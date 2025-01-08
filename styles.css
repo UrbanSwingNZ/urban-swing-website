@@ -1,0 +1,103 @@
+/* Reset margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+img {
+    max-width: 100%; /* Makes images scale with their container */
+    height: auto;
+  }
+  
+/* General Body Styles */
+body {
+    margin-top: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+/* Header Styling */
+header {
+    margin-top: 0;
+    /* position: relative; /* Needed for absolute positioning inside the header */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: black;
+    padding: 10px 20px;
+}
+
+.logo {
+    height: 200px; /* Adjust to make the logo bigger */
+    width: auto; /* Maintain the aspect ratio */
+    margin-bottom: 20px;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: #3ef3fa
+}
+
+.header-text p {
+    margin: 0;
+    font-size: 1.5em;
+    color: #fd26ee;
+}
+
+/* Page Content */
+.container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: flex-start; /* Align items closer to the top */
+    align-items: center; /* Center items horizontally */
+    height: auto;
+    padding: 100px;
+}
+
+.container p {
+    margin-top: 50px;
+    font-size: 2em;
+    color: #fd26ee;
+}
+
+/* Styles for mobile devices */
+@media (max-width: 768px) {
+    body {
+      font-size: 14px; /* Reduce text size */
+    }
+  
+    img {
+      width: 100%; /* Scale images for smaller screens */
+    }
+  
+    .content {
+      display: flex;
+      flex-direction: column; /* Stack elements vertically */
+      padding: 10px;
+    }
+  }
+  
+  .container {
+    display: flex;
+    flex-wrap: wrap; /* Makes elements stack on smaller screens */
+    gap: 10px;
+  }
+  
+  .container > div {
+    flex: 1 1 calc(50% - 20px); /* Two items per row on larger screens */
+  }
+  
+  @media (max-width: 768px) {
+    .container > div {
+      flex: 1 1 100%; /* Stack items on smaller screens */
+    }
+  }
+  
