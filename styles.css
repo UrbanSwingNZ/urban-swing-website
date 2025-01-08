@@ -1,0 +1,62 @@
+/* Reset margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* General Body Styles */
+body {
+    margin-top: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+/* Header Styling */
+header {
+    margin-top: 0;
+    position: relative; /* Needed for absolute positioning inside the header */
+    display: flex;
+    align-items: center;
+    background-color: black;
+    padding: 10px 20px;
+}
+
+.logo {
+    height: 200px; /* Adjust to make the logo bigger */
+    width: auto; /* Maintain the aspect ratio */
+}
+
+.header-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 4em;
+    color: #3ef3fa
+}
+
+.header-text p {
+    margin: 0;
+    font-size: 1.5em;
+    font-style: italic;
+    color: #fd26ee;
+}
+
+/* Page Content */
+.container {
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.container p {
+    margin-top: 75px;
+    font-size: 2em;
+    color: #fd26ee;
+}
