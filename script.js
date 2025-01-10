@@ -6,6 +6,7 @@ fetch('header.html')
 
         // Re-add menu functionality after header loads
         const hamburgerMenu = document.getElementById('hamburger-menu');
+        const closeMenu = document.getElementById('close-menu');
         const menu = document.getElementById('menu');
         const body = document.body;
 
@@ -13,6 +14,12 @@ fetch('header.html')
         hamburgerMenu.addEventListener('click', () => {
             menu.classList.toggle('active'); // Show/hide sliding menu
             body.classList.toggle('menu-open'); // Shift page content
+        });
+
+        // Close menu with "X" icon
+        closeMenu.addEventListener('click', () => {
+            menu.classList.remove('active');
+            body.classList.remove('menu-open');
         });
 
         // Close the menu when a menu link is clicked
