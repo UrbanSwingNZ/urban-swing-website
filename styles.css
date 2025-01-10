@@ -127,7 +127,7 @@ nav {
   /* When the menu is active (visible) */
   body.menu-open #menu {
     left: 0; /* Slide into view */
-    padding-top: 80px;
+    padding-top: 100px;
     display: block; /* show the menu */
   }
 
@@ -182,7 +182,7 @@ nav {
     background: none;
     border: none;
     font-size: 2em;
-    color: white;
+    color: var(--urban-swing-blue);
     cursor: pointer;
     z-index: 1001; /* Ensure it stays on top */
   }
