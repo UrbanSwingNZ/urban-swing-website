@@ -103,11 +103,16 @@ nav {
     position: relative;
   }
 
+  img {
+    max-width: 80%;
+    margin: 20px auto;
+  }
+
   #menu {
     position: fixed; /* Fixed position for sliding effect */
     top: 0;
-    left: -250px; /* Start off-screen */
-    width: 250px;
+    left: -220px; /* Start off-screen */
+    width: 220px;
     height: 100%;
     background-color: black;
     color: white;
@@ -122,13 +127,14 @@ nav {
   /* When the menu is active (visible) */
   body.menu-open #menu {
     left: 0; /* Slide into view */
+    padding-top: 50px;
     display: block; /* show the menu */
   }
 
   /* Adjust the rest of the page when the menu is open */
   body.menu-open {
     /* display: block; */
-    margin-left: 250px;
+    margin-left: 220px;
     transition: margin-left 0.3s ease-in-out;
     /* overflow: hidden; */
   }
@@ -166,5 +172,23 @@ nav {
     color: white;
     cursor: pointer;
     z-index: 1001;
+  }
+
+  #close-menu {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: white;
+    cursor: pointer;
+    z-index: 1001; /* Ensure it stays on top */
+  }
+
+  /* When the menu is open, show the "X" icon */
+  body.menu-open #close-menu {
+    display: block;
   }
 }
