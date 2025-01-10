@@ -111,7 +111,7 @@ nav {
     height: 100%;
     background-color: black;
     color: white;
-    display: flex;
+    display: none; /* Initially hidden on mobile devices */
     flex-direction: column; /* Stack menu items vertically */
     padding: 20px;
     transition: left 0.3s ease;
@@ -122,13 +122,15 @@ nav {
   /* When the menu is active (visible) */
   body.menu-open #menu {
     left: 0; /* Slide into view */
+    display: block; /* show the menu */
   }
 
   /* Adjust the rest of the page when the menu is open */
   body.menu-open {
+    /* display: block; */
     margin-left: 250px;
     transition: margin-left 0.3s ease-in-out;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
 
   #menu li {
@@ -149,6 +151,7 @@ nav {
 
   #menu li {
     width: 100%;
+    list-style-type: none; /* Remove bullet points */
   }
 
   /* Hamburger Button */
