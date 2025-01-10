@@ -1,6 +1,7 @@
 :root {
   --urban-swing-pink: #fd26ee;
   --urban-swing-blue: #3ef3fa;
+  --urban-swing-purple: #9C59FF;
 }
 
 /* Reset margin and padding for all elements */
@@ -27,6 +28,10 @@ h1 {
   color: var(--urban-swing-blue);
   padding: 50px;
   text-align: center;
+}
+
+h2 {
+  color: var(--urban-swing-purple);
 }
 
 p {
@@ -124,6 +129,28 @@ nav {
   justify-content: center;
   align-items: center;
   margin: 20px, 0;
+}
+
+/* Style for the Register Now button */
+.register-button {
+  width: calc(100% - 20px); /* Adjust the button width to account for the padding in the second column */
+  padding: 10px;
+  margin-top: 40px; /* Add space above the button */
+  background-color: var(--urban-swing-pink);
+  color: white;
+  text-align: center; /* Center the text */
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none; /* Remove underline */
+  display: block; /* Make sure it's displayed as a block */
+  margin-left: 10px; /* Add margin to align it with the second column */
+}
+
+.register-button:hover {
+  background-color: var(--urban-swing-purple);
 }
 
 /* Mobile Styles for Sliding Menu */
