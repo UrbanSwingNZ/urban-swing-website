@@ -18,8 +18,9 @@ fetch('header.html')
 
         // Close menu with "X" icon
         closeMenu.addEventListener('click', () => {
-            menu.classList.remove('active');
-            body.classList.remove('menu-open');
+            menu.classList.remove('active'); // Hide the menu
+            body.classList.remove('menu-open'); // Reset content position
+            closeMenu.style.display = 'none'; // Hide the X button
         });
 
         // Close the menu when a menu link is clicked
