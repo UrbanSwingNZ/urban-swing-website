@@ -141,14 +141,6 @@ nav {
     display: block; /* show the menu */
   }
 
-  /* Adjust the rest of the page when the menu is open */
-  body.menu-open {
-    /* display: block; */
-    margin-left: 220px;
-    transition: margin-left 0.3s ease-in-out;
-    /* overflow: hidden; */
-  }
-
   #menu li {
     padding: 10px 0;
     margin: 15px 0;
@@ -189,7 +181,7 @@ nav {
   }
 
   #close-menu {
-    /* display: none; /* Hidden by default */
+    display: block;
     position: absolute;
     top: 10px;
     right: 10px;
