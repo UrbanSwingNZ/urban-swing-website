@@ -23,6 +23,16 @@ body {
   text-align: center;
 }
 
+h1 {
+  color: var(--urban-swing-blue);
+  padding: 50px;
+}
+
+p {
+  color: white;
+  padding: 20px;
+}
+
 /* Header Styling */
 header {
   margin-top: 0;
