@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- Google Maps API Key: AIzaSyBT6HNz0tpQPofR_PjAtvr1-uy2apl-60Q -->
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,18 +23,19 @@
     }
 
     .class-details-table {
-      border-collapse: collapse;
-      width: 100%;
-      /* Table takes the full width of the wrapper */
+      border-collapse: collapse; /* Remove spacing between cells */
+      width: 100%; /* Table takes the full width of the wrapper */
     }
 
     .class-details-table td:nth-child(1) {
+      padding: 5px 10px;
       width: 50%;
     }
 
     .class-details-table td:nth-child(2) {
+      padding: 5px 10px;
       width: 50%;
-      text-align: center;
+      text-align: right;
     }
 
     .class-details-wrapper iframe {
@@ -87,47 +90,37 @@
     /* For mobile devices */
     @media screen and (max-width: 767px) {
       .class-details-table {
-        display: block;
-        /* Make the table behave like a block on mobile */
+        display: block; /* Stack rows vertically */
       }
 
       .class-details-table td:nth-child(2) {
-        width: 100%;
-        /* Make the second column (map) take the full width */
-        text-align: center;
-        /* Center-align the map */
+        width: 100%; /* Make the second column (map) take the full width */
+        text-align: right; /* Right-align the map */
+        margin-top: 15px;
       }
 
       .class-details-wrapper iframe {
-        width: 100%;
-        /* Make the map full-width on mobile */
-        height: 300px;
-        /* Adjust the map height on mobile */
-        margin-top: 15px;
-        /* Add space between the map and the address */
+        width: 100%; /* Make the map full-width on mobile */
+        height: 300px; /* Adjust the map height on mobile */
+        max-width: 100%; /* Ensure it doesn't exceed screen width */
+        margin-top: 15px; /* Add space between the map and the address */
       }
     }
 
     /* For desktop */
     @media screen and (min-width: 768px) {
       .class-details-table {
-        display: table;
-        /* Keep the table layout for larger screens */
+        display: table; /* Keep the table layout for larger screens */
       }
 
       .class-details-table td:nth-child(2) {
-        width: 50%;
-        /* Keep the second column (map) at 50% width */
-        text-align: center;
+        width: 50%; /* Keep map and address side by side */
+        text-align: right;
       }
 
       .class-details-wrapper iframe {
-        width: 100%;
-        /* Map will take 100% of its container */
-        max-width: 600px;
-        /* Limit the width of the map on desktop */
-        height: 400px;
-        /* Adjust height for desktop */
+        width: 100%; /* Map will take 100% of its container */
+        max-width: 600px; /* Limit the width of the map on desktop */
       }
     }
   </style>
@@ -148,7 +141,7 @@
           <td rowspan="10">
             <!-- Embed Google Map (example) -->
             <iframe
-              src="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D"
+              src="https://www.google.co.nz/maps/place/?key=AIzaSyBT6HNz0tpQPofR_PjAtvr1-uy2apl-60Q&q=Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D"
               width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
           </td>
         </tr>
