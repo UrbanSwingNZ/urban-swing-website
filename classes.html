@@ -11,7 +11,8 @@
   <style>
     /* Class Details section styles */
     .class-details-wrapper {
-      width: 600px;
+      width: 100%;
+      max-width: 900px;
       margin: 0 auto 30px auto;
       /* margin-bottom: 30px; /* Add space between this section and the pricing table */
     }
@@ -38,14 +39,6 @@
       text-align: right;
     }
 
-    .class-details-wrapper iframe {
-      width: 100%;
-      max-width: 600px;
-      /* Limit the map size on desktop */
-      height: 300px;
-      /* Set a larger height for desktop */
-    }
-
     /* Price section styles */
     .pricing-section {
       display: flex;
@@ -55,7 +48,8 @@
 
     .pricing-wrapper {
       margin-top: 50px;
-      width: 600px;
+      width: 100%;
+      max-width: 900px;
       /* Set a consistent width for both the heading and table */
     }
 
@@ -89,6 +83,11 @@
 
     /* For mobile devices */
     @media screen and (max-width: 767px) {
+      .class-details-wrapper {
+        width: 100%;
+        padding: 0 15px;
+      }
+
       .class-details-table {
         display: block; /* Stack rows vertically */
       }
@@ -98,17 +97,13 @@
         text-align: right; /* Right-align the map */
         margin-top: 15px;
       }
-
-      .class-details-wrapper iframe {
-        width: 100%; /* Make the map full-width on mobile */
-        height: 300px; /* Adjust the map height on mobile */
-        max-width: 100%; /* Ensure it doesn't exceed screen width */
-        margin-top: 15px; /* Add space between the map and the address */
-      }
     }
 
     /* For desktop */
     @media screen and (min-width: 768px) {
+      .class-details-wrapper {
+        width: 900px; /* Fixed width for desktop */
+      }
       .class-details-table {
         display: table; /* Keep the table layout for larger screens */
       }
@@ -116,11 +111,6 @@
       .class-details-table td:nth-child(2) {
         width: 50%; /* Keep map and address side by side */
         text-align: right;
-      }
-
-      .class-details-wrapper iframe {
-        width: 100%; /* Map will take 100% of its container */
-        max-width: 600px; /* Limit the width of the map on desktop */
       }
     }
   </style>
@@ -139,9 +129,10 @@
         <tr>
           <td>Every Thursday</td>
           <td rowspan="10">
-            <!-- Embed Google Map -->
-            <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBT6HNz0tpQPofR_PjAtvr1-uy2apl-60Q&q=Dance+Express+Napier,+New+Zealand" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-
+            <!-- Link to Google Maps with an image of the map -->
+            <a href="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+              <img src="images/map.png" alt="Dance Express Map" style="width:100%; height:auto;">
+            </a>
           </td>
         </tr>
         <tr>
@@ -158,7 +149,7 @@
           <td><b>Location:</b></td>
         </tr>
         <tr>
-          <td>Dance Express Studios</td>
+          <td><a href="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" style="color: #fd26ee">Dance Express Studios</a></td>
         </tr>
         <tr>
           <td>Cnr Taradale Road & Austin Street</td>
