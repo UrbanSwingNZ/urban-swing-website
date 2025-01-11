@@ -107,14 +107,14 @@ nav {
   display: flex;
   justify-content: center; /* Center the menu items */
   list-style: none;
-  gap: 50px;
+  gap: 10px;
   padding: 0;
   margin: 10px 0 0;
   width: 1150;
 }
 
 #menu li {
-  display: inline;
+  margin: 0;
 }
 
 #menu a {
@@ -122,10 +122,13 @@ nav {
   color: white;
   font-size: 1.2em;
   transition: color 0.3s ease;
+  padding: 10px 20px;
+  display: inline-block;
 }
 
 #menu a:hover {
-  color: var(--urban-swing-pink);
+  background-color: var(--urban-swing-pink);
+  color: white;
 }
 
 #hamburger-menu {
@@ -213,7 +216,8 @@ nav {
   }
 
   #menu a:hover {
-    color: var(--urban-swing-pink);
+    background-color: var(--urban-swing-pink);
+    color: white;
   }
 
   #menu li {
