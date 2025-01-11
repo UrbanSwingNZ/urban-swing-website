@@ -91,6 +91,10 @@ header {
   margin-top: 50px;
 }
 
+.faq-container h3 {
+  color: var(--urban-swing-purple)
+}
+
 /* Navigation Menu (Desktop) */
 nav {
   width: 100%;
