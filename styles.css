@@ -15,6 +15,10 @@ img {
   height: auto;
 }
 
+a {
+  color: var(--urban-swing-pink);
+}
+
 /* General Body Styles */
 body {
   margin-top: 0;
@@ -133,20 +137,21 @@ nav {
 
 /* Style for the Register Now button */
 .register-button {
-  width: calc(100% - 20px); /* Adjust the button width to account for the padding in the second column */
-  padding: 10px;
-  margin-top: 40px; /* Add space above the button */
+  display: inline-block; /* Make sure it's displayed as a block */
   background-color: var(--urban-swing-pink);
   color: white;
-  text-align: center; /* Center the text */
+  padding: 12px 20px;
+  text-decoration: none; /* Remove underline */
   font-size: 16px;
   font-weight: bold;
+  text-align: center; /* Center the text */
+  border-radius: 5px;
+  margin-top: 40px; /* Add space above the button */
+  margin-left: 0px; 
+  margin-right: 0px;
+  width: calc(100% - 30px); /* Adjust the button width to account for the padding in the second column */
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  text-decoration: none; /* Remove underline */
-  display: block; /* Make sure it's displayed as a block */
-  margin-left: 10px; /* Add margin to align it with the second column */
 }
 
 .register-button:hover {
