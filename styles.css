@@ -11,6 +11,23 @@
   --common-max-width: 1150px;
 }
 
+/* Reset margin and padding for all elements */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Light Mode Logo */
+.logo {
+  /* background-image: url('/images/urban-swing-logo-light-mode.png'); */
+  background-image: url('/images/temporary-logo-light-mode.jpg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 200px;
+  /* width: 400px; */
+  width: 300px; /* width of the temporary logo */
+}
+
 /* Dark Mode Styles (Automatically applied via media query) */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -22,23 +39,6 @@
     /* background-image: url('/images/urban-swing-logo-dark-mode.png'); */
     background-image: url('/images/temporary-logo-dark-mode.jpg');
   }
-}
-
-/* Light Mode Logo */
-.logo {
-  /* background-image: url('/images/urban-swing-logo-light-mode.png'); */
-  background-image: url('/images/temporary-logo-light-mode.jpg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  height: 200px;
-  /* width: 400px; */
-  width: 300px;
-}
-
-/* Reset margin and padding for all elements */
-* {
-  margin: 0;
-  padding: 0;
 }
 
 img {
