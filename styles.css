@@ -19,13 +19,20 @@
   }
 
   .logo {
-    background-image: url('/images/urban-swing-logo-dark-mode.png');
+    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); */
+    background-image: url('/images/temporary-logo-dark-mode.jpg');
   }
 }
 
 /* Light Mode Logo */
 .logo {
-  background-image: url('/images/urban-swing-logo-light-mode.png');
+  /* background-image: url('/images/urban-swing-logo-light-mode.png'); */
+  background-image: url('/images/temporary-logo-light-mode.jpg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 200px;
+  /* width: 400px; */
+  width: 300px;
 }
 
 /* Reset margin and padding for all elements */
@@ -78,20 +85,9 @@ header {
   /* text-align: center; */
 }
 
-.logo {
-  background-image: url('/images/urban-swing-logo-light-mode.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  height: 200px;
-  width: 400px;
-}
-
-.dark-mode .logo {
-  background-image: url('/images/urban-swing-logo-dark-mode.png');
-}
-
 .header-text {
   text-align: center;
+  max-width: var(--common-max-width);
 }
 
 .header-text h1 {
