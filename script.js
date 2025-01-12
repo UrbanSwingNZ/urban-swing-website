@@ -32,29 +32,22 @@ fetch('header.html')
             }
         });
 
-        // Theme toggle button functionality
-        const themeToggleButton = document.getElementById('theme-toggle');
-        const savedTheme = localStorage.getItem('theme');
-
-        // Apply the saved theme on page load
-        if (savedTheme) {
-            body.classList.add(savedTheme);
-            themeToggleButton.textContent =
-                savedTheme === 'dark-mode' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        // Detect and apply the system's color scheme
+        function applySystemTheme() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
         }
 
-        // Add event listener for the button
-        themeToggleButton.addEventListener('click', () => {
-            // Toggle dark mode class on the body
-            if (body.classList.contains('dark-mode')) {
-                body.classList.remove('dark-mode');
-                localStorage.setItem('theme', ''); // Clear saved theme
-                themeToggleButton.textContent = 'Switch to Dark Mode';
-            } else {
-                body.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark-mode'); // Save theme
-                themeToggleButton.textContent = 'Switch to Light Mode';
-            }
+        // Apply the system theme on page load
+        applySystemTheme();
+
+        // Listen for system theme changes and update dynamically
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            applySystemTheme();
         });
     })
     .catch(error => console.error('Error loading header:', error));
