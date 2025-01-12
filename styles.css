@@ -11,13 +11,35 @@
   --common-max-width: 1150px;
 }
 
-/* Dark mode overrides */
+/* Dark mode overrides 
 .dark-mode {
   --background-color: black;
   --text-color: white;
+} */
+
+/* Dark Mode Styles (Automatically applied via media query) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: black;
+    --text-color: white;
+  }
+
+  .logo {
+    background-image: url('/images/urban-swing-logo-dark-mode.png');
+  }
 }
 
-.theme-toggle-button {
+/* Light Mode Logo */
+.logo {
+  background-image: url('/images/urban-swing-logo-light-mode.png');
+}
+
+/* Remove the theme toggle button styles */
+/* .theme-toggle-button {
+  display: none;
+} */
+
+/* .theme-toggle-button {
   padding: 10px 20px;
   font-size: 16px;
   font-weight: bold;
@@ -31,7 +53,7 @@
 
 .theme-toggle-button:hover {
   background-color: var(--urban-swing-purple);
-}
+} */
 
 /* Reset margin and padding for all elements */
 * {
