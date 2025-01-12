@@ -8,6 +8,7 @@
   --urban-swing-pink: #e800f2;
   --background-color: white;
   --text-color: black;
+  --common-max-width: 1150px;
 }
 
 /* Dark mode overrides */
@@ -79,7 +80,7 @@ header {
   justify-content: center;
   background-color: var(--background-color);
   padding: 10px 20px;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .logo {
@@ -87,9 +88,7 @@ header {
   background-size: contain;
   background-repeat: no-repeat;
   height: 200px;
-  width: 100%;
-  margin-bottom: 20px;
-  display: block;
+  width: 400px;
 }
 
 .dark-mode .logo {
@@ -116,7 +115,7 @@ header {
 /* Wrapper for all page content */
 .content-wrapper {
   width: 100%;
-  max-width: 1150px;
+  max-width: var(--common-max-width);
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
@@ -135,9 +134,11 @@ header {
 /* Navigation Menu (Desktop) */
 nav {
   width: 100%;
-  position: relative;
+  max-width: var(--common-max-width);
+  position: flex;
   margin-top: 25px;
   margin-bottom: 25px;
+  justify-content: center;
 }
 
 #menu {
@@ -147,7 +148,7 @@ nav {
   gap: 10px;
   padding: 0;
   margin: 10px 0 0;
-  width: 1150px; /* Fixed unit */
+  width: var(--common-max-width);
 }
 
 #menu li {
