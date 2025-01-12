@@ -2,6 +2,7 @@
 fetch('header.html')
     .then(response => response.text())
     .then(html => {
+        // Insert the header HTML into the document
         document.body.insertAdjacentHTML('afterbegin', html);
 
         // Re-add menu functionality after header loads
@@ -28,6 +29,31 @@ fetch('header.html')
             if (event.target.tagName === 'A') {
                 menu.classList.remove('active');
                 body.classList.remove('menu-open');
+            }
+        });
+
+        // Theme toggle button functionality
+        const themeToggleButton = document.getElementById('theme-toggle');
+        const savedTheme = localStorage.getItem('theme');
+
+        // Apply the saved theme on page load
+        if (savedTheme) {
+            body.classList.add(savedTheme);
+            themeToggleButton.textContent =
+                savedTheme === 'dark-mode' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        }
+
+        // Add event listener for the button
+        themeToggleButton.addEventListener('click', () => {
+            // Toggle dark mode class on the body
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', ''); // Clear saved theme
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode'); // Save theme
+                themeToggleButton.textContent = 'Switch to Light Mode';
             }
         });
     })
