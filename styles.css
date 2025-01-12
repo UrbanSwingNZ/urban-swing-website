@@ -162,7 +162,6 @@ nav {
 
 #menu a:hover {
   background-color: var(--urban-swing-pink);
-  /* color: var(--text-color); */
   color: white;
 }
 
