@@ -41,6 +41,18 @@
   }
 }
 
+/* Default light mode */
+.under-construction-logo {
+  content: url('/images/under-construction-light-mode.jpg');
+  width: 300px; /* Adjust as needed */
+  height: auto;
+}
+
+/* Dark mode */
+body.dark-mode .under-construction-logo {
+  content: url('/images/under-construction-dark-mode.jpg');
+}
+
 img {
   max-width: 100%;
   height: auto;
