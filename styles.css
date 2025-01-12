@@ -60,7 +60,7 @@ body {
 
 h1 {
   color: var(--urban-swing-blue);
-  padding: 50px;
+  padding-bottom: 50px;
   text-align: center;
 }
 
@@ -112,6 +112,11 @@ header {
   box-sizing: border-box;
 }
 
+.content-wrapper a:hover {
+  background-color: var(--urban-swing-pink);
+  color: white;
+}
+
 .container p {
   color: var(--urban-swing-pink);
   font-size: 1.5em;
@@ -157,7 +162,8 @@ nav {
 
 #menu a:hover {
   background-color: var(--urban-swing-pink);
-  color: var(--text-color);
+  /* color: var(--text-color); */
+  color: white;
 }
 
 #hamburger-menu {
