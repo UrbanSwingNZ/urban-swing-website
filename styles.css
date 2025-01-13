@@ -1,11 +1,8 @@
 /* Set light mode as the default */
 :root {
-  --urban-swing-pink: #fd26ee;
-  --urban-swing-blue: #3ef3fa;
-  --urban-swing-purple: #9C59FF;
-  --urban-swing-blue-new: #3534Fa;
-  --urban-swing-purple-new: #9a16f5;
-  --urban-swing-pink-new: #e800f2;
+  --urban-swing-blue: #3534Fa;
+  --urban-swing-purple: #9a16f5;
+  --urban-swing-pink: #e800f2;
   --background-color: white;
   --text-color: black;
   --common-max-width: 1150px;
@@ -17,27 +14,11 @@
   padding: 0;
 }
 
-/* Light Mode Logo */
-.logo {
-  /* background-image: url('/images/urban-swing-logo-light-mode.png'); */
-  background-image: url('/images/temporary-logo-light-mode.jpg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  height: 200px;
-  /* width: 400px; */
-  width: 300px; /* width of the temporary logo */
-}
-
 /* Dark Mode Styles (Automatically applied via media query) */
 @media (prefers-color-scheme: dark) {
   :root {
     --background-color: black;
     --text-color: white;
-  }
-
-  .logo {
-    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); */
-    background-image: url('/images/temporary-logo-dark-mode.jpg');
   }
 }
 
