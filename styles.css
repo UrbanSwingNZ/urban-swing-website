@@ -224,7 +224,10 @@ nav {
     height: auto;
     max-width: 300px;
     display: block;
-    margin: 0 auto; /* Center the logo */
+    margin: 20px auto; /* Center the logo */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
   #menu {
