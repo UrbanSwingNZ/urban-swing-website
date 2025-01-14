@@ -221,7 +221,8 @@ nav {
   .logo {
     width: 80%;
     height: auto;
-    max-width: 400px;
+    max-width: 300px;
+    display: block;
     margin: 0 auto; /* Center the logo */
   }
 
