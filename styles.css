@@ -5,7 +5,7 @@
   --urban-swing-pink: #e800f2;
   --background-color: white;
   --text-color: black;
-  --common-max-width: 1150px;
+  --common-max-width: 1100px;
 }
 
 /* Reset margin and padding for all elements */
@@ -22,6 +22,29 @@
   height: 200px;
   width: 400px;
 }
+
+/* Social Icons Container */
+.social-icons {
+  display: flex;
+  justify-content: center; /* Center the icons horizontally */
+  gap: 50px; /* Spacing between the icons */
+  margin-top: 10px; /* Space between the menu and icons */
+  margin-bottom: 20px;
+}
+
+/* Individual Icon Styles */
+.social-icons a {
+  color: var(--text-color); /* Matches the light or dark mode text color */
+  font-size: 24px; /* Adjust icon size */
+  text-decoration: none; /* Removes underline from the links */
+  transition: color 0.3s ease; /* Smooth color change on hover */
+}
+
+/* Icon Hover Effect */
+.social-icons a:hover {
+  color: var(--urban-swing-pink); /* Highlight color on hover */
+}
+
 
 /* Dark Mode Styles (Automatically applied via media query) */
 @media (prefers-color-scheme: dark) {
