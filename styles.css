@@ -14,12 +14,28 @@
   padding: 0;
 }
 
+/* Light Mode Logo */
+.logo {
+  /* background-image: url('/images/urban-swing-logo-light-mode.png'); */
+  background-image: url('/images/urban-swing-logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 200px;
+  width: 400px;
+  /* width: 300px; /* width of the temporary logo */
+}
+
 /* Dark Mode Styles (Automatically applied via media query) */
 @media (prefers-color-scheme: dark) {
   :root {
     --background-color: black;
     --text-color: white;
   }
+
+  /* .logo {
+    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); 
+    background-image: url('/images/temporary-logo-dark-mode.jpg');
+  } */
 }
 
 /* Default light mode */
