@@ -87,6 +87,7 @@ header {
   margin-top: 0;
   display: flex;
   flex-direction: column;
+  text-align: center;
   align-items: center;
   justify-content: center;
   background-color: var(--background-color);
