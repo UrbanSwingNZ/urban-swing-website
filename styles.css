@@ -31,10 +31,10 @@
     --text-color: white;
   }
 
-  .logo {
-    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); */
+  /* .logo {
+    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); 
     background-image: url('/images/urban-swing-logo.png');
-  }
+  } */
 }
 
 /* Default light mode */
