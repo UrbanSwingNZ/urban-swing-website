@@ -172,6 +172,7 @@ nav {
 #menu a:hover {
   background-color: var(--urban-swing-pink);
   color: white;
+  transition: all 0.3s ease-in-out;
 }
 
 #hamburger-menu {
@@ -215,6 +216,13 @@ nav {
   img {
     max-width: 80%;
     margin: 20px auto;
+  }
+
+  .logo {
+    width: 80%;
+    height: auto;
+    max-width: 300px;
+    margin: 0 auto; /* Center the logo */
   }
 
   #menu {
