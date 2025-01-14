@@ -16,7 +16,6 @@
 
 /* Light Mode Logo */
 .logo {
-  /* background-image: url('/images/urban-swing-logo-light-mode.png'); */
   background-image: url('/images/urban-swing-logo.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -30,11 +29,6 @@
     --background-color: black;
     --text-color: white;
   }
-
-  /* .logo {
-    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); 
-    background-image: url('/images/urban-swing-logo.png');
-  } */
 }
 
 /* Default light mode */
@@ -90,7 +84,7 @@ header {
   justify-content: center;
   background-color: var(--background-color);
   padding: 10px 20px;
-  /* text-align: center; */
+  text-align: center; /* Can maybe remove this */
 }
 
 .header-text {
