@@ -159,6 +159,10 @@ header {
   color: var(--urban-swing-purple);
 }
 
+.other-classes-container {
+  color: var(--text-color);
+}
+
 /* Navigation Menu (Desktop) */
 nav {
   width: 100%;
