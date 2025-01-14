@@ -21,8 +21,8 @@
   background-size: contain;
   background-repeat: no-repeat;
   height: 200px;
-  width: 400px;
-  /* width: 300px; /* width of the temporary logo */
+  /* width: 400px; */
+  width: 300px; /* width of the temporary logo */
 }
 
 /* Dark Mode Styles (Automatically applied via media query) */
@@ -32,10 +32,10 @@
     --text-color: white;
   }
 
-  /* .logo {
-    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); 
-    background-image: url('/images/temporary-logo-dark-mode.jpg');
-  } */
+  .logo {
+    /* background-image: url('/images/urban-swing-logo-dark-mode.png'); */
+    background-image: url('/images/urban-swing-logo.png');
+  }
 }
 
 /* Default light mode */
@@ -87,7 +87,6 @@ header {
   margin-top: 0;
   display: flex;
   flex-direction: column;
-  text-align: center;
   align-items: center;
   justify-content: center;
   background-color: var(--background-color);
@@ -173,7 +172,6 @@ nav {
 #menu a:hover {
   background-color: var(--urban-swing-pink);
   color: white;
-  transition: all 0.3s ease-in-out;
 }
 
 #hamburger-menu {
@@ -217,17 +215,6 @@ nav {
   img {
     max-width: 80%;
     margin: 20px auto;
-  }
-
-  .logo {
-    width: 80%;
-    height: auto;
-    max-width: 300px;
-    display: block;
-    margin: 20px auto; /* Center the logo */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 
   #menu {
