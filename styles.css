@@ -133,6 +133,7 @@ header {
   max-width: var(--common-max-width);
   margin: 0 auto;
   padding: 20px;
+  line-height: 1.5;
 }
 
 .content-wrapper a:hover {
