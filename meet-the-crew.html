@@ -3,21 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Information</title>
+  <title>Meet the Crew</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <!-- Header will be dynamically loaded by script.js -->
-  
-  <!--TODO: Remove the style from the div tag once this page has content-->
-
   <div class="content-wrapper" style="text-align: center;">
     <h1>Meet the Crew</h1>
+    
+    <!-- TODO: Remove the below div to get rid of the Under Construction logo  -->
+
     <div class="container">
-        <!-- <img src="/images/under-construction.jpg""></img> -->
-        <img class="under-construction-logo" alt="Under Construction">
-        <br>
-        <p>Coming soon: crew profiles</p>
+      <img class="under-construction-logo" alt="Under Construction">
+      <br>
+      <p>Coming soon: crew profiles</p>
+    </div>
+  
+    <!-- TODO: Remove style="display:none;" from the below so that the table becomes visible -->
+    
+    <!-- TODO: Test the crew profiles on mobile display -->
+     
+    <div class="crew-container" style="display: none;">
+      <table class="crew-table">
+        <tbody>
+          <!-- Lance -->
+          <tr>
+            <td class="crew-photo">
+              <img src="/images/crew-placeholder.png" alt="Crew Member 1 Photo" class="crew-img">
+            </td>
+            <td class="crew-info">
+              <h2>Lance</h2>
+              <p>Lance started dancing Ceroc/Modern Jive in 2014 and started teaching in 2020 before starting West Coast Swing in 2023. 
+                He and his wife, Nicole, moved to Napier from Auckland mid-2024 with their daughter, Emily, to be closer to family. 
+                He still enjoys dancing Modern Jive and attends competitions around NZ regularly, 
+                but is excited to grow his WCS knowledge and pass it on to new dancers in Hawkes Bay.
+              </p>            
+            </td>
+          </tr>
+          <!-- Crew Member 2 -->
+          <tr>
+            <td class="crew-photo">
+              <img src="/images/crew-placeholder.png" alt="Crew Member 2 Photo" class="crew-img">
+            </td>
+            <td class="crew-info">
+              <h2>Crew Member 2</h2>
+              <p>Ut fringilla quam eget neque efficitur, ac bibendum nunc scelerisque. Curabitur ac sem at dolor viverra sagittis. Phasellus porta neque sit amet risus.</p>
+            </td>
+          </tr>
+          <!-- Crew Member 3 -->
+          <tr>
+            <td class="crew-photo">
+              <img src="/images/crew-placeholder.png" alt="Crew Member 3 Photo" class="crew-img">
+            </td>
+            <td class="crew-info">
+              <h2>Crew Member 3</h2>
+              <p>Mauris ultricies, justo eu convallis placerat, felis enim ornare turpis, ac dictum est ipsum sed nisi. Vestibulum convallis sed libero nec ultricies.</p>
+            </td>
+          </tr>
+          <!-- Crew Member 4 -->
+          <tr>
+            <td class="crew-photo">
+              <img src="/images/crew-placeholder.png" alt="Crew Member 4 Photo" class="crew-img">
+            </td>
+            <td class="crew-info">
+              <h2>Crew Member 4</h2>
+              <p>Aliquam erat volutpat. Nam volutpat odio sit amet metus viverra, at sagittis nunc placerat. Duis feugiat urna vel libero cursus, in congue turpis dapibus.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <script src="script.js"></script>

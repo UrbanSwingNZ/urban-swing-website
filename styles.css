@@ -81,7 +81,6 @@ body {
   font-family: Verdana, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
-  padding-top: 425px;
 }
 
 h1 {
@@ -108,13 +107,6 @@ header {
   justify-content: center;
   background-color: var(--background-color);
   padding: 10px 20px;
-  /*text-align: center; /* Can maybe remove this */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  height: auto;
 }
 
 .header-text {
@@ -141,7 +133,7 @@ header {
   max-width: var(--common-max-width);
   margin: 0 auto;
   padding: 20px;
-  box-sizing: border-box;
+  line-height: 1.5;
 }
 
 .content-wrapper a:hover {
@@ -161,6 +153,65 @@ header {
 
 .other-classes-container {
   color: var(--text-color);
+}
+
+/* Style for the crew table */
+.crew-container {
+  max-width: var(--common-max-width);
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.crew-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.crew-table tr {
+  border-bottom: 1px solid var(--urban-swing-pink);
+}
+
+.crew-table td {
+  padding: 15px;
+  vertical-align: top;
+}
+
+.crew-photo {
+  width: 25%;
+}
+
+.crew-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* Optional: round the edges */
+}
+
+.crew-info h2 {
+  margin: 0 0 10px;
+  font-size: 1.5em;
+}
+
+.crew-info p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Mobile responsiveness for the crew container */
+@media (max-width: 768px) {
+  .crew-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .crew-photo {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .crew-info h2 {
+    text-align: center;
+  }
 }
 
 /* Navigation Menu (Desktop) */
