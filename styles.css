@@ -156,7 +156,7 @@ header {
 
 /* Style for the crew table */
 .crew-container {
-  max-width: 800px;
+  max-width: var(--common-max-width);
   margin: 0 auto;
   padding: 20px;
 }
@@ -168,7 +168,7 @@ header {
 }
 
 .crew-table tr {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--urban-swing-pink);
 }
 
 .crew-table td {
