@@ -181,6 +181,10 @@ header {
   width: 25%;
 }
 
+.crew-table td.crew-photo {
+  vertical-align: middle;
+}
+
 .crew-img {
   max-width: 100%;
   height: auto;
