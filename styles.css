@@ -14,13 +14,15 @@
   padding: 0;
 }
 
-/* Light Mode Logo */
 .logo {
   background-image: url('/images/urban-swing-logo.png');
   background-size: contain;
   background-repeat: no-repeat;
-  height: 200px;
-  width: 400px;
+  width: 90vw;
+  max-width: 400px;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  margin: 0 auto;
 }
 
 /* Social Icons Container */
@@ -284,6 +286,15 @@ nav {
   cursor: pointer;
 }
 
+/* For mobile: */
+@media (max-width: 768px) {
+  .register-button {
+    width: 90%;
+    margin: 20px auto;
+    display: block;
+  }
+}
+
 .register-button:hover {
   background-color: var(--urban-swing-purple);
 }
@@ -375,4 +386,43 @@ nav {
   body.menu-open #close-menu {
     display: block;
   }
+
+  /* Mobile device spacing for social media logos */
+  @media (max-width: 768px) {
+    .social-icons {
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  
+    .social-icons a {
+      font-size: 20px;
+    }
+  }  
+
+  /* Content wrapper for mobile */
+  @media (max-width: 768px) {
+    .content-wrapper {
+      padding: 15px;
+    }
+  
+    .header-text h1 {
+      font-size: 2em;
+    }
+  
+    .header-text p {
+      font-size: 1.2em;
+    }
+  }
+
+  /* Mobile crew table layout */
+  @media (max-width: 768px) {
+    .crew-photo {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .crew-info {
+      text-align: center;
+    }
+  }  
 }
