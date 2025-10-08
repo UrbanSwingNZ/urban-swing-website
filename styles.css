@@ -15,14 +15,11 @@
 }
 
 .logo {
-  background-image: url('/images/urban-swing-logo.png');
-  background-size: contain;
-  background-repeat: no-repeat;
   width: 90vw;
   max-width: 400px;
   height: auto;
-  aspect-ratio: 2 / 1;
   margin: 0 auto;
+  display: block;
 }
 
 /* Social Icons Container */
@@ -56,16 +53,18 @@
   }
 }
 
-/* Default light mode */
+/* Under construction logo */
 .under-construction-logo {
   content: url('/images/under-construction-light-mode.jpg');
-  width: 300px; /* Adjust as needed */
+  width: 300px;
   height: auto;
 }
 
-/* Dark mode */
-body.dark-mode .under-construction-logo {
-  content: url('/images/under-construction-dark-mode.jpg');
+/* Dark mode under construction logo */
+@media (prefers-color-scheme: dark) {
+  .under-construction-logo {
+    content: url('/images/under-construction-dark-mode.jpg');
+  }
 }
 
 img {
@@ -75,6 +74,22 @@ img {
 
 a {
   color: var(--urban-swing-pink);
+}
+
+/* Accessibility: Focus styles for keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--urban-swing-pink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus for mouse users (focus-visible handles this) */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* General Body Styles */
@@ -224,7 +239,7 @@ header {
 nav {
   width: 100%;
   max-width: var(--common-max-width);
-  position: flex;
+  position: relative;
   margin-top: 25px;
   margin-bottom: 25px;
   justify-content: center;
@@ -388,41 +403,140 @@ nav {
   }
 
   /* Mobile device spacing for social media logos */
-  @media (max-width: 768px) {
-    .social-icons {
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-  
-    .social-icons a {
-      font-size: 20px;
-    }
-  }  
+  .social-icons {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .social-icons a {
+    font-size: 20px;
+  }
 
   /* Content wrapper for mobile */
-  @media (max-width: 768px) {
-    .content-wrapper {
-      padding: 15px;
-    }
-  
-    .header-text h1 {
-      font-size: 2em;
-    }
-  
-    .header-text p {
-      font-size: 1.2em;
-    }
+  .content-wrapper {
+    padding: 15px;
+  }
+
+  .header-text h1 {
+    font-size: 2em;
+  }
+
+  .header-text p {
+    font-size: 1.2em;
   }
 
   /* Mobile crew table layout */
-  @media (max-width: 768px) {
-    .crew-photo {
-      width: 100%;
-      margin-bottom: 10px;
-    }
+  .crew-photo {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .crew-info {
+    text-align: center;
+  }
+}
+
+/* Class Details section styles - moved from classes.html inline styles */
+.class-details-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+}
+
+.class-details-wrapper h2 {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.class-details-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.class-details-table td:nth-child(1) {
+  padding: 5px 10px;
+  width: 50%;
+}
+
+.class-details-table td:nth-child(2) {
+  padding: 5px 10px;
+  width: 50%;
+  text-align: right;
+}
+
+/* Price section styles */
+.pricing-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pricing-wrapper {
+  margin-top: 50px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.pricing-wrapper h2 {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.pricing-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pricing-table td:nth-child(2) {
+  padding-top: 10px;
+  padding-left: 20px;
+  text-align: right;
+}
+
+.indent-with-italics {
+  padding-left: 5px;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.indent-only {
+  padding-left: 15px;
+}
+
+/* Mobile styles for class details */
+@media screen and (max-width: 767px) {
+  .class-details-wrapper {
+    width: 100%;
+    padding: 0 15px;
+  }
+
+  .class-details-table {
+    display: block;
+  }
+
+  .class-details-table td:nth-child(2) {
+    width: 100%;
+    text-align: right;
+    margin-top: 15px;
+  }
+}
+
+/* Desktop styles for class details */
+@media screen and (min-width: 768px) {
+  .class-details-wrapper {
+    width: 900px;
+  }
   
-    .crew-info {
-      text-align: center;
-    }
-  }  
+  .class-details-table {
+    display: table;
+  }
+
+  .class-details-table td:nth-child(2) {
+    width: 50%;
+    text-align: right;
+  }
+
+  .class-details-table td img {
+    vertical-align: top;
+  }
 }
