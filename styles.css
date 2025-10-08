@@ -12,6 +12,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .logo {
@@ -70,6 +71,15 @@
 img {
   max-width: 100%;
   height: auto;
+  display: block;
+}
+
+/* Ensure all media respects viewport */
+iframe,
+video,
+embed,
+object {
+  max-width: 100%;
 }
 
 a {
@@ -98,6 +108,12 @@ body {
   font-family: Verdana, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow-x: hidden;
+}
+
+/* Prevent horizontal scroll on all pages */
+html {
+  overflow-x: hidden;
 }
 
 h1 {
@@ -124,6 +140,9 @@ header {
   justify-content: center;
   background-color: var(--background-color);
   padding: 10px 20px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .header-text {
@@ -151,6 +170,7 @@ header {
   margin: 0 auto;
   padding: 20px;
   line-height: 1.5;
+  box-sizing: border-box;
 }
 
 .content-wrapper a:hover {
@@ -282,6 +302,16 @@ nav {
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Responsive video container */
+.video iframe {
+  width: 560px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
 }
 
 /* Style for the Register Now button */
@@ -318,6 +348,9 @@ nav {
 @media (max-width: 768px) {
   nav {
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   img {
@@ -415,6 +448,8 @@ nav {
   /* Content wrapper for mobile */
   .content-wrapper {
     padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .header-text h1 {
@@ -423,6 +458,19 @@ nav {
 
   .header-text p {
     font-size: 1.2em;
+  }
+  
+  /* Ensure video container fits on mobile */
+  .video {
+    width: 100%;
+    padding: 0 15px;
+    margin: 20px 0;
+    box-sizing: border-box;
+  }
+  
+  .video iframe {
+    width: 100%;
+    max-width: 90vw;
   }
 
   /* Mobile crew table layout */
@@ -508,16 +556,30 @@ nav {
   .class-details-wrapper {
     width: 100%;
     padding: 0 15px;
+    box-sizing: border-box;
   }
 
   .class-details-table {
     display: block;
+    width: 100%;
+    overflow-x: auto;
   }
 
   .class-details-table td:nth-child(2) {
     width: 100%;
     text-align: right;
     margin-top: 15px;
+  }
+  
+  /* Ensure pricing table doesn't overflow */
+  .pricing-wrapper {
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+  
+  .pricing-table {
+    width: 100%;
   }
 }
 
