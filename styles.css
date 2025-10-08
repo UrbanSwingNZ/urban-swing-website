@@ -12,17 +12,15 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .logo {
-  background-image: url('/images/urban-swing-logo.png');
-  background-size: contain;
-  background-repeat: no-repeat;
   width: 90vw;
   max-width: 400px;
   height: auto;
-  aspect-ratio: 2 / 1;
   margin: 0 auto;
+  display: block;
 }
 
 /* Social Icons Container */
@@ -56,25 +54,52 @@
   }
 }
 
-/* Default light mode */
+/* Under construction logo */
 .under-construction-logo {
   content: url('/images/under-construction-light-mode.jpg');
-  width: 300px; /* Adjust as needed */
+  width: 300px;
   height: auto;
 }
 
-/* Dark mode */
-body.dark-mode .under-construction-logo {
-  content: url('/images/under-construction-dark-mode.jpg');
+/* Dark mode under construction logo */
+@media (prefers-color-scheme: dark) {
+  .under-construction-logo {
+    content: url('/images/under-construction-dark-mode.jpg');
+  }
 }
 
 img {
   max-width: 100%;
   height: auto;
+  display: block;
+}
+
+/* Ensure all media respects viewport */
+iframe,
+video,
+embed,
+object {
+  max-width: 100%;
 }
 
 a {
   color: var(--urban-swing-pink);
+}
+
+/* Accessibility: Focus styles for keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--urban-swing-pink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus for mouse users (focus-visible handles this) */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* General Body Styles */
@@ -83,6 +108,12 @@ body {
   font-family: Verdana, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow-x: hidden;
+}
+
+/* Prevent horizontal scroll on all pages */
+html {
+  overflow-x: hidden;
 }
 
 h1 {
@@ -109,6 +140,9 @@ header {
   justify-content: center;
   background-color: var(--background-color);
   padding: 10px 20px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .header-text {
@@ -136,6 +170,7 @@ header {
   margin: 0 auto;
   padding: 20px;
   line-height: 1.5;
+  box-sizing: border-box;
 }
 
 .content-wrapper a:hover {
@@ -224,7 +259,7 @@ header {
 nav {
   width: 100%;
   max-width: var(--common-max-width);
-  position: flex;
+  position: relative;
   margin-top: 25px;
   margin-bottom: 25px;
   justify-content: center;
@@ -267,6 +302,16 @@ nav {
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Responsive video container */
+.video iframe {
+  width: 560px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
 }
 
 /* Style for the Register Now button */
@@ -303,6 +348,9 @@ nav {
 @media (max-width: 768px) {
   nav {
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   img {
@@ -388,41 +436,169 @@ nav {
   }
 
   /* Mobile device spacing for social media logos */
-  @media (max-width: 768px) {
-    .social-icons {
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-  
-    .social-icons a {
-      font-size: 20px;
-    }
-  }  
+  .social-icons {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .social-icons a {
+    font-size: 20px;
+  }
 
   /* Content wrapper for mobile */
-  @media (max-width: 768px) {
-    .content-wrapper {
-      padding: 15px;
-    }
+  .content-wrapper {
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .header-text h1 {
+    font-size: 2em;
+  }
+
+  .header-text p {
+    font-size: 1.2em;
+  }
   
-    .header-text h1 {
-      font-size: 2em;
-    }
+  /* Ensure video container fits on mobile */
+  .video {
+    width: 100%;
+    padding: 0 15px;
+    margin: 20px 0;
+    box-sizing: border-box;
+  }
   
-    .header-text p {
-      font-size: 1.2em;
-    }
+  .video iframe {
+    width: 100%;
+    max-width: 90vw;
   }
 
   /* Mobile crew table layout */
-  @media (max-width: 768px) {
-    .crew-photo {
-      width: 100%;
-      margin-bottom: 10px;
-    }
+  .crew-photo {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .crew-info {
+    text-align: center;
+  }
+}
+
+/* Class Details section styles - moved from classes.html inline styles */
+.class-details-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+}
+
+.class-details-wrapper h2 {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.class-details-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.class-details-table td:nth-child(1) {
+  padding: 5px 10px;
+  width: 50%;
+}
+
+.class-details-table td:nth-child(2) {
+  padding: 5px 10px;
+  width: 50%;
+  text-align: right;
+}
+
+/* Price section styles */
+.pricing-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pricing-wrapper {
+  margin-top: 50px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.pricing-wrapper h2 {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.pricing-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pricing-table td:nth-child(2) {
+  padding-top: 10px;
+  padding-left: 20px;
+  text-align: right;
+}
+
+.indent-with-italics {
+  padding-left: 5px;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.indent-only {
+  padding-left: 15px;
+}
+
+/* Mobile styles for class details */
+@media screen and (max-width: 767px) {
+  .class-details-wrapper {
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+
+  .class-details-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .class-details-table td:nth-child(2) {
+    width: 100%;
+    text-align: right;
+    margin-top: 15px;
+  }
   
-    .crew-info {
-      text-align: center;
-    }
-  }  
+  /* Ensure pricing table doesn't overflow */
+  .pricing-wrapper {
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+  
+  .pricing-table {
+    width: 100%;
+  }
+}
+
+/* Desktop styles for class details */
+@media screen and (min-width: 768px) {
+  .class-details-wrapper {
+    width: 900px;
+  }
+  
+  .class-details-table {
+    display: table;
+  }
+
+  .class-details-table td:nth-child(2) {
+    width: 50%;
+    text-align: right;
+  }
+
+  .class-details-table td img {
+    vertical-align: top;
+  }
 }

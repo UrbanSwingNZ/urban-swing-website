@@ -1,6 +1,11 @@
 // Load header.html into the page
 fetch('header.html')
-    .then(response => response.text())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to load header: ' + response.status);
+        }
+        return response.text();
+    })
     .then(html => {
         // Insert the header HTML into the document
         document.body.insertAdjacentHTML('afterbegin', html);
@@ -10,6 +15,12 @@ fetch('header.html')
         const closeMenu = document.getElementById('close-menu');
         const menu = document.getElementById('menu');
         const body = document.body;
+        
+        // Verify required elements exist
+        if (!hamburgerMenu || !closeMenu || !menu) {
+            console.error('Header elements not found after loading');
+            return;
+        }
 
         // Toggle the menu visibility and body shift
         hamburgerMenu.addEventListener('click', () => {
@@ -31,23 +42,12 @@ fetch('header.html')
                 body.classList.remove('menu-open');
             }
         });
-
-        // Detect and apply the system's color scheme
-        function applySystemTheme() {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) {
-                body.classList.add('dark-mode');
-            } else {
-                body.classList.remove('dark-mode');
-            }
-        }
-
-        // Apply the system theme on page load
-        applySystemTheme();
-
-        // Listen for system theme changes and update dynamically
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            applySystemTheme();
-        });
     })
-    .catch(error => console.error('Error loading header:', error));
+    .catch(error => {
+        console.error('Error loading header:', error);
+        // Provide a fallback message to the user
+        const fallbackHeader = document.createElement('div');
+        fallbackHeader.style.cssText = 'text-align: center; padding: 20px; color: red;';
+        fallbackHeader.textContent = 'Unable to load navigation. Please refresh the page.';
+        document.body.insertAdjacentElement('afterbegin', fallbackHeader);
+    });

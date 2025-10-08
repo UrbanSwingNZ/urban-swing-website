@@ -4,123 +4,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="West Coast Swing classes every Thursday at Dance Express Napier. Beginner classes start at 7:30pm. Check our pricing, location details, and register now!">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://urbanswing.co.nz/classes.html">
+  <meta property="og:title" content="Class Information - Urban Swing">
+  <meta property="og:description" content="West Coast Swing classes every Thursday at Dance Express Napier. Beginner classes start at 7:30pm. Register now!">
+  <meta property="og:image" content="https://urbanswing.co.nz/images/urban-swing-logo.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://urbanswing.co.nz/classes.html">
+  <meta property="twitter:title" content="Class Information - Urban Swing">
+  <meta property="twitter:description" content="West Coast Swing classes every Thursday at Dance Express Napier. Beginner classes start at 7:30pm. Register now!">
+  <meta property="twitter:image" content="https://urbanswing.co.nz/images/urban-swing-logo.png">
+  
   <title>Class Information</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/images/icons/android-chrome-192x192.png" sizes="192x192" type="image/png">
   <link rel="icon" href="/images/icons/android-chrome-512x512.png" sizes="512x512" type="image/png">
   <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png">
-  <style>
-    /* Class Details section styles */
-    .class-details-wrapper {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto 30px auto;
-      /* margin-bottom: 30px; /* Add space between this section and the pricing table */
-    }
-
-    .class-details-wrapper h2 {
-      margin-bottom: 10px;
-      text-align: left;
-      /* Align heading to the left */
-    }
-
-    .class-details-table {
-      border-collapse: collapse; /* Remove spacing between cells */
-      width: 100%; /* Table takes the full width of the wrapper */
-    }
-
-    .class-details-table td:nth-child(1) {
-      padding: 5px 10px;
-      width: 50%;
-    }
-
-    .class-details-table td:nth-child(2) {
-      padding: 5px 10px;
-      width: 50%;
-      text-align: right;
-    }
-
-    /* Price section styles */
-    .pricing-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .pricing-wrapper {
-      margin-top: 50px;
-      width: 100%;
-      max-width: 900px;
-      /* Set a consistent width for both the heading and table */
-    }
-
-    .pricing-wrapper h2 {
-      margin-bottom: 10px;
-      text-align: left;
-      /* Align the heading to the left */
-    }
-
-    .pricing-table {
-      border-collapse: collapse;
-      width: 100%;
-      /* Table takes the full width of the wrapper */
-    }
-
-    .pricing-table td:nth-child(2) {
-      padding-top: 10px;
-      padding-left: 20px;
-      text-align: right;
-    }
-
-    .indent-with-italics {
-      padding-left: 5px;
-      font-style: italic;
-      font-size: 0.9em;
-    }
-
-    .indent-only {
-      padding-left: 15px;
-    }
-
-    /* For mobile devices */
-    @media screen and (max-width: 767px) {
-      .class-details-wrapper {
-        width: 100%;
-        padding: 0 15px;
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "West Coast Swing Level 1 Classes",
+    "description": "Beginner West Coast Swing dance classes at Dance Express Napier. No partner or experience required!",
+    "eventSchedule": {
+      "@type": "Schedule",
+      "repeatFrequency": "P1W",
+      "byDay": "https://schema.org/Thursday"
+    },
+    "startDate": "2024-01-01",
+    "doorTime": "19:15:00",
+    "startTime": "19:30:00",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": "Dance Express Studios",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Cnr Taradale Road & Austin Street",
+        "addressLocality": "Onekawa, Napier",
+        "addressRegion": "Hawke's Bay",
+        "addressCountry": "NZ"
       }
-
-      .class-details-table {
-        display: block; /* Stack rows vertically */
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "Urban Swing",
+      "url": "https://urbanswing.co.nz"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Casual Rate",
+        "price": "15",
+        "priceCurrency": "NZD"
+      },
+      {
+        "@type": "Offer",
+        "name": "Student Rate",
+        "price": "12",
+        "priceCurrency": "NZD"
       }
-
-      .class-details-table td:nth-child(2) {
-        width: 100%; /* Make the second column (map) take the full width */
-        text-align: right; /* Right-align the map */
-        margin-top: 15px;
-      }
-    }
-
-    /* For desktop */
-    @media screen and (min-width: 768px) {
-      .class-details-wrapper {
-        width: 900px; /* Fixed width for desktop */
-      }
-      .class-details-table {
-        display: table; /* Keep the table layout for larger screens */
-      }
-
-      .class-details-table td:nth-child(2) {
-        width: 50%; /* Keep map and address side by side */
-        text-align: right;
-      }
-
-      /* Align map image to the top on mobile */
-      .class-details-table td img {
-        vertical-align: top; /* Align image to the top */
-      }
-    }
-  </style>
+    ]
+  }
+  </script>
 </head>
 
 <body>
@@ -137,7 +93,7 @@
           <td>Every Thursday</td>
           <td rowspan="10">
             <!-- Link to Google Maps with an image of the map -->
-            <a href="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+            <a href="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">
               <img src="images/map.png" alt="Dance Express Map" style="width:100%; height:auto;">
             </a>
           </td>
@@ -156,7 +112,7 @@
           <td><b>Location:</b></td>
         </tr>
         <tr>
-          <td><a href="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank">Dance Express Studios</a></td>
+          <td><a href="https://www.google.co.nz/maps/place/Dance+Express+Napier/@-39.5023612,176.8847153,16z/data=!3m1!4b1!4m6!3m5!1s0x6d69b33ff4cfe433:0xc3e628c1f77dece4!8m2!3d-39.5023612!4d176.8872902!16s%2Fg%2F1tkl3hv6?entry=ttu&g_ep=EgoyMDI1MDEwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">Dance Express Studios</a></td>
         </tr>
         <tr>
           <td>Cnr Taradale Road & Austin Street</td>
@@ -214,7 +170,7 @@
         </div>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
