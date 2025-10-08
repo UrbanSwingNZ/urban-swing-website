@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard - Urban Swing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-container" class="auth-container">
+        <div class="auth-card">
+            <img src="images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
+            <h1>Admin Login</h1>
+            <p class="subtitle">Urban Swing Staff Portal</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="admin@urbanswing.co.nz" 
+                        required 
+                        autocomplete="email"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password" 
+                        required 
+                        autocomplete="current-password"
+                    >
+                </div>
+                
+                <button type="submit" class="btn-primary" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div id="login-error" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen (hidden by default) -->
+    <div id="dashboard-container" class="dashboard-container" style="display: none;">
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <img src="images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo-small">
+                <h1>Admin Dashboard</h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="dashboard-welcome">
+                <h2>Welcome back!</h2>
+                <p>Choose a tool to get started:</p>
+            </div>
+
+            <div class="dashboard-tiles">
+                <!-- Playlist Manager Tile -->
+                <div class="dashboard-tile tile-playlist">
+                    <div class="tile-icon">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <h3>Playlist Manager</h3>
+                    <p>Manage Spotify playlists, reorder songs, and organize music for classes</p>
+                    <button class="tile-button" id="playlist-manager-btn" disabled>
+                        Coming Soon <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Student Check-in Tile -->
+                <div class="dashboard-tile tile-checkin">
+                    <div class="tile-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h3>Student Check-in</h3>
+                    <p>Track attendance, manage casual payments, and handle concessions</p>
+                    <button class="tile-button" id="checkin-btn" disabled>
+                        Coming Soon <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-info">
+                <p><i class="fas fa-info-circle"></i> New features are being added regularly. Check back soon!</p>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Admin Portal v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Firebase Config & Admin Logic -->
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
