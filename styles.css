@@ -269,10 +269,11 @@ nav {
   display: flex;
   justify-content: center;
   list-style: none;
-  gap: 10px;
+  gap: 5px;
   padding: 0;
   margin: 10px 0 0;
   width: var(--common-max-width);
+  flex-wrap: wrap;
 }
 
 #menu li {
@@ -282,9 +283,9 @@ nav {
 #menu a {
   text-decoration: none;
   color: var(--text-color);
-  font-size: 1.2em;
+  font-size: 1.1em;
   transition: color 0.3s ease;
-  padding: 10px 20px;
+  padding: 10px 15px;
   display: inline-block;
 }
 
