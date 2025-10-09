@@ -1,148 +1,141 @@
 /**
  * Urban Swing - Spotify Token Exchange Functions
  * Securely exchanges Spotify authorization codes for access tokens
+ * Using Firebase Functions v1 for better compatibility
  */
 
-const {onCall} = require("firebase-functions/v2/https");
-const {setGlobalOptions} = require("firebase-functions/v2");
+const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
+const axios = require("axios");
 
 // Initialize Firebase Admin
 admin.initializeApp();
 
-// Set global options for cost control
-setGlobalOptions({
-  maxInstances: 10,
-  region: "australia-southeast1", // Closest to NZ
-});
-
-// Note: Set your Spotify credentials using:
-// firebase functions:config:set spotify.client_id="YOUR_CLIENT_ID"
-// firebase functions:config:set spotify.client_secret="YOUR_CLIENT_SECRET"
-
 /**
  * Exchange Spotify authorization code for access and refresh tokens
  */
-exports.exchangeSpotifyToken = onCall(async (request) => {
+exports.exchangeSpotifyToken = functions.https.onCall(async (data, context) => {
   // Verify user is authenticated
-  if (!request.auth) {
-    logger.error("Unauthenticated request to exchangeSpotifyToken");
-    throw new Error("User must be authenticated");
+  if (!context.auth) {
+    console.error("Unauthenticated request to exchangeSpotifyToken");
+    throw new functions.https.HttpsError("unauthenticated", "Authentication required");
   }
 
-  const {code, redirectUri} = request.data;
+  const {code, redirectUri} = data;
 
   if (!code) {
-    logger.error("Missing authorization code");
-    throw new Error("Authorization code required");
+    console.error("Missing authorization code");
+    throw new functions.https.HttpsError("invalid-argument", "Authorization code required");
   }
 
-  logger.info("Exchanging Spotify token for user:", request.auth.uid);
+  console.log("Exchanging Spotify token for user:", context.auth.uid);
 
   try {
-    // Get Spotify credentials from environment
-    const clientId = process.env.SPOTIFY_CLIENT_ID;
-    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+    // Get Spotify credentials from config
+    const config = functions.config();
+    const clientId = config.spotify?.client_id;
+    const clientSecret = config.spotify?.client_secret;
 
     if (!clientId || !clientSecret) {
-      logger.error("Spotify credentials not configured");
-      throw new Error("Spotify credentials not configured");
+      console.error("Spotify credentials not configured");
+      throw new functions.https.HttpsError("failed-precondition", "Spotify credentials not configured");
     }
 
     // Exchange code for tokens
-    const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
-      },
-      body: new URLSearchParams({
+    const tokenResponse = await axios.post("https://accounts.spotify.com/api/token", 
+      new URLSearchParams({
         grant_type: "authorization_code",
         code: code,
         redirect_uri: redirectUri,
       }),
-    });
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+        },
+      }
+    );
 
-    if (!tokenResponse.ok) {
-      const error = await tokenResponse.text();
-      logger.error("Spotify token exchange failed:", error);
-      throw new Error("Failed to exchange token with Spotify");
-    }
+    const tokens = tokenResponse.data;
 
-    const tokens = await tokenResponse.json();
+    // Store refresh token in Firestore
+    await admin.firestore()
+        .collection("admin_tokens")
+        .doc(context.auth.uid)
+        .set({
+          refreshToken: tokens.refresh_token,
+          lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+        });
 
-    logger.info("Successfully exchanged Spotify token");
+    console.log("Successfully exchanged and stored Spotify tokens for user:", context.auth.uid);
 
+    // Return access token (short-lived) to client
     return {
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      expires_in: tokens.expires_in,
+      accessToken: tokens.access_token,
+      expiresIn: tokens.expires_in,
+      tokenType: tokens.token_type,
+      scope: tokens.scope,
     };
   } catch (error) {
-    logger.error("Token exchange error:", error);
-    throw new Error("Failed to exchange token: " + error.message);
+    console.error("Error exchanging Spotify token:", error);
+    throw new functions.https.HttpsError("internal", `Token exchange failed: ${error.message}`);
   }
 });
 
 /**
  * Refresh Spotify access token using refresh token
  */
-exports.refreshSpotifyToken = onCall(async (request) => {
+exports.refreshSpotifyToken = functions.https.onCall(async (data, context) => {
   // Verify user is authenticated
-  if (!request.auth) {
-    logger.error("Unauthenticated request to refreshSpotifyToken");
-    throw new Error("User must be authenticated");
+  if (!context.auth) {
+    console.error("Unauthenticated request to refreshSpotifyToken");
+    throw new functions.https.HttpsError("unauthenticated", "Authentication required");
   }
 
-  const {refreshToken} = request.data;
+  const {refreshToken} = data;
 
   if (!refreshToken) {
-    logger.error("Missing refresh token");
-    throw new Error("Refresh token required");
+    console.error("Missing refresh token");
+    throw new functions.https.HttpsError("invalid-argument", "Refresh token required");
   }
 
-  logger.info("Refreshing Spotify token for user:", request.auth.uid);
+  console.log("Refreshing Spotify token for user:", context.auth.uid);
 
   try {
-    // Get Spotify credentials from environment
-    const clientId = process.env.SPOTIFY_CLIENT_ID;
-    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+    // Get Spotify credentials from config
+    const config = functions.config();
+    const clientId = config.spotify?.client_id;
+    const clientSecret = config.spotify?.client_secret;
 
     if (!clientId || !clientSecret) {
-      logger.error("Spotify credentials not configured");
-      throw new Error("Spotify credentials not configured");
+      console.error("Spotify credentials not configured");
+      throw new functions.https.HttpsError("failed-precondition", "Spotify credentials not configured");
     }
 
     // Refresh the access token
-    const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
-      },
-      body: new URLSearchParams({
+    const tokenResponse = await axios.post("https://accounts.spotify.com/api/token", 
+      new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: refreshToken,
       }),
-    });
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+        },
+      }
+    );
 
-    if (!tokenResponse.ok) {
-      const error = await tokenResponse.text();
-      logger.error("Spotify token refresh failed:", error);
-      throw new Error("Failed to refresh token with Spotify");
-    }
+    const tokens = tokenResponse.data;
 
-    const tokens = await tokenResponse.json();
-
-    logger.info("Successfully refreshed Spotify token");
+    console.log("Successfully refreshed Spotify token");
 
     return {
-      access_token: tokens.access_token,
-      expires_in: tokens.expires_in,
+      accessToken: tokens.access_token,
+      expiresIn: tokens.expires_in,
     };
   } catch (error) {
-    logger.error("Token refresh error:", error);
-    throw new Error("Failed to refresh token: " + error.message);
+    console.error("Error refreshing Spotify token:", error);
+    throw new functions.https.HttpsError("internal", `Token refresh failed: ${error.message}`);
   }
 });

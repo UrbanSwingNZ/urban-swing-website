@@ -4,7 +4,7 @@
 
 const spotifyConfig = {
   clientId: '6c90506e3e9340ddbe364a4bc6476086',
-  redirectUri: window.location.origin + '/playlist-manager/index.html',
+  redirectUri: window.location.href.split('?')[0].split('#')[0], // Current page URL without params
   
   // Required scopes for playlist management
   scopes: [
@@ -21,11 +21,11 @@ const spotifyConfig = {
   apiEndpoint: 'https://api.spotify.com/v1'
 };
 
-// Generate Spotify authorization URL
+// Generate Spotify authorization URL (using implicit grant flow)
 function getSpotifyAuthUrl() {
   const params = new URLSearchParams({
     client_id: spotifyConfig.clientId,
-    response_type: 'code',
+    response_type: 'token',
     redirect_uri: spotifyConfig.redirectUri,
     scope: spotifyConfig.scopes,
     show_dialog: true
