@@ -117,6 +117,8 @@ class SpotifyAPI {
     return await this.makeRequest('/me');
   }
 
+
+
   async getUserPlaylists(limit = 50, offset = 0) {
     return await this.makeRequest(`/me/playlists?limit=${limit}&offset=${offset}`);
   }
@@ -137,6 +139,24 @@ class SpotifyAPI {
     return allPlaylists;
   }
 
+  async createPlaylist(name, description = '', isPublic = false, isCollaborative = false) {
+    // First get current user ID
+    const user = await this.getCurrentUser();
+    
+    return await this.makeRequest(`/users/${user.id}/playlists`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+        description: description,
+        public: isPublic,
+        collaborative: isCollaborative
+      })
+    });
+  }
+
   async getPlaylist(playlistId) {
     return await this.makeRequest(`/playlists/${playlistId}`);
   }
@@ -146,7 +166,25 @@ class SpotifyAPI {
   // ========================================
 
   async getPlaylistTracks(playlistId, limit = 100, offset = 0) {
-    return await this.makeRequest(`/playlists/${playlistId}/tracks?limit=${limit}&offset=${offset}`);
+    // Try the alternative approach first - get playlist with embedded tracks
+    try {
+      console.log(`Trying alternative approach for playlist ${playlistId}`);
+      const playlist = await this.makeRequest(`/playlists/${playlistId}?fields=tracks(items(track(id,name,artists,duration_ms,uri,album(images),explicit)),next,total)&limit=${limit}&offset=${offset}`);
+      console.log('Alternative approach successful');
+      return playlist.tracks;
+    } catch (alternativeError) {
+      console.log('Alternative approach failed, trying direct tracks endpoint...');
+      
+      // Fallback to direct tracks endpoint
+      try {
+        return await this.makeRequest(`/playlists/${playlistId}/tracks?limit=${limit}&offset=${offset}`);
+      } catch (directError) {
+        console.error('Both approaches failed');
+        console.error('Alternative error:', alternativeError);
+        console.error('Direct error:', directError);
+        throw directError;
+      }
+    }
   }
 
   async getAllPlaylistTracks(playlistId) {
@@ -154,15 +192,41 @@ class SpotifyAPI {
     let offset = 0;
     const limit = 100;
 
-    while (true) {
-      const response = await this.getPlaylistTracks(playlistId, limit, offset);
-      allTracks.push(...response.items);
+    try {
+      while (true) {
+        console.log(`Fetching tracks: offset=${offset}, limit=${limit}`);
+        const response = await this.getPlaylistTracks(playlistId, limit, offset);
+        console.log('Track response:', response);
+        
+        allTracks.push(...response.items);
+        
+        if (!response.next) break;
+        offset += limit;
+      }
       
-      if (!response.next) break;
-      offset += limit;
+      console.log('Total tracks fetched:', allTracks.length);
+      return allTracks;
+    } catch (error) {
+      console.error('Error in getAllPlaylistTracks:', error);
+      
+      // If it's a 403 error, log the full error details
+      if (error.message && error.message.includes('403')) {
+        console.error('Full 403 error details:', error);
+        console.log('Playlist ID causing error:', playlistId);
+        
+        // Log the current user to see if there's an ownership issue
+        try {
+          const user = await this.getCurrentUser();
+          console.log('Current user:', user.id);
+        } catch (userError) {
+          console.error('Could not get current user:', userError);
+        }
+        
+        throw new Error(`Access denied (403) when trying to read tracks from playlist ${playlistId}. This might be a Spotify API permissions issue.`);
+      }
+      
+      throw error;
     }
-
-    return allTracks;
   }
 
   // ========================================
@@ -170,6 +234,8 @@ class SpotifyAPI {
   // ========================================
 
   async getAudioFeatures(trackIds) {
+    console.log('getAudioFeatures called with:', trackIds);
+    
     // Spotify allows up to 100 track IDs per request
     if (trackIds.length > 100) {
       const chunks = [];
@@ -185,8 +251,16 @@ class SpotifyAPI {
     }
 
     const ids = trackIds.join(',');
-    const response = await this.makeRequest(`/audio-features?ids=${ids}`);
-    return response.audio_features;
+    console.log('Making audio-features request with IDs:', ids);
+    
+    try {
+      const response = await this.makeRequest(`/audio-features?ids=${ids}`);
+      console.log('Audio features response:', response);
+      return response.audio_features;
+    } catch (error) {
+      console.error('Audio features request failed:', error);
+      throw error;
+    }
   }
 
   // ========================================
@@ -242,6 +316,37 @@ class SpotifyAPI {
     await this.removeTracksFromPlaylist(fromPlaylistId, [trackUri]);
     
     return { success: true, action: 'moved' };
+  }
+
+  // ========================================
+  // Search
+  // ========================================
+
+  async searchTracks(query, limit = 20) {
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+
+    const params = new URLSearchParams({
+      q: query.trim(),
+      type: 'track',
+      limit: limit.toString()
+    });
+
+    const response = await this.makeRequest(`/search?${params}`);
+    return response.tracks?.items || [];
+  }
+
+  // ========================================
+  // Playlist Deletion
+  // ========================================
+
+  async deletePlaylist(playlistId) {
+    // Note: Spotify API doesn't allow deleting playlists directly
+    // But we can "unfollow" a playlist, which removes it from the user's library
+    return await this.makeRequest(`/playlists/${playlistId}/followers`, {
+      method: 'DELETE'
+    });
   }
 
   // Format duration from milliseconds to mm:ss
