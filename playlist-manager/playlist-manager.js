@@ -28,6 +28,9 @@ window.addEventListener('load', async () => {
 async function initializeApp() {
   setupEventListeners();
   
+  // Initialize button states to prevent both from showing
+  initializeButtonStates();
+  
   // Check if we have an authorization code in the URL (authorization code flow)
   const authCode = getAuthCodeFromUrl();
   if (authCode) {
@@ -53,6 +56,20 @@ async function initializeApp() {
     await showAuthenticatedState();
   } else {
     showConnectPrompt();
+  }
+}
+
+function initializeButtonStates() {
+  // Ensure only one Spotify button is visible at a time
+  // Default to Connect state, auth logic will override if needed
+  const connectBtn = document.getElementById('spotify-connect-btn');
+  const disconnectBtn = document.getElementById('spotify-disconnect-btn');
+  
+  if (connectBtn && disconnectBtn) {
+    // Always start with Connect visible, Disconnect hidden
+    // The auth logic will switch these if user is authenticated
+    connectBtn.style.setProperty('display', 'flex', 'important');
+    disconnectBtn.style.setProperty('display', 'none', 'important');
   }
 }
 
@@ -232,17 +249,29 @@ async function handleSpotifyDisconnect() {
 }
 
 function showConnectPrompt() {
+  console.log('Showing connect prompt');
   document.getElementById('connect-prompt').style.display = 'flex';
   document.getElementById('main-content').style.display = 'none';
-  document.getElementById('spotify-connect-btn').style.display = 'flex';
-  document.getElementById('spotify-disconnect-btn').style.display = 'none';
+  
+  // Force button states for connect screen
+  const connectBtn = document.getElementById('spotify-connect-btn');
+  const disconnectBtn = document.getElementById('spotify-disconnect-btn');
+  
+  if (connectBtn) connectBtn.style.setProperty('display', 'flex', 'important');
+  if (disconnectBtn) disconnectBtn.style.setProperty('display', 'none', 'important');
 }
 
 async function showAuthenticatedState() {
+  console.log('Showing authenticated state');
   document.getElementById('connect-prompt').style.display = 'none';
   document.getElementById('main-content').style.display = 'flex';
-  document.getElementById('spotify-connect-btn').style.display = 'none';
-  document.getElementById('spotify-disconnect-btn').style.display = 'flex';
+  
+  // Force button states for authenticated screen
+  const connectBtn = document.getElementById('spotify-connect-btn');
+  const disconnectBtn = document.getElementById('spotify-disconnect-btn');
+  
+  if (connectBtn) connectBtn.style.setProperty('display', 'none', 'important');
+  if (disconnectBtn) disconnectBtn.style.setProperty('display', 'flex', 'important');
   
   // Load user info and playlists
   await loadUserInfo();
