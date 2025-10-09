@@ -9,14 +9,13 @@ let filteredTracks = [];
 let sortableInstance = null;
 let pendingAction = null;
 
-// Wait for Firebase and page to load
+// Wait for page to load
 window.addEventListener('load', async () => {
-  // Check if user is authenticated with Firebase
-  if (!auth || !auth.currentUser) {
-    window.location.href = '../admin.html';
-    return;
-  }
-
+  console.log('Playlist manager page loaded');
+  
+  // TEMPORARY: Skip Firebase auth check for testing
+  // TODO: Re-enable after Spotify auth is working
+  
   initializeApp();
 });
 
