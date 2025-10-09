@@ -745,7 +745,7 @@ function showTrackMenu(button, track) {
       <i class="fas fa-arrow-right"></i> Move to Playlist
     </button>
     <button data-action="delete" class="menu-delete">
-      <i class="fas fa-trash"></i> Remove from Playlist
+      <i class="fas fa-trash"></i> Delete
     </button>
   `;
   

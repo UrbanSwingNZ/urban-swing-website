@@ -452,14 +452,16 @@
   padding: 10px 12px;
   border: none;
   background: none;
-  text-align: left;
+  text-align: left !important;
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--text-color);
   transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .playlist-menu button:first-child {
@@ -928,13 +930,15 @@
   border: none;
   color: var(--text-color);
   padding: 12px 16px;
-  text-align: left;
+  text-align: left !important;
   cursor: pointer;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
   gap: 10px;
   font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .track-menu button:hover {
@@ -1218,8 +1222,8 @@
   filter: none !important;
 }
 
-/* Force ALL buttons to have consistent height and alignment */
-button,
+/* Force ALL buttons to have consistent height and alignment (except menu buttons) */
+button:not(.track-menu button):not(.playlist-menu button),
 .btn-primary,
 .btn-secondary,
 .btn-danger,
@@ -1617,11 +1621,13 @@ button,
   transform: none;
 }
 
-.track-menu .menu-delete {
+.track-menu .menu-delete,
+.playlist-menu .menu-delete {
   color: #ff4444;
 }
 
-.track-menu .menu-delete:hover {
+.track-menu .menu-delete:hover,
+.playlist-menu .menu-delete:hover {
   background: rgba(255, 68, 68, 0.1);
   color: #ff4444;
 }
