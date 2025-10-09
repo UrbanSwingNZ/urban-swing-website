@@ -26,14 +26,24 @@ window.addEventListener('load', async () => {
 async function initializeApp() {
   setupEventListeners();
   
-  // Check if we have tokens in the URL hash (implicit grant flow)
-  const tokenFromUrl = getTokenFromUrl();
-  if (tokenFromUrl) {
-    // Store the token and clear URL
-    spotifyAPI.setTokens(tokenFromUrl.access_token, null, tokenFromUrl.expires_in);
-    window.history.replaceState({}, document.title, window.location.pathname);
-    await showAuthenticatedState();
-    return;
+  // Check if we have an authorization code in the URL (authorization code flow)
+  const authCode = getAuthCodeFromUrl();
+  if (authCode) {
+    try {
+      showLoading(true);
+      // Exchange code for tokens
+      await exchangeCodeForTokens(authCode);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      await showAuthenticatedState();
+      return;
+    } catch (error) {
+      console.error('Token exchange error:', error);
+      showError('Failed to authenticate with Spotify: ' + error.message);
+      showConnectPrompt();
+      return;
+    } finally {
+      showLoading(false);
+    }
   }
   
   // Try to load existing Spotify tokens from localStorage
@@ -76,28 +86,60 @@ function setupEventListeners() {
 // SPOTIFY AUTHENTICATION
 // ========================================
 
-function handleSpotifyConnect() {
+async function handleSpotifyConnect() {
   showLoading(true);
-  window.location.href = getSpotifyAuthUrl();
+  const authUrl = await getSpotifyAuthUrl();
+  window.location.href = authUrl;
 }
 
-// Parse access token from URL hash (implicit grant flow)
-function getTokenFromUrl() {
-  const hash = window.location.hash.substring(1);
-  if (!hash) return null;
+// Parse authorization code from URL (authorization code flow)
+function getAuthCodeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('code');
+}
+
+// Exchange authorization code for access token
+async function exchangeCodeForTokens(code) {
+  const codeVerifier = localStorage.getItem('spotify_code_verifier');
   
-  const params = new URLSearchParams(hash);
-  const accessToken = params.get('access_token');
-  const expiresIn = params.get('expires_in');
-  
-  if (accessToken && expiresIn) {
-    return {
-      access_token: accessToken,
-      expires_in: parseInt(expiresIn)
-    };
+  if (!codeVerifier) {
+    throw new Error('Code verifier not found. Please try authenticating again.');
   }
   
-  return null;
+  try {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: spotifyConfig.clientId,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: spotifyConfig.redirectUri,
+        code_verifier: codeVerifier,
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error_description || 'Token exchange failed');
+    }
+    
+    const tokens = await response.json();
+    
+    // Store tokens
+    spotifyAPI.setTokens(tokens.access_token, tokens.refresh_token, tokens.expires_in);
+    
+    // Clean up
+    localStorage.removeItem('spotify_code_verifier');
+    
+    console.log('Successfully exchanged authorization code for tokens');
+    
+  } catch (error) {
+    localStorage.removeItem('spotify_code_verifier');
+    throw error;
+  }
 }
 
 async function handleSpotifyDisconnect() {
