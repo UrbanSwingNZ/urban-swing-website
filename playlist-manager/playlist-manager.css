@@ -422,11 +422,11 @@
   position: absolute;
   right: 0;
   top: 100%;
-  background: var(--pm-card-bg);
+  background: var(--pm-card-light);
   border: 1px solid var(--pm-border-light);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 2000;
   min-width: 140px;
   opacity: 0;
   transform: translateY(-10px);
@@ -469,6 +469,7 @@
 
 @media (prefers-color-scheme: dark) {
   .playlist-menu {
+    background: var(--pm-card-dark);
     border-color: var(--pm-border-dark);
   }
 }
