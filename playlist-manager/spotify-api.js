@@ -17,7 +17,7 @@ class SpotifyAPI {
     this.refreshToken = refreshToken;
     this.tokenExpiry = Date.now() + (expiresIn * 1000);
     
-    // Store tokens in localStorage for implicit flow
+    // Store tokens in localStorage only
     this.saveTokensToStorage();
   }
 
@@ -43,46 +43,7 @@ class SpotifyAPI {
     }
   }
 
-  async saveTokensToFirestore() {
-    if (!auth.currentUser) return;
-    
-    try {
-      await db.collection('admin_tokens').doc(auth.currentUser.uid).set({
-        spotifyAccessToken: this.accessToken,
-        spotifyRefreshToken: this.refreshToken,
-        spotifyTokenExpiry: this.tokenExpiry,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } catch (error) {
-      console.error('Error saving tokens to Firestore:', error);
-    }
-  }
-
-  async loadTokensFromFirestore() {
-    if (!auth.currentUser) return false;
-    
-    try {
-      const doc = await db.collection('admin_tokens').doc(auth.currentUser.uid).get();
-      
-      if (doc.exists) {
-        const data = doc.data();
-        this.accessToken = data.spotifyAccessToken;
-        this.refreshToken = data.spotifyRefreshToken;
-        this.tokenExpiry = data.spotifyTokenExpiry;
-        
-        // Check if token needs refresh
-        if (this.isTokenExpired()) {
-          return await this.refreshAccessToken();
-        }
-        
-        return true;
-      }
-    } catch (error) {
-      console.error('Error loading tokens from Firestore:', error);
-    }
-    
-    return false;
-  }
+  // Note: Firestore methods removed - using localStorage only for implicit flow
 
   isTokenExpired() {
     return !this.tokenExpiry || Date.now() >= this.tokenExpiry - 60000; // Refresh 1 min early
@@ -122,9 +83,12 @@ class SpotifyAPI {
     });
 
     if (response.status === 401) {
-      // Token expired, try to refresh
-      await this.refreshAccessToken();
-      throw new Error('Token expired, please re-authenticate');
+      // Token expired - for implicit flow, user needs to re-authenticate
+      this.accessToken = null;
+      this.tokenExpiry = null;
+      localStorage.removeItem('spotify_access_token');
+      localStorage.removeItem('spotify_token_expiry');
+      throw new Error('Spotify session expired. Please reconnect your account.');
     }
 
     if (!response.ok) {
