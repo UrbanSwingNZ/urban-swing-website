@@ -93,7 +93,17 @@ class SpotifyAPI {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.error?.message || `Spotify API error: ${response.status}`);
+      console.error('Spotify API Error:', {
+        status: response.status,
+        endpoint: endpoint,
+        error: error
+      });
+      
+      if (response.status === 403) {
+        throw new Error(`Access denied. This might be a private playlist you don't own, or you need additional permissions.`);
+      }
+      
+      throw new Error(error.error?.message || error.message || `Spotify API error: ${response.status}`);
     }
 
     return response.json();

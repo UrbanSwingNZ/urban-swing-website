@@ -9,10 +9,12 @@ const spotifyConfig = {
   // Required scopes for playlist management
   scopes: [
     'playlist-read-private',
-    'playlist-read-collaborative',
+    'playlist-read-collaborative', 
     'playlist-modify-public',
     'playlist-modify-private',
-    'user-library-read'
+    'user-library-read',
+    'user-read-private',
+    'user-read-email'
   ].join(' '),
   
   // Spotify API endpoints
@@ -21,13 +23,42 @@ const spotifyConfig = {
   apiEndpoint: 'https://api.spotify.com/v1'
 };
 
-// Generate Spotify authorization URL (using implicit grant flow)
-function getSpotifyAuthUrl() {
+// Generate random string for PKCE
+function generateCodeVerifier() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return btoa(String.fromCharCode.apply(null, array))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
+
+// Generate code challenge for PKCE
+async function generateCodeChallenge(verifier) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
+
+// Generate Spotify authorization URL (using Authorization Code with PKCE)
+async function getSpotifyAuthUrl() {
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  
+  // Store code verifier for later use
+  localStorage.setItem('spotify_code_verifier', codeVerifier);
+  
   const params = new URLSearchParams({
     client_id: spotifyConfig.clientId,
-    response_type: 'token',
+    response_type: 'code',
     redirect_uri: spotifyConfig.redirectUri,
     scope: spotifyConfig.scopes,
+    code_challenge_method: 'S256',
+    code_challenge: codeChallenge,
     show_dialog: true
   });
   
