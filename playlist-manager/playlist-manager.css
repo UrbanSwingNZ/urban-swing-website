@@ -1,6 +1,7 @@
 /* ========================================
    PLAYLIST MANAGER STYLES
    Urban Swing color scheme with modern UI
+   Updated: Button sizing fixes
    ======================================== */
 
 /* Import parent styles if needed */
@@ -600,6 +601,14 @@
   flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
+.playlist-actions button,
+.toolbar-actions button {
+  vertical-align: middle !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* Tracks Toolbar */
 .tracks-toolbar {
   padding: 20px 30px;
@@ -945,26 +954,22 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
   z-index: 9999;
   padding: 20px;
 }
 
-/* Desktop: Explicitly center modals */
-@media (min-width: 769px) {
-  .modal {
-    align-items: center;
-    justify-content: center;
-  }
+.modal[style*="display: block"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Mobile: Position modals at top */
 @media (max-width: 768px) {
   .modal {
-    align-items: flex-start;
-    justify-content: center;
+    align-items: flex-start !important;
+    justify-content: center !important;
     padding-top: 60px; /* Account for header */
   }
 }
@@ -1021,6 +1026,33 @@
 
 @media (prefers-color-scheme: dark) {
   .modal-close:hover {
+    background: var(--pm-hover-dark);
+  }
+}
+
+/* Make .close spans behave like .modal-close buttons */
+.close {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.close:hover {
+  background: var(--pm-hover-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  .close:hover {
     background: var(--pm-hover-dark);
   }
 }
@@ -1112,7 +1144,102 @@
   border-top: 1px solid var(--pm-border-light);
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 10px;
+}
+
+.modal-footer button {
+  flex: none;
+  white-space: nowrap;
+  min-width: auto;
+  width: auto;
+}
+
+/* Force consistent button sizing in modals */
+.modal-footer .btn-secondary,
+.modal .btn-secondary,
+#cancel-add-tracks-btn,
+#cancel-create-playlist-btn,
+#cancel-rename-btn,
+#cancel-delete-playlist-btn {
+  padding: 7px 11px !important;
+  border: 1px solid var(--pm-border-light) !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  margin: 0 !important;
+}
+
+/* Force consistent primary button colors in modals */
+.modal-footer .btn-primary,
+.modal .btn-primary,
+#add-selected-tracks-btn,
+#confirm-create-playlist-btn,
+#confirm-rename-btn {
+  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
+  color: white !important;
+  opacity: 1 !important;
+  padding: 8px 12px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  margin: 0 !important;
+}
+
+/* Specifically target add-selected-tracks when enabled */
+#add-selected-tracks-btn:not(:disabled) {
+  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Force ALL buttons to have consistent height and alignment */
+button,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-filter,
+#add-tracks-btn,
+#save-order-btn,
+#delete-playlist-btn,
+#toggle-explicit-btn {
+  box-sizing: border-box !important;
+  height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+/* Fix specific button widths for main playlist actions */
+#add-tracks-btn,
+#save-order-btn {
+  width: auto !important;
+  min-width: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1125,11 +1252,17 @@
   background: var(--pm-card-light);
   border: 1px solid var(--pm-border-light);
   color: var(--text-color);
-  padding: 10px 20px;
+  padding: 7px 11px;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  justify-content: center;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1428,9 +1561,12 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 6px;
 }
 
@@ -1446,16 +1582,19 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
-  color: white;
+  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
+  color: white !important;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 6px;
 }
 
