@@ -370,9 +370,11 @@ nav {
     display: none;
     flex-direction: column;
     padding: 20px;
+    padding-bottom: 40px;
     transition: left 0.3s ease;
     z-index: 1000;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
   }
 
   body.menu-open #menu {
