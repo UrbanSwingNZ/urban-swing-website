@@ -84,6 +84,22 @@
   width: auto;
 }
 
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .pm-header h1 {
   font-size: 1.5rem;
   margin: 0;
@@ -255,6 +271,11 @@
   gap: 10px;
 }
 
+.sidebar-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .btn-icon {
   background: none;
   border: none;
@@ -351,13 +372,113 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  position: relative;
+}
+
+.playlist-drag-handle {
+  color: #888;
+  cursor: grab;
+  padding: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.playlist-item:hover .playlist-drag-handle {
+  opacity: 1;
+}
+
+.playlist-drag-handle:active {
+  cursor: grabbing;
+}
+
+.playlist-item-actions {
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.playlist-item:hover .playlist-item-actions {
+  opacity: 1;
+}
+
+.playlist-menu-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.playlist-menu-btn:hover {
+  background: rgba(128, 128, 128, 0.1);
+  color: var(--pm-purple);
+}
+
+.playlist-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--pm-card-bg);
+  border: 1px solid var(--pm-border-light);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 140px;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.playlist-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.playlist-menu button {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.playlist-menu button:first-child {
+  border-radius: 6px 6px 0 0;
+}
+
+.playlist-menu button:last-child {
+  border-radius: 0 0 6px 6px;
+}
+
+.playlist-menu button:hover {
+  background: var(--pm-hover-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .playlist-menu {
+    border-color: var(--pm-border-dark);
+  }
 }
 
 .playlist-item img {
   width: 50px;
   height: 50px;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--gradient-purple);
+  padding: 2px;
 }
 
 .playlist-item-info {
@@ -446,7 +567,9 @@
   width: 150px;
   height: 150px;
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--gradient-purple);
+  padding: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -472,6 +595,9 @@
 .playlist-actions {
   display: flex;
   gap: 10px;
+  align-items: center;
+  min-height: 44px; /* Ensure consistent height */
+  flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
 /* Tracks Toolbar */
@@ -481,6 +607,17 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--pm-border-light);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  .tracks-toolbar {
+    padding: 15px 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -490,7 +627,9 @@
 }
 
 .tracks-toolbar .search-box {
-  flex: 0 0 300px;
+  flex: 1 1 300px;
+  max-width: 400px;
+  min-width: 200px;
   padding: 0;
   border: 1px solid var(--pm-border-light);
   border-radius: 20px;
@@ -508,6 +647,14 @@
 .toolbar-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .toolbar-actions {
+    justify-content: center;
+  }
 }
 
 .btn-filter {
@@ -805,6 +952,23 @@
   padding: 20px;
 }
 
+/* Desktop: Explicitly center modals */
+@media (min-width: 769px) {
+  .modal {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Mobile: Position modals at top */
+@media (max-width: 768px) {
+  .modal {
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 60px; /* Account for header */
+  }
+}
+
 .modal-content {
   background: var(--pm-card-light);
   border-radius: 16px;
@@ -897,6 +1061,52 @@
   border-color: var(--pm-purple);
 }
 
+/* Input and Textarea Styles */
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  background: var(--background-color);
+  border: 1px solid var(--pm-border-light);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+@media (prefers-color-scheme: dark) {
+  .form-group input[type="text"],
+  .form-group textarea {
+    border-color: var(--pm-border-dark);
+  }
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--pm-purple);
+  box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+/* Checkbox Styles */
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 0 !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.checkmark {
+  font-size: 0.9rem;
+}
+
 .modal-footer {
   padding: 20px;
   border-top: 1px solid var(--pm-border-light);
@@ -975,6 +1185,10 @@
     gap: 10px;
   }
   
+  .sidebar-toggle {
+    display: block;
+  }
+  
   .pm-sidebar {
     position: fixed;
     left: -300px;
@@ -987,6 +1201,21 @@
   
   .pm-sidebar.open {
     left: 0;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+    display: none;
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
   }
   
   .playlist-header {
@@ -1031,7 +1260,7 @@
   }
   
   .pm-header .logo-small {
-    height: 40px;
+    height: 55px;
   }
   
   .playlist-cover {
@@ -1083,4 +1312,236 @@
 
 .loading-pulse {
   animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   SEARCH RESULTS
+   ======================================== */
+
+.search-results-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--pm-border-light);
+  border-radius: 8px;
+  background: var(--pm-card-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-results-container {
+    border-color: var(--pm-border-dark);
+  }
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--pm-border-light);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-result-item {
+    border-bottom-color: var(--pm-border-dark);
+  }
+}
+
+.search-result-item:hover {
+  background: var(--pm-hover-bg);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--pm-purple);
+}
+
+.search-result-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--pm-border-light);
+}
+
+.search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-title {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-artist {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-duration {
+  color: #888;
+  font-size: 0.85rem;
+  min-width: 50px;
+  text-align: right;
+}
+
+/* ========================================
+   DELETE BUTTONS
+   ======================================== */
+
+.track-delete-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  margin-right: 4px;
+}
+
+.track-delete-btn:hover {
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff4444, #cc3333);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #ff6666, #ee4444);
+  transform: translateY(-1px);
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4040ff, #aa22ff);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.track-menu .menu-delete {
+  color: #ff4444;
+}
+
+.track-menu .menu-delete:hover {
+  background: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+}
+
+/* ========================================
+   SNACKBAR
+   ======================================== */
+
+.snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px 24px;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.snackbar.show {
+  visibility: visible;
+  animation: snackbarFadeIn 0.3s ease;
+}
+
+.snackbar.success {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+.snackbar.error {
+  background: linear-gradient(135deg, #f44336, #da190b);
+}
+
+.snackbar.warning {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+@keyframes snackbarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes snackbarFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .snackbar {
+    background-color: #444;
+  }
 }
