@@ -34,6 +34,9 @@
                 <a href="../admin.html" class="back-button" title="Back to Admin Dashboard">
                     <i class="fas fa-arrow-left"></i>
                 </a>
+                <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle Playlists">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <img src="../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
                 <h1>Playlist Manager</h1>
                 <div class="pm-header-actions">
@@ -65,13 +68,21 @@
 
         <!-- Main Content (shown when connected) -->
         <div id="main-content" class="pm-main-content" style="display: none;">
+            <!-- Sidebar Overlay (mobile) -->
+            <div id="sidebar-overlay" class="sidebar-overlay"></div>
+            
             <!-- Sidebar: Playlists -->
             <aside class="pm-sidebar">
                 <div class="sidebar-header">
                     <h3><i class="fas fa-list"></i> Your Playlists</h3>
-                    <button id="refresh-playlists-btn" class="btn-icon" title="Refresh Playlists">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
+                    <div class="sidebar-actions">
+                        <button id="create-playlist-btn" class="btn-icon" title="Create New Playlist">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button id="refresh-playlists-btn" class="btn-icon" title="Refresh Playlists">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="search-box">
                     <i class="fas fa-search"></i>
@@ -108,7 +119,10 @@
                         </div>
                         <div class="playlist-actions">
                             <button id="save-order-btn" class="btn-primary" style="display: none;">
-                                <i class="fas fa-save"></i> Save Order
+                                <i class="fas fa-save"></i>&nbsp;Save Order
+                            </button>
+                            <button id="delete-playlist-btn" class="btn-danger" title="Delete this playlist">
+                                <i class="fas fa-trash"></i>&nbsp;Delete Playlist
                             </button>
                         </div>
                     </div>
@@ -120,6 +134,9 @@
                             <input type="text" id="track-search" placeholder="Search tracks...">
                         </div>
                         <div class="toolbar-actions">
+                            <button id="add-tracks-btn" class="btn-primary" title="Add tracks to this playlist">
+                                <i class="fas fa-plus"></i> Add Tracks
+                            </button>
                             <button id="toggle-explicit-btn" class="btn-filter">
                                 <i class="fas fa-filter"></i> Hide Explicit
                             </button>
@@ -151,6 +168,112 @@
         </div>
     </div>
 
+    <!-- Create Playlist Modal -->
+    <div id="create-playlist-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Playlist</h3>
+                <button class="modal-close" id="close-create-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-playlist-name">Playlist Name:</label>
+                    <input type="text" id="new-playlist-name" placeholder="Enter playlist name..." maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-playlist-description">Description (optional):</label>
+                    <textarea id="new-playlist-description" placeholder="Enter description..." rows="3" maxlength="300"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="new-playlist-public">
+                        <span class="checkmark"></span>
+                        Make playlist public
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="new-playlist-collaborative">
+                        <span class="checkmark"></span>
+                        Make playlist collaborative
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-create-playlist-btn" class="btn-secondary">Cancel</button>
+                <button id="confirm-create-playlist-btn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Create Playlist
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Tracks Modal -->
+    <div id="add-tracks-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Add Tracks to Playlist</h3>
+                <span id="close-add-tracks-modal" class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-tracks-input" placeholder="Search for songs, artists, or albums...">
+                </div>
+                <div id="search-results" class="search-results-container">
+                    <p class="text-muted">Enter a search term to find tracks</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-add-tracks-btn" class="btn-secondary">Cancel</button>
+                <button id="add-selected-tracks-btn" class="btn-primary" disabled>
+                    <i class="fas fa-plus"></i> Add Selected Tracks
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unsaved Changes Warning Modal -->
+    <div id="unsaved-changes-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Unsaved Changes</h3>
+            </div>
+            <div class="modal-body">
+                <p>You have unsaved track order changes. What would you like to do?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="discard-changes-btn" class="btn-secondary">
+                    <i class="fas fa-times"></i> Discard Changes
+                </button>
+                <button id="save-and-continue-btn" class="btn-primary">
+                    <i class="fas fa-save"></i> Save & Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Playlist Confirmation Modal -->
+    <div id="delete-playlist-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash"></i> Delete Playlist</h3>
+            </div>
+            <div class="modal-body">
+                <p id="delete-playlist-message">Are you sure you want to delete this playlist?</p>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-delete-playlist-btn" class="btn-secondary">Cancel</button>
+                <button id="confirm-delete-playlist-btn" class="btn-danger">
+                    <i class="fas fa-trash"></i> Delete Playlist
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Copy/Move Track Modal -->
     <div id="track-action-modal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -177,6 +300,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Rename Playlist Modal -->
+    <div id="rename-playlist-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Rename Playlist</h3>
+                <span class="close" id="close-rename-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rename-playlist-input">New playlist name:</label>
+                    <input type="text" id="rename-playlist-input" class="form-input" placeholder="Enter playlist name...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-rename-btn" class="btn-secondary">Cancel</button>
+                <button id="confirm-rename-btn" class="btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Snackbar for notifications -->
+    <div id="snackbar" class="snackbar"></div>
 
     <!-- Scripts -->
     <script src="../firebase-config.js"></script>

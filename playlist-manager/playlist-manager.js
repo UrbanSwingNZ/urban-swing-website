@@ -8,6 +8,8 @@ let currentTracks = [];
 let filteredTracks = [];
 let sortableInstance = null;
 let pendingAction = null;
+let hasUnsavedChanges = false;
+let pendingPlaylistSelection = null;
 
 // Wait for page to load
 window.addEventListener('load', async () => {
@@ -60,9 +62,38 @@ function setupEventListeners() {
   document.getElementById('connect-spotify-prompt-btn')?.addEventListener('click', handleSpotifyConnect);
   document.getElementById('spotify-disconnect-btn')?.addEventListener('click', handleSpotifyDisconnect);
   
+  // Mobile sidebar toggle
+  document.getElementById('sidebar-toggle')?.addEventListener('click', toggleSidebar);
+  document.getElementById('sidebar-overlay')?.addEventListener('click', closeSidebar);
+  
   // Playlist actions
+  document.getElementById('create-playlist-btn')?.addEventListener('click', openCreatePlaylistModal);
+  
   document.getElementById('refresh-playlists-btn')?.addEventListener('click', loadPlaylists);
   document.getElementById('playlist-search')?.addEventListener('input', handlePlaylistSearch);
+  
+  // Create playlist modal
+  document.getElementById('close-create-modal')?.addEventListener('click', closeCreatePlaylistModal);
+  document.getElementById('cancel-create-playlist-btn')?.addEventListener('click', closeCreatePlaylistModal);
+  document.getElementById('confirm-create-playlist-btn')?.addEventListener('click', handleCreatePlaylist);
+  
+  // Add tracks modal
+  document.getElementById('add-tracks-btn')?.addEventListener('click', openAddTracksModal);
+  document.getElementById('close-add-tracks-modal')?.addEventListener('click', closeAddTracksModal);
+  document.getElementById('cancel-add-tracks-btn')?.addEventListener('click', closeAddTracksModal);
+  document.getElementById('add-selected-tracks-btn')?.addEventListener('click', handleAddSelectedTracks);
+  document.getElementById('search-tracks-input')?.addEventListener('input', handleTrackSearch);
+  
+  // Delete functionality
+  document.getElementById('delete-playlist-btn')?.addEventListener('click', handleDeletePlaylist);
+  
+  // Unsaved changes modal
+  document.getElementById('save-and-continue-btn')?.addEventListener('click', handleSaveAndContinue);
+  document.getElementById('discard-changes-btn')?.addEventListener('click', handleDiscardChanges);
+  
+  // Delete playlist modal
+  document.getElementById('cancel-delete-playlist-btn')?.addEventListener('click', closeDeletePlaylistModal);
+  document.getElementById('confirm-delete-playlist-btn')?.addEventListener('click', confirmDeletePlaylist);
   
   // Track actions
   document.getElementById('track-search')?.addEventListener('input', handleTrackSearch);
@@ -78,6 +109,36 @@ function setupEventListeners() {
   document.getElementById('track-action-modal')?.addEventListener('click', (e) => {
     if (e.target.id === 'track-action-modal') {
       closeModal();
+    }
+  });
+  
+  document.getElementById('create-playlist-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'create-playlist-modal') {
+      closeCreatePlaylistModal();
+    }
+  });
+  
+  document.getElementById('add-tracks-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'add-tracks-modal') {
+      closeAddTracksModal();
+    }
+  });
+  
+  // Escape key handling
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      // Check which modal is open
+      const trackModal = document.getElementById('track-action-modal');
+      const createModal = document.getElementById('create-playlist-modal');
+      const addTracksModal = document.getElementById('add-tracks-modal');
+      
+      if (trackModal && trackModal.style.display === 'block') {
+        closeModal();
+      } else if (createModal && createModal.style.display === 'block') {
+        closeCreatePlaylistModal();
+      } else if (addTracksModal && addTracksModal.style.display === 'block') {
+        closeAddTracksModal();
+      }
     }
   });
 }
@@ -237,15 +298,35 @@ function displayPlaylists(playlists) {
     
     li.innerHTML = `
       <div class="playlist-item">
+        <div class="playlist-drag-handle">
+          <i class="fas fa-grip-vertical"></i>
+        </div>
         <img src="${imageUrl}" alt="${playlist.name}">
         <div class="playlist-item-info">
           <div class="playlist-item-name">${playlist.name}</div>
           <div class="playlist-item-count">${playlist.tracks.total} tracks</div>
         </div>
+        <div class="playlist-item-actions">
+          <button class="playlist-menu-btn" data-playlist-id="${playlist.id}">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
       </div>
     `;
     
-    li.addEventListener('click', () => selectPlaylist(playlist));
+    // Add click handler for playlist selection (but not on menu button)
+    li.addEventListener('click', (e) => {
+      if (!e.target.closest('.playlist-menu-btn') && !e.target.closest('.playlist-drag-handle')) {
+        selectPlaylist(playlist);
+      }
+    });
+    
+    // Add menu button handler
+    const menuBtn = li.querySelector('.playlist-menu-btn');
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showPlaylistMenu(e.currentTarget, playlist);
+    });
     listEl.appendChild(li);
   });
 }
@@ -270,7 +351,34 @@ function handlePlaylistSearch(e) {
 // ========================================
 
 async function selectPlaylist(playlist) {
-  currentPlaylist = playlist;
+  // Check for unsaved changes
+  if (hasUnsavedChanges) {
+    pendingPlaylistSelection = playlist;
+    document.getElementById('unsaved-changes-modal').style.display = 'block';
+    return;
+  }
+  
+  await performPlaylistSelection(playlist);
+}
+
+async function performPlaylistSelection(playlist) {
+  console.log('Selecting playlist:', playlist);
+  
+  // Get fresh playlist info from Spotify API to ensure we have latest data
+  try {
+    const freshPlaylist = await spotifyAPI.getPlaylist(playlist.id);
+    console.log('Fresh playlist data:', freshPlaylist);
+    currentPlaylist = freshPlaylist;
+  } catch (error) {
+    console.warn('Could not get fresh playlist data, using cached:', error);
+    currentPlaylist = playlist;
+  }
+  
+  currentPlaylistId = playlist.id;
+  hasUnsavedChanges = false;
+  
+  // Hide save order button
+  document.getElementById('save-order-btn').style.display = 'none';
   
   // Update active state
   document.querySelectorAll('.playlists-list li').forEach(li => {
@@ -302,6 +410,8 @@ async function loadTracks(playlistId) {
   showLoading(true);
   
   try {
+    console.log('Loading tracks for playlist:', playlistId);
+    
     // Get all tracks
     const trackItems = await spotifyAPI.getAllPlaylistTracks(playlistId);
     
@@ -310,10 +420,17 @@ async function loadTracks(playlistId) {
       .filter(item => item.track && item.track.id)
       .map(item => item.track.id);
     
-    // Get audio features (BPM, etc.)
+    // Get audio features (BPM, etc.) - this is optional
     let audioFeatures = [];
     if (trackIds.length > 0) {
-      audioFeatures = await spotifyAPI.getAudioFeatures(trackIds);
+      try {
+        audioFeatures = await spotifyAPI.getAudioFeatures(trackIds);
+        console.log('Audio features loaded successfully');
+      } catch (audioError) {
+        console.warn('Could not load audio features (BPM data will not be available):', audioError);
+        // Create empty array with same length as tracks
+        audioFeatures = new Array(trackIds.length).fill({});
+      }
     }
     
     // Combine tracks with audio features
@@ -494,6 +611,9 @@ function handleDragEnd(evt) {
   const [movedTrack] = filteredTracks.splice(oldIndex, 1);
   filteredTracks.splice(newIndex, 0, movedTrack);
   
+  // Mark as having unsaved changes
+  hasUnsavedChanges = true;
+  
   // Show save button
   document.getElementById('save-order-btn').style.display = 'inline-flex';
   
@@ -515,33 +635,52 @@ function updateTrackNumbers() {
 async function handleSaveOrder() {
   if (!currentPlaylist) return;
   
-  const confirmed = confirm('Save the new track order to Spotify?');
-  if (!confirmed) return;
-  
   showLoading(true);
   
   try {
-    // Get the current order on Spotify
-    const originalOrder = await spotifyAPI.getAllPlaylistTracks(currentPlaylist.id);
+    console.log('Saving track order for playlist:', currentPlaylist.id);
     
-    // Calculate the moves needed
-    // For simplicity, we'll remove all tracks and re-add them in the new order
-    // This is not the most efficient method, but it's reliable
-    
-    const trackUris = filteredTracks
-      .filter(item => item.track)
+    // Get track URIs in the new order
+    const newOrderUris = filteredTracks
+      .filter(item => item.track && item.track.uri)
       .map(item => item.track.uri);
     
-    // Note: Spotify has a limit of 100 tracks per request
-    // This is a simplified implementation
-    alert('Track reordering will be implemented once Spotify authentication is complete.');
+    console.log('New track order URIs:', newOrderUris);
+    
+    if (newOrderUris.length === 0) {
+      showError('No tracks to reorder');
+      return;
+    }
+    
+    // Step 1: Remove all tracks from the playlist
+    console.log('Removing all tracks from playlist...');
+    await spotifyAPI.removeTracksFromPlaylist(currentPlaylist.id, newOrderUris);
+    
+    // Step 2: Add tracks back in the new order
+    // Spotify has a limit of 100 tracks per request, so we need to chunk
+    console.log('Adding tracks back in new order...');
+    
+    const chunkSize = 100;
+    for (let i = 0; i < newOrderUris.length; i += chunkSize) {
+      const chunk = newOrderUris.slice(i, i + chunkSize);
+      await spotifyAPI.addTracksToPlaylist(currentPlaylist.id, chunk, i);
+      console.log(`Added chunk ${Math.floor(i/chunkSize) + 1}/${Math.ceil(newOrderUris.length/chunkSize)}`);
+    }
+    
+    // Update the current tracks array to reflect the new order
+    currentTracks = [...filteredTracks];
+    
+    showSnackbar('Track order saved successfully!', 'success');
+    
+    // Clear unsaved changes flag
+    hasUnsavedChanges = false;
     
     // Hide save button
     document.getElementById('save-order-btn').style.display = 'none';
     
   } catch (error) {
     console.error('Error saving order:', error);
-    showError('Failed to save track order. ' + error.message);
+    showError('Failed to save track order: ' + error.message);
   } finally {
     showLoading(false);
   }
@@ -564,6 +703,9 @@ function showTrackMenu(button, track) {
     </button>
     <button data-action="move">
       <i class="fas fa-arrow-right"></i> Move to Playlist
+    </button>
+    <button data-action="delete" class="menu-delete">
+      <i class="fas fa-trash"></i> Remove from Playlist
     </button>
   `;
   
@@ -593,6 +735,11 @@ function showTrackMenu(button, track) {
 }
 
 function handleTrackAction(action, track) {
+  if (action === 'delete') {
+    handleDeleteTrack(track.uri, track.name);
+    return;
+  }
+  
   pendingAction = { action, track, fromPlaylistId: currentPlaylist.id };
   
   // Update modal title
@@ -669,11 +816,34 @@ function showLoading(show) {
 }
 
 function showError(message) {
-  alert('Error: ' + message);
+  showSnackbar('Error: ' + message, 'error');
 }
 
 function showSuccess(message) {
-  alert(message);
+  showSnackbar(message, 'success');
+}
+
+function showSnackbar(message, type = 'success') {
+  const snackbar = document.getElementById('snackbar');
+  
+  // Clear any existing classes
+  snackbar.className = 'snackbar';
+  
+  // Add type class
+  if (type) {
+    snackbar.classList.add(type);
+  }
+  
+  // Set message
+  snackbar.textContent = message;
+  
+  // Show snackbar
+  snackbar.classList.add('show');
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    snackbar.classList.remove('show');
+  }, 3000);
 }
 
 function formatTotalDuration(ms) {
@@ -684,4 +854,465 @@ function formatTotalDuration(ms) {
     return `${hours} hr ${minutes} min`;
   }
   return `${minutes} min`;
+}
+
+// ========================================
+// MOBILE SIDEBAR TOGGLE
+// ========================================
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.pm-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.pm-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+}
+
+// ========================================
+// CREATE PLAYLIST MODAL
+// ========================================
+
+function openCreatePlaylistModal() {
+  const modal = document.getElementById('create-playlist-modal');
+  const form = document.getElementById('create-playlist-form');
+  
+  if (!modal) {
+    console.error('Modal element not found');
+    return;
+  }
+  
+  // Reset form
+  if (form) {
+    form.reset();
+  }
+  
+  // Show modal
+  modal.style.display = 'block';
+  
+  // Focus on name field
+  setTimeout(() => {
+    const nameField = document.getElementById('new-playlist-name');
+    if (nameField) {
+      nameField.focus();
+    }
+  }, 100);
+}
+
+function closeCreatePlaylistModal() {
+  const modal = document.getElementById('create-playlist-modal');
+  modal.style.display = 'none';
+}
+
+async function handleCreatePlaylist() {
+  const nameInput = document.getElementById('new-playlist-name');
+  const descInput = document.getElementById('new-playlist-description');
+  const publicCheckbox = document.getElementById('new-playlist-public');
+  const collaborativeCheckbox = document.getElementById('new-playlist-collaborative');
+  const createBtn = document.getElementById('confirm-create-playlist-btn');
+  
+  const name = nameInput.value.trim();
+  if (!name) {
+    showError('Please enter a playlist name');
+    nameInput.focus();
+    return;
+  }
+  
+  // Show loading
+  const originalText = createBtn.textContent;
+  createBtn.textContent = 'Creating...';
+  createBtn.disabled = true;
+  
+  try {
+    const description = descInput.value.trim();
+    const isPublic = publicCheckbox.checked;
+    const isCollaborative = collaborativeCheckbox.checked;
+    
+    const newPlaylist = await spotifyAPI.createPlaylist(name, description, isPublic, isCollaborative);
+    
+    closeCreatePlaylistModal();
+    
+    // Refresh playlists to show the new one
+    await loadPlaylists();
+    
+    // Select the new playlist if we can find it
+    const playlistItems = document.querySelectorAll('.playlist-item');
+    const newPlaylistItem = Array.from(playlistItems).find(item => 
+      item.textContent.includes(name)
+    );
+    if (newPlaylistItem) {
+      newPlaylistItem.click();
+    }
+    
+  } catch (error) {
+    console.error('Error creating playlist:', error);
+    showError('Failed to create playlist: ' + error.message);
+  } finally {
+    // Reset button
+    createBtn.textContent = originalText;
+    createBtn.disabled = false;
+  }
+}
+
+// ========================================
+// ADD TRACKS MODAL
+// ========================================
+
+let selectedTracks = [];
+let currentPlaylistId = null;
+
+function openAddTracksModal() {
+  if (!currentPlaylistId) {
+    showError('Please select a playlist first');
+    return;
+  }
+
+  const modal = document.getElementById('add-tracks-modal');
+  const searchInput = document.getElementById('search-tracks-input');
+  const resultsContainer = document.getElementById('search-results');
+  
+  // Reset state
+  selectedTracks = [];
+  searchInput.value = '';
+  resultsContainer.innerHTML = '<p class="text-muted">Enter a search term to find tracks</p>';
+  updateAddTracksButton();
+  
+  // Show modal
+  modal.style.display = 'block';
+  
+  // Focus on search field
+  setTimeout(() => {
+    searchInput.focus();
+  }, 100);
+}
+
+function closeAddTracksModal() {
+  const modal = document.getElementById('add-tracks-modal');
+  modal.style.display = 'none';
+  selectedTracks = [];
+}
+
+let searchTimeout;
+
+function handleTrackSearch(e) {
+  const query = e.target.value.trim();
+  
+  // Clear previous timeout
+  clearTimeout(searchTimeout);
+  
+  if (query.length === 0) {
+    document.getElementById('search-results').innerHTML = '<p class="text-muted">Enter a search term to find tracks</p>';
+    return;
+  }
+  
+  // Debounce search
+  searchTimeout = setTimeout(async () => {
+    await searchAndDisplayTracks(query);
+  }, 300);
+}
+
+async function searchAndDisplayTracks(query) {
+  const resultsContainer = document.getElementById('search-results');
+  
+  try {
+    resultsContainer.innerHTML = '<div class="loading-pulse" style="padding: 20px; text-align: center;">Searching...</div>';
+    
+    const tracks = await spotifyAPI.searchTracks(query, 20);
+    console.log('Search results:', tracks);
+    
+    if (tracks.length === 0) {
+      resultsContainer.innerHTML = '<p class="text-muted">No tracks found</p>';
+      return;
+    }
+    
+    resultsContainer.innerHTML = tracks.map(track => {
+      const isSelected = selectedTracks.some(t => t.id === track.id);
+      return `
+        <div class="search-result-item" data-track-id="${track.id}">
+          <input type="checkbox" class="search-result-checkbox" ${isSelected ? 'checked' : ''}>
+          <img src="${track.album?.images?.[2]?.url || '../images/urban-swing-logo.png'}" 
+               alt="${track.name}" class="search-result-image">
+          <div class="search-result-info">
+            <h4 class="search-result-title">${track.name}</h4>
+            <p class="search-result-artist">${track.artists?.map(a => a.name).join(', ')}</p>
+          </div>
+          <span class="search-result-duration">${spotifyAPI.formatDuration(track.duration_ms)}</span>
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers
+    resultsContainer.querySelectorAll('.search-result-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        // Don't trigger if clicking the checkbox directly
+        if (e.target.type === 'checkbox') return;
+        
+        const checkbox = item.querySelector('.search-result-checkbox');
+        checkbox.checked = !checkbox.checked;
+        handleTrackSelection(item.dataset.trackId, checkbox.checked, tracks);
+      });
+      
+      const checkbox = item.querySelector('.search-result-checkbox');
+      checkbox.addEventListener('change', (e) => {
+        handleTrackSelection(item.dataset.trackId, e.target.checked, tracks);
+      });
+    });
+    
+  } catch (error) {
+    console.error('Error searching tracks:', error);
+    resultsContainer.innerHTML = '<p class="text-muted">Error searching tracks. Please try again.</p>';
+  }
+}
+
+function handleTrackSelection(trackId, isSelected, allTracks) {
+  console.log('Track selection:', trackId, isSelected);
+  const track = allTracks.find(t => t.id === trackId);
+  console.log('Found track:', track);
+  
+  if (isSelected && track) {
+    // Add to selected tracks if not already there
+    if (!selectedTracks.some(t => t.id === trackId)) {
+      selectedTracks.push(track);
+      console.log('Added track to selection:', track);
+    }
+  } else {
+    // Remove from selected tracks
+    selectedTracks = selectedTracks.filter(t => t.id !== trackId);
+    console.log('Removed track from selection');
+  }
+  
+  console.log('Selected tracks count:', selectedTracks.length);
+  updateAddTracksButton();
+}
+
+function updateAddTracksButton() {
+  const button = document.getElementById('add-selected-tracks-btn');
+  button.disabled = selectedTracks.length === 0;
+  button.innerHTML = selectedTracks.length > 0 
+    ? `<i class="fas fa-plus"></i> Add ${selectedTracks.length} Track${selectedTracks.length > 1 ? 's' : ''}`
+    : '<i class="fas fa-plus"></i> Add Selected Tracks';
+}
+
+async function handleAddSelectedTracks() {
+  if (selectedTracks.length === 0) return;
+  
+  console.log('Adding tracks:', selectedTracks);
+  console.log('Current playlist ID:', currentPlaylistId);
+  
+  const button = document.getElementById('add-selected-tracks-btn');
+  const originalText = button.innerHTML;
+  button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+  button.disabled = true;
+  
+  try {
+    const trackUris = selectedTracks.map(track => {
+      console.log('Track URI:', track.uri);
+      return track.uri;
+    });
+    
+    console.log('Track URIs to add:', trackUris);
+    
+    const result = await spotifyAPI.addTracksToPlaylist(currentPlaylistId, trackUris);
+    console.log('Add tracks result:', result);
+    
+    closeAddTracksModal();
+    
+    // Wait a moment for Spotify to sync, then reload the playlist
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Reload the current playlist to show new tracks
+    if (currentPlaylist) {
+      await selectPlaylist(currentPlaylist);
+    }
+    
+  } catch (error) {
+    console.error('Error adding tracks:', error);
+    showError('Failed to add tracks: ' + error.message);
+  } finally {
+    button.innerHTML = originalText;
+    button.disabled = false;
+  }
+}
+
+// ========================================
+// UNSAVED CHANGES HANDLING
+// ========================================
+
+async function handleSaveAndContinue() {
+  // Save current changes
+  await handleSaveOrder();
+  
+  // Close modal
+  document.getElementById('unsaved-changes-modal').style.display = 'none';
+  
+  // Continue to selected playlist
+  if (pendingPlaylistSelection) {
+    await performPlaylistSelection(pendingPlaylistSelection);
+    pendingPlaylistSelection = null;
+  }
+}
+
+function handleDiscardChanges() {
+  // Reset changes flag
+  hasUnsavedChanges = false;
+  
+  // Hide save order button
+  document.getElementById('save-order-btn').style.display = 'none';
+  
+  // Close modal
+  document.getElementById('unsaved-changes-modal').style.display = 'none';
+  
+  // Continue to selected playlist
+  if (pendingPlaylistSelection) {
+    performPlaylistSelection(pendingPlaylistSelection);
+    pendingPlaylistSelection = null;
+  }
+}
+
+// ========================================
+// PLAYLIST MENU
+// ========================================
+
+let playlistMenuTarget = null;
+
+function showPlaylistMenu(button, playlist) {
+  // Close any existing menus
+  document.querySelectorAll('.playlist-menu').forEach(menu => menu.remove());
+  
+  playlistMenuTarget = playlist;
+  
+  // Create menu
+  const menu = document.createElement('div');
+  menu.className = 'playlist-menu show';
+  menu.innerHTML = `
+    <button data-action="rename">
+      <i class="fas fa-edit"></i> Rename
+    </button>
+    <button data-action="delete" class="menu-delete">
+      <i class="fas fa-trash"></i> Delete
+    </button>
+  `;
+  
+  // Position menu
+  const actions = button.closest('.playlist-item-actions');
+  actions.appendChild(menu);
+  
+  // Add click handlers
+  menu.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const action = e.currentTarget.dataset.action;
+      handlePlaylistMenuAction(action, playlist);
+      menu.remove();
+    });
+  });
+  
+  // Close menu on outside click
+  setTimeout(() => {
+    const closeMenu = (e) => {
+      if (!menu.contains(e.target) && e.target !== button) {
+        menu.remove();
+        document.removeEventListener('click', closeMenu);
+      }
+    };
+    document.addEventListener('click', closeMenu);
+  }, 10);
+}
+
+function handlePlaylistMenuAction(action, playlist) {
+  if (action === 'rename') {
+    openRenamePlaylistModal(playlist);
+  } else if (action === 'delete') {
+    // Set as current for deletion
+    currentPlaylist = playlist;
+    handleDeletePlaylist();
+  }
+}
+
+// ========================================
+// DELETE FUNCTIONALITY
+// ========================================
+
+async function handleDeletePlaylist() {
+  if (!currentPlaylist) {
+    showError('No playlist selected');
+    return;
+  }
+  
+  const playlistName = currentPlaylist.name;
+  document.getElementById('delete-playlist-message').textContent = 
+    `Are you sure you want to delete "${playlistName}"?`;
+  
+  document.getElementById('delete-playlist-modal').style.display = 'block';
+}
+
+function closeDeletePlaylistModal() {
+  document.getElementById('delete-playlist-modal').style.display = 'none';
+}
+
+async function confirmDeletePlaylist() {
+  if (!currentPlaylist) return;
+  
+  const playlistName = currentPlaylist.name;
+  
+  // Close modal first
+  closeDeletePlaylistModal();
+  
+  const deleteBtn = document.getElementById('delete-playlist-btn');
+  const originalText = deleteBtn.innerHTML;
+  deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Deleting...';
+  deleteBtn.disabled = true;
+  
+  try {
+    await spotifyAPI.deletePlaylist(currentPlaylist.id);
+    
+    // Show success message
+    showSnackbar(`Playlist "${playlistName}" has been deleted.`, 'success');
+    
+    // Clear the current view and reload playlists
+    document.getElementById('playlist-view').style.display = 'none';
+    document.getElementById('empty-state').style.display = 'flex';
+    currentPlaylist = null;
+    currentPlaylistId = null;
+    hasUnsavedChanges = false;
+    
+    await loadPlaylists();
+    
+  } catch (error) {
+    console.error('Error deleting playlist:', error);
+    showError('Failed to delete playlist: ' + error.message);
+  } finally {
+    deleteBtn.innerHTML = originalText;
+    deleteBtn.disabled = false;
+  }
+}
+
+function handleDeleteTrack(trackUri, trackName) {
+  removeTrackFromPlaylist(trackUri, trackName);
+}
+
+async function removeTrackFromPlaylist(trackUri, trackName) {
+  if (!currentPlaylistId) {
+    showError('No playlist selected');
+    return;
+  }
+  
+  try {
+    await spotifyAPI.removeTracksFromPlaylist(currentPlaylistId, [trackUri]);
+    
+    // Reload the playlist to show updated tracks
+    if (currentPlaylist) {
+      await selectPlaylist(currentPlaylist);
+    }
+    
+  } catch (error) {
+    console.error('Error removing track:', error);
+    showError('Failed to remove track: ' + error.message);
+  }
 }
