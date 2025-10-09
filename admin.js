@@ -148,11 +148,12 @@ function setupTileButtons() {
   const playlistBtn = document.getElementById('playlist-manager-btn');
   const checkinBtn = document.getElementById('checkin-btn');
   
-  // These will be enabled when features are implemented
+  // Playlist Manager - Now available!
   playlistBtn.addEventListener('click', () => {
-    alert('Playlist Manager is coming soon! 🎵');
+    window.location.href = 'playlist-manager/index.html';
   });
   
+  // Check-in system - Coming soon
   checkinBtn.addEventListener('click', () => {
     alert('Student Check-in system is coming soon! ✅');
   });
