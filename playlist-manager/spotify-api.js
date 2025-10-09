@@ -17,8 +17,30 @@ class SpotifyAPI {
     this.refreshToken = refreshToken;
     this.tokenExpiry = Date.now() + (expiresIn * 1000);
     
-    // Store tokens in Firestore for persistence
-    this.saveTokensToFirestore();
+    // Store tokens in localStorage for implicit flow
+    this.saveTokensToStorage();
+  }
+
+  saveTokensToStorage() {
+    try {
+      localStorage.setItem('spotify_access_token', this.accessToken || '');
+      localStorage.setItem('spotify_token_expiry', this.tokenExpiry || '');
+    } catch (error) {
+      console.error('Error saving tokens to storage:', error);
+    }
+  }
+
+  loadTokensFromStorage() {
+    try {
+      this.accessToken = localStorage.getItem('spotify_access_token');
+      const expiry = localStorage.getItem('spotify_token_expiry');
+      this.tokenExpiry = expiry ? parseInt(expiry) : null;
+      
+      return !!(this.accessToken && this.tokenExpiry);
+    } catch (error) {
+      console.error('Error loading tokens from storage:', error);
+      return false;
+    }
   }
 
   async saveTokensToFirestore() {

@@ -27,19 +27,21 @@ window.addEventListener('load', async () => {
 async function initializeApp() {
   setupEventListeners();
   
-  // Try to load existing Spotify tokens
-  const hasTokens = await spotifyAPI.loadTokensFromFirestore();
+  // Check if we have tokens in the URL hash (implicit grant flow)
+  const tokenFromUrl = getTokenFromUrl();
+  if (tokenFromUrl) {
+    // Store the token and clear URL
+    spotifyAPI.setTokens(tokenFromUrl.access_token, null, tokenFromUrl.expires_in);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    await showAuthenticatedState();
+    return;
+  }
   
-  if (hasTokens && spotifyAPI.isAuthenticated()) {
+  // Try to load existing Spotify tokens from localStorage
+  if (spotifyAPI.loadTokensFromStorage() && spotifyAPI.isAuthenticated()) {
     await showAuthenticatedState();
   } else {
-    // Check if we have an auth code in the URL
-    const authCode = getAuthCodeFromUrl();
-    if (authCode) {
-      await handleAuthCallback(authCode);
-    } else {
-      showConnectPrompt();
-    }
+    showConnectPrompt();
   }
 }
 
@@ -80,47 +82,37 @@ function handleSpotifyConnect() {
   window.location.href = getSpotifyAuthUrl();
 }
 
-async function handleAuthCallback(authCode) {
-  showLoading(true);
+// Parse access token from URL hash (implicit grant flow)
+function getTokenFromUrl() {
+  const hash = window.location.hash.substring(1);
+  if (!hash) return null;
   
-  try {
-    // Exchange auth code for access token
-    // Note: This requires a backend endpoint or use of Firebase Functions
-    // For now, we'll show an error message with instructions
-    
-    alert('To complete Spotify authentication, you need to set up a token exchange endpoint. See SPOTIFY_SETUP.md for instructions.');
-    
-    // Placeholder for token exchange
-    // const tokens = await exchangeCodeForTokens(authCode);
-    // spotifyAPI.setTokens(tokens.access_token, tokens.refresh_token, tokens.expires_in);
-    // await showAuthenticatedState();
-    
-  } catch (error) {
-    console.error('Auth callback error:', error);
-    showError('Failed to authenticate with Spotify. Please try again.');
-    showConnectPrompt();
-  } finally {
-    showLoading(false);
-    // Clean URL
-    window.history.replaceState({}, document.title, window.location.pathname);
+  const params = new URLSearchParams(hash);
+  const accessToken = params.get('access_token');
+  const expiresIn = params.get('expires_in');
+  
+  if (accessToken && expiresIn) {
+    return {
+      access_token: accessToken,
+      expires_in: parseInt(expiresIn)
+    };
   }
+  
+  return null;
 }
 
 async function handleSpotifyDisconnect() {
-  if (!confirm('Are you sure you want to disconnect Spotify?')) {
-    return;
-  }
-  
   // Clear tokens
   spotifyAPI.accessToken = null;
   spotifyAPI.refreshToken = null;
   spotifyAPI.tokenExpiry = null;
   
-  // Clear from Firestore
+  // Clear from localStorage
   try {
-    await db.collection('admin_tokens').doc(auth.currentUser.uid).delete();
+    localStorage.removeItem('spotify_access_token');
+    localStorage.removeItem('spotify_token_expiry');
   } catch (error) {
-    console.error('Error clearing tokens:', error);
+    console.error('Error clearing tokens from storage:', error);
   }
   
   showConnectPrompt();
