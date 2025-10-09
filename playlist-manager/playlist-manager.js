@@ -95,6 +95,11 @@ function setupEventListeners() {
   document.getElementById('cancel-delete-playlist-btn')?.addEventListener('click', closeDeletePlaylistModal);
   document.getElementById('confirm-delete-playlist-btn')?.addEventListener('click', confirmDeletePlaylist);
   
+  // Rename playlist modal
+  document.getElementById('close-rename-modal')?.addEventListener('click', closeRenamePlaylistModal);
+  document.getElementById('cancel-rename-btn')?.addEventListener('click', closeRenamePlaylistModal);
+  document.getElementById('confirm-rename-btn')?.addEventListener('click', handleRenamePlaylist);
+  
   // Track actions
   document.getElementById('track-search')?.addEventListener('input', handleTrackSearch);
   document.getElementById('toggle-explicit-btn')?.addEventListener('click', handleToggleExplicit);
@@ -115,6 +120,12 @@ function setupEventListeners() {
   document.getElementById('create-playlist-modal')?.addEventListener('click', (e) => {
     if (e.target.id === 'create-playlist-modal') {
       closeCreatePlaylistModal();
+    }
+  });
+  
+  document.getElementById('rename-playlist-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'rename-playlist-modal') {
+      closeRenamePlaylistModal();
     }
   });
   
@@ -1290,6 +1301,87 @@ async function confirmDeletePlaylist() {
   } finally {
     deleteBtn.innerHTML = originalText;
     deleteBtn.disabled = false;
+  }
+}
+
+// ========================================
+// RENAME PLAYLIST
+// ========================================
+
+let renamePlaylistTarget = null;
+
+function openRenamePlaylistModal(playlist) {
+  renamePlaylistTarget = playlist;
+  
+  const modal = document.getElementById('rename-playlist-modal');
+  const input = document.getElementById('rename-playlist-input');
+  
+  // Pre-fill with current name
+  input.value = playlist.name;
+  
+  // Show modal
+  modal.style.display = 'block';
+  
+  // Focus and select text
+  setTimeout(() => {
+    input.focus();
+    input.select();
+  }, 100);
+}
+
+function closeRenamePlaylistModal() {
+  document.getElementById('rename-playlist-modal').style.display = 'none';
+  renamePlaylistTarget = null;
+}
+
+async function handleRenamePlaylist() {
+  if (!renamePlaylistTarget) return;
+  
+  const input = document.getElementById('rename-playlist-input');
+  const newName = input.value.trim();
+  
+  if (!newName) {
+    showError('Please enter a playlist name');
+    input.focus();
+    return;
+  }
+  
+  if (newName === renamePlaylistTarget.name) {
+    closeRenamePlaylistModal();
+    return;
+  }
+  
+  const confirmBtn = document.getElementById('confirm-rename-btn');
+  const originalText = confirmBtn.innerHTML;
+  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Renaming...';
+  confirmBtn.disabled = true;
+  
+  try {
+    await spotifyAPI.changePlaylistDetails(renamePlaylistTarget.id, {
+      name: newName
+    });
+    
+    // Close modal
+    closeRenamePlaylistModal();
+    
+    // Show success message
+    showSnackbar(`Playlist renamed to "${newName}"`, 'success');
+    
+    // Reload playlists to show updated name
+    await loadPlaylists();
+    
+    // If this is the currently selected playlist, update the display
+    if (currentPlaylist && currentPlaylist.id === renamePlaylistTarget.id) {
+      currentPlaylist.name = newName;
+      document.getElementById('playlist-name').textContent = newName;
+    }
+    
+  } catch (error) {
+    console.error('Error renaming playlist:', error);
+    showError('Failed to rename playlist: ' + error.message);
+  } finally {
+    confirmBtn.innerHTML = originalText;
+    confirmBtn.disabled = false;
   }
 }
 
