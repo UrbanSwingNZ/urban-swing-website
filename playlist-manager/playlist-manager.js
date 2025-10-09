@@ -161,7 +161,13 @@ async function loadPlaylists() {
     displayPlaylists(allPlaylists);
   } catch (error) {
     console.error('Error loading playlists:', error);
-    showError('Failed to load playlists. ' + error.message);
+    if (error.message.includes('expired') || error.message.includes('401')) {
+      // Token expired - show connect prompt
+      showConnectPrompt();
+      showError('Your Spotify session has expired. Please reconnect.');
+    } else {
+      showError('Failed to load playlists. ' + error.message);
+    }
   } finally {
     showLoading(false);
   }
