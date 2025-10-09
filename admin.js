@@ -47,8 +47,16 @@ function showLogin() {
   document.getElementById('login-container').style.display = 'flex';
   document.getElementById('dashboard-container').style.display = 'none';
   
-  // Setup login form handler
+  // Clear the login form
   const loginForm = document.getElementById('login-form');
+  loginForm.reset();
+  
+  // Clear any error messages
+  const errorDiv = document.getElementById('login-error');
+  errorDiv.textContent = '';
+  errorDiv.classList.remove('show');
+  
+  // Setup login form handler
   loginForm.addEventListener('submit', handleLogin);
 }
 
@@ -151,10 +159,6 @@ function setupTileButtons() {
 }
 
 async function handleLogout() {
-  const confirmLogout = confirm('Are you sure you want to logout?');
-  
-  if (!confirmLogout) return;
-  
   showLoading(true);
   
   try {
