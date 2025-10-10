@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Spotify Authentication</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .info {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        button {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #1ed760;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+        }
+        button.secondary {
+            background: #666;
+        }
+        button.secondary:hover {
+            background: #888;
+        }
+        .status {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Spotify Authentication Reset</h1>
+        
+        <div class="info">
+            <strong>Current Issue:</strong> Your Spotify authentication is in a broken state, preventing the app from loading playlists.
+            <br><br>
+            <strong>Solution:</strong> This page will completely clear all authentication data and redirect you to a fresh start.
+        </div>
+
+        <button onclick="clearAuth()">Clear Authentication & Restart</button>
+        <button class="secondary" onclick="checkStatus()">Check Current Status</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function showStatus(message, isSuccess) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status ' + (isSuccess ? 'success' : 'error');
+            statusDiv.textContent = message;
+        }
+
+        function checkStatus() {
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.includes('spotify')) {
+                    keys.push(key + ': ' + localStorage.getItem(key)?.substring(0, 20) + '...');
+                }
+            }
+            
+            if (keys.length === 0) {
+                showStatus('✓ No Spotify data found in localStorage', true);
+            } else {
+                showStatus('Found Spotify data:\n' + keys.join('\n'), false);
+            }
+            
+            console.log('Full localStorage contents:', { ...localStorage });
+        }
+
+        function clearAuth() {
+            try {
+                // Clear ALL localStorage
+                localStorage.clear();
+                
+                // Also clear sessionStorage just in case
+                sessionStorage.clear();
+                
+                // Verify it's cleared
+                const remaining = localStorage.length;
+                
+                if (remaining === 0) {
+                    showStatus('✓ Authentication cleared successfully! Redirecting...', true);
+                    
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = './index.html';
+                    }, 2000);
+                } else {
+                    showStatus('⚠️ Some data remains. Try clearing browser cache manually.', false);
+                }
+            } catch (error) {
+                showStatus('Error clearing data: ' + error.message, false);
+                console.error('Clear error:', error);
+            }
+        }
+
+        // Check status on load
+        window.addEventListener('load', () => {
+            checkStatus();
+        });
+    </script>
+</body>
+</html>

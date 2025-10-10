@@ -2,6 +2,7 @@
 // Handles Spotify authentication and authorization
 
 import { showLoading, showError, showConnectPrompt, showAuthenticatedState } from './playlist-ui.js';
+import { spotifyConfig, getSpotifyAuthUrl } from './spotify-config.js';
 
 // ========================================
 // SPOTIFY AUTHENTICATION
