@@ -1,6 +1,7 @@
 /* ========================================
    PLAYLIST MANAGER STYLES
    Urban Swing color scheme with modern UI
+   Updated: Button visibility fixes - v2.2
    ======================================== */
 
 /* Import parent styles if needed */
@@ -84,8 +85,11 @@
   width: auto;
 }
 
-.sidebar-toggle {
-  display: none;
+/* Hamburger menu - hidden by default on desktop */
+.pm-header-content .sidebar-toggle,
+#sidebar-toggle,
+button.sidebar-toggle {
+  display: none !important;
   background: none;
   border: none;
   color: white;
@@ -98,6 +102,15 @@
 
 .sidebar-toggle:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Show hamburger menu only on mobile */
+@media (max-width: 768px) {
+  .pm-header-content .sidebar-toggle,
+  #sidebar-toggle,
+  button.sidebar-toggle {
+    display: block !important;
+  }
 }
 
 .pm-header h1 {
@@ -421,11 +434,11 @@
   position: absolute;
   right: 0;
   top: 100%;
-  background: var(--pm-card-bg);
+  background: var(--pm-card-light);
   border: 1px solid var(--pm-border-light);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 2000;
   min-width: 140px;
   opacity: 0;
   transform: translateY(-10px);
@@ -444,14 +457,16 @@
   padding: 10px 12px;
   border: none;
   background: none;
-  text-align: left;
+  text-align: left !important;
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--text-color);
   transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .playlist-menu button:first-child {
@@ -468,6 +483,7 @@
 
 @media (prefers-color-scheme: dark) {
   .playlist-menu {
+    background: var(--pm-card-dark);
     border-color: var(--pm-border-dark);
   }
 }
@@ -598,6 +614,14 @@
   align-items: center;
   min-height: 44px; /* Ensure consistent height */
   flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
+.playlist-actions button,
+.toolbar-actions button {
+  vertical-align: middle !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Tracks Toolbar */
@@ -911,13 +935,15 @@
   border: none;
   color: var(--text-color);
   padding: 12px 16px;
-  text-align: left;
+  text-align: left !important;
   cursor: pointer;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
   gap: 10px;
   font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .track-menu button:hover {
@@ -945,26 +971,22 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none;
   z-index: 9999;
   padding: 20px;
 }
 
-/* Desktop: Explicitly center modals */
-@media (min-width: 769px) {
-  .modal {
-    align-items: center;
-    justify-content: center;
-  }
+.modal[style*="display: block"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Mobile: Position modals at top */
 @media (max-width: 768px) {
   .modal {
-    align-items: flex-start;
-    justify-content: center;
+    align-items: flex-start !important;
+    justify-content: center !important;
     padding-top: 60px; /* Account for header */
   }
 }
@@ -1021,6 +1043,33 @@
 
 @media (prefers-color-scheme: dark) {
   .modal-close:hover {
+    background: var(--pm-hover-dark);
+  }
+}
+
+/* Make .close spans behave like .modal-close buttons */
+.close {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.close:hover {
+  background: var(--pm-hover-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  .close:hover {
     background: var(--pm-hover-dark);
   }
 }
@@ -1112,7 +1161,124 @@
   border-top: 1px solid var(--pm-border-light);
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 10px;
+}
+
+.modal-footer button {
+  flex: none;
+  white-space: nowrap;
+  min-width: auto;
+  width: auto;
+}
+
+/* Force consistent button sizing in modals */
+.modal-footer .btn-secondary,
+.modal .btn-secondary,
+#cancel-add-tracks-btn,
+#cancel-create-playlist-btn,
+#cancel-rename-btn,
+#cancel-delete-playlist-btn {
+  padding: 7px 11px !important;
+  border: 1px solid var(--pm-border-light) !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  margin: 0 !important;
+}
+
+/* Force consistent primary button colors in modals */
+.modal-footer .btn-primary,
+.modal .btn-primary,
+#add-selected-tracks-btn,
+#confirm-create-playlist-btn,
+#confirm-rename-btn {
+  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
+  color: white !important;
+  opacity: 1 !important;
+  padding: 8px 12px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  margin: 0 !important;
+}
+
+/* Specifically target add-selected-tracks when enabled */
+#add-selected-tracks-btn:not(:disabled) {
+  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Force ALL buttons to have consistent height and alignment (except menu buttons) */
+button:not(.track-menu button):not(.playlist-menu button),
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-filter,
+#add-tracks-btn,
+#delete-playlist-btn,
+#toggle-explicit-btn {
+  box-sizing: border-box !important;
+  height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+/* Save Order button - display controlled by JavaScript based on hasUnsavedChanges */
+#save-order-btn {
+  box-sizing: border-box !important;
+  height: 36px !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  width: auto !important;
+  min-width: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
+}
+
+/* Show Save Order button only when it has the 'show' class */
+#save-order-btn.show {
+  display: inline-flex !important;
+}
+
+/* Fix specific button widths for main playlist actions */
+#add-tracks-btn {
+  width: auto !important;
+  min-width: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1125,11 +1291,17 @@
   background: var(--pm-card-light);
   border: 1px solid var(--pm-border-light);
   color: var(--text-color);
-  padding: 10px 20px;
+  padding: 7px 11px;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  justify-content: center;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1185,9 +1357,7 @@
     gap: 10px;
   }
   
-  .sidebar-toggle {
-    display: block;
-  }
+  /* .sidebar-toggle display:block removed to avoid desktop override */
   
   .pm-sidebar {
     position: fixed;
@@ -1428,9 +1598,12 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 6px;
 }
 
@@ -1446,16 +1619,19 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
-  color: white;
+  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
+  color: white !important;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 6px;
 }
 
@@ -1470,11 +1646,13 @@
   transform: none;
 }
 
-.track-menu .menu-delete {
+.track-menu .menu-delete,
+.playlist-menu .menu-delete {
   color: #ff4444;
 }
 
-.track-menu .menu-delete:hover {
+.track-menu .menu-delete:hover,
+.playlist-menu .menu-delete:hover {
   background: rgba(255, 68, 68, 0.1);
   color: #ff4444;
 }

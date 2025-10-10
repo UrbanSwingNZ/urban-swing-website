@@ -338,6 +338,17 @@ class SpotifyAPI {
   }
 
   // ========================================
+  // Playlist Management
+  // ========================================
+
+  async changePlaylistDetails(playlistId, details) {
+    return await this.makeRequest(`/playlists/${playlistId}`, {
+      method: 'PUT',
+      body: JSON.stringify(details)
+    });
+  }
+
+  // ========================================
   // Playlist Deletion
   // ========================================
 

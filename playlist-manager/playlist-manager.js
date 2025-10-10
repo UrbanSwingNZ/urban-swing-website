@@ -11,6 +11,18 @@ let pendingAction = null;
 let hasUnsavedChanges = false;
 let pendingPlaylistSelection = null;
 
+function updateSaveOrderButton() {
+  const btn = document.getElementById('save-order-btn');
+  if (!btn) return;
+  const shouldShow = hasUnsavedChanges;
+  if (shouldShow) {
+    btn.classList.add('show');
+  } else {
+    btn.classList.remove('show');
+  }
+  console.log('Save Order button:', shouldShow ? 'shown' : 'hidden', '(hasUnsavedChanges:', hasUnsavedChanges, ')');
+}
+
 // Wait for page to load
 window.addEventListener('load', async () => {
   console.log('Playlist manager page loaded');
@@ -27,6 +39,9 @@ window.addEventListener('load', async () => {
 
 async function initializeApp() {
   setupEventListeners();
+  
+  // Initialize button states to prevent both from showing
+  initializeButtonStates();
   
   // Check if we have an authorization code in the URL (authorization code flow)
   const authCode = getAuthCodeFromUrl();
@@ -53,6 +68,31 @@ async function initializeApp() {
     await showAuthenticatedState();
   } else {
     showConnectPrompt();
+  }
+}
+
+function initializeButtonStates() {
+  // Ensure only one Spotify button is visible at a time
+  // Default to Connect state, auth logic will override if needed
+  const connectBtn = document.getElementById('spotify-connect-btn');
+  const disconnectBtn = document.getElementById('spotify-disconnect-btn');
+  
+  if (connectBtn && disconnectBtn) {
+    // Always start with Connect visible, Disconnect hidden
+    // The auth logic will switch these if user is authenticated
+    connectBtn.style.setProperty('display', 'flex', 'important');
+    disconnectBtn.style.setProperty('display', 'none', 'important');
+  }
+  
+  // Ensure Save Order button starts hidden
+  updateSaveOrderButton();
+  
+  // Debug: Check hamburger menu
+  const hamburger = document.getElementById('sidebar-toggle');
+  if (hamburger) {
+    const computedStyle = window.getComputedStyle(hamburger);
+    console.log('Hamburger menu computed display:', computedStyle.display);
+    console.log('Window width:', window.innerWidth);
   }
 }
 
@@ -95,6 +135,11 @@ function setupEventListeners() {
   document.getElementById('cancel-delete-playlist-btn')?.addEventListener('click', closeDeletePlaylistModal);
   document.getElementById('confirm-delete-playlist-btn')?.addEventListener('click', confirmDeletePlaylist);
   
+  // Rename playlist modal
+  document.getElementById('close-rename-modal')?.addEventListener('click', closeRenamePlaylistModal);
+  document.getElementById('cancel-rename-btn')?.addEventListener('click', closeRenamePlaylistModal);
+  document.getElementById('confirm-rename-btn')?.addEventListener('click', handleRenamePlaylist);
+  
   // Track actions
   document.getElementById('track-search')?.addEventListener('input', handleTrackSearch);
   document.getElementById('toggle-explicit-btn')?.addEventListener('click', handleToggleExplicit);
@@ -115,6 +160,12 @@ function setupEventListeners() {
   document.getElementById('create-playlist-modal')?.addEventListener('click', (e) => {
     if (e.target.id === 'create-playlist-modal') {
       closeCreatePlaylistModal();
+    }
+  });
+  
+  document.getElementById('rename-playlist-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'rename-playlist-modal') {
+      closeRenamePlaylistModal();
     }
   });
   
@@ -221,17 +272,29 @@ async function handleSpotifyDisconnect() {
 }
 
 function showConnectPrompt() {
+  console.log('Showing connect prompt');
   document.getElementById('connect-prompt').style.display = 'flex';
   document.getElementById('main-content').style.display = 'none';
-  document.getElementById('spotify-connect-btn').style.display = 'flex';
-  document.getElementById('spotify-disconnect-btn').style.display = 'none';
+  
+  // Force button states for connect screen
+  const connectBtn = document.getElementById('spotify-connect-btn');
+  const disconnectBtn = document.getElementById('spotify-disconnect-btn');
+  
+  if (connectBtn) connectBtn.style.setProperty('display', 'flex', 'important');
+  if (disconnectBtn) disconnectBtn.style.setProperty('display', 'none', 'important');
 }
 
 async function showAuthenticatedState() {
+  console.log('Showing authenticated state');
   document.getElementById('connect-prompt').style.display = 'none';
   document.getElementById('main-content').style.display = 'flex';
-  document.getElementById('spotify-connect-btn').style.display = 'none';
-  document.getElementById('spotify-disconnect-btn').style.display = 'flex';
+  
+  // Force button states for authenticated screen
+  const connectBtn = document.getElementById('spotify-connect-btn');
+  const disconnectBtn = document.getElementById('spotify-disconnect-btn');
+  
+  if (connectBtn) connectBtn.style.setProperty('display', 'none', 'important');
+  if (disconnectBtn) disconnectBtn.style.setProperty('display', 'flex', 'important');
   
   // Load user info and playlists
   await loadUserInfo();
@@ -376,9 +439,7 @@ async function performPlaylistSelection(playlist) {
   
   currentPlaylistId = playlist.id;
   hasUnsavedChanges = false;
-  
-  // Hide save order button
-  document.getElementById('save-order-btn').style.display = 'none';
+  updateSaveOrderButton();
   
   // Update active state
   document.querySelectorAll('.playlists-list li').forEach(li => {
@@ -613,9 +674,7 @@ function handleDragEnd(evt) {
   
   // Mark as having unsaved changes
   hasUnsavedChanges = true;
-  
-  // Show save button
-  document.getElementById('save-order-btn').style.display = 'inline-flex';
+  updateSaveOrderButton();
   
   // Update track numbers
   updateTrackNumbers();
@@ -673,10 +732,8 @@ async function handleSaveOrder() {
     showSnackbar('Track order saved successfully!', 'success');
     
     // Clear unsaved changes flag
-    hasUnsavedChanges = false;
-    
-    // Hide save button
-    document.getElementById('save-order-btn').style.display = 'none';
+  hasUnsavedChanges = false;
+  updateSaveOrderButton();
     
   } catch (error) {
     console.error('Error saving order:', error);
@@ -705,7 +762,7 @@ function showTrackMenu(button, track) {
       <i class="fas fa-arrow-right"></i> Move to Playlist
     </button>
     <button data-action="delete" class="menu-delete">
-      <i class="fas fa-trash"></i> Remove from Playlist
+      <i class="fas fa-trash"></i> Delete
     </button>
   `;
   
@@ -1162,9 +1219,7 @@ async function handleSaveAndContinue() {
 function handleDiscardChanges() {
   // Reset changes flag
   hasUnsavedChanges = false;
-  
-  // Hide save order button
-  document.getElementById('save-order-btn').style.display = 'none';
+  updateSaveOrderButton();
   
   // Close modal
   document.getElementById('unsaved-changes-modal').style.display = 'none';
@@ -1290,6 +1345,87 @@ async function confirmDeletePlaylist() {
   } finally {
     deleteBtn.innerHTML = originalText;
     deleteBtn.disabled = false;
+  }
+}
+
+// ========================================
+// RENAME PLAYLIST
+// ========================================
+
+let renamePlaylistTarget = null;
+
+function openRenamePlaylistModal(playlist) {
+  renamePlaylistTarget = playlist;
+  
+  const modal = document.getElementById('rename-playlist-modal');
+  const input = document.getElementById('rename-playlist-input');
+  
+  // Pre-fill with current name
+  input.value = playlist.name;
+  
+  // Show modal
+  modal.style.display = 'block';
+  
+  // Focus and select text
+  setTimeout(() => {
+    input.focus();
+    input.select();
+  }, 100);
+}
+
+function closeRenamePlaylistModal() {
+  document.getElementById('rename-playlist-modal').style.display = 'none';
+  renamePlaylistTarget = null;
+}
+
+async function handleRenamePlaylist() {
+  if (!renamePlaylistTarget) return;
+  
+  const input = document.getElementById('rename-playlist-input');
+  const newName = input.value.trim();
+  
+  if (!newName) {
+    showError('Please enter a playlist name');
+    input.focus();
+    return;
+  }
+  
+  if (newName === renamePlaylistTarget.name) {
+    closeRenamePlaylistModal();
+    return;
+  }
+  
+  const confirmBtn = document.getElementById('confirm-rename-btn');
+  const originalText = confirmBtn.innerHTML;
+  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Renaming...';
+  confirmBtn.disabled = true;
+  
+  try {
+    await spotifyAPI.changePlaylistDetails(renamePlaylistTarget.id, {
+      name: newName
+    });
+    
+    // Close modal
+    closeRenamePlaylistModal();
+    
+    // Show success message
+    showSnackbar(`Playlist renamed to "${newName}"`, 'success');
+    
+    // Reload playlists to show updated name
+    await loadPlaylists();
+    
+    // If this is the currently selected playlist, update the display
+    if (currentPlaylist && currentPlaylist.id === renamePlaylistTarget.id) {
+      currentPlaylist.name = newName;
+      document.getElementById('playlist-name').textContent = newName;
+    }
+    
+  } catch (error) {
+    console.error('Error renaming playlist:', error);
+    showError('Failed to rename playlist: ' + error.message);
+  } finally {
+    confirmBtn.innerHTML = originalText;
+    confirmBtn.disabled = false;
   }
 }
 
