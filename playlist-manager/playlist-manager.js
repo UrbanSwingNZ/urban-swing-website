@@ -11,6 +11,18 @@ let pendingAction = null;
 let hasUnsavedChanges = false;
 let pendingPlaylistSelection = null;
 
+function updateSaveOrderButton() {
+  const btn = document.getElementById('save-order-btn');
+  if (!btn) return;
+  const shouldShow = hasUnsavedChanges;
+  if (shouldShow) {
+    btn.classList.add('show');
+  } else {
+    btn.classList.remove('show');
+  }
+  console.log('Save Order button:', shouldShow ? 'shown' : 'hidden', '(hasUnsavedChanges:', hasUnsavedChanges, ')');
+}
+
 // Wait for page to load
 window.addEventListener('load', async () => {
   console.log('Playlist manager page loaded');
@@ -70,6 +82,17 @@ function initializeButtonStates() {
     // The auth logic will switch these if user is authenticated
     connectBtn.style.setProperty('display', 'flex', 'important');
     disconnectBtn.style.setProperty('display', 'none', 'important');
+  }
+  
+  // Ensure Save Order button starts hidden
+  updateSaveOrderButton();
+  
+  // Debug: Check hamburger menu
+  const hamburger = document.getElementById('sidebar-toggle');
+  if (hamburger) {
+    const computedStyle = window.getComputedStyle(hamburger);
+    console.log('Hamburger menu computed display:', computedStyle.display);
+    console.log('Window width:', window.innerWidth);
   }
 }
 
@@ -416,9 +439,7 @@ async function performPlaylistSelection(playlist) {
   
   currentPlaylistId = playlist.id;
   hasUnsavedChanges = false;
-  
-  // Hide save order button
-  document.getElementById('save-order-btn').style.display = 'none';
+  updateSaveOrderButton();
   
   // Update active state
   document.querySelectorAll('.playlists-list li').forEach(li => {
@@ -653,9 +674,7 @@ function handleDragEnd(evt) {
   
   // Mark as having unsaved changes
   hasUnsavedChanges = true;
-  
-  // Show save button
-  document.getElementById('save-order-btn').style.display = 'inline-flex';
+  updateSaveOrderButton();
   
   // Update track numbers
   updateTrackNumbers();
@@ -713,10 +732,8 @@ async function handleSaveOrder() {
     showSnackbar('Track order saved successfully!', 'success');
     
     // Clear unsaved changes flag
-    hasUnsavedChanges = false;
-    
-    // Hide save button
-    document.getElementById('save-order-btn').style.display = 'none';
+  hasUnsavedChanges = false;
+  updateSaveOrderButton();
     
   } catch (error) {
     console.error('Error saving order:', error);
@@ -1202,9 +1219,7 @@ async function handleSaveAndContinue() {
 function handleDiscardChanges() {
   // Reset changes flag
   hasUnsavedChanges = false;
-  
-  // Hide save order button
-  document.getElementById('save-order-btn').style.display = 'none';
+  updateSaveOrderButton();
   
   // Close modal
   document.getElementById('unsaved-changes-modal').style.display = 'none';

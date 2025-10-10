@@ -1,7 +1,7 @@
 /* ========================================
    PLAYLIST MANAGER STYLES
    Urban Swing color scheme with modern UI
-   Updated: Button sizing fixes
+   Updated: Button visibility fixes - v2.2
    ======================================== */
 
 /* Import parent styles if needed */
@@ -85,7 +85,10 @@
   width: auto;
 }
 
-.sidebar-toggle {
+/* Hamburger menu - hidden by default on desktop */
+.pm-header-content .sidebar-toggle,
+#sidebar-toggle,
+button.sidebar-toggle {
   display: none !important;
   background: none;
   border: none;
@@ -97,15 +100,17 @@
   transition: background-color 0.2s;
 }
 
-/* Explicitly hide on desktop */
-@media (min-width: 769px) {
-  .sidebar-toggle {
-    display: none !important;
-  }
-}
-
 .sidebar-toggle:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Show hamburger menu only on mobile */
+@media (max-width: 768px) {
+  .pm-header-content .sidebar-toggle,
+  #sidebar-toggle,
+  button.sidebar-toggle {
+    display: block !important;
+  }
 }
 
 .pm-header h1 {
@@ -1229,7 +1234,6 @@ button:not(.track-menu button):not(.playlist-menu button),
 .btn-danger,
 .btn-filter,
 #add-tracks-btn,
-#save-order-btn,
 #delete-playlist-btn,
 #toggle-explicit-btn {
   box-sizing: border-box !important;
@@ -1245,9 +1249,32 @@ button:not(.track-menu button):not(.playlist-menu button),
   font-weight: 600 !important;
 }
 
-/* Fix specific button widths for main playlist actions */
-#add-tracks-btn,
+/* Save Order button - display controlled by JavaScript based on hasUnsavedChanges */
 #save-order-btn {
+  box-sizing: border-box !important;
+  height: 36px !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  width: auto !important;
+  min-width: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
+}
+
+/* Show Save Order button only when it has the 'show' class */
+#save-order-btn.show {
+  display: inline-flex !important;
+}
+
+/* Fix specific button widths for main playlist actions */
+#add-tracks-btn {
   width: auto !important;
   min-width: auto !important;
   flex: none !important;
@@ -1330,9 +1357,7 @@ button:not(.track-menu button):not(.playlist-menu button),
     gap: 10px;
   }
   
-  .sidebar-toggle {
-    display: block;
-  }
+  /* .sidebar-toggle display:block removed to avoid desktop override */
   
   .pm-sidebar {
     position: fixed;
