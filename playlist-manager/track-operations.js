@@ -12,8 +12,6 @@ export async function loadTracks(playlistId) {
   showLoading(true);
   
   try {
-    console.log('Loading tracks for playlist:', playlistId);
-    
     // Get all tracks
     const trackItems = await spotifyAPI.getAllPlaylistTracks(playlistId);
     
@@ -27,11 +25,27 @@ export async function loadTracks(playlistId) {
     if (trackIds.length > 0) {
       try {
         audioFeatures = await spotifyAPI.getAudioFeatures(trackIds);
-        console.log('Audio features loaded successfully');
+        
+        // Count how many tracks have BPM data
+        const tracksWithBPM = audioFeatures.filter(f => f && f.tempo).length;
+        if (tracksWithBPM === 0) {
+          // Only show error if it's the 403 Extended Quota issue
+          console.error('⚠️ BPM data unavailable - Spotify Audio Features API requires Extended Quota Mode.');
+          console.error('📖 See AUDIO_FEATURES_ACCESS.md for details on requesting access from Spotify.');
+          showError('BPM data unavailable: Spotify API requires Extended Quota Mode approval.');
+        }
       } catch (audioError) {
-        console.warn('Could not load audio features (BPM data will not be available):', audioError);
+        // Check if it's a 403 error (API access restriction)
+        if (audioError.message && audioError.message.includes('403')) {
+          console.error('⚠️ BPM data unavailable - Spotify Audio Features API requires Extended Quota Mode.');
+          console.error('📖 See AUDIO_FEATURES_ACCESS.md for details on requesting access from Spotify.');
+          showError('BPM data unavailable: Spotify API requires Extended Quota Mode approval.');
+        } else {
+          showError('BPM data temporarily unavailable.');
+        }
+        
         // Create empty array with same length as tracks
-        audioFeatures = new Array(trackIds.length).fill({});
+        audioFeatures = new Array(trackIds.length).fill(null);
       }
     }
     
@@ -261,7 +275,6 @@ export function updateSaveOrderButton() {
   } else {
     btn.classList.remove('show');
   }
-  console.log('Save Order button:', shouldShow ? 'shown' : 'hidden', '(hasUnsavedChanges:', State.getHasUnsavedChanges(), ')');
 }
 
 export async function handleSaveOrder() {
