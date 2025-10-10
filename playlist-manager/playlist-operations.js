@@ -120,15 +120,11 @@ export async function selectPlaylist(playlist) {
 }
 
 export async function performPlaylistSelection(playlist) {
-  console.log('Selecting playlist:', playlist);
-  
   // Get fresh playlist info from Spotify API to ensure we have latest data
   try {
     const freshPlaylist = await spotifyAPI.getPlaylist(playlist.id);
-    console.log('Fresh playlist data:', freshPlaylist);
     State.setCurrentPlaylist(freshPlaylist);
   } catch (error) {
-    console.warn('Could not get fresh playlist data, using cached:', error);
     State.setCurrentPlaylist(playlist);
   }
   

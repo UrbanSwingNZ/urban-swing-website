@@ -328,8 +328,10 @@
 
     <!-- Scripts -->
     <script src="../firebase-config.js"></script>
-    <script src="spotify-config.js"></script>
+    <script type="module" src="spotify-config.js"></script>
     <script src="spotify-api.js"></script>
+    
+    <!-- Note: spotify-config.js is loaded as module AND exposes globals for spotify-api.js -->
     
     <!-- Modular Playlist Manager Scripts -->
     <script type="module" src="playlist-state.js"></script>

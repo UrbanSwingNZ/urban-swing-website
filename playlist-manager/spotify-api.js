@@ -36,7 +36,10 @@ class SpotifyAPI {
       const expiry = localStorage.getItem('spotify_token_expiry');
       this.tokenExpiry = expiry ? parseInt(expiry) : null;
       
-      return !!(this.accessToken && this.tokenExpiry);
+      // Check if tokens are actually valid (not empty strings)
+      const hasValidToken = !!(this.accessToken && this.accessToken !== '' && this.tokenExpiry);
+      
+      return hasValidToken;
     } catch (error) {
       console.error('Error loading tokens from storage:', error);
       return false;
@@ -72,7 +75,6 @@ class SpotifyAPI {
     }
 
     const url = endpoint.startsWith('http') ? endpoint : `${spotifyConfig.apiEndpoint}${endpoint}`;
-    
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -92,15 +94,25 @@ class SpotifyAPI {
     }
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      console.error('Spotify API Error:', {
-        status: response.status,
-        endpoint: endpoint,
-        error: error
-      });
+      // Try to get the response body as text first
+      const responseText = await response.text();
+      
+      let error = {};
+      try {
+        error = JSON.parse(responseText);
+      } catch (e) {
+        error = { message: 'Non-JSON response from Spotify', raw: responseText.substring(0, 500) };
+      }
       
       if (response.status === 403) {
-        throw new Error(`Access denied. This might be a private playlist you don't own, or you need additional permissions.`);
+        const errorMsg = error.error?.message || 'Access denied';
+        
+        // Provide more specific error message for audio-features endpoint
+        if (endpoint.includes('audio-features')) {
+          throw new Error(`Access denied (403): ${errorMsg}. The Audio Features API requires Extended Quota Mode approval from Spotify. See AUDIO_FEATURES_ACCESS.md for details.`);
+        }
+        
+        throw new Error(`Access denied (403): ${errorMsg}. This might be a private playlist you don't own, or you may need additional API permissions.`);
       }
       
       throw new Error(error.error?.message || error.message || `Spotify API error: ${response.status}`);
@@ -168,20 +180,13 @@ class SpotifyAPI {
   async getPlaylistTracks(playlistId, limit = 100, offset = 0) {
     // Try the alternative approach first - get playlist with embedded tracks
     try {
-      console.log(`Trying alternative approach for playlist ${playlistId}`);
       const playlist = await this.makeRequest(`/playlists/${playlistId}?fields=tracks(items(track(id,name,artists,duration_ms,uri,album(images),explicit)),next,total)&limit=${limit}&offset=${offset}`);
-      console.log('Alternative approach successful');
       return playlist.tracks;
     } catch (alternativeError) {
-      console.log('Alternative approach failed, trying direct tracks endpoint...');
-      
       // Fallback to direct tracks endpoint
       try {
         return await this.makeRequest(`/playlists/${playlistId}/tracks?limit=${limit}&offset=${offset}`);
       } catch (directError) {
-        console.error('Both approaches failed');
-        console.error('Alternative error:', alternativeError);
-        console.error('Direct error:', directError);
         throw directError;
       }
     }
@@ -194,9 +199,7 @@ class SpotifyAPI {
 
     try {
       while (true) {
-        console.log(`Fetching tracks: offset=${offset}, limit=${limit}`);
         const response = await this.getPlaylistTracks(playlistId, limit, offset);
-        console.log('Track response:', response);
         
         allTracks.push(...response.items);
         
@@ -204,24 +207,10 @@ class SpotifyAPI {
         offset += limit;
       }
       
-      console.log('Total tracks fetched:', allTracks.length);
       return allTracks;
     } catch (error) {
-      console.error('Error in getAllPlaylistTracks:', error);
-      
-      // If it's a 403 error, log the full error details
+      // If it's a 403 error, provide a clearer message
       if (error.message && error.message.includes('403')) {
-        console.error('Full 403 error details:', error);
-        console.log('Playlist ID causing error:', playlistId);
-        
-        // Log the current user to see if there's an ownership issue
-        try {
-          const user = await this.getCurrentUser();
-          console.log('Current user:', user.id);
-        } catch (userError) {
-          console.error('Could not get current user:', userError);
-        }
-        
         throw new Error(`Access denied (403) when trying to read tracks from playlist ${playlistId}. This might be a Spotify API permissions issue.`);
       }
       
@@ -234,33 +223,53 @@ class SpotifyAPI {
   // ========================================
 
   async getAudioFeatures(trackIds) {
-    console.log('getAudioFeatures called with:', trackIds);
+    // Filter out any invalid track IDs
+    const validTrackIds = trackIds.filter(id => id && typeof id === 'string' && id.trim().length > 0);
     
-    // Spotify allows up to 100 track IDs per request
-    if (trackIds.length > 100) {
-      const chunks = [];
-      for (let i = 0; i < trackIds.length; i += 100) {
-        chunks.push(trackIds.slice(i, i + 100));
-      }
-      
-      const results = await Promise.all(
-        chunks.map(chunk => this.getAudioFeatures(chunk))
-      );
-      
-      return results.flat();
+    if (validTrackIds.length === 0) {
+      return [];
     }
-
-    const ids = trackIds.join(',');
-    console.log('Making audio-features request with IDs:', ids);
     
+    // First, try the batch endpoint (even though it's supposedly deprecated, it might work)
     try {
-      const response = await this.makeRequest(`/audio-features?ids=${ids}`);
-      console.log('Audio features response:', response);
-      return response.audio_features;
+      const idsParam = validTrackIds.join(',');
+      const response = await this.makeRequest(`/audio-features?ids=${idsParam}`);
+      
+      if (response && response.audio_features) {
+        return response.audio_features;
+      }
     } catch (error) {
-      console.error('Audio features request failed:', error);
-      throw error;
+      // Batch endpoint failed, fall back to individual requests silently
     }
+    
+    // Fallback: Call each track individually
+    // To avoid rate limiting, we'll process them in smaller concurrent batches
+    const results = [];
+    const batchSize = 20; // Process 20 at a time
+    
+    for (let i = 0; i < validTrackIds.length; i += batchSize) {
+      const batch = validTrackIds.slice(i, i + batchSize);
+      
+      // Fetch all tracks in this batch concurrently
+      const batchPromises = batch.map(async (trackId) => {
+        try {
+          const response = await this.makeRequest(`/audio-features/${trackId}`);
+          return response;
+        } catch (error) {
+          return null;
+        }
+      });
+      
+      const batchResults = await Promise.all(batchPromises);
+      results.push(...batchResults);
+      
+      // Small delay between batches to avoid rate limiting
+      if (i + batchSize < validTrackIds.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+    
+    return results;
   }
 
   // ========================================
