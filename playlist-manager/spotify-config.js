@@ -4,9 +4,10 @@
 
 const spotifyConfig = {
   clientId: '6c90506e3e9340ddbe364a4bc6476086',
-  redirectUri: window.location.href.split('?')[0].split('#')[0], // Current page URL without params
+  // Use 127.0.0.1:5500 for local development (matches Spotify dashboard setting)
+  redirectUri: 'http://127.0.0.1:5500/playlist-manager/index.html',
   
-  // Required scopes for playlist management
+  // Required scopes for playlist management and audio features
   scopes: [
     'playlist-read-private',
     'playlist-read-collaborative', 
@@ -15,7 +16,10 @@ const spotifyConfig = {
     'user-library-read',
     'user-library-modify',
     'user-read-private',
-    'user-read-email'
+    'user-read-email',
+    'user-read-playback-state',
+    'user-read-recently-played',
+    'user-top-read'
   ].join(' '),
   
   // Spotify API endpoints
@@ -79,7 +83,11 @@ function generateRandomString(length) {
   return values.reduce((acc, x) => acc + possible[x % possible.length], '');
 }
 
-// Export for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { spotifyConfig, getSpotifyAuthUrl, getAuthCodeFromUrl, generateRandomString };
-}
+// Make available globally for both module and non-module scripts
+window.spotifyConfig = spotifyConfig;
+window.getSpotifyAuthUrl = getSpotifyAuthUrl;
+window.getAuthCodeFromUrl = getAuthCodeFromUrl;
+window.generateRandomString = generateRandomString;
+
+// Also export as ES6 module for module scripts
+export { spotifyConfig, getSpotifyAuthUrl, getAuthCodeFromUrl, generateRandomString };
