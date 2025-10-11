@@ -88,13 +88,14 @@ export function displayPlaylists(playlists) {
       if (e.target.closest('.playlist-menu-btn') || e.target.closest('.playlist-drag-handle')) {
         return;
       }
-      e.preventDefault();
+      
+      console.log('Playlist clicked:', playlist.name);
       e.stopPropagation();
       selectPlaylist(playlist);
     };
     
-    li.addEventListener('click', handlePlaylistClick);
-    li.addEventListener('touchend', handlePlaylistClick);
+    // Use click event for both desktop and mobile
+    li.addEventListener('click', handlePlaylistClick, { passive: false });
     
     // Add menu button handler
     const menuBtn = li.querySelector('.playlist-menu-btn');
@@ -128,6 +129,7 @@ function initializePlaylistDragDrop() {
     delay: 100,
     delayOnTouchOnly: true,
     preventOnFilter: false,
+    touchStartThreshold: 5,
     onStart: function(evt) {
       // Prevent text selection during drag
       document.body.style.userSelect = 'none';
@@ -166,22 +168,30 @@ export function handlePlaylistSearch(e) {
 // ========================================
 
 export async function selectPlaylist(playlist) {
+  console.log('selectPlaylist called for:', playlist.name);
+  
   // Check for unsaved changes
   if (State.getHasUnsavedChanges()) {
+    console.log('Has unsaved changes, showing modal');
     State.setPendingPlaylistSelection(playlist);
     document.getElementById('unsaved-changes-modal').style.display = 'block';
     return;
   }
   
+  console.log('Performing playlist selection');
   await performPlaylistSelection(playlist);
 }
 
 export async function performPlaylistSelection(playlist) {
+  console.log('performPlaylistSelection started for:', playlist.name);
+  
   // Get fresh playlist info from Spotify API to ensure we have latest data
   try {
     const freshPlaylist = await spotifyAPI.getPlaylist(playlist.id);
     State.setCurrentPlaylist(freshPlaylist);
+    console.log('Got fresh playlist data');
   } catch (error) {
+    console.log('Error getting fresh playlist, using cached:', error);
     State.setCurrentPlaylist(playlist);
   }
   
@@ -199,10 +209,21 @@ export async function performPlaylistSelection(playlist) {
       li.classList.add('active');
     }
   });
+  console.log('Updated active state');
   
   // Show playlist view
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('playlist-view').style.display = 'flex';
+  console.log('Showing playlist view');
+  
+  // Close sidebar on mobile after selection
+  if (window.innerWidth <= 768) {
+    console.log('Closing sidebar on mobile');
+    const sidebar = document.querySelector('.pm-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar?.classList.remove('open');
+    overlay?.classList.remove('show');
+  }
   
   // Update playlist header
   const imageUrl = playlist.images && playlist.images.length > 0 

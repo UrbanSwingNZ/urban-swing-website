@@ -61,7 +61,6 @@ async function initializeApp() {
 
 function setupEventListeners() {
   // Connect Spotify buttons
-  document.getElementById('spotify-connect-btn')?.addEventListener('click', Auth.handleSpotifyConnect);
   document.getElementById('connect-spotify-prompt-btn')?.addEventListener('click', Auth.handleSpotifyConnect);
   document.getElementById('spotify-disconnect-btn')?.addEventListener('click', Auth.handleSpotifyDisconnect);
   

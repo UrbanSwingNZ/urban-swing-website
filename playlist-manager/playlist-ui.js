@@ -52,11 +52,8 @@ export function showConnectPrompt() {
   document.getElementById('connect-prompt').style.display = 'flex';
   document.getElementById('main-content').style.display = 'none';
   
-  // Force button states for connect screen
-  const connectBtn = document.getElementById('spotify-connect-btn');
+  // Hide disconnect button when not connected
   const disconnectBtn = document.getElementById('spotify-disconnect-btn');
-  
-  if (connectBtn) connectBtn.style.setProperty('display', 'flex', 'important');
   if (disconnectBtn) disconnectBtn.style.setProperty('display', 'none', 'important');
 }
 
@@ -65,11 +62,8 @@ export async function showAuthenticatedState() {
   document.getElementById('connect-prompt').style.display = 'none';
   document.getElementById('main-content').style.display = 'flex';
   
-  // Force button states for authenticated screen
-  const connectBtn = document.getElementById('spotify-connect-btn');
+  // Show disconnect button when authenticated
   const disconnectBtn = document.getElementById('spotify-disconnect-btn');
-  
-  if (connectBtn) connectBtn.style.setProperty('display', 'none', 'important');
   if (disconnectBtn) disconnectBtn.style.setProperty('display', 'flex', 'important');
   
   // Initialize Spotify Web Playback SDK
@@ -102,7 +96,7 @@ export function toggleSidebar() {
   const overlay = document.getElementById('sidebar-overlay');
   
   sidebar.classList.toggle('open');
-  overlay.classList.toggle('active');
+  overlay.classList.toggle('show');
 }
 
 export function closeSidebar() {
@@ -110,5 +104,5 @@ export function closeSidebar() {
   const overlay = document.getElementById('sidebar-overlay');
   
   sidebar.classList.remove('open');
-  overlay.classList.remove('active');
+  overlay.classList.remove('show');
 }
