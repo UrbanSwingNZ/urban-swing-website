@@ -1,0 +1,154 @@
+/* ========================================
+   TOOLBAR STYLES
+   Tracks toolbar with search and actions
+   ======================================== */
+
+.tracks-toolbar {
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--pm-border-light);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  .tracks-toolbar {
+    padding: 10px 15px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .tracks-toolbar {
+    border-bottom-color: var(--pm-border-dark);
+  }
+}
+
+.tracks-toolbar .search-box {
+  flex: 1 1 300px;
+  max-width: 400px;
+  min-width: 200px;
+  padding: 0;
+  border: 1px solid var(--pm-border-light);
+  border-radius: 20px;
+  padding: 8px 15px;
+  background: var(--pm-card-light);
+}
+
+@media (max-width: 768px) {
+  .tracks-toolbar .search-box {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .tracks-toolbar .search-box {
+    border-color: var(--pm-border-dark);
+    background: var(--pm-card-dark);
+  }
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .toolbar-buttons {
+    gap: 8px;
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .toolbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Button alignment in toolbars */
+.playlist-actions button,
+.toolbar-actions button {
+  vertical-align: middle !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Global button overrides */
+button:not(.track-menu button):not(.playlist-menu button),
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-filter,
+#add-tracks-btn,
+#delete-playlist-btn {
+  box-sizing: border-box !important;
+  height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+/* Save Order button */
+#save-order-btn {
+  box-sizing: border-box !important;
+  height: 36px !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  width: auto !important;
+  min-width: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
+}
+
+#save-order-btn.show {
+  display: inline-flex !important;
+}
+
+#add-tracks-btn {
+  width: auto !important;
+  min-width: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-filter,
+  #add-tracks-btn,
+  #delete-playlist-btn {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+    height: 32px !important;
+  }
+}

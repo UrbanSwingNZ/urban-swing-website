@@ -1,0 +1,122 @@
+/* ========================================
+   UTILITY STYLES
+   Snackbar, animations, and helpers
+   ======================================== */
+
+/* Snackbar Notifications */
+.snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px 24px;
+  position: fixed;
+  z-index: 10000;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.snackbar.show {
+  visibility: visible;
+  animation: snackbarFadeIn 0.3s ease;
+}
+
+.snackbar.success {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+.snackbar.error {
+  background: linear-gradient(135deg, #f44336, #da190b);
+}
+
+.snackbar.warning {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+@media (prefers-color-scheme: dark) {
+  .snackbar {
+    background-color: #444;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes snackbarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes snackbarFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Delete Button Styles */
+.track-delete-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  margin-right: 4px;
+}
+
+.track-delete-btn:hover {
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+}
+
+.track-menu .menu-delete,
+.playlist-menu .menu-delete {
+  color: #ff4444;
+}
+
+.track-menu .menu-delete:hover,
+.playlist-menu .menu-delete:hover {
+  background: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+}

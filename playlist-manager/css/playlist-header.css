@@ -1,0 +1,136 @@
+/* ========================================
+   PLAYLIST HEADER STYLES
+   Playlist tile, name, metadata, and actions
+   ======================================== */
+
+.playlist-header {
+  padding: 30px;
+  background: linear-gradient(180deg, rgba(154, 22, 245, 0.1) 0%, transparent 100%);
+  border-bottom: 1px solid var(--pm-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.playlist-header-flex {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.playlist-header-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.playlist-cover {
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: var(--gradient-purple);
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.playlist-header-info h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--pm-blue), var(--pm-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.playlist-meta {
+  font-size: 0.9rem;
+  color: #999;
+  margin-bottom: 0.5em;
+}
+
+.playlist-description {
+  color: #888;
+  margin-bottom: 0;
+}
+
+.playlist-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.playlist-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  flex-wrap: wrap;
+}
+
+.playlist-actions button,
+.toolbar-actions button {
+  vertical-align: middle !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Mobile Playlist Header */
+@media (max-width: 768px) {
+  .playlist-header {
+    padding: 15px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .playlist-header-flex {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .playlist-cover {
+    width: 80px;
+    height: 80px;
+    padding: 4px;
+  }
+  
+  .playlist-header-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .playlist-header-info h2 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+  }
+  
+  .playlist-meta {
+    font-size: 0.85rem;
+  }
+  
+  .playlist-description {
+    display: none;
+  }
+  
+  .playlist-actions-row {
+    width: 100%;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: flex-start;
+  }
+  
+  .playlist-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .playlist-header {
+    border-bottom-color: var(--pm-border-dark);
+  }
+}
