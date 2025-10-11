@@ -121,16 +121,26 @@ function initializePlaylistDragDrop() {
   window.playlistSortable = new Sortable(listEl, {
     handle: '.playlist-drag-handle',
     animation: 150,
-    ghostClass: 'sortable-ghost',
-    dragClass: 'sortable-drag',
-    forceFallback: true,
-    fallbackTolerance: 3,
+    ghostClass: 'playlist-sortable-ghost',
+    dragClass: 'playlist-sortable-drag',
+    chosenClass: 'playlist-sortable-chosen',
+    fallbackClass: 'playlist-sortable-fallback',
     delay: 100,
     delayOnTouchOnly: true,
-    onEnd: async function(evt) {
+    preventOnFilter: false,
+    onStart: function(evt) {
+      // Prevent text selection during drag
+      document.body.style.userSelect = 'none';
+    },
+    onEnd: function(evt) {
+      // Re-enable text selection after drag
+      document.body.style.userSelect = '';
+      
       // Playlist reordering would require Spotify API support
       // For now, we'll just keep the visual order
-      console.log('Playlist moved from', evt.oldIndex, 'to', evt.newIndex);
+      if (evt.oldIndex !== evt.newIndex) {
+        console.log('Playlist moved from', evt.oldIndex, 'to', evt.newIndex);
+      }
     }
   });
 }

@@ -116,6 +116,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
+  user-select: none;
 }
 
 .playlists-list li:hover {
@@ -161,6 +162,36 @@
 }
 
 .playlist-drag-handle:active {
+  cursor: move;
+}
+
+/* Sortable drag states for playlists */
+.playlists-list li.playlist-sortable-ghost {
+  opacity: 0.4;
+  background: var(--pm-hover-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  .playlists-list li.playlist-sortable-ghost {
+    background: var(--pm-hover-dark);
+  }
+}
+
+.playlists-list li.playlist-sortable-drag {
+  opacity: 1;
+  background: var(--pm-card-light);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-left-color: var(--pm-purple);
+  cursor: move;
+}
+
+@media (prefers-color-scheme: dark) {
+  .playlists-list li.playlist-sortable-drag {
+    background: var(--pm-card-dark);
+  }
+}
+
+.playlists-list li.playlist-sortable-chosen {
   cursor: move;
 }
 
@@ -257,6 +288,7 @@
 .playlist-item-info {
   flex: 1;
   min-width: 0;
+  user-select: none;
 }
 
 .playlist-item-name {
@@ -265,11 +297,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  user-select: none;
 }
 
 .playlist-item-count {
   font-size: 0.85rem;
   color: #888;
+  user-select: none;
 }
 
 /* Mobile Sidebar */
