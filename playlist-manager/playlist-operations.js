@@ -82,12 +82,19 @@ export function displayPlaylists(playlists) {
       </div>
     `;
     
-    // Add click handler for playlist selection (but not on menu button)
-    li.addEventListener('click', (e) => {
-      if (!e.target.closest('.playlist-menu-btn') && !e.target.closest('.playlist-drag-handle')) {
-        selectPlaylist(playlist);
+    // Add click handler for playlist selection (but not on menu button or drag handle)
+    const handlePlaylistClick = (e) => {
+      // Don't select if clicking on menu button or drag handle
+      if (e.target.closest('.playlist-menu-btn') || e.target.closest('.playlist-drag-handle')) {
+        return;
       }
-    });
+      e.preventDefault();
+      e.stopPropagation();
+      selectPlaylist(playlist);
+    };
+    
+    li.addEventListener('click', handlePlaylistClick);
+    li.addEventListener('touchend', handlePlaylistClick);
     
     // Add menu button handler
     const menuBtn = li.querySelector('.playlist-menu-btn');
@@ -96,6 +103,35 @@ export function displayPlaylists(playlists) {
       showPlaylistMenu(e.currentTarget, playlist);
     });
     listEl.appendChild(li);
+  });
+  
+  // Initialize drag and drop for playlists
+  initializePlaylistDragDrop();
+}
+
+function initializePlaylistDragDrop() {
+  const listEl = document.getElementById('playlists-list');
+  if (!listEl) return;
+  
+  // Destroy existing instance if present
+  if (window.playlistSortable) {
+    window.playlistSortable.destroy();
+  }
+  
+  window.playlistSortable = new Sortable(listEl, {
+    handle: '.playlist-drag-handle',
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    dragClass: 'sortable-drag',
+    forceFallback: true,
+    fallbackTolerance: 3,
+    delay: 100,
+    delayOnTouchOnly: true,
+    onEnd: async function(evt) {
+      // Playlist reordering would require Spotify API support
+      // For now, we'll just keep the visual order
+      console.log('Playlist moved from', evt.oldIndex, 'to', evt.newIndex);
+    }
   });
 }
 
