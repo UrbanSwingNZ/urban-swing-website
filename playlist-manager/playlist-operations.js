@@ -89,7 +89,6 @@ export function displayPlaylists(playlists) {
         return;
       }
       
-      console.log('Playlist clicked:', playlist.name);
       e.stopPropagation();
       selectPlaylist(playlist);
     };
@@ -126,10 +125,12 @@ function initializePlaylistDragDrop() {
     dragClass: 'playlist-sortable-drag',
     chosenClass: 'playlist-sortable-chosen',
     fallbackClass: 'playlist-sortable-fallback',
-    delay: 100,
-    delayOnTouchOnly: true,
-    preventOnFilter: false,
+    forceFallback: false,
+    fallbackTolerance: 3,
     touchStartThreshold: 5,
+    delay: 0,
+    delayOnTouchOnly: false,
+    preventOnFilter: false,
     onStart: function(evt) {
       // Prevent text selection during drag
       document.body.style.userSelect = 'none';
@@ -168,30 +169,22 @@ export function handlePlaylistSearch(e) {
 // ========================================
 
 export async function selectPlaylist(playlist) {
-  console.log('selectPlaylist called for:', playlist.name);
-  
   // Check for unsaved changes
   if (State.getHasUnsavedChanges()) {
-    console.log('Has unsaved changes, showing modal');
     State.setPendingPlaylistSelection(playlist);
     document.getElementById('unsaved-changes-modal').style.display = 'block';
     return;
   }
   
-  console.log('Performing playlist selection');
   await performPlaylistSelection(playlist);
 }
 
 export async function performPlaylistSelection(playlist) {
-  console.log('performPlaylistSelection started for:', playlist.name);
-  
   // Get fresh playlist info from Spotify API to ensure we have latest data
   try {
     const freshPlaylist = await spotifyAPI.getPlaylist(playlist.id);
     State.setCurrentPlaylist(freshPlaylist);
-    console.log('Got fresh playlist data');
   } catch (error) {
-    console.log('Error getting fresh playlist, using cached:', error);
     State.setCurrentPlaylist(playlist);
   }
   
@@ -209,16 +202,13 @@ export async function performPlaylistSelection(playlist) {
       li.classList.add('active');
     }
   });
-  console.log('Updated active state');
   
   // Show playlist view
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('playlist-view').style.display = 'flex';
-  console.log('Showing playlist view');
   
   // Close sidebar on mobile after selection
   if (window.innerWidth <= 768) {
-    console.log('Closing sidebar on mobile');
     const sidebar = document.querySelector('.pm-sidebar');
     const overlay = document.getElementById('sidebar-overlay');
     sidebar?.classList.remove('open');
