@@ -1,0 +1,249 @@
+/* ========================================
+   TRACK TABLE AND PLAYBACK STYLES
+   Track list, drag and drop, play buttons
+   ======================================== */
+
+.tracks-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 30px 30px;
+}
+
+.tracks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tracks-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--background-color);
+  padding: 15px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #888;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--pm-border-light);
+  z-index: 10;
+}
+
+.tracks-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--pm-border-light);
+  cursor: default;
+}
+
+.tracks-table tbody tr:hover {
+  background: var(--pm-hover-light);
+}
+
+.tracks-table tbody tr.sortable-ghost {
+  opacity: 0.4;
+}
+
+.tracks-table tbody tr.sortable-drag {
+  background: var(--pm-card-light);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.tracks-table td {
+  padding: 12px 10px;
+}
+
+/* Column Widths */
+.col-drag { width: 30px; }
+.col-number { width: 50px; }
+.col-title { width: auto; }
+.col-artist { width: 25%; }
+.col-duration { width: 80px; }
+.col-bpm { width: 80px; }
+.col-explicit { width: 80px; text-align: center; }
+.col-actions { width: 60px; text-align: right; }
+
+/* Drag Handle */
+.drag-handle {
+  color: #888;
+  cursor: move;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tracks-table tbody tr:hover .drag-handle {
+  opacity: 1;
+}
+
+/* Track Info */
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.track-album-art {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.track-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist {
+  color: #888;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-number {
+  color: #888;
+}
+
+/* Play and Action Buttons */
+.track-actions {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.track-play-btn,
+.track-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-play-btn {
+  color: var(--pm-green);
+}
+
+.track-play-btn:hover {
+  background: rgba(29, 185, 84, 0.1);
+  transform: scale(1.1);
+}
+
+.track-play-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.tracks-table tbody tr:hover .track-play-btn,
+.tracks-table tbody tr:hover .track-menu-btn,
+.track-play-btn.playing {
+  opacity: 1;
+}
+
+.track-menu-btn:hover {
+  background: var(--pm-hover-light);
+}
+
+/* Search play button in Add Tracks modal */
+.search-play-btn {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+/* Badges */
+.bpm-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
+  color: white;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.explicit-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #999;
+  color: white;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Mobile Tracks */
+@media (max-width: 768px) {
+  .tracks-container {
+    padding: 0 10px 10px;
+  }
+  
+  .tracks-table tbody tr {
+    cursor: pointer;
+  }
+  
+  .drag-handle {
+    opacity: 1;
+  }
+  
+  /* Hide some columns on mobile */
+  .col-bpm,
+  .tracks-table thead th:nth-child(6),
+  .tracks-table tbody td:nth-child(6) {
+    display: none;
+  }
+  
+  .col-number { width: 30px; }
+  .col-artist { width: 30%; }
+  .col-duration { width: 60px; }
+  .col-explicit { width: 40px; }
+  .col-actions { width: 40px; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .tracks-table thead th {
+    background: var(--pm-bg-dark);
+    border-bottom-color: var(--pm-border-dark);
+  }
+  
+  .tracks-table tbody tr {
+    border-bottom-color: var(--pm-border-dark);
+  }
+  
+  .tracks-table tbody tr:hover {
+    background: var(--pm-hover-dark);
+  }
+  
+  .tracks-table tbody tr.sortable-drag {
+    background: var(--pm-card-dark);
+  }
+  
+  .track-menu-btn:hover {
+    background: var(--pm-hover-dark);
+  }
+  
+  .track-play-btn:hover {
+    background: rgba(29, 185, 84, 0.2);
+  }
+}

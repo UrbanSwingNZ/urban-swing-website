@@ -104,7 +104,6 @@ function setupEventListeners() {
   
   // Track actions
   document.getElementById('track-search')?.addEventListener('input', TrackOps.handleTrackSearch);
-  document.getElementById('toggle-explicit-btn')?.addEventListener('click', TrackOps.handleToggleExplicit);
   document.getElementById('save-order-btn')?.addEventListener('click', TrackOps.handleSaveOrder);
   
   // Modal actions
