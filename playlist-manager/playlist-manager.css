@@ -749,7 +749,7 @@ button.sidebar-toggle {
 .tracks-table tbody tr {
   transition: all 0.2s ease;
   border-bottom: 1px solid var(--pm-border-light);
-  cursor: move;
+  cursor: default;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -915,7 +915,8 @@ button.sidebar-toggle {
 }
 
 .tracks-table tbody tr:hover .track-play-btn,
-.tracks-table tbody tr:hover .track-menu-btn {
+.tracks-table tbody tr:hover .track-menu-btn,
+.track-play-btn.playing {
   opacity: 1;
 }
 

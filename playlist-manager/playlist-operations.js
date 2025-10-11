@@ -402,7 +402,14 @@ export async function handleRenamePlaylist() {
 // ========================================
 
 export function showPlaylistMenu(button, playlist) {
-  // Close any existing menus
+  // Check if menu is already open for this button
+  const existingMenu = button.closest('.playlist-item-actions').querySelector('.playlist-menu');
+  if (existingMenu) {
+    existingMenu.remove();
+    return; // Toggle off - don't create new menu
+  }
+  
+  // Close any other open menus
   document.querySelectorAll('.playlist-menu').forEach(menu => menu.remove());
   
   State.setPlaylistMenuTarget(playlist);
