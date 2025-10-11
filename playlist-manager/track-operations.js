@@ -11,6 +11,9 @@ import { showLoading, showError, showSnackbar, showSuccess } from './playlist-ui
 export async function loadTracks(playlistId) {
   showLoading(true);
   
+  // Stop any currently playing audio
+  stopCurrentAudio();
+  
   try {
     // Get all tracks
     const trackItems = await spotifyAPI.getAllPlaylistTracks(playlistId);
@@ -139,6 +142,9 @@ export function displayTracks(tracks) {
       </td>
       <td class="col-actions">
         <div class="track-actions">
+          <button class="track-play-btn" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Play track">
+            <i class="fas fa-play"></i>
+          </button>
           <button class="track-menu-btn" data-track-uri="${track.uri}">
             <i class="fas fa-ellipsis-v"></i>
           </button>
@@ -152,6 +158,15 @@ export function displayTracks(tracks) {
       e.stopPropagation();
       showTrackMenu(e.currentTarget, track);
     });
+    
+    // Add play button click handler
+    const playBtn = tr.querySelector('.track-play-btn');
+    if (playBtn) {
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleTrackPlayPause(playBtn, track.uri, track.id);
+      });
+    }
     
     tbody.appendChild(tr);
   });
@@ -704,6 +719,108 @@ export function handleDiscardChanges() {
       performPlaylistSelection(pendingPlaylistSelection);
       State.setPendingPlaylistSelection(null);
     });
+  }
+}
+
+// ========================================
+// SPOTIFY WEB PLAYBACK
+// ========================================
+
+let currentPlayingButton = null;
+let currentPlayingTrackUri = null;
+
+export async function handleTrackPlayPause(button, trackUri, trackId) {
+  try {
+    // Import player module
+    const { playTrack, togglePlayback, getCurrentState, isReady } = await import('./spotify-player.js');
+    
+    // Check if this is the currently playing track
+    const state = await getCurrentState();
+    const isCurrentTrack = state && state.track_window?.current_track?.uri === trackUri;
+    
+    if (isCurrentTrack) {
+      // Toggle play/pause for current track
+      await togglePlayback();
+      return;
+    }
+    
+    // Check if player is ready
+    if (!isReady()) {
+      throw new Error('Player not ready. Please try again in a moment.');
+    }
+    
+    // Play new track
+    const accessToken = spotifyAPI.accessToken;
+    await playTrack(trackUri, accessToken);
+    
+    // Update UI
+    if (currentPlayingButton && currentPlayingButton !== button) {
+      currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
+      currentPlayingButton.classList.remove('playing');
+    }
+    
+    button.innerHTML = '<i class="fas fa-pause"></i>';
+    button.classList.add('playing');
+    currentPlayingButton = button;
+    currentPlayingTrackUri = trackUri;
+    
+  } catch (error) {
+    console.error('Error playing track:', error);
+    
+    // Show error message to user
+    if (error.message.includes('premium')) {
+      showError('Spotify Premium is required for full playback. Using 30-second preview instead.');
+      // Fall back to preview if available
+      const previewUrl = button.dataset.previewUrl;
+      if (previewUrl) {
+        playPreviewFallback(button, previewUrl);
+      }
+    } else {
+      showError('Error playing track: ' + error.message);
+    }
+    
+    // Reset button
+    button.innerHTML = '<i class="fas fa-play"></i>';
+    button.classList.remove('playing');
+  }
+}
+
+// Fallback to preview playback for non-Premium users
+let previewAudio = null;
+
+function playPreviewFallback(button, previewUrl) {
+  // Stop any existing preview
+  if (previewAudio) {
+    previewAudio.pause();
+  }
+  
+  // Play preview
+  previewAudio = new Audio(previewUrl);
+  button.innerHTML = '<i class="fas fa-pause"></i>';
+  
+  previewAudio.addEventListener('ended', () => {
+    button.innerHTML = '<i class="fas fa-play"></i>';
+    previewAudio = null;
+  });
+  
+  previewAudio.play().catch(error => {
+    console.error('Preview playback error:', error);
+    button.innerHTML = '<i class="fas fa-play"></i>';
+  });
+}
+
+// Stop any playing audio when loading new tracks
+export function stopCurrentAudio() {
+  if (currentPlayingButton) {
+    currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
+    currentPlayingButton.classList.remove('playing');
+    currentPlayingButton = null;
+    currentPlayingTrackUri = null;
+  }
+  
+  if (previewAudio) {
+    previewAudio.pause();
+    previewAudio = null;
   }
 }
 
