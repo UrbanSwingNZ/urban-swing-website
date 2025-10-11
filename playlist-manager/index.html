@@ -41,7 +41,10 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <img src="../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
-                <h1>Playlist Manager</h1>
+                <h1 class="pm-main-heading">
+                    <span class="pm-heading-desktop">Playlist Manager</span>
+                    <span class="pm-heading-mobile">Urban Swing Playlist Manager</span>
+                </h1>
                 <div class="pm-header-actions">
                     <span id="spotify-user-name"></span>
                     <button id="spotify-connect-btn" class="btn-spotify">
@@ -109,39 +112,36 @@
                 <div id="playlist-view" style="display: none;">
                     <!-- Playlist Header -->
                     <div class="playlist-header">
-                        <div class="playlist-info">
+                        <div class="playlist-header-flex">
                             <img id="playlist-image" src="" alt="Playlist Cover" class="playlist-cover">
-                            <div>
+                            <div class="playlist-header-info">
                                 <h2 id="playlist-name"></h2>
-                                <p id="playlist-description"></p>
                                 <p class="playlist-meta">
                                     <span id="playlist-track-count"></span> tracks • 
                                     <span id="playlist-duration"></span>
                                 </p>
+                                <p id="playlist-description" class="playlist-description"></p>
                             </div>
                         </div>
-                        <div class="playlist-actions">
+                        <div class="playlist-actions" style="display:none;">
                             <button id="save-order-btn" class="btn-primary" style="display: none;">
                                 <i class="fas fa-save"></i>&nbsp;Save Order
-                            </button>
-                            <button id="delete-playlist-btn" class="btn-danger" title="Delete this playlist">
-                                <i class="fas fa-trash"></i>&nbsp;Delete Playlist
                             </button>
                         </div>
                     </div>
 
-                    <!-- Search & Filter -->
+                    <!-- Search & Filter (search box hidden on mobile by CSS) -->
                     <div class="tracks-toolbar">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
                             <input type="text" id="track-search" placeholder="Search tracks...">
                         </div>
-                        <div class="toolbar-actions">
+                        <div class="toolbar-buttons">
                             <button id="add-tracks-btn" class="btn-primary" title="Add tracks to this playlist">
                                 <i class="fas fa-plus"></i> Add Tracks
                             </button>
-                            <button id="toggle-explicit-btn" class="btn-filter">
-                                <i class="fas fa-filter"></i> Hide Explicit
+                            <button id="delete-playlist-btn" class="btn-danger" title="Delete this playlist">
+                                <i class="fas fa-trash"></i> Delete Playlist
                             </button>
                         </div>
                     </div>

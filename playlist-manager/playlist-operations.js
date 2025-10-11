@@ -18,8 +18,9 @@ export async function loadPlaylists() {
     displayPlaylists(playlists);
     
     // After loading playlists, check if there's a saved playlist to restore
+    // Only restore if coming from a page refresh (not navigation/disconnect)
     const savedPlaylistId = localStorage.getItem('last_viewed_playlist');
-    if (savedPlaylistId) {
+    if (savedPlaylistId && performance && performance.navigation && performance.navigation.type === 1) { // 1 = reload
       const savedPlaylist = playlists.find(p => p.id === savedPlaylistId);
       if (savedPlaylist) {
         // Restore the last viewed playlist
