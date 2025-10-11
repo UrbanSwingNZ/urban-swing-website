@@ -134,20 +134,25 @@ function updatePlaybackUI(state) {
   // Update all play buttons to reflect current playback state
   document.querySelectorAll('.track-play-btn').forEach(btn => {
     const trackUri = btn.closest('tr')?.dataset.trackUri;
+    const row = btn.closest('tr');
+    const colNumber = row?.querySelector('.col-number');
     
     if (trackUri === currentTrack.uri) {
       // This is the currently playing/paused track
       if (isPaused) {
         btn.innerHTML = '<i class="fas fa-play"></i>';
         btn.classList.remove('playing');
+        colNumber?.classList.remove('playing');
       } else {
         btn.innerHTML = '<i class="fas fa-pause"></i>';
         btn.classList.add('playing');
+        colNumber?.classList.add('playing');
       }
     } else {
       // Other tracks should show play icon
       btn.innerHTML = '<i class="fas fa-play"></i>';
       btn.classList.remove('playing');
+      colNumber?.classList.remove('playing');
     }
   });
 

@@ -94,6 +94,10 @@
   min-width: 0;
 }
 
+.track-artist-mobile {
+  display: none;
+}
+
 .track-name {
   font-weight: 500;
   white-space: nowrap;
@@ -111,6 +115,60 @@
 
 .track-number {
   color: #888;
+}
+
+/* Now Playing Animation */
+.now-playing-animation {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 16px;
+  width: 20px;
+  margin: 0 auto;
+}
+
+.now-playing-animation .bar {
+  width: 3px;
+  height: 100%;
+  background: var(--pm-green);
+  border-radius: 3px;
+  animation: sound-wave 1s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.now-playing-animation .bar:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.now-playing-animation .bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.now-playing-animation .bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.now-playing-animation .bar:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+@keyframes sound-wave {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* When track is playing, hide number and show animation */
+.col-number.playing .track-number {
+  display: none;
+}
+
+.col-number.playing .now-playing-animation {
+  display: flex !important;
 }
 
 /* Play and Action Buttons */
@@ -197,6 +255,12 @@
 @media (max-width: 768px) {
   .tracks-container {
     padding: 0 10px 10px;
+    overflow-x: hidden;
+  }
+  
+  .tracks-table {
+    table-layout: fixed;
+    width: 100%;
   }
   
   .tracks-table tbody tr {
@@ -207,18 +271,36 @@
     opacity: 1;
   }
   
+  /* Hide 3-dots menu and play/pause buttons on mobile */
+  .track-menu-btn,
+  .track-play-btn {
+    display: none !important;
+  }
+  
   /* Hide some columns on mobile */
   .col-bpm,
+  .col-artist,
+  .col-actions,
+  .tracks-table thead th:nth-child(4),
+  .tracks-table tbody td:nth-child(4),
   .tracks-table thead th:nth-child(6),
-  .tracks-table tbody td:nth-child(6) {
+  .tracks-table tbody td:nth-child(6),
+  .tracks-table thead th:nth-child(8),
+  .tracks-table tbody td:nth-child(8) {
     display: none;
   }
   
+  /* Show artist under track name on mobile */
+  .track-artist-mobile {
+    display: block !important;
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 4px;
+  }
+  
   .col-number { width: 30px; }
-  .col-artist { width: 30%; }
   .col-duration { width: 60px; }
   .col-explicit { width: 40px; }
-  .col-actions { width: 40px; }
 }
 
 @media (prefers-color-scheme: dark) {

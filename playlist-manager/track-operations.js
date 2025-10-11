@@ -103,12 +103,19 @@ export function displayTracks(tracks) {
       </td>
       <td class="col-number">
         <span class="track-number">${index + 1}</span>
+        <div class="now-playing-animation" style="display: none;">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
       </td>
       <td class="col-title">
         <div class="track-info">
           ${albumArt ? `<img src="${albumArt}" alt="${track.name}" class="track-album-art">` : ''}
           <div class="track-details">
             <div class="track-name">${track.name}</div>
+            <div class="track-artist-mobile">${artistNames}</div>
           </div>
         </div>
       </td>
@@ -154,23 +161,221 @@ export function displayTracks(tracks) {
     tr.addEventListener('click', (e) => {
       // Only trigger on mobile (screen width <= 768px)
       if (window.innerWidth <= 768) {
-        // Don't trigger if clicking drag handle, menu button, or their children
-        if (e.target.closest('.drag-handle') || 
-            e.target.closest('.track-menu-btn') ||
-            e.target.closest('.track-play-btn')) {
+        // Don't trigger if clicking drag handle
+        if (e.target.closest('.drag-handle')) {
           return;
         }
         
-        // Trigger play/pause
-        handleTrackPlayPause(playBtn, track.uri, track.id);
+        // Trigger play/pause (pass the row element instead of playBtn for mobile)
+        handleTrackPlayPause(tr, track.uri, track.id);
       }
     });
+    
+    // Add swipe to delete and long press on mobile
+    if (window.innerWidth <= 768) {
+      addSwipeToDelete(tr, track);
+      addLongPressMenu(tr, track);
+    }
     
     tbody.appendChild(tr);
   });
   
   // Restore playback state after tracks are displayed
   restorePlaybackState();
+}
+
+// Swipe to delete functionality for mobile
+function addSwipeToDelete(element, track) {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+  let isSwiping = false;
+  
+  element.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    isSwiping = false;
+  }, { passive: true });
+  
+  element.addEventListener('touchmove', (e) => {
+    const currentX = e.changedTouches[0].screenX;
+    const currentY = e.changedTouches[0].screenY;
+    const diffX = touchStartX - currentX;
+    const diffY = Math.abs(touchStartY - currentY);
+    
+    // Only consider it a swipe if horizontal movement is greater than vertical
+    if (Math.abs(diffX) > 50 && diffY < 30) {
+      isSwiping = true;
+      
+      // Apply swipe visual feedback
+      if (diffX > 0) { // Swiping left
+        element.style.transform = `translateX(-${Math.min(diffX, 100)}px)`;
+        element.style.backgroundColor = '#ff4444';
+      }
+    }
+  }, { passive: true });
+  
+  element.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    
+    const swipeDistance = touchStartX - touchEndX;
+    const verticalDistance = Math.abs(touchStartY - touchEndY);
+    
+    // Reset visual feedback
+    element.style.transform = '';
+    element.style.backgroundColor = '';
+    
+    // If swiped left more than 100px and vertical movement is minimal
+    if (isSwiping && swipeDistance > 100 && verticalDistance < 30) {
+      // Confirm and delete
+      if (confirm(`Delete "${track.name}" from this playlist?`)) {
+        handleDeleteTrack(track);
+      }
+    }
+  }, { passive: true });
+}
+
+// Long press menu functionality for mobile
+function addLongPressMenu(element, track) {
+  let pressTimer = null;
+  let touchMoved = false;
+  
+  element.addEventListener('touchstart', (e) => {
+    touchMoved = false;
+    
+    // Start timer for long press (500ms)
+    pressTimer = setTimeout(() => {
+      if (!touchMoved) {
+        // Show track menu
+        showMobileTrackMenu(track);
+      }
+    }, 500);
+  }, { passive: true });
+  
+  element.addEventListener('touchmove', () => {
+    touchMoved = true;
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }, { passive: true });
+  
+  element.addEventListener('touchend', () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }, { passive: true });
+  
+  element.addEventListener('touchcancel', () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }, { passive: true });
+}
+
+// Show mobile-friendly track menu with options
+function showMobileTrackMenu(track) {
+  const options = [
+    { label: 'Copy to Playlist', action: () => handleCopyTrack(track) },
+    { label: 'Move to Playlist', action: () => handleMoveTrack(track) },
+    { label: 'Delete from Playlist', action: () => handleDeleteTrack(track) }
+  ];
+  
+  // Create a simple menu overlay
+  const menuOverlay = document.createElement('div');
+  menuOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 3000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  `;
+  
+  const menuContainer = document.createElement('div');
+  menuContainer.style.cssText = `
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.2);
+  `;
+  
+  // Track title
+  const title = document.createElement('h3');
+  title.textContent = track.name;
+  title.style.cssText = `
+    margin: 0 0 20px 0;
+    font-size: 1.1rem;
+    color: #333;
+    text-align: center;
+  `;
+  menuContainer.appendChild(title);
+  
+  // Add option buttons
+  options.forEach(option => {
+    const btn = document.createElement('button');
+    btn.textContent = option.label;
+    btn.style.cssText = `
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    `;
+    
+    btn.addEventListener('click', () => {
+      option.action();
+      document.body.removeChild(menuOverlay);
+    });
+    
+    menuContainer.appendChild(btn);
+  });
+  
+  // Cancel button
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = `
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  `;
+  
+  cancelBtn.addEventListener('click', () => {
+    document.body.removeChild(menuOverlay);
+  });
+  
+  menuContainer.appendChild(cancelBtn);
+  menuOverlay.appendChild(menuContainer);
+  
+  // Close on overlay click
+  menuOverlay.addEventListener('click', (e) => {
+    if (e.target === menuOverlay) {
+      document.body.removeChild(menuOverlay);
+    }
+  });
+  
+  document.body.appendChild(menuOverlay);
 }
 
 // ========================================
@@ -216,6 +421,11 @@ export function initializeDragDrop() {
     handle: '.drag-handle',
     ghostClass: 'sortable-ghost',
     dragClass: 'sortable-drag',
+    forceFallback: false,
+    fallbackTolerance: 3,
+    touchStartThreshold: 5,
+    delay: 0,
+    delayOnTouchOnly: false,
     onEnd: handleDragEnd
   });
   
@@ -778,11 +988,14 @@ export function restorePlaybackState() {
       const trackRow = document.querySelector(`tr[data-track-uri="${trackUri}"]`);
       if (trackRow) {
         const playBtn = trackRow.querySelector('.track-play-btn');
+        const colNumber = trackRow.querySelector('.col-number');
         if (playBtn) {
           playBtn.innerHTML = '<i class="fas fa-pause"></i>';
           playBtn.classList.add('playing');
           currentPlayingButton = playBtn;
           currentPlayingTrackUri = trackUri;
+          // Restore playing animation
+          colNumber?.classList.add('playing');
         }
       }
     }
@@ -820,16 +1033,33 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     const accessToken = spotifyAPI.accessToken;
     await playTrack(trackUri, accessToken);
     
-    // Update UI
-    if (currentPlayingButton && currentPlayingButton !== button) {
-      currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
-      currentPlayingButton.classList.remove('playing');
+    // Determine if button is actually a button or the row element (mobile)
+    const row = button.closest('tr') || button;
+    const actualButton = button.classList?.contains('track-play-btn') ? button : row.querySelector('.track-play-btn');
+    
+    // Update UI - remove playing state from previous track
+    if (currentPlayingButton && currentPlayingButton !== actualButton) {
+      if (currentPlayingButton.classList?.contains('track-play-btn')) {
+        currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
+        currentPlayingButton.classList.remove('playing');
+      }
+      // Remove playing animation from previous track
+      const prevRow = currentPlayingButton.closest('tr') || currentPlayingButton;
+      const prevColNumber = prevRow.querySelector('.col-number');
+      prevColNumber?.classList.remove('playing');
     }
     
-    button.innerHTML = '<i class="fas fa-pause"></i>';
-    button.classList.add('playing');
-    currentPlayingButton = button;
+    // Update UI - add playing state to current track
+    if (actualButton) {
+      actualButton.innerHTML = '<i class="fas fa-pause"></i>';
+      actualButton.classList.add('playing');
+    }
+    currentPlayingButton = actualButton || row;
     currentPlayingTrackUri = trackUri;
+    
+    // Add playing animation to current track
+    const colNumber = row.querySelector('.col-number');
+    colNumber?.classList.add('playing');
     
     // Save state to localStorage
     savePlaybackState(trackUri, true);
