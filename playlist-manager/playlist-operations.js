@@ -88,13 +88,13 @@ export function displayPlaylists(playlists) {
       if (e.target.closest('.playlist-menu-btn') || e.target.closest('.playlist-drag-handle')) {
         return;
       }
-      e.preventDefault();
+      
       e.stopPropagation();
       selectPlaylist(playlist);
     };
     
-    li.addEventListener('click', handlePlaylistClick);
-    li.addEventListener('touchend', handlePlaylistClick);
+    // Use click event for both desktop and mobile
+    li.addEventListener('click', handlePlaylistClick, { passive: false });
     
     // Add menu button handler
     const menuBtn = li.querySelector('.playlist-menu-btn');
@@ -125,8 +125,11 @@ function initializePlaylistDragDrop() {
     dragClass: 'playlist-sortable-drag',
     chosenClass: 'playlist-sortable-chosen',
     fallbackClass: 'playlist-sortable-fallback',
-    delay: 100,
-    delayOnTouchOnly: true,
+    forceFallback: false,
+    fallbackTolerance: 3,
+    touchStartThreshold: 5,
+    delay: 0,
+    delayOnTouchOnly: false,
     preventOnFilter: false,
     onStart: function(evt) {
       // Prevent text selection during drag
@@ -203,6 +206,14 @@ export async function performPlaylistSelection(playlist) {
   // Show playlist view
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('playlist-view').style.display = 'flex';
+  
+  // Close sidebar on mobile after selection
+  if (window.innerWidth <= 768) {
+    const sidebar = document.querySelector('.pm-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar?.classList.remove('open');
+    overlay?.classList.remove('show');
+  }
   
   // Update playlist header
   const imageUrl = playlist.images && playlist.images.length > 0 
