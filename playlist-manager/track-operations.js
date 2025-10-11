@@ -28,25 +28,7 @@ export async function loadTracks(playlistId) {
     if (trackIds.length > 0) {
       try {
         audioFeatures = await spotifyAPI.getAudioFeatures(trackIds);
-        
-        // Count how many tracks have BPM data
-        const tracksWithBPM = audioFeatures.filter(f => f && f.tempo).length;
-        if (tracksWithBPM === 0) {
-          // Only show error if it's the 403 Extended Quota issue
-          console.error('⚠️ BPM data unavailable - Spotify Audio Features API requires Extended Quota Mode.');
-          console.error('📖 See AUDIO_FEATURES_ACCESS.md for details on requesting access from Spotify.');
-          showError('BPM data unavailable: Spotify API requires Extended Quota Mode approval.');
-        }
       } catch (audioError) {
-        // Check if it's a 403 error (API access restriction)
-        if (audioError.message && audioError.message.includes('403')) {
-          console.error('⚠️ BPM data unavailable - Spotify Audio Features API requires Extended Quota Mode.');
-          console.error('📖 See AUDIO_FEATURES_ACCESS.md for details on requesting access from Spotify.');
-          showError('BPM data unavailable: Spotify API requires Extended Quota Mode approval.');
-        } else {
-          showError('BPM data temporarily unavailable.');
-        }
-        
         // Create empty array with same length as tracks
         audioFeatures = new Array(trackIds.length).fill(null);
       }
@@ -168,6 +150,22 @@ export function displayTracks(tracks) {
       });
     }
     
+    // Make entire row tappable on mobile (excluding drag handle)
+    tr.addEventListener('click', (e) => {
+      // Only trigger on mobile (screen width <= 768px)
+      if (window.innerWidth <= 768) {
+        // Don't trigger if clicking drag handle, menu button, or their children
+        if (e.target.closest('.drag-handle') || 
+            e.target.closest('.track-menu-btn') ||
+            e.target.closest('.track-play-btn')) {
+          return;
+        }
+        
+        // Trigger play/pause
+        handleTrackPlayPause(playBtn, track.uri, track.id);
+      }
+    });
+    
     tbody.appendChild(tr);
   });
   
@@ -194,31 +192,6 @@ export function handleTrackSearch(e) {
       const artistNames = track.artists.map(a => a.name.toLowerCase()).join(' ');
       return trackName.includes(query) || artistNames.includes(query);
     });
-  }
-  
-  State.setFilteredTracks(filteredTracks);
-  displayTracks(filteredTracks);
-  initializeDragDrop();
-}
-
-export function handleToggleExplicit(e) {
-  const btn = e.currentTarget;
-  btn.classList.toggle('active');
-  
-  const hideExplicit = btn.classList.contains('active');
-  const currentTracks = State.getCurrentTracks();
-  
-  let filteredTracks;
-  if (hideExplicit) {
-    filteredTracks = currentTracks.filter(item => !item.track?.explicit);
-  } else {
-    // Restore from current search if any
-    const searchQuery = document.getElementById('track-search').value;
-    if (searchQuery) {
-      handleTrackSearch({ target: { value: searchQuery } });
-      return;
-    }
-    filteredTracks = [...currentTracks];
   }
   
   State.setFilteredTracks(filteredTracks);
