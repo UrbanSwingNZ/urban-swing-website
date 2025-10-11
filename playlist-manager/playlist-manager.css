@@ -1541,6 +1541,11 @@ button:not(.track-menu button):not(.playlist-menu button),
   transition: background-color 0.2s;
 }
 
+.search-play-btn {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
 @media (prefers-color-scheme: dark) {
   .search-result-item {
     border-bottom-color: var(--pm-border-dark);
