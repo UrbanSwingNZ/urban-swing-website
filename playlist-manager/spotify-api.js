@@ -180,7 +180,7 @@ class SpotifyAPI {
   async getPlaylistTracks(playlistId, limit = 100, offset = 0) {
     // Try the alternative approach first - get playlist with embedded tracks
     try {
-      const playlist = await this.makeRequest(`/playlists/${playlistId}?fields=tracks(items(track(id,name,artists,duration_ms,uri,album(images),explicit)),next,total)&limit=${limit}&offset=${offset}`);
+      const playlist = await this.makeRequest(`/playlists/${playlistId}?fields=tracks(items(track(id,name,artists,duration_ms,uri,album(images),explicit,preview_url)),next,total)&limit=${limit}&offset=${offset}`);
       return playlist.tracks;
     } catch (alternativeError) {
       // Fallback to direct tracks endpoint

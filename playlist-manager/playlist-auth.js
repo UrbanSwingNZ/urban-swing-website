@@ -65,6 +65,14 @@ export async function exchangeCodeForTokens(code) {
 }
 
 export async function handleSpotifyDisconnect() {
+  // Disconnect Spotify Player
+  try {
+    const { disconnectPlayer } = await import('./spotify-player.js');
+    disconnectPlayer();
+  } catch (error) {
+    // Player might not be loaded yet
+  }
+  
   // Clear tokens
   spotifyAPI.accessToken = null;
   spotifyAPI.refreshToken = null;
@@ -74,6 +82,7 @@ export async function handleSpotifyDisconnect() {
   try {
     localStorage.removeItem('spotify_access_token');
     localStorage.removeItem('spotify_token_expiry');
+    localStorage.removeItem('last_viewed_playlist'); // Clear saved playlist
   } catch (error) {
     console.error('Error clearing tokens from storage:', error);
   }

@@ -749,7 +749,7 @@ button.sidebar-toggle {
 .tracks-table tbody tr {
   transition: all 0.2s ease;
   border-bottom: 1px solid var(--pm-border-light);
-  cursor: move;
+  cursor: default;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -877,8 +877,12 @@ button.sidebar-toggle {
 /* Track Actions Menu */
 .track-actions {
   position: relative;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
+.track-play-btn,
 .track-menu-btn {
   background: none;
   border: none;
@@ -889,9 +893,30 @@ button.sidebar-toggle {
   border-radius: 50%;
   opacity: 0;
   transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tracks-table tbody tr:hover .track-menu-btn {
+.track-play-btn {
+  color: var(--pm-green);
+}
+
+.track-play-btn:hover {
+  background: rgba(29, 185, 84, 0.1);
+  transform: scale(1.1);
+}
+
+.track-play-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.tracks-table tbody tr:hover .track-play-btn,
+.tracks-table tbody tr:hover .track-menu-btn,
+.track-play-btn.playing {
   opacity: 1;
 }
 
@@ -902,6 +927,10 @@ button.sidebar-toggle {
 @media (prefers-color-scheme: dark) {
   .track-menu-btn:hover {
     background: var(--pm-hover-dark);
+  }
+  
+  .track-play-btn:hover {
+    background: rgba(29, 185, 84, 0.2);
   }
 }
 

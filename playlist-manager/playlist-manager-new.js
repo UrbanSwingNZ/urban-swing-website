@@ -5,6 +5,7 @@ import * as Auth from './playlist-auth.js';
 import * as PlaylistOps from './playlist-operations.js';
 import * as TrackOps from './track-operations.js';
 import * as UI from './playlist-ui.js';
+import * as Player from './spotify-player.js';
 
 // ========================================
 // INITIALIZATION

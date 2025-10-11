@@ -16,6 +16,16 @@ export async function loadPlaylists() {
     const playlists = await spotifyAPI.getAllUserPlaylists();
     State.setAllPlaylists(playlists);
     displayPlaylists(playlists);
+    
+    // After loading playlists, check if there's a saved playlist to restore
+    const savedPlaylistId = localStorage.getItem('last_viewed_playlist');
+    if (savedPlaylistId) {
+      const savedPlaylist = playlists.find(p => p.id === savedPlaylistId);
+      if (savedPlaylist) {
+        // Restore the last viewed playlist
+        await performPlaylistSelection(savedPlaylist);
+      }
+    }
   } catch (error) {
     console.error('Error loading playlists:', error);
     if (error.message.includes('expired') || error.message.includes('401')) {
@@ -131,6 +141,9 @@ export async function performPlaylistSelection(playlist) {
   State.setCurrentPlaylistId(playlist.id);
   State.setHasUnsavedChanges(false);
   updateSaveOrderButton();
+  
+  // Save the selected playlist ID for refresh persistence
+  localStorage.setItem('last_viewed_playlist', playlist.id);
   
   // Update active state
   document.querySelectorAll('.playlists-list li').forEach(li => {
@@ -389,7 +402,14 @@ export async function handleRenamePlaylist() {
 // ========================================
 
 export function showPlaylistMenu(button, playlist) {
-  // Close any existing menus
+  // Check if menu is already open for this button
+  const existingMenu = button.closest('.playlist-item-actions').querySelector('.playlist-menu');
+  if (existingMenu) {
+    existingMenu.remove();
+    return; // Toggle off - don't create new menu
+  }
+  
+  // Close any other open menus
   document.querySelectorAll('.playlist-menu').forEach(menu => menu.remove());
   
   State.setPlaylistMenuTarget(playlist);
