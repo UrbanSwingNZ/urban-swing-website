@@ -170,6 +170,9 @@ export function displayTracks(tracks) {
     
     tbody.appendChild(tr);
   });
+  
+  // Restore playback state after tracks are displayed
+  restorePlaybackState();
 }
 
 // ========================================
@@ -538,6 +541,9 @@ export function closeAddTracksModal() {
   const modal = document.getElementById('add-tracks-modal');
   modal.style.display = 'none';
   State.setSelectedTracks([]);
+  
+  // Stop any playing audio when modal closes
+  stopCurrentAudio();
 }
 
 let searchTimeout;
@@ -550,6 +556,8 @@ export function handleTracksSearch(e) {
   
   if (query.length === 0) {
     document.getElementById('search-results').innerHTML = '<p class="text-muted">Enter a search term to find tracks</p>';
+    // Stop any playing audio when search is cleared
+    stopCurrentAudio();
     return;
   }
   
@@ -567,6 +575,7 @@ async function searchAndDisplayTracks(query) {
     
     const tracks = await spotifyAPI.searchTracks(query, 20);
     console.log('Search results:', tracks);
+    console.log('🎵 Enhanced search rendering active - play buttons and selected tracks reordering');
     
     if (tracks.length === 0) {
       resultsContainer.innerHTML = '<p class="text-muted">No tracks found</p>';
@@ -574,11 +583,21 @@ async function searchAndDisplayTracks(query) {
     }
     
     const selectedTracks = State.getSelectedTracks();
-    resultsContainer.innerHTML = tracks.map(track => {
-      const isSelected = selectedTracks.some(t => t.id === track.id);
+    
+    // Partition tracks: selected tracks first, then unselected
+    const selectedTrackIds = new Set(selectedTracks.map(t => t.id));
+    const selectedResults = tracks.filter(t => selectedTrackIds.has(t.id));
+    const unselectedResults = tracks.filter(t => !selectedTrackIds.has(t.id));
+    const orderedTracks = [...selectedResults, ...unselectedResults];
+    
+    resultsContainer.innerHTML = orderedTracks.map(track => {
+      const isSelected = selectedTrackIds.has(track.id);
       return `
-        <div class="search-result-item" data-track-id="${track.id}">
+        <div class="search-result-item" data-track-id="${track.id}" data-track-uri="${track.uri}">
           <input type="checkbox" class="search-result-checkbox" ${isSelected ? 'checked' : ''}>
+          <button class="track-play-btn search-play-btn" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Play track">
+            <i class="fas fa-play"></i>
+          </button>
           <img src="${track.album?.images?.[2]?.url || '../images/urban-swing-logo.png'}" 
                alt="${track.name}" class="search-result-image">
           <div class="search-result-info">
@@ -593,8 +612,13 @@ async function searchAndDisplayTracks(query) {
     // Add click handlers
     resultsContainer.querySelectorAll('.search-result-item').forEach(item => {
       item.addEventListener('click', (e) => {
-        // Don't trigger if clicking the checkbox directly
-        if (e.target.type === 'checkbox') return;
+        // Don't trigger if clicking the checkbox, play button, or their children
+        if (e.target.type === 'checkbox' || 
+            e.target.classList.contains('track-play-btn') ||
+            e.target.classList.contains('search-play-btn') ||
+            e.target.closest('.track-play-btn')) {
+          return;
+        }
         
         const checkbox = item.querySelector('.search-result-checkbox');
         checkbox.checked = !checkbox.checked;
@@ -604,6 +628,13 @@ async function searchAndDisplayTracks(query) {
       const checkbox = item.querySelector('.search-result-checkbox');
       checkbox.addEventListener('change', (e) => {
         handleTrackSelection(item.dataset.trackId, e.target.checked, tracks);
+      });
+      
+      // Add play button handler
+      const playBtn = item.querySelector('.track-play-btn');
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleTrackPlayPause(playBtn, playBtn.dataset.trackUri, playBtn.dataset.trackId);
       });
     });
     
@@ -634,6 +665,12 @@ function handleTrackSelection(trackId, isSelected, allTracks) {
   State.setSelectedTracks(selectedTracks);
   console.log('Selected tracks count:', selectedTracks.length);
   updateAddTracksButton();
+  
+  // Re-render search results to move selected tracks to top
+  const searchInput = document.getElementById('search-tracks-input');
+  if (searchInput && searchInput.value.trim()) {
+    searchAndDisplayTracks(searchInput.value.trim());
+  }
 }
 
 function updateAddTracksButton() {
@@ -736,6 +773,51 @@ export function handleDiscardChanges() {
 let currentPlayingButton = null;
 let currentPlayingTrackUri = null;
 
+// Save playback state to localStorage
+function savePlaybackState(trackUri, isPlaying) {
+  try {
+    localStorage.setItem('currently_playing_track', trackUri);
+    localStorage.setItem('currently_playing_state', isPlaying ? 'playing' : 'paused');
+  } catch (error) {
+    console.warn('Could not save playback state:', error);
+  }
+}
+
+// Clear playback state from localStorage
+function clearPlaybackState() {
+  try {
+    localStorage.removeItem('currently_playing_track');
+    localStorage.removeItem('currently_playing_state');
+  } catch (error) {
+    console.warn('Could not clear playback state:', error);
+  }
+}
+
+// Restore playback state UI after page load
+export function restorePlaybackState() {
+  try {
+    const trackUri = localStorage.getItem('currently_playing_track');
+    const state = localStorage.getItem('currently_playing_state');
+    console.log('🔄 Restoring playback state:', { trackUri, state });
+    
+    if (trackUri && state === 'playing') {
+      // Find the button for this track
+      const trackRow = document.querySelector(`tr[data-track-uri="${trackUri}"]`);
+      if (trackRow) {
+        const playBtn = trackRow.querySelector('.track-play-btn');
+        if (playBtn) {
+          playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          playBtn.classList.add('playing');
+          currentPlayingButton = playBtn;
+          currentPlayingTrackUri = trackUri;
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Could not restore playback state:', error);
+  }
+}
+
 export async function handleTrackPlayPause(button, trackUri, trackId) {
   try {
     // Import player module
@@ -748,6 +830,11 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     if (isCurrentTrack) {
       // Toggle play/pause for current track
       await togglePlayback();
+      
+      // Update state in localStorage
+      const isPaused = state.paused;
+      savePlaybackState(trackUri, !isPaused);
+      
       return;
     }
     
@@ -770,6 +857,9 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     button.classList.add('playing');
     currentPlayingButton = button;
     currentPlayingTrackUri = trackUri;
+    
+    // Save state to localStorage
+    savePlaybackState(trackUri, true);
     
   } catch (error) {
     console.error('Error playing track:', error);
@@ -829,6 +919,9 @@ export function stopCurrentAudio() {
     previewAudio.pause();
     previewAudio = null;
   }
+  
+  // Clear playback state from localStorage
+  clearPlaybackState();
 }
 
 // ========================================
