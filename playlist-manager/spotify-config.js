@@ -2,10 +2,24 @@
 // TODO: Replace these values with your Spotify Developer App credentials
 // Get these from: https://developer.spotify.com/dashboard
 
+// Detect environment and set redirect URI accordingly
+const isLocalhost = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname === '';
+
+const getRedirectUri = () => {
+  if (isLocalhost) {
+    // Local development
+    return 'http://127.0.0.1:5500/playlist-manager/index.html';
+  } else {
+    // Production - use current domain
+    return `${window.location.origin}/playlist-manager/index.html`;
+  }
+};
+
 const spotifyConfig = {
   clientId: '6c90506e3e9340ddbe364a4bc6476086',
-  // Use 127.0.0.1:5500 for local development (matches Spotify dashboard setting)
-  redirectUri: 'http://127.0.0.1:5500/playlist-manager/index.html',
+  redirectUri: getRedirectUri(),
   
   // Required scopes for playlist management and audio features
   scopes: [
