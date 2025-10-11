@@ -351,7 +351,14 @@ export async function handleSaveOrder() {
 // ========================================
 
 export function showTrackMenu(button, track) {
-  // Close any existing menus
+  // Check if menu is already open for this button
+  const existingMenu = button.closest('.track-actions').querySelector('.track-menu');
+  if (existingMenu) {
+    existingMenu.remove();
+    return; // Toggle off - don't create new menu
+  }
+  
+  // Close any other open menus
   document.querySelectorAll('.track-menu').forEach(menu => menu.remove());
   
   // Create menu
