@@ -154,15 +154,13 @@ export function displayTracks(tracks) {
     tr.addEventListener('click', (e) => {
       // Only trigger on mobile (screen width <= 768px)
       if (window.innerWidth <= 768) {
-        // Don't trigger if clicking drag handle, menu button, or their children
-        if (e.target.closest('.drag-handle') || 
-            e.target.closest('.track-menu-btn') ||
-            e.target.closest('.track-play-btn')) {
+        // Don't trigger if clicking drag handle
+        if (e.target.closest('.drag-handle')) {
           return;
         }
         
-        // Trigger play/pause
-        handleTrackPlayPause(playBtn, track.uri, track.id);
+        // Trigger play/pause (pass the row element instead of playBtn for mobile)
+        handleTrackPlayPause(tr, track.uri, track.id);
       }
     });
     

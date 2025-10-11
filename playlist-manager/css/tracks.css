@@ -197,6 +197,12 @@
 @media (max-width: 768px) {
   .tracks-container {
     padding: 0 10px 10px;
+    overflow-x: hidden;
+  }
+  
+  .tracks-table {
+    table-layout: fixed;
+    width: 100%;
   }
   
   .tracks-table tbody tr {
@@ -207,10 +213,19 @@
     opacity: 1;
   }
   
+  /* Hide 3-dots menu and play/pause buttons on mobile */
+  .track-menu-btn,
+  .track-play-btn {
+    display: none !important;
+  }
+  
   /* Hide some columns on mobile */
   .col-bpm,
+  .col-actions,
   .tracks-table thead th:nth-child(6),
-  .tracks-table tbody td:nth-child(6) {
+  .tracks-table tbody td:nth-child(6),
+  .tracks-table thead th:nth-child(8),
+  .tracks-table tbody td:nth-child(8) {
     display: none;
   }
   
@@ -218,7 +233,6 @@
   .col-artist { width: 30%; }
   .col-duration { width: 60px; }
   .col-explicit { width: 40px; }
-  .col-actions { width: 40px; }
 }
 
 @media (prefers-color-scheme: dark) {

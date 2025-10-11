@@ -104,15 +104,10 @@ export async function loadUserInfo() {
 }
 
 export function initializeButtonStates() {
-  // Ensure only one Spotify button is visible at a time
-  // Default to Connect state, auth logic will override if needed
-  const connectBtn = document.getElementById('spotify-connect-btn');
+  // Ensure disconnect button starts hidden
+  // The auth logic will show it if user is authenticated
   const disconnectBtn = document.getElementById('spotify-disconnect-btn');
-  
-  if (connectBtn && disconnectBtn) {
-    // Always start with Connect visible, Disconnect hidden
-    // The auth logic will switch these if user is authenticated
-    connectBtn.style.setProperty('display', 'flex', 'important');
+  if (disconnectBtn) {
     disconnectBtn.style.setProperty('display', 'none', 'important');
   }
   
