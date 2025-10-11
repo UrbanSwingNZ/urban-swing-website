@@ -72,6 +72,22 @@ export async function showAuthenticatedState() {
   if (connectBtn) connectBtn.style.setProperty('display', 'none', 'important');
   if (disconnectBtn) disconnectBtn.style.setProperty('display', 'flex', 'important');
   
+  // Initialize Spotify Web Playback SDK
+  try {
+    const accessToken = spotifyAPI.accessToken;
+    if (accessToken) {
+      // Import player module and initialize
+      const { initializePlayer } = await import('./spotify-player.js');
+      await initializePlayer(accessToken);
+      console.log('✅ Spotify Player initialized successfully');
+    }
+  } catch (error) {
+    console.warn('⚠️ Could not initialize Spotify Player:', error.message);
+    if (error.message.includes('premium')) {
+      console.warn('💡 Full track playback requires Spotify Premium. Falling back to preview mode.');
+    }
+  }
+  
   // Load user info and playlists
   await loadUserInfo();
   await loadPlaylists();
