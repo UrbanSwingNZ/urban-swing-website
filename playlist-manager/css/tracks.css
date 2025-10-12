@@ -407,6 +407,68 @@
 }
 
 /* ========================================
+   DESKTOP TRACK MENU (DROPDOWN)
+   ======================================== */
+
+.track-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--pm-card-light);
+  border: 1px solid var(--pm-border-light);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  min-width: 160px;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.track-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.track-menu button {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  text-align: left !important;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.track-menu button:first-child {
+  border-radius: 6px 6px 0 0;
+}
+
+.track-menu button:last-child {
+  border-radius: 0 0 6px 6px;
+}
+
+.track-menu button:hover {
+  background: var(--pm-hover-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .track-menu {
+    background: var(--pm-card-dark);
+    border-color: var(--pm-border-dark);
+  }
+}
+
+/* ========================================
    MOBILE TRACK MENU (BOTTOM SHEET)
    ======================================== */
 
