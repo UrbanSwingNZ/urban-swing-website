@@ -960,7 +960,6 @@ export function restorePlaybackState() {
   try {
     const trackUri = localStorage.getItem('currently_playing_track');
     const state = localStorage.getItem('currently_playing_state');
-    console.log('🔄 Restoring playback state:', { trackUri, state });
     
     if (trackUri && state === 'playing') {
       // Find the button for this track
