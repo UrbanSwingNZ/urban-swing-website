@@ -17,6 +17,7 @@ export let selectedTracks = [];
 export let currentPlaylistId = null;
 export let playlistMenuTarget = null;
 export let renamePlaylistTarget = null;
+export let currentUserId = null;
 
 // ========================================
 // STATE SETTERS
@@ -70,6 +71,10 @@ export function setRenamePlaylistTarget(playlist) {
   renamePlaylistTarget = playlist;
 }
 
+export function setCurrentUserId(userId) {
+  currentUserId = userId;
+}
+
 // ========================================
 // STATE GETTERS
 // ========================================
@@ -120,4 +125,21 @@ export function getPlaylistMenuTarget() {
 
 export function getRenamePlaylistTarget() {
   return renamePlaylistTarget;
+}
+
+export function getCurrentUserId() {
+  return currentUserId;
+}
+
+// ========================================
+// OWNERSHIP HELPERS
+// ========================================
+
+export function isPlaylistOwnedByCurrentUser(playlist) {
+  if (!playlist || !currentUserId) {
+    return false;
+  }
+  
+  // Check if the playlist owner matches the current user
+  return playlist.owner && playlist.owner.id === currentUserId;
 }
