@@ -295,10 +295,11 @@ function showMobileTrackMenu(track) {
   const menu = document.createElement('div');
   menu.className = 'track-menu track-menu-mobile show';
 
-  // Track title
+  // Track title with artist
   const title = document.createElement('div');
   title.className = 'track-menu-title';
-  title.textContent = track.name;
+  const artistNames = track.artists.map(a => a.name).join(', ');
+  title.textContent = `${track.name} • ${artistNames}`;
   menu.appendChild(title);
 
   // Menu options
