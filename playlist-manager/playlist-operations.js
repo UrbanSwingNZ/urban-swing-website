@@ -96,12 +96,58 @@ export function displayPlaylists(playlists) {
     // Use click event for both desktop and mobile
     li.addEventListener('click', handlePlaylistClick, { passive: false });
     
-    // Add menu button handler
+    // Add menu button handler (desktop)
     const menuBtn = li.querySelector('.playlist-menu-btn');
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       showPlaylistMenu(e.currentTarget, playlist);
     });
+    
+    // Add long-press handler for mobile (always add, check width when triggered)
+    let pressTimer = null;
+    let touchMoved = false;
+    
+    li.addEventListener('touchstart', (e) => {
+      // Only handle on mobile
+      if (window.innerWidth > 768) return;
+      
+      // Don't trigger long press on drag handle or menu button
+      if (e.target.closest('.playlist-drag-handle') || e.target.closest('.playlist-menu-btn')) {
+        return;
+      }
+      
+      touchMoved = false;
+      pressTimer = setTimeout(() => {
+        if (!touchMoved) {
+          e.preventDefault();
+          // Show menu for mobile - pass the playlist item itself
+          showPlaylistMenu(li, playlist, true);
+        }
+      }, 500);
+    }, { passive: false });
+    
+    li.addEventListener('touchmove', () => {
+      touchMoved = true;
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    li.addEventListener('touchend', () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    li.addEventListener('touchcancel', () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
     listEl.appendChild(li);
   });
   
@@ -459,34 +505,44 @@ export async function handleRenamePlaylist() {
 // PLAYLIST MENU
 // ========================================
 
-export function showPlaylistMenu(button, playlist) {
-  // Check if menu is already open for this button
-  const existingMenu = button.closest('.playlist-item-actions').querySelector('.playlist-menu');
-  if (existingMenu) {
-    existingMenu.remove();
-    return; // Toggle off - don't create new menu
-  }
-  
+export function showPlaylistMenu(button, playlist, isMobile = false) {
   // Close any other open menus
   document.querySelectorAll('.playlist-menu').forEach(menu => menu.remove());
+  
+  // Check if menu is already open for this button (only for desktop)
+  if (!isMobile) {
+    const existingMenu = button.closest('.playlist-item-actions').querySelector('.playlist-menu');
+    if (existingMenu) {
+      existingMenu.remove();
+      return; // Toggle off - don't create new menu
+    }
+  }
   
   State.setPlaylistMenuTarget(playlist);
   
   // Create menu
   const menu = document.createElement('div');
-  menu.className = 'playlist-menu show';
+  menu.className = 'playlist-menu show' + (isMobile ? ' playlist-menu-mobile' : '');
   menu.innerHTML = `
     <button data-action="rename">
-      <i class="fas fa-edit"></i> Rename
+      <i class="fas fa-edit"></i> <span>Rename</span>
     </button>
     <button data-action="delete" class="menu-delete">
-      <i class="fas fa-trash"></i> Delete
+      <i class="fas fa-trash"></i> <span>Delete</span>
     </button>
   `;
   
   // Position menu
-  const actions = button.closest('.playlist-item-actions');
-  actions.appendChild(menu);
+  if (isMobile) {
+    // For mobile, position to the right of the playlist item
+    const playlistItem = button.closest('.playlist-item');
+    playlistItem.style.position = 'relative';
+    playlistItem.appendChild(menu);
+  } else {
+    // For desktop, position under the action button
+    const actions = button.closest('.playlist-item-actions');
+    actions.appendChild(menu);
+  }
   
   // Add click handlers
   menu.querySelectorAll('button').forEach(btn => {
@@ -503,9 +559,13 @@ export function showPlaylistMenu(button, playlist) {
       if (!menu.contains(e.target) && e.target !== button) {
         menu.remove();
         document.removeEventListener('click', closeMenu);
+        document.removeEventListener('touchstart', closeMenu);
       }
     };
     document.addEventListener('click', closeMenu);
+    if (isMobile) {
+      document.addEventListener('touchstart', closeMenu);
+    }
   }, 10);
 }
 
