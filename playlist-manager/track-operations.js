@@ -5,6 +5,21 @@ import * as State from './playlist-state.js';
 import { showLoading, showError, showSnackbar, showSuccess } from './playlist-ui.js';
 
 // ========================================
+// PERFORMANCE CONFIGURATION
+// ========================================
+
+// Progressive rendering: Only render 50 tracks initially, load more on scroll
+let renderedTrackCount = 0;
+const INITIAL_RENDER_COUNT = 50; // First batch - renders in 1-2 seconds
+const LAZY_RENDER_BATCH_SIZE = 50; // Subsequent batches when scrolling
+
+// BPM Loading: DISABLED by default due to Spotify API limitations
+// Spotify's batch endpoint fails, causing 500+ individual requests (very slow!)
+// Enable only if you want BPM data (will add ~250s load time for 500 tracks)
+// TODO: Replace with third-party BPM service (see todo #2)
+const SKIP_BPM_LOADING = true;
+
+// ========================================
 // TRACKS - LOAD & DISPLAY
 // ========================================
 
@@ -14,34 +29,21 @@ export async function loadTracks(playlistId) {
   // Stop any currently playing audio
   stopCurrentAudio();
   
+  // Clean up any existing lazy load observers
+  const tracksContainer = document.querySelector('.tracks-container');
+  if (tracksContainer && tracksContainer._lazyLoadCleanup) {
+    tracksContainer._lazyLoadCleanup();
+  }
+  
   try {
-    // Get all tracks
+    // Get all tracks (fast - just metadata)
     const trackItems = await spotifyAPI.getAllPlaylistTracks(playlistId);
     
-    // Extract track IDs for audio features
-    const trackIds = trackItems
-      .filter(item => item.track && item.track.id)
-      .map(item => item.track.id);
-    
-    // Get audio features (BPM, etc.) - this is optional
-    let audioFeatures = [];
-    if (trackIds.length > 0) {
-      try {
-        audioFeatures = await spotifyAPI.getAudioFeatures(trackIds);
-      } catch (audioError) {
-        // Create empty array with same length as tracks
-        audioFeatures = new Array(trackIds.length).fill(null);
-      }
-    }
-    
-    // Combine tracks with audio features
-    const currentTracks = trackItems.map((item, index) => {
-      const features = audioFeatures[index] || {};
-      return {
-        ...item,
-        audioFeatures: features
-      };
-    });
+    // Store tracks WITHOUT audio features first for immediate display
+    const currentTracks = trackItems.map(item => ({
+      ...item,
+      audioFeatures: null // Will be lazy-loaded
+    }));
     
     State.setCurrentTracks(currentTracks);
     State.setFilteredTracks([...currentTracks]);
@@ -52,8 +54,23 @@ export async function loadTracks(playlistId) {
     }, 0);
     document.getElementById('playlist-duration').textContent = formatTotalDuration(totalMs);
     
+    // Display tracks immediately (progressive rendering)
+    renderedTrackCount = 0;
     displayTracks(State.getFilteredTracks());
     initializeDragDrop();
+    
+    showLoading(false);
+    
+    // Show performance mode notification
+    if (SKIP_BPM_LOADING && currentTracks.length > 100) {
+      showSnackbar('⚡ Performance mode: BPM data disabled for faster loading', 'success');
+    }
+    
+    // Lazy load audio features ONLY for rendered tracks (not all tracks)
+    // This prevents the 600+ request problem
+    if (!SKIP_BPM_LOADING) {
+      lazyLoadAudioFeaturesForRenderedTracks();
+    }
     
   } catch (error) {
     console.error('Error loading tracks:', error);
@@ -63,9 +80,100 @@ export async function loadTracks(playlistId) {
   }
 }
 
+// Lazy load audio features ONLY for currently rendered tracks (not all tracks!)
+// This is called after initial render and after each lazy batch load
+async function lazyLoadAudioFeaturesForRenderedTracks() {
+  try {
+    const allTracks = State.getCurrentTracks();
+    
+    // Only load audio features for rendered tracks (renderedTrackCount)
+    const renderedTracks = allTracks.slice(0, renderedTrackCount);
+    
+    // Extract track IDs that don't have audio features yet
+    const tracksNeedingFeatures = renderedTracks
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => item.track && item.track.id && !item.audioFeatures);
+    
+    if (tracksNeedingFeatures.length === 0) return;
+    
+    // Fetch audio features in batches of 100 (Spotify API limit)
+    const batchSize = 100;
+    const trackIds = tracksNeedingFeatures.map(({ item }) => item.track.id);
+    
+    for (let i = 0; i < trackIds.length; i += batchSize) {
+      const batchIds = trackIds.slice(i, i + batchSize);
+      const batchIndices = tracksNeedingFeatures.slice(i, i + batchSize).map(({ index }) => index);
+      
+      try {
+        const audioFeatures = await spotifyAPI.getAudioFeatures(batchIds);
+        
+        // Update tracks with audio features
+        const currentTracks = State.getCurrentTracks();
+        for (let j = 0; j < batchIds.length; j++) {
+          const trackIndex = batchIndices[j];
+          if (currentTracks[trackIndex]) {
+            currentTracks[trackIndex].audioFeatures = audioFeatures[j] || {};
+          }
+        }
+        
+        // Update state
+        State.setCurrentTracks(currentTracks);
+        State.setFilteredTracks([...currentTracks]);
+        
+        // Update only the BPM cells for this batch (no full re-render)
+        const startIdx = Math.min(...batchIndices);
+        const endIdx = Math.max(...batchIndices) + 1;
+        updateBPMCells(startIdx, endIdx);
+        
+      } catch (audioError) {
+        console.warn('Failed to load audio features batch:', audioError);
+        // Continue with next batch even if one fails
+      }
+      
+      // Small delay between batches to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    
+  } catch (error) {
+    console.warn('Error lazy loading audio features:', error);
+  }
+}
+
+// Update BPM cells without re-rendering entire track list
+function updateBPMCells(startIndex, endIndex) {
+  const tracks = State.getFilteredTracks();
+  const tbody = document.getElementById('tracks-list');
+  const rows = tbody.querySelectorAll('tr[data-track-index]');
+  
+  for (let i = startIndex; i < endIndex && i < tracks.length; i++) {
+    const trackItem = tracks[i];
+    if (!trackItem || !trackItem.audioFeatures) continue;
+    
+    const row = rows[i];
+    if (!row) continue;
+    
+    const bpmCell = row.querySelector('.col-bpm .bpm-badge');
+    if (bpmCell) {
+      const tempo = trackItem.audioFeatures.tempo;
+      bpmCell.textContent = tempo ? spotifyAPI.formatBPM(tempo) : 'N/A';
+      
+      // Add subtle animation when BPM loads
+      bpmCell.style.opacity = '0.5';
+      setTimeout(() => {
+        bpmCell.style.transition = 'opacity 0.3s';
+        bpmCell.style.opacity = '1';
+      }, 10);
+    }
+  }
+}
+
 export function displayTracks(tracks) {
   const tbody = document.getElementById('tracks-list');
-  tbody.innerHTML = '';
+  
+  // Only clear if this is a fresh render (renderedTrackCount === 0)
+  if (renderedTrackCount === 0) {
+    tbody.innerHTML = '';
+  }
   
   if (tracks.length === 0) {
     tbody.innerHTML = `
@@ -78,9 +186,28 @@ export function displayTracks(tracks) {
     return;
   }
   
-  tracks.forEach((item, index) => {
+  // Progressive rendering: Render in batches
+  const tracksToRender = tracks.length <= INITIAL_RENDER_COUNT 
+    ? tracks 
+    : tracks.slice(0, INITIAL_RENDER_COUNT);
+  
+  // Render initial batch or all if small playlist
+  renderTrackBatch(tracksToRender, 0);
+  
+  // If there are more tracks, set up lazy loading
+  if (tracks.length > INITIAL_RENDER_COUNT) {
+    setupLazyTrackLoading(tracks);
+  }
+}
+
+// Render a batch of tracks
+function renderTrackBatch(tracks, startIndex) {
+  const tbody = document.getElementById('tracks-list');
+  
+  tracks.forEach((item, batchIndex) => {
     if (!item.track) return;
     
+    const index = startIndex + batchIndex;
     const track = item.track;
     const features = item.audioFeatures || {};
     const tr = document.createElement('tr');
@@ -182,8 +309,105 @@ export function displayTracks(tracks) {
     tbody.appendChild(tr);
   });
   
+  renderedTrackCount = startIndex + tracks.length;
+  
   // Restore playback state after tracks are displayed
   restorePlaybackState();
+}
+
+// Set up lazy loading for remaining tracks
+function setupLazyTrackLoading(allTracks) {
+  const tbody = document.getElementById('tracks-list');
+  const tracksContainer = tbody.closest('.tracks-container');
+  
+  if (!tracksContainer) return;
+  
+  // Remove any existing scroll listener
+  if (tracksContainer._lazyLoadListener) {
+    tracksContainer.removeEventListener('scroll', tracksContainer._lazyLoadListener);
+  }
+  
+  // Create loading indicator
+  let loadingIndicator = tbody.querySelector('.lazy-loading-indicator');
+  if (!loadingIndicator) {
+    loadingIndicator = document.createElement('tr');
+    loadingIndicator.className = 'lazy-loading-indicator';
+    loadingIndicator.innerHTML = `
+      <td colspan="8" style="text-align: center; padding: 20px; color: #888;">
+        <i class="fas fa-spinner fa-spin"></i> Loading more tracks...
+      </td>
+    `;
+  }
+  tbody.appendChild(loadingIndicator);
+  
+  // Set up intersection observer for lazy loading
+  let isLoading = false;
+  
+  const loadMoreTracks = () => {
+    if (isLoading || renderedTrackCount >= allTracks.length) {
+      // All tracks loaded, remove indicator
+      if (loadingIndicator && loadingIndicator.parentNode) {
+        loadingIndicator.remove();
+      }
+      return;
+    }
+    
+    isLoading = true;
+    
+    // Calculate next batch
+    const nextBatch = allTracks.slice(
+      renderedTrackCount, 
+      renderedTrackCount + LAZY_RENDER_BATCH_SIZE
+    );
+    
+    // Small delay to make it feel smoother
+    setTimeout(() => {
+      // Remove loading indicator temporarily
+      if (loadingIndicator && loadingIndicator.parentNode) {
+        loadingIndicator.remove();
+      }
+      
+      // Render next batch
+      renderTrackBatch(nextBatch, renderedTrackCount);
+      
+      // Re-initialize drag-drop for new elements
+      initializeDragDrop();
+      
+      // Load audio features for the newly rendered batch
+      if (!SKIP_BPM_LOADING) {
+        lazyLoadAudioFeaturesForRenderedTracks();
+      }
+      
+      isLoading = false;
+      
+      // Re-add loading indicator if more tracks remain
+      if (renderedTrackCount < allTracks.length) {
+        tbody.appendChild(loadingIndicator);
+      }
+    }, 100);
+  };
+  
+  // Use Intersection Observer for efficient scroll detection
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        loadMoreTracks();
+      }
+    });
+  }, {
+    root: tracksContainer,
+    rootMargin: '200px' // Start loading 200px before reaching the indicator
+  });
+  
+  observer.observe(loadingIndicator);
+  
+  // Store cleanup function
+  tracksContainer._lazyLoadCleanup = () => {
+    observer.disconnect();
+    if (loadingIndicator && loadingIndicator.parentNode) {
+      loadingIndicator.remove();
+    }
+  };
 }
 
 // Swipe to delete functionality for mobile

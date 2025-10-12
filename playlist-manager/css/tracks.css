@@ -49,6 +49,25 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Lazy Loading Indicator */
+.tracks-table tbody tr.lazy-loading-indicator {
+  background: transparent;
+  border-bottom: none;
+}
+
+.tracks-table tbody tr.lazy-loading-indicator:hover {
+  background: transparent;
+}
+
+.tracks-table tbody tr.lazy-loading-indicator td {
+  padding: 30px;
+  font-size: 0.9rem;
+}
+
+.tracks-table tbody tr.lazy-loading-indicator i.fa-spinner {
+  margin-right: 8px;
+}
+
 .tracks-table td {
   padding: 12px 10px;
 }
@@ -237,6 +256,12 @@
   border-radius: 12px;
   font-size: 0.85rem;
   font-weight: 600;
+  transition: opacity 0.3s ease;
+}
+
+.bpm-badge.loading {
+  opacity: 0.5;
+  background: #666;
 }
 
 .explicit-badge {
