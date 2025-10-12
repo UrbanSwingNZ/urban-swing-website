@@ -58,7 +58,6 @@ export function showConnectPrompt() {
 }
 
 export async function showAuthenticatedState() {
-  console.log('Showing authenticated state');
   document.getElementById('connect-prompt').style.display = 'none';
   document.getElementById('main-content').style.display = 'flex';
   
@@ -73,7 +72,6 @@ export async function showAuthenticatedState() {
       // Import player module and initialize
       const { initializePlayer } = await import('./spotify-player.js');
       await initializePlayer(accessToken);
-      console.log('✅ Spotify Player initialized successfully');
     }
   } catch (error) {
     console.warn('⚠️ Could not initialize Spotify Player:', error.message);

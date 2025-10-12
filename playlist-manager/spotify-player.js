@@ -51,7 +51,6 @@ export async function initializePlayer(accessToken) {
 
       // Ready
       player.addListener('ready', ({ device_id }) => {
-        console.log('Spotify Player Ready! Device ID:', device_id);
         deviceId = device_id;
         isPlayerReady = true;
         resolve(device_id);
