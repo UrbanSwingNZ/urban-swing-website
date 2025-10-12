@@ -99,7 +99,9 @@ export function displayTracks(tracks) {
     
     tr.innerHTML = `
       <td class="col-drag">
-        <i class="fas fa-grip-vertical drag-handle"></i>
+        <div class="drag-handle">
+          <i class="fas fa-grip-vertical"></i>
+        </div>
       </td>
       <td class="col-number">
         <span class="track-number">${index + 1}</span>
@@ -280,101 +282,56 @@ function addLongPressMenu(element, track) {
 // Show mobile-friendly track menu with options
 function showMobileTrackMenu(track) {
   const options = [
-    { label: 'Copy to Playlist', action: () => handleCopyTrack(track) },
-    { label: 'Move to Playlist', action: () => handleMoveTrack(track) },
-    { label: 'Delete from Playlist', action: () => handleDeleteTrack(track) }
+    { label: 'Copy to Playlist', icon: 'fa-copy', action: () => handleCopyTrack(track) },
+    { label: 'Move to Playlist', icon: 'fa-arrow-right', action: () => handleMoveTrack(track) },
+    { label: 'Delete from Playlist', icon: 'fa-trash', action: () => handleDeleteTrack(track), class: 'menu-delete' }
   ];
-  
-  // Create a simple menu overlay
+
+  // Overlay
   const menuOverlay = document.createElement('div');
-  menuOverlay.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 3000;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  `;
-  
-  const menuContainer = document.createElement('div');
-  menuContainer.style.cssText = `
-    background: white;
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.2);
-  `;
-  
-  // Track title
-  const title = document.createElement('h3');
-  title.textContent = track.name;
-  title.style.cssText = `
-    margin: 0 0 20px 0;
-    font-size: 1.1rem;
-    color: #333;
-    text-align: center;
-  `;
-  menuContainer.appendChild(title);
-  
-  // Add option buttons
+  menuOverlay.className = 'track-menu-mobile-overlay';
+
+  // Floating menu (styled like desktop, but centered and touch-friendly)
+  const menu = document.createElement('div');
+  menu.className = 'track-menu track-menu-mobile show';
+
+  // Track title with artist
+  const title = document.createElement('div');
+  title.className = 'track-menu-title';
+  const artistNames = track.artists.map(a => a.name).join(', ');
+  title.textContent = `${track.name} • ${artistNames}`;
+  menu.appendChild(title);
+
+  // Menu options
   options.forEach(option => {
     const btn = document.createElement('button');
-    btn.textContent = option.label;
-    btn.style.cssText = `
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      background: #f0f0f0;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    `;
-    
+    btn.className = 'track-menu-item' + (option.class ? ' ' + option.class : '');
+    btn.innerHTML = `<i class="fas ${option.icon}"></i> <span>${option.label}</span>`;
     btn.addEventListener('click', () => {
       option.action();
       document.body.removeChild(menuOverlay);
     });
-    
-    menuContainer.appendChild(btn);
+    menu.appendChild(btn);
   });
-  
-  // Cancel button
+
+  // Cancel option (styled as a normal menu item, but with .menu-cancel class)
   const cancelBtn = document.createElement('button');
-  cancelBtn.textContent = 'Cancel';
-  cancelBtn.style.cssText = `
-    width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    background: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-  `;
-  
+  cancelBtn.className = 'track-menu-item menu-cancel';
+  cancelBtn.innerHTML = '<span>Cancel</span>';
   cancelBtn.addEventListener('click', () => {
     document.body.removeChild(menuOverlay);
   });
-  
-  menuContainer.appendChild(cancelBtn);
-  menuOverlay.appendChild(menuContainer);
-  
+  menu.appendChild(cancelBtn);
+
+  menuOverlay.appendChild(menu);
+
   // Close on overlay click
   menuOverlay.addEventListener('click', (e) => {
     if (e.target === menuOverlay) {
       document.body.removeChild(menuOverlay);
     }
   });
-  
+
   document.body.appendChild(menuOverlay);
 }
 

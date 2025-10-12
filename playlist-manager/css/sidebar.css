@@ -277,6 +277,125 @@
   }
 }
 
+/* ========================================
+   MOBILE PLAYLIST MENU (BOTTOM SHEET)
+   ======================================== */
+
+.playlist-menu-mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+.playlist-menu-mobile {
+  background: var(--pm-card-light);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.playlist-menu-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  padding: 0 0 15px 0;
+  border-bottom: 1px solid var(--pm-border-light);
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlist-menu-item {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  text-align: left !important;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.playlist-menu-item:hover {
+  background: var(--pm-hover-bg);
+}
+
+.playlist-menu-item i {
+  width: 20px;
+  text-align: center;
+}
+
+.playlist-menu-item.menu-cancel {
+  margin-top: 10px;
+  justify-content: center !important;
+  color: #888;
+  border-top: 1px solid var(--pm-border-light);
+  padding-top: 20px;
+  margin-bottom: 0;
+}
+
+.playlist-menu-item.menu-cancel:hover {
+  background: var(--pm-hover-bg);
+  color: var(--text-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  .playlist-menu-mobile {
+    background: var(--pm-card-dark);
+  }
+  
+  .playlist-menu-title {
+    border-bottom-color: var(--pm-border-dark);
+  }
+  
+  .playlist-menu-item.menu-cancel {
+    border-top-color: var(--pm-border-dark);
+  }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  /* Hide the 3-dots button on mobile */
+  .playlist-menu-btn {
+    display: none !important;
+  }
+  
+  /* Hide the entire actions container on mobile */
+  .playlist-item-actions {
+    display: none !important;
+  }
+}
+
 .playlist-item img {
   width: 50px;
   height: 50px;
