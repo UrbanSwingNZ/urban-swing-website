@@ -13,8 +13,6 @@ import * as Player from './spotify-player.js';
 
 // Wait for page to load
 window.addEventListener('load', async () => {
-  console.log('Playlist manager page loaded');
-  
   // TEMPORARY: Skip Firebase auth check for testing
   // TODO: Re-enable after Spotify auth is working
   

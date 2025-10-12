@@ -107,14 +107,6 @@ export function initializeButtonStates() {
   
   // Ensure Save Order button starts hidden
   updateSaveOrderButton();
-  
-  // Debug: Check hamburger menu
-  const hamburger = document.getElementById('sidebar-toggle');
-  if (hamburger) {
-    const computedStyle = window.getComputedStyle(hamburger);
-    console.log('Hamburger menu computed display:', computedStyle.display);
-    console.log('Window width:', window.innerWidth);
-  }
 }
 
 // Import updateSaveOrderButton from track-operations
