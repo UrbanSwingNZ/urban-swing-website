@@ -895,7 +895,13 @@ export async function handleConfirmAction() {
     
   } catch (error) {
     console.error('Error performing action:', error);
-    showError('Failed to ' + pendingAction.action + ' track. ' + error.message);
+    
+    // Show user-friendly message for duplicates
+    if (error.message && error.message.includes('already exists')) {
+      showError('This track already exists in the destination playlist');
+    } else {
+      showError('Failed to ' + pendingAction.action + ' track. ' + error.message);
+    }
   } finally {
     showLoading(false);
     State.setPendingAction(null);
