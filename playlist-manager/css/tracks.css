@@ -257,11 +257,13 @@
   .tracks-container {
     padding: 0 10px 80px;
     overflow-x: hidden;
+    max-width: 100vw;
   }
   
   .tracks-table {
     table-layout: fixed;
     width: 100%;
+    max-width: 100%;
   }
   
   .tracks-table tbody tr {
@@ -270,6 +272,16 @@
   
   .drag-handle {
     opacity: 1;
+  }
+  
+  /* Reduce padding on mobile */
+  .tracks-table td {
+    padding: 10px 6px;
+  }
+  
+  .tracks-table thead th {
+    padding: 12px 6px;
+    font-size: 0.75rem;
   }
   
   /* Hide 3-dots menu and play/pause buttons on mobile */
@@ -299,9 +311,47 @@
     margin-top: 4px;
   }
   
-  .col-number { width: 30px; }
-  .col-duration { width: 60px; }
-  .col-explicit { width: 40px; }
+  /* Column widths for mobile - ensure everything fits */
+  .col-drag { 
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+  }
+  .col-number { 
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+  }
+  .col-title { 
+    width: auto;
+    min-width: 0;
+  }
+  .col-duration { 
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    text-align: right;
+    padding-right: 8px !important;
+  }
+  .col-explicit { 
+    width: 28px;
+    min-width: 28px;
+    max-width: 28px;
+  }
+  
+  /* Ensure table doesn't overflow */
+  .tracks-table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Prevent text overflow in track title */
+  .track-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
