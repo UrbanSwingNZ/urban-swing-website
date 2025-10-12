@@ -13,6 +13,10 @@ export async function loadPlaylists() {
   showLoading(true);
   
   try {
+    // Get current user to determine playlist ownership
+    const currentUser = await spotifyAPI.getCurrentUser();
+    State.setCurrentUserId(currentUser.id);
+    
     const playlists = await spotifyAPI.getAllUserPlaylists();
     State.setAllPlaylists(playlists);
     displayPlaylists(playlists);
@@ -521,6 +525,9 @@ export function showPlaylistMenu(button, playlist, isMobile = false) {
   
   State.setPlaylistMenuTarget(playlist);
   
+  // Check if the playlist is owned by the current user
+  const isOwned = State.isPlaylistOwnedByCurrentUser(playlist);
+  
   if (isMobile) {
     // Mobile: Create bottom sheet overlay
     const menuOverlay = document.createElement('div');
@@ -536,26 +543,39 @@ export function showPlaylistMenu(button, playlist, isMobile = false) {
     title.textContent = playlist.name;
     menu.appendChild(title);
 
-    // Menu options
-    const renameBtn = document.createElement('button');
-    renameBtn.className = 'playlist-menu-item';
-    renameBtn.dataset.action = 'rename';
-    renameBtn.innerHTML = '<i class="fas fa-edit"></i> <span>Rename</span>';
-    renameBtn.addEventListener('click', () => {
-      handlePlaylistMenuAction('rename', playlist);
-      document.body.removeChild(menuOverlay);
-    });
-    menu.appendChild(renameBtn);
+    // Menu options based on ownership
+    if (isOwned) {
+      const renameBtn = document.createElement('button');
+      renameBtn.className = 'playlist-menu-item';
+      renameBtn.dataset.action = 'rename';
+      renameBtn.innerHTML = '<i class="fas fa-edit"></i> <span>Rename</span>';
+      renameBtn.addEventListener('click', () => {
+        handlePlaylistMenuAction('rename', playlist);
+        document.body.removeChild(menuOverlay);
+      });
+      menu.appendChild(renameBtn);
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'playlist-menu-item menu-delete';
-    deleteBtn.dataset.action = 'delete';
-    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span>Delete</span>';
-    deleteBtn.addEventListener('click', () => {
-      handlePlaylistMenuAction('delete', playlist);
-      document.body.removeChild(menuOverlay);
-    });
-    menu.appendChild(deleteBtn);
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'playlist-menu-item menu-delete';
+      deleteBtn.dataset.action = 'delete';
+      deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span>Delete</span>';
+      deleteBtn.addEventListener('click', () => {
+        handlePlaylistMenuAction('delete', playlist);
+        document.body.removeChild(menuOverlay);
+      });
+      menu.appendChild(deleteBtn);
+    } else {
+      // Not owned - show "Remove from Library" option
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'playlist-menu-item menu-delete';
+      removeBtn.dataset.action = 'remove';
+      removeBtn.innerHTML = '<i class="fas fa-minus-circle"></i> <span>Remove from Library</span>';
+      removeBtn.addEventListener('click', () => {
+        handlePlaylistMenuAction('remove', playlist);
+        document.body.removeChild(menuOverlay);
+      });
+      menu.appendChild(removeBtn);
+    }
 
     // Cancel button
     const cancelBtn = document.createElement('button');
@@ -580,14 +600,25 @@ export function showPlaylistMenu(button, playlist, isMobile = false) {
     // Desktop: Create dropdown menu
     const menu = document.createElement('div');
     menu.className = 'playlist-menu show';
-    menu.innerHTML = `
-      <button data-action="rename">
-        <i class="fas fa-edit"></i> <span>Rename</span>
-      </button>
-      <button data-action="delete" class="menu-delete">
-        <i class="fas fa-trash"></i> <span>Delete</span>
-      </button>
-    `;
+    
+    // Build menu HTML based on ownership
+    if (isOwned) {
+      menu.innerHTML = `
+        <button data-action="rename">
+          <i class="fas fa-edit"></i> <span>Rename</span>
+        </button>
+        <button data-action="delete" class="menu-delete">
+          <i class="fas fa-trash"></i> <span>Delete</span>
+        </button>
+      `;
+    } else {
+      // Not owned - show "Remove from Library" option
+      menu.innerHTML = `
+        <button data-action="remove" class="menu-delete">
+          <i class="fas fa-minus-circle"></i> <span>Remove from Library</span>
+        </button>
+      `;
+    }
     
     // Position under the action button
     const actions = button.closest('.playlist-item-actions');
@@ -622,5 +653,61 @@ function handlePlaylistMenuAction(action, playlist) {
     // Set as current for deletion
     State.setCurrentPlaylist(playlist);
     handleDeletePlaylist();
+  } else if (action === 'remove') {
+    // Remove from library (unfollow)
+    State.setCurrentPlaylist(playlist);
+    handleRemovePlaylistFromLibrary();
+  }
+}
+
+// ========================================
+// REMOVE PLAYLIST FROM LIBRARY
+// ========================================
+
+async function handleRemovePlaylistFromLibrary() {
+  const playlist = State.getCurrentPlaylist();
+  if (!playlist) {
+    showError('No playlist selected');
+    return;
+  }
+  
+  const playlistName = playlist.name;
+  
+  // Confirm the action
+  if (!confirm(`Remove "${playlistName}" from your library?\n\nThis won't delete the playlist, but it will be removed from your library.`)) {
+    return;
+  }
+  
+  showLoading(true);
+  
+  try {
+    // Use the deletePlaylist method which actually unfollows the playlist
+    await spotifyAPI.deletePlaylist(playlist.id);
+    
+    // If this was the currently selected playlist, clear it
+    if (State.getCurrentPlaylistId() === playlist.id) {
+      State.setCurrentPlaylist(null);
+      State.setCurrentPlaylistId(null);
+      State.setCurrentTracks([]);
+      State.setFilteredTracks([]);
+      document.getElementById('playlist-tracks').innerHTML = '';
+      document.getElementById('playlist-name').textContent = 'Select a playlist';
+      document.getElementById('track-search').value = '';
+      updateSaveOrderButton();
+    }
+    
+    // Remove from all playlists array
+    const allPlaylists = State.getAllPlaylists().filter(p => p.id !== playlist.id);
+    State.setAllPlaylists(allPlaylists);
+    
+    // Refresh the playlists list
+    displayPlaylists(allPlaylists);
+    
+    showSnackbar(`Removed "${playlistName}" from your library`);
+  } catch (error) {
+    console.error('Error removing playlist from library:', error);
+    showError('Failed to remove playlist from library: ' + error.message);
+  } finally {
+    showLoading(false);
   }
 }
