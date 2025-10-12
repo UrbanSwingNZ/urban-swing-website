@@ -12,5 +12,15 @@
       ],
       "predeploy": []
     }
-  ]
+  ],
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "functions/**",
+      "cloudflare-worker/**"
+    ]
+  }
 }

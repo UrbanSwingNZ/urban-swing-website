@@ -53,12 +53,45 @@ class SpotifyAPI {
   }
 
   async refreshAccessToken() {
-    if (!this.refreshToken) return false;
-    
-    // Note: Token refresh requires server-side implementation
-    // For now, we'll redirect to re-authenticate
-    console.warn('Token expired, need to re-authenticate');
-    return false;
+    try {
+      console.log('Refreshing access token via Cloudflare Worker...');
+      
+      // Get Spotify user ID from localStorage
+      const userId = localStorage.getItem('spotify_user_id');
+      if (!userId) {
+        console.error('No Spotify user ID found');
+        return false;
+      }
+      
+      // Call Cloudflare Worker
+      const response = await fetch('https://urban-swing-spotify.urban-swing.workers.dev/refresh-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+        }),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Refresh failed:', error.error);
+        return false;
+      }
+      
+      const tokens = await response.json();
+      
+      // Update tokens (refresh token stays server-side in Firestore)
+      this.setTokens(tokens.accessToken, null, tokens.expiresIn);
+      
+      console.log('Successfully refreshed access token');
+      return true;
+      
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      return false;
+    }
   }
 
   isAuthenticated() {
@@ -70,8 +103,12 @@ class SpotifyAPI {
   // ========================================
 
   async makeRequest(endpoint, options = {}) {
-    if (!this.isAuthenticated()) {
-      throw new Error('Not authenticated with Spotify');
+    // Check if token is expired and try to refresh
+    if (this.isTokenExpired()) {
+      const refreshed = await this.refreshAccessToken();
+      if (!refreshed) {
+        throw new Error('Not authenticated with Spotify');
+      }
     }
 
     const url = endpoint.startsWith('http') ? endpoint : `${spotifyConfig.apiEndpoint}${endpoint}`;
@@ -85,12 +122,18 @@ class SpotifyAPI {
     });
 
     if (response.status === 401) {
-      // Token expired - for implicit flow, user needs to re-authenticate
-      this.accessToken = null;
-      this.tokenExpiry = null;
-      localStorage.removeItem('spotify_access_token');
-      localStorage.removeItem('spotify_token_expiry');
-      throw new Error('Spotify session expired. Please reconnect your account.');
+      // Token expired - try to refresh once
+      const refreshed = await this.refreshAccessToken();
+      if (!refreshed) {
+        this.accessToken = null;
+        this.tokenExpiry = null;
+        localStorage.removeItem('spotify_access_token');
+        localStorage.removeItem('spotify_token_expiry');
+        throw new Error('Spotify session expired. Please reconnect your account.');
+      }
+      
+      // Retry the request with new token
+      return this.makeRequest(endpoint, options);
     }
 
     if (!response.ok) {
