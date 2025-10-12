@@ -345,12 +345,35 @@ class SpotifyAPI {
   // Helper Methods
   // ========================================
 
+  async checkTrackExistsInPlaylist(trackUri, playlistId) {
+    try {
+      const tracks = await this.getAllPlaylistTracks(playlistId);
+      return tracks.some(item => item.track && item.track.uri === trackUri);
+    } catch (error) {
+      console.error('Error checking track existence:', error);
+      // If we can't check, assume it doesn't exist to allow the operation
+      return false;
+    }
+  }
+
   async copyTrackToPlaylist(trackUri, fromPlaylistId, toPlaylistId) {
+    // Check if track already exists in destination
+    const exists = await this.checkTrackExistsInPlaylist(trackUri, toPlaylistId);
+    if (exists) {
+      throw new Error('Track already exists in the destination playlist');
+    }
+    
     await this.addTracksToPlaylist(toPlaylistId, [trackUri]);
     return { success: true, action: 'copied' };
   }
 
   async moveTrackToPlaylist(trackUri, fromPlaylistId, toPlaylistId) {
+    // Check if track already exists in destination
+    const exists = await this.checkTrackExistsInPlaylist(trackUri, toPlaylistId);
+    if (exists) {
+      throw new Error('Track already exists in the destination playlist');
+    }
+    
     // Add to destination first
     await this.addTracksToPlaylist(toPlaylistId, [trackUri]);
     

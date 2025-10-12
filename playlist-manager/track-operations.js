@@ -3,6 +3,7 @@
 
 import * as State from './playlist-state.js';
 import { showLoading, showError, showSnackbar, showSuccess } from './playlist-ui.js';
+import { updatePlaylistTrackCount } from './playlist-operations.js';
 
 // ========================================
 // PERFORMANCE CONFIGURATION
@@ -527,11 +528,21 @@ function addLongPressMenu(element, track) {
 
 // Show mobile-friendly track menu with options
 function showMobileTrackMenu(track) {
+  // Check if current playlist is owned by the user
+  const currentPlaylist = State.getCurrentPlaylist();
+  const isOwned = State.isPlaylistOwnedByCurrentUser(currentPlaylist);
+  
+  // Build options array based on ownership
   const options = [
-    { label: 'Copy to Playlist', icon: 'fa-copy', action: () => handleCopyTrack(track) },
-    { label: 'Move to Playlist', icon: 'fa-arrow-right', action: () => handleMoveTrack(track) },
-    { label: 'Delete from Playlist', icon: 'fa-trash', action: () => handleDeleteTrack(track.uri, track.name), class: 'menu-delete' }
+    { label: 'Copy to Playlist', icon: 'fa-copy', action: () => handleCopyTrack(track) }
   ];
+  
+  // Only show "Move to Playlist" if the current playlist is owned by the user
+  if (isOwned) {
+    options.push({ label: 'Move to Playlist', icon: 'fa-arrow-right', action: () => handleMoveTrack(track) });
+  }
+  
+  options.push({ label: 'Delete from Playlist', icon: 'fa-trash', action: () => handleDeleteTrack(track.uri, track.name), class: 'menu-delete' });
 
   // Overlay
   const menuOverlay = document.createElement('div');
@@ -750,20 +761,37 @@ export function showTrackMenu(button, track) {
   // Close any other open menus
   document.querySelectorAll('.track-menu').forEach(menu => menu.remove());
   
+  // Check if current playlist is owned by the user
+  const currentPlaylist = State.getCurrentPlaylist();
+  const isOwned = State.isPlaylistOwnedByCurrentUser(currentPlaylist);
+  
   // Create menu
   const menu = document.createElement('div');
   menu.className = 'track-menu show';
-  menu.innerHTML = `
+  
+  // Build menu HTML based on ownership
+  let menuHTML = `
     <button data-action="copy">
       <i class="fas fa-copy"></i> Copy to Playlist
     </button>
-    <button data-action="move">
-      <i class="fas fa-arrow-right"></i> Move to Playlist
-    </button>
+  `;
+  
+  // Only show "Move to Playlist" if the current playlist is owned by the user
+  if (isOwned) {
+    menuHTML += `
+      <button data-action="move">
+        <i class="fas fa-arrow-right"></i> Move to Playlist
+      </button>
+    `;
+  }
+  
+  menuHTML += `
     <button data-action="delete" class="menu-delete">
       <i class="fas fa-trash"></i> Delete
     </button>
   `;
+  
+  menu.innerHTML = menuHTML;
   
   // Position menu
   const actions = button.closest('.track-actions');
@@ -844,18 +872,36 @@ export async function handleConfirmAction() {
     
     if (action === 'copy') {
       await spotifyAPI.copyTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
+      
+      // Update destination playlist track count (+1)
+      await updatePlaylistTrackCount(destinationId, 1);
+      
       showSuccess(`Track copied successfully!`);
     } else if (action === 'move') {
       await spotifyAPI.moveTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
+      
+      // Update destination playlist track count (+1)
+      await updatePlaylistTrackCount(destinationId, 1);
+      
+      // Update source playlist track count (-1)
+      await updatePlaylistTrackCount(fromPlaylistId, -1);
+      
       showSuccess(`Track moved successfully!`);
-      // Reload current playlist
+      
+      // Reload current playlist tracks to reflect the removal
       const currentPlaylist = State.getCurrentPlaylist();
       await loadTracks(currentPlaylist.id);
     }
     
   } catch (error) {
     console.error('Error performing action:', error);
-    showError('Failed to ' + pendingAction.action + ' track. ' + error.message);
+    
+    // Show user-friendly message for duplicates
+    if (error.message && error.message.includes('already exists')) {
+      showError('This track already exists in the destination playlist');
+    } else {
+      showError('Failed to ' + pendingAction.action + ' track. ' + error.message);
+    }
   } finally {
     showLoading(false);
     State.setPendingAction(null);
@@ -880,6 +926,9 @@ async function removeTrackFromPlaylist(trackUri, trackName) {
   
   try {
     await spotifyAPI.removeTracksFromPlaylist(currentPlaylistId, [trackUri]);
+    
+    // Update playlist track count (-1)
+    await updatePlaylistTrackCount(currentPlaylistId, -1);
     
     // Reload the playlist to show updated tracks
     const currentPlaylist = State.getCurrentPlaylist();
