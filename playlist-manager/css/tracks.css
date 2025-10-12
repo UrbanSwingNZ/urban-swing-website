@@ -30,6 +30,7 @@
 }
 
 .tracks-table tbody tr {
+  position: relative;
   transition: all 0.2s ease;
   border-bottom: 1px solid var(--pm-border-light);
   cursor: default;
@@ -254,7 +255,7 @@
 /* Mobile Tracks */
 @media (max-width: 768px) {
   .tracks-container {
-    padding: 0 10px 10px;
+    padding: 0 10px 80px;
     overflow-x: hidden;
   }
   
@@ -433,4 +434,25 @@
   .track-menu-item.menu-cancel {
     border-top-color: var(--pm-border-dark);
   }
+}
+
+/* ========================================
+   SWIPE TO DELETE ICON
+   ======================================== */
+
+.swipe-delete-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff4444;
+  font-size: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  z-index: 10;
+}
+
+.swipe-delete-icon i {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }

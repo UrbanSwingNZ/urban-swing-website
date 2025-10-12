@@ -193,6 +193,7 @@ function addSwipeToDelete(element, track) {
   let touchEndX = 0;
   let touchEndY = 0;
   let isSwiping = false;
+  let deleteIcon = null;
   
   element.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
@@ -212,8 +213,22 @@ function addSwipeToDelete(element, track) {
       
       // Apply swipe visual feedback
       if (diffX > 0) { // Swiping left
-        element.style.transform = `translateX(-${Math.min(diffX, 100)}px)`;
-        element.style.backgroundColor = '#ff4444';
+        const swipeAmount = Math.min(diffX, 100);
+        element.style.transform = `translateX(-${swipeAmount}px)`;
+        element.style.transition = 'none';
+        element.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
+        
+        // Create or update delete icon
+        if (!deleteIcon) {
+          deleteIcon = document.createElement('div');
+          deleteIcon.className = 'swipe-delete-icon';
+          deleteIcon.innerHTML = '<i class="fas fa-trash"></i>';
+          element.appendChild(deleteIcon);
+        }
+        
+        // Show icon as we swipe further
+        const iconOpacity = Math.min(swipeAmount / 100, 1);
+        deleteIcon.style.opacity = iconOpacity;
       }
     }
   }, { passive: true });
@@ -225,15 +240,22 @@ function addSwipeToDelete(element, track) {
     const swipeDistance = touchStartX - touchEndX;
     const verticalDistance = Math.abs(touchStartY - touchEndY);
     
-    // Reset visual feedback
+    // Reset visual feedback with transition
+    element.style.transition = 'transform 0.3s ease, background-color 0.3s ease';
     element.style.transform = '';
     element.style.backgroundColor = '';
     
+    // Remove delete icon
+    if (deleteIcon) {
+      deleteIcon.remove();
+      deleteIcon = null;
+    }
+    
     // If swiped left more than 100px and vertical movement is minimal
     if (isSwiping && swipeDistance > 100 && verticalDistance < 30) {
-      // Confirm and delete
+      // Confirm and delete - pass correct parameters
       if (confirm(`Delete "${track.name}" from this playlist?`)) {
-        handleDeleteTrack(track);
+        handleDeleteTrack(track.uri, track.name);
       }
     }
   }, { passive: true });
@@ -284,7 +306,7 @@ function showMobileTrackMenu(track) {
   const options = [
     { label: 'Copy to Playlist', icon: 'fa-copy', action: () => handleCopyTrack(track) },
     { label: 'Move to Playlist', icon: 'fa-arrow-right', action: () => handleMoveTrack(track) },
-    { label: 'Delete from Playlist', icon: 'fa-trash', action: () => handleDeleteTrack(track), class: 'menu-delete' }
+    { label: 'Delete from Playlist', icon: 'fa-trash', action: () => handleDeleteTrack(track.uri, track.name), class: 'menu-delete' }
   ];
 
   // Overlay
