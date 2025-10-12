@@ -3,6 +3,7 @@
 
 import * as State from './playlist-state.js';
 import { showLoading, showError, showSnackbar, showSuccess } from './playlist-ui.js';
+import { updatePlaylistTrackCount } from './playlist-operations.js';
 
 // ========================================
 // PERFORMANCE CONFIGURATION
@@ -871,11 +872,23 @@ export async function handleConfirmAction() {
     
     if (action === 'copy') {
       await spotifyAPI.copyTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
+      
+      // Update destination playlist track count (+1)
+      await updatePlaylistTrackCount(destinationId, 1);
+      
       showSuccess(`Track copied successfully!`);
     } else if (action === 'move') {
       await spotifyAPI.moveTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
+      
+      // Update destination playlist track count (+1)
+      await updatePlaylistTrackCount(destinationId, 1);
+      
+      // Update source playlist track count (-1)
+      await updatePlaylistTrackCount(fromPlaylistId, -1);
+      
       showSuccess(`Track moved successfully!`);
-      // Reload current playlist
+      
+      // Reload current playlist tracks to reflect the removal
       const currentPlaylist = State.getCurrentPlaylist();
       await loadTracks(currentPlaylist.id);
     }
@@ -907,6 +920,9 @@ async function removeTrackFromPlaylist(trackUri, trackName) {
   
   try {
     await spotifyAPI.removeTracksFromPlaylist(currentPlaylistId, [trackUri]);
+    
+    // Update playlist track count (-1)
+    await updatePlaylistTrackCount(currentPlaylistId, -1);
     
     // Reload the playlist to show updated tracks
     const currentPlaylist = State.getCurrentPlaylist();

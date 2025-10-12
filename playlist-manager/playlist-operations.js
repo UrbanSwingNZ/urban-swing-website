@@ -215,6 +215,30 @@ export function handlePlaylistSearch(e) {
 }
 
 // ========================================
+// PLAYLIST TRACK COUNT UPDATE
+// ========================================
+
+export async function updatePlaylistTrackCount(playlistId, delta) {
+  // Update the track count in state
+  const allPlaylists = State.getAllPlaylists();
+  const playlist = allPlaylists.find(p => p.id === playlistId);
+  
+  if (playlist) {
+    // Update the count
+    playlist.tracks.total += delta;
+    
+    // Update the UI element if it exists
+    const playlistItem = document.querySelector(`[data-playlist-id="${playlistId}"]`);
+    if (playlistItem) {
+      const countEl = playlistItem.querySelector('.playlist-item-count');
+      if (countEl) {
+        countEl.textContent = `${playlist.tracks.total} tracks`;
+      }
+    }
+  }
+}
+
+// ========================================
 // PLAYLIST SELECTION
 // ========================================
 
