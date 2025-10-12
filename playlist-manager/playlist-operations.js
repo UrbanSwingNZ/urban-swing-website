@@ -96,12 +96,58 @@ export function displayPlaylists(playlists) {
     // Use click event for both desktop and mobile
     li.addEventListener('click', handlePlaylistClick, { passive: false });
     
-    // Add menu button handler
+    // Add menu button handler (desktop)
     const menuBtn = li.querySelector('.playlist-menu-btn');
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       showPlaylistMenu(e.currentTarget, playlist);
     });
+    
+    // Add long-press handler for mobile (always add, check width when triggered)
+    let pressTimer = null;
+    let touchMoved = false;
+    
+    li.addEventListener('touchstart', (e) => {
+      // Only handle on mobile
+      if (window.innerWidth > 768) return;
+      
+      // Don't trigger long press on drag handle or menu button
+      if (e.target.closest('.playlist-drag-handle') || e.target.closest('.playlist-menu-btn')) {
+        return;
+      }
+      
+      touchMoved = false;
+      pressTimer = setTimeout(() => {
+        if (!touchMoved) {
+          e.preventDefault();
+          // Show menu for mobile - pass the playlist item itself
+          showPlaylistMenu(li, playlist, true);
+        }
+      }, 500);
+    }, { passive: false });
+    
+    li.addEventListener('touchmove', () => {
+      touchMoved = true;
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    li.addEventListener('touchend', () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
+    li.addEventListener('touchcancel', () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }, { passive: true });
+    
     listEl.appendChild(li);
   });
   
@@ -459,54 +505,114 @@ export async function handleRenamePlaylist() {
 // PLAYLIST MENU
 // ========================================
 
-export function showPlaylistMenu(button, playlist) {
-  // Check if menu is already open for this button
-  const existingMenu = button.closest('.playlist-item-actions').querySelector('.playlist-menu');
-  if (existingMenu) {
-    existingMenu.remove();
-    return; // Toggle off - don't create new menu
-  }
-  
+export function showPlaylistMenu(button, playlist, isMobile = false) {
   // Close any other open menus
   document.querySelectorAll('.playlist-menu').forEach(menu => menu.remove());
+  document.querySelectorAll('.playlist-menu-mobile-overlay').forEach(overlay => overlay.remove());
+  
+  // Check if menu is already open for this button (only for desktop)
+  if (!isMobile) {
+    const existingMenu = button.closest('.playlist-item-actions').querySelector('.playlist-menu');
+    if (existingMenu) {
+      existingMenu.remove();
+      return; // Toggle off - don't create new menu
+    }
+  }
   
   State.setPlaylistMenuTarget(playlist);
   
-  // Create menu
-  const menu = document.createElement('div');
-  menu.className = 'playlist-menu show';
-  menu.innerHTML = `
-    <button data-action="rename">
-      <i class="fas fa-edit"></i> Rename
-    </button>
-    <button data-action="delete" class="menu-delete">
-      <i class="fas fa-trash"></i> Delete
-    </button>
-  `;
-  
-  // Position menu
-  const actions = button.closest('.playlist-item-actions');
-  actions.appendChild(menu);
-  
-  // Add click handlers
-  menu.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const action = e.currentTarget.dataset.action;
-      handlePlaylistMenuAction(action, playlist);
-      menu.remove();
+  if (isMobile) {
+    // Mobile: Create bottom sheet overlay
+    const menuOverlay = document.createElement('div');
+    menuOverlay.className = 'playlist-menu-mobile-overlay';
+
+    // Bottom sheet menu
+    const menu = document.createElement('div');
+    menu.className = 'playlist-menu playlist-menu-mobile show';
+
+    // Playlist title
+    const title = document.createElement('div');
+    title.className = 'playlist-menu-title';
+    title.textContent = playlist.name;
+    menu.appendChild(title);
+
+    // Menu options
+    const renameBtn = document.createElement('button');
+    renameBtn.className = 'playlist-menu-item';
+    renameBtn.dataset.action = 'rename';
+    renameBtn.innerHTML = '<i class="fas fa-edit"></i> <span>Rename</span>';
+    renameBtn.addEventListener('click', () => {
+      handlePlaylistMenuAction('rename', playlist);
+      document.body.removeChild(menuOverlay);
     });
-  });
-  
-  // Close menu on outside click
-  setTimeout(() => {
-    const closeMenu = (e) => {
-      if (!menu.contains(e.target) && e.target !== button) {
-        menu.remove();
-        document.removeEventListener('click', closeMenu);
+    menu.appendChild(renameBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'playlist-menu-item menu-delete';
+    deleteBtn.dataset.action = 'delete';
+    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span>Delete</span>';
+    deleteBtn.addEventListener('click', () => {
+      handlePlaylistMenuAction('delete', playlist);
+      document.body.removeChild(menuOverlay);
+    });
+    menu.appendChild(deleteBtn);
+
+    // Cancel button
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'playlist-menu-item menu-cancel';
+    cancelBtn.innerHTML = '<span>Cancel</span>';
+    cancelBtn.addEventListener('click', () => {
+      document.body.removeChild(menuOverlay);
+    });
+    menu.appendChild(cancelBtn);
+
+    menuOverlay.appendChild(menu);
+
+    // Close on overlay click
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) {
+        document.body.removeChild(menuOverlay);
       }
-    };
-    document.addEventListener('click', closeMenu);
-  }, 10);
+    });
+
+    document.body.appendChild(menuOverlay);
+  } else {
+    // Desktop: Create dropdown menu
+    const menu = document.createElement('div');
+    menu.className = 'playlist-menu show';
+    menu.innerHTML = `
+      <button data-action="rename">
+        <i class="fas fa-edit"></i> <span>Rename</span>
+      </button>
+      <button data-action="delete" class="menu-delete">
+        <i class="fas fa-trash"></i> <span>Delete</span>
+      </button>
+    `;
+    
+    // Position under the action button
+    const actions = button.closest('.playlist-item-actions');
+    actions.appendChild(menu);
+    
+    // Add click handlers
+    menu.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const action = e.currentTarget.dataset.action;
+        handlePlaylistMenuAction(action, playlist);
+        menu.remove();
+      });
+    });
+    
+    // Close menu on outside click
+    setTimeout(() => {
+      const closeMenu = (e) => {
+        if (!menu.contains(e.target) && e.target !== button) {
+          menu.remove();
+          document.removeEventListener('click', closeMenu);
+        }
+      };
+      document.addEventListener('click', closeMenu);
+    }, 10);
+  }
 }
 
 function handlePlaylistMenuAction(action, playlist) {
