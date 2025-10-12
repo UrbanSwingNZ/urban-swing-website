@@ -15,16 +15,17 @@
   padding: 20px;
 }
 
-.modal[style*="display: block"] {
+.modal[style*="display: block"],
+.modal[style*="display: flex"] {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
 @media (max-width: 768px) {
-  .modal {
+  .modal[style*="display: block"],
+  .modal[style*="display: flex"] {
     align-items: flex-start !important;
-    justify-content: center !important;
     padding-top: 60px;
   }
 }
