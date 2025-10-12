@@ -20,47 +20,41 @@ export function getAuthCodeFromUrl() {
   return params.get('code');
 }
 
-// Exchange authorization code for access token
+// Exchange authorization code for access token via Cloudflare Worker
 export async function exchangeCodeForTokens(code) {
-  const codeVerifier = localStorage.getItem('spotify_code_verifier');
-  
-  if (!codeVerifier) {
-    throw new Error('Code verifier not found. Please try authenticating again.');
-  }
-  
   try {
-    const response = await fetch('https://accounts.spotify.com/api/token', {
+    console.log('Exchanging authorization code via Cloudflare Worker...');
+    
+    // Call Cloudflare Worker (no Firebase Auth required)
+    const response = await fetch('https://urban-swing-spotify.urban-swing.workers.dev/exchange-token', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: new URLSearchParams({
-        client_id: spotifyConfig.clientId,
-        grant_type: 'authorization_code',
+      body: JSON.stringify({
         code: code,
-        redirect_uri: spotifyConfig.redirectUri,
-        code_verifier: codeVerifier,
+        redirectUri: spotifyConfig.redirectUri,
       }),
     });
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error_description || 'Token exchange failed');
+      throw new Error(error.error || 'Token exchange failed');
     }
     
     const tokens = await response.json();
     
-    // Store tokens
-    spotifyAPI.setTokens(tokens.access_token, tokens.refresh_token, tokens.expires_in);
+    // Store Spotify user ID for refresh token lookups
+    localStorage.setItem('spotify_user_id', tokens.userId);
     
-    // Clean up
-    localStorage.removeItem('spotify_code_verifier');
+    // Store tokens (refresh token is stored server-side in Firestore)
+    spotifyAPI.setTokens(tokens.accessToken, null, tokens.expiresIn);
     
     console.log('Successfully exchanged authorization code for tokens');
     
   } catch (error) {
-    localStorage.removeItem('spotify_code_verifier');
-    throw error;
+    console.error('Token exchange error:', error);
+    throw new Error(error.message || 'Failed to exchange authorization code');
   }
 }
 
