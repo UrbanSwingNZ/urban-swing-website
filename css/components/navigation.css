@@ -7,7 +7,7 @@
 nav {
   width: 100%;
   max-width: var(--max-width-xl);
-  margin: var(--space-md) auto;
+  margin: var(--space-sm) auto var(--space-md);
   position: relative;
 }
 
