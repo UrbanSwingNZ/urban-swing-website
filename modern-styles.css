@@ -1,0 +1,309 @@
+/* ========================================
+   URBAN SWING - MODERN STYLES
+   Modern design system matching Admin Portal
+   and Playlist Manager aesthetic
+   ======================================== */
+
+/* Import order matters - base styles first, then components */
+
+/* Base Styles */
+@import url('css/base/variables.css');
+@import url('css/base/reset.css');
+@import url('css/base/typography.css');
+
+/* Layout */
+@import url('css/layout/layout.css');
+
+/* Components */
+@import url('css/components/header.css');
+@import url('css/components/navigation.css');
+@import url('css/components/buttons.css');
+@import url('css/components/cards.css');
+
+/* Utilities */
+@import url('css/utilities/utilities.css');
+
+/* ========================================
+   LEGACY SUPPORT & OVERRIDES
+   Styles to ensure backward compatibility
+   with existing pages
+   ======================================== */
+
+/* Ensure existing table-based layouts still work */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* FAQ Container */
+.faq-container {
+  max-width: var(--max-width-lg);
+  margin: 0 auto;
+}
+
+.faq-container h3 {
+  color: var(--urban-purple);
+  padding: var(--space-sm) 0;
+  margin-top: var(--space-md);
+}
+
+.faq-container p {
+  padding: var(--space-xs) 0;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Crew Container */
+.crew-container {
+  max-width: var(--max-width-xl);
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+.crew-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-lg);
+}
+
+.crew-table tr {
+  border-bottom: 1px solid var(--urban-pink);
+}
+
+.crew-table td {
+  padding: var(--space-md);
+  vertical-align: top;
+}
+
+.crew-photo {
+  width: 25%;
+}
+
+.crew-table td.crew-photo {
+  vertical-align: middle;
+}
+
+.crew-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base);
+}
+
+.crew-img:hover {
+  transform: scale(1.02);
+}
+
+.crew-info h2 {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-2xl);
+}
+
+.crew-info p {
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Class Details Table */
+.class-details-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto var(--space-xl);
+}
+
+.class-details-wrapper h2 {
+  margin-bottom: var(--space-md);
+  text-align: left;
+}
+
+.class-details-table {
+  border-collapse: collapse;
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.class-details-table td {
+  padding: var(--space-md);
+}
+
+.class-details-table td:nth-child(1) {
+  width: 50%;
+}
+
+.class-details-table td:nth-child(2) {
+  width: 50%;
+  text-align: right;
+}
+
+.class-details-table td img {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base);
+}
+
+.class-details-table td img:hover {
+  transform: scale(1.02);
+}
+
+/* Pricing Section */
+.pricing-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pricing-wrapper {
+  margin-top: var(--space-xl);
+  width: 100%;
+  max-width: 900px;
+}
+
+.pricing-wrapper h2 {
+  margin-bottom: var(--space-md);
+  text-align: left;
+}
+
+.pricing-table {
+  border-collapse: collapse;
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+}
+
+.pricing-table td {
+  padding: var(--space-sm) var(--space-md);
+}
+
+.pricing-table td:nth-child(2) {
+  text-align: right;
+  font-weight: var(--font-weight-semibold);
+  color: var(--urban-purple);
+}
+
+.indent-with-italics {
+  padding-left: var(--space-sm);
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.indent-only {
+  padding-left: var(--space-md);
+}
+
+/* Other Classes Container */
+.other-classes-container {
+  color: var(--text-color);
+  margin-top: var(--space-xl);
+}
+
+/* Under Construction Logo */
+.under-construction-logo {
+  content: url('/images/under-construction-light-mode.jpg');
+  width: 300px;
+  height: auto;
+  display: block;
+  margin: var(--space-lg) auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+@media (prefers-color-scheme: dark) {
+  .under-construction-logo {
+    content: url('/images/under-construction-dark-mode.jpg');
+  }
+}
+
+/* Mobile Responsive Adjustments for Legacy Components */
+@media (max-width: 768px) {
+  .crew-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .crew-photo {
+    text-align: center;
+    margin-bottom: var(--space-md);
+    width: 100%;
+  }
+
+  .crew-info h2 {
+    text-align: center;
+  }
+  
+  .class-details-wrapper,
+  .pricing-wrapper {
+    width: 100%;
+    padding: 0 var(--space-md);
+  }
+  
+  .class-details-table,
+  .pricing-table {
+    display: block;
+    width: 100%;
+  }
+  
+  .class-details-table td:nth-child(2) {
+    width: 100%;
+    text-align: center;
+    margin-top: var(--space-md);
+  }
+}
+
+/* Desktop specific styles */
+@media (min-width: 769px) {
+  .class-details-wrapper {
+    width: 900px;
+  }
+  
+  .class-details-table {
+    display: table;
+  }
+
+  .class-details-table td:nth-child(2) {
+    width: 50%;
+    text-align: right;
+  }
+
+  .class-details-table td img {
+    vertical-align: top;
+  }
+}
+
+/* ========================================
+   PAGE-SPECIFIC ENHANCEMENTS
+   ======================================== */
+
+/* Add smooth page transitions */
+body {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Improve link hover states throughout */
+.content-wrapper a:not(.btn):not(.card) {
+  position: relative;
+  transition: color var(--transition-base);
+}
+
+.content-wrapper a:not(.btn):not(.card):hover {
+  color: var(--urban-purple);
+}
+
+/* Style external links with icon */
+a[target="_blank"]::after {
+  content: " ↗";
+  font-size: 0.8em;
+  vertical-align: super;
+}
+
+/* Remove icon from button links */
+.btn[target="_blank"]::after,
+.card[target="_blank"]::after {
+  content: none;
+}
