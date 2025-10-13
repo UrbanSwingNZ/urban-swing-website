@@ -19,6 +19,8 @@
 @import url('components/navigation.css');
 @import url('components/buttons.css');
 @import url('components/cards.css');
+@import url('components/tables.css');
+@import url('components/faq.css');
 
 /* Utilities */
 @import url('utilities/utilities.css');
