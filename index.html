@@ -20,7 +20,7 @@
     <meta property="twitter:image" content="https://urbanswing.co.nz/images/urban-swing-logo.png">
     
     <title>Urban Swing</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="modern-styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/images/icons/android-chrome-192x192.png" sizes="192x192" type="image/png">
@@ -62,25 +62,74 @@
 
 <body>
     <!-- Header will be dynamically loaded by script.js -->
+    
     <div class="content-wrapper">
       <h1>Welcome to Urban Swing</h1>
-      <p>Urban Swing is Hawkes Bay's first West Coast Swing dance school.</p>
-      <p>West Coast Swing, sometimes called Modern Swing, is a fun social dance style suitable for people of all backgrounds, regardless of whether or not you've danced before!</p>
-      <p>West Coast Swing originated on the West Coast of the United States, evolving from Lindy Hop in the 1940s and 1950s, into a modern partner dance that can be danced to different types of music.</p>
-      <p>It's a great way to meet new friends and improve your fitness while having fun!</p>
-      <p>Come along to our classes on Thursday night at Dance Express in Onekawa. See <a href="classes.html">Class Info & Registration</a> for more details, and check out the video below to see West Coast Swing in action.</p>
-    </div>
-    <div class="video" style="margin-top: 25px; justify-content: center;">
-      <iframe width="560" 
-              height="315" 
-              src="https://www.youtube.com/embed/v4fRV0aG3lc?si=NkABX_HkPlgOTBK5" 
-              title="YouTube video player" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerpolicy="strict-origin-when-cross-origin" 
-              allowfullscreen>
+      
+      <!-- Main Content Cards -->
+      <div class="card-grid">
+        <!-- What is WCS Card -->
+        <div class="card card-gradient hover-lift">
+          <div class="card-icon">
+            <div class="card-icon-image">
+              <i class="fas fa-music"></i>
+            </div>
+            <div class="card-icon-content">
+              <h3>What is West Coast Swing?</h3>
+              <p>West Coast Swing, sometimes called Modern Swing, is a fun social dance style suitable for people of all backgrounds, regardless of whether or not you've danced before!</p>
+              <p>It originated on the West Coast of the United States, evolving from Lindy Hop in the 1940s and 1950s, into a modern partner dance that can be danced to different types of music.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why Join Card -->
+        <div class="card card-gradient hover-lift">
+          <div class="card-icon">
+            <div class="card-icon-image">
+              <i class="fas fa-heart"></i>
+            </div>
+            <div class="card-icon-content">
+              <h3>Why Join Us?</h3>
+              <p>Urban Swing is Hawkes Bay's first West Coast Swing dance school.</p>
+              <p>It's a great way to meet new friends and improve your fitness while having fun!</p>
+              <p>Come along to our classes on Thursday night at Dance Express in Onekawa.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div style="text-align: center; margin: var(--space-xl) 0;">
+        <p style="font-size: var(--font-size-xl); margin-bottom: var(--space-md);">
+          Ready to start dancing?
+        </p>
+        <a href="classes.html" class="btn-primary btn-lg">
+          <i class="fas fa-calendar-check"></i>
+          View Class Info & Register
+        </a>
+      </div>
+
+      <div class="divider-gradient"></div>
+
+      <!-- Video Section -->
+      <div style="text-align: center; margin-bottom: var(--space-md);">
+        <h2>See West Coast Swing in Action</h2>
+        <p class="text-muted">Watch this video to see what you'll be learning!</p>
+      </div>
+      
+      <div class="video">
+        <iframe width="560" 
+                height="315" 
+                src="https://www.youtube.com/embed/v4fRV0aG3lc?si=NkABX_HkPlgOTBK5" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
         </iframe>
+      </div>
     </div>
+    
     <script src="script.js" defer></script>
   </body>
 </html>
