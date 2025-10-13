@@ -7,21 +7,21 @@
 /* Import order matters - base styles first, then components */
 
 /* Base Styles */
-@import url('css/base/variables.css');
-@import url('css/base/reset.css');
-@import url('css/base/typography.css');
+@import url('base/variables.css');
+@import url('base/reset.css');
+@import url('base/typography.css');
 
 /* Layout */
-@import url('css/layout/layout.css');
+@import url('layout/layout.css');
 
 /* Components */
-@import url('css/components/header.css');
-@import url('css/components/navigation.css');
-@import url('css/components/buttons.css');
-@import url('css/components/cards.css');
+@import url('components/header.css');
+@import url('components/navigation.css');
+@import url('components/buttons.css');
+@import url('components/cards.css');
 
 /* Utilities */
-@import url('css/utilities/utilities.css');
+@import url('utilities/utilities.css');
 
 /* ========================================
    LEGACY SUPPORT & OVERRIDES

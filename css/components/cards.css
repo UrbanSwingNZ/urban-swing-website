@@ -20,11 +20,6 @@
 }
 
 /* Card with gradient top border */
-.card-gradient {
-  border-top: 4px solid transparent;
-  border-image: linear-gradient(90deg, var(--urban-blue), var(--urban-purple), var(--urban-pink)) 1;
-}
-
 .card-gradient::before {
   content: '';
   position: absolute;
@@ -33,6 +28,7 @@
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, var(--urban-blue), var(--urban-purple), var(--urban-pink));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 /* Card Header */
