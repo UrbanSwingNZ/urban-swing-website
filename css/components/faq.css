@@ -1,0 +1,97 @@
+/* FAQ Component */
+
+.faq-item {
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.faq-item:first-child {
+  padding-top: 0;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.faq-question {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.faq-question i {
+  font-size: 0.9em;
+  color: var(--accent-secondary);
+}
+
+.faq-answer {
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-left: calc(var(--space-sm) + 0.9em + var(--space-sm));
+}
+
+.faq-answer a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.faq-answer a:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+}
+
+/* Other classes container (WCS Around NZ page) */
+.other-classes-container {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.other-classes-container h3 {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: var(--space-xs);
+  border-bottom: 2px solid var(--accent-primary);
+  padding-bottom: var(--space-xs);
+  display: inline-block;
+}
+
+.other-classes-container p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.other-classes-container a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.other-classes-container a:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+}
+
+/* Under construction */
+.under-construction-logo {
+  max-width: 200px;
+  margin: var(--space-xl) auto;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .faq-question {
+    font-size: 1.2em;
+  }
+  
+  .other-classes-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
