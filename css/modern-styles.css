@@ -21,6 +21,7 @@
 @import url('components/cards.css');
 @import url('components/tables.css');
 @import url('components/faq.css');
+@import url('components/enhanced-features.css');
 
 /* Utilities */
 @import url('utilities/utilities.css');
