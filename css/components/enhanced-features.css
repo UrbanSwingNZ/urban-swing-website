@@ -1,0 +1,564 @@
+/* ========================================
+   ENHANCED FEATURES - PHASE 3
+   Advanced interactivity and UI enhancements
+   ======================================== */
+
+/* ============================================
+   1. SCROLL TO TOP BUTTON
+   ============================================ */
+
+.scroll-to-top {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+}
+
+.scroll-to-top:active {
+  transform: translateY(-2px);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   2. MODAL COMPONENT
+   ============================================ */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-container {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  transform: scale(0.9) translateY(20px);
+  transition: all var(--transition-normal);
+}
+
+.modal-overlay.active .modal-container {
+  transform: scale(1) translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.modal-title {
+  margin: 0;
+  color: var(--accent-primary);
+  font-size: 1.5rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--border-light);
+  color: var(--accent-primary);
+}
+
+.modal-body {
+  padding: var(--space-xl);
+}
+
+/* ============================================
+   3. FAQ ACCORDION
+   ============================================ */
+
+.faq-question-button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: var(--space-md) var(--space-lg) var(--space-md) 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--accent-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.faq-question-button::after {
+  content: '\f078'; /* Font Awesome chevron-down */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.8em;
+  transition: transform var(--transition-normal);
+  color: var(--accent-secondary);
+  position: absolute;
+  right: 0;
+}
+
+.faq-question-button.expanded::after {
+  transform: rotate(180deg);
+}
+
+.faq-question-button:hover {
+  color: var(--accent-secondary);
+}
+
+.faq-question-button:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.faq-answer {
+  animation: slideDown 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* ============================================
+   4. MOBILE MENU / HAMBURGER
+   ============================================ */
+
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-sm);
+  z-index: 1001;
+  position: relative;
+}
+
+.hamburger-line {
+  width: 25px;
+  height: 3px;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
+}
+
+/* Mobile menu styles */
+@media (max-width: 767px) {
+  .hamburger-menu {
+    display: flex;
+  }
+  
+  .nav-buttons {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 250px;
+    background: var(--bg-secondary);
+    flex-direction: column;
+    padding: var(--space-3xl) var(--space-lg);
+    box-shadow: var(--shadow-xl);
+    transform: translateX(100%);
+    transition: transform var(--transition-normal);
+    z-index: 1000;
+  }
+  
+  .nav-buttons.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .nav-btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* ============================================
+   5. LOADING STATES
+   ============================================ */
+
+/* Image loading */
+img.loading {
+  background: linear-gradient(
+    90deg,
+    var(--border-light) 0%,
+    var(--bg-secondary) 50%,
+    var(--border-light) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  min-height: 200px;
+}
+
+img.loaded {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Button loading state */
+.btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   6. SKIP LINK (Accessibility)
+   ============================================ */
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: var(--space-md);
+  background: var(--accent-primary);
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 10000;
+  transition: top var(--transition-fast);
+  box-shadow: var(--shadow-lg);
+}
+
+.skip-link:focus {
+  top: var(--space-md);
+  outline: 3px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   7. ACTIVE NAVIGATION
+   ============================================ */
+
+.nav-btn.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-btn.active:hover {
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   8. FORM ENHANCEMENTS
+   ============================================ */
+
+input.valid,
+textarea.valid,
+select.valid {
+  border-color: #10b981;
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: #ef4444;
+}
+
+input.valid:focus,
+textarea.valid:focus,
+select.valid:focus {
+  outline-color: #10b981;
+}
+
+input.error:focus,
+textarea.error:focus,
+select.error:focus {
+  outline-color: #ef4444;
+}
+
+/* ============================================
+   9. SMOOTH TRANSITIONS
+   ============================================ */
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Page load fade-in */
+body {
+  opacity: 0;
+  animation: pageLoadFade 0.5s ease forwards;
+}
+
+body.page-loaded {
+  opacity: 1;
+}
+
+@keyframes pageLoadFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   10. FOCUS VISIBLE (Better Accessibility)
+   ============================================ */
+
+/* Remove default focus, add custom */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+/* ============================================
+   11. SKELETON SCREENS
+   ============================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--border-light) 0%,
+    var(--bg-secondary) 50%,
+    var(--border-light) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--space-sm);
+}
+
+.skeleton-heading {
+  height: 2em;
+  width: 60%;
+  margin-bottom: var(--space-md);
+}
+
+.skeleton-card {
+  height: 200px;
+  margin-bottom: var(--space-lg);
+}
+
+/* ============================================
+   12. TOOLTIPS
+   ============================================ */
+
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--text-primary);
+  color: white;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition-fast);
+  z-index: 1000;
+}
+
+[data-tooltip]::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--text-primary);
+  opacity: 0;
+  transition: all var(--transition-fast);
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   13. RESPONSIVE IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 767px) {
+  .scroll-to-top {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    width: 45px;
+    height: 45px;
+    font-size: 1rem;
+  }
+  
+  .modal-container {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .modal-header {
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .modal-body {
+    padding: var(--space-lg);
+  }
+  
+  .modal-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* ============================================
+   14. PRINT STYLES
+   ============================================ */
+
+@media print {
+  .scroll-to-top,
+  .hamburger-menu,
+  .modal-overlay,
+  .skip-link {
+    display: none !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}

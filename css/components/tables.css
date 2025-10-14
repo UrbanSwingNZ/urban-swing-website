@@ -1,0 +1,360 @@
+/* Tables Component */
+
+/* General table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Class details table */
+.class-details-table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+.class-details-table td {
+  padding: var(--space-md);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.class-details-table td:first-child {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.class-details-table td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.class-details-table img {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal);
+}
+
+.class-details-table img:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.class-details-table a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.class-details-table a:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+}
+
+/* Pricing table */
+.pricing-table {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pricing-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.pricing-table tr:last-child td {
+  border-bottom: none;
+}
+
+.pricing-table td:first-child {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.pricing-table td:last-child {
+  text-align: right;
+  font-weight: 600;
+  color: var(--accent-primary);
+  font-size: 1.1em;
+}
+
+.pricing-table .indent-only {
+  padding-left: var(--space-xl);
+  font-weight: normal;
+}
+
+.pricing-table .indent-with-italics {
+  padding-left: var(--space-xl);
+  font-style: italic;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+/* Left-align cells that span both columns */
+.pricing-table td[colspan="2"] {
+  text-align: left;
+  font-weight: normal;
+}
+
+/* Crew table */
+.crew-table {
+  width: 100%;
+  border-spacing: 0 var(--space-xl);
+}
+
+.crew-table tr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.crew-table tr:last-child {
+  border-bottom: none;
+}
+
+.crew-photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.crew-img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal);
+  display: block;
+  margin: 0 auto;
+}
+
+.crew-img:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.crew-info {
+  padding: 0;
+}
+
+.crew-info h2 {
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+  color: var(--accent-primary);
+}
+
+.crew-info p {
+  margin-bottom: var(--space-md);
+  line-height: 1.7;
+}
+
+/* Responsive design */
+
+/* Mobile-specific styles for class details and pricing */
+@media (max-width: 767px) {
+  /* Class details table - stack vertically on mobile */
+  .class-details-table {
+    display: block;
+    width: 100%;
+  }
+  
+  .class-details-table tr {
+    display: block;
+    width: 100%;
+  }
+  
+  .class-details-table td {
+    display: block;
+    width: 100% !important;
+    padding: var(--space-md);
+    box-sizing: border-box;
+  }
+  
+  .class-details-table td:first-child {
+    padding-bottom: var(--space-lg);
+  }
+  
+  .class-details-table td:last-child {
+    text-align: center;
+    padding-top: var(--space-md);
+  }
+  
+  .class-details-table img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Pricing table - complete redesign for mobile */
+  .pricing-table {
+    display: block;
+    width: 100%;
+  }
+  
+  .pricing-table tr {
+    display: block;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-light);
+  }
+  
+  .pricing-table tr:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  /* Hide empty spacing rows on mobile - completely remove from layout */
+  .pricing-table tr[style*="height"] {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    height: 0 !important;
+  }
+  
+  .pricing-table td {
+    display: block;
+    width: 100%;
+    padding: var(--space-xs) 0;
+    text-align: left !important;
+    border-bottom: none;
+  }
+  
+  /* Make simple pricing rows (Casual/Student) use flexbox for alignment */
+  .pricing-table tr:not([style*="height"]):has(td:not([colspan]):not(.indent-only):not(.indent-with-italics)) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pricing-table tr:not([style*="height"]) td:first-child:not([colspan]):not(.indent-only):not(.indent-with-italics) {
+    display: block;
+    flex: 0 0 auto;
+    max-width: 70%;
+  }
+  
+  .pricing-table tr:not([style*="height"]) td:last-child:not([colspan]) {
+    display: block;
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+    font-size: 1.2em;
+    color: var(--urban-purple) !important;
+    font-weight: 600;
+  }
+  
+  /* Section headers (colspan) - bigger and bold */
+  .pricing-table td[colspan="2"]:not(.indent-with-italics) {
+    font-weight: 600;
+    font-size: 1.05em;
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    padding-top: var(--space-md);
+    border-top: none;
+  }
+  
+  .pricing-table tr:first-child td[colspan="2"] {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  
+  /* Remove bottom border from rows before section headers */
+  .pricing-table tr:has(+ tr td[colspan="2"]:not(.indent-with-italics)) {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  /* Indented items with pricing - use flexbox to keep price on right */
+  .pricing-table tr:has(.indent-only) {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .pricing-table .indent-only {
+    display: block;
+    flex: 0 0 auto;
+    max-width: 70%;
+    padding-left: 0;
+    padding-top: var(--space-sm);
+    line-height: 1.6;
+  }
+  
+  .pricing-table tr:has(.indent-only) td:last-child {
+    display: block;
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+    padding-top: var(--space-sm);
+    font-size: 1.2em;
+    color: var(--urban-pink) !important;
+    font-weight: 600;
+  }
+  
+  /* Notes and italicized text */
+  .pricing-table .indent-with-italics {
+    display: block;
+    width: 100%;
+    font-style: italic;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    padding-left: 0;
+    padding-top: var(--space-xs);
+    line-height: 1.5;
+  }
+}
+
+@media (min-width: 768px) {
+  .crew-table tr {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .crew-photo {
+    flex: 0 0 250px;
+  }
+
+  .crew-img {
+    width: 220px;
+    height: 220px;
+  }
+
+  .crew-info {
+    flex: 1;
+    padding-left: var(--space-xl);
+    margin-top: -2.5rem;
+  }
+  
+  /* Alternate row layout */
+  .crew-table tr:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+  
+  .crew-table tr:nth-child(even) .crew-info {
+    padding-left: 0;
+    padding-right: var(--space-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .class-details-table {
+    display: table;
+  }
+  
+  .class-details-table td:first-child {
+    width: 40%;
+  }
+  
+  .class-details-table td:last-child {
+    width: 60%;
+  }
+}

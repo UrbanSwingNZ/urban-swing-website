@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Admin Dashboard - Urban Swing</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
@@ -19,8 +18,8 @@
     <!-- Login Screen -->
     <div id="login-container" class="auth-container">
         <div class="auth-card">
-            <a href="index.html" title="Back to Urban Swing Homepage">
-                <img src="images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
+            <a href="../index.html" title="Back to Urban Swing Homepage">
+                <img src="../images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
             </a>
             <h1>Admin Login</h1>
             <p class="subtitle">Urban Swing Staff Portal</p>
@@ -34,7 +33,7 @@
                         type="email" 
                         id="email" 
                         name="email" 
-                        placeholder="admin@urbanswing.co.nz" 
+                        placeholder="Enter your email" 
                         required 
                         autocomplete="email"
                     >
@@ -67,7 +66,7 @@
     <div id="dashboard-container" class="dashboard-container" style="display: none;">
         <header class="admin-header">
             <div class="admin-header-content">
-                <img src="images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
+                <img src="../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
                 <h1>Admin Dashboard</h1>
                 <div class="admin-user-info">
                     <span id="user-email"></span>
@@ -127,7 +126,7 @@
     </div>
 
     <!-- Firebase Config & Admin Logic -->
-    <script src="firebase-config.js"></script>
+    <script src="../config/firebase-config.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>
