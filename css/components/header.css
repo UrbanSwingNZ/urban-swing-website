@@ -151,7 +151,7 @@ a.no-external-icon::after {
   font-size: var(--font-size-2xl);
   color: white;
   cursor: pointer;
-  z-index: calc(var(--z-modal) + 2);
+  z-index: calc(var(--z-modal-backdrop) + 101);
   transition: all var(--transition-base);
   width: 48px;
   height: 48px;

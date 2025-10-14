@@ -47,6 +47,19 @@ fetch(headerPath)
                 body.classList.remove('menu-open');
             }
         });
+
+        // Close menu when clicking the overlay/background
+        document.addEventListener('click', (event) => {
+            if (body.classList.contains('menu-open')) {
+                // Check if click is outside menu and not on hamburger button
+                if (!menu.contains(event.target) && 
+                    !hamburgerMenu.contains(event.target) && 
+                    !closeMenu.contains(event.target)) {
+                    menu.classList.remove('active');
+                    body.classList.remove('menu-open');
+                }
+            }
+        });
     })
     .catch(error => {
         console.error('Error loading header:', error);
