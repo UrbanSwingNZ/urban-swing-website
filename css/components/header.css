@@ -23,14 +23,14 @@ header {
   justify-content: space-between;
   width: 100%;
   max-width: var(--max-width-xl);
-  gap: var(--space-lg);
+  gap: var(--space-xl);
   margin-bottom: var(--space-md);
   padding: 0 var(--space-md);
 }
 
 /* Logo */
 .logo {
-  height: 100px;
+  height: 200px;
   width: auto;
   display: block;
   transition: transform var(--transition-base);
@@ -200,7 +200,7 @@ body.menu-open #close-menu {
   }
   
   .logo {
-    height: 85px;
+    height: 100px;
   }
   
   .header-text h1 {
@@ -229,7 +229,7 @@ body.menu-open #close-menu {
 
 @media (max-width: 480px) {
   .logo {
-    height: 70px;
+    height: 80px;
   }
   
   .header-text p {
