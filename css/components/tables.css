@@ -9,11 +9,13 @@ table {
 /* Class details table */
 .class-details-table {
   width: 100%;
+  border-spacing: 0;
 }
 
 .class-details-table td {
-  padding: var(--space-sm) var(--space-md);
-  vertical-align: top;
+  padding: var(--space-md);
+  vertical-align: middle;
+  line-height: 1.5;
 }
 
 .class-details-table td:first-child {
@@ -23,6 +25,7 @@ table {
 
 .class-details-table td:last-child {
   text-align: center;
+  vertical-align: middle;
 }
 
 .class-details-table img {
