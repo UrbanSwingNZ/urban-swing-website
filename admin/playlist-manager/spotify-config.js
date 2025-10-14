@@ -10,10 +10,10 @@ const isLocalhost = window.location.hostname === 'localhost' ||
 const getRedirectUri = () => {
   if (isLocalhost) {
     // Local development
-    return 'http://127.0.0.1:5500/playlist-manager/index.html';
+    return 'http://127.0.0.1:5500/admin/playlist-manager/index.html';
   } else {
     // Production - use current domain
-    return `${window.location.origin}/playlist-manager/index.html`;
+    return `${window.location.origin}/admin/playlist-manager/index.html`;
   }
 };
 

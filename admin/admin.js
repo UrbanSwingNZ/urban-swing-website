@@ -151,7 +151,7 @@ function setupTileButtons() {
   
   // Playlist Manager - Now available!
   playlistBtn.addEventListener('click', () => {
-    window.location.href = '../playlist-manager/index.html';
+    window.location.href = 'playlist-manager/index.html';
   });
   
   // Student Database - Now available!

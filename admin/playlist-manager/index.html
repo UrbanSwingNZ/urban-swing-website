@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Playlist Manager - Urban Swing Admin</title>
-    <link rel="stylesheet" href="../admin/admin.css">
+    <link rel="stylesheet" href="../admin.css">
     <link rel="stylesheet" href="playlist-manager.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" href="../images/icons/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -33,13 +33,13 @@
         <!-- Header -->
         <header class="pm-header">
             <div class="pm-header-content">
-                <a href="../admin/" class="back-button" title="Back to Admin Dashboard">
+                <a href="../index.html" class="back-button" title="Back to Admin Dashboard">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle Playlists">
                     <i class="fas fa-bars"></i>
                 </button>
-                <img src="../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
+                <img src="../../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
                 <h1 class="pm-main-heading">
                     <span class="pm-heading-desktop">Playlist Manager</span>
                     <span class="pm-heading-mobile">Playlist Manager</span>
@@ -326,7 +326,7 @@
     <div id="snackbar" class="snackbar"></div>
 
     <!-- Scripts -->
-    <script src="../firebase-config.js"></script>
+    <script src="../../config/firebase-config.js"></script>
     <script type="module" src="spotify-config.js"></script>
     <script src="spotify-api.js"></script>
     
