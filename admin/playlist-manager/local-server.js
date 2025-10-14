@@ -80,7 +80,7 @@ server.listen(PORT, () => {
   console.log(`📍 URL: http://localhost:${PORT}/index.html`);
   console.log(`\n⚙️  Next steps:`);
   console.log(`1. Add this redirect URI to your Spotify app:`);
-  console.log(`   http://localhost:${PORT}/playlist-manager/index.html`);
+  console.log(`   http://localhost:${PORT}/admin/playlist-manager/index.html`);
   console.log(`\n2. Open your browser to:`);
   console.log(`   http://localhost:${PORT}/index.html`);
   console.log(`\n3. Press Ctrl+C to stop the server\n`);
