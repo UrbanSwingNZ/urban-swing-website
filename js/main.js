@@ -1,5 +1,10 @@
 // Load header.html into the page
-fetch('header.html')
+// Determine the correct path based on current page location
+const currentPath = window.location.pathname;
+const isInPagesFolder = currentPath.includes('/pages/');
+const headerPath = isInPagesFolder ? 'header.html' : 'pages/header.html';
+
+fetch(headerPath)
     .then(response => {
         if (!response.ok) {
             throw new Error('Failed to load header: ' + response.status);
@@ -40,6 +45,19 @@ fetch('header.html')
             if (event.target.tagName === 'A') {
                 menu.classList.remove('active');
                 body.classList.remove('menu-open');
+            }
+        });
+
+        // Close menu when clicking the overlay/background
+        document.addEventListener('click', (event) => {
+            if (body.classList.contains('menu-open')) {
+                // Check if click is outside menu and not on hamburger button
+                if (!menu.contains(event.target) && 
+                    !hamburgerMenu.contains(event.target) && 
+                    !closeMenu.contains(event.target)) {
+                    menu.classList.remove('active');
+                    body.classList.remove('menu-open');
+                }
             }
         });
     })

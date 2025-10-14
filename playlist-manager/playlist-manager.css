@@ -15,6 +15,16 @@
 @import url('css/search.css');
 @import url('css/utilities.css');
 
+/* Remove white border and set base styles */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 /* Import parent styles if needed */
 :root {
   --pm-blue: #3534Fa;
@@ -293,6 +303,44 @@
     width: 60px;
     font-size: 0.85rem;
   }
+}
+
+/* Loading Spinner Styles */
+.loading-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  font-size: 1.2em;
+  color: var(--text-color, #fff);
+}
+
+.loading-spinner .spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid #eee;
+  border-top: 6px solid var(--pm-pink, #e800f2);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 18px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  margin: 0;
+  font-size: 1.1em;
+  color: var(--text-color, #fff);
 }
 
 

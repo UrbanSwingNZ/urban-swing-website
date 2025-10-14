@@ -20,7 +20,7 @@
   <meta property="twitter:image" content="https://urbanswing.co.nz/images/urban-swing-logo.png">
   
   <title>Meet the Crew</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../css/modern-styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/images/icons/android-chrome-192x192.png" sizes="192x192" type="image/png">
@@ -30,11 +30,13 @@
 
 <body>
   <!-- Header will be dynamically loaded by script.js -->
-  <div class="content-wrapper" style="text-align: justify;">
-    <h1>Meet the Crew</h1>
-    
-    <div class="crew-container">
-      <table class="crew-table">
+  <main class="main-content">
+    <div class="container">
+      <h1 class="page-title">Meet the Crew</h1>
+      
+      <section class="card">
+        <div class="card-body">
+          <table class="crew-table">
         <tbody>
           <!-- Nicole -->
           <tr>
@@ -90,8 +92,11 @@
           </tr>
         </tbody>
       </table>
+        </div>
+      </section>
     </div>
-  </div>
-  <script src="script.js" defer></script>
+  </main>
+  <script src="../js/main.js" defer></script>
+  <script src="../js/enhanced-features.js" defer></script>
 </body>
 </html>

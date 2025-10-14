@@ -1,0 +1,211 @@
+/* ========================================
+   TYPOGRAPHY
+   Modern typography system with gradient text
+   ======================================== */
+
+/* Body text */
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-base);
+  color: var(--text-color);
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-md);
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+  background: linear-gradient(135deg, var(--urban-blue), var(--urban-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  padding-bottom: var(--space-lg);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  color: var(--urban-purple);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--urban-purple);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+  color: var(--text-color);
+}
+
+h5 {
+  font-size: var(--font-size-lg);
+  color: var(--text-color);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--space-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-color);
+}
+
+/* Links */
+a {
+  color: var(--urban-pink);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  font-weight: var(--font-weight-medium);
+}
+
+a:hover {
+  color: var(--urban-purple);
+  text-decoration: underline;
+}
+
+/* Strong/Bold */
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Emphasis/Italic */
+em,
+i {
+  font-style: italic;
+}
+
+/* Small text */
+small {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+/* Code */
+code {
+  font-family: 'Courier New', Courier, monospace;
+  background: var(--hover-bg);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+pre {
+  background: var(--hover-bg);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--space-md);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Blockquote */
+blockquote {
+  border-left: 4px solid var(--urban-purple);
+  padding-left: var(--space-md);
+  margin: var(--space-md) 0;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* Lists */
+ul,
+ol {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-lg);
+}
+
+li {
+  margin-bottom: var(--space-xs);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 2px solid var(--border-color);
+  margin: var(--space-lg) 0;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-small {
+  font-size: var(--font-size-sm);
+}
+
+.text-large {
+  font-size: var(--font-size-lg);
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--urban-blue), var(--urban-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Mobile typography adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: var(--font-size-3xl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  h3 {
+    font-size: var(--font-size-xl);
+  }
+  
+  body {
+    font-size: var(--font-size-base);
+  }
+}
