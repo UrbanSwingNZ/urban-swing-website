@@ -78,19 +78,6 @@ table {
   font-size: 1.1em;
 }
 
-.pricing-table .indent-only {
-  padding-left: var(--space-xl);
-  font-weight: normal;
-}
-
-.pricing-table .indent-with-italics {
-  padding-left: var(--space-xl);
-  font-style: italic;
-  font-size: 0.9em;
-  color: var(--text-secondary);
-  font-weight: normal;
-}
-
 /* Left-align cells that span both columns */
 .pricing-table td[colspan="2"] {
   text-align: left;
@@ -229,13 +216,13 @@ table {
   }
   
   /* Make simple pricing rows (Casual/Student) use flexbox for alignment */
-  .pricing-table tr:not([style*="height"]):has(td:not([colspan]):not(.indent-only):not(.indent-with-italics)) {
+  .pricing-table tr:not([style*="height"]):has(td:not([colspan])) {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   
-  .pricing-table tr:not([style*="height"]) td:first-child:not([colspan]):not(.indent-only):not(.indent-with-italics) {
+  .pricing-table tr:not([style*="height"]) td:first-child:not([colspan]) {
     display: block;
     flex: 0 0 auto;
     max-width: 70%;
@@ -252,7 +239,7 @@ table {
   }
   
   /* Section headers (colspan) - bigger and bold */
-  .pricing-table td[colspan="2"]:not(.indent-with-italics) {
+  .pricing-table td[colspan="2"] {
     font-weight: 600;
     font-size: 1.05em;
     margin-top: var(--space-sm);
@@ -267,47 +254,13 @@ table {
     padding-top: 0;
   }
   
-  /* Remove bottom border from rows before section headers */
-  .pricing-table tr:has(+ tr td[colspan="2"]:not(.indent-with-italics)) {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-  
-  /* Indented items with pricing - use flexbox to keep price on right */
-  .pricing-table tr:has(.indent-only) {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-  
-  .pricing-table .indent-only {
-    display: block;
-    flex: 0 0 auto;
-    max-width: 70%;
-    padding-left: 0;
-    padding-top: var(--space-sm);
-    line-height: 1.6;
-  }
-  
-  .pricing-table tr:has(.indent-only) td:last-child {
-    display: block;
-    flex: 0 0 auto;
-    margin-left: auto;
-    text-align: right;
-    padding-top: var(--space-sm);
-    font-size: 1.2em;
-    color: var(--urban-pink) !important;
-    font-weight: 600;
-  }
-  
   /* Notes and italicized text */
-  .pricing-table .indent-with-italics {
+  .pricing-table td[colspan="2"] i {
     display: block;
     width: 100%;
     font-style: italic;
     font-size: 0.85em;
     color: var(--text-secondary);
-    padding-left: 0;
     padding-top: var(--space-xs);
     line-height: 1.5;
   }

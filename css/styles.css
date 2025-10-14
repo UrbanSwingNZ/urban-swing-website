@@ -544,16 +544,6 @@ nav {
   text-align: right;
 }
 
-.indent-with-italics {
-  padding-left: 5px;
-  font-style: italic;
-  font-size: 0.9em;
-}
-
-.indent-only {
-  padding-left: 15px;
-}
-
 /* Mobile styles for class details */
 @media screen and (max-width: 767px) {
   .class-details-wrapper {
