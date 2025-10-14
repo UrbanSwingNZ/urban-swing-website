@@ -91,6 +91,12 @@ table {
   font-weight: normal;
 }
 
+/* Left-align cells that span both columns */
+.pricing-table td[colspan="2"] {
+  text-align: left;
+  font-weight: normal;
+}
+
 /* Crew table */
 .crew-table {
   width: 100%;
