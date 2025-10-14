@@ -188,7 +188,7 @@
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 20px 60px var(--admin-shadow);
-    max-width: 650px;
+    max-width: 500px;
     width: 100%;
 }
 
@@ -199,8 +199,8 @@
 }
 
 .register-card .logo {
-    width: 200px;
-    max-width: 80%;
+    width: 150px;
+    max-width: 150px;
     margin: 0 auto 20px;
     display: block;
 }
@@ -275,11 +275,17 @@ textarea {
     border: 2px solid var(--border-color);
     border-radius: 10px;
     font-size: 1rem;
-    font-family: inherit;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     transition: all 0.3s ease;
     background: var(--input-bg);
     color: var(--text-color);
     resize: vertical;
+    min-height: 80px;
+}
+
+textarea::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
 }
 
 textarea:focus {
