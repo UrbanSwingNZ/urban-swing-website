@@ -12,6 +12,7 @@
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
+  margin-bottom: var(--space-xl);
 }
 
 .card:hover {
