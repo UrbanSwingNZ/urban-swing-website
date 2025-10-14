@@ -1,5 +1,10 @@
 // Load header.html into the page
-fetch('header.html')
+// Determine the correct path based on current page location
+const currentPath = window.location.pathname;
+const isInPagesFolder = currentPath.includes('/pages/');
+const headerPath = isInPagesFolder ? 'header.html' : 'pages/header.html';
+
+fetch(headerPath)
     .then(response => {
         if (!response.ok) {
             throw new Error('Failed to load header: ' + response.status);
