@@ -12,24 +12,11 @@
   position: relative;
 }
 
-.pm-header-content {
-  max-width: 100%;
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: 20px;
-  width: 100%;
-}
+/* Header layout, heading, and action styles inherited from admin.css */
 
-.pm-main-heading {
-  font-size: 1.5rem;
-  margin: 0;
-  padding: 0;
-  color: var(--pm-pink);
-  font-weight: 700;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
+/* Override to ensure left alignment on desktop */
+.pm-header-content {
+  justify-content: flex-start;
 }
 
 /* Show/hide text based on screen size */
@@ -39,27 +26,6 @@
 
 .pm-heading-desktop {
   display: block;
-}
-
-/* Back button styles inherited from admin.css */
-
-.pm-header .logo-small {
-  height: 50px;
-  width: auto;
-  flex-shrink: 0;
-}
-
-.pm-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.pm-header-actions span {
-  font-size: 0.9rem;
-  opacity: 0.95;
 }
 
 /* Spotify Buttons */

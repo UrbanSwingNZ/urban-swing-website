@@ -254,12 +254,13 @@ html, body {
   transform: scale(1.1);
 }
 
-.admin-header-content {
+/* Shared Header Layout for all admin pages */
+.admin-header-content,
+.pm-header-content {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 20px;
 }
@@ -282,25 +283,31 @@ html, body {
   flex-shrink: 0;
 }
 
-.admin-header h1 {
+.admin-header h1,
+.pm-main-heading,
+.page-heading {
   font-size: 1.5rem;
   margin: 0;
   padding: 0;
-  flex: 1;
-  text-align: center;
   color: var(--admin-pink);
   font-weight: 700;
   line-height: normal;
+  display: flex;
+  align-items: center;
+  letter-spacing: 1px;
 }
 
-.admin-user-info {
+.admin-user-info,
+.pm-header-actions {
   display: flex;
   align-items: center;
   gap: 15px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
-.admin-user-info span {
+.admin-user-info span,
+.pm-header-actions span {
   font-size: 0.9rem;
   opacity: 0.95;
   white-space: nowrap;
