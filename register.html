@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Urban Swing</title>
+    <link rel="stylesheet" href="css/base/variables.css">
+    <link rel="stylesheet" href="css/base/reset.css">
+    <link rel="stylesheet" href="css/base/typography.css">
+    <link rel="stylesheet" href="admin/admin.css">
+    <link rel="stylesheet" href="admin/student-database.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Submitting registration...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="register-container">
+        <div class="register-card">
+            <a href="index.html" title="Back to Urban Swing Homepage">
+                <img src="images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
+            </a>
+            <h1>Student Registration</h1>
+            <p class="subtitle">Join the Urban Swing community</p>
+
+            <!-- Registration Form -->
+            <form id="registration-form" class="registration-form">
+                <!-- First Name -->
+                <div class="form-group">
+                    <label for="firstName">
+                        <i class="fas fa-user"></i> First Name <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="firstName" 
+                        name="firstName" 
+                        placeholder="Enter your first name" 
+                        required
+                        autocomplete="given-name"
+                    >
+                </div>
+
+                <!-- Last Name -->
+                <div class="form-group">
+                    <label for="lastName">
+                        <i class="fas fa-user"></i> Last Name <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="lastName" 
+                        name="lastName" 
+                        placeholder="Enter your last name" 
+                        required
+                        autocomplete="family-name"
+                    >
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email Address <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="your.email@example.com" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phoneNumber">
+                        <i class="fas fa-phone"></i> Phone Number <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        name="phoneNumber" 
+                        placeholder="021 123 4567" 
+                        required
+                        autocomplete="tel"
+                    >
+                </div>
+
+                <!-- Pronouns -->
+                <div class="form-group">
+                    <label for="pronouns">
+                        <i class="fas fa-id-badge"></i> Pronouns
+                    </label>
+                    <input 
+                        type="text" 
+                        id="pronouns" 
+                        name="pronouns" 
+                        placeholder="e.g., she/her, he/him, they/them" 
+                        autocomplete="off"
+                    >
+                    <small class="form-help">Optional - helps us address you correctly</small>
+                </div>
+
+                <!-- Age Confirmation -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="over16Confirmed" 
+                            name="over16Confirmed" 
+                            required
+                        >
+                        <span>
+                            <i class="fas fa-check-circle"></i> 
+                            I confirm I am 16 years or older <span class="required">*</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Email Consent -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="emailConsent" 
+                            name="emailConsent"
+                            checked
+                        >
+                        <span>
+                            <i class="fas fa-envelope-open-text"></i> 
+                            I'd like to receive updates and news from Urban Swing
+                        </span>
+                    </label>
+                    <small class="form-help">We'll only send occasional updates about classes and events</small>
+                </div>
+
+                <!-- Admin Notes (Only visible to admins) -->
+                <div class="form-group admin-only" id="admin-notes-group" style="display: none;">
+                    <label for="adminNotes">
+                        <i class="fas fa-sticky-note"></i> Admin Notes
+                    </label>
+                    <textarea 
+                        id="adminNotes" 
+                        name="adminNotes" 
+                        rows="3"
+                        placeholder="Internal notes (only visible to admin)"
+                    ></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary btn-submit" id="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Register
+                </button>
+
+                <!-- Messages -->
+                <div id="success-message" class="success-message" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Registration successful! Welcome to Urban Swing!</span>
+                </div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
+            </form>
+
+            <!-- Back to Admin Link (Only for admins) -->
+            <div class="admin-only" id="back-to-admin" style="display: none;">
+                <a href="admin/student-database/index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Student Database
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duplicate Warning Modal -->
+    <div id="duplicate-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Duplicate Name Detected</h3>
+            </div>
+            <div class="modal-body">
+                <p>A student with this name already exists in the database:</p>
+                <div id="duplicate-students-list" class="duplicate-list">
+                    <!-- Duplicate student info will be inserted here -->
+                </div>
+                <p><strong>Do you want to register this student anyway?</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-btn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-primary" id="proceed-btn">
+                    <i class="fas fa-check"></i> Register Anyway
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config & Registration Logic -->
+    <script src="config/firebase-config.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html>

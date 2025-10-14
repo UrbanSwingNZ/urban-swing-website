@@ -146,11 +146,17 @@ function showDashboard(user) {
 
 function setupTileButtons() {
   const playlistBtn = document.getElementById('playlist-manager-btn');
+  const studentDatabaseBtn = document.getElementById('student-database-btn');
   const checkinBtn = document.getElementById('checkin-btn');
   
   // Playlist Manager - Now available!
   playlistBtn.addEventListener('click', () => {
     window.location.href = '../playlist-manager/index.html';
+  });
+  
+  // Student Database - Now available!
+  studentDatabaseBtn.addEventListener('click', () => {
+    window.location.href = 'student-database/index.html';
   });
   
   // Check-in system - Coming soon

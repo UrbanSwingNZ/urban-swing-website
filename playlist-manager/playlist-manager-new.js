@@ -13,8 +13,21 @@ import * as Player from './spotify-player.js';
 
 // Wait for page to load
 window.addEventListener('load', async () => {
-  // TEMPORARY: Skip Firebase auth check for testing
-  // TODO: Re-enable after Spotify auth is working
+  // Show admin user email from Firebase Auth
+  try {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user && user.email) {
+          const adminEmailElement = document.getElementById('admin-user-email');
+          if (adminEmailElement) {
+            adminEmailElement.textContent = user.email;
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.log('Firebase auth not available:', error);
+  }
   
   await initializeApp();
 });
