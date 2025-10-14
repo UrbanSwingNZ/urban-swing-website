@@ -189,17 +189,6 @@ table {
   color: var(--urban-purple);
 }
 
-.indent-with-italics {
-  padding-left: var(--space-sm);
-  font-style: italic;
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-}
-
-.indent-only {
-  padding-left: var(--space-md);
-}
-
 /* Other Classes Container */
 .other-classes-container {
   color: var(--text-color);
