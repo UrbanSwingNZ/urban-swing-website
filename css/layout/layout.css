@@ -37,6 +37,15 @@
   line-height: var(--line-height-base);
 }
 
+/* Main Content (for other pages) */
+.main-content {
+  width: 100%;
+  max-width: var(--max-width-xl);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  line-height: var(--line-height-base);
+}
+
 /* Section Spacing */
 .section {
   padding: var(--space-xl) 0;
