@@ -135,14 +135,14 @@
   text-align: left;
   background: none;
   border: none;
-  padding: var(--space-md) 0;
+  padding: var(--space-md) var(--space-lg) var(--space-md) 0;
   font-size: 1.1em;
   font-weight: 600;
   color: var(--accent-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: var(--space-sm);
   transition: all var(--transition-fast);
   position: relative;
@@ -155,6 +155,8 @@
   font-size: 0.8em;
   transition: transform var(--transition-normal);
   color: var(--accent-secondary);
+  position: absolute;
+  right: 0;
 }
 
 .faq-question-button.expanded::after {
