@@ -4,6 +4,15 @@
    Using Urban Swing color scheme
    ======================================== */
 
+/* Remove white border around gradient */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
 /* Color Variables (matching main site) */
 :root {
   --admin-pink: #e800f2;
