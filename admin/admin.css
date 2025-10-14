@@ -241,6 +241,18 @@ html, body {
   gap: 20px;
 }
 
+.admin-header-content a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.admin-header-content a:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
 .logo-small {
   height: 60px;
   width: auto;
