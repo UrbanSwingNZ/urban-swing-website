@@ -29,12 +29,22 @@ html, body {
   --admin-success: #28a745;
   --admin-error: #dc3545;
   --admin-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Theme-aware variables - Light mode defaults */
+  --text-color: var(--admin-text-light);
+  --background-color: var(--admin-card-light);
+  --border-color: var(--admin-border-light);
+  --input-bg: #ffffff;
 }
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   :root {
     --admin-shadow: rgba(0, 0, 0, 0.4);
+    --text-color: var(--admin-text-dark);
+    --background-color: var(--admin-card-dark);
+    --border-color: var(--admin-border-dark);
+    --input-bg: #1a1a1a;
   }
 }
 
@@ -103,7 +113,8 @@ html, body {
 }
 
 .auth-card .subtitle {
-  color: #888;
+  color: var(--text-color);
+  opacity: 0.7;
   margin-bottom: 30px;
   font-size: 0.95rem;
 }
@@ -130,18 +141,17 @@ html, body {
 .form-group input {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid var(--admin-border-light);
+  border: 2px solid var(--border-color);
   border-radius: 10px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: var(--background-color);
+  background: var(--input-bg);
   color: var(--text-color);
 }
 
-@media (prefers-color-scheme: dark) {
-  .form-group input {
-    border-color: var(--admin-border-dark);
-  }
+.form-group input::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
 }
 
 .form-group input:focus {
