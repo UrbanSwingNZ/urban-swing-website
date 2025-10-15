@@ -483,6 +483,41 @@ textarea.form-control {
     padding: 12px;
 }
 
+/* Search Input with Clear Button */
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-input-wrapper .form-control {
+    padding-right: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: color 0.2s ease;
+    z-index: 10;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-search-btn:hover {
+    color: var(--admin-purple);
+}
+
 /* Purchase Section */
 .purchase-section {
     margin: 20px 0;
@@ -517,39 +552,119 @@ textarea.form-control {
    HISTORY MODAL
    ======================================== */
 
+#history-modal .modal-body {
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
 .history-filters {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     flex-wrap: wrap;
     margin-bottom: 20px;
     padding: 16px;
+    padding-top: 8px;
     background: var(--background-color);
     border-radius: 8px;
+    position: relative;
+    z-index: 100;
 }
 
 .filter-group {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+    z-index: 10;
 }
 
 .filter-group label {
     font-weight: 500;
     color: var(--text-color);
     font-size: 0.9rem;
+    margin-bottom: 4px;
 }
 
 .filter-group .form-control {
     min-width: 150px;
 }
 
-#custom-dates {
+.date-range-group {
+    flex: 2;
+    min-width: 100%;
+}
+
+.date-range-inputs {
     display: flex;
-    gap: 8px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.date-range-inputs .date-picker-container {
+    flex: 1;
+    min-width: 250px;
+}
+
+.student-search-wrapper {
+    position: relative;
+    width: 100%;
+    z-index: 100;
+}
+
+.student-search-wrapper .form-control {
+    padding-right: 40px;
+}
+
+.search-results-dropdown {
+    position: fixed;
+    background: var(--admin-card-light);
+    border: 1px solid rgba(154, 22, 245, 0.3);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 10000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    .search-results-dropdown {
+        background: var(--admin-card-dark);
+    }
+}
+
+.search-results-dropdown .student-result {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-results-dropdown .student-result:hover {
+    background: rgba(154, 22, 245, 0.1);
+}
+
+.search-results-dropdown .student-result:last-child {
+    border-bottom: none;
+}
+
+.search-results-dropdown .student-result .student-name {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.search-results-dropdown .student-result .student-email {
+    font-size: 0.85rem;
+    color: var(--text-muted);
 }
 
 .history-results {
     margin-top: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .results-count {
@@ -697,9 +812,28 @@ textarea.form-control {
 
     .filter-group {
         width: 100%;
+        min-width: 0;
     }
 
     .filter-group .form-control {
+        width: 100%;
+    }
+
+    .date-range-group {
+        min-width: 0;
+    }
+
+    .date-range-inputs {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .date-range-inputs .date-picker-container {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .student-search-wrapper {
         width: 100%;
     }
 

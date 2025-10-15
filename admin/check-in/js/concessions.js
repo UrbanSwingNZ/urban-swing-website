@@ -4,25 +4,14 @@
  */
 
 /**
- * Get mock concession data for a student
- * TODO: Replace with real Firestore query when backend is implemented
+ * Get concession data for a student from their student object
+ * TODO: Query Firestore concessionBlocks collection when backend is implemented
  */
 function getMockConcessionData(studentId) {
-    // Mock data for UI demonstration
+    // Return empty data - will be populated from Firestore in future
     return {
-        balance: 8,
-        blocks: [
-            {
-                remaining: 2,
-                expiryDate: new Date('2025-12-15'),
-                expired: false
-            },
-            {
-                remaining: 6,
-                expiryDate: new Date('2026-03-20'),
-                expired: false
-            }
-        ]
+        balance: 0,
+        blocks: []
     };
 }
 
