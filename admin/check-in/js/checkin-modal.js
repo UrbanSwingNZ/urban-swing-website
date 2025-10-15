@@ -61,10 +61,14 @@ function resetCheckinForm() {
     document.getElementById('payment-method').value = '';
     document.getElementById('payment-section').style.display = 'none';
     
+    // Clear free entry reason
+    document.getElementById('free-entry-reason').value = '';
+    document.getElementById('free-entry-section').style.display = 'none';
+    
     // Clear notes
     document.getElementById('checkin-notes').value = '';
     
-    // Disable submit button
+    // Disable submit button (will be re-enabled when student is selected)
     document.getElementById('confirm-checkin-btn').disabled = true;
 }
 
@@ -166,13 +170,23 @@ function updateConcessionInfo(student) {
     
     // Enable/disable concession option based on balance
     const concessionRadio = document.getElementById('entry-concession');
+    const casualRadio = document.getElementById('entry-casual');
+    
     if (concessionData.balance > 0) {
         concessionRadio.disabled = false;
         concessionRadio.parentElement.style.opacity = '1';
+        // Default to concession if available
+        concessionRadio.checked = true;
     } else {
         concessionRadio.disabled = true;
         concessionRadio.parentElement.style.opacity = '0.5';
+        // Default to casual if no concession
+        casualRadio.checked = true;
+        document.getElementById('payment-section').style.display = 'block';
     }
+    
+    // Enable confirm button since we have a default selection
+    document.getElementById('confirm-checkin-btn').disabled = false;
 }
 
 /**
@@ -181,29 +195,46 @@ function updateConcessionInfo(student) {
 function setupEntryTypeListeners() {
     const entryRadios = document.querySelectorAll('input[name="entry-type"]');
     const paymentSection = document.getElementById('payment-section');
+    const freeEntrySection = document.getElementById('free-entry-section');
     const confirmBtn = document.getElementById('confirm-checkin-btn');
     
     entryRadios.forEach(radio => {
         radio.addEventListener('change', () => {
-            // Show payment section for casual
+            // Hide both sections first
+            paymentSection.style.display = 'none';
+            freeEntrySection.style.display = 'none';
+            
+            // Show appropriate section based on selection
             if (radio.value === 'casual') {
                 paymentSection.style.display = 'block';
+                // Check if payment method is selected
+                const paymentMethod = document.getElementById('payment-method').value;
+                confirmBtn.disabled = paymentMethod === '';
+            } else if (radio.value === 'free') {
+                freeEntrySection.style.display = 'block';
+                // Check if reason is selected
+                const freeReason = document.getElementById('free-entry-reason').value;
+                confirmBtn.disabled = freeReason === '';
             } else {
-                paymentSection.style.display = 'none';
+                // Concession - no additional selection needed
+                confirmBtn.disabled = false;
             }
-            
-            // Enable confirm button
-            confirmBtn.disabled = false;
         });
     });
     
     // Payment method required for casual
     document.getElementById('payment-method').addEventListener('change', (e) => {
         const casualRadio = document.getElementById('entry-casual');
-        if (casualRadio.checked && e.target.value === '') {
-            confirmBtn.disabled = true;
-        } else {
-            confirmBtn.disabled = false;
+        if (casualRadio.checked) {
+            confirmBtn.disabled = e.target.value === '';
+        }
+    });
+    
+    // Free entry reason required for free
+    document.getElementById('free-entry-reason').addEventListener('change', (e) => {
+        const freeRadio = document.getElementById('entry-free');
+        if (freeRadio.checked) {
+            confirmBtn.disabled = e.target.value === '';
         }
     });
 }
@@ -243,6 +274,7 @@ function handleCheckinSubmit() {
     }
     
     const paymentMethod = document.getElementById('payment-method').value;
+    const freeEntryReason = document.getElementById('free-entry-reason').value;
     const notes = document.getElementById('checkin-notes').value;
     
     // Validate payment for casual
@@ -251,17 +283,24 @@ function handleCheckinSubmit() {
         return;
     }
     
+    // Validate reason for free entry
+    if (entryType === 'free' && !freeEntryReason) {
+        showError('Please select a reason for free entry');
+        return;
+    }
+    
     // TODO: Submit to Firestore when backend is ready
     console.log('Check-in data:', {
         student: selectedStudent,
         entryType,
         paymentMethod: entryType === 'casual' ? paymentMethod : null,
+        freeEntryReason: entryType === 'free' ? freeEntryReason : null,
         notes,
         timestamp: new Date()
     });
     
     // For now, just add to today's list
-    addMockCheckin(selectedStudent, entryType, paymentMethod);
+    addMockCheckin(selectedStudent, entryType, paymentMethod, freeEntryReason);
     
     closeCheckinModal();
 }
@@ -269,7 +308,7 @@ function handleCheckinSubmit() {
 /**
  * Add mock check-in to today's list (UI only)
  */
-function addMockCheckin(student, entryType, paymentMethod) {
+function addMockCheckin(student, entryType, paymentMethod, freeEntryReason) {
     const checkin = {
         id: 'mock-' + Date.now(),
         studentId: student.id,
@@ -277,6 +316,7 @@ function addMockCheckin(student, entryType, paymentMethod) {
         timestamp: new Date(),
         entryType: entryType,
         paymentMethod: entryType === 'casual' ? paymentMethod : null,
+        freeEntryReason: entryType === 'free' ? freeEntryReason : null,
         balance: student.concessionBalance || 0
     };
     
