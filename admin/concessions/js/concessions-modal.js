@@ -30,7 +30,12 @@ function initializePurchaseConcessionsModal() {
                 </div>
                 
                 <div class="form-group">
-                    <label><i class="fas fa-box"></i> Package</label>
+                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fas fa-box"></i> Package</span>
+                        <button type="button" class="btn-add-package" onclick="openAddConcessionModal()" title="Add new package">
+                            <i class="fas fa-plus"></i> Add Package
+                        </button>
+                    </label>
                     <select id="purchase-package-select" class="form-control">
                         <option value="">Select a package</option>
                         <!-- Options populated dynamically -->
