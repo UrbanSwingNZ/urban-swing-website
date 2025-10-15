@@ -94,8 +94,98 @@
         </footer>
     </div>
 
-    <!-- Student Detail Modal (Future Enhancement) -->
-    <!-- This will be used for viewing/editing student details -->
+    <!-- Student Detail Modal -->
+    <div id="student-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Student Details</h2>
+                <button class="modal-close" onclick="closeStudentModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="student-form" onsubmit="saveStudentChanges(event)">
+                    <input type="hidden" id="modal-student-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-firstName">First Name</label>
+                            <input type="text" id="modal-firstName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-lastName">Last Name</label>
+                            <input type="text" id="modal-lastName" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-email">Email</label>
+                        <input type="email" id="modal-email" readonly>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-phoneNumber">Phone Number</label>
+                            <input type="tel" id="modal-phoneNumber" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-pronouns">Pronouns</label>
+                            <input type="text" id="modal-pronouns" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row checkbox-row">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-emailConsent" disabled>
+                                <span>Email updates</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-over16Confirmed" disabled>
+                                <span>Over 16 confirmed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-adminNotes">
+                            <i class="fas fa-sticky-note"></i> Admin Notes
+                        </label>
+                        <textarea id="modal-adminNotes" rows="3" placeholder="Add internal notes about this student..."></textarea>
+                    </div>
+
+                    <div class="timestamps">
+                        <div class="timestamp-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span class="timestamp-label">Registered:</span>
+                            <span id="modal-registeredAt">—</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="timestamp-label">Created:</span>
+                            <span id="modal-createdAt">—</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <i class="fas fa-edit"></i>
+                            <span class="timestamp-label">Updated:</span>
+                            <span id="modal-updatedAt">—</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" onclick="closeStudentModal()">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                        <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js"></script>
