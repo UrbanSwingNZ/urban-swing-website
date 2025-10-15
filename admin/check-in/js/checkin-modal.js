@@ -277,12 +277,15 @@ function initializeCheckinModalListeners() {
     
     if (purchaseBtn) {
         purchaseBtn.addEventListener('click', () => {
+            // Hide check-in modal before opening purchase modal
+            document.getElementById('checkin-modal').style.display = 'none';
+            
             if (selectedStudent) {
-                // Open reusable purchase modal with student ID and callback
+                // Open reusable purchase modal with student ID, callback, and parent modal ID
                 openPurchaseConcessionsModal(selectedStudent.id, (result) => {
                     // Refresh concession info after purchase
                     updateConcessionInfo(selectedStudent);
-                });
+                }, 'checkin-modal');
             } else {
                 // Fallback: Try to get the student ID from the hidden field
                 const studentIdField = document.getElementById('selected-student-id');
@@ -291,7 +294,7 @@ function initializeCheckinModalListeners() {
                     if (student) {
                         openPurchaseConcessionsModal(student.id, (result) => {
                             updateConcessionInfo(student);
-                        });
+                        }, 'checkin-modal');
                     }
                 }
             }

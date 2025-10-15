@@ -5,6 +5,7 @@
 
 let purchaseModalStudentId = null;
 let purchaseModalCallback = null;
+let purchaseModalParentModal = null;
 
 /**
  * Initialize the purchase modal HTML (call once on page load)
@@ -79,10 +80,12 @@ function initializePurchaseConcessionsModal() {
  * Open purchase modal
  * @param {string} studentId - Optional student ID to pre-fill
  * @param {function} callback - Optional callback after successful purchase
+ * @param {string} parentModalId - Optional parent modal ID to return to on cancel
  */
-async function openPurchaseConcessionsModal(studentId = null, callback = null) {
+async function openPurchaseConcessionsModal(studentId = null, callback = null, parentModalId = null) {
     purchaseModalStudentId = studentId;
     purchaseModalCallback = callback;
+    purchaseModalParentModal = parentModalId;
     
     const modal = document.getElementById('purchase-concessions-modal');
     
@@ -108,8 +111,18 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null) {
 function closePurchaseConcessionsModal() {
     const modal = document.getElementById('purchase-concessions-modal');
     modal.style.display = 'none';
+    
+    // If there's a parent modal, reopen it
+    if (purchaseModalParentModal) {
+        const parentModal = document.getElementById(purchaseModalParentModal);
+        if (parentModal) {
+            parentModal.style.display = 'flex';
+        }
+    }
+    
     purchaseModalStudentId = null;
     purchaseModalCallback = null;
+    purchaseModalParentModal = null;
 }
 
 /**
