@@ -1,0 +1,537 @@
+/* ========================================
+   CHECK-IN PAGE STYLES
+   Uses parent styles from admin.css and admin-modals.css
+   ======================================== */
+
+/* ========================================
+   MAIN LAYOUT
+   ======================================== */
+
+.checkin-main {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   HEADER SECTION
+   ======================================== */
+
+.checkin-header {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.search-section {
+    flex: 1;
+    position: relative;
+}
+
+.btn-checkin {
+    white-space: nowrap;
+    padding: 12px 24px;
+}
+
+/* ========================================
+   SEARCH RESULTS DROPDOWN
+   ======================================== */
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.search-result-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: rgba(154, 22, 245, 0.05);
+}
+
+.search-result-name {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.search-result-email {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.search-result-balance {
+    font-size: 0.85rem;
+    color: var(--admin-purple);
+    margin-top: 4px;
+}
+
+.no-results {
+    padding: 16px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* ========================================
+   CHECK-INS SECTION
+   ======================================== */
+
+.checkins-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.checkin-count {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
+
+/* Check-Ins List */
+.checkins-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkin-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checkin-item:hover {
+    border-color: var(--admin-purple);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+}
+
+.checkin-check {
+    color: var(--admin-green);
+    font-size: 1.2rem;
+    margin-right: 16px;
+}
+
+.checkin-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.checkin-student {
+    min-width: 200px;
+}
+
+.checkin-name {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.checkin-time {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.checkin-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.checkin-type.concession {
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
+}
+
+.checkin-type.casual {
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
+}
+
+.checkin-type.free {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--admin-green);
+}
+
+.checkin-balance {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ========================================
+   MODAL SPECIFIC STYLES
+   ======================================== */
+
+.modal-large {
+    max-width: 900px;
+}
+
+.search-results-modal {
+    margin-top: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--background-color);
+}
+
+.student-info-card {
+    padding: 16px;
+    background: var(--background-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-purple);
+    margin-bottom: 20px;
+}
+
+.student-info-card h4 {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.student-info-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Concession Info */
+.concession-info {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.concession-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+.concession-header i {
+    color: var(--admin-purple);
+}
+
+.concession-blocks {
+    padding-left: 24px;
+}
+
+.concession-block {
+    padding: 8px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.concession-block.expired {
+    color: var(--admin-error);
+    font-weight: 500;
+}
+
+.concession-block i {
+    margin-right: 6px;
+}
+
+/* Radio Group */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.radio-option:hover {
+    border-color: var(--admin-purple);
+    background: rgba(154, 22, 245, 0.05);
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"]:checked + .radio-label {
+    color: var(--admin-purple);
+    font-weight: 600;
+}
+
+.radio-label {
+    flex: 1;
+    color: var(--text-color);
+}
+
+/* Purchase Section */
+.purchase-section {
+    margin: 20px 0;
+    padding: 16px;
+    background: var(--background-color);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.btn-purchase {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Purchase Summary */
+.purchase-summary {
+    background: var(--background-color);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.summary-row strong {
+    color: var(--admin-purple);
+    font-size: 1.3rem;
+}
+
+/* ========================================
+   HISTORY MODAL
+   ======================================== */
+
+.history-filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--background-color);
+    border-radius: 8px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.filter-group .form-control {
+    min-width: 150px;
+}
+
+#custom-dates {
+    display: flex;
+    gap: 8px;
+}
+
+.history-results {
+    margin-top: 20px;
+}
+
+.results-count {
+    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.history-date {
+    min-width: 80px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.history-student {
+    flex: 1;
+    color: var(--text-color);
+}
+
+.history-time {
+    min-width: 80px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.history-type {
+    min-width: 120px;
+    text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .checkin-main {
+        padding: 20px;
+    }
+
+    .checkin-header {
+        flex-direction: column;
+    }
+
+    .btn-checkin {
+        width: 100%;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .checkin-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .history-filters {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-group .form-control {
+        width: 100%;
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .history-date,
+    .history-time,
+    .history-type {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkin-item {
+        padding: 12px;
+    }
+
+    .checkin-check {
+        font-size: 1rem;
+        margin-right: 12px;
+    }
+
+    .checkin-name {
+        font-size: 0.95rem;
+    }
+}
