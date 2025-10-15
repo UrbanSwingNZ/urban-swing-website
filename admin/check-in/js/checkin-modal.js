@@ -46,12 +46,25 @@ function closeCheckinModal() {
  * Reset check-in form
  */
 function resetCheckinForm() {
+    // Clear student search
+    const modalSearchInput = document.getElementById('modal-student-search');
+    const modalSearchResults = document.getElementById('modal-search-results');
+    if (modalSearchInput) modalSearchInput.value = '';
+    if (modalSearchResults) modalSearchResults.style.display = 'none';
+    
+    // Clear entry type selection
     document.querySelectorAll('input[name="entry-type"]').forEach(radio => {
         radio.checked = false;
     });
+    
+    // Clear payment method
     document.getElementById('payment-method').value = '';
     document.getElementById('payment-section').style.display = 'none';
+    
+    // Clear notes
     document.getElementById('checkin-notes').value = '';
+    
+    // Disable submit button
     document.getElementById('confirm-checkin-btn').disabled = true;
 }
 
