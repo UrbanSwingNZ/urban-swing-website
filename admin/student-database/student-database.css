@@ -164,11 +164,24 @@
     letter-spacing: 0.5px;
 }
 
+/* Header alignment to match columns */
+.students-table th:nth-child(3) {
+    text-align: right; /* Phone column */
+}
+
+.students-table th:nth-child(5) {
+    text-align: center; /* Email Consent column */
+}
+
+.students-table th:nth-child(6) {
+    text-align: right; /* Registered column */
+}
+
 .students-table th.sortable {
     cursor: pointer;
     user-select: none;
     position: relative;
-    transition: background-color 0.2s ease;
+    padding-right: 35px;
 }
 
 .students-table th.sortable:hover {
@@ -180,6 +193,13 @@
     font-size: 0.8rem;
     opacity: 0.5;
     transition: opacity 0.2s ease;
+}
+
+/* Adjust sort icon for right-aligned headers */
+.students-table th:nth-child(3) .sort-icon,
+.students-table th:nth-child(6) .sort-icon {
+    margin-left: 0;
+    margin-right: 8px;
 }
 
 .students-table th.sortable:hover .sort-icon {
@@ -207,6 +227,23 @@
     padding: 16px;
     font-size: 0.95rem;
     color: var(--text-color);
+}
+
+/* Column-specific alignment */
+.students-table td:nth-child(1) {
+    text-transform: capitalize; /* Title case for names */
+}
+
+.students-table td:nth-child(3) {
+    text-align: right; /* Right-align phone numbers */
+}
+
+.students-table td:nth-child(5) {
+    text-align: center; /* Center email consent badges */
+}
+
+.students-table td:nth-child(6) {
+    text-align: right; /* Right-align dates */
 }
 
 /* Email Consent Badge */

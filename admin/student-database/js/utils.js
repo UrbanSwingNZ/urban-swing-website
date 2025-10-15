@@ -61,3 +61,21 @@ function formatTimestamp(timestamp) {
     
     return date.toLocaleDateString('en-NZ', options).replace(',', '');
 }
+
+/**
+ * Convert text to title case (first letter of each word capitalized)
+ */
+function toTitleCase(text) {
+    if (!text) return '';
+    
+    return text
+        .toLowerCase()
+        .split(' ')
+        .map(word => {
+            // Don't capitalize empty strings
+            if (word.length === 0) return word;
+            // Capitalize first letter, keep rest lowercase
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(' ');
+}
