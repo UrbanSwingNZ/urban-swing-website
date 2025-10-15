@@ -10,12 +10,8 @@ function displayStudents() {
     const tbody = document.getElementById('students-tbody');
     const emptyState = document.getElementById('empty-state');
     const table = document.getElementById('students-table');
-    const studentCount = document.getElementById('student-count');
 
     const studentsData = getStudentsData();
-
-    // Update student count
-    studentCount.textContent = studentsData.length;
 
     // Clear existing rows
     tbody.innerHTML = '';
@@ -24,6 +20,7 @@ function displayStudents() {
         // Show empty state
         table.style.display = 'none';
         emptyState.style.display = 'block';
+        document.getElementById('pagination-container').style.display = 'none';
         return;
     }
 
@@ -34,14 +31,21 @@ function displayStudents() {
     // Apply current sort
     const sortedData = sortStudents([...studentsData], getCurrentSort().field, getCurrentSort().direction);
 
+    // Get paginated data
+    const paginatedData = getPaginatedData(sortedData);
+
     // Create table rows
-    sortedData.forEach((student) => {
+    paginatedData.forEach((student) => {
         const row = createStudentRow(student);
         tbody.appendChild(row);
     });
 
     // Update sort icons
     updateSortIcons();
+
+    // Update pagination
+    renderPagination(studentsData.length);
+    updatePaginationInfo(studentsData.length);
 }
 
 /**
