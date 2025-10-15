@@ -246,6 +246,13 @@
     text-align: right; /* Right-align dates */
 }
 
+/* Column widths */
+.students-table th:nth-child(7),
+.students-table td:nth-child(7) {
+    width: 200px; /* Wider Actions column for 4 buttons */
+    min-width: 200px;
+}
+
 /* Email Consent Badge */
 .badge {
     display: inline-block;
@@ -302,6 +309,12 @@
 .btn-icon.has-notes:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
+}
+
+.btn-icon.btn-delete:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
 }
 
 /* Empty State */
@@ -580,6 +593,18 @@ textarea:focus {
     .search-input::placeholder {
         font-size: 0.85rem;
     }
+
+    .action-buttons {
+        gap: 6px;
+    }
+
+    .btn-icon {
+        padding: 6px 10px;
+    }
+
+    .btn-icon i {
+        font-size: 0.85rem;
+    }
 }
 
 /* ========================================
@@ -732,6 +757,34 @@ textarea:focus {
 }
 
 #notes-content::placeholder {
+    font-family: inherit;
+}
+
+/* ========================================
+   DELETE CONFIRMATION - STUDENT SPECIFIC
+   ======================================== */
+
+.student-info-delete {
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--background-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-purple);
+    font-family: inherit;
+}
+
+.student-info-delete p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+.student-info-delete strong {
+    display: inline-block;
+    min-width: 70px;
+    color: var(--text-color);
+    opacity: 0.7;
     font-family: inherit;
 }
 

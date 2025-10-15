@@ -103,6 +103,9 @@ function createStudentRow(student) {
             <button class="btn-icon" onclick="editStudent('${student.id}')" title="Edit Student">
                 <i class="fas fa-edit"></i>
             </button>
+            <button class="btn-icon btn-delete" onclick="confirmDeleteStudent('${student.id}')" title="Delete Student">
+                <i class="fas fa-trash-alt"></i>
+            </button>
         </td>
     `;
 

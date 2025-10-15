@@ -180,6 +180,7 @@ function initializeModalListeners() {
     document.addEventListener('click', (e) => {
         const studentModal = document.getElementById('student-modal');
         const notesModal = document.getElementById('notes-modal');
+        const deleteModal = document.getElementById('delete-modal');
         
         if (studentModal && e.target === studentModal) {
             closeStudentModal();
@@ -188,6 +189,10 @@ function initializeModalListeners() {
         if (notesModal && e.target === notesModal) {
             closeNotesModal();
         }
+        
+        if (deleteModal && e.target === deleteModal) {
+            closeDeleteModal();
+        }
     });
 
     // Close modals on Escape key
@@ -195,6 +200,7 @@ function initializeModalListeners() {
         if (e.key === 'Escape') {
             const studentModal = document.getElementById('student-modal');
             const notesModal = document.getElementById('notes-modal');
+            const deleteModal = document.getElementById('delete-modal');
             
             if (studentModal && studentModal.style.display === 'flex') {
                 closeStudentModal();
@@ -203,6 +209,94 @@ function initializeModalListeners() {
             if (notesModal && notesModal.style.display === 'flex') {
                 closeNotesModal();
             }
+            
+            if (deleteModal && deleteModal.style.display === 'flex') {
+                closeDeleteModal();
+            }
         }
     });
+}
+
+/**
+ * Delete Student Functionality
+ */
+
+let studentToDelete = null;
+
+/**
+ * Confirm delete student (opens confirmation modal)
+ */
+function confirmDeleteStudent(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    
+    studentToDelete = student;
+    
+    const modal = document.getElementById('delete-modal');
+    const infoDiv = document.getElementById('delete-student-info');
+    
+    // Format name
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    const fullName = `${firstName} ${lastName}`.trim();
+    
+    // Update message with student name
+    const messageElement = document.getElementById('delete-student-message');
+    messageElement.textContent = `Are you sure you want to delete ${fullName}?`;
+    
+    // Populate student info
+    infoDiv.innerHTML = `
+        <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(student.phoneNumber || 'N/A')}</p>
+    `;
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Set up delete button click handler
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    deleteBtn.onclick = () => deleteStudent(student.id);
+}
+
+/**
+ * Close delete confirmation modal
+ */
+function closeDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    modal.style.display = 'none';
+    studentToDelete = null;
+}
+
+/**
+ * Delete student from Firestore
+ */
+async function deleteStudent(studentId) {
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    const originalText = deleteBtn.innerHTML;
+    
+    try {
+        // Disable button and show loading state
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+        
+        // Delete from Firestore
+        await db.collection('students').doc(studentId).delete();
+        
+        // Close modal
+        closeDeleteModal();
+        
+        // Reload students
+        await loadStudents();
+        
+        // Show success message (you could enhance this with a toast notification)
+        alert('Student deleted successfully');
+        
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        showError('Failed to delete student: ' + error.message);
+        
+        // Reset button
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = originalText;
+    }
 }
