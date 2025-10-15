@@ -7,6 +7,7 @@
     <title>Student Check-In - Urban Swing Admin</title>
     <link rel="stylesheet" href="../admin.css">
     <link rel="stylesheet" href="../admin-modals.css">
+    <link rel="stylesheet" href="../concessions/concessions.css">
     <link rel="stylesheet" href="check-in.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
@@ -177,48 +178,7 @@
         </div>
     </div>
 
-    <!-- Purchase Concessions Modal -->
-    <div id="purchase-modal" class="modal" style="display: none;">
-        <div class="modal-content modal-small">
-            <div class="modal-header">
-                <h3><i class="fas fa-shopping-cart"></i> Purchase Concessions</h3>
-                <button class="modal-close" onclick="closePurchaseModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label><i class="fas fa-box"></i> Package</label>
-                    <select id="package-select" class="form-control">
-                        <option value="">Select a package</option>
-                        <option value="5-block">5-Class Concession - $60 (6 months)</option>
-                        <option value="10-block">10-Class Concession - $100 (9 months)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-credit-card"></i> Payment Method</label>
-                    <select id="purchase-payment-method" class="form-control">
-                        <option value="">Select payment method</option>
-                        <option value="cash">Cash</option>
-                        <option value="eftpos">EFTPOS</option>
-                        <option value="bank-transfer">Bank Transfer</option>
-                    </select>
-                </div>
-
-                <div class="purchase-summary">
-                    <div class="summary-row">
-                        <span>Total Amount:</span>
-                        <strong id="purchase-amount">$0.00</strong>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closePurchaseModal()">Cancel</button>
-                <button type="button" class="btn-primary" id="confirm-purchase-btn" disabled>
-                    <i class="fas fa-check"></i> Complete Purchase
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Purchase Concessions Modal is now dynamically created by concessions-modal.js -->
 
     <!-- History Modal -->
     <div id="history-modal" class="modal" style="display: none;">
@@ -274,8 +234,13 @@
     <script src="js/auth.js"></script>
     <script src="js/students.js"></script>
     <script src="js/concessions.js"></script>
+    
+    <!-- Reusable Concessions Module (after students.js for dependencies) -->
+    <script src="../concessions/js/concessions-data.js"></script>
+    <script src="../concessions/js/concessions-modal.js"></script>
+    
+    <!-- Continue Check-In Modules -->
     <script src="js/checkin-modal.js"></script>
-    <script src="js/purchase-modal.js"></script>
     <script src="js/history-modal.js"></script>
     <script src="js/todays-checkins.js"></script>
     <script src="js/main.js"></script>

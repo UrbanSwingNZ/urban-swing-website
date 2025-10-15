@@ -1,0 +1,60 @@
+/**
+ * concessions.css - Purchase Concessions Modal Styles
+ * Reusable modal styling for purchasing concessions
+ */
+
+/* Purchase Summary */
+.purchase-summary {
+    background: var(--background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.summary-row strong {
+    color: var(--admin-purple);
+    font-size: 1.3rem;
+}
+
+/* Student Info Card in Purchase Modal */
+#purchase-concessions-modal .student-info-card {
+    background: var(--background-color);
+    border-left: 4px solid var(--admin-purple);
+    padding: 16px;
+    border-radius: 8px;
+}
+
+#purchase-concessions-modal .student-info-card h4 {
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+#purchase-concessions-modal .student-info-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .purchase-summary {
+        padding: 12px;
+    }
+    
+    .summary-row {
+        font-size: 1rem;
+    }
+    
+    .summary-row strong {
+        font-size: 1.2rem;
+    }
+}

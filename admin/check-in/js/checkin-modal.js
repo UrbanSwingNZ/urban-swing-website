@@ -244,9 +244,30 @@ function setupEntryTypeListeners() {
  */
 function initializeCheckinModalListeners() {
     // Purchase concessions button
-    document.getElementById('purchase-concessions-btn').addEventListener('click', () => {
-        openPurchaseModal();
-    });
+    const purchaseBtn = document.getElementById('purchase-concessions-btn');
+    
+    if (purchaseBtn) {
+        purchaseBtn.addEventListener('click', () => {
+            if (selectedStudent) {
+                // Open reusable purchase modal with student ID and callback
+                openPurchaseConcessionsModal(selectedStudent.id, (result) => {
+                    // Refresh concession info after purchase
+                    updateConcessionInfo(selectedStudent);
+                });
+            } else {
+                // Fallback: Try to get the student ID from the hidden field
+                const studentIdField = document.getElementById('selected-student-id');
+                if (studentIdField && studentIdField.value) {
+                    const student = findStudentById(studentIdField.value);
+                    if (student) {
+                        openPurchaseConcessionsModal(student.id, (result) => {
+                            updateConcessionInfo(student);
+                        });
+                    }
+                }
+            }
+        });
+    }
     
     // Confirm check-in button
     document.getElementById('confirm-checkin-btn').addEventListener('click', () => {
