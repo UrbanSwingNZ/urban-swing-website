@@ -8,10 +8,48 @@ let todaysCheckins = [];
  * Load today's check-ins from Firestore
  */
 async function loadTodaysCheckins() {
-    // TODO: Query Firestore for transactions where date = today when backend is ready
-    // For now, start with empty list (will be populated as mock check-ins are added)
-    todaysCheckins = [];
-    displayTodaysCheckins();
+    try {
+        // Get the selected check-in date (not today's actual date)
+        const selectedDate = getSelectedCheckinDate();
+        
+        // Start and end of selected day
+        const startOfDay = new Date(selectedDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const endOfDay = new Date(selectedDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        
+        // Query Firestore for check-ins on selected date
+        const snapshot = await firebase.firestore()
+            .collection('checkins')
+            .where('checkinDate', '>=', firebase.firestore.Timestamp.fromDate(startOfDay))
+            .where('checkinDate', '<=', firebase.firestore.Timestamp.fromDate(endOfDay))
+            .orderBy('checkinDate', 'desc')
+            .get();
+        
+        // Convert to array
+        todaysCheckins = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                studentId: data.studentId,
+                studentName: data.studentName,
+                timestamp: data.checkinDate.toDate(),
+                entryType: data.entryType,
+                paymentMethod: data.paymentMethod,
+                freeEntryReason: data.freeEntryReason,
+                balance: 0, // TODO: Get actual balance from student or concessionBlocks
+                notes: data.notes
+            };
+        });
+        
+        displayTodaysCheckins();
+        
+    } catch (error) {
+        console.error('Error loading check-ins:', error);
+        todaysCheckins = [];
+        displayTodaysCheckins();
+    }
 }
 
 /**
