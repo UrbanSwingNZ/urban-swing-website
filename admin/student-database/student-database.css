@@ -249,8 +249,8 @@
 /* Column widths */
 .students-table th:nth-child(7),
 .students-table td:nth-child(7) {
-    width: 200px; /* Wider Actions column for 4 buttons */
-    min-width: 200px;
+    width: 240px; /* Wider Actions column for 5 buttons */
+    min-width: 240px;
 }
 
 /* Email Consent Badge */
