@@ -199,8 +199,55 @@
         </div>
     </div>
 
+    <!-- Notes Modal (Simplified) -->
+    <div id="notes-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="notes-modal-title">Admin Notes</h2>
+                <button class="modal-close" onclick="closeNotesModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="notes-form" onsubmit="saveNotes(event)">
+                    <input type="hidden" id="notes-student-id">
+                    
+                    <div class="student-info">
+                        <h3 id="notes-student-name"></h3>
+                        <p id="notes-student-email"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes-content">
+                            <i class="fas fa-sticky-note"></i> Notes
+                        </label>
+                        <textarea id="notes-content" rows="8" placeholder="Add internal notes about this student..." autofocus></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" onclick="closeNotesModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Notes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js"></script>
-    <script src="student-database.js"></script>
+    
+    <!-- Student Database Modules (load in dependency order) -->
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/sort.js"></script>
+    <script src="js/table.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
