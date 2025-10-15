@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Student Check-In - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../admin.css">
+    <link rel="stylesheet" href="../admin-modals.css">
+    <link rel="stylesheet" href="check-in.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="dashboard-container" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <a href="../index.html" title="Back to Dashboard" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <img src="../../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
+                <h1 class="page-heading">Student Check-In</h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="checkin-main">
+            <!-- Search and Check-In Section -->
+            <div class="checkin-header">
+                <div class="search-section">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="student-search" placeholder="Search student by name..." class="search-input" autocomplete="off">
+                    </div>
+                    <div id="search-results" class="search-results" style="display: none;">
+                        <!-- Search results will be populated here -->
+                    </div>
+                </div>
+                <button class="btn-primary btn-checkin" id="checkin-btn">
+                    <i class="fas fa-user-check"></i> Check In Student
+                </button>
+            </div>
+
+            <!-- Today's Check-Ins -->
+            <div class="checkins-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Today's Check-Ins</h2>
+                        <span class="checkin-count" id="checkin-count">0</span>
+                    </div>
+                    <button class="btn-secondary" id="view-history-btn">
+                        <i class="fas fa-history"></i> View History
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h3>No Check-Ins Yet</h3>
+                    <p>Search for a student above or click "Check In Student" to get started.</p>
+                </div>
+
+                <!-- Check-Ins List -->
+                <div id="checkins-list" class="checkins-list" style="display: none;">
+                    <!-- Today's check-ins will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Check-In Modal -->
+    <div id="checkin-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-check"></i> Check In Student</h3>
+                <button class="modal-close" onclick="closeCheckinModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Student Selection (if opened without search) -->
+                <div id="student-selection" class="form-group">
+                    <label><i class="fas fa-user"></i> Student</label>
+                    <input type="text" id="modal-student-search" placeholder="Search student name..." class="form-control">
+                    <div id="modal-search-results" class="search-results-modal" style="display: none;"></div>
+                </div>
+
+                <!-- Selected Student Info -->
+                <div id="selected-student-info" style="display: none;">
+                    <div class="student-info-card">
+                        <h4 id="selected-student-name">Student Name</h4>
+                        <p id="selected-student-email">email@example.com</p>
+                        <input type="hidden" id="selected-student-id">
+                    </div>
+
+                    <!-- Concession Balance -->
+                    <div id="concession-info" class="concession-info">
+                        <div class="concession-header">
+                            <i class="fas fa-ticket-alt"></i>
+                            <strong>Concession Balance:</strong>
+                            <span id="concession-balance">0</span> remaining
+                        </div>
+                        <div id="concession-blocks" class="concession-blocks">
+                            <!-- Concession block details will be shown here -->
+                        </div>
+                    </div>
+
+                    <!-- Entry Type Selection -->
+                    <div class="form-group">
+                        <label><i class="fas fa-sign-in-alt"></i> Entry Type</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="concession" id="entry-concession">
+                                <span class="radio-label">Use Concession</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="casual" id="entry-casual">
+                                <span class="radio-label">Casual Entry ($15)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="free" id="entry-free">
+                                <span class="radio-label">Free Entry</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method (for casual) -->
+                    <div id="payment-section" class="form-group" style="display: none;">
+                        <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                        <select id="payment-method" class="form-control">
+                            <option value="">Select payment method</option>
+                            <option value="cash">Cash</option>
+                            <option value="eftpos">EFTPOS</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <!-- Purchase Concessions -->
+                    <div class="purchase-section">
+                        <button type="button" class="btn-secondary btn-purchase" id="purchase-concessions-btn">
+                            <i class="fas fa-shopping-cart"></i> Purchase Concessions
+                        </button>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label><i class="fas fa-sticky-note"></i> Notes (Optional)</label>
+                        <textarea id="checkin-notes" class="form-control" rows="3" placeholder="Add any notes about this check-in..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeCheckinModal()">Cancel</button>
+                <button type="button" class="btn-primary" id="confirm-checkin-btn" disabled>
+                    <i class="fas fa-check"></i> Complete Check-In
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Concessions Modal -->
+    <div id="purchase-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-cart"></i> Purchase Concessions</h3>
+                <button class="modal-close" onclick="closePurchaseModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-box"></i> Package</label>
+                    <select id="package-select" class="form-control">
+                        <option value="">Select a package</option>
+                        <option value="5-block">5-Class Concession - $60 (6 months)</option>
+                        <option value="10-block">10-Class Concession - $100 (9 months)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                    <select id="purchase-payment-method" class="form-control">
+                        <option value="">Select payment method</option>
+                        <option value="cash">Cash</option>
+                        <option value="eftpos">EFTPOS</option>
+                        <option value="bank-transfer">Bank Transfer</option>
+                    </select>
+                </div>
+
+                <div class="purchase-summary">
+                    <div class="summary-row">
+                        <span>Total Amount:</span>
+                        <strong id="purchase-amount">$0.00</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closePurchaseModal()">Cancel</button>
+                <button type="button" class="btn-primary" id="confirm-purchase-btn" disabled>
+                    <i class="fas fa-check"></i> Complete Purchase
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Check-In History</h3>
+                <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="history-filters">
+                    <div class="filter-group">
+                        <label>Date Range:</label>
+                        <select id="date-range" class="form-control">
+                            <option value="today">Today</option>
+                            <option value="week" selected>Last 7 Days</option>
+                            <option value="month">Last 30 Days</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" id="custom-dates" style="display: none;">
+                        <label>From:</label>
+                        <input type="date" id="date-from" class="form-control">
+                        <label>To:</label>
+                        <input type="date" id="date-to" class="form-control">
+                        <button class="btn-secondary" id="apply-dates">Go</button>
+                    </div>
+                    <div class="filter-group">
+                        <label>Student:</label>
+                        <select id="history-student-filter" class="form-control">
+                            <option value="">All Students</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="history-results">
+                    <p class="results-count" id="history-count">0 check-ins found</p>
+                    <div id="history-list" class="history-list">
+                        <!-- History items will be populated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeHistoryModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config & Scripts -->
+    <script src="../../config/firebase-config.js"></script>
+    
+    <!-- Check-In Modules (load in dependency order) -->
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/students.js"></script>
+    <script src="js/concessions.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/checkin-modal.js"></script>
+    <script src="js/purchase-modal.js"></script>
+    <script src="js/history-modal.js"></script>
+    <script src="js/todays-checkins.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

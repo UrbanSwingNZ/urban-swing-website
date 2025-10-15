@@ -1,0 +1,44 @@
+/**
+ * auth.js - Authentication module
+ * Handles user authentication and session management
+ */
+
+let currentUser = null;
+
+/**
+ * Initialize authentication
+ * Returns a promise that resolves when authentication is complete
+ */
+function initializeAuth() {
+    return new Promise((resolve, reject) => {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('user-email').textContent = user.email;
+                resolve(user);
+            } else {
+                // Not logged in, redirect to login
+                window.location.href = '../index.html';
+                reject(new Error('Not authenticated'));
+            }
+        });
+    });
+}
+
+/**
+ * Logout user
+ */
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = '../index.html';
+    }).catch((error) => {
+        showError('Logout failed: ' + error.message);
+    });
+}
+
+/**
+ * Get current user
+ */
+function getCurrentUser() {
+    return currentUser;
+}
