@@ -245,10 +245,45 @@ function loadHistory() {
         return;
     }
     
-    // TODO: Query Firestore for check-ins between dateFrom and dateTo when backend is implemented
-    // If studentId is set, filter by that student
-    // For now, show empty state
-    displayHistory([]);
+    // Query Firestore for check-ins between dateFrom and dateTo
+    (async () => {
+        try {
+            const start = new Date(dateFrom);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(dateTo);
+            end.setHours(23, 59, 59, 999);
+
+            let query = firebase.firestore()
+                .collection('checkins')
+                .where('checkinDate', '>=', firebase.firestore.Timestamp.fromDate(start))
+                .where('checkinDate', '<=', firebase.firestore.Timestamp.fromDate(end));
+
+            // Always order by date, fetch all in range, filter by studentId client-side for compatibility
+            query = query.orderBy('checkinDate', 'desc');
+            const snapshot = await query.get();
+
+            let history = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    studentId: data.studentId,
+                    studentName: data.studentName,
+                    timestamp: data.checkinDate.toDate(),
+                    entryType: data.entryType,
+                    paymentMethod: data.paymentMethod,
+                    freeEntryReason: data.freeEntryReason,
+                    notes: data.notes
+                };
+            });
+            if (studentId) {
+                history = history.filter(item => item.studentId === studentId);
+            }
+            displayHistory(history);
+        } catch (err) {
+            console.error('Error loading check-in history:', err);
+            displayHistory([]);
+        }
+    })();
 }
 
 /**
@@ -272,15 +307,14 @@ function displayHistory(history) {
     
     historyList.innerHTML = history.map(item => {
         const date = formatDate(item.timestamp);
-        const time = formatTime(item.timestamp);
         const typeClass = item.entryType;
         const typeLabel = item.entryType === 'concession' ? 'Concession' : 
                          item.entryType === 'casual' ? 'Casual $15' : 'Free Entry';
-        
-        return `<div class="history-item">
-            <div class="history-date">${date}</div>
-            <div class="history-student">${escapeHtml(item.studentName)}</div>
-            <div class="history-time">${time}</div>
+        return `<div class="history-item" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+            <div class="history-date-name" style="display:flex;align-items:center;gap:12px;">
+                <span class="history-date" style="font-weight:600;">${date}</span>
+                <span class="history-student">${escapeHtml(item.studentName)}</span>
+            </div>
             <div class="history-type">
                 <span class="checkin-type ${typeClass}">${typeLabel}</span>
             </div>
