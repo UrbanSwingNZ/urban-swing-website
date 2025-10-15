@@ -53,10 +53,17 @@
                 </button>
             </div>
 
-            <!-- Search/Filter Section (Future Enhancement) -->
-            <!-- <div class="database-filters">
-                <input type="text" id="search-input" placeholder="Search by name or email..." class="search-input">
-            </div> -->
+            <!-- Search Section -->
+            <div class="database-search">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search students by name, email, phone, or pronouns..." class="search-input">
+                    <button id="clear-search" class="clear-search" style="display: none;" title="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="search-results-info" id="search-results-info" style="display: none;"></p>
+            </div>
 
             <!-- Students Table -->
             <div class="table-container">
@@ -253,6 +260,7 @@
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/data.js"></script>
+    <script src="js/search.js"></script>
     <script src="js/pagination.js"></script>
     <script src="js/sort.js"></script>
     <script src="js/table.js"></script>
