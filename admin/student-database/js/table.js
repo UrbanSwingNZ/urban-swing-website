@@ -28,8 +28,12 @@ function displayStudents() {
     table.style.display = 'table';
     emptyState.style.display = 'none';
 
+    // Apply search filter
+    const searchTerm = getSearchTerm();
+    const filteredData = filterStudents(studentsData, searchTerm);
+
     // Apply current sort
-    const sortedData = sortStudents([...studentsData], getCurrentSort().field, getCurrentSort().direction);
+    const sortedData = sortStudents([...filteredData], getCurrentSort().field, getCurrentSort().direction);
 
     // Get paginated data
     const paginatedData = getPaginatedData(sortedData);
@@ -44,8 +48,11 @@ function displayStudents() {
     updateSortIcons();
 
     // Update pagination
-    renderPagination(studentsData.length);
-    updatePaginationInfo(studentsData.length);
+    renderPagination(filteredData.length);
+    updatePaginationInfo(filteredData.length);
+
+    // Update search results info
+    updateSearchResultsInfo(filteredData.length, studentsData.length);
 }
 
 /**

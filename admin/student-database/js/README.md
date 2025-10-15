@@ -48,7 +48,45 @@ Manages Firestore data operations and student data state.
 
 ---
 
-### 4. **sort.js** (Sorting)
+### 4. **search.js** (Search & Filter)
+Handles student search and filtering functionality.
+
+**Functions:**
+- `getSearchTerm()` - Get current search query
+- `filterStudents(students, term)` - Filter students by search term
+- `updateSearchResultsInfo(filteredCount, totalCount)` - Update results display
+- `handleSearch()` - Process search input
+- `clearSearch()` - Clear search and reset view
+- `initializeSearch()` - Attach search event listeners
+
+**State:**
+- `searchTerm` - Current search query string
+
+**Search Fields:** Searches across name, email, phone number, and pronouns
+
+**Dependencies:** table.js, pagination.js
+
+---
+
+### 5. **pagination.js** (Pagination)
+Handles table pagination with 20 students per page.
+
+**Functions:**
+- `getPaginatedData(data)` - Get current page slice of data
+- `renderPagination(totalItems)` - Render page controls
+- `goToPage(page)` - Navigate to specific page
+- `updatePaginationInfo(totalItems)` - Update page info display
+- `setCurrentPage(page)` - Set current page (used by search/sort)
+
+**State:**
+- `currentPage` - Current page number
+- `itemsPerPage` - Items per page (20)
+
+**Dependencies:** table.js
+
+---
+
+### 6. **sort.js** (Sorting)
 Handles table column sorting functionality.
 
 **Functions:**
@@ -61,38 +99,39 @@ Handles table column sorting functionality.
 **State:**
 - `currentSort` - Current sort field and direction
 
-**Dependencies:** table.js
+**Dependencies:** table.js, pagination.js
 
 ---
 
-### 5. **table.js** (Table Display)
+### 7. **table.js** (Table Display)
 Renders students in the table UI.
 
 **Functions:**
-- `displayStudents()` - Render all students in table
+- `displayStudents()` - Render all students in table (with search, sort, pagination)
 - `createStudentRow(student)` - Create table row HTML
 
-**Dependencies:** utils.js, data.js, sort.js
+**Dependencies:** utils.js, data.js, search.js, pagination.js, sort.js
 
 ---
 
-### 6. **modal.js** (Modal Management)
+### 8. **modal.js** (Modal Management)
 Handles student detail/edit modal functionality.
 
 **Functions:**
 - `viewStudent(id)` - Open modal in view mode
-- `editNotes(id)` - Open modal in notes-only edit mode
+- `openNotesModal(student)` - Open simplified notes modal
 - `editStudent(id)` - Open modal in full edit mode
-- `openStudentModal(student, mode)` - Open modal with specific mode
-- `closeStudentModal()` - Close modal
+- `closeStudentModal()` - Close student detail modal
+- `closeNotesModal()` - Close notes modal
 - `saveStudentChanges(event)` - Save modal form changes
+- `saveNotes(event)` - Save notes changes
 - `initializeModalListeners()` - Attach modal event listeners
 
 **Dependencies:** utils.js, data.js
 
 ---
 
-### 7. **navigation.js** (Navigation)
+### 9. **navigation.js** (Navigation)
 Handles page navigation and button clicks.
 
 **Functions:**
@@ -103,7 +142,7 @@ Handles page navigation and button clicks.
 
 ---
 
-### 8. **main.js** (Application Entry)
+### 10. **main.js** (Application Entry)
 Coordinates application startup and module initialization.
 
 **Functions:**
@@ -120,11 +159,13 @@ Modules must be loaded in this specific order to resolve dependencies:
 1. **utils.js** - No dependencies
 2. **auth.js** - Depends on utils
 3. **data.js** - Depends on utils, table, sort
-4. **sort.js** - Depends on table
-5. **table.js** - Depends on utils, data, sort
-6. **modal.js** - Depends on utils, data
-7. **navigation.js** - Depends on auth
-8. **main.js** - Coordinates all modules
+4. **search.js** - Depends on table, pagination
+5. **pagination.js** - Depends on table
+6. **sort.js** - Depends on table, pagination
+7. **table.js** - Depends on utils, data, search, pagination, sort
+8. **modal.js** - Depends on utils, data
+9. **navigation.js** - Depends on auth
+10. **main.js** - Coordinates all modules
 
 ## File Structure
 

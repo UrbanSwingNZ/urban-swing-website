@@ -29,6 +29,9 @@ function initializeApp() {
     
     // Initialize modal event listeners
     initializeModalListeners();
+    
+    // Initialize search
+    initializeSearch();
 }
 
 /**
