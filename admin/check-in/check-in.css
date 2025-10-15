@@ -19,21 +19,11 @@
 
 .checkin-header {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
+    justify-content: flex-end;
     margin-bottom: 30px;
 }
 
-.search-section {
-    flex: 1;
-    position: relative;
-    z-index: 100;
-}
-
-.btn-checkin {
-    white-space: nowrap;
-    padding: 12px 24px;
-}
+/* Button styles inherited from admin-modals.css */
 
 /* ========================================
    SEARCH RESULTS DROPDOWN
@@ -481,7 +471,7 @@
         flex-direction: column;
     }
 
-    .btn-checkin {
+    .btn-primary-lg {
         width: 100%;
     }
 

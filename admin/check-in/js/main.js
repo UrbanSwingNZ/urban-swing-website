@@ -16,9 +16,6 @@ async function initializeApp() {
         // Load students data
         await loadStudents();
         
-        // Initialize search functionality
-        initializeSearch();
-        
         // Load today's check-ins
         await loadTodaysCheckins();
         
@@ -42,14 +39,14 @@ async function initializeApp() {
  * Initialize navigation button listeners
  */
 function initializeNavListeners() {
-    // Purchase button
-    const purchaseBtn = document.getElementById('purchase-btn');
-    if (purchaseBtn) {
-        purchaseBtn.addEventListener('click', openPurchaseModal);
+    // Check-in button - opens modal
+    const checkinBtn = document.getElementById('checkin-btn');
+    if (checkinBtn) {
+        checkinBtn.addEventListener('click', () => openCheckinModal());
     }
     
     // History button
-    const historyBtn = document.getElementById('history-btn');
+    const historyBtn = document.getElementById('view-history-btn');
     if (historyBtn) {
         historyBtn.addEventListener('click', openHistoryModal);
     }

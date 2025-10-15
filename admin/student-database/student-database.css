@@ -41,13 +41,7 @@
     color: var(--admin-purple);
 }
 
-.btn-register {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    white-space: nowrap;
-}
+/* Button styles inherited from admin-modals.css */
 
 /* Header styles inherited from admin.css */
 
@@ -457,7 +451,7 @@ textarea:focus {
         align-items: stretch;
     }
 
-    .btn-register {
+    .btn-primary-lg {
         width: 100%;
         justify-content: center;
     }
