@@ -27,6 +27,7 @@
 .search-section {
     flex: 1;
     position: relative;
+    z-index: 100;
 }
 
 .btn-checkin {
@@ -43,13 +44,13 @@
     top: calc(100% + 5px);
     left: 0;
     right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: var(--background-color);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     max-height: 300px;
     overflow-y: auto;
-    z-index: 100;
+    z-index: 1000;
 }
 
 .search-result-item {
