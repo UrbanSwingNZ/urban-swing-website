@@ -1,20 +1,10 @@
 /* ========================================
    MODAL STYLES
-   Modal dialogs and forms
+   Base styles inherited from admin-modals.css
+   Only playlist-specific overrides here
    ======================================== */
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: none;
-  z-index: 9999;
-  padding: 20px;
-}
-
+/* Playlist Manager specific: display handling for jQuery show/hide */
 .modal[style*="display: block"],
 .modal[style*="display: flex"] {
   display: flex !important;
@@ -30,202 +20,12 @@
   }
 }
 
+/* Playlist Manager modal content max-width override */
 .modal-content {
-  background: var(--pm-card-light);
-  border-radius: 16px;
   max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal-content {
-    background: var(--pm-card-dark);
-  }
-}
-
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--pm-border-light);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal-header {
-    border-bottom-color: var(--pm-border-dark);
-  }
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-.modal-close,
-.close {
-  background: none;
-  border: none;
-  color: var(--text-color);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-}
-
-.modal-close:hover,
-.close:hover {
-  background: var(--pm-hover-light);
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal-close:hover,
-  .close:hover {
-    background: var(--pm-hover-dark);
-  }
-}
-
-.modal-body {
-  padding: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.form-select,
-.form-group input[type="text"],
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  background: var(--background-color);
-  border: 1px solid var(--pm-border-light);
-  border-radius: 8px;
-  color: var(--text-color);
-  font-size: 0.95rem;
-  font-family: inherit;
-}
-
-.form-group textarea {
-  resize: vertical;
-}
-
-@media (prefers-color-scheme: dark) {
-  .form-select,
-  .form-group input[type="text"],
-  .form-group textarea {
-    border-color: var(--pm-border-dark);
-  }
-}
-
-.form-select:focus,
-.form-group input[type="text"]:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--pm-purple);
-  box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
-}
-
-.checkbox-label {
-  display: flex !important;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  margin-bottom: 0 !important;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-  accent-color: var(--pm-purple);
-}
-
-.modal-footer {
-  padding: 20px;
-  border-top: 1px solid var(--pm-border-light);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal-footer {
-    border-top-color: var(--pm-border-dark);
-  }
-}
-
-.modal-footer button {
-  flex: none;
-  white-space: nowrap;
-  min-width: auto;
-  width: auto;
-}
-
-/* Modal button overrides */
-.modal-footer .btn-secondary,
-.modal .btn-secondary,
-#cancel-add-tracks-btn,
-#cancel-create-playlist-btn,
-#cancel-rename-btn,
-#cancel-delete-playlist-btn {
-  padding: 7px 11px !important;
-  border: 1px solid var(--pm-border-light) !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  line-height: 1 !important;
-  box-sizing: border-box !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  vertical-align: top !important;
-  margin: 0 !important;
-}
-
-.modal-footer .btn-primary,
-.modal .btn-primary,
-#add-selected-tracks-btn,
-#confirm-create-playlist-btn,
-#confirm-rename-btn {
-  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
-  color: white !important;
-  opacity: 1 !important;
-  padding: 8px 12px !important;
-  border: none !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  line-height: 1 !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  box-sizing: border-box !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  vertical-align: top !important;
-  margin: 0 !important;
 }
 
 #add-selected-tracks-btn:not(:disabled) {
-  background: linear-gradient(135deg, #3534Fa, #9a16f5) !important;
   opacity: 1 !important;
   filter: none !important;
 }

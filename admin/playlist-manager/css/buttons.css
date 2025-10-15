@@ -1,84 +1,8 @@
 /* ========================================
    BUTTON STYLES
-   Primary, secondary, danger, and filter buttons
+   Base styles inherited from admin-modals.css
+   Only playlist-specific overrides here
    ======================================== */
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--pm-purple), var(--pm-pink));
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(135deg, var(--pm-pink), var(--pm-purple));
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-secondary {
-  background: var(--pm-card-light);
-  color: var(--text-color);
-  border: 1px solid var(--pm-border-light);
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn-secondary:hover {
-  background: var(--pm-hover-light);
-  border-color: var(--pm-purple);
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #ff4444, #cc3333);
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 6px;
-}
-
-.btn-danger:hover {
-  background: linear-gradient(135deg, #ff6666, #ee4444);
-  transform: translateY(-1px);
-}
-
-.btn-danger:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
 
 .btn-filter {
   background: var(--pm-card-light);
@@ -102,50 +26,7 @@
   color: white;
 }
 
-/* Ensure consistent button sizing */
-.btn-primary,
-.btn-secondary,
-.btn-danger,
-.btn-filter,
-#add-tracks-btn,
-#delete-playlist-btn {
-  box-sizing: border-box !important;
-  height: 36px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  vertical-align: top !important;
-  line-height: 1 !important;
-  margin: 0 !important;
-  padding: 8px 12px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-}
-
-/* Mobile button sizing */
-@media (max-width: 768px) {
-  .btn-primary,
-  .btn-secondary,
-  .btn-danger,
-  .btn-filter,
-  #add-tracks-btn,
-  #delete-playlist-btn {
-    padding: 6px 10px !important;
-    font-size: 0.8rem !important;
-    height: 32px !important;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
-  .btn-secondary {
-    background: var(--pm-card-dark);
-    border-color: var(--pm-border-dark);
-  }
-  
-  .btn-secondary:hover {
-    background: var(--pm-hover-dark);
-  }
-  
   .btn-filter {
     background: var(--pm-card-dark);
     border-color: var(--pm-border-dark);

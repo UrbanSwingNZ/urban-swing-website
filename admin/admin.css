@@ -4,6 +4,9 @@
    Using Urban Swing color scheme
    ======================================== */
 
+/* Import shared modal and button styles */
+@import url('admin-modals.css');
+
 /* Remove white border around gradient */
 html, body {
   margin: 0 !important;
@@ -160,8 +163,8 @@ html, body {
   box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
-/* Buttons */
-.btn-primary {
+/* Form Submit Buttons (scoped to auth forms only) */
+.auth-container .btn-primary {
   width: 100%;
   padding: 14px 20px;
   background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
@@ -175,16 +178,16 @@ html, body {
   margin-top: 10px;
 }
 
-.btn-primary:hover {
+.auth-container .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(154, 22, 245, 0.3);
 }
 
-.btn-primary:active {
+.auth-container .btn-primary:active {
   transform: translateY(0);
 }
 
-.btn-primary:disabled {
+.auth-container .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
