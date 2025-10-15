@@ -226,6 +226,32 @@ function initializeModalListeners() {
             }
         }
     });
+    
+    // Transaction History button in student modal
+    const transactionHistoryBtn = document.getElementById('transaction-history-btn');
+    if (transactionHistoryBtn) {
+        transactionHistoryBtn.addEventListener('click', () => {
+            const studentId = document.getElementById('modal-student-id').value;
+            if (studentId) {
+                viewTransactionHistory(studentId);
+            }
+        });
+    }
+    
+    // Purchase Concessions button in student modal
+    const purchaseConcessionsBtn = document.getElementById('purchase-concessions-modal-btn');
+    if (purchaseConcessionsBtn) {
+        purchaseConcessionsBtn.addEventListener('click', () => {
+            const studentId = document.getElementById('modal-student-id').value;
+            if (studentId) {
+                openPurchaseConcessionsModal(studentId, (result) => {
+                    // Refresh student data after purchase
+                    console.log('Concession purchase completed');
+                    // Could refresh the student's concession balance display here if needed
+                });
+            }
+        });
+    }
 }
 
 /**
