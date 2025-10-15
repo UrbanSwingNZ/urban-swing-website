@@ -43,6 +43,13 @@ async function loadTodaysCheckins() {
             };
         });
         
+        // Sort alphabetically by first name, then last name
+        todaysCheckins.sort((a, b) => {
+            const nameA = a.studentName.toLowerCase();
+            const nameB = b.studentName.toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+        
         displayTodaysCheckins();
         
     } catch (error) {
@@ -79,25 +86,137 @@ function displayTodaysCheckins() {
     checkinsList.style.display = 'block';
     
     checkinsList.innerHTML = todaysCheckins.map(checkin => {
-        const time = formatTime(checkin.timestamp);
         const typeClass = checkin.entryType;
         const typeLabel = checkin.entryType === 'concession' ? 'Concession' : 
                          checkin.entryType === 'casual' ? 'Casual $15' : 'Free Entry';
         
-        return `<div class="checkin-item">
-            <div class="checkin-info">
+        return `<div class="checkin-item" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
+            <div class="checkin-info-row" data-action="edit">
                 <span class="checkin-name">${escapeHtml(checkin.studentName)}</span>
-                <span class="checkin-time">${time}</span>
             </div>
-            <div class="checkin-details">
+            <div class="checkin-actions">
                 <span class="checkin-type ${typeClass}">${typeLabel}</span>
-                ${checkin.balanceAfter !== undefined ? 
-                    `<span class="checkin-balance">Balance: ${checkin.balanceAfter}</span>` : ''}
+                <button type="button" class="btn-icon btn-purchase" data-action="purchase" title="Purchase Concessions">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+                <button type="button" class="btn-icon btn-delete" data-action="delete" title="Delete Check-In">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
             </div>
         </div>`;
     }).join('');
     
+    // Add event listeners to check-in items
+    attachCheckinEventListeners();
+    
     updateCheckinCount(todaysCheckins.length);
+}
+
+/**
+ * Attach event listeners to check-in items
+ */
+function attachCheckinEventListeners() {
+    const checkinItems = document.querySelectorAll('.checkin-item');
+    
+    checkinItems.forEach(item => {
+        const checkinId = item.dataset.checkinId;
+        const studentId = item.dataset.studentId;
+        
+        // Click on info row to edit
+        const infoRow = item.querySelector('[data-action="edit"]');
+        infoRow.addEventListener('click', () => {
+            editCheckin(checkinId, studentId);
+        });
+        
+        // Purchase concessions button
+        const purchaseBtn = item.querySelector('[data-action="purchase"]');
+        purchaseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            purchaseConcessions(studentId);
+        });
+        
+        // Delete button
+        const deleteBtn = item.querySelector('[data-action="delete"]');
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteCheckin(checkinId);
+        });
+    });
+}
+
+/**
+ * Edit a check-in (reopen modal with prepopulated data)
+ */
+async function editCheckin(checkinId, studentId) {
+    try {
+        // Load the check-in document from Firestore
+        const doc = await firebase.firestore()
+            .collection('checkins')
+            .doc(checkinId)
+            .get();
+        
+        if (!doc.exists) {
+            showSnackbar('Check-in not found', 'error');
+            return;
+        }
+        
+        const checkinData = doc.data();
+        
+        // Find the student
+        const student = findStudentById(studentId);
+        if (!student) {
+            showSnackbar('Student not found', 'error');
+            return;
+        }
+        
+        // Open check-in modal with prepopulated data
+        openCheckinModalWithData(student, checkinData);
+        
+    } catch (error) {
+        console.error('Error loading check-in:', error);
+        showSnackbar('Failed to load check-in data', 'error');
+    }
+}
+
+/**
+ * Open purchase concessions modal for a student
+ */
+function purchaseConcessions(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) {
+        showSnackbar('Student not found', 'error');
+        return;
+    }
+    
+    openPurchaseConcessionsModal(studentId, (result) => {
+        // Refresh check-ins after purchase
+        loadTodaysCheckins();
+    });
+}
+
+/**
+ * Delete a check-in
+ */
+async function deleteCheckin(checkinId) {
+    if (!confirm('Are you sure you want to delete this check-in? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        await firebase.firestore()
+            .collection('checkins')
+            .doc(checkinId)
+            .delete();
+        
+        showSnackbar('Check-in deleted successfully', 'success');
+        
+        // Reload check-ins
+        loadTodaysCheckins();
+        
+    } catch (error) {
+        console.error('Error deleting check-in:', error);
+        showSnackbar('Failed to delete check-in', 'error');
+    }
 }
 
 /**

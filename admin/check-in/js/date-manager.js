@@ -66,22 +66,8 @@ function initializeDatePicker() {
         calendarButton.style.pointerEvents = 'auto';
     }
     
-    // Clear localStorage when navigating away
-    window.addEventListener('beforeunload', () => {
-        // Don't clear if modal is open (user might refresh accidentally)
-        const checkinModal = document.getElementById('checkin-modal');
-        const purchaseModal = document.getElementById('purchase-concessions-modal');
-        const historyModal = document.getElementById('history-modal');
-        
-        const isModalOpen = 
-            (checkinModal && checkinModal.style.display === 'flex') ||
-            (purchaseModal && purchaseModal.style.display === 'flex') ||
-            (historyModal && historyModal.style.display === 'flex');
-        
-        if (!isModalOpen) {
-            localStorage.removeItem(CHECKIN_DATE_KEY);
-        }
-    });
+    // Date persists in localStorage across page refreshes
+    // Only cleared manually or when user navigates away from check-in page
 }
 
 /**
