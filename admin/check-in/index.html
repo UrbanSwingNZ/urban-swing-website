@@ -44,18 +44,9 @@
 
         <!-- Main Content -->
         <main class="checkin-main">
-            <!-- Search and Check-In Section -->
+            <!-- Check-In Action Button -->
             <div class="checkin-header">
-                <div class="search-section">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="student-search" placeholder="Search student by name..." class="search-input" autocomplete="off">
-                    </div>
-                    <div id="search-results" class="search-results" style="display: none;">
-                        <!-- Search results will be populated here -->
-                    </div>
-                </div>
-                <button class="btn-primary btn-checkin" id="checkin-btn">
+                <button class="btn-primary" id="checkin-btn">
                     <i class="fas fa-user-check"></i> Check In Student
                 </button>
             </div>
@@ -76,7 +67,7 @@
                 <div id="empty-state" class="empty-state">
                     <i class="fas fa-clipboard-check"></i>
                     <h3>No Check-Ins Yet</h3>
-                    <p>Search for a student above or click "Check In Student" to get started.</p>
+                    <p>Click "Check In Student" to get started.</p>
                 </div>
 
                 <!-- Check-Ins List -->
@@ -272,7 +263,6 @@
     <script src="js/auth.js"></script>
     <script src="js/students.js"></script>
     <script src="js/concessions.js"></script>
-    <script src="js/search.js"></script>
     <script src="js/checkin-modal.js"></script>
     <script src="js/purchase-modal.js"></script>
     <script src="js/history-modal.js"></script>

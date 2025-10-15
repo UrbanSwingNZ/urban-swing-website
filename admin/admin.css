@@ -333,6 +333,50 @@ html, body {
   transform: translateY(-2px);
 }
 
+/* ========================================
+   PAGE ACTION BUTTONS
+   Large buttons for primary page actions
+   ======================================== */
+
+.btn-primary-lg {
+  background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+.btn-primary-lg:hover {
+  background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-primary-lg:active {
+  transform: translateY(0);
+}
+
+.btn-primary-lg:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+
 /* Main Content */
 .dashboard-main {
   flex: 1;
