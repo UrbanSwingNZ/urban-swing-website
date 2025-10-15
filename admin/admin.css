@@ -541,6 +541,82 @@ html, body {
 }
 
 /* ========================================
+   SEARCH BOX - Shared Component
+   Used by student database and check-in pages
+   ======================================== */
+
+.search-box {
+  position: relative;
+  max-width: 600px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--admin-purple);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 45px 8px 48px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: var(--card-bg);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--admin-purple);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.clear-search {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-search:hover {
+  color: var(--admin-purple);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.search-results-info {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.search-results-info strong {
+  color: var(--admin-purple);
+  font-weight: 600;
+}
+
+/* ========================================
    RESPONSIVE DESIGN
    ======================================== */
 
