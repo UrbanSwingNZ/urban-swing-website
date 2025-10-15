@@ -13,6 +13,9 @@ async function initializeApp() {
         // Initialize authentication
         await initializeAuth();
         
+        // Initialize date picker
+        initializeDatePicker();
+        
         // Load students data
         await loadStudents();
         
