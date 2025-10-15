@@ -81,6 +81,32 @@
     letter-spacing: 0.5px;
 }
 
+.students-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.students-table th.sortable:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.students-table th .sort-icon {
+    margin-left: 8px;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.students-table th.sortable:hover .sort-icon {
+    opacity: 0.8;
+}
+
+.students-table th .sort-icon.active {
+    opacity: 1;
+}
+
 .students-table tbody tr {
     border-bottom: 1px solid var(--border-color);
     transition: background-color 0.2s ease;
