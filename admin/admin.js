@@ -159,9 +159,9 @@ function setupTileButtons() {
     window.location.href = 'student-database/index.html';
   });
   
-  // Check-in system - Coming soon
+  // Check-in system - Now available!
   checkinBtn.addEventListener('click', () => {
-    alert('Student Check-in system is coming soon! ✅');
+    window.location.href = 'check-in/index.html';
   });
 }
 
