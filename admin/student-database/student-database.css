@@ -173,6 +173,17 @@
     font-size: 0.9rem;
 }
 
+.btn-icon.has-notes {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.btn-icon.has-notes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;
@@ -435,6 +446,47 @@ textarea:focus {
     .register-card .logo {
         width: 150px;
     }
+}
+
+/* ========================================
+   NOTES MODAL (SIMPLIFIED)
+   ======================================== */
+
+.student-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--background-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-purple);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.student-info h3 {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.student-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+#notes-content {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 150px;
+}
+
+#notes-content::placeholder {
+    font-family: inherit;
 }
 
 /* ========================================
