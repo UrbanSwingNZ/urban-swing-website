@@ -19,8 +19,12 @@ async function initializeApp() {
         // Load today's check-ins
         await loadTodaysCheckins();
         
+        // Initialize reusable purchase concessions modal
+        initializePurchaseConcessionsModal();
+        
         // Initialize modal event listeners
         initializeModalListeners();
+        initializeCheckinModalListeners();
         initializeHistoryModalListeners();
         
         // Initialize nav button event listeners
