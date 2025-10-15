@@ -3,18 +3,53 @@
    Track search results in modal
    ======================================== */
 
-.search-results-container {
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid var(--pm-border-light);
+/* Modal search box should use form input styling */
+.modal-body .search-box {
+  padding: 0;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--pm-card-bg);
+  background: var(--admin-card-light);
+  padding: 12px 15px;
 }
 
 @media (prefers-color-scheme: dark) {
-  .search-results-container {
-    border-color: var(--pm-border-dark);
+  .modal-body .search-box {
+    background: var(--admin-card-dark);
   }
+}
+
+.modal-body .search-box:focus-within {
+  border-color: var(--admin-purple);
+  box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+.modal-body .search-box input {
+  background: transparent;
+}
+
+.search-results-container {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--pm-card-bg);
+  padding: 20px;
+  text-align: center;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-results-container p {
+  margin: 0;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+/* When search results are present, reset container styling */
+.search-results-container:has(.search-result-item) {
+  padding: 0;
+  display: block;
+  text-align: left;
 }
 
 .search-result-item {
@@ -22,15 +57,9 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  border-bottom: 1px solid var(--pm-border-light);
+  border-bottom: 1px solid var(--border-color);
   cursor: pointer;
   transition: background-color 0.2s;
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-result-item {
-    border-bottom-color: var(--pm-border-dark);
-  }
 }
 
 .search-result-item:hover {

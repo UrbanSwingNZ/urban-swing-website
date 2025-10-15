@@ -4,6 +4,9 @@
    Updated: Modular CSS structure - v3.0
    ======================================== */
 
+/* Import shared admin styles first */
+@import url('../admin-modals.css');
+
 /* Import modular CSS files */
 @import url('css/header.css');
 @import url('css/sidebar.css');

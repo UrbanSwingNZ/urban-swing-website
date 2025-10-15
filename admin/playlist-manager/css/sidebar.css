@@ -75,13 +75,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid var(--pm-border-light);
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-box {
-    border-bottom-color: var(--pm-border-dark);
-  }
+  border-bottom: 1px solid var(--border-color);
 }
 
 .search-box i {
