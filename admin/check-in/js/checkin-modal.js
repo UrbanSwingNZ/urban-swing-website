@@ -34,6 +34,47 @@ function openCheckinModal(studentId = null) {
 }
 
 /**
+ * Open check-in modal with prepopulated data (for editing)
+ */
+function openCheckinModalWithData(student, checkinData) {
+    const modal = document.getElementById('checkin-modal');
+    const studentSelection = document.getElementById('student-selection');
+    
+    // Reset form first
+    resetCheckinForm();
+    
+    // Set selected student
+    selectedStudent = student;
+    studentSelection.style.display = 'none';
+    showSelectedStudent(student);
+    
+    // Prepopulate entry type
+    const entryTypeRadio = document.querySelector(`input[name="entry-type"][value="${checkinData.entryType}"]`);
+    if (entryTypeRadio) {
+        entryTypeRadio.checked = true;
+        // Trigger change event to show relevant sections
+        entryTypeRadio.dispatchEvent(new Event('change'));
+    }
+    
+    // Prepopulate payment method if casual
+    if (checkinData.entryType === 'casual' && checkinData.paymentMethod) {
+        document.getElementById('payment-method').value = checkinData.paymentMethod;
+    }
+    
+    // Prepopulate free entry reason if free
+    if (checkinData.entryType === 'free' && checkinData.freeEntryReason) {
+        document.getElementById('free-entry-reason').value = checkinData.freeEntryReason;
+    }
+    
+    // Prepopulate notes
+    if (checkinData.notes) {
+        document.getElementById('checkin-notes').value = checkinData.notes;
+    }
+    
+    modal.style.display = 'flex';
+}
+
+/**
  * Close check-in modal
  */
 function closeCheckinModal() {
