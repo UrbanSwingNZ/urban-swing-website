@@ -61,8 +61,10 @@ function displayStudents() {
 function createStudentRow(student) {
     const row = document.createElement('tr');
     
-    // Format name
-    const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim();
+    // Format name in title case
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    const fullName = `${firstName} ${lastName}`.trim();
     
     // Format registration date
     let registeredDate = 'N/A';
