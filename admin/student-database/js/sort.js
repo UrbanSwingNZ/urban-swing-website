@@ -59,6 +59,8 @@ function handleSort(field) {
         currentSort.direction = 'asc';
     }
 
+    // Reset to first page when sorting
+    setCurrentPage(1);
     displayStudents();
 }
 

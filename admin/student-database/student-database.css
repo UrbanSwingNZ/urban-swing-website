@@ -60,6 +60,9 @@
     border-radius: 12px;
     box-shadow: 0 2px 8px var(--admin-shadow);
     overflow: hidden;
+    max-height: 70vh;
+    overflow-y: auto;
+    position: relative;
 }
 
 .students-table {
@@ -70,6 +73,9 @@
 .students-table thead {
     background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .students-table th {
@@ -445,6 +451,118 @@ textarea:focus {
 
     .register-card .logo {
         width: 150px;
+    }
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+
+.pagination-wrapper {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination-number {
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-width: 40px;
+}
+
+.pagination-number:hover {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.pagination-number.active {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border-color: transparent;
+}
+
+.pagination-ellipsis {
+    padding: 0 8px;
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.pagination-info-wrapper {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .pagination-btn,
+    .pagination-number {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        min-width: 36px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .pagination-btn:not(:disabled):hover,
+    .pagination-number:hover {
+        box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
     }
 }
 
