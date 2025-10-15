@@ -101,8 +101,11 @@
                 <!-- Student Selection (if opened without search) -->
                 <div id="student-selection" class="form-group">
                     <label><i class="fas fa-user"></i> Student</label>
-                    <input type="text" id="modal-student-search" placeholder="Search student name..." class="form-control" autocomplete="off">
-                    <div id="modal-search-results" class="search-results-modal" style="display: none;"></div>
+                    <div class="search-input-wrapper">
+                        <input type="text" id="modal-student-search" placeholder="Search student name..." class="form-control" autocomplete="off">
+                        <button type="button" class="clear-search-btn" id="clear-modal-search" style="display: none;">&times;</button>
+                        <div id="modal-search-results" class="search-results-modal" style="display: none;"></div>
+                    </div>
                 </div>
 
                 <!-- Selected Student Info -->
@@ -200,27 +203,42 @@
             </div>
             <div class="modal-body">
                 <div class="history-filters">
-                    <div class="filter-group">
+                    <div class="filter-group date-range-group">
                         <label>Date Range:</label>
-                        <select id="date-range" class="form-control">
-                            <option value="today">Today</option>
-                            <option value="week" selected>Last 7 Days</option>
-                            <option value="month">Last 30 Days</option>
-                            <option value="custom">Custom Range</option>
-                        </select>
-                    </div>
-                    <div class="filter-group" id="custom-dates" style="display: none;">
-                        <label>From:</label>
-                        <input type="date" id="date-from" class="form-control">
-                        <label>To:</label>
-                        <input type="date" id="date-to" class="form-control">
-                        <button class="btn-secondary" id="apply-dates">Go</button>
+                        <div class="date-range-inputs">
+                            <div class="date-picker-container">
+                                <span class="date-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    From:
+                                </span>
+                                <div class="date-input-wrapper">
+                                    <input type="date" id="history-date-from" class="date-input">
+                                    <button class="calendar-button" type="button" aria-label="Open calendar">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="date-picker-container">
+                                <span class="date-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    To:
+                                </span>
+                                <div class="date-input-wrapper">
+                                    <input type="date" id="history-date-to" class="date-input">
+                                    <button class="calendar-button" type="button" aria-label="Open calendar">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="filter-group">
                         <label>Student:</label>
-                        <select id="history-student-filter" class="form-control">
-                            <option value="">All Students</option>
-                        </select>
+                        <div class="student-search-wrapper">
+                            <input type="text" id="history-student-search" class="form-control" placeholder="All Students" autocomplete="off">
+                            <button type="button" class="clear-search-btn" id="clear-history-search" style="display: none;">&times;</button>
+                            <div id="history-search-results" class="search-results-dropdown" style="display: none;"></div>
+                        </div>
                     </div>
                 </div>
 

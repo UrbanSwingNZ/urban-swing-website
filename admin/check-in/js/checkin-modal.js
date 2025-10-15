@@ -78,10 +78,24 @@ function resetCheckinForm() {
 function initializeModalSearch() {
     const modalSearchInput = document.getElementById('modal-student-search');
     const modalSearchResults = document.getElementById('modal-search-results');
+    const clearBtn = document.getElementById('clear-modal-search');
     
     let timeout;
+    
+    // Show all students when focused with empty input
+    modalSearchInput.addEventListener('focus', () => {
+        if (modalSearchInput.value.trim() === '') {
+            const allStudents = getStudents();
+            displayModalSearchResults(allStudents);
+        }
+    });
+    
     modalSearchInput.addEventListener('input', () => {
         clearTimeout(timeout);
+        
+        // Show/hide clear button
+        clearBtn.style.display = modalSearchInput.value ? 'block' : 'none';
+        
         timeout = setTimeout(() => {
             const query = modalSearchInput.value;
             if (query.trim() === '') {
@@ -92,6 +106,21 @@ function initializeModalSearch() {
             const results = searchStudents(query);
             displayModalSearchResults(results);
         }, 300);
+    });
+    
+    // Clear button functionality
+    clearBtn.addEventListener('click', () => {
+        modalSearchInput.value = '';
+        clearBtn.style.display = 'none';
+        modalSearchResults.style.display = 'none';
+        modalSearchInput.focus();
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-input-wrapper') && !e.target.closest('#student-selection')) {
+            modalSearchResults.style.display = 'none';
+        }
     });
 }
 
@@ -320,26 +349,11 @@ function handleCheckinSubmit() {
         timestamp: new Date()
     });
     
-    // For now, just add to today's list
-    addMockCheckin(selectedStudent, entryType, paymentMethod, freeEntryReason);
+    // TODO: Save check-in to Firestore when backend is implemented
+    // For now, no data is saved - ready for real implementation
     
     closeCheckinModal();
-}
-
-/**
- * Add mock check-in to today's list (UI only)
- */
-function addMockCheckin(student, entryType, paymentMethod, freeEntryReason) {
-    const checkin = {
-        id: 'mock-' + Date.now(),
-        studentId: student.id,
-        studentName: getStudentFullName(student),
-        timestamp: new Date(),
-        entryType: entryType,
-        paymentMethod: entryType === 'casual' ? paymentMethod : null,
-        freeEntryReason: entryType === 'free' ? freeEntryReason : null,
-        balance: student.concessionBalance || 0
-    };
     
-    addCheckinToDisplay(checkin);
+    // Show success message
+    showSnackbar(`${getStudentFullName(selectedStudent)} checked in successfully!`, 'success');
 }

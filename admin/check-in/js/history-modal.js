@@ -9,8 +9,11 @@
 function openHistoryModal() {
     const modal = document.getElementById('history-modal');
     
-    // Load history with default filter (last 7 days)
-    loadHistory('week');
+    // Initialize date range to last 7 days
+    initializeHistoryDateRange();
+    
+    // Load history with default filter
+    loadHistory();
     
     modal.style.display = 'flex';
 }
@@ -24,51 +27,195 @@ function closeHistoryModal() {
 }
 
 /**
+ * Initialize history date range inputs
+ */
+function initializeHistoryDateRange() {
+    const dateFrom = document.getElementById('history-date-from');
+    const dateTo = document.getElementById('history-date-to');
+    
+    // Set default range to last 7 days
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    dateFrom.value = formatDateToString(sevenDaysAgo);
+    dateTo.value = formatDateToString(today);
+}
+
+/**
  * Initialize history modal listeners
  */
 function initializeHistoryModalListeners() {
-    const dateRangeSelect = document.getElementById('date-range');
-    const customDates = document.getElementById('custom-dates');
-    const applyDatesBtn = document.getElementById('apply-dates');
-    const studentFilter = document.getElementById('history-student-filter');
+    const dateFrom = document.getElementById('history-date-from');
+    const dateTo = document.getElementById('history-date-to');
+    const studentSearch = document.getElementById('history-student-search');
+    const searchResults = document.getElementById('history-search-results');
+    const clearBtn = document.getElementById('clear-history-search');
     
-    // Date range selection
-    dateRangeSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'custom') {
-            customDates.style.display = 'flex';
-        } else {
-            customDates.style.display = 'none';
-            loadHistory(e.target.value);
+    // Date range changes - reload history
+    dateFrom.addEventListener('change', () => {
+        loadHistory();
+    });
+    
+    dateTo.addEventListener('change', () => {
+        loadHistory();
+    });
+    
+    // Student search functionality
+    let selectedHistoryStudentId = null;
+    
+    // Function to position the dropdown
+    const positionDropdown = () => {
+        const rect = studentSearch.getBoundingClientRect();
+        searchResults.style.top = `${rect.bottom}px`;
+        searchResults.style.left = `${rect.left}px`;
+        searchResults.style.width = `${rect.width}px`;
+    };
+    
+    studentSearch.addEventListener('focus', (e) => {
+        // Show all students when focused with empty or default value
+        if (e.target.value === '' || e.target.value === 'All Students') {
+            const students = getStudents();
+            
+            // Add "All Students" option at the top
+            const allStudentsHtml = `
+                <div class="student-result" data-student-id="">
+                    <div class="student-name" style="font-weight: 600; color: var(--admin-purple);">All Students</div>
+                    <div class="student-email">Show all check-ins</div>
+                </div>
+            `;
+            
+            const studentsHtml = students.map(student => `
+                <div class="student-result" data-student-id="${student.id}">
+                    <div class="student-name">${getStudentFullName(student)}</div>
+                    <div class="student-email">${student.email || 'No email'}</div>
+                </div>
+            `).join('');
+            
+            searchResults.innerHTML = allStudentsHtml + studentsHtml;
+            positionDropdown();
+            searchResults.style.display = 'block';
+            
+            // Add click handlers
+            searchResults.querySelectorAll('.student-result').forEach(result => {
+                result.addEventListener('click', () => {
+                    const studentId = result.dataset.studentId;
+                    if (studentId === '') {
+                        selectedHistoryStudentId = null;
+                        studentSearch.value = 'All Students';
+                        clearBtn.style.display = 'block';
+                    } else {
+                        const student = students.find(s => s.id === studentId);
+                        selectedHistoryStudentId = studentId;
+                        studentSearch.value = getStudentFullName(student);
+                        clearBtn.style.display = 'block';
+                    }
+                    searchResults.style.display = 'none';
+                    loadHistory();
+                });
+            });
         }
     });
     
-    // Apply custom dates
-    applyDatesBtn.addEventListener('click', () => {
-        const from = document.getElementById('date-from').value;
-        const to = document.getElementById('date-to').value;
+    studentSearch.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
         
-        if (!from || !to) {
-            showError('Please select both start and end dates');
+        // Show/hide clear button
+        clearBtn.style.display = e.target.value ? 'block' : 'none';
+        
+        // If empty, show all students and clear filter
+        if (query === '' || query === 'all students') {
+            selectedHistoryStudentId = null;
+            searchResults.style.display = 'none';
+            loadHistory();
             return;
         }
         
-        loadHistory('custom', from, to);
-    });
-    
-    // Student filter
-    studentFilter.addEventListener('change', () => {
-        const range = dateRangeSelect.value;
-        if (range === 'custom') {
-            const from = document.getElementById('date-from').value;
-            const to = document.getElementById('date-to').value;
-            loadHistory('custom', from, to);
+        // Filter students
+        const students = getStudents();
+        const filtered = students.filter(student => {
+            const fullName = getStudentFullName(student).toLowerCase();
+            const email = student.email ? student.email.toLowerCase() : '';
+            return fullName.includes(query) || email.includes(query);
+        });
+        
+        // Display results with "All Students" option
+        if (filtered.length > 0) {
+            const allStudentsHtml = `
+                <div class="student-result" data-student-id="">
+                    <div class="student-name" style="font-weight: 600; color: var(--admin-purple);">All Students</div>
+                    <div class="student-email">Show all check-ins</div>
+                </div>
+            `;
+            
+            const studentsHtml = filtered.map(student => `
+                <div class="student-result" data-student-id="${student.id}">
+                    <div class="student-name">${getStudentFullName(student)}</div>
+                    <div class="student-email">${student.email || 'No email'}</div>
+                </div>
+            `).join('');
+            
+            searchResults.innerHTML = allStudentsHtml + studentsHtml;
+            positionDropdown();
+            searchResults.style.display = 'block';
+            
+            // Add click handlers to results
+            searchResults.querySelectorAll('.student-result').forEach(result => {
+                result.addEventListener('click', () => {
+                    const studentId = result.dataset.studentId;
+                    if (studentId === '') {
+                        selectedHistoryStudentId = null;
+                        studentSearch.value = 'All Students';
+                        clearBtn.style.display = 'block';
+                    } else {
+                        const student = students.find(s => s.id === studentId);
+                        selectedHistoryStudentId = studentId;
+                        studentSearch.value = getStudentFullName(student);
+                        clearBtn.style.display = 'block';
+                    }
+                    searchResults.style.display = 'none';
+                    loadHistory();
+                });
+            });
         } else {
-            loadHistory(range);
+            searchResults.innerHTML = '<div class="student-result" style="cursor: default;"><div class="student-name" style="color: var(--text-muted);">No students found</div></div>';
+            positionDropdown();
+            searchResults.style.display = 'block';
         }
     });
     
-    // Populate student filter
-    populateStudentFilter();
+    // Clear button functionality
+    clearBtn.addEventListener('click', () => {
+        studentSearch.value = 'All Students';
+        selectedHistoryStudentId = null;
+        clearBtn.style.display = 'none';
+        searchResults.style.display = 'none';
+        loadHistory();
+        studentSearch.focus();
+    });
+    
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.student-search-wrapper')) {
+            searchResults.style.display = 'none';
+        }
+    });
+    
+    // Calendar button clicks - trigger date picker
+    const dateInputWrappers = document.querySelectorAll('#history-modal .date-input-wrapper');
+    dateInputWrappers.forEach(wrapper => {
+        const input = wrapper.querySelector('.date-input');
+        const button = wrapper.querySelector('.calendar-button');
+        
+        wrapper.addEventListener('click', (e) => {
+            if (e.target !== input && input.showPicker) {
+                input.showPicker();
+            }
+        });
+    });
+    
+    // Store selected student ID for loadHistory to access
+    window.getSelectedHistoryStudentId = () => selectedHistoryStudentId;
     
     // Close modal when clicking outside
     document.getElementById('history-modal').addEventListener('click', (e) => {
@@ -79,71 +226,29 @@ function initializeHistoryModalListeners() {
 }
 
 /**
- * Populate student filter dropdown
- */
-function populateStudentFilter() {
-    const select = document.getElementById('history-student-filter');
-    const students = getStudents();
-    
-    // Add all students option (already in HTML)
-    students.forEach(student => {
-        const option = document.createElement('option');
-        option.value = student.id;
-        option.textContent = getStudentFullName(student);
-        select.appendChild(option);
-    });
-}
-
-/**
  * Load history based on filters
  */
-function loadHistory(range, customFrom = null, customTo = null) {
-    // TODO: Query Firestore when backend is ready
-    // For now, show mock data
-    const mockHistory = generateMockHistory(range, customFrom, customTo);
-    displayHistory(mockHistory);
-}
-
-/**
- * Generate mock history data (for UI demonstration)
- */
-function generateMockHistory(range, customFrom, customTo) {
-    const students = getStudents().slice(0, 10); // Use first 10 students
-    const history = [];
+function loadHistory() {
+    const dateFrom = document.getElementById('history-date-from').value;
+    const dateTo = document.getElementById('history-date-to').value;
+    const studentId = window.getSelectedHistoryStudentId ? window.getSelectedHistoryStudentId() : null;
     
-    // Generate mock check-ins
-    const now = new Date();
-    const daysBack = range === 'today' ? 0 : range === 'week' ? 7 : 30;
-    
-    for (let i = 0; i < daysBack * 3; i++) {
-        const randomDays = Math.floor(Math.random() * daysBack);
-        const date = new Date(now);
-        date.setDate(date.getDate() - randomDays);
-        date.setHours(19, Math.floor(Math.random() * 60), 0, 0);
-        
-        const student = students[Math.floor(Math.random() * students.length)];
-        const entryTypes = ['concession', 'casual', 'free'];
-        const entryType = entryTypes[Math.floor(Math.random() * entryTypes.length)];
-        
-        history.push({
-            id: 'mock-' + i,
-            studentId: student.id,
-            studentName: getStudentFullName(student),
-            timestamp: date,
-            entryType: entryType
-        });
+    // Validate date range
+    if (!dateFrom || !dateTo) {
+        displayHistory([]);
+        return;
     }
     
-    // Sort by date descending
-    history.sort((a, b) => b.timestamp - a.timestamp);
-    
-    // Filter by student if selected
-    const studentFilter = document.getElementById('history-student-filter').value;
-    if (studentFilter) {
-        return history.filter(h => h.studentId === studentFilter);
+    if (new Date(dateFrom) > new Date(dateTo)) {
+        showSnackbar('Start date must be before end date', 'warning');
+        displayHistory([]);
+        return;
     }
     
-    return history;
+    // TODO: Query Firestore for check-ins between dateFrom and dateTo when backend is implemented
+    // If studentId is set, filter by that student
+    // For now, show empty state
+    displayHistory([]);
 }
 
 /**
@@ -153,12 +258,17 @@ function displayHistory(history) {
     const historyList = document.getElementById('history-list');
     const countElement = document.getElementById('history-count');
     
-    countElement.textContent = `${history.length} check-in${history.length !== 1 ? 's' : ''} found`;
+    // Get student filter name
+    const studentSearch = document.getElementById('history-student-search');
+    const studentFilterName = studentSearch.value || 'All Students';
     
     if (history.length === 0) {
-        historyList.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">No check-ins found for selected filters</p>';
+        countElement.textContent = '';
+        historyList.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 40px;">No check-ins found for ${studentFilterName}</p>`;
         return;
     }
+    
+    countElement.textContent = `${history.length} check-in${history.length !== 1 ? 's' : ''} found`;
     
     historyList.innerHTML = history.map(item => {
         const date = formatDate(item.timestamp);

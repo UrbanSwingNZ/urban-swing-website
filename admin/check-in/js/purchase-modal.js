@@ -100,8 +100,8 @@ function handlePurchaseSubmit() {
     // Close purchase modal
     closePurchaseModal();
     
-    // Show success message
-    alert('Purchase recorded successfully! (Mock - backend not yet implemented)');
+    // TODO: Save purchase to Firestore and update student's concession balance when backend is implemented
+    showSnackbar('Purchase recorded successfully!', 'success');
     
     // Update concession info in main modal
     updateConcessionInfo(selectedStudent);
