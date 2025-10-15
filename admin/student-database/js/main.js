@@ -27,6 +27,9 @@ function initializeApp() {
     // Initialize authentication
     initializeAuth();
     
+    // Initialize reusable purchase concessions modal
+    initializePurchaseConcessionsModal();
+    
     // Initialize modal event listeners
     initializeModalListeners();
     

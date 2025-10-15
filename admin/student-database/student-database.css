@@ -716,6 +716,46 @@ textarea:focus {
 }
 
 /* ========================================
+   MODAL ACTION BUTTONS
+   ======================================== */
+
+.modal-actions-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.modal-actions-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.modal-actions-left .btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid var(--admin-purple);
+    background: transparent;
+    color: var(--admin-purple);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-actions-left .btn-icon:hover {
+    background: var(--admin-purple);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.modal-actions-left .btn-icon i {
+    font-size: 1rem;
+}
+
+/* ========================================
    LOADING SPINNER
    Inherited from admin.css - no need to redefine
    ======================================== */

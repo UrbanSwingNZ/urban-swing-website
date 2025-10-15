@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../admin.css">
     <link rel="stylesheet" href="../admin-modals.css">
     <link rel="stylesheet" href="student-database.css">
+    <link rel="stylesheet" href="../concessions/concessions.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -203,13 +204,23 @@
                         </div>
                     </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn-secondary" onclick="closeStudentModal()">
-                            <i class="fas fa-times"></i> Close
-                        </button>
-                        <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
-                            <i class="fas fa-save"></i> Save Changes
-                        </button>
+                    <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="modal-actions-left">
+                            <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
+                                <i class="fas fa-history"></i>
+                            </button>
+                            <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                        <div class="modal-actions-right">
+                            <button type="button" class="btn-secondary" onclick="closeStudentModal()">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                            <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -289,6 +300,11 @@
     <script src="js/table.js"></script>
     <script src="js/modal.js"></script>
     <script src="js/navigation.js"></script>
+    
+    <!-- Reusable Concessions Module -->
+    <script src="../concessions/js/concessions-data.js"></script>
+    <script src="../concessions/js/concessions-modal.js"></script>
+    
     <script src="js/main.js"></script>
 </body>
 </html>

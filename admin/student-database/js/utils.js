@@ -79,3 +79,13 @@ function toTitleCase(text) {
         })
         .join(' ');
 }
+
+/**
+ * Get full name of student in title case
+ */
+function getStudentFullName(student) {
+    if (!student) return '';
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    return `${firstName} ${lastName}`.trim();
+}
