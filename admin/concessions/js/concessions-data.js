@@ -112,15 +112,17 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
     // Format purchase date for document ID (YYYY-MM-DD)
     const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
     
-    // Create document ID: firstName-lastName-purchased-YYYY-MM-DD (lowercase)
-    let docId = `unknown-unknown-purchased-${dateStr}`;
+    // Create document ID: firstName-lastName-purchased-YYYY-MM-DD-timestamp (lowercase)
+    // Added timestamp to ensure uniqueness when multiple blocks purchased on same day
+    const timestamp = Date.now();
+    let docId = `unknown-unknown-purchased-${dateStr}-${timestamp}`;
     try {
         if (typeof findStudentById === 'function') {
             const student = findStudentById(studentId);
             if (student) {
                 const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
                 const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
-                docId = `${firstName}-${lastName}-purchased-${dateStr}`;
+                docId = `${firstName}-${lastName}-purchased-${dateStr}-${timestamp}`;
             }
         }
     } catch (e) {

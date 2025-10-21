@@ -49,10 +49,12 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
         // Format purchase date for document ID (YYYY-MM-DD)
         const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
         
-        // Create document ID: firstName-lastName-purchased-YYYY-MM-DD (lowercase)
+        // Create document ID: firstName-lastName-purchased-YYYY-MM-DD-timestamp (lowercase)
+        // Added timestamp to ensure uniqueness when multiple blocks purchased on same day
+        const timestamp = Date.now();
         const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
-        const docId = `${firstName}-${lastName}-purchased-${dateStr}`;
+        const docId = `${firstName}-${lastName}-purchased-${dateStr}-${timestamp}`;
         
         // Determine status based on expiry date
         const now = new Date();
