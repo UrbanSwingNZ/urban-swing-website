@@ -40,22 +40,6 @@ function handleCheckinSubmit() {
  */
 async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEntryReason, notes) {
     try {
-        let concessionBlockId = null;
-        
-        // If this is a concession check-in, use a block entry (FIFO)
-        if (entryType === 'concession') {
-            const block = await getNextAvailableBlock(student.id, true); // Allow expired
-            
-            if (!block) {
-                showSnackbar('No concession entries available for this student', 'error');
-                return;
-            }
-            
-            // Use one entry from the block
-            await useBlockEntry(block.id);
-            concessionBlockId = block.id;
-        }
-        
         // Get the selected check-in date from date picker
         const checkinDate = getSelectedCheckinDate(); // Returns Date object
         
@@ -69,6 +53,51 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         const firstName = student.firstName.toLowerCase().replace(/\s+/g, '-');
         const lastName = student.lastName.toLowerCase().replace(/\s+/g, '-');
         const docId = `checkin-${dateStr}-${firstName}-${lastName}`;
+        
+        let concessionBlockId = null;
+        
+        // Check if this student already has a check-in for this date
+        const existingCheckin = await firebase.firestore()
+            .collection('checkins')
+            .doc(docId)
+            .get();
+        
+        if (existingCheckin.exists) {
+            const existingData = existingCheckin.data();
+            
+            // If they're changing FROM concession TO another type, restore the concession
+            if (existingData.entryType === 'concession' && entryType !== 'concession' && existingData.concessionBlockId) {
+                await restoreBlockEntry(existingData.concessionBlockId);
+            }
+            // If they're changing FROM another type TO concession, use a concession
+            else if (existingData.entryType !== 'concession' && entryType === 'concession') {
+                const block = await getNextAvailableBlock(student.id, true);
+                if (!block) {
+                    showSnackbar('No concession entries available for this student', 'error');
+                    return;
+                }
+                await useBlockEntry(block.id);
+                concessionBlockId = block.id;
+            }
+            // If both are concession, keep the existing block ID (no change needed)
+            else if (existingData.entryType === 'concession' && entryType === 'concession') {
+                concessionBlockId = existingData.concessionBlockId;
+            }
+        } else {
+            // New check-in - if concession, use a block entry
+            if (entryType === 'concession') {
+                const block = await getNextAvailableBlock(student.id, true); // Allow expired
+                
+                if (!block) {
+                    showSnackbar('No concession entries available for this student', 'error');
+                    return;
+                }
+                
+                // Use one entry from the block
+                await useBlockEntry(block.id);
+                concessionBlockId = block.id;
+            }
+        }
         
         // Build check-in data
         const checkinData = {
