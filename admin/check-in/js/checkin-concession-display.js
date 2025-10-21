@@ -102,12 +102,17 @@ async function getConcessionData(studentId) {
         let totalBalance = 0;
         let expiredBalance = 0;
         const blocks = [];
+        const now = new Date();
         
         snapshot.forEach(doc => {
             const data = doc.data();
             totalBalance += data.remainingQuantity;
             
-            if (data.status === 'expired') {
+            // Determine actual status based on expiry date, not stored status
+            const expiryDate = data.expiryDate ? data.expiryDate.toDate() : null;
+            const isExpired = expiryDate && expiryDate < now;
+            
+            if (isExpired) {
                 expiredBalance += data.remainingQuantity;
             }
             
@@ -116,9 +121,9 @@ async function getConcessionData(studentId) {
                 packageName: data.packageName,
                 remaining: data.remainingQuantity,
                 original: data.originalQuantity,
-                status: data.status,
+                status: isExpired ? 'expired' : 'active', // Calculate status dynamically
                 purchaseDate: data.purchaseDate ? data.purchaseDate.toDate() : null,
-                expiryDate: data.expiryDate ? data.expiryDate.toDate() : null
+                expiryDate: expiryDate
             });
         });
         
@@ -141,25 +146,28 @@ async function getConcessionData(studentId) {
  * Format a concession block for display
  */
 function formatConcessionBlock(block) {
+    // Status badge - green for active, red for expired
     const statusBadge = block.status === 'expired' 
-        ? '<span class="badge badge-warning">Expired</span>'
-        : '<span class="badge badge-success">Active</span>';
+        ? '<span class="badge badge-no">Expired</span>'
+        : '<span class="badge badge-yes">Active</span>';
     
     const expiryInfo = block.expiryDate
-        ? `<span style="font-size: 0.85rem; color: var(--text-muted);">Expires: ${formatDate(block.expiryDate)}</span>`
-        : '';
+        ? `${formatDate(block.expiryDate)}`
+        : 'No expiry date';
     
     return `
-        <div style="padding: 0.5rem; margin-bottom: 0.5rem; background: var(--background-secondary); border-radius: 4px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
+        <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--background-secondary); border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
                     <strong>${block.packageName}</strong>
                     ${statusBadge}
-                    ${expiryInfo}
                 </div>
-                <div style="font-size: 0.95rem;">
-                    ${block.remaining} / ${block.original} remaining
-                </div>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                Expires: ${expiryInfo}
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 500;">
+                ${block.remaining} / ${block.original} remaining
             </div>
         </div>
     `;

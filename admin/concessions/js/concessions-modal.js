@@ -277,12 +277,31 @@ async function handlePurchaseSubmit() {
     try {
         showLoading();
         
+        // Parse date string to local date (not UTC midnight)
+        // purchaseDate is in format YYYY-MM-DD from the date picker
+        let parsedDate;
+        if (typeof purchaseDate === 'string' && purchaseDate.includes('-')) {
+            // Parse as local date at noon to avoid timezone issues
+            const [year, month, day] = purchaseDate.split('-').map(Number);
+            parsedDate = new Date(year, month - 1, day, 12, 0, 0);
+        } else {
+            parsedDate = new Date(purchaseDate);
+        }
+        
+        // Validate the date
+        if (isNaN(parsedDate.getTime())) {
+            showError('Invalid purchase date selected');
+            return;
+        }
+        
+        console.log('Parsed date:', parsedDate, 'Original:', purchaseDate);
+        
         // Complete purchase in Firestore
         const result = await completeConcessionPurchase(
             purchaseModalStudentId,
             packageId,
             paymentMethod,
-            new Date(purchaseDate) // Pass the selected date
+            parsedDate
         );
         
         showLoading(false);

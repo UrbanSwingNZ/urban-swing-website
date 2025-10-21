@@ -86,6 +86,9 @@ function getDefaultPackages() {
 async function createConcessionBlock(studentId, packageData, purchaseDate = new Date(), paymentMethod = '') {
     console.log('createConcessionBlock called with:', { studentId, packageData, purchaseDate, paymentMethod });
     
+    // Ensure purchaseDate is a proper Date object
+    const actualPurchaseDate = purchaseDate instanceof Date ? purchaseDate : new Date(purchaseDate);
+    
     // Try to get student name, fallback to 'Unknown' if not available
     let studentName = 'Unknown Student';
     try {
@@ -99,8 +102,30 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
         console.warn('Could not get student name:', e);
     }
     
-    const expiryDate = new Date(purchaseDate);
+    const expiryDate = new Date(actualPurchaseDate.getTime());
     expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
+    
+    // Determine status based on expiry date
+    const now = new Date();
+    const isExpired = expiryDate < now;
+    
+    // Format purchase date for document ID (YYYY-MM-DD)
+    const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    // Create document ID: firstName-lastName-purchased-YYYY-MM-DD (lowercase)
+    let docId = `unknown-unknown-purchased-${dateStr}`;
+    try {
+        if (typeof findStudentById === 'function') {
+            const student = findStudentById(studentId);
+            if (student) {
+                const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
+                const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
+                docId = `${firstName}-${lastName}-purchased-${dateStr}`;
+            }
+        }
+    } catch (e) {
+        console.warn('Could not create custom document ID:', e);
+    }
     
     const blockData = {
         studentId: studentId,
@@ -109,9 +134,9 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
         packageName: packageData.name,
         originalQuantity: packageData.numberOfClasses,
         remainingQuantity: packageData.numberOfClasses,
-        purchaseDate: firebase.firestore.Timestamp.fromDate(purchaseDate),
+        purchaseDate: firebase.firestore.Timestamp.fromDate(actualPurchaseDate),
         expiryDate: firebase.firestore.Timestamp.fromDate(expiryDate),
-        status: 'active',
+        status: isExpired ? 'expired' : 'active',
         price: packageData.price || 0,
         paymentMethod: paymentMethod || 'unknown',
         transactionId: null,
@@ -122,7 +147,9 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
     
     console.log('Block data to save:', blockData);
     
-    const docRef = await db.collection('concessionBlocks').add(blockData);
+    // Use set() with custom document ID instead of add()
+    const docRef = db.collection('concessionBlocks').doc(docId);
+    await docRef.set(blockData);
     return docRef.id;
 }
 
@@ -130,9 +157,12 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
  * Create transaction record
  */
 async function createTransaction(studentId, packageData, paymentMethod, transactionDate = new Date()) {
+    // Ensure transactionDate is a proper Date object
+    const actualTransactionDate = transactionDate instanceof Date ? transactionDate : new Date(transactionDate);
+    
     const transactionData = {
         studentId: studentId,
-        transactionDate: firebase.firestore.Timestamp.fromDate(transactionDate),
+        transactionDate: firebase.firestore.Timestamp.fromDate(actualTransactionDate),
         type: 'purchase',
         packageId: packageData.id,
         packageName: packageData.name,
@@ -168,7 +198,13 @@ async function completeConcessionPurchase(studentId, packageId, paymentMethod, p
     }
     
     // Use provided date or default to now
-    const actualPurchaseDate = purchaseDate || new Date();
+    // Ensure we have a proper Date object
+    let actualPurchaseDate;
+    if (purchaseDate) {
+        actualPurchaseDate = purchaseDate instanceof Date ? purchaseDate : new Date(purchaseDate);
+    } else {
+        actualPurchaseDate = new Date();
+    }
     
     try {
         // Create concession block with specified purchase date
@@ -176,19 +212,15 @@ async function completeConcessionPurchase(studentId, packageId, paymentMethod, p
         // Otherwise use the local version defined above
         
         // Calculate expiry date
-        const expiryDate = new Date(actualPurchaseDate);
+        const expiryDate = new Date(actualPurchaseDate.getTime());
         expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
         
-        // Call createConcessionBlock with correct parameters for the check-in version
+        // Call createConcessionBlock with correct parameters
         const blockId = await createConcessionBlock(
             studentId, 
             packageData, 
-            packageData.numberOfClasses,  // quantity
-            packageData.price,             // price
-            paymentMethod,                 // paymentMethod
-            expiryDate,                    // expiryDate
-            '',                            // notes
-            actualPurchaseDate             // purchaseDate (custom date for backdating)
+            actualPurchaseDate,  // purchaseDate
+            paymentMethod        // paymentMethod
         );
         
         // Create transaction record

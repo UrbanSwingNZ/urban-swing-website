@@ -17,19 +17,46 @@
  */
 async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null) {
     try {
+        // Check if findStudentById is available
+        if (typeof findStudentById !== 'function') {
+            throw new Error('findStudentById function is not available');
+        }
+        
         const student = findStudentById(studentId);
         if (!student) {
-            throw new Error('Student not found');
+            throw new Error('Student not found with ID: ' + studentId);
+        }
+        
+        // Check if getStudentFullName is available
+        if (typeof getStudentFullName !== 'function') {
+            throw new Error('getStudentFullName function is not available');
+        }
+        
+        // Ensure purchaseDate is a proper Date object
+        let actualPurchaseDate;
+        if (purchaseDate) {
+            actualPurchaseDate = purchaseDate instanceof Date ? purchaseDate : new Date(purchaseDate);
+        } else {
+            actualPurchaseDate = new Date();
+        }
+        
+        // Ensure expiryDate is a proper Date object if provided
+        let actualExpiryDate = null;
+        if (expiryDate) {
+            actualExpiryDate = expiryDate instanceof Date ? expiryDate : new Date(expiryDate);
         }
         
         // Format purchase date for document ID (YYYY-MM-DD)
-        const dateForId = purchaseDate ? purchaseDate : new Date();
-        const dateStr = dateForId.toISOString().split('T')[0]; // YYYY-MM-DD
+        const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
         
         // Create document ID: firstName-lastName-purchased-YYYY-MM-DD (lowercase)
         const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const docId = `${firstName}-${lastName}-purchased-${dateStr}`;
+        
+        // Determine status based on expiry date
+        const now = new Date();
+        const isExpired = actualExpiryDate && actualExpiryDate < now;
         
         const blockData = {
             studentId: studentId,
@@ -38,9 +65,9 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
             packageName: packageData.name,
             originalQuantity: quantity,
             remainingQuantity: quantity,
-            purchaseDate: purchaseDate ? firebase.firestore.Timestamp.fromDate(purchaseDate) : firebase.firestore.FieldValue.serverTimestamp(),
-            expiryDate: expiryDate ? firebase.firestore.Timestamp.fromDate(expiryDate) : null,
-            status: 'active',
+            purchaseDate: firebase.firestore.Timestamp.fromDate(actualPurchaseDate),
+            expiryDate: actualExpiryDate ? firebase.firestore.Timestamp.fromDate(actualExpiryDate) : null,
+            status: isExpired ? 'expired' : 'active',
             price: price,
             paymentMethod: paymentMethod,
             transactionId: null, // TODO: Link to transaction when implemented
