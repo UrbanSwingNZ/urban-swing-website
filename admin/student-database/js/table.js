@@ -43,6 +43,12 @@ function displayStudents() {
     paginatedData.forEach((student) => {
         const row = createStudentRow(student);
         tbody.appendChild(row);
+        
+        // Load concessions after row is in DOM
+        const concessionsCellId = `concessions-${student.id}`;
+        setTimeout(() => {
+            loadStudentConcessions(student.id, concessionsCellId);
+        }, 0);
     });
 
     // Update sort icons
@@ -84,6 +90,9 @@ function createStudentRow(student) {
         ? '<span class="badge badge-yes">Yes</span>' 
         : '<span class="badge badge-no">No</span>';
     
+    // Concessions badge (will be populated async)
+    const concessionsCellId = `concessions-${student.id}`;
+    
     // Check if student has notes
     const hasNotes = student.adminNotes && student.adminNotes.trim().length > 0;
     const notesButtonClass = hasNotes ? 'btn-icon has-notes' : 'btn-icon';
@@ -94,6 +103,9 @@ function createStudentRow(student) {
         <td>${escapeHtml(student.phoneNumber || 'N/A')}</td>
         <td>${escapeHtml(student.pronouns || '-')}</td>
         <td>${emailConsentBadge}</td>
+        <td id="${concessionsCellId}" class="concessions-cell">
+            <i class="fas fa-spinner fa-spin text-muted"></i>
+        </td>
         <td>${registeredDate}</td>
         <td class="action-buttons">
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
@@ -108,14 +120,64 @@ function createStudentRow(student) {
         </td>
     `;
 
-    // Add click handler to open student details (except when clicking action buttons)
+    // Add click handler to open student details (except when clicking action buttons or concessions)
     row.addEventListener('click', (e) => {
-        // Don't trigger if clicking on action buttons
-        if (e.target.closest('.action-buttons')) {
+        // Don't trigger if clicking on action buttons or concessions
+        if (e.target.closest('.action-buttons') || e.target.closest('.concessions-cell')) {
             return;
         }
         viewStudent(student.id);
     });
 
     return row;
+}
+
+/**
+ * Load and display concessions for a student
+ */
+async function loadStudentConcessions(studentId, cellId) {
+    const cell = document.getElementById(cellId);
+    if (!cell) {
+        console.warn('Cell not found for concessions:', cellId);
+        return;
+    }
+    
+    try {
+        const blocks = await getStudentConcessionBlocks(studentId);
+        const stats = calculateConcessionStats(blocks);
+        const badgeHTML = getConcessionBadgeHTML(stats);
+        
+        if (badgeHTML) {
+            cell.innerHTML = badgeHTML;
+            
+            // Add click handler for badge (shows detail modal)
+            const badge = cell.querySelector('.concession-badge');
+            if (badge) {
+                badge.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showConcessionsDetail(studentId);
+                });
+            }
+            
+            // Add click handler for purchase button (opens purchase modal)
+            const purchaseBtn = cell.querySelector('.btn-purchase-mini');
+            if (purchaseBtn) {
+                purchaseBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const student = findStudentById(studentId);
+                    if (student) {
+                        openPurchaseConcessionsModal(student.id, async (result) => {
+                            // Refresh concessions after purchase
+                            await loadStudentConcessions(studentId, cellId);
+                        }, null, student);
+                    }
+                });
+            }
+        } else {
+            cell.innerHTML = '';
+        }
+    } catch (error) {
+        console.error('Error loading concessions for student:', studentId, error);
+        cell.innerHTML = '<span class="text-muted">-</span>';
+    }
 }

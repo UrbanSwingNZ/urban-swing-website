@@ -91,6 +91,14 @@ function getStudentFullName(student) {
 }
 
 /**
+ * Find student by ID from the students data
+ */
+function findStudentById(studentId) {
+    const studentsData = getStudentsData();
+    return studentsData.find(s => s.id === studentId);
+}
+
+/**
  * Show snackbar notification
  */
 function showSnackbar(message, type = 'success', duration = 3000) {

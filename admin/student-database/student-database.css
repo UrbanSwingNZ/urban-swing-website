@@ -101,6 +101,10 @@
 }
 
 .students-table th:nth-child(6) {
+    text-align: center; /* Concessions column */
+}
+
+.students-table th:nth-child(7) {
     text-align: right; /* Registered column */
 }
 
@@ -108,7 +112,7 @@
     cursor: pointer;
     user-select: none;
     position: relative;
-    padding-right: 35px;
+    padding-right: 30px;
 }
 
 .students-table th.sortable:hover {
@@ -116,17 +120,13 @@
 }
 
 .students-table th .sort-icon {
-    margin-left: 8px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 0.8rem;
     opacity: 0.5;
     transition: opacity 0.2s ease;
-}
-
-/* Adjust sort icon for right-aligned headers */
-.students-table th:nth-child(3) .sort-icon,
-.students-table th:nth-child(6) .sort-icon {
-    margin-left: 0;
-    margin-right: 8px;
 }
 
 .students-table th.sortable:hover .sort-icon {
@@ -171,12 +171,16 @@
 }
 
 .students-table td:nth-child(6) {
+    text-align: center; /* Center concessions badges */
+}
+
+.students-table td:nth-child(7) {
     text-align: right; /* Right-align dates */
 }
 
 /* Column widths */
-.students-table th:nth-child(7),
-.students-table td:nth-child(7) {
+.students-table th:nth-child(8),
+.students-table td:nth-child(8) {
     width: 240px; /* Wider Actions column for 5 buttons */
     min-width: 240px;
 }
@@ -199,6 +203,45 @@
 .badge-no {
     background: rgba(220, 53, 69, 0.15);
     color: var(--admin-error);
+}
+
+.badge-warning {
+    background: rgba(255, 165, 0, 0.15);
+    color: #ff8800;
+}
+
+.concession-badge {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.concession-badge:hover {
+    transform: scale(1.1);
+}
+
+.concessions-cell {
+    text-align: center;
+}
+
+/* Mini Purchase Button */
+.btn-purchase-mini {
+    background: transparent;
+    border: 1.5px solid var(--admin-purple);
+    color: var(--admin-purple);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-purchase-mini:hover {
+    background: var(--admin-purple);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.2);
 }
 
 /* Action Buttons */
@@ -756,6 +799,87 @@ textarea:focus {
 
 .modal-actions-left .btn-icon i {
     font-size: 1rem;
+}
+
+/* ========================================
+   CONCESSIONS DETAIL MODAL
+   ======================================== */
+
+.concessions-section {
+    margin-bottom: 24px;
+}
+
+.concessions-section:last-child {
+    margin-bottom: 0;
+}
+
+.concessions-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.concessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.concession-item {
+    padding: 12px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.concession-item:hover {
+    border-color: var(--admin-purple);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+}
+
+.concession-item.expired {
+    opacity: 0.7;
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.concession-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.concession-info strong {
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.concession-info .text-muted {
+    font-size: 0.85rem;
+}
+
+.concession-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.concession-details span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.concession-details i {
+    width: 14px;
+    text-align: center;
+    font-size: 0.8rem;
 }
 
 /* ========================================

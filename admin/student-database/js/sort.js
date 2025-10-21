@@ -29,6 +29,13 @@ function sortStudents(data, field, direction) {
                 bVal = b.emailConsent ? 1 : 0;
                 break;
             
+            case 'concessions':
+                // For concessions, we'll use the cached count if available
+                // Otherwise default to 0 (will be updated when concessions load)
+                aVal = a._concessionsCount !== undefined ? a._concessionsCount : 0;
+                bVal = b._concessionsCount !== undefined ? b._concessionsCount : 0;
+                break;
+            
             default:
                 aVal = (a[field] || '').toString().toLowerCase();
                 bVal = (b[field] || '').toString().toLowerCase();
