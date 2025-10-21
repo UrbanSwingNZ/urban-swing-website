@@ -14,7 +14,7 @@
  * @param {Date} purchaseDate - Optional purchase date (defaults to now)
  * @returns {Promise<string>} - Document ID of created block
  */
-async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null) {
+async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null, transactionId = null) {
     try {
         // Check if findStudentById is available
         if (typeof findStudentById !== 'function') {
@@ -72,7 +72,7 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
             isLocked: false, // Default: not locked, can be used even if expired
             price: price,
             paymentMethod: paymentMethod,
-            transactionId: null, // TODO: Link to transaction when implemented
+            transactionId: transactionId, // Now properly set
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
             notes: notes

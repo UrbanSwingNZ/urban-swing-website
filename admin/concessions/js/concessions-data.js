@@ -92,8 +92,8 @@ function getDefaultPackages() {
  * @param {Date} purchaseDate - Optional purchase date (defaults to now)
  * @returns {Promise<string>} - Document ID of created block
  */
-async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null) {
-    console.log('createConcessionBlock called with:', { studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate });
+async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null, transactionId = null) {
+    console.log('createConcessionBlock called with:', { studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate, transactionId });
     
     // Ensure purchaseDate is a proper Date object
     let actualPurchaseDate;
@@ -159,7 +159,7 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
         isLocked: false, // Default: not locked, can be used even if expired
         price: price,
         paymentMethod: paymentMethod,
-        transactionId: null,
+        transactionId: transactionId, // Now properly set
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
         notes: notes
@@ -192,8 +192,25 @@ async function createTransaction(studentId, packageData, paymentMethod, transact
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
-    const docRef = await db.collection('transactions').add(transactionData);
-    return docRef.id;
+    // Generate human-readable transaction ID: firstName-lastName-packageId-timestamp
+    const student = await db.collection('students').doc(studentId).get();
+    const studentData = student.data();
+    
+    const firstName = (studentData.firstName || 'unknown').toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    const lastName = (studentData.lastName || 'unknown').toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    const timestamp = actualTransactionDate.getTime();
+    const transactionId = `${firstName}-${lastName}-${packageData.id}-${timestamp}`;
+    
+    await db.collection('transactions').doc(transactionId).set(transactionData);
+    return transactionId;
 }
 
 /**
@@ -227,12 +244,15 @@ async function completeConcessionPurchase(studentId, packageId, paymentMethod, p
     }
     
     try {
+        // Create transaction record FIRST so we have the ID
+        const transactionId = await createTransaction(studentId, packageData, paymentMethod, actualPurchaseDate);
+        
         // Calculate expiry date
         const expiryDate = new Date(actualPurchaseDate.getTime());
         expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
         
         // Call createConcessionBlock with correct parameters
-        // Signature: createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate)
+        // Signature: createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate, transactionId)
         const blockId = await createConcessionBlock(
             studentId,
             packageData,
@@ -241,11 +261,9 @@ async function completeConcessionPurchase(studentId, packageId, paymentMethod, p
             paymentMethod,                 // paymentMethod
             expiryDate,                    // expiryDate
             '',                            // notes
-            actualPurchaseDate             // purchaseDate
+            actualPurchaseDate,            // purchaseDate
+            transactionId                  // transactionId
         );
-        
-        // Create transaction record
-        const transactionId = await createTransaction(studentId, packageData, paymentMethod, actualPurchaseDate);
         
         // Update student balance
         await updateStudentBalance(studentId, packageData.numberOfClasses);
