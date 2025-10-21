@@ -463,6 +463,11 @@ html, body {
   --tile-color-2: var(--admin-purple);
 }
 
+.tile-tools {
+  --tile-color-1: var(--admin-purple);
+  --tile-color-2: var(--admin-pink);
+}
+
 .tile-icon {
   width: 80px;
   height: 80px;

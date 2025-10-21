@@ -148,6 +148,7 @@ function setupTileButtons() {
   const playlistBtn = document.getElementById('playlist-manager-btn');
   const studentDatabaseBtn = document.getElementById('student-database-btn');
   const checkinBtn = document.getElementById('checkin-btn');
+  const adminToolsBtn = document.getElementById('admin-tools-btn');
   
   // Playlist Manager - Now available!
   playlistBtn.addEventListener('click', () => {
@@ -164,6 +165,11 @@ function setupTileButtons() {
     // Clear the saved check-in date so it defaults to today
     localStorage.removeItem('checkin-selected-date');
     window.location.href = 'check-in/index.html';
+  });
+  
+  // Admin Tools - Now available!
+  adminToolsBtn.addEventListener('click', () => {
+    window.location.href = 'admin-tools/index.html';
   });
 }
 
