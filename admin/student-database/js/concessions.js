@@ -128,7 +128,7 @@ async function showConcessionsDetail(studentId) {
     // Build content HTML
     let html = '';
     
-    if (stats.totalCount === 0) {
+    if (blocks.length === 0) {
         html = '<p class="text-muted">This student has no concession blocks.</p>';
     } else {
         // Add bulk action button if there are expired blocks
@@ -296,10 +296,62 @@ async function showConcessionsDetail(studentId) {
 }
 
 /**
+ * Update concession badge in table for a specific student
+ */
+async function updateStudentConcessionBadge(studentId) {
+    try {
+        // Fetch fresh concession data
+        const blocks = await getStudentConcessionBlocks(studentId);
+        const stats = calculateConcessionStats(blocks);
+        
+        // Find the table cell for this student
+        const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+        if (!row) {
+            console.warn('Student row not found in table');
+            return;
+        }
+        
+        const concessionsCell = row.querySelector('.concessions-cell');
+        if (!concessionsCell) {
+            console.warn('Concessions cell not found in row');
+            return;
+        }
+        
+        // Update the badge HTML
+        concessionsCell.innerHTML = getConcessionBadgeHTML(stats);
+        
+        // Re-attach click handler for the new badge/button
+        const badge = concessionsCell.querySelector('.concession-badge, .btn-purchase-mini');
+        if (badge) {
+            badge.addEventListener('click', () => {
+                showConcessionsDetail(studentId);
+            });
+        }
+    } catch (error) {
+        console.error('Error updating concession badge:', error);
+    }
+}
+
+/**
  * Close concessions detail modal
  */
 function closeConcessionsDetailModal() {
     const modal = document.getElementById('concessions-detail-modal');
+    
+    // Get the student ID before closing
+    const studentNameEl = document.getElementById('concessions-student-name');
+    if (studentNameEl && studentNameEl.textContent) {
+        const students = getStudentsData();
+        const student = students.find(s => 
+            getStudentFullName(s) === studentNameEl.textContent
+        );
+        
+        // Update the badge in the table
+        if (student && student.id) {
+            updateStudentConcessionBadge(student.id);
+        }
+    }
+    
     modal.style.display = 'none';
 }
 
@@ -380,6 +432,8 @@ function showDeleteConfirmationModal(blockId, studentId) {
             await deleteConcessionBlock(blockId);
             closeDeleteModal();
             showSnackbar('Concession block deleted successfully', 'success');
+            // Small delay to ensure Firestore propagates the delete
+            await new Promise(resolve => setTimeout(resolve, 100));
             // Refresh the concessions detail modal
             await showConcessionsDetail(studentId);
         } catch (error) {
