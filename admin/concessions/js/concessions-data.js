@@ -162,14 +162,10 @@ async function updateStudentBalance(studentId, classesToAdd) {
  * Complete purchase - creates block, transaction, and updates balance
  */
 async function completeConcessionPurchase(studentId, packageId, paymentMethod, purchaseDate = null) {
-    console.log('completeConcessionPurchase called with:', { studentId, packageId, paymentMethod, purchaseDate });
-    
     const packageData = getConcessionPackageById(packageId);
     if (!packageData) {
         throw new Error('Package not found');
     }
-    
-    console.log('Package data:', packageData);
     
     // Use provided date or default to now
     const actualPurchaseDate = purchaseDate || new Date();
@@ -178,7 +174,6 @@ async function completeConcessionPurchase(studentId, packageId, paymentMethod, p
         // Create concession block with specified purchase date
         // Note: If concession-blocks.js is loaded (from check-in page), use that version
         // Otherwise use the local version defined above
-        console.log('Creating block with:', { studentId, packageData, actualPurchaseDate, paymentMethod });
         
         // Calculate expiry date
         const expiryDate = new Date(actualPurchaseDate);

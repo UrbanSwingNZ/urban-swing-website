@@ -99,9 +99,11 @@ function initializeCheckinModalListeners() {
             const student = getSelectedStudent();
             if (student) {
                 // Open reusable purchase modal with student ID, callback, and parent modal ID
-                openPurchaseConcessionsModal(student.id, (result) => {
+                openPurchaseConcessionsModal(student.id, async (result) => {
+                    // Re-set the selected student (state may have been lost)
+                    setSelectedStudent(student);
                     // Refresh concession info after purchase
-                    updateConcessionInfo(student);
+                    await updateConcessionInfo(student);
                 }, 'checkin-modal');
             } else {
                 // Fallback: Try to get the student ID from the hidden field
@@ -109,8 +111,10 @@ function initializeCheckinModalListeners() {
                 if (studentIdField && studentIdField.value) {
                     const fallbackStudent = findStudentById(studentIdField.value);
                     if (fallbackStudent) {
-                        openPurchaseConcessionsModal(fallbackStudent.id, (result) => {
-                            updateConcessionInfo(fallbackStudent);
+                        openPurchaseConcessionsModal(fallbackStudent.id, async (result) => {
+                            // Re-set the selected student (state may have been lost)
+                            setSelectedStudent(fallbackStudent);
+                            await updateConcessionInfo(fallbackStudent);
                         }, 'checkin-modal');
                     }
                 }
@@ -119,7 +123,8 @@ function initializeCheckinModalListeners() {
     }
     
     // Confirm check-in button
-    document.getElementById('confirm-checkin-btn').addEventListener('click', () => {
+    const confirmBtn = document.getElementById('confirm-checkin-btn');
+    confirmBtn.addEventListener('click', (e) => {
         handleCheckinSubmit();
     });
     

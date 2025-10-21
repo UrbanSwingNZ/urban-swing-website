@@ -250,8 +250,6 @@ async function handlePurchaseSubmit() {
     const paymentMethod = document.getElementById('purchase-payment-select').value;
     const purchaseDate = document.getElementById('purchase-date-picker').value;
     
-    console.log('Purchase submission:', { packageId, paymentMethod, purchaseDate, studentId: purchaseModalStudentId });
-    
     if (!packageId || !paymentMethod) {
         showError('Please select package and payment method');
         return;
@@ -280,7 +278,15 @@ async function handlePurchaseSubmit() {
         
         showLoading(false);
         
-        // Close modal first
+        // Call callback FIRST (to refresh concession info while data is fresh)
+        if (purchaseModalCallback && typeof purchaseModalCallback === 'function') {
+            // Wait for callback to complete (in case it's async)
+            await Promise.resolve(purchaseModalCallback(result));
+            // Add small delay to ensure UI updates before modal switches
+            await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        
+        // Close modal and reopen parent
         closePurchaseConcessionsModal();
         
         // Show success message with snackbar
@@ -288,11 +294,6 @@ async function handlePurchaseSubmit() {
             showSnackbar(`Purchase successful! ${result.package.name} added to student's account.`, 'success');
         } else {
             alert(`Purchase successful! ${result.package.name} added to student's account.`);
-        }
-        
-        // Call callback if provided (e.g., to refresh concession info)
-        if (purchaseModalCallback && typeof purchaseModalCallback === 'function') {
-            purchaseModalCallback(result);
         }
         
     } catch (error) {

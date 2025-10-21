@@ -56,8 +56,6 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
         
         await docRef.set(blockData);
         
-        console.log('Concession block created:', docRef.id);
-        
         // Update student balance
         await updateStudentBalance(studentId);
         
@@ -200,7 +198,6 @@ async function updateStudentBalance(studentId) {
                 expiredConcessions: expiredBalance
             });
         
-        console.log(`Updated balance for student ${studentId}: ${totalBalance} (${expiredBalance} expired)`);
     } catch (error) {
         console.error('Error updating student balance:', error);
         throw error;
@@ -230,8 +227,6 @@ async function markExpiredBlocks() {
         });
         
         await batch.commit();
-        
-        console.log(`Marked ${snapshot.size} blocks as expired`);
         
         // Update affected students' balances
         for (const studentId of affectedStudents) {
