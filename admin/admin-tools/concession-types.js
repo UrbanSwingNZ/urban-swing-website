@@ -78,9 +78,21 @@ async function loadPackages() {
   container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>Loading packages...</h3></div>';
 
   try {
-    const snapshot = await db.collection('concessionPackages')
-      .orderBy('classes', 'asc')
-      .get();
+    console.log('Loading concessionPackages from Firestore...');
+    
+    // Try with orderBy first
+    let snapshot;
+    try {
+      snapshot = await db.collection('concessionPackages')
+        .orderBy('displayOrder', 'asc')
+        .get();
+    } catch (orderError) {
+      // If orderBy fails (missing index), fall back to simple get
+      console.warn('OrderBy failed, using simple get:', orderError);
+      snapshot = await db.collection('concessionPackages').get();
+    }
+
+    console.log(`Found ${snapshot.size} packages`);
 
     if (snapshot.empty) {
       container.innerHTML = `
@@ -93,19 +105,28 @@ async function loadPackages() {
       return;
     }
 
-    container.innerHTML = '';
+    // Sort packages by displayOrder in JavaScript if orderBy failed
+    const packages = [];
     snapshot.forEach(doc => {
-      const pkg = doc.data();
-      container.appendChild(createPackageCard(doc.id, pkg));
+      packages.push({ id: doc.id, data: doc.data() });
+    });
+    
+    packages.sort((a, b) => (a.data.displayOrder || 999) - (b.data.displayOrder || 999));
+
+    container.innerHTML = '';
+    packages.forEach(pkg => {
+      container.appendChild(createPackageCard(pkg.id, pkg.data));
     });
 
   } catch (error) {
     console.error('Error loading packages:', error);
+    console.error('Error details:', error.code, error.message);
     container.innerHTML = `
       <div class="empty-state">
         <i class="fas fa-exclamation-triangle"></i>
         <h3>Error Loading Packages</h3>
         <p>${error.message}</p>
+        <p style="font-size: 0.9rem; margin-top: 10px;">Check the browser console for more details.</p>
       </div>
     `;
   }
@@ -113,13 +134,16 @@ async function loadPackages() {
 
 function createPackageCard(id, pkg) {
   const card = document.createElement('div');
-  card.className = `package-card ${pkg.active ? 'active' : 'inactive'}`;
+  const isActive = pkg.isActive !== false; // Default to true if not specified
+  card.className = `package-card ${isActive ? 'active' : 'inactive'}`;
   
-  const pricePerClass = (pkg.price / pkg.classes).toFixed(2);
+  const numberOfClasses = pkg.numberOfClasses || 0;
+  const price = pkg.price || 0;
+  const pricePerClass = numberOfClasses > 0 ? (price / numberOfClasses).toFixed(2) : '0.00';
   
   card.innerHTML = `
-    <div class="package-status ${pkg.active ? 'active' : 'inactive'}">
-      ${pkg.active ? 'Active' : 'Inactive'}
+    <div class="package-status ${isActive ? 'active' : 'inactive'}">
+      ${isActive ? 'Active' : 'Inactive'}
     </div>
     
     <h3 class="package-name">${escapeHtml(pkg.name)}</h3>
@@ -127,11 +151,11 @@ function createPackageCard(id, pkg) {
     <div class="package-details">
       <div class="package-detail">
         <i class="fas fa-receipt"></i>
-        <span><strong>${pkg.classes}</strong> classes</span>
+        <span><strong>${numberOfClasses}</strong> classes</span>
       </div>
       <div class="package-detail">
         <i class="fas fa-dollar-sign"></i>
-        <span class="package-price">$${pkg.price.toFixed(2)}</span>
+        <span class="package-price">$${price.toFixed(2)}</span>
       </div>
       <div class="package-detail">
         <i class="fas fa-calculator"></i>
@@ -200,10 +224,10 @@ function openModal(packageId = null, packageData = null) {
     // Edit mode
     title.innerHTML = '<i class="fas fa-edit"></i> Edit Concession Package';
     document.getElementById('package-name').value = packageData.name;
-    document.getElementById('package-classes').value = packageData.classes;
+    document.getElementById('package-classes').value = packageData.numberOfClasses;
     document.getElementById('package-price').value = packageData.price;
     document.getElementById('package-description').value = packageData.description || '';
-    document.getElementById('package-active').checked = packageData.active !== false;
+    document.getElementById('package-active').checked = packageData.isActive !== false;
   } else {
     // Add mode
     title.innerHTML = '<i class="fas fa-plus"></i> Add Concession Package';
@@ -232,12 +256,11 @@ async function handleFormSubmit(e) {
     
     const packageData = {
       name: document.getElementById('package-name').value.trim(),
-      classes: parseInt(document.getElementById('package-classes').value),
+      numberOfClasses: parseInt(document.getElementById('package-classes').value),
       price: parseFloat(document.getElementById('package-price').value),
       description: document.getElementById('package-description').value.trim(),
-      active: document.getElementById('package-active').checked,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedBy: currentUser.email
+      isActive: document.getElementById('package-active').checked,
+      updateAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
     if (currentEditId) {
@@ -247,7 +270,6 @@ async function handleFormSubmit(e) {
     } else {
       // Create new package
       packageData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      packageData.createdBy = currentUser.email;
       await db.collection('concessionPackages').add(packageData);
       console.log('Package created');
     }
