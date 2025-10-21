@@ -203,10 +203,23 @@ async function deleteCheckin(checkinId) {
     }
     
     try {
-        await firebase.firestore()
-            .collection('checkins')
-            .doc(checkinId)
-            .delete();
+        const checkinRef = firebase.firestore().collection('checkins').doc(checkinId);
+        const checkinDoc = await checkinRef.get();
+        
+        if (!checkinDoc.exists) {
+            showSnackbar('Check-in not found', 'error');
+            return;
+        }
+        
+        const checkinData = checkinDoc.data();
+        
+        // If this was a concession check-in, restore the entry
+        if (checkinData.entryType === 'concession' && checkinData.concessionBlockId) {
+            await restoreBlockEntry(checkinData.concessionBlockId);
+        }
+        
+        // Delete the check-in
+        await checkinRef.delete();
         
         showSnackbar('Check-in deleted successfully', 'success');
         

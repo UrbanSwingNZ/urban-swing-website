@@ -74,31 +74,45 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
  */
 async function getNextAvailableBlock(studentId, allowExpired = false) {
     try {
+        // Simple query - just filter by studentId to avoid index requirements
         let query = firebase.firestore()
             .collection('concessionBlocks')
-            .where('studentId', '==', studentId)
-            .where('remainingQuantity', '>', 0);
+            .where('studentId', '==', studentId);
         
-        if (!allowExpired) {
-            query = query.where('status', '==', 'active');
-        } else {
-            query = query.where('status', 'in', ['active', 'expired']);
-        }
-        
-        // Order by status (active first), then purchaseDate (oldest first - FIFO)
-        query = query.orderBy('status', 'asc').orderBy('purchaseDate', 'asc');
-        
-        const snapshot = await query.limit(1).get();
+        // Get all blocks for this student
+        const snapshot = await query.get();
         
         if (snapshot.empty) {
             return null;
         }
         
-        const doc = snapshot.docs[0];
-        return {
-            id: doc.id,
-            ...doc.data()
-        };
+        // Filter and sort in JavaScript to avoid complex Firestore indexes
+        const blocks = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(block => {
+                // Only blocks with remaining quantity
+                if (block.remainingQuantity <= 0) return false;
+                
+                // Filter by status based on allowExpired flag
+                if (!allowExpired) {
+                    return block.status === 'active';
+                } else {
+                    return block.status === 'active' || block.status === 'expired';
+                }
+            })
+            .sort((a, b) => {
+                // Active blocks before expired blocks
+                if (a.status !== b.status) {
+                    return a.status === 'active' ? -1 : 1;
+                }
+                // Then sort by purchaseDate (oldest first - FIFO)
+                return a.purchaseDate.toMillis() - b.purchaseDate.toMillis();
+            });
+        
+        return blocks.length > 0 ? blocks[0] : null;
     } catch (error) {
         console.error('Error getting next available block:', error);
         return null;
@@ -139,6 +153,47 @@ async function useBlockEntry(blockId) {
         return true;
     } catch (error) {
         console.error('Error using block entry:', error);
+        throw error;
+    }
+}
+
+/**
+ * Restore one entry to a concession block (e.g., when deleting/updating a check-in)
+ * @param {string} blockId - Block document ID
+ * @returns {Promise<boolean>} - Success status
+ */
+async function restoreBlockEntry(blockId) {
+    try {
+        const blockRef = firebase.firestore().collection('concessionBlocks').doc(blockId);
+        const blockDoc = await blockRef.get();
+        
+        if (!blockDoc.exists) {
+            throw new Error('Block not found');
+        }
+        
+        const blockData = blockDoc.data();
+        const newRemaining = blockData.remainingQuantity + 1;
+        
+        const updates = {
+            remainingQuantity: newRemaining
+        };
+        
+        // If was depleted, restore to previous status (active or expired)
+        if (blockData.status === 'depleted') {
+            // Check if expired
+            const now = new Date();
+            const expiryDate = blockData.expiryDate ? blockData.expiryDate.toDate() : null;
+            updates.status = (expiryDate && expiryDate < now) ? 'expired' : 'active';
+        }
+        
+        await blockRef.update(updates);
+        
+        // Update student balance
+        await updateStudentBalance(blockData.studentId);
+        
+        return true;
+    } catch (error) {
+        console.error('Error restoring block entry:', error);
         throw error;
     }
 }
