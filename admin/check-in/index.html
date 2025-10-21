@@ -294,7 +294,14 @@
     
     <!-- Continue Check-In Modules -->
     <!-- Concession blocks management (before check-in modules that use it) -->
-    <script src="js/concession-blocks.js"></script>
+    <!-- Load in order: balance (used by all), then others -->
+    <script src="js/concession-blocks-balance.js"></script>
+    <script src="js/concession-blocks-create.js"></script>
+    <script src="js/concession-blocks-query.js"></script>
+    <script src="js/concession-blocks-usage.js"></script>
+    <script src="js/concession-blocks-lock.js"></script>
+    <script src="js/concession-blocks-delete.js"></script>
+    <script src="js/concession-blocks-maintenance.js"></script>
     
     <!-- Check-in modal modules (load in dependency order) -->
     <script src="js/checkin-state.js"></script>

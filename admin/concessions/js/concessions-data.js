@@ -82,12 +82,32 @@ function getDefaultPackages() {
 
 /**
  * Create concession block document
+ * @param {string} studentId - Student document ID
+ * @param {object} packageData - Package information
+ * @param {number} quantity - Number of entries
+ * @param {number} price - Amount paid
+ * @param {string} paymentMethod - Payment method
+ * @param {Date} expiryDate - Expiry date
+ * @param {string} notes - Optional notes
+ * @param {Date} purchaseDate - Optional purchase date (defaults to now)
+ * @returns {Promise<string>} - Document ID of created block
  */
-async function createConcessionBlock(studentId, packageData, purchaseDate = new Date(), paymentMethod = '') {
-    console.log('createConcessionBlock called with:', { studentId, packageData, purchaseDate, paymentMethod });
+async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null) {
+    console.log('createConcessionBlock called with:', { studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate });
     
     // Ensure purchaseDate is a proper Date object
-    const actualPurchaseDate = purchaseDate instanceof Date ? purchaseDate : new Date(purchaseDate);
+    let actualPurchaseDate;
+    if (purchaseDate) {
+        actualPurchaseDate = purchaseDate instanceof Date ? purchaseDate : new Date(purchaseDate);
+    } else {
+        actualPurchaseDate = new Date();
+    }
+    
+    // Ensure expiryDate is a proper Date object if provided
+    let actualExpiryDate = null;
+    if (expiryDate) {
+        actualExpiryDate = expiryDate instanceof Date ? expiryDate : new Date(expiryDate);
+    }
     
     // Try to get student name, fallback to 'Unknown' if not available
     let studentName = 'Unknown Student';
@@ -102,12 +122,9 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
         console.warn('Could not get student name:', e);
     }
     
-    const expiryDate = new Date(actualPurchaseDate.getTime());
-    expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
-    
     // Determine status based on expiry date
     const now = new Date();
-    const isExpired = expiryDate < now;
+    const isExpired = actualExpiryDate && actualExpiryDate < now;
     
     // Format purchase date for document ID (YYYY-MM-DD)
     const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
@@ -134,18 +151,18 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
         studentName: studentName,
         packageId: packageData.id,
         packageName: packageData.name,
-        originalQuantity: packageData.numberOfClasses,
-        remainingQuantity: packageData.numberOfClasses,
+        originalQuantity: quantity,
+        remainingQuantity: quantity,
         purchaseDate: firebase.firestore.Timestamp.fromDate(actualPurchaseDate),
-        expiryDate: firebase.firestore.Timestamp.fromDate(expiryDate),
+        expiryDate: actualExpiryDate ? firebase.firestore.Timestamp.fromDate(actualExpiryDate) : null,
         status: isExpired ? 'expired' : 'active',
         isLocked: false, // Default: not locked, can be used even if expired
-        price: packageData.price || 0,
-        paymentMethod: paymentMethod || 'unknown',
+        price: price,
+        paymentMethod: paymentMethod,
         transactionId: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
-        notes: ''
+        notes: notes
     };
     
     console.log('Block data to save:', blockData);
@@ -210,20 +227,21 @@ async function completeConcessionPurchase(studentId, packageId, paymentMethod, p
     }
     
     try {
-        // Create concession block with specified purchase date
-        // Note: If concession-blocks.js is loaded (from check-in page), use that version
-        // Otherwise use the local version defined above
-        
         // Calculate expiry date
         const expiryDate = new Date(actualPurchaseDate.getTime());
         expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
         
         // Call createConcessionBlock with correct parameters
+        // Signature: createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate)
         const blockId = await createConcessionBlock(
-            studentId, 
-            packageData, 
-            actualPurchaseDate,  // purchaseDate
-            paymentMethod        // paymentMethod
+            studentId,
+            packageData,
+            packageData.numberOfClasses,  // quantity
+            packageData.price,             // price
+            paymentMethod,                 // paymentMethod
+            expiryDate,                    // expiryDate
+            '',                            // notes
+            actualPurchaseDate             // purchaseDate
         );
         
         // Create transaction record
