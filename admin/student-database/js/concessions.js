@@ -15,12 +15,15 @@ async function getStudentConcessionBlocks(studentId) {
         
         const blocks = [];
         blocksSnapshot.forEach(doc => {
+            const data = doc.data();
+            console.log('Block found:', doc.id, 'isLocked:', data.isLocked, 'remaining:', data.remainingQuantity);
             blocks.push({
                 id: doc.id,
-                ...doc.data()
+                ...data
             });
         });
         
+        console.log('Total blocks found for student:', blocks.length);
         return blocks;
     } catch (error) {
         console.error('Error fetching concession blocks for student:', studentId, error);
@@ -42,18 +45,31 @@ function calculateConcessionStats(blocks) {
     blocks.forEach(block => {
         const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
         const isExpired = expiryDate < now;
+        // Treat undefined as false (unlocked) - for backwards compatibility with old blocks
+        const isLocked = block.isLocked === true;
         
         // Use remainingQuantity (the actual field name in Firestore)
         const remaining = block.remainingQuantity || 0;
         
         if (isExpired) {
-            expiredCount += remaining;
+            // Always add to expiredBlocks array (for display)
             expiredBlocks.push(block);
+            // Only add to count if not locked
+            if (!isLocked) {
+                expiredCount += remaining;
+            }
         } else {
-            unexpiredCount += remaining;
+            // Always add to unexpiredBlocks array (for display)
             unexpiredBlocks.push(block);
+            // Only add to count if not locked
+            if (!isLocked) {
+                unexpiredCount += remaining;
+            }
         }
     });
+    
+    console.log('Stats calculated:', { unexpiredCount, expiredCount, totalCount: unexpiredCount + expiredCount });
+    console.log('Unexpired blocks:', unexpiredBlocks.length, 'Expired blocks:', expiredBlocks.length);
     
     return {
         unexpiredCount,
@@ -135,7 +151,7 @@ async function showConcessionsDetail(studentId) {
         }
         
         // Unexpired concessions section
-        if (stats.unexpiredCount > 0) {
+        if (stats.unexpiredBlocks.length > 0) {
             html += `
                 <div class="concessions-section">
                     <h4><i class="fas fa-check-circle" style="color: var(--admin-success);"></i> Active Concessions (${stats.unexpiredCount})</h4>
@@ -150,6 +166,9 @@ async function showConcessionsDetail(studentId) {
                 const lockButton = isLocked 
                     ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
                     : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+                const deleteButton = isLocked
+                    ? `<button class="btn-delete-block" disabled title="Unlock before deleting"><i class="fas fa-trash"></i> Delete</button>`
+                    : `<button class="btn-delete-block" data-block-id="${block.id}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
                 
                 html += `
                     <div class="concession-item ${isLocked ? 'locked' : ''}">
@@ -164,6 +183,7 @@ async function showConcessionsDetail(studentId) {
                         </div>
                         <div class="concession-actions">
                             ${lockButton}
+                            ${deleteButton}
                         </div>
                     </div>
                 `;
@@ -176,7 +196,7 @@ async function showConcessionsDetail(studentId) {
         }
         
         // Expired concessions section
-        if (stats.expiredCount > 0) {
+        if (stats.expiredBlocks.length > 0) {
             html += `
                 <div class="concessions-section">
                     <h4><i class="fas fa-exclamation-circle" style="color: var(--admin-error);"></i> Expired Concessions (${stats.expiredCount})</h4>
@@ -191,6 +211,9 @@ async function showConcessionsDetail(studentId) {
                 const lockButton = isLocked 
                     ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
                     : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+                const deleteButton = isLocked
+                    ? `<button class="btn-delete-block" disabled title="Unlock before deleting"><i class="fas fa-trash"></i> Delete</button>`
+                    : `<button class="btn-delete-block" data-block-id="${block.id}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
                 
                 html += `
                     <div class="concession-item expired ${isLocked ? 'locked' : ''}">
@@ -205,6 +228,7 @@ async function showConcessionsDetail(studentId) {
                         </div>
                         <div class="concession-actions">
                             ${lockButton}
+                            ${deleteButton}
                         </div>
                     </div>
                 `;
@@ -240,6 +264,29 @@ async function showConcessionsDetail(studentId) {
                 showSnackbar('Error toggling lock: ' + error.message, 'error');
             }
         });
+    });
+    
+    // Add event listeners for delete buttons
+    contentEl.querySelectorAll('.btn-delete-block').forEach(btn => {
+        if (!btn.disabled) {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const blockId = btn.dataset.blockId;
+                
+                if (!confirm('Are you sure you want to delete this concession block? This action cannot be undone.')) {
+                    return;
+                }
+                
+                try {
+                    await deleteConcessionBlock(blockId);
+                    showSnackbar('Concession block deleted successfully', 'success');
+                    // Refresh the modal
+                    await showConcessionsDetail(studentId);
+                } catch (error) {
+                    showSnackbar('Error deleting block: ' + error.message, 'error');
+                }
+            });
+        }
     });
     
     // Add event listener for "Lock All Expired" button
