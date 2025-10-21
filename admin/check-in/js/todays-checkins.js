@@ -139,7 +139,7 @@ function attachCheckinEventListeners() {
         const deleteBtn = item.querySelector('[data-action="delete"]');
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            deleteCheckin(checkinId);
+            confirmDeleteCheckin(checkinId);
         });
     });
 }
@@ -195,13 +195,47 @@ function purchaseConcessions(studentId) {
 }
 
 /**
+ * Show delete confirmation modal for check-in
+ */
+function confirmDeleteCheckin(checkinId) {
+    const modal = document.getElementById('delete-modal');
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoEl = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    // Customize modal for check-in deletion
+    titleEl.textContent = 'Delete Check-In';
+    messageEl.textContent = 'Are you sure you want to delete this check-in?';
+    infoEl.innerHTML = ''; // No additional info needed
+    btnTextEl.textContent = 'Delete Check-In';
+    
+    // Remove any existing event listeners by replacing the button
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Add click handler for confirm button
+    newConfirmBtn.addEventListener('click', () => {
+        deleteCheckin(checkinId);
+        closeDeleteModal();
+    });
+    
+    modal.style.display = 'flex';
+}
+
+/**
+ * Close delete modal
+ */
+function closeDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    modal.style.display = 'none';
+}
+
+/**
  * Delete a check-in
  */
 async function deleteCheckin(checkinId) {
-    if (!confirm('Are you sure you want to delete this check-in? This action cannot be undone.')) {
-        return;
-    }
-    
     try {
         const checkinRef = firebase.firestore().collection('checkins').doc(checkinId);
         const checkinDoc = await checkinRef.get();

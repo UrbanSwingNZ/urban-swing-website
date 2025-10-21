@@ -270,16 +270,20 @@ function confirmDeleteStudent(studentId) {
     studentToDelete = student;
     
     const modal = document.getElementById('delete-modal');
-    const infoDiv = document.getElementById('delete-student-info');
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoDiv = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
     
     // Format name
     const firstName = toTitleCase(student.firstName || '');
     const lastName = toTitleCase(student.lastName || '');
     const fullName = `${firstName} ${lastName}`.trim();
     
-    // Update message with student name
-    const messageElement = document.getElementById('delete-student-message');
-    messageElement.textContent = `Are you sure you want to delete ${fullName}?`;
+    // Customize modal for student deletion
+    titleEl.textContent = 'Delete Student';
+    messageEl.textContent = `Are you sure you want to delete ${fullName}?`;
+    btnTextEl.textContent = 'Delete Student';
     
     // Populate student info
     infoDiv.innerHTML = `
