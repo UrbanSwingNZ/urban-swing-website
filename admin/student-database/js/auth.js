@@ -16,7 +16,13 @@ function initializeAuth() {
         if (user) {
             currentUser = user;
             document.getElementById('user-email').textContent = user.email;
-            loadStudents();
+            
+            // Load students
+            loadStudents().catch(error => {
+                console.error('Failed to load students:', error);
+                showError('Failed to load students: ' + error.message);
+                showLoading(false);
+            });
         } else {
             // User not authenticated, redirect to admin login
             window.location.href = '../index.html';

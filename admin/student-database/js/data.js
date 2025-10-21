@@ -8,54 +8,55 @@ let studentsData = [];
 /**
  * Load students from Firestore
  */
-async function loadStudents() {
-    try {
-        showLoading(true);
-
-        // Fetch all students from Firestore (no orderBy to avoid index requirements)
-        const studentsSnapshot = await db.collection('students')
-            .get();
-
-        studentsData = [];
-        studentsSnapshot.forEach((doc) => {
-            studentsData.push({
-                id: doc.id,
-                ...doc.data()
+function loadStudentsV2() {
+    showLoading(true);
+    
+    // Fetch all students from Firestore (no orderBy to avoid index requirements)
+    return db.collection('students')
+        .get()
+        .then((studentsSnapshot) => {
+            studentsData = [];
+            studentsSnapshot.forEach((doc) => {
+                studentsData.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
             });
+
+            // Sort by firstName then lastName in JavaScript
+            studentsData.sort((a, b) => {
+                const firstNameA = (a.firstName || '').toLowerCase();
+                const firstNameB = (b.firstName || '').toLowerCase();
+                const lastNameA = (a.lastName || '').toLowerCase();
+                const lastNameB = (b.lastName || '').toLowerCase();
+                
+                // First compare by firstName
+                if (firstNameA < firstNameB) return -1;
+                if (firstNameA > firstNameB) return 1;
+                
+                // If firstName is the same, compare by lastName
+                if (lastNameA < lastNameB) return -1;
+                if (lastNameA > lastNameB) return 1;
+                
+                return 0;
+            });
+
+            displayStudents();
+            initializeSortListeners();
+            showLoading(false);
+
+            // Show main container
+            document.getElementById('main-container').style.display = 'flex';
+        })
+        .catch((error) => {
+            console.error('Error loading students:', error);
+            showError('Failed to load students. Please try refreshing the page.');
+            showLoading(false);
         });
-
-        // Sort by firstName then lastName in JavaScript
-        studentsData.sort((a, b) => {
-            const firstNameA = (a.firstName || '').toLowerCase();
-            const firstNameB = (b.firstName || '').toLowerCase();
-            const lastNameA = (a.lastName || '').toLowerCase();
-            const lastNameB = (b.lastName || '').toLowerCase();
-            
-            // First compare by firstName
-            if (firstNameA < firstNameB) return -1;
-            if (firstNameA > firstNameB) return 1;
-            
-            // If firstName is the same, compare by lastName
-            if (lastNameA < lastNameB) return -1;
-            if (lastNameA > lastNameB) return 1;
-            
-            return 0;
-        });
-
-        console.log(`Loaded ${studentsData.length} students`);
-        displayStudents();
-        initializeSortListeners();
-        showLoading(false);
-
-        // Show main container
-        document.getElementById('main-container').style.display = 'flex';
-
-    } catch (error) {
-        console.error('Error loading students:', error);
-        showError('Failed to load students. Please try refreshing the page.');
-        showLoading(false);
-    }
 }
+
+// Alias for backwards compatibility
+const loadStudents = loadStudentsV2;
 
 /**
  * Get all students data

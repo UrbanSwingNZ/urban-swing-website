@@ -33,7 +33,8 @@ function displayStudents() {
     const filteredData = filterStudents(studentsData, searchTerm);
 
     // Apply current sort
-    const sortedData = sortStudents([...filteredData], getCurrentSort().field, getCurrentSort().direction);
+    const currentSort = getCurrentSort();
+    const sortedData = sortStudents([...filteredData], currentSort.field, currentSort.direction);
 
     // Get paginated data
     const paginatedData = getPaginatedData(sortedData);
