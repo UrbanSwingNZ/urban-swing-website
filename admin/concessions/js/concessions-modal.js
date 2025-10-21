@@ -280,16 +280,20 @@ async function handlePurchaseSubmit() {
         
         showLoading(false);
         
-        // Show success message
-        alert(`Purchase successful! ${result.package.name} added to student's account.`);
+        // Close modal first
+        closePurchaseConcessionsModal();
+        
+        // Show success message with snackbar
+        if (typeof showSnackbar === 'function') {
+            showSnackbar(`Purchase successful! ${result.package.name} added to student's account.`, 'success');
+        } else {
+            alert(`Purchase successful! ${result.package.name} added to student's account.`);
+        }
         
         // Call callback if provided (e.g., to refresh concession info)
         if (purchaseModalCallback && typeof purchaseModalCallback === 'function') {
             purchaseModalCallback(result);
         }
-        
-        // Close modal
-        closePurchaseConcessionsModal();
         
     } catch (error) {
         showLoading(false);
