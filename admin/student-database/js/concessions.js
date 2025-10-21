@@ -16,14 +16,12 @@ async function getStudentConcessionBlocks(studentId) {
         const blocks = [];
         blocksSnapshot.forEach(doc => {
             const data = doc.data();
-            console.log('Block found:', doc.id, 'isLocked:', data.isLocked, 'remaining:', data.remainingQuantity);
             blocks.push({
                 id: doc.id,
                 ...data
             });
         });
         
-        console.log('Total blocks found for student:', blocks.length);
         return blocks;
     } catch (error) {
         console.error('Error fetching concession blocks for student:', studentId, error);
@@ -67,9 +65,6 @@ function calculateConcessionStats(blocks) {
             }
         }
     });
-    
-    console.log('Stats calculated:', { unexpiredCount, expiredCount, totalCount: unexpiredCount + expiredCount });
-    console.log('Unexpired blocks:', unexpiredBlocks.length, 'Expired blocks:', expiredBlocks.length);
     
     return {
         unexpiredCount,
@@ -269,22 +264,10 @@ async function showConcessionsDetail(studentId) {
     // Add event listeners for delete buttons
     contentEl.querySelectorAll('.btn-delete-block').forEach(btn => {
         if (!btn.disabled) {
-            btn.addEventListener('click', async (e) => {
+            btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const blockId = btn.dataset.blockId;
-                
-                if (!confirm('Are you sure you want to delete this concession block? This action cannot be undone.')) {
-                    return;
-                }
-                
-                try {
-                    await deleteConcessionBlock(blockId);
-                    showSnackbar('Concession block deleted successfully', 'success');
-                    // Refresh the modal
-                    await showConcessionsDetail(studentId);
-                } catch (error) {
-                    showSnackbar('Error deleting block: ' + error.message, 'error');
-                }
+                showDeleteConfirmationModal(blockId, studentId);
             });
         }
     });
@@ -368,4 +351,49 @@ function formatDate(date) {
         month: 'short', 
         day: 'numeric' 
     });
+}
+
+/**
+ * Show delete confirmation modal
+ */
+function showDeleteConfirmationModal(blockId, studentId) {
+    const modal = document.getElementById('delete-modal');
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoEl = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    // Customize modal for concession block deletion
+    titleEl.textContent = 'Delete Concession';
+    messageEl.textContent = 'Are you sure you want to delete this concession block?';
+    infoEl.innerHTML = ''; // Clear any student info
+    btnTextEl.textContent = 'Delete Block';
+    
+    // Remove any existing event listeners by replacing the button
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Add click handler for confirm button
+    newConfirmBtn.addEventListener('click', async () => {
+        try {
+            await deleteConcessionBlock(blockId);
+            closeDeleteModal();
+            showSnackbar('Concession block deleted successfully', 'success');
+            // Refresh the concessions detail modal
+            await showConcessionsDetail(studentId);
+        } catch (error) {
+            closeDeleteModal();
+            showSnackbar('Error deleting block: ' + error.message, 'error');
+        }
+    });
+    
+    modal.style.display = 'flex';
+}
+
+/**
+ * Close delete confirmation modal (uses existing closeDeleteModal function)
+ */
+function closeDeleteConfirmationModal() {
+    closeDeleteModal();
 }
