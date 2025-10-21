@@ -35,7 +35,15 @@ function resetCheckinForm() {
 /**
  * Setup entry type radio listeners
  */
+let entryTypeListenersInitialized = false;
+
 function setupEntryTypeListeners() {
+    // Only set up listeners once to avoid duplicates
+    if (entryTypeListenersInitialized) {
+        return;
+    }
+    entryTypeListenersInitialized = true;
+    
     const entryRadios = document.querySelectorAll('input[name="entry-type"]');
     const paymentSection = document.getElementById('payment-section');
     const freeEntrySection = document.getElementById('free-entry-section');

@@ -67,12 +67,15 @@ async function updateConcessionInfo(student) {
             concessionRadio.parentElement.style.opacity = '1';
             // Default to concession if available
             concessionRadio.checked = true;
+            // Trigger change event to update form state
+            concessionRadio.dispatchEvent(new Event('change'));
         } else {
             concessionRadio.disabled = true;
             concessionRadio.parentElement.style.opacity = '0.5';
             // Default to casual if no concession
             casualRadio.checked = true;
-            document.getElementById('payment-section').style.display = 'block';
+            // Trigger change event to show payment section
+            casualRadio.dispatchEvent(new Event('change'));
         }
         
         // Enable confirm button since we have a default selection

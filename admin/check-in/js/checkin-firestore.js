@@ -54,8 +54,6 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             // Use one entry from the block
             await useBlockEntry(block.id);
             concessionBlockId = block.id;
-            
-            console.log(`Used concession block ${block.id} (${block.status}), ${block.remainingQuantity - 1} remaining`);
         }
         
         // Get the selected check-in date from date picker
@@ -92,8 +90,6 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             .collection('checkins')
             .doc(docId)
             .set(checkinData);
-        
-        console.log('Check-in saved successfully:', docId);
         
         // Close modal and show success
         closeCheckinModal();
