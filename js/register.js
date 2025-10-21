@@ -263,6 +263,28 @@ function hideDuplicateModal() {
 }
 
 // ========================================
+// Generate Human-Readable Student ID
+// ========================================
+
+function generateStudentId(firstName, lastName) {
+    // Normalize names: lowercase, remove special characters, replace spaces with hyphens
+    const cleanFirst = firstName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    const cleanLast = lastName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    // Generate a short random suffix (6 characters)
+    const randomSuffix = Math.random().toString(36).substring(2, 8);
+    
+    return `${cleanFirst}-${cleanLast}-${randomSuffix}`;
+}
+
+// ========================================
 // Save Student to Firestore
 // ========================================
 
@@ -270,9 +292,12 @@ async function saveStudent(data) {
     try {
         showLoading(true);
 
-        // Add student to Firestore
-        const docRef = await db.collection('students').add(data);
-        console.log('Student registered with ID:', docRef.id);
+        // Generate human-readable student ID
+        const studentId = generateStudentId(data.firstName, data.lastName);
+
+        // Add student to Firestore with custom ID
+        await db.collection('students').doc(studentId).set(data);
+        console.log('Student registered with ID:', studentId);
 
         // Show success message
         showSuccess();
