@@ -161,6 +161,8 @@ function setupTileButtons() {
   
   // Check-in system - Now available!
   checkinBtn.addEventListener('click', () => {
+    // Clear the saved check-in date so it defaults to today
+    localStorage.removeItem('checkin-selected-date');
     window.location.href = 'check-in/index.html';
   });
 }

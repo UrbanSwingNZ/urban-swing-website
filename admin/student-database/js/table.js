@@ -60,6 +60,7 @@ function displayStudents() {
  */
 function createStudentRow(student) {
     const row = document.createElement('tr');
+    row.dataset.studentId = student.id; // Store student ID for click handler
     
     // Format name in title case
     const firstName = toTitleCase(student.firstName || '');
@@ -94,9 +95,6 @@ function createStudentRow(student) {
         <td>${emailConsentBadge}</td>
         <td>${registeredDate}</td>
         <td class="action-buttons">
-            <button class="btn-icon" onclick="viewStudent('${student.id}')" title="View Details">
-                <i class="fas fa-eye"></i>
-            </button>
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
                 <i class="fas fa-sticky-note"></i>
             </button>
@@ -108,6 +106,15 @@ function createStudentRow(student) {
             </button>
         </td>
     `;
+
+    // Add click handler to open student details (except when clicking action buttons)
+    row.addEventListener('click', (e) => {
+        // Don't trigger if clicking on action buttons
+        if (e.target.closest('.action-buttons')) {
+            return;
+        }
+        viewStudent(student.id);
+    });
 
     return row;
 }

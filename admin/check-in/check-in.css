@@ -271,8 +271,7 @@
 }
 
 .checkin-item:hover {
-    border-color: var(--admin-purple);
-    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+    background-color: rgba(154, 22, 245, 0.05);
 }
 
 .checkin-info-row {
@@ -281,10 +280,6 @@
     gap: 16px;
     flex: 1;
     cursor: pointer;
-}
-
-.checkin-info-row:hover .checkin-name {
-    color: var(--admin-purple);
 }
 
 .checkin-check {
