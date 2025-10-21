@@ -98,13 +98,13 @@ function initializeCheckinModalListeners() {
             
             const student = getSelectedStudent();
             if (student) {
-                // Open reusable purchase modal with student ID, callback, and parent modal ID
+                // Open reusable purchase modal with student ID, callback, parent modal ID, and student object
                 openPurchaseConcessionsModal(student.id, async (result) => {
                     // Re-set the selected student (state may have been lost)
                     setSelectedStudent(student);
                     // Refresh concession info after purchase
                     await updateConcessionInfo(student);
-                }, 'checkin-modal');
+                }, 'checkin-modal', student);
             } else {
                 // Fallback: Try to get the student ID from the hidden field
                 const studentIdField = document.getElementById('selected-student-id');
@@ -115,7 +115,7 @@ function initializeCheckinModalListeners() {
                             // Re-set the selected student (state may have been lost)
                             setSelectedStudent(fallbackStudent);
                             await updateConcessionInfo(fallbackStudent);
-                        }, 'checkin-modal');
+                        }, 'checkin-modal', fallbackStudent);
                     }
                 }
             }
