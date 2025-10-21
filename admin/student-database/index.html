@@ -87,6 +87,9 @@
                             <th class="sortable" data-sort="emailConsent">
                                 Email Consent <i class="fas fa-sort sort-icon"></i>
                             </th>
+                            <th class="sortable" data-sort="concessions">
+                                Concessions <i class="fas fa-sort sort-icon"></i>
+                            </th>
                             <th class="sortable" data-sort="registeredAt">
                                 Registered <i class="fas fa-sort sort-icon"></i>
                             </th>
@@ -287,22 +290,51 @@
         </div>
     </div>
 
+    <!-- Concessions Detail Modal -->
+    <div id="concessions-detail-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-ticket-alt"></i> Concessions Detail</h3>
+                <button class="modal-close" onclick="closeConcessionsDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="student-info">
+                    <h4 id="concessions-student-name"></h4>
+                </div>
+                
+                <div id="concessions-detail-content">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeConcessionsDetailModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                <button type="button" class="btn-primary" id="purchase-concessions-from-detail-btn">
+                    <i class="fas fa-shopping-cart"></i> Purchase Concessions
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js?v=4"></script>
     
     <!-- Student Database Modules (load in dependency order) -->
-    <script src="js/utils.js?v=4"></script>
-    <script src="js/auth.js?v=4"></script>
-    <script src="js/data.js?v=7"></script>
-    <script src="js/search.js?v=4"></script>
-    <script src="js/pagination.js?v=4"></script>
-    <script src="js/sort.js?v=4"></script>
-    <script src="js/table.js?v=4"></script>
-    <script src="js/modal.js?v=4"></script>
-    <script src="js/navigation.js?v=4"></script>
+    <script src="js/utils.js?v=10"></script>
+    <script src="js/auth.js?v=10"></script>
+    <script src="js/data.js?v=10"></script>
+    <script src="js/concessions.js?v=10"></script>
+    <script src="js/search.js?v=10"></script>
+    <script src="js/pagination.js?v=10"></script>
+    <script src="js/sort.js?v=10"></script>
+    <script src="js/table.js?v=11"></script>
+    <script src="js/modal.js?v=10"></script>
+    <script src="js/navigation.js?v=10"></script>
     
     <!-- Reusable Concessions Module -->
-    <script src="../check-in/js/students.js?v=2"></script>
     <script src="../check-in/js/concession-blocks.js?v=2"></script>
     <script src="../concessions/js/concessions-data.js?v=2"></script>
     <script src="../concessions/js/concessions-modal.js?v=2"></script>
