@@ -22,6 +22,7 @@ function initializePurchaseConcessionsModal() {
         <div class="modal-content modal-small">
             <div class="modal-header">
                 <h3><i class="fas fa-shopping-cart"></i> Purchase Concessions</h3>
+                <input type="date" id="purchase-date-picker" class="purchase-date-picker" title="Purchase date (defaults to today)">
                 <button class="modal-close" onclick="closePurchaseConcessionsModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -88,6 +89,12 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
     purchaseModalParentModal = parentModalId;
     
     const modal = document.getElementById('purchase-concessions-modal');
+    
+    // Set default date to today
+    const datePicker = document.getElementById('purchase-date-picker');
+    const today = new Date();
+    datePicker.value = today.toISOString().split('T')[0];
+    datePicker.max = today.toISOString().split('T')[0]; // Prevent future dates
     
     // Load packages and populate dropdown
     await populatePackageOptions();
@@ -180,6 +187,26 @@ function setupPurchaseModalListeners() {
     const packageSelect = document.getElementById('purchase-package-select');
     const paymentSelect = document.getElementById('purchase-payment-select');
     const confirmBtn = document.getElementById('confirm-purchase-concessions-btn');
+    const datePicker = document.getElementById('purchase-date-picker');
+    
+    // Date picker validation
+    datePicker.addEventListener('change', () => {
+        const selectedDate = new Date(datePicker.value);
+        const today = new Date();
+        const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
+        
+        // Warn if backdating more than 30 days
+        if (daysDiff > 30) {
+            datePicker.style.borderColor = 'var(--warning-color, #ff9800)';
+            datePicker.title = `Warning: Backdating by ${daysDiff} days`;
+        } else if (daysDiff > 0) {
+            datePicker.style.borderColor = 'var(--info-color, #2196F3)';
+            datePicker.title = `Backdating by ${daysDiff} day${daysDiff === 1 ? '' : 's'}`;
+        } else {
+            datePicker.style.borderColor = '';
+            datePicker.title = 'Purchase date (defaults to today)';
+        }
+    });
     
     // Package selection updates amount
     packageSelect.addEventListener('change', () => {
@@ -221,6 +248,9 @@ function updatePurchaseButton() {
 async function handlePurchaseSubmit() {
     const packageId = document.getElementById('purchase-package-select').value;
     const paymentMethod = document.getElementById('purchase-payment-select').value;
+    const purchaseDate = document.getElementById('purchase-date-picker').value;
+    
+    console.log('Purchase submission:', { packageId, paymentMethod, purchaseDate, studentId: purchaseModalStudentId });
     
     if (!packageId || !paymentMethod) {
         showError('Please select package and payment method');
@@ -232,6 +262,11 @@ async function handlePurchaseSubmit() {
         return;
     }
     
+    if (!purchaseDate) {
+        showError('Please select a purchase date');
+        return;
+    }
+    
     try {
         showLoading();
         
@@ -239,7 +274,8 @@ async function handlePurchaseSubmit() {
         const result = await completeConcessionPurchase(
             purchaseModalStudentId,
             packageId,
-            paymentMethod
+            paymentMethod,
+            new Date(purchaseDate) // Pass the selected date
         );
         
         showLoading(false);
