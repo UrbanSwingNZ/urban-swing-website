@@ -68,6 +68,7 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
             purchaseDate: firebase.firestore.Timestamp.fromDate(actualPurchaseDate),
             expiryDate: actualExpiryDate ? firebase.firestore.Timestamp.fromDate(actualExpiryDate) : null,
             status: isExpired ? 'expired' : 'active',
+            isLocked: false, // Default: not locked, can be used even if expired
             price: price,
             paymentMethod: paymentMethod,
             transactionId: null, // TODO: Link to transaction when implemented
@@ -122,6 +123,9 @@ async function getNextAvailableBlock(studentId, allowExpired = false) {
             .filter(block => {
                 // Only blocks with remaining quantity
                 if (block.remainingQuantity <= 0) return false;
+                
+                // Exclude locked blocks
+                if (block.isLocked === true) return false;
                 
                 // Filter by status based on allowExpired flag
                 if (!allowExpired) {
@@ -318,6 +322,93 @@ async function markExpiredBlocks() {
         return snapshot.size;
     } catch (error) {
         console.error('Error marking expired blocks:', error);
+        throw error;
+    }
+}
+
+/**
+ * Lock a concession block (prevent use even if it has remaining quantity)
+ * @param {string} blockId - Block document ID
+ * @returns {Promise<boolean>} - Success status
+ */
+async function lockConcessionBlock(blockId) {
+    try {
+        await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .update({ 
+                isLocked: true,
+                lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
+            });
+        return true;
+    } catch (error) {
+        console.error('Error locking concession block:', error);
+        return false;
+    }
+}
+
+/**
+ * Unlock a concession block (allow use again)
+ * @param {string} blockId - Block document ID
+ * @returns {Promise<boolean>} - Success status
+ */
+async function unlockConcessionBlock(blockId) {
+    try {
+        await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .update({ 
+                isLocked: false,
+                unlockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                unlockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
+            });
+        return true;
+    } catch (error) {
+        console.error('Error unlocking concession block:', error);
+        return false;
+    }
+}
+
+/**
+ * Lock all expired concession blocks for a student
+ * @param {string} studentId - Student document ID
+ * @returns {Promise<number>} - Number of blocks locked
+ */
+async function lockAllExpiredBlocks(studentId) {
+    try {
+        const now = new Date();
+        const snapshot = await firebase.firestore()
+            .collection('concessionBlocks')
+            .where('studentId', '==', studentId)
+            .where('isLocked', '==', false)
+            .get();
+        
+        const batch = firebase.firestore().batch();
+        let lockedCount = 0;
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const expiryDate = data.expiryDate ? data.expiryDate.toDate() : null;
+            const isExpired = expiryDate && expiryDate < now;
+            
+            if (isExpired) {
+                batch.update(doc.ref, { 
+                    isLocked: true,
+                    lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
+                });
+                lockedCount++;
+            }
+        });
+        
+        if (lockedCount > 0) {
+            await batch.commit();
+        }
+        
+        return lockedCount;
+    } catch (error) {
+        console.error('Error locking expired blocks:', error);
         throw error;
     }
 }

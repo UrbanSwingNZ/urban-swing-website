@@ -943,3 +943,8 @@ textarea.form-control {
     background: rgba(255, 165, 0, 0.15);
     color: #ff8800;
 }
+
+.badge-locked {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}

@@ -845,6 +845,12 @@ textarea:focus {
     background: rgba(220, 53, 69, 0.05);
 }
 
+.concession-item.locked {
+    opacity: 0.6;
+    background: rgba(128, 128, 128, 0.1);
+    border-left: 3px solid #6c757d;
+}
+
 .concession-info {
     display: flex;
     align-items: baseline;
@@ -880,6 +886,51 @@ textarea:focus {
     width: 14px;
     text-align: center;
     font-size: 0.8rem;
+}
+
+.concession-actions {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-lock-toggle {
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.btn-lock-toggle:hover {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.btn-lock-toggle i {
+    margin-right: 4px;
+}
+
+.badge-locked {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}
+
+.bulk-actions {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-lock-all-expired {
+    width: 100%;
 }
 
 /* ========================================

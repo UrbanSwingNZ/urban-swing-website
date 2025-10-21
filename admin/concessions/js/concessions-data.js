@@ -137,6 +137,7 @@ async function createConcessionBlock(studentId, packageData, purchaseDate = new 
         purchaseDate: firebase.firestore.Timestamp.fromDate(actualPurchaseDate),
         expiryDate: firebase.firestore.Timestamp.fromDate(expiryDate),
         status: isExpired ? 'expired' : 'active',
+        isLocked: false, // Default: not locked, can be used even if expired
         price: packageData.price || 0,
         paymentMethod: paymentMethod || 'unknown',
         transactionId: null,

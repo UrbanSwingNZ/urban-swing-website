@@ -151,16 +151,22 @@ function formatConcessionBlock(block) {
         ? '<span class="badge badge-no">Expired</span>'
         : '<span class="badge badge-yes">Active</span>';
     
+    // Lock badge if locked
+    const lockBadge = block.isLocked === true 
+        ? '<span class="badge badge-locked" style="margin-left: 4px;"><i class="fas fa-lock"></i> Locked</span>' 
+        : '';
+    
     const expiryInfo = block.expiryDate
         ? `${formatDate(block.expiryDate)}`
         : 'No expiry date';
     
     return `
-        <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--background-secondary); border-radius: 4px;">
+        <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--background-secondary); border-radius: 4px; ${block.isLocked ? 'opacity: 0.6; border-left: 3px solid #6c757d;' : ''}">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <strong>${block.packageName}</strong>
                     ${statusBadge}
+                    ${lockBadge}
                 </div>
             </div>
             <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">
@@ -169,6 +175,7 @@ function formatConcessionBlock(block) {
             <div style="font-size: 0.95rem; font-weight: 500;">
                 ${block.remaining} / ${block.original} remaining
             </div>
+            ${block.isLocked ? '<div style="font-size: 0.8rem; color: #6c757d; margin-top: 0.25rem;"><i class="fas fa-info-circle"></i> This block is locked and cannot be used</div>' : ''}
         </div>
     `;
 }
