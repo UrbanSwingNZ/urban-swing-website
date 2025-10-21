@@ -52,12 +52,16 @@ function displayConcessionInfo(blocks, stats, studentId) {
             const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
             const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
             const isLocked = block.isLocked === true;
+            const hasBeenUsed = block.remainingQuantity < block.originalQuantity;
+            
             const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
-            const lockButton = isLocked 
-                ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
-                : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
-            const deleteButton = isLocked
-                ? `<button class="btn-delete-block" disabled title="Unlock before deleting"><i class="fas fa-trash"></i> Delete</button>`
+            
+            // Active blocks cannot be locked/unlocked
+            const lockButton = `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
+            
+            // Active blocks can only be deleted if no entries have been used
+            const deleteButton = hasBeenUsed
+                ? `<button class="btn-delete-block" disabled title="Cannot delete - concession has been used"><i class="fas fa-trash"></i> Delete</button>`
                 : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
             
             html += `
@@ -97,12 +101,18 @@ function displayConcessionInfo(blocks, stats, studentId) {
             const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
             const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
             const isLocked = block.isLocked === true;
+            const hasBeenUsed = block.remainingQuantity < block.originalQuantity;
+            
             const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
+            
+            // Expired blocks can be locked/unlocked
             const lockButton = isLocked 
                 ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
                 : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
-            const deleteButton = isLocked
-                ? `<button class="btn-delete-block" disabled title="Unlock before deleting"><i class="fas fa-trash"></i> Delete</button>`
+            
+            // Expired blocks can only be deleted if no entries have been used
+            const deleteButton = hasBeenUsed
+                ? `<button class="btn-delete-block" disabled title="Cannot delete - concession has been used"><i class="fas fa-trash"></i> Delete</button>`
                 : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
             
             html += `
