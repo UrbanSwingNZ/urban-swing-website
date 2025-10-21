@@ -918,6 +918,33 @@ textarea:focus {
     margin-right: 4px;
 }
 
+.btn-delete-block {
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--admin-error);
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--admin-error);
+}
+
+.btn-delete-block:hover:not(:disabled) {
+    background: var(--admin-error);
+    color: white;
+}
+
+.btn-delete-block:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn-delete-block i {
+    margin-right: 4px;
+}
+
 .badge-locked {
     background: rgba(108, 117, 125, 0.15);
     color: #6c757d;
