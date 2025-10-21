@@ -117,6 +117,14 @@ async function loadPackages() {
     packages.forEach(pkg => {
       container.appendChild(createPackageCard(pkg.id, pkg.data));
     });
+    
+    // Show drag hint if there are 2+ packages
+    const dragHint = document.getElementById('drag-hint');
+    if (dragHint && packages.length >= 2) {
+      dragHint.style.display = 'flex';
+    } else if (dragHint) {
+      dragHint.style.display = 'none';
+    }
 
   } catch (error) {
     console.error('Error loading packages:', error);
@@ -136,17 +144,30 @@ function createPackageCard(id, pkg) {
   const card = document.createElement('div');
   const isActive = pkg.isActive !== false; // Default to true if not specified
   card.className = `package-card ${isActive ? 'active' : 'inactive'}`;
+  card.setAttribute('data-package-id', id);
+  card.setAttribute('draggable', 'true');
   
   const numberOfClasses = pkg.numberOfClasses || 0;
   const price = pkg.price || 0;
   const pricePerClass = numberOfClasses > 0 ? (price / numberOfClasses).toFixed(2) : '0.00';
   
+  // Format package name - if it contains "PROMO", put it on separate line
+  let formattedName = pkg.name;
+  if (formattedName.match(/promo/i)) {
+    // Replace "PROMO - " or "promo - " with "PROMO<br>"
+    formattedName = formattedName.replace(/promo\s*-\s*/i, 'PROMO<br>');
+  }
+  
   card.innerHTML = `
+    <div class="drag-handle" title="Drag to reorder">
+      <i class="fas fa-grip-vertical"></i>
+    </div>
+    
     <div class="package-status ${isActive ? 'active' : 'inactive'}">
       ${isActive ? 'Active' : 'Inactive'}
     </div>
     
-    <h3 class="package-name">${escapeHtml(pkg.name)}</h3>
+    <h3 class="package-name">${formattedName}</h3>
     
     <div class="package-details">
       <div class="package-detail">
@@ -174,6 +195,9 @@ function createPackageCard(id, pkg) {
       </button>
     </div>
   `;
+  
+  // Add drag event listeners
+  setupDragListeners(card);
   
   return card;
 }
@@ -387,3 +411,122 @@ function resetInactivityTimer() {
 ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach((event) => {
   document.addEventListener(event, resetInactivityTimer, true);
 });
+
+// ========================================
+// Drag and Drop Functionality
+// ========================================
+
+let draggedElement = null;
+
+function setupDragListeners(card) {
+  card.addEventListener('dragstart', handleDragStart);
+  card.addEventListener('dragend', handleDragEnd);
+  card.addEventListener('dragover', handleDragOver);
+  card.addEventListener('drop', handleDrop);
+  card.addEventListener('dragenter', handleDragEnter);
+  card.addEventListener('dragleave', handleDragLeave);
+}
+
+function handleDragStart(e) {
+  draggedElement = this;
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragEnd(e) {
+  this.classList.remove('dragging');
+  
+  // Remove drag-over class from all cards
+  document.querySelectorAll('.package-card').forEach(card => {
+    card.classList.remove('drag-over');
+  });
+}
+
+function handleDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDragEnter(e) {
+  if (this !== draggedElement) {
+    this.classList.add('drag-over');
+  }
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('drag-over');
+}
+
+async function handleDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+  
+  if (draggedElement !== this) {
+    // Get the container
+    const container = document.getElementById('packages-container');
+    const allCards = Array.from(container.querySelectorAll('.package-card'));
+    
+    // Get positions
+    const draggedIndex = allCards.indexOf(draggedElement);
+    const targetIndex = allCards.indexOf(this);
+    
+    // Reorder in DOM
+    if (draggedIndex < targetIndex) {
+      this.parentNode.insertBefore(draggedElement, this.nextSibling);
+    } else {
+      this.parentNode.insertBefore(draggedElement, this);
+    }
+    
+    // Update displayOrder in Firestore
+    await updateDisplayOrders();
+  }
+  
+  return false;
+}
+
+async function updateDisplayOrders() {
+  const container = document.getElementById('packages-container');
+  const allCards = Array.from(container.querySelectorAll('.package-card'));
+  
+  try {
+    // Create batch update
+    const batch = db.batch();
+    
+    allCards.forEach((card, index) => {
+      const packageId = card.getAttribute('data-package-id');
+      const docRef = db.collection('concessionPackages').doc(packageId);
+      batch.update(docRef, { displayOrder: index + 1 });
+    });
+    
+    await batch.commit();
+    console.log('Display orders updated successfully');
+    
+    // Show brief success message
+    showOrderUpdateSuccess();
+    
+  } catch (error) {
+    console.error('Error updating display orders:', error);
+    alert('Failed to save new order: ' + error.message);
+    // Reload to restore correct order
+    loadPackages();
+  }
+}
+
+function showOrderUpdateSuccess() {
+  const dragHint = document.getElementById('drag-hint');
+  if (!dragHint) return;
+  
+  const originalHTML = dragHint.innerHTML;
+  dragHint.innerHTML = '<i class="fas fa-check-circle"></i> Order saved!';
+  dragHint.style.color = 'var(--admin-success)';
+  
+  setTimeout(() => {
+    dragHint.innerHTML = originalHTML;
+    dragHint.style.color = '';
+  }, 2000);
+}
