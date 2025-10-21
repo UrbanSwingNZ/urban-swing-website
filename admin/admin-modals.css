@@ -463,6 +463,11 @@
     max-width: 500px;
 }
 
+/* Delete modal should appear above other modals */
+#delete-modal {
+    z-index: 10000;
+}
+
 .text-muted {
     color: var(--text-muted);
     font-size: 0.9rem;

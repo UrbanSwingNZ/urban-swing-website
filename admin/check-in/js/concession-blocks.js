@@ -339,7 +339,9 @@ async function lockConcessionBlock(blockId) {
             .update({ 
                 isLocked: true,
                 lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
+                lockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
+                unlockedAt: null,
+                unlockedBy: null
             });
         return true;
     } catch (error) {
@@ -361,7 +363,9 @@ async function unlockConcessionBlock(blockId) {
             .update({ 
                 isLocked: false,
                 unlockedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                unlockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
+                unlockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
+                lockedAt: null,
+                lockedBy: null
             });
         return true;
     } catch (error) {
