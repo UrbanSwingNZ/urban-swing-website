@@ -1,0 +1,339 @@
+/**
+ * transaction-history.css
+ * Styles for the transaction history modal
+ */
+
+/* Transaction History Modal */
+#transaction-history-modal .modal-content {
+    max-width: 900px;
+    max-height: 90vh;
+}
+
+#transaction-history-modal .modal-body {
+    padding: 0;
+}
+
+/* Student Info Header */
+.transaction-student-info {
+    padding: 20px 24px;
+    background: var(--bg-secondary, #f8f9fa);
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+}
+
+.transaction-student-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.25rem;
+    color: var(--text-primary, #212529);
+}
+
+.transaction-student-info p {
+    margin: 0;
+    color: var(--text-muted, #6c757d);
+    font-size: 0.9rem;
+}
+
+/* Tabs */
+.transaction-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color, #dee2e6);
+    background: var(--bg-secondary, #f8f9fa);
+}
+
+.transaction-tab {
+    flex: 1;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted, #6c757d);
+    transition: all 0.2s ease;
+    position: relative;
+    bottom: -2px;
+}
+
+.transaction-tab:hover {
+    color: var(--text-primary, #212529);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.transaction-tab.active {
+    color: var(--admin-purple, #9a16f5);
+    border-bottom-color: var(--admin-purple, #9a16f5);
+    background: white;
+}
+
+.transaction-tab i {
+    margin-right: 8px;
+}
+
+/* Tab Content */
+.transaction-tab-content {
+    display: none;
+    padding: 24px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.transaction-tab-content.active {
+    display: block;
+}
+
+/* Section Summary */
+.section-summary {
+    margin: 0 0 16px 0;
+    padding: 12px 16px;
+    background: var(--bg-secondary, #f8f9fa);
+    border-left: 4px solid var(--admin-purple, #9a16f5);
+    border-radius: 4px;
+    font-weight: 500;
+    color: var(--text-primary, #212529);
+}
+
+/* Attendance List */
+.attendance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.attendance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-primary, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.attendance-item:hover {
+    border-color: var(--admin-purple, #9a16f5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.attendance-date-time {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.attendance-date {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.attendance-time {
+    font-size: 0.85rem;
+}
+
+/* Payment List */
+.payments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg-primary, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.payment-item:hover {
+    border-color: var(--admin-purple, #9a16f5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.payment-date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.payment-date-time {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.payment-date {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.payment-time {
+    font-size: 0.85rem;
+}
+
+.payment-package {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.payment-package strong {
+    color: var(--text-primary, #212529);
+}
+
+.payment-amount-method {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.payment-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-success, #28a745);
+}
+
+.payment-method {
+    font-size: 0.85rem;
+    text-transform: capitalize;
+}
+
+/* Concession Summary */
+.concession-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--admin-purple, #9a16f5) 0%, #7a0cc5 100%);
+    border-radius: 8px;
+    color: white;
+}
+
+.summary-stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Concessions Sections */
+.concessions-section {
+    margin-bottom: 24px;
+}
+
+.concessions-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    color: var(--text-primary, #212529);
+}
+
+.concessions-section h4 i {
+    margin-right: 8px;
+}
+
+/* Concession Items - Reuse from existing concessions.css */
+.concession-item {
+    padding: 16px;
+    background: var(--bg-primary, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-left: 4px solid var(--admin-success, #28a745);
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.concession-item.expired {
+    border-left-color: var(--admin-error, #dc3545);
+    background: rgba(220, 53, 69, 0.02);
+}
+
+.concession-info {
+    margin-bottom: 8px;
+}
+
+.concession-info strong {
+    color: var(--text-primary, #212529);
+}
+
+.concession-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--text-muted, #6c757d);
+}
+
+.concession-details span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.concession-details i {
+    color: var(--admin-purple, #9a16f5);
+}
+
+/* Utility Classes */
+.text-success {
+    color: var(--admin-success, #28a745) !important;
+}
+
+.text-warning {
+    color: var(--admin-warning, #ffc107) !important;
+}
+
+.text-error {
+    color: var(--admin-error, #dc3545) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #transaction-history-modal .modal-content {
+        max-width: 95%;
+    }
+    
+    .transaction-tabs {
+        flex-direction: column;
+    }
+    
+    .transaction-tab {
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+        border-left: 3px solid transparent;
+    }
+    
+    .transaction-tab.active {
+        border-left-color: var(--admin-purple, #9a16f5);
+        border-bottom-color: var(--border-color, #dee2e6);
+    }
+    
+    .payment-item,
+    .attendance-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .payment-amount-method {
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .concession-summary {
+        grid-template-columns: 1fr;
+    }
+}

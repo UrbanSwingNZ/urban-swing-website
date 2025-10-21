@@ -31,6 +31,9 @@ function initializeApp() {
     initializePurchaseConcessionsModal();
     initializeAddConcessionModal();
     
+    // Initialize transaction history modal
+    initializeTransactionHistoryModalListeners();
+    
     // Initialize modal event listeners
     initializeModalListeners();
     

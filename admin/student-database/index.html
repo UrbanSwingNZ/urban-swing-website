@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../admin-modals.css">
     <link rel="stylesheet" href="student-database.css">
     <link rel="stylesheet" href="../concessions/concessions.css">
+    <link rel="stylesheet" href="js/transaction-history/transaction-history.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -319,6 +320,48 @@
         </div>
     </div>
 
+    <!-- Transaction History Modal -->
+    <div id="transaction-history-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Transaction History</h3>
+                <button class="modal-close" onclick="closeTransactionHistoryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-student-info">
+                    <h3 id="transaction-history-student-name"></h3>
+                    <p id="transaction-history-student-email"></p>
+                </div>
+                
+                <div class="transaction-tabs">
+                    <button class="transaction-tab active" data-tab="attendance-content">
+                        <i class="fas fa-calendar-check"></i> Attendance
+                    </button>
+                    <button class="transaction-tab" data-tab="payments-content">
+                        <i class="fas fa-dollar-sign"></i> Payments
+                    </button>
+                    <button class="transaction-tab" data-tab="concessions-content">
+                        <i class="fas fa-ticket-alt"></i> Concessions
+                    </button>
+                </div>
+                
+                <div class="transaction-tab-content active" id="attendance-content">
+                    <!-- Attendance content will be loaded here -->
+                </div>
+                
+                <div class="transaction-tab-content" id="payments-content">
+                    <!-- Payment content will be loaded here -->
+                </div>
+                
+                <div class="transaction-tab-content" id="concessions-content">
+                    <!-- Concession content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js?v=4"></script>
     
@@ -333,6 +376,12 @@
     <script src="js/table.js?v=11"></script>
     <script src="js/modal.js?v=11"></script>
     <script src="js/navigation.js?v=10"></script>
+    
+    <!-- Transaction History Module -->
+    <script src="js/transaction-history/transaction-history-modal.js?v=1"></script>
+    <script src="js/transaction-history/transaction-history-attendance.js?v=1"></script>
+    <script src="js/transaction-history/transaction-history-payments.js?v=1"></script>
+    <script src="js/transaction-history/transaction-history-concessions.js?v=1"></script>
     
     <!-- Reusable Concessions Module -->
     <script src="../check-in/js/concession-blocks-balance.js?v=3"></script>
