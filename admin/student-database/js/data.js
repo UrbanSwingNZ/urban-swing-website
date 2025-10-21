@@ -12,9 +12,8 @@ async function loadStudents() {
     try {
         showLoading(true);
 
-        // Fetch all students from Firestore, ordered by registration date (newest first)
+        // Fetch all students from Firestore (no orderBy to avoid index requirements)
         const studentsSnapshot = await db.collection('students')
-            .orderBy('registeredAt', 'desc')
             .get();
 
         studentsData = [];
@@ -23,6 +22,24 @@ async function loadStudents() {
                 id: doc.id,
                 ...doc.data()
             });
+        });
+
+        // Sort by firstName then lastName in JavaScript
+        studentsData.sort((a, b) => {
+            const firstNameA = (a.firstName || '').toLowerCase();
+            const firstNameB = (b.firstName || '').toLowerCase();
+            const lastNameA = (a.lastName || '').toLowerCase();
+            const lastNameB = (b.lastName || '').toLowerCase();
+            
+            // First compare by firstName
+            if (firstNameA < firstNameB) return -1;
+            if (firstNameA > firstNameB) return 1;
+            
+            // If firstName is the same, compare by lastName
+            if (lastNameA < lastNameB) return -1;
+            if (lastNameA > lastNameB) return 1;
+            
+            return 0;
         });
 
         console.log(`Loaded ${studentsData.length} students`);
