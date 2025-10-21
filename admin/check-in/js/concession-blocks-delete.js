@@ -24,8 +24,23 @@ async function deleteConcessionBlock(blockId) {
             throw new Error('Cannot delete a locked concession block. Unlock it first.');
         }
         
-        // Get student ID before deleting
+        // Get student ID and transaction ID before deleting
         const studentId = blockData.studentId;
+        const transactionId = blockData.transactionId;
+        
+        // Delete the associated transaction if it exists
+        if (transactionId) {
+            try {
+                await firebase.firestore()
+                    .collection('transactions')
+                    .doc(transactionId)
+                    .delete();
+                console.log(`Deleted associated transaction: ${transactionId}`);
+            } catch (transactionError) {
+                console.warn('Could not delete associated transaction:', transactionError);
+                // Continue with block deletion even if transaction deletion fails
+            }
+        }
         
         // Delete the block
         await firebase.firestore()
