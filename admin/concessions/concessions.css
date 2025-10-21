@@ -118,7 +118,12 @@
 #add-concession-modal .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
+}
+
+#add-concession-modal .form-row .form-control {
+    min-width: 0; /* Allow inputs to shrink below content size */
+    width: 100%;
 }
 
 #add-concession-modal .form-hint {
@@ -131,6 +136,7 @@
 
 #add-concession-modal .checkbox-group {
     margin-top: 10px;
+    display: block; /* Ensure block layout for stacking */
 }
 
 #add-concession-modal .checkbox-label {
@@ -138,12 +144,24 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    margin-bottom: 8px;
 }
 
 #add-concession-modal .checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
     cursor: pointer;
+    flex-shrink: 0;
+}
+
+#add-concession-modal .checkbox-label span {
+    flex: 1;
+}
+
+#add-concession-modal .checkbox-group .form-hint {
+    display: block;
+    margin-top: 0;
+    margin-left: 26px; /* Align with checkbox text (18px checkbox + 8px gap) */
 }
 
 /* Responsive */
