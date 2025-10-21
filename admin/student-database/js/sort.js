@@ -3,7 +3,7 @@
  * Handles table column sorting
  */
 
-let currentSort = { field: 'registeredAt', direction: 'desc' };
+let currentSort = { field: 'name', direction: 'asc' };
 
 /**
  * Sort students array
