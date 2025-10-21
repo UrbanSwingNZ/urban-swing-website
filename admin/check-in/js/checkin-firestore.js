@@ -40,6 +40,24 @@ function handleCheckinSubmit() {
  */
 async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEntryReason, notes) {
     try {
+        let concessionBlockId = null;
+        
+        // If this is a concession check-in, use a block entry (FIFO)
+        if (entryType === 'concession') {
+            const block = await getNextAvailableBlock(student.id, true); // Allow expired
+            
+            if (!block) {
+                showSnackbar('No concession entries available for this student', 'error');
+                return;
+            }
+            
+            // Use one entry from the block
+            await useBlockEntry(block.id);
+            concessionBlockId = block.id;
+            
+            console.log(`Used concession block ${block.id} (${block.status}), ${block.remainingQuantity - 1} remaining`);
+        }
+        
         // Get the selected check-in date from date picker
         const checkinDate = getSelectedCheckinDate(); // Returns Date object
         
@@ -63,7 +81,7 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             paymentMethod: entryType === 'casual' ? paymentMethod : null,
             freeEntryReason: entryType === 'free' ? freeEntryReason : null,
             amountPaid: entryType === 'casual' ? 15 : 0,
-            concessionBlockId: null, // TODO: Link to actual block when concession deduction is implemented
+            concessionBlockId: concessionBlockId,
             notes: notes || '',
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'

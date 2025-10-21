@@ -25,38 +25,140 @@ function showSelectedStudent(student) {
 /**
  * Update concession info display
  */
-function updateConcessionInfo(student) {
-    const concessionData = getMockConcessionData(student.id);
+async function updateConcessionInfo(student) {
     const balanceSpan = document.getElementById('concession-balance');
     const blocksDiv = document.getElementById('concession-blocks');
     
-    balanceSpan.textContent = concessionData.balance;
+    // Show loading state
+    balanceSpan.textContent = 'Loading...';
+    blocksDiv.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Loading blocks...</p>';
     
-    if (concessionData.blocks.length > 0) {
-        blocksDiv.innerHTML = concessionData.blocks
-            .map(block => formatConcessionBlock(block))
-            .join('');
-    } else {
-        blocksDiv.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No active concessions</p>';
+    try {
+        const concessionData = await getConcessionData(student.id);
+        
+        // Display balance with expired count
+        if (concessionData.totalBalance > 0) {
+            if (concessionData.expiredBalance > 0) {
+                balanceSpan.textContent = `${concessionData.totalBalance} entries (incl. ${concessionData.expiredBalance} expired)`;
+            } else {
+                balanceSpan.textContent = `${concessionData.totalBalance} entries`;
+            }
+        } else {
+            balanceSpan.textContent = 'No concessions available';
+        }
+        
+        // Display blocks
+        if (concessionData.blocks.length > 0) {
+            blocksDiv.innerHTML = concessionData.blocks
+                .map(block => formatConcessionBlock(block))
+                .join('');
+        } else {
+            blocksDiv.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No active concessions</p>';
+        }
+        
+        // Enable/disable concession option based on balance
+        const concessionRadio = document.getElementById('entry-concession');
+        const casualRadio = document.getElementById('entry-casual');
+        
+        if (concessionData.totalBalance > 0) {
+            concessionRadio.disabled = false;
+            concessionRadio.parentElement.style.opacity = '1';
+            // Default to concession if available
+            concessionRadio.checked = true;
+        } else {
+            concessionRadio.disabled = true;
+            concessionRadio.parentElement.style.opacity = '0.5';
+            // Default to casual if no concession
+            casualRadio.checked = true;
+            document.getElementById('payment-section').style.display = 'block';
+        }
+        
+        // Enable confirm button since we have a default selection
+        document.getElementById('confirm-checkin-btn').disabled = false;
+    } catch (error) {
+        console.error('Error loading concession info:', error);
+        balanceSpan.textContent = 'Error loading balance';
+        blocksDiv.innerHTML = '<p style="color: var(--danger); font-size: 0.9rem;">Error loading blocks</p>';
     }
-    
-    // Enable/disable concession option based on balance
-    const concessionRadio = document.getElementById('entry-concession');
-    const casualRadio = document.getElementById('entry-casual');
-    
-    if (concessionData.balance > 0) {
-        concessionRadio.disabled = false;
-        concessionRadio.parentElement.style.opacity = '1';
-        // Default to concession if available
-        concessionRadio.checked = true;
-    } else {
-        concessionRadio.disabled = true;
-        concessionRadio.parentElement.style.opacity = '0.5';
-        // Default to casual if no concession
-        casualRadio.checked = true;
-        document.getElementById('payment-section').style.display = 'block';
+}
+
+/**
+ * Get concession data for a student from Firestore
+ */
+async function getConcessionData(studentId) {
+    try {
+        // Get all blocks with remaining quantity
+        const snapshot = await firebase.firestore()
+            .collection('concessionBlocks')
+            .where('studentId', '==', studentId)
+            .where('remainingQuantity', '>', 0)
+            .orderBy('remainingQuantity', 'desc')
+            .orderBy('status', 'asc')
+            .orderBy('purchaseDate', 'asc')
+            .get();
+        
+        let totalBalance = 0;
+        let expiredBalance = 0;
+        const blocks = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            totalBalance += data.remainingQuantity;
+            
+            if (data.status === 'expired') {
+                expiredBalance += data.remainingQuantity;
+            }
+            
+            blocks.push({
+                id: doc.id,
+                packageName: data.packageName,
+                remaining: data.remainingQuantity,
+                original: data.originalQuantity,
+                status: data.status,
+                purchaseDate: data.purchaseDate ? data.purchaseDate.toDate() : null,
+                expiryDate: data.expiryDate ? data.expiryDate.toDate() : null
+            });
+        });
+        
+        return {
+            totalBalance,
+            expiredBalance,
+            blocks
+        };
+    } catch (error) {
+        console.error('Error getting concession data:', error);
+        return {
+            totalBalance: 0,
+            expiredBalance: 0,
+            blocks: []
+        };
     }
+}
+
+/**
+ * Format a concession block for display
+ */
+function formatConcessionBlock(block) {
+    const statusBadge = block.status === 'expired' 
+        ? '<span class="badge badge-warning">Expired</span>'
+        : '<span class="badge badge-success">Active</span>';
     
-    // Enable confirm button since we have a default selection
-    document.getElementById('confirm-checkin-btn').disabled = false;
+    const expiryInfo = block.expiryDate
+        ? `<span style="font-size: 0.85rem; color: var(--text-muted);">Expires: ${formatDate(block.expiryDate)}</span>`
+        : '';
+    
+    return `
+        <div style="padding: 0.5rem; margin-bottom: 0.5rem; background: var(--background-secondary); border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>${block.packageName}</strong>
+                    ${statusBadge}
+                    ${expiryInfo}
+                </div>
+                <div style="font-size: 0.95rem;">
+                    ${block.remaining} / ${block.original} remaining
+                </div>
+            </div>
+        </div>
+    `;
 }

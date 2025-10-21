@@ -83,22 +83,44 @@ function getDefaultPackages() {
 /**
  * Create concession block document
  */
-async function createConcessionBlock(studentId, packageData, purchaseDate = new Date()) {
+async function createConcessionBlock(studentId, packageData, purchaseDate = new Date(), paymentMethod = '') {
+    console.log('createConcessionBlock called with:', { studentId, packageData, purchaseDate, paymentMethod });
+    
+    // Try to get student name, fallback to 'Unknown' if not available
+    let studentName = 'Unknown Student';
+    try {
+        if (typeof findStudentById === 'function') {
+            const student = findStudentById(studentId);
+            if (student && typeof getStudentFullName === 'function') {
+                studentName = getStudentFullName(student);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not get student name:', e);
+    }
+    
     const expiryDate = new Date(purchaseDate);
     expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
     
     const blockData = {
         studentId: studentId,
+        studentName: studentName,
         packageId: packageData.id,
         packageName: packageData.name,
+        originalQuantity: packageData.numberOfClasses,
+        remainingQuantity: packageData.numberOfClasses,
         purchaseDate: firebase.firestore.Timestamp.fromDate(purchaseDate),
         expiryDate: firebase.firestore.Timestamp.fromDate(expiryDate),
-        totalClasses: packageData.numberOfClasses,
-        remaining: packageData.numberOfClasses,
-        used: 0,
         status: 'active',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        price: packageData.price || 0,
+        paymentMethod: paymentMethod || 'unknown',
+        transactionId: null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
+        notes: ''
     };
+    
+    console.log('Block data to save:', blockData);
     
     const docRef = await db.collection('concessionBlocks').add(blockData);
     return docRef.id;
@@ -139,18 +161,43 @@ async function updateStudentBalance(studentId, classesToAdd) {
 /**
  * Complete purchase - creates block, transaction, and updates balance
  */
-async function completeConcessionPurchase(studentId, packageId, paymentMethod) {
+async function completeConcessionPurchase(studentId, packageId, paymentMethod, purchaseDate = null) {
+    console.log('completeConcessionPurchase called with:', { studentId, packageId, paymentMethod, purchaseDate });
+    
     const packageData = getConcessionPackageById(packageId);
     if (!packageData) {
         throw new Error('Package not found');
     }
     
+    console.log('Package data:', packageData);
+    
+    // Use provided date or default to now
+    const actualPurchaseDate = purchaseDate || new Date();
+    
     try {
-        // Create concession block
-        const blockId = await createConcessionBlock(studentId, packageData);
+        // Create concession block with specified purchase date
+        // Note: If concession-blocks.js is loaded (from check-in page), use that version
+        // Otherwise use the local version defined above
+        console.log('Creating block with:', { studentId, packageData, actualPurchaseDate, paymentMethod });
+        
+        // Calculate expiry date
+        const expiryDate = new Date(actualPurchaseDate);
+        expiryDate.setMonth(expiryDate.getMonth() + packageData.expiryMonths);
+        
+        // Call createConcessionBlock with correct parameters for the check-in version
+        const blockId = await createConcessionBlock(
+            studentId, 
+            packageData, 
+            packageData.numberOfClasses,  // quantity
+            packageData.price,             // price
+            paymentMethod,                 // paymentMethod
+            expiryDate,                    // expiryDate
+            '',                            // notes
+            actualPurchaseDate             // purchaseDate (custom date for backdating)
+        );
         
         // Create transaction record
-        const transactionId = await createTransaction(studentId, packageData, paymentMethod);
+        const transactionId = await createTransaction(studentId, packageData, paymentMethod, actualPurchaseDate);
         
         // Update student balance
         await updateStudentBalance(studentId, packageData.numberOfClasses);
