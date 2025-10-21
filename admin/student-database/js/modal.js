@@ -19,8 +19,8 @@ function viewTransactionHistory(studentId) {
     const student = findStudentById(studentId);
     if (!student) return;
     
-    // Placeholder for future transaction history functionality
-    alert(`Transaction history for ${student.firstName} ${student.lastName} will be available soon.\n\nThis will show:\n• Class attendance dates\n• Payment history (casual vs concession)\n• Remaining concessions\n• Concession expiry dates`);
+    // Open the transaction history modal
+    openTransactionHistoryModal(studentId);
 }
 
 /**
