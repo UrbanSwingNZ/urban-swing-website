@@ -38,6 +38,7 @@ html, body {
   --background-color: var(--admin-card-light);
   --border-color: var(--admin-border-light);
   --input-bg: #ffffff;
+  --text-muted: #999999;
 }
 
 /* Dark mode adjustments */
@@ -48,6 +49,7 @@ html, body {
     --background-color: var(--admin-card-dark);
     --border-color: var(--admin-border-dark);
     --input-bg: #1a1a1a;
+    --text-muted: #888888;
   }
 }
 

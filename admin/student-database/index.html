@@ -59,7 +59,7 @@
             <div class="database-search">
                 <div class="search-box">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="search-input" placeholder="Search students by name, email, phone, or pronouns..." class="search-input">
+                    <input type="text" id="search-input" placeholder="Search students by name, email, phone..." class="search-input" autocomplete="off">
                     <button id="clear-search" class="clear-search" style="display: none;" title="Clear search">
                         <i class="fas fa-times"></i>
                     </button>
@@ -288,24 +288,26 @@
     </div>
 
     <!-- Firebase Config & Scripts -->
-    <script src="../../config/firebase-config.js"></script>
+    <script src="../../config/firebase-config.js?v=4"></script>
     
     <!-- Student Database Modules (load in dependency order) -->
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/pagination.js"></script>
-    <script src="js/sort.js"></script>
-    <script src="js/table.js"></script>
-    <script src="js/modal.js"></script>
-    <script src="js/navigation.js"></script>
+    <script src="js/utils.js?v=4"></script>
+    <script src="js/auth.js?v=4"></script>
+    <script src="js/data.js?v=7"></script>
+    <script src="js/search.js?v=4"></script>
+    <script src="js/pagination.js?v=4"></script>
+    <script src="js/sort.js?v=4"></script>
+    <script src="js/table.js?v=4"></script>
+    <script src="js/modal.js?v=4"></script>
+    <script src="js/navigation.js?v=4"></script>
     
     <!-- Reusable Concessions Module -->
-    <script src="../concessions/js/concessions-data.js"></script>
-    <script src="../concessions/js/concessions-modal.js"></script>
-    <script src="../concessions/js/concessions-admin.js"></script>
+    <script src="../check-in/js/students.js?v=2"></script>
+    <script src="../check-in/js/concession-blocks.js?v=2"></script>
+    <script src="../concessions/js/concessions-data.js?v=2"></script>
+    <script src="../concessions/js/concessions-modal.js?v=2"></script>
+    <script src="../concessions/js/concessions-admin.js?v=2"></script>
     
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=2"></script>
 </body>
 </html>
