@@ -36,24 +36,26 @@ async function updateConcessionInfo(student) {
     try {
         const concessionData = await getConcessionData(student.id);
         
-        // Display balance with expired count
+        // Display balance
         if (concessionData.totalBalance > 0) {
+            // Has balance - show just expired count if any, blocks will show the details
             if (concessionData.expiredBalance > 0) {
-                balanceSpan.textContent = `${concessionData.totalBalance} entries (incl. ${concessionData.expiredBalance} expired)`;
+                balanceSpan.textContent = `(incl. ${concessionData.expiredBalance} expired)`;
             } else {
-                balanceSpan.textContent = `${concessionData.totalBalance} entries`;
+                // Hide balance text entirely when blocks will show the details
+                balanceSpan.textContent = '';
             }
-        } else {
-            balanceSpan.textContent = 'No concessions available';
-        }
-        
-        // Display blocks
-        if (concessionData.blocks.length > 0) {
+            
+            // Show blocks with full details
+            blocksDiv.style.display = 'block';
             blocksDiv.innerHTML = concessionData.blocks
                 .map(block => formatConcessionBlock(block))
                 .join('');
         } else {
-            blocksDiv.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No active concessions</p>';
+            // No balance - show clear message
+            balanceSpan.textContent = 'No concessions available';
+            // Hide blocks div entirely when no concessions
+            blocksDiv.style.display = 'none';
         }
         
         // Enable/disable concession option based on balance
@@ -87,14 +89,11 @@ async function updateConcessionInfo(student) {
  */
 async function getConcessionData(studentId) {
     try {
-        // Get all blocks with remaining quantity
+        // Get all blocks with remaining quantity (simplified query to avoid complex indexes)
         const snapshot = await firebase.firestore()
             .collection('concessionBlocks')
             .where('studentId', '==', studentId)
             .where('remainingQuantity', '>', 0)
-            .orderBy('remainingQuantity', 'desc')
-            .orderBy('status', 'asc')
-            .orderBy('purchaseDate', 'asc')
             .get();
         
         let totalBalance = 0;

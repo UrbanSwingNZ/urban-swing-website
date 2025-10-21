@@ -22,6 +22,15 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
             throw new Error('Student not found');
         }
         
+        // Format purchase date for document ID (YYYY-MM-DD)
+        const dateForId = purchaseDate ? purchaseDate : new Date();
+        const dateStr = dateForId.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        // Create document ID: firstName-lastName-purchased-YYYY-MM-DD (lowercase)
+        const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const docId = `${firstName}-${lastName}-purchased-${dateStr}`;
+        
         const blockData = {
             studentId: studentId,
             studentName: getStudentFullName(student),
@@ -40,9 +49,12 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
             notes: notes
         };
         
-        const docRef = await firebase.firestore()
+        // Use set() with custom document ID instead of add()
+        const docRef = firebase.firestore()
             .collection('concessionBlocks')
-            .add(blockData);
+            .doc(docId);
+        
+        await docRef.set(blockData);
         
         console.log('Concession block created:', docRef.id);
         
