@@ -1,3 +1,28 @@
+// ============================================================
+// DEPRECATED - This file has been refactored into modular components
+// ============================================================
+// 
+// This monolithic file has been split into separate modules for better
+// maintainability and organization. The new modular structure is located
+// in the 'concession-types/' subdirectory.
+//
+// New structure:
+//   concession-types/
+//     ├── auth.js               - Authentication & initialization
+//     ├── package-display.js    - Package loading & card creation
+//     ├── modal-handlers.js     - Modal operations (add/edit/delete)
+//     ├── drag-drop.js          - Drag & drop reordering
+//     ├── status-toggle.js      - Active/inactive status management
+//     ├── utils.js              - Shared utility functions
+//     └── README.md             - Documentation
+//
+// See concession-types/README.md for detailed documentation.
+//
+// This file is kept for reference but is NO LONGER LOADED.
+// To revert to this monolithic version, update concession-types.html
+// to load this file instead of the modular scripts.
+// ============================================================
+
 // Concession Types Manager Logic
 // Handles CRUD operations for concessionPackages collection
 
