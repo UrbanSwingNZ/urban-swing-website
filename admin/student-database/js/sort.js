@@ -30,10 +30,12 @@ function sortStudents(data, field, direction) {
                 break;
             
             case 'concessions':
-                // For concessions, we'll use the cached count if available
-                // Otherwise default to 0 (will be updated when concessions load)
-                aVal = a._concessionsCount !== undefined ? a._concessionsCount : 0;
-                bVal = b._concessionsCount !== undefined ? b._concessionsCount : 0;
+                // For concessions, we'll use the cached count
+                // -1 means "needs to purchase" (no concessions)
+                // 0+ means the actual count of concessions
+                // undefined means not yet loaded (shouldn't happen if ensureConcessionsLoaded was called)
+                aVal = a._concessionsCount !== undefined ? a._concessionsCount : -1;
+                bVal = b._concessionsCount !== undefined ? b._concessionsCount : -1;
                 break;
             
             default:
@@ -56,7 +58,7 @@ function sortStudents(data, field, direction) {
 /**
  * Handle column sort click
  */
-function handleSort(field) {
+async function handleSort(field) {
     // If clicking the same column, toggle direction
     if (currentSort.field === field) {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
@@ -68,7 +70,7 @@ function handleSort(field) {
 
     // Reset to first page when sorting
     setCurrentPage(1);
-    displayStudents();
+    await displayStudents();
 }
 
 /**
