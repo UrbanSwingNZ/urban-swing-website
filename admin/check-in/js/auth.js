@@ -15,6 +15,14 @@ function initializeAuth() {
             if (user) {
                 currentUser = user;
                 document.getElementById('user-email').textContent = user.email;
+                
+                // Check if user has access to Admin Tools
+                const isAuthorizedForAdminTools = user.email === 'dance@urbanswing.co.nz';
+                const adminToolsNavItem = document.getElementById('admin-tools-nav');
+                if (adminToolsNavItem) {
+                    adminToolsNavItem.parentElement.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
+                }
+                
                 resolve(user);
             } else {
                 // Not logged in, redirect to login

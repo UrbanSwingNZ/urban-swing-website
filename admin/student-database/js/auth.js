@@ -17,6 +17,13 @@ function initializeAuth() {
             currentUser = user;
             document.getElementById('user-email').textContent = user.email;
             
+            // Check if user has access to Admin Tools
+            const isAuthorizedForAdminTools = user.email === 'dance@urbanswing.co.nz';
+            const adminToolsNavItem = document.getElementById('admin-tools-nav');
+            if (adminToolsNavItem) {
+                adminToolsNavItem.parentElement.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
+            }
+            
             // Load students
             loadStudents().catch(error => {
                 console.error('Failed to load students:', error);
