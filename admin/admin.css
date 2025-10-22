@@ -232,8 +232,85 @@ html, body {
 .admin-header {
   background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
   color: white;
-  padding: 20px;
+  padding: 20px 20px 0;
   box-shadow: 0 4px 12px var(--admin-shadow);
+}
+
+/* Admin Navigation */
+.admin-nav {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto 0;
+}
+
+.admin-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.admin-menu li {
+  margin: 0;
+}
+
+.admin-menu a {
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 12px 20px;
+  display: inline-block;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 3px solid transparent;
+}
+
+.admin-menu a i {
+  margin-right: 6px;
+}
+
+.admin-menu a:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.admin-menu a.active {
+  background: rgba(255, 255, 255, 0.3);
+  border-bottom-color: var(--admin-pink);
+}
+
+/* Mobile Navigation Styles */
+@media (max-width: 768px) {
+  .admin-menu {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 0 12px 0;
+  }
+  
+  .admin-menu li {
+    width: 100%;
+  }
+  
+  .admin-menu a {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+  
+  .admin-menu a:hover {
+    transform: translateX(5px);
+  }
 }
 
 /* Back Button (shared across admin pages) */
