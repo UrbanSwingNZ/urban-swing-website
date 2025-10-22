@@ -5,20 +5,28 @@
 /**
  * Lock a concession block (prevent use even if it has remaining quantity)
  * @param {string} blockId - Block document ID
+ * @param {string} notes - Optional notes about why the block is being locked
  * @returns {Promise<boolean>} - Success status
  */
-async function lockConcessionBlock(blockId) {
+async function lockConcessionBlock(blockId, notes = null) {
     try {
+        const updateData = { 
+            isLocked: true,
+            lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
+            unlockedAt: null,
+            unlockedBy: null
+        };
+        
+        // Only update lockNotes if notes are provided (don't clear existing notes)
+        if (notes !== null) {
+            updateData.lockNotes = notes;
+        }
+        
         await firebase.firestore()
             .collection('concessionBlocks')
             .doc(blockId)
-            .update({ 
-                isLocked: true,
-                lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
-                unlockedAt: null,
-                unlockedBy: null
-            });
+            .update(updateData);
         return true;
     } catch (error) {
         console.error('Error locking concession block:', error);
@@ -29,23 +37,54 @@ async function lockConcessionBlock(blockId) {
 /**
  * Unlock a concession block (allow use again)
  * @param {string} blockId - Block document ID
+ * @param {string} notes - Optional notes about why the block is being unlocked
  * @returns {Promise<boolean>} - Success status
  */
-async function unlockConcessionBlock(blockId) {
+async function unlockConcessionBlock(blockId, notes = null) {
+    try {
+        const updateData = { 
+            isLocked: false,
+            unlockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            unlockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
+            lockedAt: null,
+            lockedBy: null
+        };
+        
+        // Only update lockNotes if notes are provided (don't clear existing notes)
+        if (notes !== null) {
+            updateData.lockNotes = notes;
+        }
+        
+        await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .update(updateData);
+        return true;
+    } catch (error) {
+        console.error('Error unlocking concession block:', error);
+        return false;
+    }
+}
+
+/**
+ * Update the lock notes for a concession block without changing lock state
+ * @param {string} blockId - Block document ID
+ * @param {string} notes - Notes to save (empty string to clear notes)
+ * @returns {Promise<boolean>} - Success status
+ */
+async function updateConcessionBlockNotes(blockId, notes) {
     try {
         await firebase.firestore()
             .collection('concessionBlocks')
             .doc(blockId)
             .update({ 
-                isLocked: false,
-                unlockedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                unlockedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
-                lockedAt: null,
-                lockedBy: null
+                lockNotes: notes || '',
+                notesUpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                notesUpdatedBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
             });
         return true;
     } catch (error) {
-        console.error('Error unlocking concession block:', error);
+        console.error('Error updating concession block notes:', error);
         return false;
     }
 }
