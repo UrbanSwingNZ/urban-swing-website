@@ -12,10 +12,18 @@ async function loadAllTransactions() {
         loadConcessionPurchases()
     ]);
     
-    // Combine and normalize all transactions
+    // Normalize check-ins (synchronous)
+    const normalizedCheckins = checkinsData.map(normalizeCheckin);
+    
+    // Normalize transactions (asynchronous - need to fetch student names)
+    const normalizedTransactions = await Promise.all(
+        transactionsData.map(transaction => normalizeTransaction(transaction))
+    );
+    
+    // Combine and return all transactions
     return [
-        ...checkinsData.map(normalizeCheckin),
-        ...transactionsData.map(normalizeTransaction)
+        ...normalizedCheckins,
+        ...normalizedTransactions
     ];
 }
 
@@ -86,21 +94,40 @@ function normalizeCheckin(checkin) {
 /**
  * Normalize transaction data to standard format
  */
-function normalizeTransaction(transaction) {
-    const date = transaction.timestamp?.toDate ? transaction.timestamp.toDate() : new Date(transaction.timestamp);
+async function normalizeTransaction(transaction) {
+    const date = transaction.transactionDate?.toDate ? transaction.transactionDate.toDate() : new Date(transaction.transactionDate);
     const paymentMethod = (transaction.paymentMethod || '').toLowerCase();
+    const amount = transaction.amountPaid || 0;
+    
+    // Fetch student name from students collection if we have a studentId
+    let studentName = transaction.studentName || 'Unknown';
+    if (transaction.studentId) {
+        try {
+            const studentDoc = await firebase.firestore()
+                .collection('students')
+                .doc(transaction.studentId)
+                .get();
+            
+            if (studentDoc.exists) {
+                const studentData = studentDoc.data();
+                studentName = `${studentData.firstName} ${studentData.lastName}`;
+            }
+        } catch (error) {
+            console.error('Error fetching student name:', error);
+        }
+    }
     
     return {
         id: transaction.id,
         type: 'concession',
         typeName: 'Concession Purchase',
         date: date,
-        studentName: transaction.studentName || 'Unknown',
+        studentName: studentName,
         studentId: transaction.studentId || null,
-        amount: transaction.price || 0,
-        cash: paymentMethod === 'cash' ? transaction.price : 0,
-        eftpos: paymentMethod === 'eftpos' ? transaction.price : 0,
-        bankTransfer: paymentMethod === 'bank transfer' ? transaction.price : 0,
+        amount: amount,
+        cash: paymentMethod === 'cash' ? amount : 0,
+        eftpos: paymentMethod === 'eftpos' ? amount : 0,
+        bankTransfer: paymentMethod === 'bank transfer' ? amount : 0,
         paymentMethod: paymentMethod,
         invoiced: transaction.invoiced || false,
         collection: 'transactions',
