@@ -147,6 +147,13 @@ async function loadStudentConcessions(studentId, cellId) {
         const stats = calculateConcessionStats(blocks);
         const badgeHTML = getConcessionBadgeHTML(stats);
         
+        // Cache the concession count on the student object for sorting
+        const student = findStudentById(studentId);
+        if (student) {
+            // Use totalCount for students with concessions, -1 for students needing to purchase
+            student._concessionsCount = stats.totalCount > 0 ? stats.totalCount : -1;
+        }
+        
         if (badgeHTML) {
             cell.innerHTML = badgeHTML;
             
@@ -179,5 +186,10 @@ async function loadStudentConcessions(studentId, cellId) {
     } catch (error) {
         console.error('Error loading concessions for student:', studentId, error);
         cell.innerHTML = '<span class="text-muted">-</span>';
+        // Set count to -1 for error state
+        const student = findStudentById(studentId);
+        if (student) {
+            student._concessionsCount = -1;
+        }
     }
 }

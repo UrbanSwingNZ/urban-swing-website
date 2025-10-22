@@ -27,6 +27,14 @@ function openCheckinModal(studentId = null) {
         studentSelection.style.display = 'block';
         selectedInfo.style.display = 'none';
         initializeModalSearch();
+        
+        // Focus on search input after modal is displayed
+        setTimeout(() => {
+            const searchInput = document.getElementById('modal-student-search');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }, 100);
     }
     
     modal.style.display = 'flex';
