@@ -6,7 +6,7 @@
 /**
  * Display students in table
  */
-function displayStudents() {
+async function displayStudents() {
     const tbody = document.getElementById('students-tbody');
     const emptyState = document.getElementById('empty-state');
     const table = document.getElementById('students-table');
@@ -34,6 +34,12 @@ function displayStudents() {
 
     // Apply current sort
     const currentSort = getCurrentSort();
+    
+    // If sorting by concessions, ensure all concession counts are loaded first
+    if (currentSort.field === 'concessions') {
+        await ensureConcessionsLoaded(filteredData);
+    }
+    
     const sortedData = sortStudents([...filteredData], currentSort.field, currentSort.direction);
 
     // Get paginated data
@@ -44,7 +50,7 @@ function displayStudents() {
         const row = createStudentRow(student);
         tbody.appendChild(row);
         
-        // Load concessions after row is in DOM
+        // Load concessions after row is in DOM (or use cached data if already loaded)
         const concessionsCellId = `concessions-${student.id}`;
         setTimeout(() => {
             loadStudentConcessions(student.id, concessionsCellId);
@@ -60,6 +66,30 @@ function displayStudents() {
 
     // Update search results info
     updateSearchResultsInfo(filteredData.length, studentsData.length);
+}
+
+/**
+ * Ensure all concession counts are loaded for the given students
+ */
+async function ensureConcessionsLoaded(students) {
+    const loadPromises = students.map(async (student) => {
+        // Skip if already loaded
+        if (student._concessionsCount !== undefined) {
+            return;
+        }
+        
+        try {
+            const blocks = await getStudentConcessionBlocks(student.id);
+            const stats = calculateConcessionStats(blocks);
+            // Use totalCount for students with concessions, -1 for students needing to purchase
+            student._concessionsCount = stats.totalCount > 0 ? stats.totalCount : -1;
+        } catch (error) {
+            console.error('Error loading concessions for student:', student.id, error);
+            student._concessionsCount = -1;
+        }
+    });
+    
+    await Promise.all(loadPromises);
 }
 
 /**
