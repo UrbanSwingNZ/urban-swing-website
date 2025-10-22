@@ -53,6 +53,14 @@ function initializeNavListeners() {
         checkinBtn.addEventListener('click', () => openCheckinModal());
     }
     
+    // Register Student button - navigates to student database
+    const registerBtn = document.getElementById('register-student-btn');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', () => {
+            window.location.href = '../../register.html';
+        });
+    }
+    
     // History button
     const historyBtn = document.getElementById('view-history-btn');
     if (historyBtn) {

@@ -48,6 +48,7 @@ function openStudentModal(student, mode) {
     const modal = document.getElementById('student-modal');
     const modalTitle = document.getElementById('modal-title');
     const saveBtn = document.getElementById('save-student-btn');
+    const editBtn = document.getElementById('edit-student-modal-btn');
     const form = document.getElementById('student-form');
     
     // Populate form fields
@@ -76,6 +77,7 @@ function openStudentModal(student, mode) {
             input.disabled = input.type === 'checkbox';
         });
         saveBtn.style.display = 'none';
+        if (editBtn) editBtn.style.display = 'inline-flex';
     } else if (mode === 'edit') {
         modalTitle.textContent = 'Edit Student - ' + student.firstName + ' ' + student.lastName;
         allInputs.forEach(input => {
@@ -83,6 +85,7 @@ function openStudentModal(student, mode) {
             input.disabled = false;
         });
         saveBtn.style.display = 'inline-flex';
+        if (editBtn) editBtn.style.display = 'none';
     }
     
     modal.style.display = 'flex';
@@ -226,6 +229,17 @@ function initializeModalListeners() {
             }
         }
     });
+    
+    // Edit Student button in student modal
+    const editStudentModalBtn = document.getElementById('edit-student-modal-btn');
+    if (editStudentModalBtn) {
+        editStudentModalBtn.addEventListener('click', () => {
+            const studentId = document.getElementById('modal-student-id').value;
+            if (studentId) {
+                editStudent(studentId);
+            }
+        });
+    }
     
     // Transaction History button in student modal
     const transactionHistoryBtn = document.getElementById('transaction-history-btn');

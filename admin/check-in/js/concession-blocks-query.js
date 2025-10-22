@@ -22,6 +22,8 @@ async function getNextAvailableBlock(studentId, allowExpired = false) {
             return null;
         }
         
+        const now = new Date();
+        
         // Filter and sort in JavaScript to avoid complex Firestore indexes
         const blocks = snapshot.docs
             .map(doc => ({
@@ -32,23 +34,27 @@ async function getNextAvailableBlock(studentId, allowExpired = false) {
                 // Only blocks with remaining quantity
                 if (block.remainingQuantity <= 0) return false;
                 
-                // Exclude locked blocks
+                // Exclude locked blocks (always)
                 if (block.isLocked === true) return false;
                 
-                // Filter by status based on allowExpired flag
+                // Check if block is expired
+                const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
+                const isExpired = expiryDate < now;
+                
+                // If allowExpired is true, include both active and expired (but not locked)
+                // If allowExpired is false, only include active blocks
                 if (!allowExpired) {
-                    return block.status === 'active';
+                    return !isExpired;
                 } else {
-                    return block.status === 'active' || block.status === 'expired';
+                    return true; // Include both active and expired (locked already filtered out)
                 }
             })
             .sort((a, b) => {
-                // Active blocks before expired blocks
-                if (a.status !== b.status) {
-                    return a.status === 'active' ? -1 : 1;
-                }
-                // Then sort by purchaseDate (oldest first - FIFO)
-                return a.purchaseDate.toMillis() - b.purchaseDate.toMillis();
+                // FIFO - sort by purchaseDate only (oldest first)
+                // This ensures we use the oldest block first, regardless of expiry status
+                const aDate = a.purchaseDate?.toMillis ? a.purchaseDate.toMillis() : 0;
+                const bDate = b.purchaseDate?.toMillis ? b.purchaseDate.toMillis() : 0;
+                return aDate - bDate;
             });
         
         return blocks.length > 0 ? blocks[0] : null;

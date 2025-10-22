@@ -461,22 +461,33 @@ textarea:focus {
 }
 
 /* Back to Admin Link (for registration form) */
+#back-to-admin {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 #back-to-admin .back-link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-top: 20px;
-    padding: 10px 20px;
+    padding: 8px 14px;
     background: var(--admin-purple);
     color: white;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 6px;
     transition: all 0.2s ease;
+    font-size: 0.85rem;
 }
 
 #back-to-admin .back-link:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+}
+
+#back-to-admin .back-link i {
+    font-size: 0.8rem;
 }
 
 /* ========================================

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../admin.css">
     <link rel="stylesheet" href="../admin-modals.css">
     <link rel="stylesheet" href="../concessions/concessions.css">
-    <link rel="stylesheet" href="check-in.css">
+    <link rel="stylesheet" href="check-in.css?v=8">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -47,9 +47,14 @@
         <main class="checkin-main">
             <!-- Check-In Header with Date Picker -->
             <div class="checkin-header">
-                <button class="btn-primary btn-primary-lg" id="checkin-btn">
-                    <i class="fas fa-user-check"></i> Check In Student
-                </button>
+                <div class="checkin-actions">
+                    <button class="btn-primary btn-primary-lg" id="checkin-btn">
+                        <i class="fas fa-user-check"></i> Check In Student
+                    </button>
+                    <button class="btn-primary btn-primary-lg btn-primary-inverted" id="register-student-btn">
+                        <i class="fas fa-user-plus"></i> Register New Student
+                    </button>
+                </div>
                 <div class="date-picker-container">
                     <label for="checkin-date" class="date-label">
                         <i class="fas fa-calendar-alt"></i> Check-In Date:
