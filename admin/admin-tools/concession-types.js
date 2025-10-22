@@ -4,6 +4,7 @@
 let currentUser = null;
 let currentEditId = null;
 let packageToDelete = null;
+let editingPackageId = null; // Track which package is being edited
 
 // Wait for Firebase to initialize
 window.addEventListener('load', () => {
@@ -50,10 +51,14 @@ function showPage(user) {
   // Setup logout button
   document.getElementById('logout-btn').addEventListener('click', handleLogout);
   
+  // IMPORTANT: Override handleSaveConcession BEFORE initializing the modal
+  // so the event listeners attach to our overridden version
+  overrideHandleSaveConcession();
+  
   // Initialize the existing add concession modal
   initializeAddConcessionModal();
   
-  // Setup modal handlers
+  // Setup other modal handlers
   setupModalHandlers();
   
   console.log('Concession Types Manager loaded for user:', user.email);
@@ -220,6 +225,35 @@ function createPackageCard(id, pkg) {
 // Modal Handlers
 // ========================================
 
+// ========================================
+// Override handleSaveConcession for Edit Support
+// ========================================
+
+function overrideHandleSaveConcession() {
+  // Store reference to the original save handler before we override it
+  const originalHandleSave = window.handleSaveConcession;
+  
+  // Override handleSaveConcession globally to support both add and edit modes
+  window.handleSaveConcession = async function() {
+    console.log('handleSaveConcession called, editingPackageId:', editingPackageId);
+    // Check if we're in edit mode
+    if (editingPackageId) {
+      console.log('Edit mode - calling handleUpdatePackage');
+      await handleUpdatePackage(editingPackageId);
+    } else {
+      console.log('Add mode - calling original handler');
+      // Normal add mode - call the original handler
+      await originalHandleSave.call(this);
+      // Reload the package list after adding
+      await loadPackages();
+    }
+  };
+}
+
+// ========================================
+// Modal Handlers
+// ========================================
+
 function setupModalHandlers() {
   const deleteModal = document.getElementById('delete-modal');
   
@@ -236,19 +270,6 @@ function setupModalHandlers() {
   deleteModal.addEventListener('click', (e) => {
     if (e.target === deleteModal) closeDeleteModal();
   });
-  
-  // Override the handleSaveConcession to support both add and edit modes
-  const originalHandleSave = window.handleSaveConcession;
-  window.handleSaveConcession = async function() {
-    // Check if we're in edit mode
-    if (editingPackageId) {
-      await handleUpdatePackage(editingPackageId);
-    } else {
-      // Normal add mode - use original handler
-      await originalHandleSave();
-      loadPackages(); // Reload the package list after adding
-    }
-  };
   
   // Override the close handler to reset edit mode
   const originalCloseModal = window.closeAddConcessionModal;
@@ -277,8 +298,6 @@ function setupModalHandlers() {
 // Edit Package - Extends the existing modal for edit mode
 // ========================================
 
-let editingPackageId = null; // Track which package is being edited
-
 async function editPackage(id) {
   try {
     const doc = await db.collection('concessionPackages').doc(id).get();
@@ -290,6 +309,7 @@ async function editPackage(id) {
     
     const pkg = doc.data();
     editingPackageId = id; // Store the ID we're editing
+    console.log('Edit mode activated, editingPackageId set to:', editingPackageId);
     
     // Open the existing add modal
     openAddConcessionModal();
@@ -339,22 +359,22 @@ async function handleUpdatePackage(packageId) {
     
     // Validate (same validation as the original modal)
     if (!name || !numberOfClasses || !price || !expiryMonths) {
-      alert('Please fill in all required fields');
+      showStatusMessage('Please fill in all required fields', 'error');
       return;
     }
     
     if (numberOfClasses < 1) {
-      alert('Number of classes must be at least 1');
+      showStatusMessage('Number of classes must be at least 1', 'error');
       return;
     }
     
     if (price < 0) {
-      alert('Price cannot be negative');
+      showStatusMessage('Price cannot be negative', 'error');
       return;
     }
     
     if (expiryMonths < 1) {
-      alert('Expiry must be at least 1 month');
+      showStatusMessage('Expiry must be at least 1 month', 'error');
       return;
     }
     
@@ -383,11 +403,11 @@ async function handleUpdatePackage(packageId) {
     loadPackages();
     
     // Show success message
-    showStatusUpdateSuccess('updated');
+    showStatusMessage(`Package "${name}" updated successfully!`, 'success');
     
   } catch (error) {
     console.error('Error updating package:', error);
-    alert('Failed to update package: ' + error.message);
+    showStatusMessage('Failed to update package: ' + error.message, 'error');
   } finally {
     saveBtn.disabled = false;
     saveBtn.innerHTML = originalText;
@@ -444,6 +464,29 @@ function showLoading(show) {
 
 function showError(message) {
   alert(message);
+}
+
+function showStatusMessage(message, type = 'success') {
+  const dragHint = document.getElementById('drag-hint');
+  if (!dragHint) {
+    // Fallback to alert if drag hint element doesn't exist
+    alert(message);
+    return;
+  }
+  
+  const originalHTML = dragHint.innerHTML;
+  const originalColor = dragHint.style.color;
+  
+  const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+  const color = type === 'success' ? 'var(--admin-success)' : 'var(--admin-error)';
+  
+  dragHint.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+  dragHint.style.color = color;
+  
+  setTimeout(() => {
+    dragHint.innerHTML = originalHTML;
+    dragHint.style.color = originalColor;
+  }, 3000);
 }
 
 function escapeHtml(text) {

@@ -4,6 +4,26 @@
  */
 
 /**
+ * Helper function to show messages - works in both contexts
+ */
+function showMessage(message, type = 'success') {
+    // Try showSnackbar first (student-database context)
+    if (typeof showSnackbar === 'function') {
+        showSnackbar(message, type);
+        return;
+    }
+    
+    // Try showStatusMessage (admin-tools context)
+    if (typeof showStatusMessage === 'function') {
+        showStatusMessage(message, type);
+        return;
+    }
+    
+    // Fallback to alert
+    alert(message);
+}
+
+/**
  * Initialize the add concession package modal HTML
  */
 function initializeAddConcessionModal() {
@@ -210,22 +230,22 @@ async function handleSaveConcession() {
         
         // Validate
         if (!name || !numberOfClasses || !price || !expiryMonths) {
-            showSnackbar('Please fill in all required fields', 'error');
+            showMessage('Please fill in all required fields', 'error');
             return;
         }
         
         if (numberOfClasses < 1) {
-            showSnackbar('Number of classes must be at least 1', 'error');
+            showMessage('Number of classes must be at least 1', 'error');
             return;
         }
         
         if (price < 0) {
-            showSnackbar('Price cannot be negative', 'error');
+            showMessage('Price cannot be negative', 'error');
             return;
         }
         
         if (expiryMonths < 1) {
-            showSnackbar('Expiry must be at least 1 month', 'error');
+            showMessage('Expiry must be at least 1 month', 'error');
             return;
         }
         
@@ -239,16 +259,21 @@ async function handleSaveConcession() {
         // Check if ID already exists
         const existingDoc = await db.collection('concessionPackages').doc(docId).get();
         if (existingDoc.exists) {
-            showSnackbar('A package with this name already exists', 'error');
+            showMessage('A package with this name already exists', 'error');
             saveBtn.disabled = false;
             saveBtn.innerHTML = originalText;
             return;
         }
         
         // Get the highest display order for new package
-        const existingPackages = await loadConcessionPackages();
-        const maxDisplayOrder = existingPackages.reduce((max, pkg) => 
-            Math.max(max, pkg.displayOrder || 0), 0);
+        const existingPackagesSnapshot = await db.collection('concessionPackages').get();
+        let maxDisplayOrder = 0;
+        existingPackagesSnapshot.forEach(doc => {
+            const displayOrder = doc.data().displayOrder || 0;
+            if (displayOrder > maxDisplayOrder) {
+                maxDisplayOrder = displayOrder;
+            }
+        });
         
         // Create package object
         const packageData = {
@@ -267,17 +292,24 @@ async function handleSaveConcession() {
         await db.collection('concessionPackages').doc(docId).set(packageData);
         
         // Success!
-        showSnackbar(`Concession package "${name}" created successfully!`, 'success');
+        showMessage(`Concession package "${name}" created successfully!`, 'success');
         
         // Close add modal
         closeAddConcessionModal();
         
-        // Reload packages in purchase modal
-        await populatePackageOptions();
+        // Reload packages in purchase modal (if function exists)
+        if (typeof populatePackageOptions === 'function') {
+            await populatePackageOptions();
+        }
+        
+        // Reload packages in admin tools (if function exists)
+        if (typeof loadPackages === 'function') {
+            await loadPackages();
+        }
         
     } catch (error) {
         console.error('Error creating concession package:', error);
-        showSnackbar('Failed to create concession package: ' + error.message, 'error');
+        showMessage('Failed to create concession package: ' + error.message, 'error');
     } finally {
         // Reset button
         saveBtn.disabled = false;

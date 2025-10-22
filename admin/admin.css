@@ -232,7 +232,7 @@ html, body {
 .admin-header {
   background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
   color: white;
-  padding: 20px 20px 0;
+  padding: 20px 20px 12px;
   box-shadow: 0 4px 12px var(--admin-shadow);
 }
 
