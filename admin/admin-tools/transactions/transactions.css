@@ -1,0 +1,504 @@
+/**
+ * Transactions Page Styles
+ */
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #9b59b6;
+    --text-primary: #2c3e50;
+    --text-muted: #7f8c8d;
+    --background-primary: #ffffff;
+    --background-secondary: #f8f9fa;
+    --border-color: #dfe6e9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--background-secondary);
+    color: var(--text-primary);
+}
+
+#main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Filters Section */
+.filters-container {
+    background: var(--background-primary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.filter-group label i {
+    margin-right: 0.25rem;
+    color: var(--text-muted);
+}
+
+.filter-input {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    background: var(--background-primary);
+    transition: border-color 0.2s;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+/* Summary Row */
+.summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.summary-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Table Styles */
+.table-container {
+    background: var(--background-primary);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#transactions-table thead {
+    background: var(--primary-color);
+    color: white;
+}
+
+#transactions-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+#transactions-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+#transactions-table th.sortable:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sort-icon {
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    font-size: 0.8rem;
+}
+
+.sort-icon.active {
+    opacity: 1;
+}
+
+#transactions-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+#transactions-table tbody tr:hover {
+    background: var(--background-secondary);
+}
+
+#transactions-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+/* Type Badge */
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.type-badge.concession {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.type-badge.cash {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.type-badge.eftpos {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.type-badge.bank-transfer {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+/* Amount Styling */
+.amount-cell {
+    font-weight: 600;
+    color: var(--success-color);
+}
+
+.payment-amount {
+    font-weight: 500;
+}
+
+.payment-amount.empty {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-icon {
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.btn-icon:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--background-secondary);
+}
+
+.btn-icon.btn-delete:hover {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.btn-invoice {
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+    color: var(--text-muted);
+}
+
+.btn-invoice:hover {
+    transform: scale(1.1);
+}
+
+.btn-invoice.invoiced {
+    color: var(--info-color);
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+    background: var(--background-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* Empty State */
+#empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+
+#empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+#empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--background-primary);
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-content h3 i {
+    color: var(--warning-color);
+}
+
+.modal-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* Snackbar */
+.snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 1rem 1.5rem;
+    position: fixed;
+    z-index: 1001;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.snackbar.show {
+    visibility: visible;
+    animation: fadein 0.3s, fadeout 0.3s 2.7s;
+}
+
+.snackbar.success {
+    background-color: var(--success-color);
+}
+
+.snackbar.error {
+    background-color: var(--danger-color);
+}
+
+@keyframes fadein {
+    from { bottom: 0; opacity: 0; }
+    to { bottom: 30px; opacity: 1; }
+}
+
+@keyframes fadeout {
+    from { bottom: 30px; opacity: 1; }
+    to { bottom: 0; opacity: 0; }
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 1rem;
+}
+
+.spinner {
+    border: 4px solid var(--background-secondary);
+    border-top: 4px solid var(--secondary-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        padding: 1.5rem;
+    }
+    
+    #transactions-table {
+        font-size: 0.9rem;
+    }
+    
+    #transactions-table th,
+    #transactions-table td {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .filters-row {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .filter-actions button {
+        flex: 1;
+    }
+    
+    .summary-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    #transactions-table {
+        min-width: 800px;
+    }
+}
