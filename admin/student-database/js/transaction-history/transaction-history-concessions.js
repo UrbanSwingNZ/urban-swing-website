@@ -115,16 +115,34 @@ function displayConcessionInfo(blocks, stats, studentId) {
                 ? `<button class="btn-delete-block" disabled title="Cannot delete - concession has been used"><i class="fas fa-trash"></i> Delete</button>`
                 : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
             
+            // Get existing notes
+            const existingNotes = block.lockNotes || '';
+            
             html += `
                 <div class="concession-item expired ${isLocked ? 'locked' : ''}">
-                    <div class="concession-info">
-                        <strong>${block.remainingQuantity} of ${block.originalQuantity} classes unused</strong>
-                        ${lockBadge}
-                    </div>
-                    <div class="concession-details">
-                        <span><i class="fas fa-calendar-times"></i> Expired: ${formatDate(expiryDate)}</span>
-                        <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
-                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
+                    <div class="concession-content">
+                        <div class="concession-left">
+                            <div class="concession-info">
+                                <strong>${block.remainingQuantity} of ${block.originalQuantity} classes unused</strong>
+                                ${lockBadge}
+                            </div>
+                            <div class="concession-details">
+                                <span><i class="fas fa-calendar-times"></i> Expired: ${formatDate(expiryDate)}</span>
+                                <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
+                                <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="concession-notes">
+                            <label for="notes-${block.id}">Notes:</label>
+                            <textarea 
+                                id="notes-${block.id}" 
+                                class="concession-notes-input" 
+                                data-block-id="${block.id}"
+                                placeholder="Add notes about why this concession is locked/unlocked..."
+                                rows="4"
+                            >${existingNotes}</textarea>
+                            <span class="notes-save-status" id="notes-status-${block.id}"></span>
+                        </div>
                     </div>
                     <div class="concession-actions">
                         ${lockButton}
@@ -220,6 +238,49 @@ function displayConcessionInfo(blocks, stats, studentId) {
             });
             
             modal.style.display = 'flex';
+        });
+    });
+    
+    // Add event listeners for notes textareas with debouncing
+    const notesDebounceTimers = {};
+    contentEl.querySelectorAll('.concession-notes-input').forEach(textarea => {
+        textarea.addEventListener('input', (e) => {
+            const blockId = textarea.dataset.blockId;
+            const notes = textarea.value;
+            const statusEl = document.getElementById(`notes-status-${blockId}`);
+            
+            // Clear existing timer for this textarea
+            if (notesDebounceTimers[blockId]) {
+                clearTimeout(notesDebounceTimers[blockId]);
+            }
+            
+            // Show "saving..." indicator
+            if (statusEl) {
+                statusEl.textContent = 'Saving...';
+                statusEl.className = 'notes-save-status saving';
+            }
+            
+            // Set new timer to save after user stops typing (1 second delay)
+            notesDebounceTimers[blockId] = setTimeout(async () => {
+                try {
+                    await updateConcessionBlockNotes(blockId, notes);
+                    if (statusEl) {
+                        statusEl.textContent = 'Saved';
+                        statusEl.className = 'notes-save-status saved';
+                        // Clear the saved message after 2 seconds
+                        setTimeout(() => {
+                            statusEl.textContent = '';
+                            statusEl.className = 'notes-save-status';
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('Error saving notes:', error);
+                    if (statusEl) {
+                        statusEl.textContent = 'Error saving';
+                        statusEl.className = 'notes-save-status error';
+                    }
+                }
+            }, 1000);
         });
     });
 }
