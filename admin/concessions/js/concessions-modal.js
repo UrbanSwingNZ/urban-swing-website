@@ -99,6 +99,14 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
     datePicker.value = today.toISOString().split('T')[0];
     datePicker.max = today.toISOString().split('T')[0]; // Prevent future dates
     
+    // Show/hide Add Package button based on admin status
+    const addPackageBtn = document.querySelector('.btn-add-package');
+    if (addPackageBtn) {
+        const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+        const isAdmin = user && user.email === 'dance@urbanswing.co.nz';
+        addPackageBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+    }
+    
     // Load packages and populate dropdown
     await populatePackageOptions();
     
