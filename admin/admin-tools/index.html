@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Tools - Urban Swing</title>
+    <link rel="stylesheet" href="../admin.css">
+    <link rel="stylesheet" href="admin-tools.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Admin Tools Page -->
+    <div id="admin-tools-container" class="dashboard-container">
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <a href="../index.html" class="back-button" title="Back to Admin Dashboard">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="page-heading">
+                    Admin Tools
+                </h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="tools-intro">
+                <p>Administrative utilities for managing your Urban Swing database and settings</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Database Backup Tool -->
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Database Backup</h3>
+                    <p>Export your Firestore database to JSON files for backup and archival purposes</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-check"></i> Select specific collections</li>
+                        <li><i class="fas fa-check"></i> Creates timestamped ZIP files</li>
+                        <li><i class="fas fa-check"></i> Includes all document data</li>
+                    </ul>
+                    <button class="tool-button" onclick="window.location.href='backup-database.html'">
+                        <i class="fas fa-download"></i> Open Backup Tool
+                    </button>
+                </div>
+
+                <!-- Concession Types Manager -->
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>Concession Types</h3>
+                    <p>Add, edit, and manage concession package types and pricing</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-check"></i> Create new concession packages</li>
+                        <li><i class="fas fa-check"></i> Edit pricing and quantities</li>
+                        <li><i class="fas fa-check"></i> Enable/disable packages</li>
+                    </ul>
+                    <button class="tool-button" onclick="window.location.href='concession-types.html'">
+                        <i class="fas fa-ticket-alt"></i> Manage Concessions
+                    </button>
+                </div>
+
+                <!-- More tools can be added here -->
+                <div class="tool-card tool-card-placeholder">
+                    <div class="tool-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h3>More Tools Coming Soon</h3>
+                    <p>Additional administrative tools will be added here as needed</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-lightbulb"></i> Data migration tools</li>
+                        <li><i class="fas fa-lightbulb"></i> Reporting utilities</li>
+                        <li><i class="fas fa-lightbulb"></i> System maintenance</li>
+                    </ul>
+                    <button class="tool-button" disabled>
+                        <i class="fas fa-clock"></i> Coming Soon
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Admin Tools v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Firebase Config & Admin Tools Logic -->
+    <script src="../../config/firebase-config.js"></script>
+    <script src="admin-tools.js"></script>
+</body>
+</html>

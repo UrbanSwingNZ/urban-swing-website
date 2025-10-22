@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Student Check-In - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../admin.css">
+    <link rel="stylesheet" href="../admin-modals.css">
+    <link rel="stylesheet" href="../concessions/concessions.css">
+    <link rel="stylesheet" href="check-in.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="dashboard-container" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <a href="../index.html" title="Back to Dashboard" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <img src="../../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
+                <h1 class="page-heading">Student Check-In</h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="checkin-main">
+            <!-- Check-In Header with Date Picker -->
+            <div class="checkin-header">
+                <button class="btn-primary btn-primary-lg" id="checkin-btn">
+                    <i class="fas fa-user-check"></i> Check In Student
+                </button>
+                <div class="date-picker-container">
+                    <label for="checkin-date" class="date-label">
+                        <i class="fas fa-calendar-alt"></i> Check-In Date:
+                    </label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="checkin-date" class="date-input" />
+                        <button type="button" class="calendar-button" aria-label="Open calendar">
+                            <i class="fas fa-calendar-day"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Check-Ins -->
+            <div class="checkins-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2><span id="checkin-date-display">Today's</span> Check-Ins</h2>
+                        <span class="checkin-count" id="checkin-count">0</span>
+                    </div>
+                    <button class="btn-secondary" id="view-history-btn">
+                        <i class="fas fa-history"></i> View History
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h3>No Check-Ins Yet</h3>
+                    <p>Click "Check In Student" to get started.</p>
+                </div>
+
+                <!-- Check-Ins List -->
+                <div id="checkins-list" class="checkins-list" style="display: none;">
+                    <!-- Today's check-ins will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Check-In Modal -->
+    <div id="checkin-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-check"></i> Check In Student</h3>
+                <button class="modal-close" onclick="closeCheckinModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Student Selection (if opened without search) -->
+                <div id="student-selection" class="form-group">
+                    <label><i class="fas fa-user"></i> Student</label>
+                    <div class="search-input-wrapper">
+                        <input type="text" id="modal-student-search" placeholder="Search student name..." class="form-control" autocomplete="off">
+                        <button type="button" class="clear-search-btn" id="clear-modal-search" style="display: none;">&times;</button>
+                        <div id="modal-search-results" class="search-results-modal" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <!-- Selected Student Info -->
+                <div id="selected-student-info" style="display: none;">
+                    <div class="student-info-card">
+                        <h4 id="selected-student-name">Student Name</h4>
+                        <p id="selected-student-email">email@example.com</p>
+                        <input type="hidden" id="selected-student-id">
+                    </div>
+
+                    <!-- Concession Balance -->
+                    <div id="concession-info" class="concession-info">
+                        <div class="concession-header">
+                            <i class="fas fa-ticket-alt"></i>
+                            <strong>Concession Balance:</strong>
+                            <span id="concession-balance">0</span>
+                        </div>
+                        <div id="concession-blocks" class="concession-blocks">
+                            <!-- Concession block details will be shown here -->
+                        </div>
+                    </div>
+
+                    <!-- Purchase Concessions -->
+                    <div class="purchase-section">
+                        <button type="button" class="btn-secondary btn-purchase" id="purchase-concessions-btn">
+                            <i class="fas fa-shopping-cart"></i> Purchase Concessions
+                        </button>
+                    </div>
+
+                    <!-- Entry Type Selection -->
+                    <div class="form-group">
+                        <label><i class="fas fa-sign-in-alt"></i> Entry Type</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="concession" id="entry-concession">
+                                <span class="radio-label">Use Concession</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="casual" id="entry-casual">
+                                <span class="radio-label">Casual Entry ($15)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="free" id="entry-free">
+                                <span class="radio-label">Free Entry</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method (for casual) -->
+                    <div id="payment-section" class="form-group" style="display: none;">
+                        <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                        <select id="payment-method" class="form-control">
+                            <option value="">Select payment method</option>
+                            <option value="cash">Cash</option>
+                            <option value="eftpos">EFTPOS</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <!-- Free Entry Reason (for free entry) -->
+                    <div id="free-entry-section" class="form-group" style="display: none;">
+                        <label><i class="fas fa-gift"></i> Free Entry Reason</label>
+                        <select id="free-entry-reason" class="form-control">
+                            <option value="">Select reason</option>
+                            <option value="crew-member">Crew Member</option>
+                            <option value="promotion">Promotion</option>
+                            <option value="special-guest">Special Guest</option>
+                        </select>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label><i class="fas fa-sticky-note"></i> Notes (Optional)</label>
+                        <textarea id="checkin-notes" class="form-control" rows="3" placeholder="Add any notes about this check-in..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeCheckinModal()">Cancel</button>
+                <button type="button" class="btn-primary" id="confirm-checkin-btn" disabled>
+                    <i class="fas fa-check"></i> Complete Check-In
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Concessions Modal is now dynamically created by concessions-modal.js -->
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Check-In History</h3>
+                <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="history-filters">
+                    <div class="filter-group date-range-group">
+                        <label>Date Range:</label>
+                        <div class="date-range-inputs">
+                            <div class="date-picker-container">
+                                <span class="date-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    From:
+                                </span>
+                                <div class="date-input-wrapper">
+                                    <input type="date" id="history-date-from" class="date-input">
+                                    <button class="calendar-button" type="button" aria-label="Open calendar">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="date-picker-container">
+                                <span class="date-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    To:
+                                </span>
+                                <div class="date-input-wrapper">
+                                    <input type="date" id="history-date-to" class="date-input">
+                                    <button class="calendar-button" type="button" aria-label="Open calendar">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label>Student:</label>
+                        <div class="student-search-wrapper">
+                            <input type="text" id="history-student-search" class="form-control" placeholder="All Students" autocomplete="off">
+                            <button type="button" class="clear-search-btn" id="clear-history-search" style="display: none;">&times;</button>
+                            <div id="history-search-results" class="search-results-dropdown" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-results">
+                    <p class="results-count" id="history-count">0 check-ins found</p>
+                    <div id="history-list" class="history-list">
+                        <!-- History items will be populated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeHistoryModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash"></i> <span id="delete-modal-title">Confirm Delete</span></h3>
+            </div>
+            <div class="modal-body">
+                <p id="delete-modal-message">Are you sure you want to delete this item?</p>
+                <div class="student-info-delete" id="delete-modal-info">
+                    <!-- Additional info will be inserted here -->
+                </div>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn-danger" id="confirm-delete-btn">
+                    <i class="fas fa-trash"></i> <span id="delete-modal-btn-text">Delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config & Scripts -->
+    <script src="../../config/firebase-config.js"></script>
+    
+    <!-- Check-In Modules (load in dependency order) -->
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/date-manager.js"></script>
+    <script src="js/students.js"></script>
+    <script src="js/concessions.js"></script>
+    
+    <!-- Reusable Concessions Module (after students.js for dependencies) -->
+    <script src="../concessions/js/concessions-data.js"></script>
+    <script src="../concessions/js/concessions-modal.js"></script>
+    <script src="../concessions/js/concessions-admin.js"></script>
+    
+    <!-- Continue Check-In Modules -->
+    <!-- Concession blocks management (before check-in modules that use it) -->
+    <!-- Load in order: balance (used by all), then others -->
+    <script src="js/concession-blocks-balance.js"></script>
+    <script src="js/concession-blocks-create.js"></script>
+    <script src="js/concession-blocks-query.js"></script>
+    <script src="js/concession-blocks-usage.js"></script>
+    <script src="js/concession-blocks-lock.js"></script>
+    <script src="js/concession-blocks-delete.js"></script>
+    <script src="js/concession-blocks-maintenance.js"></script>
+    
+    <!-- Check-in modal modules (load in dependency order) -->
+    <script src="js/checkin-state.js"></script>
+    <script src="js/checkin-form.js"></script>
+    <script src="js/checkin-student-search.js"></script>
+    <script src="js/checkin-concession-display.js"></script>
+    <script src="js/checkin-firestore.js"></script>
+    <script src="js/checkin-modal.js"></script>
+    
+    <!-- History modal modules (load in dependency order) -->
+    <script src="js/history-state.js"></script>
+    <script src="js/history-filters.js"></script>
+    <script src="js/history-student-search.js"></script>
+    <script src="js/history-firestore.js"></script>
+    <script src="js/history-display.js"></script>
+    <script src="js/history-modal.js"></script>
+    
+    <script src="js/todays-checkins.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

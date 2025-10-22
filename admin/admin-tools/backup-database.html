@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Database Backup - Urban Swing Admin Tools</title>
+    <link rel="stylesheet" href="../admin.css">
+    <link rel="stylesheet" href="backup-database.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Database Backup Page -->
+    <div id="backup-container" class="dashboard-container">
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <a href="index.html" class="back-button" title="Back to Admin Tools">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="page-heading">
+                    Database Backup
+                </h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="page-intro">
+                <p>Export Firestore collections to JSON files for backup and archival purposes</p>
+            </div>
+
+            <div class="backup-container">
+                <div class="info">
+            <h3><i class="fas fa-info-circle"></i> About This Tool</h3>
+            <p>This tool creates a complete backup of your Firestore database by exporting collections to a ZIP file.</p>
+            <ul>
+                <li>Select which collections to backup</li>
+                <li>Creates a single ZIP file containing all selected collections as JSON files</li>
+                <li>ZIP file is timestamped for easy version tracking (e.g., backup-2025-10-22-15-30-00.zip)</li>
+                <li>Backups can be extracted and used for restoration or migration</li>
+            </ul>
+        </div>
+
+        <div class="select-all">
+            <input type="checkbox" id="select-all-checkbox">
+            <label for="select-all-checkbox">Select All Collections</label>
+        </div>
+
+        <div class="collections-grid" id="collections-grid">
+            <!-- Collections will be populated here -->
+        </div>
+
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <span class="stat-value" id="total-collections">0</span>
+                <span class="stat-label">Collections</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="total-documents">0</span>
+                <span class="stat-label">Documents</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="backup-size">0 KB</span>
+                <span class="stat-label">Estimated Size</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="backup-selected-btn" class="btn">
+                <i class="fas fa-download"></i> Backup Selected Collections
+            </button>
+            <button id="backup-all-btn" class="btn btn-secondary">
+                <i class="fas fa-database"></i> Backup Everything
+            </button>
+        </div>
+
+        <div id="status">
+            <div id="status-message"></div>
+            <div class="progress" id="progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%;">0%</div>
+                </div>
+                <div id="progress-text"></div>
+            </div>
+        </div>
+
+        <div class="backup-info" id="backup-info" style="display: none;">
+            <h3 style="margin-bottom: 10px;"><i class="fas fa-file-archive"></i> Backup Complete</h3>
+            <p><strong>Timestamp:</strong> <span id="backup-timestamp"></span></p>
+            <p><strong>Collections Backed Up:</strong> <span id="backup-collections"></span></p>
+            <p><strong>Total Documents:</strong> <span id="backup-docs"></span></p>
+            <p><strong>ZIP File Downloaded:</strong> <span id="backup-files"></span></p>
+        </div>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Database Backup v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Firebase Config & Logic -->
+    <script src="../../config/firebase-config.js"></script>
+    
+    <!-- JSZip for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script>
+        // Function definitions first
+        function showStatus(type, message) {
+            const status = document.getElementById('status');
+            const statusMessage = document.getElementById('status-message');
+            
+            status.className = `show ${type}`;
+            statusMessage.innerHTML = message;
+        }
+
+        function updateProgress(current, total, text) {
+            const progressDiv = document.getElementById('progress');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            
+            progressDiv.style.display = 'block';
+            
+            const percentage = Math.round((current / total) * 100);
+            progressFill.style.width = `${percentage}%`;
+            progressFill.textContent = `${percentage}%`;
+            progressText.textContent = text;
+        }
+
+        function updateStats() {
+            const statsDiv = document.getElementById('stats');
+            const totalDocs = Array.from(selectedCollections).reduce((sum, name) => sum + collectionCounts[name], 0);
+            const estimatedSize = Math.round(totalDocs * 2); // Rough estimate: 2KB per document
+
+            document.getElementById('total-collections').textContent = selectedCollections.size;
+            document.getElementById('total-documents').textContent = totalDocs;
+            document.getElementById('backup-size').textContent = estimatedSize > 1024 
+                ? `${(estimatedSize / 1024).toFixed(1)} MB` 
+                : `${estimatedSize} KB`;
+
+            statsDiv.style.display = selectedCollections.size > 0 ? 'grid' : 'none';
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('select-all-checkbox');
+            const allCheckboxes = document.querySelectorAll('.collection-checkbox');
+            const checkedCount = Array.from(allCheckboxes).filter(cb => cb.checked).length;
+            
+            selectAllCheckbox.checked = checkedCount === allCheckboxes.length;
+            selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < allCheckboxes.length;
+        }
+
+        // Wait for Firebase to be ready (db and auth are initialized in firebase-config.js)
+        window.addEventListener('load', () => {
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase SDK not loaded');
+                showStatus('error', 'Firebase SDK failed to load. Please check your internet connection.');
+                return;
+            }
+
+            if (!db || !auth) {
+                console.error('Firebase not initialized');
+                showStatus('error', 'Firebase initialization failed. Please refresh the page.');
+                return;
+            }
+
+            console.log('Firebase ready');
+            initializeAuth();
+        });
+
+        const COLLECTIONS = [
+            { name: 'students', label: 'Students', icon: 'fa-users' },
+            { name: 'checkins', label: 'Check-ins', icon: 'fa-clipboard-check' },
+            { name: 'transactions', label: 'Transactions', icon: 'fa-receipt' },
+            { name: 'concessionBlocks', label: 'Concession Blocks', icon: 'fa-ticket-alt' },
+            { name: 'concessionPackages', label: 'Concession Packages', icon: 'fa-box' }
+        ];
+
+        let collectionCounts = {};
+        let selectedCollections = new Set();
+        let currentUser = null;
+
+        function initializeAuth() {
+            showLoading(true);
+
+            auth.onAuthStateChanged((user) => {
+                showLoading(false);
+                
+                if (user) {
+                    currentUser = user;
+                    showPage(user);
+                    loadCollections();
+                } else {
+                    // Redirect to admin login
+                    window.location.href = '../index.html';
+                }
+            });
+        }
+
+        function showPage(user) {
+            // Display user email
+            document.getElementById('user-email').textContent = user.email;
+            
+            // Setup logout button
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
+            console.log('Database Backup page loaded for user:', user.email);
+        }
+
+        async function handleLogout() {
+            showLoading(true);
+            
+            try {
+                await auth.signOut();
+                console.log('Logout successful');
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Failed to logout. Please try again.');
+                showLoading(false);
+            }
+        }
+
+        function showLoading(show) {
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = show ? 'flex' : 'none';
+        }
+
+        async function loadCollections() {
+            console.log('Loading collections...');
+            const grid = document.getElementById('collections-grid');
+            grid.innerHTML = '<p style="padding: 20px; text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading collections...</p>';
+
+            try {
+                // Get counts for each collection
+                for (const collection of COLLECTIONS) {
+                    console.log(`Fetching count for ${collection.name}...`);
+                    const snapshot = await db.collection(collection.name).get();
+                    collectionCounts[collection.name] = snapshot.size;
+                    console.log(`${collection.name}: ${snapshot.size} documents`);
+                }
+
+                console.log('Collection counts:', collectionCounts);
+
+                // Render collection cards
+                grid.innerHTML = '';
+                COLLECTIONS.forEach(collection => {
+                    const card = document.createElement('div');
+                    card.className = 'collection-card';
+                    card.innerHTML = `
+                        <label>
+                            <input type="checkbox" value="${collection.name}" class="collection-checkbox">
+                            <i class="fas ${collection.icon}"></i> ${collection.label}
+                        </label>
+                        <div class="collection-count">${collectionCounts[collection.name]} documents</div>
+                    `;
+                    
+                    const checkbox = card.querySelector('input');
+                    checkbox.addEventListener('change', (e) => {
+                        console.log(`Checkbox changed: ${collection.name} = ${e.target.checked}`);
+                        if (e.target.checked) {
+                            selectedCollections.add(collection.name);
+                            card.classList.add('selected');
+                        } else {
+                            selectedCollections.delete(collection.name);
+                            card.classList.remove('selected');
+                        }
+                        updateStats();
+                        updateSelectAllCheckbox();
+                    });
+
+                    card.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT') {
+                            checkbox.checked = !checkbox.checked;
+                            checkbox.dispatchEvent(new Event('change'));
+                        }
+                    });
+
+                    grid.appendChild(card);
+                });
+
+                console.log('Collection cards rendered');
+                updateStats();
+            } catch (error) {
+                console.error('Error loading collections:', error);
+                showStatus('error', 'Error loading collections: ' + error.message);
+                grid.innerHTML = `<p style="padding: 20px; text-align: center; color: #dc3545;">Error loading collections: ${error.message}</p>`;
+            }
+        }
+
+        document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
+            const checkboxes = document.querySelectorAll('.collection-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = e.target.checked;
+                cb.dispatchEvent(new Event('change'));
+            });
+        });
+
+        document.getElementById('backup-selected-btn').addEventListener('click', async () => {
+            if (selectedCollections.size === 0) {
+                alert('Please select at least one collection to backup.');
+                return;
+            }
+
+            await runBackup(Array.from(selectedCollections));
+        });
+
+        document.getElementById('backup-all-btn').addEventListener('click', async () => {
+            if (!confirm('This will backup ALL collections. Continue?')) {
+                return;
+            }
+
+            await runBackup(COLLECTIONS.map(c => c.name));
+        });
+
+        function downloadZip(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function runBackup(collectionsToBackup) {
+            try {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                let totalDocs = 0;
+
+                showStatus('loading', '<i class="fas fa-spinner fa-spin"></i> Starting backup...');
+                document.getElementById('backup-selected-btn').disabled = true;
+                document.getElementById('backup-all-btn').disabled = true;
+                document.getElementById('backup-info').style.display = 'none';
+
+                // Create a new ZIP file
+                const zip = new JSZip();
+
+                // Add metadata file
+                const metadata = {
+                    timestamp: new Date().toISOString(),
+                    timestampReadable: new Date().toLocaleString(),
+                    collections: collectionsToBackup,
+                    totalCollections: collectionsToBackup.length
+                };
+
+                for (let i = 0; i < collectionsToBackup.length; i++) {
+                    const collectionName = collectionsToBackup[i];
+                    updateProgress(i, collectionsToBackup.length, `Backing up ${collectionName}...`);
+
+                    const snapshot = await db.collection(collectionName).get();
+                    const data = [];
+
+                    snapshot.forEach(doc => {
+                        data.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+
+                    totalDocs += data.length;
+
+                    // Add collection to ZIP file
+                    zip.file(`${collectionName}.json`, JSON.stringify(data, null, 2));
+                }
+
+                // Update metadata with total documents
+                metadata.totalDocuments = totalDocs;
+                zip.file('backup-info.json', JSON.stringify(metadata, null, 2));
+
+                // Generate ZIP file
+                updateProgress(collectionsToBackup.length, collectionsToBackup.length, 'Creating ZIP file...');
+                const zipBlob = await zip.generateAsync({ 
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 9 }
+                });
+
+                // Download ZIP file
+                const zipFilename = `backup-${timestamp}.zip`;
+                downloadZip(zipBlob, zipFilename);
+
+                updateProgress(collectionsToBackup.length, collectionsToBackup.length, 'Backup complete!');
+                
+                showStatus('success', `<i class="fas fa-check-circle"></i> Backup completed successfully!`);
+
+                // Show backup info
+                const infoDiv = document.getElementById('backup-info');
+                document.getElementById('backup-timestamp').textContent = new Date().toLocaleString();
+                document.getElementById('backup-collections').textContent = collectionsToBackup.join(', ');
+                document.getElementById('backup-docs').textContent = totalDocs.toLocaleString();
+                document.getElementById('backup-files').textContent = zipFilename;
+                infoDiv.style.display = 'block';
+
+                document.getElementById('backup-selected-btn').disabled = false;
+                document.getElementById('backup-all-btn').disabled = false;
+
+            } catch (error) {
+                console.error('Backup error:', error);
+                showStatus('error', `<i class="fas fa-exclamation-circle"></i> Backup failed: ${error.message}`);
+                document.getElementById('backup-selected-btn').disabled = false;
+                document.getElementById('backup-all-btn').disabled = false;
+            }
+        }
+
+        // ========================================
+        // Auto-logout on Inactivity (30 minutes)
+        // ========================================
+
+        let inactivityTimer;
+        const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            
+            if (auth.currentUser) {
+                inactivityTimer = setTimeout(() => {
+                    console.log('Auto-logout due to inactivity');
+                    auth.signOut();
+                    alert('You have been logged out due to inactivity.');
+                }, INACTIVITY_TIMEOUT);
+            }
+        }
+
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach((event) => {
+            document.addEventListener(event, resetInactivityTimer, true);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+/* ========================================
+   MODAL STYLES
+   Base styles inherited from admin-modals.css
+   Only playlist-specific overrides here
+   ======================================== */
+
+/* Playlist Manager specific: display handling for jQuery show/hide */
+.modal[style*="display: block"],
+.modal[style*="display: flex"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 768px) {
+  .modal[style*="display: block"],
+  .modal[style*="display: flex"] {
+    align-items: flex-start !important;
+    padding-top: 60px;
+  }
+}
+
+/* Playlist Manager modal content max-width override */
+.modal-content {
+  max-width: 500px;
+}
+
+#add-selected-tracks-btn:not(:disabled) {
+  opacity: 1 !important;
+  filter: none !important;
+}
