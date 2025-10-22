@@ -339,6 +339,10 @@
     align-items: center;
 }
 
+.checkin-actions .btn-purchase {
+    padding: 8px !important;
+}
+
 .btn-icon {
     padding: 8px 12px;
     background: transparent;
@@ -577,7 +581,7 @@ textarea.form-control {
     margin: 20px 0;
 }
 
-.btn-purchase {
+.purchase-section .btn-purchase {
     width: 100%;
     justify-content: center;
 }
