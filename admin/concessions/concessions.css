@@ -1,0 +1,199 @@
+/**
+ * concessions.css - Purchase Concessions Modal Styles
+ * Reusable modal styling for purchasing concessions
+ */
+
+/* Purchase Date Picker in Header */
+.purchase-date-picker {
+    background: var(--background-color);
+    border: 1px solid var(--admin-purple);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    color: var(--admin-purple);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    max-width: 150px;
+    font-weight: 500;
+}
+
+/* Style the calendar icon */
+.purchase-date-picker::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(28%) sepia(89%) saturate(3207%) hue-rotate(262deg) brightness(85%) contrast(95%);
+}
+
+.purchase-date-picker:hover {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+    background: rgba(138, 43, 226, 0.05);
+}
+
+.purchase-date-picker:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+    color: var(--admin-purple);
+}
+
+/* Adjust modal header to accommodate date picker */
+#purchase-concessions-modal .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#purchase-concessions-modal .modal-header h3 {
+    flex-grow: 1;
+}
+
+/* Purchase Summary */
+.purchase-summary {
+    background: var(--background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.summary-row strong {
+    color: var(--admin-purple);
+    font-size: 1.3rem;
+}
+
+/* Student Info Card in Purchase Modal */
+#purchase-concessions-modal .student-info-card {
+    background: var(--background-color);
+    border-left: 4px solid var(--admin-purple);
+    padding: 16px;
+    border-radius: 8px;
+}
+
+#purchase-concessions-modal .student-info-card h4 {
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+#purchase-concessions-modal .student-info-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Add Package Button */
+.btn-add-package {
+    background: transparent;
+    border: 1px solid var(--admin-purple);
+    color: var(--admin-purple);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-add-package:hover {
+    background: var(--admin-purple);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-add-package i {
+    font-size: 0.8rem;
+}
+
+/* Add Concession Modal Form Styles */
+#add-concession-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+#add-concession-modal .form-row .form-control {
+    min-width: 0; /* Allow inputs to shrink below content size */
+    width: 100%;
+}
+
+#add-concession-modal .form-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+#add-concession-modal .checkbox-group {
+    margin-top: 10px;
+    display: block; /* Ensure block layout for stacking */
+}
+
+#add-concession-modal .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+#add-concession-modal .checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+#add-concession-modal .checkbox-label span {
+    flex: 1;
+}
+
+#add-concession-modal .checkbox-group .form-hint {
+    display: block;
+    margin-top: 0;
+    margin-left: 26px; /* Align with checkbox text (18px checkbox + 8px gap) */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .purchase-date-picker {
+        font-size: 0.85rem;
+        padding: 5px 8px;
+        max-width: 130px;
+    }
+    
+    #purchase-concessions-modal .modal-header {
+        gap: 10px;
+    }
+    
+    .purchase-summary {
+        padding: 12px;
+    }
+    
+    .summary-row {
+        font-size: 1rem;
+    }
+    
+    .summary-row strong {
+        font-size: 1.2rem;
+    }
+    
+    #add-concession-modal .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn-add-package {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+}

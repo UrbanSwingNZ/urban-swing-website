@@ -1,0 +1,480 @@
+/* ========================================
+   ADMIN MODAL & BUTTON STYLES
+   Shared across all admin pages
+   ======================================== */
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    padding: 6px 10px;
+    background: transparent;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: var(--admin-error);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+}
+
+/* Dark mode button styles */
+@media (prefers-color-scheme: dark) {
+    .btn-secondary {
+        background: var(--admin-card-dark);
+        border-color: var(--border-color);
+    }
+    
+    .btn-secondary:hover {
+        background: #3a3a3a;
+    }
+}
+
+/* ========================================
+   MODAL STYLES
+   ======================================== */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--admin-card-light);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    overflow: hidden; /* Prevent content overflow */
+}
+
+@media (prefers-color-scheme: dark) {
+    .modal-content {
+        background: var(--admin-card-dark);
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.modal-header h2,
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    flex: 1;
+}
+
+.modal-header.error h3 {
+    color: var(--admin-error);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-header i {
+    font-size: 1.5rem;
+}
+
+.modal-close,
+.close {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover,
+.close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 30px;
+    color: var(--text-color);
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    min-height: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.modal-body p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-family: inherit;
+}
+
+.modal-footer {
+    padding: 20px 30px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   FORM STYLES (for modals)
+   ======================================== */
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+.form-group label i {
+    color: var(--admin-purple);
+    margin-right: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--admin-card-light);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    box-sizing: border-box;
+    min-width: 0; /* Allow inputs to shrink */
+}
+
+@media (prefers-color-scheme: dark) {
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="password"],
+    .form-group textarea,
+    .form-group select {
+        background: var(--admin-card-dark);
+    }
+}
+
+.form-group input[readonly],
+.form-group textarea[readonly],
+.form-group select[disabled] {
+    background: rgba(154, 22, 245, 0.05);
+    cursor: default;
+}
+
+.form-group input:not([readonly]):focus,
+.form-group textarea:not([readonly]):focus,
+.form-group select:not([disabled]):focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-group textarea::placeholder {
+    opacity: 0.5;
+}
+
+.checkbox-row {
+    margin-bottom: 15px;
+}
+
+.checkbox-group {
+    margin-bottom: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 0.9rem;
+}
+
+.checkbox-label span {
+    color: var(--text-color);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"]:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* ========================================
+   DUPLICATE WARNING STYLES
+   ======================================== */
+
+.duplicate-list {
+    background: rgba(154, 22, 245, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.duplicate-student {
+    padding: 12px;
+    background: var(--admin-card-light);
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .duplicate-student {
+        background: var(--admin-card-dark);
+    }
+}
+
+.duplicate-student:last-child {
+    margin-bottom: 0;
+}
+
+.duplicate-student strong {
+    display: block;
+    color: var(--admin-purple);
+    margin-bottom: 5px;
+}
+
+.duplicate-student p {
+    margin: 3px 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* ========================================
+   TIMESTAMP DISPLAY
+   ======================================== */
+
+.timestamps {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.8rem;
+    opacity: 0.6;
+    flex-wrap: wrap;
+}
+
+.timestamp-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.timestamp-item i {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.timestamp-label {
+    font-weight: 500;
+}
+
+.timestamp-item span:last-child {
+    color: var(--text-color);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 100%;
+        margin: 20px;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-header {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 15px 20px;
+        flex-direction: column;
+    }
+
+    .btn-secondary,
+    .modal-footer .btn-primary,
+    .modal-footer .btn-danger {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .timestamps {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+}
+
+/* ========================================
+   DELETE CONFIRMATION MODAL
+   Shared across admin pages
+   ======================================== */
+
+.modal-small {
+    max-width: 500px;
+}
+
+/* Delete modal should appear above other modals */
+#delete-modal {
+    z-index: 10000;
+}
+
+.text-muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-family: inherit;
+}

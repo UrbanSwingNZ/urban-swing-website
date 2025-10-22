@@ -1,0 +1,119 @@
+/* ========================================
+   SEARCH RESULTS STYLES
+   Track search results in modal
+   ======================================== */
+
+/* Modal search box should use form input styling */
+.modal-body .search-box {
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--admin-card-light);
+  padding: 12px 15px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-body .search-box {
+    background: var(--admin-card-dark);
+  }
+}
+
+.modal-body .search-box:focus-within {
+  border-color: var(--admin-purple);
+  box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+.modal-body .search-box input {
+  background: transparent;
+}
+
+.search-results-container {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--pm-card-bg);
+  padding: 20px;
+  text-align: center;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-results-container p {
+  margin: 0;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+/* When search results are present, reset container styling */
+.search-results-container:has(.search-result-item) {
+  padding: 0;
+  display: block;
+  text-align: left;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+  background: var(--pm-hover-bg);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--pm-purple);
+}
+
+.search-result-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--pm-border-light);
+}
+
+.search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-title {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-artist {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-duration {
+  color: #888;
+  font-size: 0.85rem;
+  min-width: 50px;
+  text-align: right;
+}
+
+.search-play-btn {
+  flex-shrink: 0;
+  margin-left: 0;
+}

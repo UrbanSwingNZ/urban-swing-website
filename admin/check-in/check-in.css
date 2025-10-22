@@ -1,0 +1,950 @@
+/* ========================================
+   CHECK-IN PAGE STYLES
+   Uses parent styles from admin.css and admin-modals.css
+   ======================================== */
+
+/* ========================================
+   MAIN LAYOUT
+   ======================================== */
+
+.checkin-main {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   HEADER SECTION
+   ======================================== */
+
+.checkin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Date Picker */
+.date-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(154, 22, 245, 0.2);
+}
+
+.date-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    white-space: nowrap;
+    margin: 0;
+}
+
+.date-label i {
+    color: var(--admin-purple);
+}
+
+.date-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.date-input {
+    padding: 8px 40px 8px 12px;
+    border: 1px solid rgba(154, 22, 245, 0.3);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 150px;
+    width: 100%;
+}
+
+.date-input:hover {
+    border-color: var(--admin-purple);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+/* Custom calendar button overlay */
+.calendar-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--admin-purple);
+    cursor: pointer;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.calendar-button i {
+    font-size: 1.1rem;
+}
+
+/* Webkit date picker styling - make native picker more visible */
+.date-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
+}
+
+/* Firefox date picker */
+.date-input::-moz-calendar-picker-indicator {
+    cursor: pointer;
+}
+
+/* Show hover state on custom button when hovering over input */
+.date-input-wrapper:hover .calendar-button {
+    color: white;
+    background: var(--admin-purple);
+}
+
+/* Button styles inherited from admin-modals.css */
+
+/* ========================================
+   SEARCH RESULTS DROPDOWN
+   ======================================== */
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: var(--background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: rgba(154, 22, 245, 0.05);
+}
+
+.search-result-name {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.search-result-email {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.search-result-balance {
+    font-size: 0.85rem;
+    color: var(--admin-purple);
+    margin-top: 4px;
+}
+
+.no-results {
+    padding: 16px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* ========================================
+   CHECK-INS SECTION
+   ======================================== */
+
+.checkins-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.checkin-count {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
+
+/* Check-Ins List */
+.checkins-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checkin-item:hover {
+    background-color: rgba(154, 22, 245, 0.05);
+}
+
+.checkin-info-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.checkin-check {
+    color: var(--admin-green);
+    font-size: 1.2rem;
+    margin-right: 16px;
+}
+
+.checkin-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.checkin-student {
+    min-width: 200px;
+}
+
+.checkin-name {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.checkin-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.checkin-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-icon {
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.btn-icon:hover {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+    transform: translateY(-2px);
+}
+
+.btn-icon i {
+    font-size: 0.9rem;
+}
+
+.btn-icon.btn-delete:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.checkin-type.concession {
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
+}
+
+.checkin-type.casual {
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
+}
+
+.checkin-type.free {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--admin-green);
+}
+
+.checkin-balance {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ========================================
+   MODAL SPECIFIC STYLES
+   ======================================== */
+
+.modal-large {
+    max-width: 900px;
+}
+
+.search-results-modal {
+    margin-top: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--background-color);
+}
+
+.student-info-card {
+    padding: 16px;
+    background: var(--background-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-purple);
+    margin-bottom: 20px;
+}
+
+.student-info-card h4 {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.student-info-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Concession Info */
+.concession-info {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.concession-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+.concession-header i {
+    color: var(--admin-purple);
+}
+
+.concession-blocks {
+    padding-left: 24px;
+}
+
+.concession-block {
+    padding: 8px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.concession-block.expired {
+    color: var(--admin-error);
+    font-weight: 500;
+}
+
+.concession-block i {
+    margin-right: 6px;
+}
+
+/* Radio Group */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.radio-option input[type="radio"] {
+    margin: 0 10px 0 0;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--admin-purple);
+}
+
+.radio-option:hover .radio-label {
+    color: var(--admin-purple);
+}
+
+.radio-option input[type="radio"]:checked + .radio-label {
+    color: var(--admin-purple);
+    font-weight: 600;
+}
+
+.radio-label {
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+    line-height: 12px;
+}
+
+/* Form Controls (inputs, selects, textareas) */
+.form-control {
+    width: 100%;
+    padding: 10px 32px 10px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    height: 48px;
+    box-sizing: border-box;
+    line-height: 1.4;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+textarea.form-control {
+    height: auto;
+    resize: vertical;
+    padding: 12px;
+}
+
+/* Search Input with Clear Button */
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-input-wrapper .form-control {
+    padding-right: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: color 0.2s ease;
+    z-index: 10;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-search-btn:hover {
+    color: var(--admin-purple);
+}
+
+/* Purchase Section */
+.purchase-section {
+    margin: 20px 0;
+}
+
+.btn-purchase {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Purchase Summary */
+.purchase-summary {
+    background: var(--background-color);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.summary-row strong {
+    color: var(--admin-purple);
+    font-size: 1.3rem;
+}
+
+/* ========================================
+   HISTORY MODAL
+   ======================================== */
+
+#history-modal .modal-body {
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
+.history-filters {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 16px;
+    padding-top: 8px;
+    background: var(--background-color);
+    border-radius: 8px;
+    position: relative;
+    z-index: 100;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+    z-index: 10;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.filter-group .form-control {
+    min-width: 150px;
+}
+
+.date-range-group {
+    flex: 2;
+    min-width: 100%;
+}
+
+.date-range-inputs {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.date-range-inputs .date-picker-container {
+    flex: 1;
+    min-width: 250px;
+}
+
+.student-search-wrapper {
+    position: relative;
+    width: 100%;
+    z-index: 100;
+}
+
+.student-search-wrapper .form-control {
+    padding-right: 40px;
+}
+
+.search-results-dropdown {
+    position: fixed;
+    background: var(--admin-card-light);
+    border: 1px solid rgba(154, 22, 245, 0.3);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 10000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    .search-results-dropdown {
+        background: var(--admin-card-dark);
+    }
+}
+
+.search-results-dropdown .student-result {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-results-dropdown .student-result:hover {
+    background: rgba(154, 22, 245, 0.1);
+}
+
+.search-results-dropdown .student-result:last-child {
+    border-bottom: none;
+}
+
+.search-results-dropdown .student-result .student-name {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.search-results-dropdown .student-result .student-email {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.history-results {
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.results-count {
+    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.history-date {
+    min-width: 80px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.history-student {
+    flex: 1;
+    color: var(--text-color);
+}
+
+.history-time {
+    min-width: 80px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.history-type {
+    min-width: 120px;
+    text-align: center;
+}
+
+/* ========================================
+   SNACKBAR NOTIFICATIONS
+   ======================================== */
+
+.snackbar {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--admin-purple);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    transition: bottom 0.3s ease;
+    min-width: 300px;
+    max-width: 500px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 0.95rem;
+}
+
+.snackbar.show {
+    bottom: 30px;
+}
+
+.snackbar i {
+    font-size: 1.2rem;
+}
+
+.snackbar-success {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+}
+
+.snackbar-error {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+.snackbar-warning {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.snackbar-info {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .checkin-main {
+        padding: 20px;
+    }
+
+    .checkin-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-primary-lg {
+        width: 100%;
+    }
+
+    .date-picker-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .date-input-wrapper {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .date-input {
+        width: 100%;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .checkin-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .history-filters {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .filter-group .form-control {
+        width: 100%;
+    }
+
+    .date-range-group {
+        min-width: 0;
+    }
+
+    .date-range-inputs {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .date-range-inputs .date-picker-container {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .student-search-wrapper {
+        width: 100%;
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .history-date,
+    .history-time,
+    .history-type {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkin-item {
+        padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .checkin-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .checkin-check {
+        font-size: 1rem;
+        margin-right: 12px;
+    }
+
+    .checkin-name {
+        font-size: 0.95rem;
+    }
+
+    .checkin-actions {
+        justify-content: flex-end;
+    }
+}
+
+/* ========================================
+   BADGE STYLES
+   ======================================== */
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-yes {
+    background: rgba(40, 167, 69, 0.15);
+    color: var(--admin-success);
+}
+
+.badge-no {
+    background: rgba(220, 53, 69, 0.15);
+    color: var(--admin-error);
+}
+
+.badge-warning {
+    background: rgba(255, 165, 0, 0.15);
+    color: #ff8800;
+}
+
+.badge-locked {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}

@@ -1,0 +1,1015 @@
+/* ========================================
+   STUDENT DATABASE STYLES
+   Extends admin.css with student-specific layouts
+   ======================================== */
+
+/* ========================================
+   STUDENT DATABASE PAGE
+   ======================================== */
+
+.database-main {
+    flex: 1;
+    padding: 30px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.database-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.database-title h2 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.student-count {
+    font-size: 0.95rem;
+    opacity: 0.7;
+    color: var(--text-color);
+}
+
+.student-count span {
+    font-weight: 600;
+    color: var(--admin-purple);
+}
+
+/* Button styles inherited from admin-modals.css */
+
+/* Header styles inherited from admin.css */
+
+/* ========================================
+   SEARCH SECTION
+   ======================================== */
+
+.database-search {
+    margin-bottom: 25px;
+}
+
+/* Search box styles moved to admin.css (shared component) */
+
+/* ========================================
+   STUDENTS TABLE
+   ======================================== */
+
+.table-container {
+    background: var(--background-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--admin-shadow);
+    overflow: hidden;
+    max-height: 70vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.students-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.students-table thead {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.students-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Header alignment to match columns */
+.students-table th:nth-child(3) {
+    text-align: right; /* Phone column */
+}
+
+.students-table th:nth-child(5) {
+    text-align: center; /* Email Consent column */
+}
+
+.students-table th:nth-child(6) {
+    text-align: center; /* Concessions column */
+}
+
+.students-table th:nth-child(7) {
+    text-align: right; /* Registered column */
+}
+
+.students-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 30px;
+}
+
+.students-table th.sortable:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.students-table th .sort-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.students-table th.sortable:hover .sort-icon {
+    opacity: 0.8;
+}
+
+.students-table th .sort-icon.active {
+    opacity: 1;
+}
+
+.students-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.students-table tbody tr:hover {
+    background-color: rgba(154, 22, 245, 0.05);
+}
+
+.students-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.students-table td {
+    padding: 16px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+/* Column-specific alignment */
+.students-table td:nth-child(1) {
+    text-transform: capitalize; /* Title case for names */
+}
+
+.students-table td:nth-child(3) {
+    text-align: right; /* Right-align phone numbers */
+}
+
+.students-table td:nth-child(5) {
+    text-align: center; /* Center email consent badges */
+}
+
+.students-table td:nth-child(6) {
+    text-align: center; /* Center concessions badges */
+}
+
+.students-table td:nth-child(7) {
+    text-align: right; /* Right-align dates */
+}
+
+/* Column widths */
+.students-table th:nth-child(8),
+.students-table td:nth-child(8) {
+    width: 240px; /* Wider Actions column for 5 buttons */
+    min-width: 240px;
+}
+
+/* Email Consent Badge */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-yes {
+    background: rgba(40, 167, 69, 0.15);
+    color: var(--admin-success);
+}
+
+.badge-no {
+    background: rgba(220, 53, 69, 0.15);
+    color: var(--admin-error);
+}
+
+.badge-warning {
+    background: rgba(255, 165, 0, 0.15);
+    color: #ff8800;
+}
+
+.concession-badge {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.concession-badge:hover {
+    transform: scale(1.1);
+}
+
+.concessions-cell {
+    text-align: center;
+}
+
+/* Mini Purchase Button */
+.btn-purchase-mini {
+    background: transparent;
+    border: 1.5px solid var(--admin-purple);
+    color: var(--admin-purple);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-purchase-mini:hover {
+    background: var(--admin-purple);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.2);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.btn-icon:hover {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+    transform: translateY(-2px);
+}
+
+.btn-icon i {
+    font-size: 0.9rem;
+}
+
+.btn-icon.has-notes {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.btn-icon.has-notes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
+}
+
+.btn-icon.btn-delete:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-color);
+}
+
+.empty-state i {
+    color: var(--admin-purple);
+    opacity: 0.3;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    opacity: 0.7;
+    margin-bottom: 25px;
+}
+
+/* ========================================
+   REGISTRATION FORM STYLES
+   ======================================== */
+
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+}
+
+.register-card {
+    background: var(--admin-card-light);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px var(--admin-shadow);
+    max-width: 500px;
+    width: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .register-card {
+        background: var(--admin-card-dark);
+    }
+}
+
+.register-card .logo {
+    width: 150px;
+    max-width: 150px;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.register-card h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.register-card .subtitle {
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+.registration-form {
+    margin-top: 20px;
+}
+
+.required {
+    color: var(--admin-error);
+}
+
+.form-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    color: var(--text-color);
+}
+
+/* Checkbox Groups */
+.checkbox-group {
+    margin-bottom: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin-top: 3px;
+    cursor: pointer;
+    accent-color: var(--admin-purple);
+}
+
+.checkbox-label span {
+    flex: 1;
+}
+
+.checkbox-label i {
+    color: var(--admin-purple);
+    margin-right: 5px;
+}
+
+/* Textarea */
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    transition: all 0.3s ease;
+    background: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+    min-height: 80px;
+}
+
+textarea::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+/* Admin-only elements */
+.admin-only {
+    border-top: 2px dashed var(--border-color);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+/* Success Message */
+.success-message {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(40, 167, 69, 0.1);
+    border: 1px solid var(--admin-success);
+    border-radius: 8px;
+    color: var(--admin-success);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.success-message i {
+    font-size: 1.2rem;
+}
+
+/* Back to Admin Link (for registration form) */
+#back-to-admin .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: var(--admin-purple);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+#back-to-admin .back-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+}
+
+/* ========================================
+   MODAL & BUTTON STYLES
+   Inherited from admin-modals.css via admin.css
+   No need to redefine here
+   ======================================== */
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .database-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-primary-lg {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Make table scrollable on mobile */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .students-table {
+        min-width: 800px;
+    }
+
+    .register-card {
+        padding: 30px 20px;
+    }
+
+    .register-card h1 {
+        font-size: 1.6rem;
+    }
+
+    .database-title h2 {
+        font-size: 1.4rem;
+    }
+
+    .page-heading {
+        font-size: 1.3rem;
+    }
+
+    .admin-header .logo-small {
+        height: 45px;
+    }
+    
+    .back-button {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .admin-user-info span {
+        display: none; /* Hide email on mobile to save space */
+    }
+}
+
+@media (max-width: 480px) {
+    .students-table th,
+    .students-table td {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+    }
+
+    .register-card .logo {
+        width: 150px;
+    }
+
+    .search-input {
+        font-size: 0.9rem;
+        padding: 12px 40px 12px 42px;
+    }
+
+    .search-icon {
+        left: 12px;
+        font-size: 0.9rem;
+    }
+
+    .search-input::placeholder {
+        font-size: 0.85rem;
+        color: #999;
+        opacity: 0.8;
+    }
+
+    .action-buttons {
+        gap: 6px;
+    }
+
+    .btn-icon {
+        padding: 6px 10px;
+    }
+
+    .btn-icon i {
+        font-size: 0.85rem;
+    }
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+
+.pagination-wrapper {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination-number {
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-width: 40px;
+}
+
+.pagination-number:hover {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.pagination-number.active {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border-color: transparent;
+}
+
+.pagination-ellipsis {
+    padding: 0 8px;
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.pagination-info-wrapper {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .pagination-btn,
+    .pagination-number {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        min-width: 36px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .pagination-btn:not(:disabled):hover,
+    .pagination-number:hover {
+        box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+    }
+}
+
+/* ========================================
+   NOTES MODAL (SIMPLIFIED)
+   ======================================== */
+
+.student-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--background-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-purple);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.student-info h3 {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.student-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+#notes-content {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 150px;
+}
+
+#notes-content::placeholder {
+    font-family: inherit;
+}
+
+/* ========================================
+   DELETE CONFIRMATION - STUDENT SPECIFIC
+   ======================================== */
+
+.student-info-delete {
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--background-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-purple);
+    font-family: inherit;
+}
+
+.student-info-delete p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+.student-info-delete strong {
+    display: inline-block;
+    min-width: 70px;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-family: inherit;
+}
+
+/* ========================================
+   MODAL ACTION BUTTONS
+   ======================================== */
+
+.modal-actions-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.modal-actions-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.modal-actions-left .btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid var(--admin-purple);
+    background: transparent;
+    color: var(--admin-purple);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-actions-left .btn-icon:hover {
+    background: var(--admin-purple);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.modal-actions-left .btn-icon i {
+    font-size: 1rem;
+}
+
+/* ========================================
+   CONCESSIONS DETAIL MODAL
+   ======================================== */
+
+.concessions-section {
+    margin-bottom: 24px;
+}
+
+.concessions-section:last-child {
+    margin-bottom: 0;
+}
+
+.concessions-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.concessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.concession-item {
+    padding: 12px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.concession-item:hover {
+    border-color: var(--admin-purple);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+}
+
+.concession-item.expired {
+    opacity: 0.7;
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.concession-item.locked {
+    opacity: 0.6;
+    background: rgba(128, 128, 128, 0.1);
+    border-left: 3px solid #6c757d;
+}
+
+.concession-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.concession-info strong {
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.concession-info .text-muted {
+    font-size: 0.85rem;
+}
+
+.concession-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.concession-details span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.concession-details i {
+    width: 14px;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+.concession-actions {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-lock-toggle {
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.btn-lock-toggle:hover {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.btn-lock-toggle i {
+    margin-right: 4px;
+}
+
+.btn-delete-block {
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--admin-error);
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--admin-error);
+}
+
+.btn-delete-block:hover:not(:disabled) {
+    background: var(--admin-error);
+    color: white;
+}
+
+.btn-delete-block:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn-delete-block i {
+    margin-right: 4px;
+}
+
+.badge-locked {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}
+
+.bulk-actions {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-lock-all-expired {
+    width: 100%;
+}
+
+/* ========================================
+   SNACKBAR NOTIFICATIONS
+   ======================================== */
+
+.snackbar {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--admin-purple);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    transition: bottom 0.3s ease;
+    min-width: 300px;
+    max-width: 500px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 0.95rem;
+}
+
+.snackbar.show {
+    bottom: 30px;
+}
+
+.snackbar i {
+    font-size: 1.2rem;
+}
+
+.snackbar-success {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+}
+
+.snackbar-error {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+.snackbar-warning {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.snackbar-info {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+/* ========================================
+   LOADING SPINNER
+   Inherited from admin.css - no need to redefine
+   ======================================== */

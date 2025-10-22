@@ -146,16 +146,30 @@ function showDashboard(user) {
 
 function setupTileButtons() {
   const playlistBtn = document.getElementById('playlist-manager-btn');
+  const studentDatabaseBtn = document.getElementById('student-database-btn');
   const checkinBtn = document.getElementById('checkin-btn');
+  const adminToolsBtn = document.getElementById('admin-tools-btn');
   
   // Playlist Manager - Now available!
   playlistBtn.addEventListener('click', () => {
-    window.location.href = '../playlist-manager/index.html';
+    window.location.href = 'playlist-manager/index.html';
   });
   
-  // Check-in system - Coming soon
+  // Student Database - Now available!
+  studentDatabaseBtn.addEventListener('click', () => {
+    window.location.href = 'student-database/index.html';
+  });
+  
+  // Check-in system - Now available!
   checkinBtn.addEventListener('click', () => {
-    alert('Student Check-in system is coming soon! ✅');
+    // Clear the saved check-in date so it defaults to today
+    localStorage.removeItem('checkin-selected-date');
+    window.location.href = 'check-in/index.html';
+  });
+  
+  // Admin Tools - Now available!
+  adminToolsBtn.addEventListener('click', () => {
+    window.location.href = 'admin-tools/index.html';
   });
 }
 

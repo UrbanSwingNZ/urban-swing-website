@@ -1,0 +1,343 @@
+/**
+ * Modal Module
+ * Handles student detail/edit modal
+ */
+
+/**
+ * View student details (read-only)
+ */
+function viewStudent(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    openStudentModal(student, 'view');
+}
+
+/**
+ * View transaction history
+ */
+function viewTransactionHistory(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    
+    // Open the transaction history modal
+    openTransactionHistoryModal(studentId);
+}
+
+/**
+ * Edit student notes (opens simplified notes modal)
+ */
+function editNotes(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    openNotesModal(student);
+}
+
+/**
+ * Edit student details
+ */
+function editStudent(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    openStudentModal(student, 'edit');
+}
+
+/**
+ * Open student modal
+ */
+function openStudentModal(student, mode) {
+    const modal = document.getElementById('student-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const saveBtn = document.getElementById('save-student-btn');
+    const form = document.getElementById('student-form');
+    
+    // Populate form fields
+    document.getElementById('modal-student-id').value = student.id;
+    document.getElementById('modal-firstName').value = student.firstName || '';
+    document.getElementById('modal-lastName').value = student.lastName || '';
+    document.getElementById('modal-email').value = student.email || '';
+    document.getElementById('modal-phoneNumber').value = student.phoneNumber || '';
+    document.getElementById('modal-pronouns').value = student.pronouns || '';
+    document.getElementById('modal-emailConsent').checked = student.emailConsent || false;
+    document.getElementById('modal-over16Confirmed').checked = student.over16Confirmed || false;
+    document.getElementById('modal-adminNotes').value = student.adminNotes || '';
+    
+    // Populate timestamps
+    document.getElementById('modal-registeredAt').textContent = formatTimestamp(student.registeredAt);
+    document.getElementById('modal-createdAt').textContent = formatTimestamp(student.createdAt);
+    document.getElementById('modal-updatedAt').textContent = formatTimestamp(student.updatedAt);
+    
+    // Configure modal based on mode
+    const allInputs = form.querySelectorAll('input:not([type="hidden"]), textarea');
+    
+    if (mode === 'view') {
+        modalTitle.textContent = 'Student Details';
+        allInputs.forEach(input => {
+            input.readOnly = true;
+            input.disabled = input.type === 'checkbox';
+        });
+        saveBtn.style.display = 'none';
+    } else if (mode === 'edit') {
+        modalTitle.textContent = 'Edit Student - ' + student.firstName + ' ' + student.lastName;
+        allInputs.forEach(input => {
+            input.readOnly = false;
+            input.disabled = false;
+        });
+        saveBtn.style.display = 'inline-flex';
+    }
+    
+    modal.style.display = 'flex';
+    
+    // Store current mode for save handler
+    form.dataset.mode = mode;
+}
+
+/**
+ * Close student modal
+ */
+function closeStudentModal() {
+    const modal = document.getElementById('student-modal');
+    modal.style.display = 'none';
+}
+
+/**
+ * Save student changes
+ */
+async function saveStudentChanges(event) {
+    event.preventDefault();
+    
+    const studentId = document.getElementById('modal-student-id').value;
+    
+    try {
+        // Update all fields (edit mode only now)
+        const updateData = {
+            firstName: document.getElementById('modal-firstName').value,
+            lastName: document.getElementById('modal-lastName').value,
+            email: document.getElementById('modal-email').value,
+            phoneNumber: document.getElementById('modal-phoneNumber').value,
+            pronouns: document.getElementById('modal-pronouns').value,
+            emailConsent: document.getElementById('modal-emailConsent').checked,
+            over16Confirmed: document.getElementById('modal-over16Confirmed').checked,
+            adminNotes: document.getElementById('modal-adminNotes').value
+        };
+        
+        await updateStudent(studentId, updateData);
+        closeStudentModal();
+        
+        console.log('Student updated successfully');
+    } catch (error) {
+        console.error('Error updating student:', error);
+        alert('Error updating student. Please try again.');
+    }
+}
+
+/**
+ * Open notes modal (simplified)
+ */
+function openNotesModal(student) {
+    const modal = document.getElementById('notes-modal');
+    const studentName = `${student.firstName || ''} ${student.lastName || ''}`.trim();
+    
+    // Populate fields
+    document.getElementById('notes-student-id').value = student.id;
+    document.getElementById('notes-student-name').textContent = studentName;
+    document.getElementById('notes-student-email').textContent = student.email || '';
+    document.getElementById('notes-content').value = student.adminNotes || '';
+    
+    modal.style.display = 'flex';
+    
+    // Focus on textarea
+    setTimeout(() => {
+        document.getElementById('notes-content').focus();
+    }, 100);
+}
+
+/**
+ * Close notes modal
+ */
+function closeNotesModal() {
+    const modal = document.getElementById('notes-modal');
+    modal.style.display = 'none';
+}
+
+/**
+ * Save notes
+ */
+async function saveNotes(event) {
+    event.preventDefault();
+    
+    const studentId = document.getElementById('notes-student-id').value;
+    const notes = document.getElementById('notes-content').value;
+    
+    try {
+        const updateData = {
+            adminNotes: notes
+        };
+        
+        await updateStudent(studentId, updateData);
+        closeNotesModal();
+        
+        console.log('Notes saved successfully');
+    } catch (error) {
+        console.error('Error saving notes:', error);
+        alert('Error saving notes. Please try again.');
+    }
+}
+
+/**
+ * Initialize modal event listeners
+ */
+function initializeModalListeners() {
+    // Close modals when clicking outside
+    document.addEventListener('click', (e) => {
+        const studentModal = document.getElementById('student-modal');
+        const notesModal = document.getElementById('notes-modal');
+        const deleteModal = document.getElementById('delete-modal');
+        
+        if (studentModal && e.target === studentModal) {
+            closeStudentModal();
+        }
+        
+        if (notesModal && e.target === notesModal) {
+            closeNotesModal();
+        }
+        
+        if (deleteModal && e.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const studentModal = document.getElementById('student-modal');
+            const notesModal = document.getElementById('notes-modal');
+            const deleteModal = document.getElementById('delete-modal');
+            
+            if (studentModal && studentModal.style.display === 'flex') {
+                closeStudentModal();
+            }
+            
+            if (notesModal && notesModal.style.display === 'flex') {
+                closeNotesModal();
+            }
+            
+            if (deleteModal && deleteModal.style.display === 'flex') {
+                closeDeleteModal();
+            }
+        }
+    });
+    
+    // Transaction History button in student modal
+    const transactionHistoryBtn = document.getElementById('transaction-history-btn');
+    if (transactionHistoryBtn) {
+        transactionHistoryBtn.addEventListener('click', () => {
+            const studentId = document.getElementById('modal-student-id').value;
+            if (studentId) {
+                viewTransactionHistory(studentId);
+            }
+        });
+    }
+    
+    // Purchase Concessions button in student modal
+    const purchaseConcessionsBtn = document.getElementById('purchase-concessions-modal-btn');
+    if (purchaseConcessionsBtn) {
+        purchaseConcessionsBtn.addEventListener('click', () => {
+            const studentId = document.getElementById('modal-student-id').value;
+            if (studentId) {
+                openPurchaseConcessionsModal(studentId, (result) => {
+                    // Refresh student data after purchase
+                    console.log('Concession purchase completed');
+                    // Could refresh the student's concession balance display here if needed
+                });
+            }
+        });
+    }
+}
+
+/**
+ * Delete Student Functionality
+ */
+
+let studentToDelete = null;
+
+/**
+ * Confirm delete student (opens confirmation modal)
+ */
+function confirmDeleteStudent(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    
+    studentToDelete = student;
+    
+    const modal = document.getElementById('delete-modal');
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoDiv = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
+    
+    // Format name
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    const fullName = `${firstName} ${lastName}`.trim();
+    
+    // Customize modal for student deletion
+    titleEl.textContent = 'Delete Student';
+    messageEl.textContent = `Are you sure you want to delete ${fullName}?`;
+    btnTextEl.textContent = 'Delete Student';
+    
+    // Populate student info
+    infoDiv.innerHTML = `
+        <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(student.phoneNumber || 'N/A')}</p>
+    `;
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Set up delete button click handler
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    deleteBtn.onclick = () => deleteStudent(student.id);
+}
+
+/**
+ * Close delete confirmation modal
+ */
+function closeDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    modal.style.display = 'none';
+    studentToDelete = null;
+}
+
+/**
+ * Delete student from Firestore
+ */
+async function deleteStudent(studentId) {
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    const originalText = deleteBtn.innerHTML;
+    
+    try {
+        // Disable button and show loading state
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+        
+        // Delete from Firestore
+        await db.collection('students').doc(studentId).delete();
+        
+        // Close modal
+        closeDeleteModal();
+        
+        // Reload students
+        await loadStudents();
+        
+        // Show success message (you could enhance this with a toast notification)
+        alert('Student deleted successfully');
+        
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        showError('Failed to delete student: ' + error.message);
+        
+        // Reset button
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = originalText;
+    }
+}

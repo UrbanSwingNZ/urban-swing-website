@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Student Database - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../admin.css">
+    <link rel="stylesheet" href="../admin-modals.css">
+    <link rel="stylesheet" href="student-database.css">
+    <link rel="stylesheet" href="../concessions/concessions.css">
+    <link rel="stylesheet" href="js/transaction-history/transaction-history.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading students...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="dashboard-container" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <a href="../index.html" title="Back to Dashboard" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <img src="../../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
+                <h1 class="page-heading">Student Database</h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="database-main">
+            <div class="database-header">
+                <div class="database-title">
+                    <h2>Registered Students</h2>
+                    <p class="student-count">Total: <span id="student-count">0</span> students</p>
+                </div>
+                <button class="btn-primary" id="register-btn">
+                    <i class="fas fa-user-plus"></i> Register New Student
+                </button>
+            </div>
+
+            <!-- Search Section -->
+            <div class="database-search">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search students by name, email, phone..." class="search-input" autocomplete="off">
+                    <button id="clear-search" class="clear-search" style="display: none;" title="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="search-results-info" id="search-results-info" style="display: none;"></p>
+            </div>
+
+            <!-- Students Table -->
+            <div class="table-container">
+                <table class="students-table" id="students-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="name">
+                                Name <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="email">
+                                Email <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="phoneNumber">
+                                Phone <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="pronouns">
+                                Pronouns <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="emailConsent">
+                                Email Consent <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="concessions">
+                                Concessions <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="registeredAt">
+                                Registered <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-tbody">
+                        <!-- Students will be dynamically inserted here -->
+                    </tbody>
+                </table>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <i class="fas fa-users fa-3x"></i>
+                    <h3>No Students Yet</h3>
+                    <p>Get started by registering your first student!</p>
+                    <button class="btn-primary" id="register-btn-empty">
+                        <i class="fas fa-user-plus"></i> Register New Student
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container" class="pagination-wrapper" style="display: none;">
+                <!-- Pagination controls will be inserted here -->
+            </div>
+
+            <div class="pagination-info-wrapper">
+                <p id="pagination-info" class="pagination-info"></p>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Admin Portal v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="student-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Student Details</h2>
+                <button class="modal-close" onclick="closeStudentModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="student-form" onsubmit="saveStudentChanges(event)">
+                    <input type="hidden" id="modal-student-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-firstName">First Name</label>
+                            <input type="text" id="modal-firstName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-lastName">Last Name</label>
+                            <input type="text" id="modal-lastName" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-email">Email</label>
+                        <input type="email" id="modal-email" readonly>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-phoneNumber">Phone Number</label>
+                            <input type="tel" id="modal-phoneNumber" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-pronouns">Pronouns</label>
+                            <input type="text" id="modal-pronouns" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row checkbox-row">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-emailConsent" disabled>
+                                <span>Email updates</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-over16Confirmed" disabled>
+                                <span>Over 16 confirmed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-adminNotes">
+                            <i class="fas fa-sticky-note"></i> Admin Notes
+                        </label>
+                        <textarea id="modal-adminNotes" rows="3" placeholder="Add internal notes about this student..."></textarea>
+                    </div>
+
+                    <div class="timestamps">
+                        <div class="timestamp-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span class="timestamp-label">Registered:</span>
+                            <span id="modal-registeredAt">—</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="timestamp-label">Created:</span>
+                            <span id="modal-createdAt">—</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <i class="fas fa-edit"></i>
+                            <span class="timestamp-label">Updated:</span>
+                            <span id="modal-updatedAt">—</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="modal-actions-left">
+                            <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
+                                <i class="fas fa-history"></i>
+                            </button>
+                            <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                        <div class="modal-actions-right">
+                            <button type="button" class="btn-secondary" onclick="closeStudentModal()">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                            <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Modal (Simplified) -->
+    <div id="notes-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="notes-modal-title">Admin Notes</h2>
+                <button class="modal-close" onclick="closeNotesModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="notes-form" onsubmit="saveNotes(event)">
+                    <input type="hidden" id="notes-student-id">
+                    
+                    <div class="student-info">
+                        <h3 id="notes-student-name"></h3>
+                        <p id="notes-student-email"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes-content">
+                            <i class="fas fa-sticky-note"></i> Notes
+                        </label>
+                        <textarea id="notes-content" rows="8" placeholder="Add internal notes about this student..." autofocus></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" onclick="closeNotesModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Notes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash"></i> <span id="delete-modal-title">Delete Student</span></h3>
+            </div>
+            <div class="modal-body">
+                <p id="delete-modal-message">Are you sure you want to delete this student?</p>
+                <div class="student-info-delete" id="delete-modal-info">
+                    <!-- Additional info will be inserted here -->
+                </div>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn-danger" id="confirm-delete-btn">
+                    <i class="fas fa-trash"></i> <span id="delete-modal-btn-text">Delete Student</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Concessions Detail Modal -->
+    <div id="concessions-detail-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-ticket-alt"></i> Concessions Detail</h3>
+                <button class="modal-close" onclick="closeConcessionsDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="student-info">
+                    <h4 id="concessions-student-name"></h4>
+                </div>
+                
+                <div id="concessions-detail-content">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeConcessionsDetailModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                <button type="button" class="btn-primary" id="purchase-concessions-from-detail-btn">
+                    <i class="fas fa-shopping-cart"></i> Purchase Concessions
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction History Modal -->
+    <div id="transaction-history-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Transaction History</h3>
+                <button class="modal-close" onclick="closeTransactionHistoryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-student-info">
+                    <h3 id="transaction-history-student-name"></h3>
+                    <p id="transaction-history-student-email"></p>
+                </div>
+                
+                <div class="transaction-tabs">
+                    <button class="transaction-tab active" data-tab="attendance-content">
+                        <i class="fas fa-calendar-check"></i> Attendance
+                    </button>
+                    <button class="transaction-tab" data-tab="payments-content">
+                        <i class="fas fa-dollar-sign"></i> Payments
+                    </button>
+                    <button class="transaction-tab" data-tab="concessions-content">
+                        <i class="fas fa-ticket-alt"></i> Concessions
+                    </button>
+                </div>
+                
+                <div class="transaction-tab-content active" id="attendance-content">
+                    <!-- Attendance content will be loaded here -->
+                </div>
+                
+                <div class="transaction-tab-content" id="payments-content">
+                    <!-- Payment content will be loaded here -->
+                </div>
+                
+                <div class="transaction-tab-content" id="concessions-content">
+                    <!-- Concession content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config & Scripts -->
+    <script src="../../config/firebase-config.js?v=4"></script>
+    
+    <!-- Student Database Modules (load in dependency order) -->
+    <script src="js/utils.js?v=10"></script>
+    <script src="js/auth.js?v=10"></script>
+    <script src="js/data.js?v=10"></script>
+    <script src="js/concessions.js?v=15"></script>
+    <script src="js/search.js?v=10"></script>
+    <script src="js/pagination.js?v=10"></script>
+    <script src="js/sort.js?v=10"></script>
+    <script src="js/table.js?v=11"></script>
+    <script src="js/modal.js?v=11"></script>
+    <script src="js/navigation.js?v=10"></script>
+    
+    <!-- Transaction History Module -->
+    <script src="js/transaction-history/transaction-history-modal.js?v=1"></script>
+    <script src="js/transaction-history/transaction-history-attendance.js?v=1"></script>
+    <script src="js/transaction-history/transaction-history-payments.js?v=1"></script>
+    <script src="js/transaction-history/transaction-history-concessions.js?v=1"></script>
+    
+    <!-- Reusable Concessions Module -->
+    <script src="../check-in/js/concession-blocks-balance.js?v=3"></script>
+    <script src="../check-in/js/concession-blocks-create.js?v=3"></script>
+    <script src="../check-in/js/concession-blocks-query.js?v=3"></script>
+    <script src="../check-in/js/concession-blocks-usage.js?v=3"></script>
+    <script src="../check-in/js/concession-blocks-lock.js?v=3"></script>
+    <script src="../check-in/js/concession-blocks-delete.js?v=3"></script>
+    <script src="../check-in/js/concession-blocks-maintenance.js?v=3"></script>
+    <script src="../concessions/js/concessions-data.js?v=2"></script>
+    <script src="../concessions/js/concessions-modal.js?v=2"></script>
+    <script src="../concessions/js/concessions-admin.js?v=2"></script>
+    
+    <script src="js/main.js?v=2"></script>
+</body>
+</html>
