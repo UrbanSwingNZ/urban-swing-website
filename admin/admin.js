@@ -138,7 +138,22 @@ function showDashboard(user) {
   const logoutBtn = document.getElementById('logout-btn');
   logoutBtn.addEventListener('click', handleLogout);
   
-  // Setup tile buttons (disabled for now - coming soon)
+  // Check if user has access to Admin Tools
+  const isAuthorizedForAdminTools = user.email === 'dance@urbanswing.co.nz';
+  
+  // Hide/show Admin Tools based on user
+  const adminToolsTile = document.querySelector('.tile-tools');
+  const adminToolsNavItem = document.querySelector('.admin-menu a[href="/admin/admin-tools/"]');
+  
+  if (adminToolsTile) {
+    adminToolsTile.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
+  }
+  
+  if (adminToolsNavItem) {
+    adminToolsNavItem.parentElement.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
+  }
+  
+  // Setup tile buttons
   setupTileButtons();
   
   console.log('Dashboard loaded for user:', user.email);
