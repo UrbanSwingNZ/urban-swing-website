@@ -60,7 +60,7 @@ function showAdminElements() {
     // Show back to admin link
     const backToAdmin = document.getElementById('back-to-admin');
     if (backToAdmin) {
-        backToAdmin.style.display = 'block';
+        backToAdmin.style.display = 'flex';
     }
 }
 

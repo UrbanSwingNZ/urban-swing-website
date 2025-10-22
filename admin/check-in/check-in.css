@@ -26,6 +26,23 @@
     flex-wrap: wrap;
 }
 
+.checkin-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Inverted gradient for Register button to create blue > purple > blue flow */
+.btn-primary-inverted {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-blue));
+}
+
+.btn-primary-inverted:hover {
+    background: linear-gradient(135deg, var(--admin-pink), var(--admin-purple));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(154, 22, 245, 0.4);
+}
+
 /* Date Picker */
 .date-picker-container {
     display: flex;
@@ -811,6 +828,10 @@ textarea.form-control {
     .checkin-header {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .checkin-actions {
+        width: 100%;
     }
 
     .btn-primary-lg {
