@@ -42,15 +42,15 @@ function createTransactionRow(transaction) {
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
         <td><span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
-        <td class="amount-cell">$${transaction.amount.toFixed(2)}</td>
+        <td class="amount-cell">${formatCurrency(transaction.amount)}</td>
         <td class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
-            ${transaction.cash > 0 ? '$' + transaction.cash.toFixed(2) : '-'}
+            ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}
         </td>
         <td class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
-            ${transaction.eftpos > 0 ? '$' + transaction.eftpos.toFixed(2) : '-'}
+            ${transaction.eftpos > 0 ? formatCurrency(transaction.eftpos) : '-'}
         </td>
         <td class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
-            ${transaction.bankTransfer > 0 ? '$' + transaction.bankTransfer.toFixed(2) : '-'}
+            ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
         </td>
         <td>
             <div class="action-buttons">
@@ -85,10 +85,10 @@ function createTransactionRow(transaction) {
  */
 function updateSummaryDisplay(summary) {
     document.getElementById('total-count').textContent = summary.totalCount;
-    document.getElementById('total-amount').textContent = '$' + summary.totalAmount.toFixed(2);
-    document.getElementById('total-cash').textContent = '$' + summary.totalCash.toFixed(2);
-    document.getElementById('total-eftpos').textContent = '$' + summary.totalEftpos.toFixed(2);
-    document.getElementById('total-bank').textContent = '$' + summary.totalBank.toFixed(2);
+    document.getElementById('total-amount').textContent = formatCurrency(summary.totalAmount);
+    document.getElementById('total-cash').textContent = formatCurrency(summary.totalCash);
+    document.getElementById('total-eftpos').textContent = formatCurrency(summary.totalEftpos);
+    document.getElementById('total-bank').textContent = formatCurrency(summary.totalBank);
 }
 
 /**

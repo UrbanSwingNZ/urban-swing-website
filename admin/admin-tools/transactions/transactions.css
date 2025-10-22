@@ -186,6 +186,10 @@ select.filter-input:focus {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+#transactions-table th.align-right {
+    text-align: right;
+}
+
 .sort-icon {
     margin-left: 0.5rem;
     opacity: 0.5;
@@ -245,16 +249,19 @@ select.filter-input:focus {
 .amount-cell {
     font-weight: 600;
     color: var(--success-color);
+    text-align: right;
 }
 
 .payment-amount {
     font-weight: 500;
     color: var(--text-color);
+    text-align: right;
 }
 
 .payment-amount.empty {
     color: var(--text-muted);
     font-weight: 400;
+    text-align: right;
 }
 
 /* Action Buttons */
