@@ -540,6 +540,11 @@ html, body {
   --tile-color-2: var(--admin-purple);
 }
 
+.tile-transactions {
+  --tile-color-1: #27ae60;
+  --tile-color-2: #2ecc71;
+}
+
 .tile-tools {
   --tile-color-1: var(--admin-purple);
   --tile-color-2: var(--admin-pink);
