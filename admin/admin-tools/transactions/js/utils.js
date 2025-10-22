@@ -15,6 +15,13 @@ function formatDate(date) {
 }
 
 /**
+ * Format currency with commas for thousands
+ */
+function formatCurrency(amount) {
+    return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
  * Format date for input field
  */
 function formatDateForInput(date) {
