@@ -309,7 +309,11 @@ async function openPurchaseConcessionsModalForEdit(studentId, transactionId, pac
     
     if (datePicker && transactionDate) {
         // Format date as YYYY-MM-DD for the date input
-        const dateStr = transactionDate.toISOString().split('T')[0];
+        // Use local date components to avoid timezone issues
+        const year = transactionDate.getFullYear();
+        const month = String(transactionDate.getMonth() + 1).padStart(2, '0');
+        const day = String(transactionDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
         datePicker.value = dateStr;
     }
     
