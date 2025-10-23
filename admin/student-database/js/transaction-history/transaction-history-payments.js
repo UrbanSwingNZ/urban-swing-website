@@ -90,12 +90,10 @@ function displayPaymentHistory(transactions) {
     transactions.forEach(transaction => {
         const date = formatDate(transaction.date);
         
-        // Add edit button for concession purchases only
-        const editButton = transaction.type === 'concession-purchase' 
-            ? `<button class="btn-icon btn-edit-transaction" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
-                   <i class="fas fa-edit"></i>
-               </button>`
-            : '';
+        // Add edit button for all transactions (both concession purchases and casual entries)
+        const editButton = `<button class="btn-icon btn-edit-transaction" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
+               <i class="fas fa-edit"></i>
+           </button>`;
         
         html += `
             <div class="payment-item">
@@ -140,7 +138,8 @@ function formatPaymentMethod(method) {
 
 /**
  * Edit a transaction
- * Opens the Purchase Concessions modal with pre-populated data
+ * Opens the Purchase Concessions modal with pre-populated data for concession purchases
+ * Opens the Casual Entry modal for casual entries
  */
 async function editTransaction(transactionId) {
     try {
@@ -155,43 +154,12 @@ async function editTransaction(transactionId) {
             return;
         }
         
-        // Only allow editing concession purchases
-        if (transaction.type !== 'concession-purchase') {
-            console.log('Cannot edit casual entry transactions');
-            return;
+        // Handle based on transaction type
+        if (transaction.type === 'casual-entry') {
+            await editCasualEntryTransaction(transaction);
+        } else if (transaction.type === 'concession-purchase') {
+            await editConcessionPurchaseTransaction(transaction);
         }
-        
-        // Fetch the full transaction data from Firestore to get packageId
-        const transactionDoc = await firebase.firestore()
-            .collection('transactions')
-            .doc(transactionId)
-            .get();
-        
-        if (!transactionDoc.exists) {
-            console.error('Transaction document not found in Firestore');
-            if (typeof showSnackbar === 'function') {
-                showSnackbar('Transaction not found', 'error');
-            }
-            return;
-        }
-        
-        const transactionData = transactionDoc.data();
-        
-        // Close the transaction history modal
-        const transactionHistoryModal = document.getElementById('transaction-history-modal');
-        if (transactionHistoryModal) {
-            transactionHistoryModal.style.display = 'none';
-        }
-        
-        // Open the purchase modal in edit mode
-        await openPurchaseConcessionsModalForEdit(
-            transaction.studentId,
-            transactionId,
-            transactionData.packageId,
-            transaction.paymentMethod,
-            transaction.date,
-            'transaction-history-modal'
-        );
         
     } catch (error) {
         console.error('Error editing transaction:', error);
@@ -199,6 +167,114 @@ async function editTransaction(transactionId) {
             showSnackbar('Error opening edit modal', 'error');
         }
     }
+}
+
+/**
+ * Edit a casual entry transaction
+ */
+async function editCasualEntryTransaction(transaction) {
+    // Fetch the full transaction data from Firestore to get checkinId
+    const transactionDoc = await firebase.firestore()
+        .collection('transactions')
+        .doc(transaction.id)
+        .get();
+    
+    if (!transactionDoc.exists) {
+        console.error('Transaction document not found in Firestore');
+        if (typeof showSnackbar === 'function') {
+            showSnackbar('Transaction not found', 'error');
+        }
+        return;
+    }
+    
+    const transactionData = transactionDoc.data();
+    
+    if (!transactionData.checkinId) {
+        console.error('Check-in ID not found in transaction');
+        if (typeof showSnackbar === 'function') {
+            showSnackbar('Unable to edit: Check-in reference missing', 'error');
+        }
+        return;
+    }
+    
+    // Get student name
+    let studentName = 'Unknown Student';
+    try {
+        if (typeof findStudentById === 'function') {
+            const student = findStudentById(transaction.studentId);
+            if (student && typeof getStudentFullName === 'function') {
+                studentName = getStudentFullName(student);
+            }
+        }
+    } catch (error) {
+        console.warn('Could not get student name:', error);
+    }
+    
+    // Initialize the casual entry modal if needed
+    if (typeof initializeCasualEntryModal === 'function') {
+        initializeCasualEntryModal();
+    }
+    
+    // Close the transaction history modal
+    const transactionHistoryModal = document.getElementById('transaction-history-modal');
+    if (transactionHistoryModal) {
+        transactionHistoryModal.style.display = 'none';
+    }
+    
+    // Open the casual entry edit modal with a callback to reload the payments tab
+    if (typeof openCasualEntryModal === 'function') {
+        await openCasualEntryModal(
+            transaction.id,                    // transactionId
+            transactionData.checkinId,         // checkinId
+            transaction.studentId,             // studentId
+            studentName,                       // studentName
+            transaction.date,                  // entryDate
+            transaction.paymentMethod,         // paymentMethod
+            transaction.amountPaid,            // amount
+            async () => {                      // callback
+                // Reload the payments tab after update
+                await loadTransactionHistoryPayments(transaction.studentId);
+            },
+            'transaction-history-modal'        // parentModalId
+        );
+    }
+}
+
+/**
+ * Edit a concession purchase transaction
+ */
+async function editConcessionPurchaseTransaction(transaction) {
+    // Fetch the full transaction data from Firestore to get packageId
+    const transactionDoc = await firebase.firestore()
+        .collection('transactions')
+        .doc(transaction.id)
+        .get();
+    
+    if (!transactionDoc.exists) {
+        console.error('Transaction document not found in Firestore');
+        if (typeof showSnackbar === 'function') {
+            showSnackbar('Transaction not found', 'error');
+        }
+        return;
+    }
+    
+    const transactionData = transactionDoc.data();
+    
+    // Close the transaction history modal
+    const transactionHistoryModal = document.getElementById('transaction-history-modal');
+    if (transactionHistoryModal) {
+        transactionHistoryModal.style.display = 'none';
+    }
+    
+    // Open the purchase modal in edit mode
+    await openPurchaseConcessionsModalForEdit(
+        transaction.studentId,
+        transaction.id,
+        transactionData.packageId,
+        transaction.paymentMethod,
+        transaction.date,
+        'transaction-history-modal'
+    );
 }
 
 /**
