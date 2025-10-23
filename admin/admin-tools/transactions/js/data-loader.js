@@ -80,7 +80,7 @@ async function normalizeTransaction(transaction) {
         amount: amount,
         cash: paymentMethod === 'cash' ? amount : 0,
         eftpos: paymentMethod === 'eftpos' ? amount : 0,
-        bankTransfer: paymentMethod === 'bank transfer' ? amount : 0,
+        bankTransfer: (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') ? amount : 0,
         paymentMethod: paymentMethod,
         invoiced: transaction.invoiced || false,
         reversed: transaction.reversed || false,

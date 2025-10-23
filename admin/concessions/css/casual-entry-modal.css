@@ -1,0 +1,192 @@
+/**
+ * casual-entry-modal.css
+ * Styles for the Edit Casual Entry modal
+ */
+
+/* Casual Entry Modal */
+#edit-casual-entry-modal .modal-content {
+    max-width: 500px;
+}
+
+#edit-casual-entry-modal .modal-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+#edit-casual-entry-modal .modal-header h3 i {
+    color: var(--admin-purple, #9a16f5);
+}
+
+/* Student Info Card */
+.student-info-card {
+    padding: 16px;
+    background: var(--bg-secondary, #f8f9fa);
+    border-left: 4px solid var(--admin-purple, #9a16f5);
+    border-radius: 6px;
+}
+
+.student-info-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    color: var(--text-primary, #212529);
+}
+
+.student-info-card p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Form Groups */
+#edit-casual-entry-modal .form-group {
+    margin-bottom: 20px;
+}
+
+#edit-casual-entry-modal .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+    font-size: 0.95rem;
+}
+
+#edit-casual-entry-modal .form-group label i {
+    color: var(--admin-purple, #9a16f5);
+    font-size: 0.9rem;
+}
+
+#edit-casual-entry-modal .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+#edit-casual-entry-modal .form-control:focus {
+    outline: none;
+    border-color: var(--admin-purple, #9a16f5);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+/* Date Picker Styling - Match purchase modal */
+#casual-entry-date-picker {
+    background: var(--background-color, white);
+    border: 1px solid var(--admin-purple, #9a16f5);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    color: var(--admin-purple, #9a16f5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 500;
+}
+
+/* Style the calendar icon */
+#casual-entry-date-picker::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(28%) sepia(89%) saturate(3207%) hue-rotate(262deg) brightness(85%) contrast(95%);
+}
+
+#casual-entry-date-picker:hover {
+    border-color: var(--admin-purple, #9a16f5);
+    color: var(--admin-purple, #9a16f5);
+    background: rgba(154, 22, 245, 0.05);
+}
+
+#casual-entry-date-picker:focus {
+    outline: none;
+    border-color: var(--admin-purple, #9a16f5);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple, #9a16f5);
+}
+
+/* Amount Display */
+.casual-entry-amount-display {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg-secondary, #f8f9fa);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 6px;
+}
+
+.casual-entry-amount-display span:first-child {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-success, #28a745);
+}
+
+/* Modal Footer Buttons */
+#edit-casual-entry-modal .modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-color, #dee2e6);
+}
+
+#edit-casual-entry-modal .btn-primary,
+#edit-casual-entry-modal .btn-secondary {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#edit-casual-entry-modal .btn-primary {
+    background: var(--admin-purple, #9a16f5);
+    color: white;
+}
+
+#edit-casual-entry-modal .btn-primary:hover:not(:disabled) {
+    background: var(--admin-purple-dark, #7a0fc5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(154, 22, 245, 0.3);
+}
+
+#edit-casual-entry-modal .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#edit-casual-entry-modal .btn-secondary {
+    background: transparent;
+    color: var(--text-primary, #212529);
+    border: 1px solid var(--border-color, #dee2e6);
+}
+
+#edit-casual-entry-modal .btn-secondary:hover {
+    background: var(--bg-secondary, #f8f9fa);
+    border-color: var(--text-muted, #6c757d);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    #edit-casual-entry-modal .modal-content {
+        max-width: 95%;
+        margin: 20px auto;
+    }
+    
+    #edit-casual-entry-modal .modal-footer {
+        flex-direction: column;
+    }
+    
+    #edit-casual-entry-modal .btn-primary,
+    #edit-casual-entry-modal .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
