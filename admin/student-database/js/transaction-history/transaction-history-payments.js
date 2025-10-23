@@ -13,56 +13,50 @@ async function loadTransactionHistoryPayments(studentId) {
     contentEl.innerHTML = '<p class="text-muted"><i class="fas fa-spinner fa-spin"></i> Loading payment history...</p>';
     
     try {
-        // Query both transactions (concession purchases) and casual checkins (casual payments)
-        const [transactionsSnapshot, checkinsSnapshot] = await Promise.all([
-            firebase.firestore().collection('transactions').get(),
-            firebase.firestore().collection('checkins').get()
-        ]);
+        // Query transactions collection only (includes both concession purchases and casual entries)
+        const transactionsSnapshot = await firebase.firestore()
+            .collection('transactions')
+            .where('studentId', '==', studentId)
+            .get();
         
-        // Get concession purchases from transactions collection
-        const concessionPurchases = transactionsSnapshot.docs
+        // Get all transactions for this student
+        const allPayments = transactionsSnapshot.docs
+            .filter(doc => {
+                const data = doc.data();
+                // Exclude reversed transactions
+                return !data.reversed;
+            })
             .map(doc => {
                 const data = doc.data();
+                
+                // Determine transaction type and package name
+                let transactionType, packageName, numberOfClasses;
+                
+                if (data.type === 'casual-entry') {
+                    transactionType = 'casual-entry';
+                    packageName = 'Casual Entry';
+                    numberOfClasses = 1;
+                } else {
+                    // Concession purchase
+                    transactionType = 'concession-purchase';
+                    packageName = data.packageName;
+                    numberOfClasses = data.numberOfClasses;
+                }
+                
                 return {
                     id: doc.id,
                     studentId: data.studentId,
                     date: data.transactionDate?.toDate ? data.transactionDate.toDate() : new Date(data.transactionDate),
-                    type: 'concession-purchase',
-                    packageName: data.packageName,
-                    numberOfClasses: data.numberOfClasses,
+                    type: transactionType,
+                    packageName: packageName,
+                    numberOfClasses: numberOfClasses,
                     amountPaid: data.amountPaid,
                     paymentMethod: data.paymentMethod
                 };
             })
-            .filter(t => t.studentId === studentId);
-        
-        // Get casual payments from checkins collection
-        const casualPayments = checkinsSnapshot.docs
-            .filter(doc => {
-                const data = doc.data();
-                return data.studentId === studentId && 
-                       data.amountPaid && 
-                       data.amountPaid > 0; // Only include check-ins where money was paid
-            })
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    studentId: data.studentId,
-                    date: data.checkinDate?.toDate ? data.checkinDate.toDate() : new Date(data.checkinDate),
-                    type: 'casual-entry',
-                    packageName: 'Casual Entry',
-                    numberOfClasses: 1,
-                    amountPaid: data.amountPaid || 15,
-                    paymentMethod: data.paymentMethod
-                };
-            });
-        
-        // Combine and sort all payments by date (newest first)
-        const allPayments = [...concessionPurchases, ...casualPayments]
             .sort((a, b) => b.date - a.date);
         
-        console.log(`Found ${allPayments.length} payment(s) for student ${studentId} (${concessionPurchases.length} concession purchases, ${casualPayments.length} casual entries)`);
+        console.log(`Found ${allPayments.length} payment(s) for student ${studentId}`);
         
         displayPaymentHistory(allPayments);
     } catch (error) {
