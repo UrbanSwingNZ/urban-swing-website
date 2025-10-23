@@ -23,10 +23,8 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter) 
         
         // Type filter
         if (typeFilter !== 'all') {
-            if (typeFilter === 'concession' && transaction.type !== 'concession') return false;
-            if (typeFilter === 'cash' && transaction.paymentMethod !== 'cash') return false;
-            if (typeFilter === 'eftpos' && transaction.paymentMethod !== 'eftpos') return false;
-            if (typeFilter === 'bank-transfer' && transaction.paymentMethod !== 'bank transfer') return false;
+            if (typeFilter === 'concession-purchase' && transaction.type !== 'concession-purchase') return false;
+            if (typeFilter === 'casual-entry' && transaction.type !== 'casual-entry') return false;
         }
         
         return true;
