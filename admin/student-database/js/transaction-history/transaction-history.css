@@ -203,6 +203,31 @@
     text-transform: capitalize;
 }
 
+/* Edit Transaction Button */
+.btn-edit-transaction {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--admin-purple, #9a16f5);
+    border-radius: 4px;
+    color: var(--admin-purple, #9a16f5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-edit-transaction:hover {
+    background: var(--admin-purple, #9a16f5);
+    color: white;
+}
+
+.btn-edit-transaction i {
+    font-size: 0.9rem;
+}
+
 /* Concession Summary */
 .concession-summary {
     display: grid;
