@@ -75,6 +75,11 @@ function createTransactionRow(transaction) {
                    data-id="${transaction.id}"
                    data-collection="${transaction.collection}"
                    ${transaction.reversed ? 'style="opacity: 0.3; pointer-events: none;"' : ''}></i>
+                <button class="btn-icon btn-edit" 
+                        title="Edit Transaction"
+                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                    <i class="fas fa-edit"></i>
+                </button>
                 <button class="btn-icon btn-delete" 
                         title="${transaction.reversed ? 'Cannot delete reversed transaction' : 'Delete Transaction'}"
                         data-id="${transaction.id}"
@@ -91,6 +96,11 @@ function createTransactionRow(transaction) {
     // Add event listeners
     const invoiceBtn = row.querySelector('.btn-invoice');
     invoiceBtn.addEventListener('click', () => window.toggleInvoiced(transaction));
+    
+    const editBtn = row.querySelector('.btn-edit');
+    if (!transaction.reversed) {
+        editBtn.addEventListener('click', () => window.editTransaction(transaction));
+    }
     
     const deleteBtn = row.querySelector('.btn-delete');
     deleteBtn.addEventListener('click', () => window.confirmDelete(transaction));

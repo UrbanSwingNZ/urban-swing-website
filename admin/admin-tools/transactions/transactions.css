@@ -602,3 +602,96 @@ select.filter-input:focus {
         min-width: 800px;
     }
 }
+
+/* ========================================
+   MODAL OVERRIDES FOR TRANSACTIONS PAGE
+   Fix styling to match Student Transaction History
+   ======================================== */
+
+/* 1. Fix Edit Transaction title wrapping and make it one line */
+#purchase-concessions-modal .modal-header h3 {
+    white-space: nowrap;
+    font-size: 1.25rem;
+}
+
+/* 2. Make edit icon black instead of purple */
+#purchase-concessions-modal .modal-header h3 i {
+    color: var(--text-color);
+    font-size: 1.25rem;
+}
+
+/* 3. Reduce modal padding to match Student Transaction History */
+#purchase-concessions-modal .modal-header {
+    padding: 20px 24px;
+    align-items: flex-end; /* Align date picker to bottom */
+}
+
+#purchase-concessions-modal .modal-body {
+    padding: 24px;
+}
+
+#purchase-concessions-modal .modal-footer {
+    padding: 16px 24px;
+}
+
+/* Fix date picker alignment - align bottom with heading */
+#purchase-concessions-modal .purchase-date-picker {
+    align-self: flex-end;
+    margin-bottom: 0;
+}
+
+/* 4. Style student info card to match */
+#purchase-concessions-modal .student-info-card {
+    background: var(--bg-secondary, #f8f9fa);
+    border-left: 4px solid var(--admin-purple);
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+#purchase-concessions-modal .student-info-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    color: var(--text-primary, #212529);
+}
+
+#purchase-concessions-modal .student-info-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted, #6c757d);
+}
+
+/* 5. Fix purchase summary styling - remove ALL borders and lines */
+#purchase-concessions-modal .purchase-summary {
+    background: transparent;
+    border: none;
+    padding: 16px 0;
+    margin-top: 20px;
+}
+
+#purchase-concessions-modal .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    background: var(--background-color, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+#purchase-concessions-modal .summary-row span {
+    color: var(--text-primary, #212529);
+}
+
+#purchase-concessions-modal .summary-row strong {
+    color: var(--admin-purple, #9a16f5);
+    font-size: 1.3rem;
+}
+
+/* 6. Ensure buttons are on the right */
+#purchase-concessions-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
