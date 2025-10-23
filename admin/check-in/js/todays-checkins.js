@@ -88,7 +88,7 @@ function displayTodaysCheckins() {
     checkinsList.innerHTML = todaysCheckins.map(checkin => {
         const typeClass = checkin.entryType;
         const typeLabel = checkin.entryType === 'concession' ? 'Concession' : 
-                         checkin.entryType === 'casual' ? 'Casual $15' : 'Free Entry';
+                         checkin.entryType === 'casual' ? 'Casual Entry' : 'Free Entry';
         
         return `<div class="checkin-item" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
             <div class="checkin-info-row" data-action="edit">

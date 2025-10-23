@@ -226,13 +226,13 @@ select.filter-input:focus {
 }
 
 .type-badge.concession {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
 }
 
 .type-badge.casual-entry {
-    background: #fff3e0;
-    color: #e65100;
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
 }
 
 .type-badge.cash {
