@@ -41,7 +41,7 @@ function createTransactionRow(transaction) {
         row.classList.add('reversed-transaction');
     }
     
-    const typeBadgeClass = transaction.type === 'purchase' ? 'concession' : transaction.paymentMethod;
+    const typeBadgeClass = transaction.type === 'concession-purchase' ? 'concession' : transaction.paymentMethod;
     
     // Add reversed badge if transaction is reversed
     const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';

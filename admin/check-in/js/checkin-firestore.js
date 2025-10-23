@@ -169,7 +169,7 @@ async function createCheckinTransaction(checkinId, studentId, entryType, amountP
     const transactionData = {
         studentId: studentId,
         transactionDate: firebase.firestore.Timestamp.fromDate(transactionDate),
-        type: 'entry',
+        type: 'casual-entry',
         entryType: entryType, // 'casual', 'free', etc.
         amountPaid: amountPaid,
         paymentMethod: paymentMethod,

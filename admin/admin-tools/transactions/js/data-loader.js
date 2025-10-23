@@ -118,12 +118,12 @@ async function normalizeTransaction(transaction) {
     }
     
     // Determine transaction type and display name
-    let transactionType = transaction.type || 'concession'; // 'purchase', 'entry', etc.
+    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual-entry', etc.
     let typeName;
     
-    if (transactionType === 'purchase') {
+    if (transactionType === 'concession-purchase') {
         typeName = 'Concession Purchase';
-    } else if (transactionType === 'entry') {
+    } else if (transactionType === 'casual-entry') {
         // Use the entry type for display (e.g., "Casual Entry")
         const entryType = transaction.entryType || 'entry';
         typeName = entryType.charAt(0).toUpperCase() + entryType.slice(1) + ' Entry';
