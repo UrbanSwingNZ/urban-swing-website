@@ -90,9 +90,13 @@ function displayPaymentHistory(transactions) {
     transactions.forEach(transaction => {
         const date = formatDate(transaction.date);
         
-        // Add edit button for all transactions (both concession purchases and casual entries)
+        // Add edit and delete buttons for all transactions
         const editButton = `<button class="btn-icon btn-edit-transaction" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
                <i class="fas fa-edit"></i>
+           </button>`;
+        
+        const deleteButton = `<button class="btn-icon btn-delete-transaction" onclick="confirmDeleteTransaction('${transaction.id}')" title="Delete transaction">
+               <i class="fas fa-trash-alt"></i>
            </button>`;
         
         html += `
@@ -109,7 +113,10 @@ function displayPaymentHistory(transactions) {
                 <div class="payment-amount-method">
                     <div class="payment-amount">$${(transaction.amountPaid || 0).toFixed(2)}</div>
                     <div class="payment-method text-muted">${formatPaymentMethod(transaction.paymentMethod)}</div>
-                    ${editButton}
+                    <div class="payment-actions">
+                        ${editButton}
+                        ${deleteButton}
+                    </div>
                 </div>
             </div>
         `;
@@ -471,6 +478,109 @@ async function handleTransactionUpdate(transactionId, studentId, parentModalId) 
         }
         if (typeof showSnackbar === 'function') {
             showSnackbar('Error updating transaction: ' + error.message, 'error');
+        }
+    }
+}
+
+/**
+ * Confirm transaction deletion
+ */
+function confirmDeleteTransaction(transactionId) {
+    // Find the transaction in our stored data
+    const transaction = currentPaymentTransactions.find(t => t.id === transactionId);
+    
+    if (!transaction) {
+        console.error('Transaction not found:', transactionId);
+        if (typeof showSnackbar === 'function') {
+            showSnackbar('Transaction not found', 'error');
+        }
+        return;
+    }
+    
+    const modal = document.getElementById('delete-modal');
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoEl = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    if (!modal || !titleEl || !messageEl || !infoEl || !btnTextEl || !confirmBtn) {
+        console.error('Delete modal elements not found');
+        return;
+    }
+    
+    // Get student name
+    let studentName = 'Unknown Student';
+    try {
+        if (typeof findStudentById === 'function') {
+            const student = findStudentById(transaction.studentId);
+            if (student && typeof getStudentFullName === 'function') {
+                studentName = getStudentFullName(student);
+            }
+        }
+    } catch (error) {
+        console.warn('Could not get student name:', error);
+    }
+    
+    // Customize modal for transaction deletion
+    titleEl.textContent = 'Delete Transaction';
+    messageEl.textContent = 'Are you sure you want to delete this transaction?';
+    
+    const date = formatDate(transaction.date);
+    infoEl.innerHTML = `<strong>${escapeHtml(studentName)}</strong> - $${(transaction.amountPaid || 0).toFixed(2)} - ${date}`;
+    
+    btnTextEl.textContent = 'Delete Transaction';
+    
+    // Remove any existing event listeners by replacing the button
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Add click handler for confirm button
+    newConfirmBtn.addEventListener('click', () => {
+        deleteTransaction(transaction);
+    });
+    
+    modal.style.display = 'flex';
+}
+
+/**
+ * Delete a transaction
+ */
+async function deleteTransaction(transaction) {
+    try {
+        if (typeof showLoading === 'function') {
+            showLoading();
+        }
+        
+        // Close delete modal
+        if (typeof closeDeleteModal === 'function') {
+            closeDeleteModal();
+        }
+        
+        // Delete the transaction from Firestore
+        await firebase.firestore()
+            .collection('transactions')
+            .doc(transaction.id)
+            .delete();
+        
+        if (typeof showLoading === 'function') {
+            showLoading(false);
+        }
+        
+        if (typeof showSnackbar === 'function') {
+            showSnackbar('Transaction deleted successfully', 'success');
+        }
+        
+        // Reload the payments tab
+        await loadTransactionHistoryPayments(transaction.studentId);
+        
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        if (typeof showLoading === 'function') {
+            showLoading(false);
+        }
+        if (typeof showSnackbar === 'function') {
+            showSnackbar('Error deleting transaction: ' + error.message, 'error');
         }
     }
 }
