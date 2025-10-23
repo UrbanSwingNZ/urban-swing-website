@@ -47,7 +47,7 @@ function setupEventListeners() {
     });
     
     // Modal
-    document.getElementById('cancel-delete-btn').addEventListener('click', closeDeleteModal);
+    document.getElementById('cancel-delete-btn')?.addEventListener('click', closeDeleteModal);
 }
 
 /**
