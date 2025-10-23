@@ -183,7 +183,7 @@ async function createTransaction(studentId, packageData, paymentMethod, transact
     const transactionData = {
         studentId: studentId,
         transactionDate: firebase.firestore.Timestamp.fromDate(actualTransactionDate),
-        type: 'purchase',
+        type: 'concession-purchase',
         packageId: packageData.id,
         packageName: packageData.name,
         numberOfClasses: packageData.numberOfClasses,
