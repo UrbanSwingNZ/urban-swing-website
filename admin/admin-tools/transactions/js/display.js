@@ -36,12 +36,28 @@ function displayTransactions(transactions, currentSort) {
 function createTransactionRow(transaction) {
     const row = document.createElement('tr');
     
-    const typeBadgeClass = transaction.type === 'concession' ? 'concession' : transaction.paymentMethod;
+    // Add reversed class if transaction is reversed
+    if (transaction.reversed) {
+        row.classList.add('reversed-transaction');
+    }
+    
+    // Determine badge class based on transaction type
+    let typeBadgeClass;
+    if (transaction.type === 'concession-purchase') {
+        typeBadgeClass = 'concession';
+    } else if (transaction.type === 'casual-entry') {
+        typeBadgeClass = 'casual-entry';
+    } else {
+        typeBadgeClass = 'other';
+    }
+    
+    // Add reversed badge if transaction is reversed
+    const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
     
     row.innerHTML = `
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
-        <td><span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
+        <td>${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
         <td class="amount-cell">${formatCurrency(transaction.amount)}</td>
         <td class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
             ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}
@@ -57,13 +73,15 @@ function createTransactionRow(transaction) {
                 <i class="fas fa-file-invoice btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
                    title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
                    data-id="${transaction.id}"
-                   data-collection="${transaction.collection}"></i>
+                   data-collection="${transaction.collection}"
+                   ${transaction.reversed ? 'style="opacity: 0.3; pointer-events: none;"' : ''}></i>
                 <button class="btn-icon btn-delete" 
-                        title="Delete Transaction"
+                        title="${transaction.reversed ? 'Cannot delete reversed transaction' : 'Delete Transaction'}"
                         data-id="${transaction.id}"
                         data-collection="${transaction.collection}"
                         data-student="${escapeHtml(transaction.studentName)}"
-                        data-amount="${transaction.amount}">
+                        data-amount="${transaction.amount}"
+                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </div>

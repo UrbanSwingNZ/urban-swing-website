@@ -183,12 +183,13 @@ async function createTransaction(studentId, packageData, paymentMethod, transact
     const transactionData = {
         studentId: studentId,
         transactionDate: firebase.firestore.Timestamp.fromDate(actualTransactionDate),
-        type: 'purchase',
+        type: 'concession-purchase',
         packageId: packageData.id,
         packageName: packageData.name,
         numberOfClasses: packageData.numberOfClasses,
         amountPaid: packageData.price,
         paymentMethod: paymentMethod,
+        checkinId: null, // Concession purchases are not tied to a check-in
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     

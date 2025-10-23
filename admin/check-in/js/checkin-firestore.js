@@ -65,6 +65,20 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         if (existingCheckin.exists) {
             const existingData = existingCheckin.data();
             
+            // Handle transaction changes when updating check-in
+            const hadPayment = existingData.amountPaid > 0;
+            const willHavePayment = entryType === 'casual';
+            
+            if (hadPayment && !willHavePayment) {
+                // Changing FROM paid TO free - reverse the transaction
+                try {
+                    await reverseTransaction(docId);
+                } catch (error) {
+                    console.error('Error reversing transaction on update:', error);
+                }
+            }
+            // Note: If changing FROM free TO paid, new transaction will be created after save
+            
             // If they're changing FROM concession TO another type, restore the concession
             if (existingData.entryType === 'concession' && entryType !== 'concession' && existingData.concessionBlockId) {
                 await restoreBlockEntry(existingData.concessionBlockId);
@@ -120,6 +134,17 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             .doc(docId)
             .set(checkinData);
         
+        // Create transaction record if there's a payment
+        if (checkinData.amountPaid > 0 && checkinData.paymentMethod) {
+            try {
+                await createCheckinTransaction(docId, student.id, checkinData.entryType, checkinData.amountPaid, checkinData.paymentMethod, checkinDate);
+            } catch (transactionError) {
+                console.error('Error creating transaction:', transactionError);
+                // Don't fail the check-in if transaction creation fails
+                showSnackbar('Check-in saved, but transaction creation failed', 'warning');
+            }
+        }
+        
         // Close modal and show success
         closeCheckinModal();
         showSnackbar(`${getStudentFullName(student)} checked in successfully!`, 'success');
@@ -132,3 +157,64 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         showSnackbar('Failed to save check-in. Please try again.', 'error');
     }
 }
+
+/**
+ * Create a transaction record for a check-in with payment
+ */
+async function createCheckinTransaction(checkinId, studentId, entryType, amountPaid, paymentMethod, transactionDate) {
+    // Generate transaction ID: studentId-checkinId-timestamp
+    const timestamp = transactionDate.getTime();
+    const transactionId = `${studentId}-${checkinId}-${timestamp}`;
+    
+    const transactionData = {
+        studentId: studentId,
+        transactionDate: firebase.firestore.Timestamp.fromDate(transactionDate),
+        type: 'casual-entry',
+        entryType: entryType, // 'casual', 'free', etc.
+        amountPaid: amountPaid,
+        paymentMethod: paymentMethod,
+        checkinId: checkinId, // Reference back to the check-in
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await firebase.firestore()
+        .collection('transactions')
+        .doc(transactionId)
+        .set(transactionData);
+    
+    console.log('Transaction created:', transactionId);
+}
+
+/**
+ * Reverse a transaction (mark as reversed instead of deleting)
+ */
+async function reverseTransaction(checkinId) {
+    try {
+        // Find transaction(s) with this checkinId
+        const snapshot = await firebase.firestore()
+            .collection('transactions')
+            .where('checkinId', '==', checkinId)
+            .get();
+        
+        if (snapshot.empty) {
+            console.log('No transaction found for checkinId:', checkinId);
+            return;
+        }
+        
+        // Mark all matching transactions as reversed
+        const batch = firebase.firestore().batch();
+        snapshot.forEach(doc => {
+            batch.update(doc.ref, {
+                reversed: true,
+                reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        
+        await batch.commit();
+        console.log(`Reversed ${snapshot.size} transaction(s) for checkinId:`, checkinId);
+    } catch (error) {
+        console.error('Error reversing transaction:', error);
+        throw error;
+    }
+}
+
