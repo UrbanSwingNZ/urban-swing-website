@@ -45,17 +45,28 @@ async function toggleInvoiced(transaction) {
  */
 function confirmDelete(transaction) {
     const modal = document.getElementById('delete-modal');
-    const infoEl = document.getElementById('delete-transaction-info');
-    
-    infoEl.textContent = `${transaction.studentName} - $${transaction.amount.toFixed(2)} - ${formatDate(transaction.date)}`;
-    
-    modal.style.display = 'flex';
-    
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoEl = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
     const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    // Customize modal for transaction deletion
+    titleEl.textContent = 'Delete Transaction';
+    messageEl.textContent = 'Are you sure you want to delete this transaction?';
+    infoEl.innerHTML = `<strong>${transaction.studentName}</strong> - $${transaction.amount.toFixed(2)} - ${formatDate(transaction.date)}`;
+    btnTextEl.textContent = 'Delete Transaction';
+    
+    // Remove any existing event listeners by replacing the button
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     
-    newConfirmBtn.addEventListener('click', () => deleteTransaction(transaction));
+    // Add click handler for confirm button
+    newConfirmBtn.addEventListener('click', () => {
+        deleteTransaction(transaction);
+    });
+    
+    modal.style.display = 'flex';
 }
 
 /**

@@ -226,13 +226,13 @@ select.filter-input:focus {
 }
 
 .type-badge.concession {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
 }
 
 .type-badge.casual-entry {
-    background: #fff3e0;
-    color: #e65100;
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
 }
 
 .type-badge.cash {
@@ -601,4 +601,147 @@ select.filter-input:focus {
     #transactions-table {
         min-width: 800px;
     }
+}
+
+/* ========================================
+   MODAL OVERRIDES FOR TRANSACTIONS PAGE
+   Fix styling to match Student Transaction History
+   ======================================== */
+
+/* 1. Fix Edit Transaction title wrapping and make it one line */
+#purchase-concessions-modal .modal-header h3 {
+    white-space: nowrap;
+    font-size: 1.25rem;
+}
+
+/* 2. Make edit icon black instead of purple */
+#purchase-concessions-modal .modal-header h3 i {
+    color: var(--text-color);
+    font-size: 1.25rem;
+}
+
+/* 3. Reduce modal padding to match Student Transaction History */
+#purchase-concessions-modal .modal-header {
+    padding: 20px 24px;
+    align-items: flex-end; /* Align date picker to bottom */
+}
+
+#purchase-concessions-modal .modal-body {
+    padding: 24px;
+}
+
+#purchase-concessions-modal .modal-footer {
+    padding: 16px 24px;
+}
+
+/* Fix date picker alignment - align bottom with heading */
+#purchase-concessions-modal .purchase-date-picker {
+    align-self: flex-end;
+    margin-bottom: 0;
+}
+
+/* 4. Style student info card to match */
+#purchase-concessions-modal .student-info-card {
+    background: var(--bg-secondary, #f8f9fa);
+    border-left: 4px solid var(--admin-purple);
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+#purchase-concessions-modal .student-info-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    color: var(--text-primary, #212529);
+}
+
+#purchase-concessions-modal .student-info-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted, #6c757d);
+}
+
+/* 5. Fix purchase summary styling - remove ALL borders and lines */
+#purchase-concessions-modal .purchase-summary {
+    background: transparent;
+    border: none;
+    padding: 16px 0;
+    margin-top: 20px;
+}
+
+#purchase-concessions-modal .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    background: var(--background-color, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+#purchase-concessions-modal .summary-row span {
+    color: var(--text-primary, #212529);
+}
+
+#purchase-concessions-modal .summary-row strong {
+    color: var(--admin-purple, #9a16f5);
+    font-size: 1.3rem;
+}
+
+/* 6. Ensure buttons are on the right */
+#purchase-concessions-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* ========================================
+   DELETE MODAL OVERRIDES
+   Match Check-In delete modal styling
+   ======================================== */
+
+/* Fix icon color to be black, not orange */
+#delete-modal .modal-header h3 i {
+    color: var(--text-color) !important;
+}
+
+/* Fix delete button to match Check-In red color */
+#delete-modal .btn-danger {
+    background: #dc3545 !important;
+}
+
+#delete-modal .btn-danger:hover {
+    background: #c82333 !important;
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4) !important;
+}
+
+/* Reduce padding to match Check-In modal */
+#delete-modal .modal-header {
+    padding: 20px 24px;
+}
+
+#delete-modal .modal-body {
+    padding: 20px 24px;
+}
+
+#delete-modal .modal-footer {
+    padding: 16px 24px;
+}
+
+/* Ensure buttons are right-aligned */
+#delete-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Style the student info in delete modal */
+.student-info-delete {
+    background: var(--bg-secondary, #f8f9fa);
+    border-left: 4px solid var(--admin-purple);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 0.95rem;
 }

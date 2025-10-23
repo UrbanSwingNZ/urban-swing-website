@@ -541,8 +541,8 @@ html, body {
 }
 
 .tile-transactions {
-  --tile-color-1: #27ae60;
-  --tile-color-2: #2ecc71;
+  --tile-color-1: var(--admin-blue);
+  --tile-color-2: var(--admin-purple);
 }
 
 .tile-tools {
