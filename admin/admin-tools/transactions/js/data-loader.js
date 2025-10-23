@@ -117,10 +117,24 @@ async function normalizeTransaction(transaction) {
         }
     }
     
+    // Determine transaction type and display name
+    let transactionType = transaction.type || 'concession'; // 'purchase', 'entry', etc.
+    let typeName;
+    
+    if (transactionType === 'purchase') {
+        typeName = 'Concession Purchase';
+    } else if (transactionType === 'entry') {
+        // Use the entry type for display (e.g., "Casual Entry")
+        const entryType = transaction.entryType || 'entry';
+        typeName = entryType.charAt(0).toUpperCase() + entryType.slice(1) + ' Entry';
+    } else {
+        typeName = 'Transaction';
+    }
+    
     return {
         id: transaction.id,
-        type: 'concession',
-        typeName: 'Concession Purchase',
+        type: transactionType,
+        typeName: typeName,
         date: date,
         studentName: studentName,
         studentId: transaction.studentId || null,
@@ -130,6 +144,7 @@ async function normalizeTransaction(transaction) {
         bankTransfer: paymentMethod === 'bank transfer' ? amount : 0,
         paymentMethod: paymentMethod,
         invoiced: transaction.invoiced || false,
+        reversed: transaction.reversed || false,
         collection: 'transactions',
         rawData: transaction
     };

@@ -189,6 +189,7 @@ async function createTransaction(studentId, packageData, paymentMethod, transact
         numberOfClasses: packageData.numberOfClasses,
         amountPaid: packageData.price,
         paymentMethod: paymentMethod,
+        checkinId: null, // Concession purchases are not tied to a check-in
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     

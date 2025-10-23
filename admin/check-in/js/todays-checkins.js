@@ -252,6 +252,16 @@ async function deleteCheckin(checkinId) {
             await restoreBlockEntry(checkinData.concessionBlockId);
         }
         
+        // If this check-in had a payment, reverse the transaction
+        if (checkinData.amountPaid > 0) {
+            try {
+                await reverseTransaction(checkinId);
+            } catch (transactionError) {
+                console.error('Error reversing transaction:', transactionError);
+                // Continue with deletion even if transaction reversal fails
+            }
+        }
+        
         // Delete the check-in
         await checkinRef.delete();
         
