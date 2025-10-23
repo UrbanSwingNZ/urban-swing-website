@@ -203,9 +203,16 @@
     text-transform: capitalize;
 }
 
+/* Action buttons container */
+.payment-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
+}
+
 /* Edit Transaction Button */
 .btn-edit-transaction {
-    margin-top: 8px;
     padding: 6px 12px;
     background: transparent;
     border: 1px solid var(--admin-purple, #9a16f5);
@@ -225,6 +232,30 @@
 }
 
 .btn-edit-transaction i {
+    font-size: 0.9rem;
+}
+
+/* Delete Transaction Button */
+.btn-delete-transaction {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--admin-error, #dc3545);
+    border-radius: 4px;
+    color: var(--admin-error, #dc3545);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-delete-transaction:hover {
+    background: var(--admin-error, #dc3545);
+    color: white;
+}
+
+.btn-delete-transaction i {
     font-size: 0.9rem;
 }
 
