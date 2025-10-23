@@ -7,50 +7,6 @@
  * Load all transactions from Firestore
  */
 async function loadAllTransactions() {
-    const [checkinsData, transactionsData] = await Promise.all([
-        loadCheckinsWithPayments(),
-        loadConcessionPurchases()
-    ]);
-    
-    // Normalize check-ins (synchronous)
-    const normalizedCheckins = checkinsData.map(normalizeCheckin);
-    
-    // Normalize transactions (asynchronous - need to fetch student names)
-    const normalizedTransactions = await Promise.all(
-        transactionsData.map(transaction => normalizeTransaction(transaction))
-    );
-    
-    // Combine and return all transactions
-    return [
-        ...normalizedCheckins,
-        ...normalizedTransactions
-    ];
-}
-
-/**
- * Load check-ins with payments from Firestore
- */
-async function loadCheckinsWithPayments() {
-    const snapshot = await firebase.firestore()
-        .collection('checkins')
-        .where('amountPaid', '>', 0)
-        .get();
-    
-    const checkins = [];
-    snapshot.forEach(doc => {
-        checkins.push({
-            id: doc.id,
-            ...doc.data()
-        });
-    });
-    
-    return checkins;
-}
-
-/**
- * Load concession purchases from transactions collection
- */
-async function loadConcessionPurchases() {
     const snapshot = await firebase.firestore()
         .collection('transactions')
         .get();
@@ -63,32 +19,12 @@ async function loadConcessionPurchases() {
         });
     });
     
-    return transactions;
-}
-
-/**
- * Normalize check-in data to standard transaction format
- */
-function normalizeCheckin(checkin) {
-    const date = checkin.timestamp?.toDate ? checkin.timestamp.toDate() : new Date(checkin.timestamp);
-    const paymentMethod = (checkin.paymentMethod || '').toLowerCase();
+    // Normalize all transactions (asynchronous - need to fetch student names)
+    const normalizedTransactions = await Promise.all(
+        transactions.map(transaction => normalizeTransaction(transaction))
+    );
     
-    return {
-        id: checkin.id,
-        type: 'checkin',
-        typeName: getPaymentTypeDisplay(paymentMethod),
-        date: date,
-        studentName: checkin.studentName || 'Unknown',
-        studentId: checkin.studentId || null,
-        amount: checkin.amountPaid || 0,
-        cash: paymentMethod === 'cash' ? checkin.amountPaid : 0,
-        eftpos: paymentMethod === 'eftpos' ? checkin.amountPaid : 0,
-        bankTransfer: paymentMethod === 'bank transfer' ? checkin.amountPaid : 0,
-        paymentMethod: paymentMethod,
-        invoiced: checkin.invoiced || false,
-        collection: 'checkins',
-        rawData: checkin
-    };
+    return normalizedTransactions;
 }
 
 /**
@@ -121,9 +57,12 @@ async function normalizeTransaction(transaction) {
     let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual-entry', etc.
     let typeName;
     
-    if (transactionType === 'concession-purchase') {
+    // Handle both old and new type names for concession purchases
+    if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
+        transactionType = 'concession-purchase'; // Normalize to new name
         typeName = 'Concession Purchase';
-    } else if (transactionType === 'casual-entry') {
+    } else if (transactionType === 'casual-entry' || transactionType === 'entry') {
+        transactionType = 'casual-entry'; // Normalize to new name
         // Use the entry type for display (e.g., "Casual Entry")
         const entryType = transaction.entryType || 'entry';
         typeName = entryType.charAt(0).toUpperCase() + entryType.slice(1) + ' Entry';
@@ -148,17 +87,4 @@ async function normalizeTransaction(transaction) {
         collection: 'transactions',
         rawData: transaction
     };
-}
-
-/**
- * Get display name for payment type
- */
-function getPaymentTypeDisplay(paymentMethod) {
-    const method = paymentMethod.toLowerCase();
-    
-    if (method === 'cash') return 'Cash Payment';
-    if (method === 'eftpos') return 'EFTPOS Payment';
-    if (method === 'bank transfer') return 'Bank Transfer';
-    
-    return 'Other Payment';
 }
