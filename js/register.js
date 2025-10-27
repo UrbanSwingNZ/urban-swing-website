@@ -39,6 +39,7 @@ function initializeAuth() {
         } else {
             // Public user (not logged in)
             isAdmin = false;
+            showPublicElements();
             console.log('Public user (not authenticated)');
         }
 
@@ -61,6 +62,30 @@ function showAdminElements() {
     const backToAdmin = document.getElementById('back-to-admin');
     if (backToAdmin) {
         backToAdmin.style.display = 'flex';
+    }
+
+    // Hide public user link
+    const backToWebsite = document.getElementById('back-to-website');
+    if (backToWebsite) {
+        backToWebsite.style.display = 'none';
+    }
+}
+
+// ========================================
+// Show Public User Elements
+// ========================================
+
+function showPublicElements() {
+    // Show back to website link
+    const backToWebsite = document.getElementById('back-to-website');
+    if (backToWebsite) {
+        backToWebsite.style.display = 'block';
+    }
+
+    // Hide admin-only links
+    const backToAdmin = document.getElementById('back-to-admin');
+    if (backToAdmin) {
+        backToAdmin.style.display = 'none';
     }
 }
 
