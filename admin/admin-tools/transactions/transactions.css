@@ -726,6 +726,44 @@ select.filter-input:focus {
 }
 
 @media (max-width: 768px) {
+    /* Fix header layout on mobile */
+    .admin-header-content {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 12px !important;
+        text-align: left !important;
+    }
+
+    .admin-header-content .back-button {
+        order: 0;
+        flex-shrink: 0;
+    }
+
+    .admin-header-content h1,
+    .admin-header-content .page-heading {
+        order: 1;
+        flex: 0 0 auto;
+        font-size: 1.1rem !important;
+        margin: 0;
+    }
+
+    .admin-user-info {
+        order: 2;
+        flex-shrink: 0;
+        margin-left: auto !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Hide email on very small screens */
+    .admin-user-info span {
+        display: none;
+    }
+
     .filters-row {
         flex-direction: column;
     }
@@ -744,8 +782,91 @@ select.filter-input:focus {
     }
     
     .summary-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--background-color);
+        border-radius: 8px;
+    }
+
+    /* First row: Total Transactions and Total Amount */
+    .summary-item:nth-child(1),
+    .summary-item:nth-child(2) {
+        grid-column: span 1;
+    }
+
+    /* Second row: Cash, EFTPOS, Bank Transfer - span all 3 across */
+    .summary-item:nth-child(3),
+    .summary-item:nth-child(4),
+    .summary-item:nth-child(5) {
+        grid-column: span 1;
+    }
+
+    .summary-item {
+        display: flex;
         flex-direction: column;
-        gap: 1rem;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 12px 16px;
+        background: var(--input-bg, #f8f9fa);
+        border-radius: 6px;
+        gap: 4px;
+        text-align: left;
+    }
+
+    .summary-label {
+        font-size: 0.85rem;
+        color: var(--text-color);
+        font-weight: 600;
+        margin: 0;
+        text-align: left;
+        width: 100%;
+    }
+
+    .summary-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--admin-purple);
+        margin: 0;
+        text-align: left;
+        width: 100%;
+    }
+
+    /* Adjust grid for payment types to fit 3 columns */
+    @supports (display: grid) {
+        .summary-row {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+        }
+        
+        .summary-item:nth-child(1) {
+            grid-column: 1;
+            grid-row: 1;
+        }
+        
+        .summary-item:nth-child(2) {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .summary-item:nth-child(n+3) {
+            grid-column: span 1;
+            grid-row: 2;
+        }
+        
+        /* For 3 payment types, create 3 columns in second row */
+        .summary-row:has(.summary-item:nth-child(5)) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .summary-row:has(.summary-item:nth-child(5)) .summary-item:nth-child(1) {
+            grid-column: 1 / 3;
+        }
+        
+        .summary-row:has(.summary-item:nth-child(5)) .summary-item:nth-child(2) {
+            grid-column: 3 / 4;
+        }
     }
     
     .table-container {
@@ -754,6 +875,214 @@ select.filter-input:focus {
     
     #transactions-table {
         min-width: 800px;
+    }
+
+    /* Mobile Card Layout for Transactions */
+    @media (max-width: 640px) {
+        .table-container {
+            overflow-x: visible;
+        }
+
+        #transactions-table {
+            display: block;
+            min-width: 100%;
+        }
+
+        #transactions-table thead {
+            display: none;
+        }
+
+        #transactions-table tbody {
+            display: block;
+        }
+
+        #transactions-table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(154, 22, 245, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            background: var(--background-color);
+            position: relative;
+            border-left: 4px solid var(--admin-purple);
+        }
+
+        #transactions-table tbody tr:hover {
+            background: var(--background-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Reversed transaction styling */
+        .reversed-transaction {
+            border-left-color: var(--danger-color);
+            opacity: 0.7;
+        }
+
+        #transactions-table td {
+            display: block;
+            padding: 0;
+            border: none;
+            text-align: left;
+        }
+
+        /* Card Layout Grid */
+        #transactions-table tbody tr {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto auto;
+            gap: 0.75rem;
+            align-items: start;
+        }
+
+        /* Date - Top Left */
+        #transactions-table td:nth-child(1) {
+            grid-column: 1;
+            grid-row: 1;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        /* Type Badge - Row 2 Left (under date) */
+        #transactions-table td:nth-child(2) {
+            grid-column: 1;
+            grid-row: 2;
+            text-align: left;
+            justify-self: start;
+        }
+
+        /* Student Name - Top Right */
+        #transactions-table td:nth-child(3) {
+            grid-column: 2;
+            grid-row: 1;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            text-align: right;
+            justify-self: end;
+        }
+
+        /* Amount - Row 2 Right */
+        #transactions-table td:nth-child(4) {
+            grid-column: 2;
+            grid-row: 2;
+            text-align: right;
+            justify-self: end;
+        }
+
+        /* Cash (5th child) - Show as payment method in row 3 when not empty */
+        #transactions-table td:nth-child(5):not(.empty) {
+            grid-column: 2;
+            grid-row: 3;
+            text-align: right;
+            justify-self: end;
+            font-size: 0.85rem;
+            color: #666;
+            font-size: 0;
+        }
+
+        #transactions-table td:nth-child(5):not(.empty)::before {
+            content: 'Cash';
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Hide empty Cash cells */
+        #transactions-table td:nth-child(5).empty {
+            display: none !important;
+        }
+
+        /* EFTPOS (6th child) - Show as payment method in row 3 when not empty */
+        #transactions-table td:nth-child(6):not(.empty) {
+            grid-column: 2;
+            grid-row: 3;
+            text-align: right;
+            justify-self: end;
+            font-size: 0;
+        }
+
+        #transactions-table td:nth-child(6):not(.empty)::before {
+            content: 'EFTPOS';
+            font-size: 0.85rem;
+            color: #666;
+            opacity: 0.7;
+        }
+
+        /* Hide empty EFTPOS cells */
+        #transactions-table td:nth-child(6).empty {
+            display: none !important;
+        }
+
+        /* Bank Transfer (7th child) - Show as payment method in row 3 when not empty */
+        #transactions-table td:nth-child(7):not(.empty) {
+            grid-column: 2;
+            grid-row: 3;
+            text-align: right;
+            justify-self: end;
+            font-size: 0;
+        }
+
+        #transactions-table td:nth-child(7):not(.empty)::before {
+            content: 'Bank Transfer';
+            font-size: 0.85rem;
+            color: #666;
+            opacity: 0.7;
+        }
+
+        /* Hide empty Bank Transfer cells */
+        #transactions-table td:nth-child(7).empty {
+            display: none !important;
+        }
+
+        /* Action Buttons - Row 4 spanning both columns */
+        #transactions-table td:nth-child(8) {
+            grid-column: 1 / -1;
+            grid-row: 4;
+            align-self: start;
+        }
+
+        /* Add labels before values on mobile */
+        #transactions-table td:nth-child(1)::before {
+            content: '';
+            display: none;
+        }
+
+        #transactions-table td:nth-child(3)::before {
+            content: '';
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        #transactions-table td:nth-child(4)::before {
+            content: 'Amount';
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        /* Adjust action buttons for mobile */
+        .action-buttons {
+            flex-direction: row;
+            gap: 0.5rem;
+            justify-content: flex-start;
+        }
+
+        .btn-icon {
+            padding: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        /* Make type badges slightly smaller on mobile */
+        .type-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+        }
     }
 }
 

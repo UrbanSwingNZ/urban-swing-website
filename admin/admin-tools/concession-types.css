@@ -589,19 +589,118 @@ form {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .packages-container {
-        grid-template-columns: 1fr;
+    .page-intro {
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    .page-intro p {
+        font-size: 1rem;
+    }
+
+    /* Fix header layout on mobile */
+    .admin-header-content {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 12px !important;
+        text-align: left !important;
+    }
+
+    .admin-header-content .back-button {
+        order: 0;
+        flex-shrink: 0;
+    }
+
+    .admin-header-content h1,
+    .admin-header-content .page-heading {
+        order: 1;
+        flex: 0 0 auto;
+        font-size: 1.1rem !important;
+        margin: 0;
+    }
+
+    .admin-user-info {
+        order: 2;
+        flex-shrink: 0;
+        margin-left: auto !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Hide email on very small screens */
+    .admin-user-info span {
+        display: none;
     }
 
     .page-actions {
         flex-direction: column;
         align-items: stretch;
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #add-package-btn {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .drag-hint {
+        justify-content: center;
+    }
+
+    .packages-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .package-card {
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+        padding: 25px 15px 25px 30px;
+    }
+
+    .package-name {
+        font-size: 1.1rem;
+        word-wrap: break-word;
+        padding-right: 60px;
+    }
+
+    .package-detail {
+        font-size: 0.9rem;
+        word-wrap: break-word;
+    }
+
+    .package-description {
+        font-size: 0.85rem;
+        word-wrap: break-word;
+    }
+
+    .dashboard-main {
+        padding: 30px 15px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .modal-content {
         margin: 0;
         max-height: 100vh;
         border-radius: 0;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .modal-header,
@@ -609,14 +708,59 @@ form {
     .modal-footer,
     form {
         padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .package-actions {
         flex-direction: column;
+        gap: 8px;
     }
 
     .btn-edit,
     .btn-delete {
         width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .btn-primary-lg {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 12px 20px;
+    }
+
+    .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-main {
+        padding: 20px 10px;
+    }
+
+    .package-card {
+        padding: 20px 12px 20px 28px;
+    }
+
+    .package-status-toggle {
+        top: 12px;
+        right: 12px;
+    }
+
+    .drag-handle {
+        left: 8px;
+        top: 10px;
     }
 }

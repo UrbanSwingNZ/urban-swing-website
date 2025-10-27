@@ -27,6 +27,9 @@ fetch(headerPath)
             return;
         }
 
+        // Set active menu item based on current page
+        setActiveMenuItem();
+
         // Toggle the menu visibility and body shift
         hamburgerMenu.addEventListener('click', () => {
             menu.classList.toggle('active'); // Show/hide sliding menu
@@ -69,3 +72,24 @@ fetch(headerPath)
         fallbackHeader.textContent = 'Unable to load navigation. Please refresh the page.';
         document.body.insertAdjacentElement('afterbegin', fallbackHeader);
     });
+
+// Function to set the active menu item based on current page
+function setActiveMenuItem() {
+    const currentPath = window.location.pathname;
+    const menuLinks = document.querySelectorAll('#menu a');
+    
+    menuLinks.forEach(link => {
+        const linkPath = new URL(link.href).pathname;
+        
+        // Check if the link matches the current page
+        if (linkPath === currentPath || 
+            (currentPath === '/' && linkPath === '/') ||
+            (currentPath === '/index.html' && linkPath === '/') ||
+            (currentPath.endsWith('/') && linkPath === currentPath.slice(0, -1)) ||
+            (linkPath.endsWith('/') && currentPath === linkPath.slice(0, -1))) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
