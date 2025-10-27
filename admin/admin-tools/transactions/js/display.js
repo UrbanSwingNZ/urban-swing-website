@@ -70,11 +70,13 @@ function createTransactionRow(transaction) {
         </td>
         <td>
             <div class="action-buttons">
-                <i class="fas fa-file-invoice btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
-                   title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
-                   data-id="${transaction.id}"
-                   data-collection="${transaction.collection}"
-                   ${transaction.reversed ? 'style="opacity: 0.3; pointer-events: none;"' : ''}></i>
+                <button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
+                        title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
+                        data-id="${transaction.id}"
+                        data-collection="${transaction.collection}"
+                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                    <i class="fas fa-file-invoice"></i>
+                </button>
                 <button class="btn-icon btn-edit" 
                         title="Edit Transaction"
                         ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
