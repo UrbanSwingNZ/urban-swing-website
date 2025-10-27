@@ -661,6 +661,11 @@
     color: var(--admin-green);
 }
 
+.checkin-type.crew {
+    background: rgba(255, 152, 0, 0.1);
+    color: #ff9800;
+}
+
 /* Reversed Check-in Styling */
 .reversed-checkin {
     opacity: 0.6;

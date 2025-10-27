@@ -60,6 +60,7 @@ async function loadTodaysCheckins() {
                 freeEntryReason: data.freeEntryReason,
                 balance: 0, // TODO: Get actual balance from student or concessionBlocks
                 notes: data.notes,
+                reversed: data.reversed || false, // Include reversed status
                 hasReversedTransaction: hasReversedTransaction
             };
         });
@@ -106,7 +107,7 @@ function displayTodaysCheckins() {
     // Filter based on toggle state
     const checkinsToDisplay = showReversedCheckins 
         ? todaysCheckins 
-        : todaysCheckins.filter(c => !c.hasReversedTransaction);
+        : todaysCheckins.filter(c => !c.reversed);
     
     if (checkinsToDisplay.length === 0) {
         emptyState.style.display = 'block';
@@ -119,17 +120,29 @@ function displayTodaysCheckins() {
     checkinsList.style.display = 'block';
     
     checkinsList.innerHTML = checkinsToDisplay.map(checkin => {
-        const typeClass = checkin.entryType;
-        const typeLabel = checkin.entryType === 'concession' ? 'Concession' : 
-                         checkin.entryType === 'casual' ? 'Casual Entry' : 'Free Entry';
+        // Determine badge type and label
+        let typeClass, typeLabel;
+        if (checkin.entryType === 'concession') {
+            typeClass = 'concession';
+            typeLabel = 'Concession';
+        } else if (checkin.entryType === 'casual') {
+            typeClass = 'casual';
+            typeLabel = 'Casual Entry';
+        } else if (checkin.entryType === 'free' && checkin.freeEntryReason === 'crew-member') {
+            typeClass = 'crew';
+            typeLabel = 'Crew';
+        } else {
+            typeClass = 'free';
+            typeLabel = 'Free Entry';
+        }
         
-        // Add reversed class if applicable
-        const reversedClass = checkin.hasReversedTransaction ? 'reversed-checkin' : '';
+        // Add reversed class if check-in is reversed
+        const reversedClass = checkin.reversed ? 'reversed-checkin' : '';
         
         return `<div class="checkin-item ${reversedClass}" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
             <div class="checkin-info-row" data-action="edit">
                 <span class="checkin-name">${escapeHtml(checkin.studentName)}</span>
-                ${checkin.hasReversedTransaction ? '<span class="reversed-badge">REVERSED</span>' : ''}
+                ${checkin.reversed ? '<span class="reversed-badge">REVERSED</span>' : ''}
             </div>
             <div class="checkin-actions">
                 <span class="checkin-type ${typeClass}">${typeLabel}</span>
@@ -298,14 +311,17 @@ async function deleteCheckin(checkinId) {
                 await reverseTransaction(checkinId);
             } catch (transactionError) {
                 console.error('Error reversing transaction:', transactionError);
-                // Continue with deletion even if transaction reversal fails
+                // Continue with reversal even if transaction reversal fails
             }
         }
         
-        // Delete the check-in
-        await checkinRef.delete();
+        // Mark the check-in as reversed instead of deleting
+        await checkinRef.update({
+            reversed: true,
+            reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
         
-        showSnackbar('Check-in deleted successfully', 'success');
+        showSnackbar('Check-in reversed successfully', 'success');
         
         // Reload check-ins
         loadTodaysCheckins();
@@ -316,8 +332,8 @@ async function deleteCheckin(checkinId) {
         }
         
     } catch (error) {
-        console.error('Error deleting check-in:', error);
-        showSnackbar('Failed to delete check-in', 'error');
+        console.error('Error reversing check-in:', error);
+        showSnackbar('Failed to reverse check-in', 'error');
     }
 }
 
