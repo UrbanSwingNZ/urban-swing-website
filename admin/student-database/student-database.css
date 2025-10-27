@@ -518,6 +518,11 @@ textarea:focus {
    RESPONSIVE DESIGN
    ======================================== */
 
+/* Hide note indicator on desktop - only show on mobile */
+.students-table tbody tr td:nth-child(1) .note-indicator {
+    display: none;
+}
+
 @media (max-width: 768px) {
     /* Reduce padding on main content for mobile */
     .database-main {
@@ -617,6 +622,15 @@ textarea:focus {
         color: var(--text-color);
         border-bottom: 1px solid rgba(154, 22, 245, 0.1);
         padding-bottom: 0.5rem;
+    }
+
+    /* Note indicator icon - only visible on mobile */
+    .students-table tbody tr td:nth-child(1) .note-indicator {
+        display: inline;
+        font-size: 0.85rem;
+        color: var(--admin-purple);
+        margin-left: 0.5rem;
+        opacity: 0.8;
     }
 
     /* Pronouns - below name */

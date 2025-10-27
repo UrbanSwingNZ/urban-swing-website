@@ -126,9 +126,10 @@ function createStudentRow(student) {
     // Check if student has notes
     const hasNotes = student.adminNotes && student.adminNotes.trim().length > 0;
     const notesButtonClass = hasNotes ? 'btn-icon has-notes' : 'btn-icon';
+    const notesIcon = hasNotes ? ' <i class="fas fa-sticky-note note-indicator"></i>' : '';
 
     row.innerHTML = `
-        <td><strong>${escapeHtml(fullName)}</strong></td>
+        <td><strong>${escapeHtml(fullName)}</strong>${notesIcon}</td>
         <td>${escapeHtml(student.email || 'N/A')}</td>
         <td>${escapeHtml(student.phoneNumber || 'N/A')}</td>
         <td>${escapeHtml(student.pronouns || '-')}</td>
