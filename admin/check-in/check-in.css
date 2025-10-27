@@ -634,6 +634,18 @@
     color: white;
 }
 
+.btn-icon.btn-invoice.invoiced {
+    color: var(--admin-purple);
+    border-color: var(--admin-purple);
+    background: rgba(154, 22, 245, 0.1);
+}
+
+.btn-icon.btn-invoice:hover {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+    background: rgba(154, 22, 245, 0.1);
+}
+
 .checkin-type.concession {
     background: rgba(154, 22, 245, 0.1);
     color: var(--admin-purple);
