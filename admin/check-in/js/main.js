@@ -22,6 +22,11 @@ async function initializeApp() {
         // Load today's check-ins
         await loadTodaysCheckins();
         
+        // Load today's transactions
+        if (typeof loadCheckinTransactions === 'function') {
+            await loadCheckinTransactions();
+        }
+        
         // Initialize reusable purchase concessions modal
         initializePurchaseConcessionsModal();
         initializeAddConcessionModal();
