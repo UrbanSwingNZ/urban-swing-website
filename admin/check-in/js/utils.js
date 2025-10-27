@@ -78,6 +78,31 @@ function formatDate(timestamp) {
 }
 
 /**
+ * Format timestamp to full date and time
+ */
+function formatTimestamp(timestamp) {
+    if (!timestamp) return '—';
+    
+    let date;
+    if (timestamp.toDate) {
+        date = timestamp.toDate();
+    } else if (timestamp instanceof Date) {
+        date = timestamp;
+    } else {
+        date = new Date(timestamp);
+    }
+    
+    return date.toLocaleDateString('en-NZ', { 
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
+/**
  * Convert text to title case
  */
 function toTitleCase(text) {
