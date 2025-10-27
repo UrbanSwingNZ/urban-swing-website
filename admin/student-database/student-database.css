@@ -518,6 +518,11 @@ textarea:focus {
    RESPONSIVE DESIGN
    ======================================== */
 
+/* Hide note indicator on desktop - only show on mobile */
+.students-table tbody tr td:nth-child(1) .note-indicator {
+    display: none;
+}
+
 @media (max-width: 768px) {
     /* Reduce padding on main content for mobile */
     .database-main {
@@ -619,6 +624,15 @@ textarea:focus {
         padding-bottom: 0.5rem;
     }
 
+    /* Note indicator icon - only visible on mobile */
+    .students-table tbody tr td:nth-child(1) .note-indicator {
+        display: inline;
+        font-size: 0.85rem;
+        color: var(--admin-purple);
+        margin-left: 0.5rem;
+        opacity: 0.8;
+    }
+
     /* Pronouns - below name */
     .students-table tbody tr td:nth-child(4) {
         font-size: 0.85rem;
@@ -694,21 +708,26 @@ textarea:focus {
         background: rgba(154, 22, 245, 0.05);
     }
 
-    .students-table tbody tr.expanded td:nth-child(8) .action-buttons {
+    .students-table tbody tr.expanded td:nth-child(8).action-buttons {
         display: flex;
         gap: 0.5rem;
         justify-content: stretch;
         width: 100%;
+        flex-direction: row !important;
+        box-sizing: border-box;
     }
 
     .students-table tbody tr.expanded td:nth-child(8) .btn-icon {
         flex: 1;
-        padding: 0.75rem;
-        display: flex;
-        flex-direction: column;
+        padding: 0.5rem;
+        display: inline-flex;
+        flex-direction: row !important;
         align-items: center;
+        justify-content: center;
         gap: 0.25rem;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .students-table tbody tr.expanded td:nth-child(8) .btn-icon i {
