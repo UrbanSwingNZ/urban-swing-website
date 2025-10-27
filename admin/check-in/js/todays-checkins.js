@@ -118,6 +118,10 @@ function displayTodaysCheckins() {
     emptyState.style.display = 'none';
     checkinsList.style.display = 'block';
     
+    // Determine if delete button should be shown
+    // Super admin can always delete, front desk can only delete today's check-ins
+    const canDelete = isSuperAdmin() || (typeof isSelectedDateToday === 'function' && isSelectedDateToday());
+    
     checkinsList.innerHTML = checkinsToDisplay.map(checkin => {
         // Determine badge type and label
         let typeClass, typeLabel;
@@ -148,9 +152,9 @@ function displayTodaysCheckins() {
                 <button type="button" class="btn-icon btn-purchase" data-action="purchase" title="Purchase Concessions">
                     <i class="fas fa-shopping-cart"></i>
                 </button>
-                <button type="button" class="btn-icon btn-delete" data-action="delete" title="Delete Check-In">
+                ${canDelete ? `<button type="button" class="btn-icon btn-delete" data-action="delete" title="Delete Check-In">
                     <i class="fas fa-trash-alt"></i>
-                </button>
+                </button>` : ''}
             </div>
         </div>`;
     }).join('');
