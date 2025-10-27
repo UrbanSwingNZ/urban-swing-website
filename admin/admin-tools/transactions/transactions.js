@@ -25,6 +25,11 @@ function initializePage() {
         initializeCasualEntryModal();
     }
     
+    // Initialize student filter
+    if (typeof initializeStudentFilter === 'function') {
+        initializeStudentFilter();
+    }
+    
     setupEventListeners();
     setDefaultDateRange();
     loadTransactions();
@@ -91,8 +96,9 @@ function applyFilters() {
     const dateTo = document.getElementById('date-to').value;
     const typeFilter = document.getElementById('transaction-type').value;
     const showReversed = document.getElementById('show-reversed-toggle').checked;
+    const studentId = typeof getSelectedStudentId === 'function' ? getSelectedStudentId() : null;
     
-    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed);
+    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed, studentId);
     sortFilteredTransactions();
     displayFilteredTransactions();
     updateSummary();
@@ -105,6 +111,12 @@ function resetFilters() {
     setDefaultDateRange();
     document.getElementById('transaction-type').value = 'all';
     document.getElementById('show-reversed-toggle').checked = false;
+    
+    // Clear student filter
+    if (typeof clearStudentFilter === 'function') {
+        clearStudentFilter();
+    }
+    
     applyFilters();
 }
 

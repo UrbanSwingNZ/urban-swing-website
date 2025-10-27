@@ -69,6 +69,15 @@
                         </select>
                     </div>
                     
+                    <div class="filter-group">
+                        <label for="student-filter"><i class="fas fa-user"></i> Student:</label>
+                        <div class="student-filter-wrapper">
+                            <input type="text" id="student-filter" class="filter-input" placeholder="All Students" autocomplete="off">
+                            <button type="button" class="clear-student-btn" id="clear-student-filter" style="display: none;">&times;</button>
+                            <div id="student-filter-results" class="student-filter-dropdown" style="display: none;"></div>
+                        </div>
+                    </div>
+                    
                     <div class="filter-actions">
                         <button id="apply-filters-btn" class="btn-primary">
                             <i class="fas fa-search"></i> Apply Filters
@@ -192,6 +201,7 @@
     
     <!-- Transaction Modules -->
     <script src="js/utils.js"></script>
+    <script src="js/student-filter.js"></script>
     <script src="js/data-loader.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/display.js"></script>
