@@ -65,37 +65,54 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         if (existingCheckin.exists) {
             const existingData = existingCheckin.data();
             
-            // Handle transaction changes when updating check-in
-            const hadPayment = existingData.amountPaid > 0;
-            const willHavePayment = entryType === 'casual';
-            
-            if (hadPayment && !willHavePayment) {
-                // Changing FROM paid TO free - reverse the transaction
-                try {
-                    await reverseTransaction(docId);
-                } catch (error) {
-                    console.error('Error reversing transaction on update:', error);
+            // If the check-in was previously reversed, un-reverse it
+            if (existingData.reversed) {
+                // Un-reverse the check-in (will be updated with new data below)
+                // If it was a concession, re-use the block entry
+                if (entryType === 'concession') {
+                    const block = await getNextAvailableBlock(student.id, true);
+                    if (!block) {
+                        showSnackbar('No concession entries available for this student', 'error');
+                        return;
+                    }
+                    await useBlockEntry(block.id);
+                    concessionBlockId = block.id;
                 }
-            }
-            // Note: If changing FROM free TO paid, new transaction will be created after save
-            
-            // If they're changing FROM concession TO another type, restore the concession
-            if (existingData.entryType === 'concession' && entryType !== 'concession' && existingData.concessionBlockId) {
-                await restoreBlockEntry(existingData.concessionBlockId);
-            }
-            // If they're changing FROM another type TO concession, use a concession
-            else if (existingData.entryType !== 'concession' && entryType === 'concession') {
-                const block = await getNextAvailableBlock(student.id, true);
-                if (!block) {
-                    showSnackbar('No concession entries available for this student', 'error');
-                    return;
+                // Transaction will be re-created if it's a paid entry (handled after save)
+            } else {
+                // Normal update of existing active check-in
+                // Handle transaction changes when updating check-in
+                const hadPayment = existingData.amountPaid > 0;
+                const willHavePayment = entryType === 'casual';
+                
+                if (hadPayment && !willHavePayment) {
+                    // Changing FROM paid TO free - reverse the transaction
+                    try {
+                        await reverseTransaction(docId);
+                    } catch (error) {
+                        console.error('Error reversing transaction on update:', error);
+                    }
                 }
-                await useBlockEntry(block.id);
-                concessionBlockId = block.id;
-            }
-            // If both are concession, keep the existing block ID (no change needed)
-            else if (existingData.entryType === 'concession' && entryType === 'concession') {
-                concessionBlockId = existingData.concessionBlockId;
+                // Note: If changing FROM free TO paid, new transaction will be created after save
+                
+                // If they're changing FROM concession TO another type, restore the concession
+                if (existingData.entryType === 'concession' && entryType !== 'concession' && existingData.concessionBlockId) {
+                    await restoreBlockEntry(existingData.concessionBlockId);
+                }
+                // If they're changing FROM another type TO concession, use a concession
+                else if (existingData.entryType !== 'concession' && entryType === 'concession') {
+                    const block = await getNextAvailableBlock(student.id, true);
+                    if (!block) {
+                        showSnackbar('No concession entries available for this student', 'error');
+                        return;
+                    }
+                    await useBlockEntry(block.id);
+                    concessionBlockId = block.id;
+                }
+                // If both are concession, keep the existing block ID (no change needed)
+                else if (existingData.entryType === 'concession' && entryType === 'concession') {
+                    concessionBlockId = existingData.concessionBlockId;
+                }
             }
         } else {
             // New check-in - if concession, use a block entry
@@ -124,15 +141,18 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             amountPaid: entryType === 'casual' ? 15 : 0,
             concessionBlockId: concessionBlockId,
             notes: notes || '',
+            reversed: false, // Explicitly set to false (un-reverses if previously reversed)
+            reversedAt: firebase.firestore.FieldValue.delete(), // Remove reversedAt field if it exists
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown'
         };
         
         // Save to Firestore with custom document ID
+        // Use merge:true to allow FieldValue.delete() to work
         await firebase.firestore()
             .collection('checkins')
             .doc(docId)
-            .set(checkinData);
+            .set(checkinData, { merge: true });
         
         // Create transaction record if there's a payment
         if (checkinData.amountPaid > 0 && checkinData.paymentMethod) {

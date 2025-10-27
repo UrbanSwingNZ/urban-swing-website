@@ -29,40 +29,43 @@ async function loadTodaysCheckins() {
             .get();
         
         // Convert to array and check for reversed transactions
-        const checkinPromises = snapshot.docs.map(async doc => {
-            const data = doc.data();
-            
-            // Check if this check-in has a reversed transaction
-            let hasReversedTransaction = false;
-            if (data.amountPaid > 0) {
-                try {
-                    const transactionSnapshot = await firebase.firestore()
-                        .collection('transactions')
-                        .where('checkinId', '==', doc.id)
-                        .get();
-                    
-                    if (!transactionSnapshot.empty) {
-                        const transactionData = transactionSnapshot.docs[0].data();
-                        hasReversedTransaction = transactionData.reversed || false;
+        // Filter out reversed check-ins
+        const checkinPromises = snapshot.docs
+            .filter(doc => !doc.data().reversed) // Exclude reversed check-ins
+            .map(async doc => {
+                const data = doc.data();
+                
+                // Check if this check-in has a reversed transaction
+                let hasReversedTransaction = false;
+                if (data.amountPaid > 0) {
+                    try {
+                        const transactionSnapshot = await firebase.firestore()
+                            .collection('transactions')
+                            .where('checkinId', '==', doc.id)
+                            .get();
+                        
+                        if (!transactionSnapshot.empty) {
+                            const transactionData = transactionSnapshot.docs[0].data();
+                            hasReversedTransaction = transactionData.reversed || false;
+                        }
+                    } catch (error) {
+                        console.error('Error checking transaction status:', error);
                     }
-                } catch (error) {
-                    console.error('Error checking transaction status:', error);
                 }
-            }
-            
-            return {
-                id: doc.id,
-                studentId: data.studentId,
-                studentName: data.studentName,
-                timestamp: data.checkinDate.toDate(),
-                entryType: data.entryType,
-                paymentMethod: data.paymentMethod,
-                freeEntryReason: data.freeEntryReason,
-                balance: 0, // TODO: Get actual balance from student or concessionBlocks
-                notes: data.notes,
-                hasReversedTransaction: hasReversedTransaction
-            };
-        });
+                
+                return {
+                    id: doc.id,
+                    studentId: data.studentId,
+                    studentName: data.studentName,
+                    timestamp: data.checkinDate.toDate(),
+                    entryType: data.entryType,
+                    paymentMethod: data.paymentMethod,
+                    freeEntryReason: data.freeEntryReason,
+                    balance: 0, // TODO: Get actual balance from student or concessionBlocks
+                    notes: data.notes,
+                    hasReversedTransaction: hasReversedTransaction
+                };
+            });
         
         todaysCheckins = await Promise.all(checkinPromises);
         
@@ -298,14 +301,17 @@ async function deleteCheckin(checkinId) {
                 await reverseTransaction(checkinId);
             } catch (transactionError) {
                 console.error('Error reversing transaction:', transactionError);
-                // Continue with deletion even if transaction reversal fails
+                // Continue with reversal even if transaction reversal fails
             }
         }
         
-        // Delete the check-in
-        await checkinRef.delete();
+        // Mark the check-in as reversed instead of deleting
+        await checkinRef.update({
+            reversed: true,
+            reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
         
-        showSnackbar('Check-in deleted successfully', 'success');
+        showSnackbar('Check-in reversed successfully', 'success');
         
         // Reload check-ins
         loadTodaysCheckins();
@@ -316,8 +322,8 @@ async function deleteCheckin(checkinId) {
         }
         
     } catch (error) {
-        console.error('Error deleting check-in:', error);
-        showSnackbar('Failed to delete check-in', 'error');
+        console.error('Error reversing check-in:', error);
+        showSnackbar('Failed to reverse check-in', 'error');
     }
 }
 
