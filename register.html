@@ -123,8 +123,22 @@
                             required
                         >
                         <span>
-                            <i class="fas fa-check-circle"></i> 
                             I confirm I am 16 years or older <span class="required">*</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="termsAccepted" 
+                            name="termsAccepted" 
+                            required
+                        >
+                        <span>
+                            I accept the <a href="#" id="terms-link" class="terms-link">Terms and Conditions</a> <span class="required">*</span>
                         </span>
                     </label>
                 </div>
@@ -203,6 +217,41 @@
                 </button>
                 <button class="btn-primary" id="proceed-btn">
                     <i class="fas fa-check"></i> Register Anyway
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div id="terms-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-contract"></i> Terms and Conditions</h3>
+                <button class="modal-close" id="terms-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body terms-content">
+                <h4>Urban Swing Terms and Conditions</h4>
+                <p><strong>Last Updated: 10 January 2025</strong></p>
+                
+                <h5>Liability Waiver & Acknowledgment of Risk</h5>
+                <p>I understand that participating in dance classes, events, or activities at Urban Swing involves inherent risks, including but not limited to physical injury. While Urban Swing will take all reasonable precautions to ensure a safe environment and minimize these risks, I acknowledge that the ultimate responsibility for my safety lies with me as the participant.</p>
+                
+                <p>By participating in Urban Swing's classes or events, I agree to assume full responsibility for any injuries, accidents, or other incidents that may occur during my participation. I understand that Urban Swing cannot be held liable for any injuries or damages sustained while attending or engaging in its activities.</p>
+                
+                <p>I hereby release Urban Swing, its instructors, crew, and affiliates from any and all claims, demands, or causes of action related to injury, loss, or damage that may arise during my participation in classes or events.</p>
+                
+                <h5>Media</h5>
+                <p>By submitting this form, I give permission to Urban Swing Limited to capture photos, videos, and other media of my participation in dance classes, events, or performances. These images and videos may be used for advertising, educational, training, or other promotional purposes across various platforms, including social media, websites, and other digital media.</p>
+                
+                <p>I understand that my participation in media captured by Urban Swing may be shared publicly. However, if I have any concerns or would prefer not to be included in such media, I will inform an owner of Urban Swing upon my arrival at a class or event. Urban Swing respects my right to privacy and will make every effort to exclude me from media coverage if requested.</p>
+                
+                <p><strong>By submitting this form, I acknowledge that I fully understand and agree to these terms.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="terms-accept-btn">
+                    <i class="fas fa-check"></i> Accept and Close
                 </button>
             </div>
         </div>
