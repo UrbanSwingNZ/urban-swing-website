@@ -70,19 +70,19 @@ function createTransactionRow(transaction) {
         </td>
         <td>
             <div class="action-buttons">
-                <button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
+                ${isSuperAdmin() ? `<button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
                         title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
                         data-id="${transaction.id}"
                         data-collection="${transaction.collection}"
                         ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-file-invoice"></i>
-                </button>
+                </button>` : ''}
                 <button class="btn-icon btn-edit" 
                         title="Edit Transaction"
                         ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-icon btn-delete" 
+                ${isSuperAdmin() ? `<button class="btn-icon btn-delete" 
                         title="${transaction.reversed ? 'Cannot delete reversed transaction' : 'Delete Transaction'}"
                         data-id="${transaction.id}"
                         data-collection="${transaction.collection}"
@@ -90,14 +90,16 @@ function createTransactionRow(transaction) {
                         data-amount="${transaction.amount}"
                         ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-trash-alt"></i>
-                </button>
+                </button>` : ''}
             </div>
         </td>
     `;
     
     // Add event listeners
     const invoiceBtn = row.querySelector('.btn-invoice');
-    invoiceBtn.addEventListener('click', () => window.toggleInvoiced(transaction));
+    if (invoiceBtn) {
+        invoiceBtn.addEventListener('click', () => window.toggleInvoiced(transaction));
+    }
     
     const editBtn = row.querySelector('.btn-edit');
     if (!transaction.reversed) {
@@ -105,7 +107,9 @@ function createTransactionRow(transaction) {
     }
     
     const deleteBtn = row.querySelector('.btn-delete');
-    deleteBtn.addEventListener('click', () => window.confirmDelete(transaction));
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => window.confirmDelete(transaction));
+    }
     
     return row;
 }
