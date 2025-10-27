@@ -726,6 +726,44 @@ select.filter-input:focus {
 }
 
 @media (max-width: 768px) {
+    /* Fix header layout on mobile */
+    .admin-header-content {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 12px !important;
+        text-align: left !important;
+    }
+
+    .admin-header-content .back-button {
+        order: 0;
+        flex-shrink: 0;
+    }
+
+    .admin-header-content h1,
+    .admin-header-content .page-heading {
+        order: 1;
+        flex: 0 0 auto;
+        font-size: 1.1rem !important;
+        margin: 0;
+    }
+
+    .admin-user-info {
+        order: 2;
+        flex-shrink: 0;
+        margin-left: auto !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Hide email on very small screens */
+    .admin-user-info span {
+        display: none;
+    }
+
     .filters-row {
         flex-direction: column;
     }
