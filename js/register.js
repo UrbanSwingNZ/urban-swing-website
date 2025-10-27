@@ -77,7 +77,7 @@ function setupFormHandlers() {
         await handleFormSubmit();
     });
 
-    // Modal buttons
+    // Modal buttons - Duplicate Modal
     const cancelBtn = document.getElementById('cancel-btn');
     const proceedBtn = document.getElementById('proceed-btn');
 
@@ -89,6 +89,33 @@ function setupFormHandlers() {
         proceedBtn.addEventListener('click', async () => {
             hideDuplicateModal();
             await saveStudent(formData);
+        });
+    }
+
+    // Terms and Conditions Modal
+    const termsLink = document.getElementById('terms-link');
+    const termsCloseBtn = document.getElementById('terms-close-btn');
+    const termsAcceptBtn = document.getElementById('terms-accept-btn');
+
+    if (termsLink) {
+        termsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showTermsModal();
+        });
+    }
+
+    if (termsCloseBtn) {
+        termsCloseBtn.addEventListener('click', hideTermsModal);
+    }
+
+    if (termsAcceptBtn) {
+        termsAcceptBtn.addEventListener('click', () => {
+            // Check the terms checkbox
+            const termsCheckbox = document.getElementById('termsAccepted');
+            if (termsCheckbox) {
+                termsCheckbox.checked = true;
+            }
+            hideTermsModal();
         });
     }
 }
@@ -143,6 +170,7 @@ function getFormData() {
         phoneNumber: document.getElementById('phoneNumber').value.trim(),
         pronouns: document.getElementById('pronouns').value.trim(),
         over16Confirmed: document.getElementById('over16Confirmed').checked,
+        termsAccepted: document.getElementById('termsAccepted').checked,
         emailConsent: document.getElementById('emailConsent').checked,
         adminNotes: isAdmin ? document.getElementById('adminNotes').value.trim() : '',
         registeredAt: firebase.firestore.Timestamp.now(),
@@ -185,6 +213,11 @@ function validateFormData(data) {
 
     if (!data.over16Confirmed) {
         showError('You must confirm that you are 16 years or older.');
+        return false;
+    }
+
+    if (!data.termsAccepted) {
+        showError('You must accept the Terms and Conditions to register.');
         return false;
     }
 
@@ -257,6 +290,24 @@ function showDuplicateModal(students) {
 
 function hideDuplicateModal() {
     const modal = document.getElementById('duplicate-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// ========================================
+// Terms and Conditions Modal
+// ========================================
+
+function showTermsModal() {
+    const modal = document.getElementById('terms-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function hideTermsModal() {
+    const modal = document.getElementById('terms-modal');
     if (modal) {
         modal.style.display = 'none';
     }

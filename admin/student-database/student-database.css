@@ -409,6 +409,19 @@
     margin-right: 5px;
 }
 
+/* Terms and Conditions Link */
+.terms-link {
+    color: var(--admin-purple);
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.terms-link:hover {
+    color: var(--admin-pink);
+}
+
 /* Textarea */
 textarea {
     width: 100%;
@@ -458,6 +471,11 @@ textarea:focus {
 
 .success-message i {
     font-size: 1.2rem;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
 }
 
 /* Back to Admin Link (for registration form) */
@@ -1018,6 +1036,62 @@ textarea:focus {
 
 .snackbar-info {
     background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+/* ========================================
+   TERMS AND CONDITIONS MODAL
+   ======================================== */
+
+.terms-content {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.terms-content h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-size: 1.3rem;
+}
+
+.terms-content h5 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: var(--admin-purple);
+    font-size: 1.1rem;
+}
+
+.terms-content p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.terms-placeholder {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(154, 22, 245, 0.05);
+    border-left: 3px solid var(--admin-purple);
+    border-radius: 4px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    margin-left: auto;
+}
+
+.modal-close:hover {
+    color: var(--admin-purple);
+    transform: scale(1.1);
 }
 
 /* ========================================
