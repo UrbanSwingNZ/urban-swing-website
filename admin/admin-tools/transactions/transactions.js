@@ -40,6 +40,7 @@ function setupEventListeners() {
     // Filters
     document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);
     document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
+    document.getElementById('show-reversed-toggle').addEventListener('change', applyFilters);
     
     // Sort
     document.querySelectorAll('.sortable').forEach(th => {
@@ -89,8 +90,9 @@ function applyFilters() {
     const dateFrom = document.getElementById('date-from').value;
     const dateTo = document.getElementById('date-to').value;
     const typeFilter = document.getElementById('transaction-type').value;
+    const showReversed = document.getElementById('show-reversed-toggle').checked;
     
-    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter);
+    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed);
     sortFilteredTransactions();
     displayFilteredTransactions();
     updateSummary();
@@ -102,6 +104,7 @@ function applyFilters() {
 function resetFilters() {
     setDefaultDateRange();
     document.getElementById('transaction-type').value = 'all';
+    document.getElementById('show-reversed-toggle').checked = false;
     applyFilters();
 }
 
@@ -143,13 +146,17 @@ function updateSummary() {
 }
 
 /**
- * Callback when transaction is deleted
+ * Callback when transaction is deleted/reversed
  */
 window.onTransactionDeleted = function(transactionId) {
-    allTransactions = allTransactions.filter(t => t.id !== transactionId);
-    filteredTransactions = filteredTransactions.filter(t => t.id !== transactionId);
-    displayFilteredTransactions();
-    updateSummary();
+    // Update the reversed flag in the local data
+    const transaction = allTransactions.find(t => t.id === transactionId);
+    if (transaction) {
+        transaction.reversed = true;
+    }
+    
+    // Reapply filters (this will hide reversed transactions unless the toggle is on)
+    applyFilters();
 };
 
 // Expose functions needed by other modules
