@@ -764,21 +764,112 @@ select.filter-input:focus {
         display: none;
     }
 
+    /* Reduce padding on main content for mobile */
+    .main-content {
+        padding: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .filters-container {
+        padding: 1rem;
+        box-sizing: border-box;
+        overflow: hidden;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
     .filters-row {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* From and To dates - side by side on first row */
+    .filter-group:nth-child(1),
+    .filter-group:nth-child(2) {
+        grid-column: span 1;
+    }
+    
+    /* Type dropdown - full width on second row */
+    .filter-group:nth-child(3) {
+        grid-column: span 2;
+    }
+    
+    /* Student search - full width on third row */
+    .filter-group:nth-child(4) {
+        grid-column: span 2;
     }
     
     .filter-group {
         width: 100%;
+        min-width: auto;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .student-filter-wrapper {
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    #student-filter {
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
     }
     
     .filter-actions {
+        grid-column: span 2;
         width: 100%;
         margin-left: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        box-sizing: border-box;
     }
     
-    .filter-actions button {
-        flex: 1;
+    /* Apply Filters button - full width on first row */
+    .filter-actions #apply-filters-btn {
+        grid-column: span 2;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Reset button and Show Reversed toggle - side by side on second row */
+    .filter-actions #reset-filters-btn {
+        grid-column: span 1;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .filter-actions .toggle-group {
+        grid-column: span 1;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .toggle-label {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     .summary-row {
