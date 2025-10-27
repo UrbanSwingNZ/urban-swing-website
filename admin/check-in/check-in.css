@@ -1305,15 +1305,27 @@ textarea.form-control {
     .date-picker-container {
         width: 100%;
         justify-content: space-between;
+        box-sizing: border-box;
+        padding: 10px 12px;
     }
 
     .date-input-wrapper {
         flex: 1;
         min-width: 0;
+        box-sizing: border-box;
     }
 
     .date-input {
         width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 8px 35px 8px 10px;
+    }
+
+    .date-label {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .section-header {
