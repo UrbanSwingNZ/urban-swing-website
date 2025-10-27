@@ -486,18 +486,20 @@ select.filter-input:focus {
     color: var(--danger-color);
 }
 
-.btn-invoice {
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s;
-    color: var(--text-muted);
+.btn-icon.btn-invoice.invoiced {
+    color: var(--info-color);
+    border-color: var(--info-color);
+    background: rgba(0, 123, 255, 0.1);
 }
 
-.btn-invoice:hover {
-    transform: scale(1.1);
+.btn-icon.btn-invoice:hover {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+    background: rgba(154, 22, 245, 0.1);
 }
 
-.btn-invoice.invoiced {
+.btn-icon.btn-invoice.invoiced:hover {
+    border-color: var(--info-color);
     color: var(--info-color);
 }
 

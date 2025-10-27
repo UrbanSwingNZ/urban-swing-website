@@ -20,15 +20,15 @@ async function toggleInvoiced(transaction) {
         // Update local data
         transaction.invoiced = newStatus;
         
-        // Update the icon in the table
-        const icon = document.querySelector(`.btn-invoice[data-id="${transaction.id}"]`);
-        if (icon) {
+        // Update the button in the table
+        const btn = document.querySelector(`.btn-invoice[data-id="${transaction.id}"]`);
+        if (btn) {
             if (newStatus) {
-                icon.classList.add('invoiced');
-                icon.title = 'Mark as Not Invoiced';
+                btn.classList.add('invoiced');
+                btn.title = 'Mark as Not Invoiced';
             } else {
-                icon.classList.remove('invoiced');
-                icon.title = 'Mark as Invoiced';
+                btn.classList.remove('invoiced');
+                btn.title = 'Mark as Invoiced';
             }
         }
         
