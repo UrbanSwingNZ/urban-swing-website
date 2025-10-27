@@ -120,9 +120,21 @@ function displayTodaysCheckins() {
     checkinsList.style.display = 'block';
     
     checkinsList.innerHTML = checkinsToDisplay.map(checkin => {
-        const typeClass = checkin.entryType;
-        const typeLabel = checkin.entryType === 'concession' ? 'Concession' : 
-                         checkin.entryType === 'casual' ? 'Casual Entry' : 'Free Entry';
+        // Determine badge type and label
+        let typeClass, typeLabel;
+        if (checkin.entryType === 'concession') {
+            typeClass = 'concession';
+            typeLabel = 'Concession';
+        } else if (checkin.entryType === 'casual') {
+            typeClass = 'casual';
+            typeLabel = 'Casual Entry';
+        } else if (checkin.entryType === 'free' && checkin.freeEntryReason === 'crew-member') {
+            typeClass = 'crew';
+            typeLabel = 'Crew';
+        } else {
+            typeClass = 'free';
+            typeLabel = 'Free Entry';
+        }
         
         // Add reversed class if check-in is reversed
         const reversedClass = checkin.reversed ? 'reversed-checkin' : '';
