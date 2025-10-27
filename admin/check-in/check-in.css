@@ -1470,6 +1470,181 @@ textarea.form-control {
             grid-column: 3 / 4;
         }
     }
+
+    /* Transaction Cards on Mobile */
+    .table-container {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    #checkin-transactions-table {
+        display: block;
+        width: 100%;
+    }
+
+    #checkin-transactions-table thead {
+        display: none;
+    }
+
+    #checkin-transactions-table tbody {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    #checkin-transactions-table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--background-color);
+        border: 1px solid rgba(154, 22, 245, 0.2);
+        border-left: 4px solid var(--admin-purple);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+
+    #checkin-transactions-table tbody tr:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--admin-purple);
+    }
+
+    #checkin-transactions-table tbody tr.reversed-transaction {
+        border-left-color: var(--danger-color);
+        opacity: 0.7;
+    }
+
+    #checkin-transactions-table tbody td {
+        padding: 0;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 0.95rem;
+    }
+
+    /* Add labels to mobile cards */
+    #checkin-transactions-table tbody td::before {
+        content: attr(data-label);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Hide labels for Date, Student, Type */
+    #checkin-transactions-table tbody td:nth-child(1)::before,
+    #checkin-transactions-table tbody td:nth-child(2)::before,
+    #checkin-transactions-table tbody td:nth-child(3)::before {
+        display: none;
+    }
+
+    /* Date - Row 1, Left */
+    #checkin-transactions-table tbody td:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    /* Student Name - Row 1, Right */
+    #checkin-transactions-table tbody td:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+        align-items: flex-end;
+    }
+
+    #checkin-transactions-table tbody td:nth-child(2) strong {
+        font-size: 1rem;
+    }
+
+    /* Type - Row 2, Right */
+    #checkin-transactions-table tbody td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 2;
+        text-align: right;
+        align-items: flex-end;
+    }
+
+    /* Amount - Row 3, Right */
+    #checkin-transactions-table tbody td:nth-child(4) {
+        grid-column: 2;
+        grid-row: 3;
+        text-align: right;
+        align-items: flex-end;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(154, 22, 245, 0.1);
+    }
+
+    #checkin-transactions-table tbody td:nth-child(4) .amount-cell {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--admin-purple);
+    }
+
+    /* Payment Method - Row 3, Full Width */
+    #checkin-transactions-table tbody td:nth-child(5) {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(154, 22, 245, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    /* Hide the individual payment amount columns (Cash, EFTPOS, Bank Transfer) on mobile */
+    #checkin-transactions-table tbody td:nth-child(6),
+    #checkin-transactions-table tbody td:nth-child(7),
+    #checkin-transactions-table tbody td:nth-child(8) {
+        display: none;
+    }
+
+    /* Actions - Row 4, Full Width */
+    #checkin-transactions-table tbody td:nth-child(9) {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        padding-top: 0.5rem;
+    }
+
+    /* Style payment amounts */
+    #checkin-transactions-table tbody td:nth-child(5) {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    #checkin-transactions-table .payment-amount {
+        font-weight: 600;
+        color: var(--admin-purple);
+    }
+
+    #checkin-transactions-table .payment-amount.empty {
+        color: var(--text-muted);
+    }
+
+    /* Actions - Row 4, Full Width */
+    #checkin-transactions-table tbody td:nth-child(9) {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        padding-top: 0.5rem;
+    }
+
+    #checkin-transactions-table tbody td:nth-child(9)::before {
+        display: none;
+    }
+
+    #checkin-transactions-table tbody td:nth-child(9) .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-start;
+    }
+
+    #checkin-transactions-table tbody td:nth-child(9) .btn-icon {
+        flex: 1;
+    }
 }
 
 @media (max-width: 480px) {
