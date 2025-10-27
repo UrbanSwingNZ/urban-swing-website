@@ -71,7 +71,7 @@ class MobileNavigation {
 
     return `
       <div class="mobile-nav-header">
-        <img src="../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo">
+        <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo">
         <div class="mobile-nav-user">
           <div class="mobile-nav-user-email">${userEmail}</div>
           <button class="mobile-nav-logout" id="mobile-logout-btn">
