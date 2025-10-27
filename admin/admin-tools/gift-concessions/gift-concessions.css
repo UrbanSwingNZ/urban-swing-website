@@ -70,15 +70,24 @@
 
 .search-icon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
+    color: var(--admin-purple);
     pointer-events: none;
+    z-index: 1;
 }
 
 .search-input {
-    padding-left: 40px;
+    padding-left: 45px !important;
+}
+
+.form-control {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
 }
 
 .search-results {
@@ -251,6 +260,36 @@
     gap: 20px;
 }
 
+/* Date Inputs - matching app style */
+input[type="date"].form-control {
+    padding: 8px 12px;
+    border: 1px solid rgba(154, 22, 245, 0.3);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+input[type="date"].form-control:hover {
+    border-color: var(--admin-purple);
+}
+
+input[type="date"].form-control:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+/* Calendar icon color for date inputs */
+input[type="date"].form-control::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(28%) sepia(89%) saturate(3207%) hue-rotate(262deg) brightness(85%) contrast(95%);
+}
+
+
 /* Gift Summary */
 .summary-section {
     background: linear-gradient(135deg, rgba(138, 43, 226, 0.05) 0%, rgba(155, 89, 182, 0.05) 100%);
@@ -392,6 +431,30 @@
 }
 
 .loading-message i {
+    margin-right: 8px;
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 20px;
+    font-style: italic;
+}
+
+.empty-message i {
+    margin-right: 8px;
+    color: var(--text-muted);
+}
+
+.error-message {
+    text-align: center;
+    color: #c62828;
+    padding: 20px;
+    background: rgba(198, 40, 40, 0.05);
+    border-radius: 4px;
+}
+
+.error-message i {
     margin-right: 8px;
 }
 

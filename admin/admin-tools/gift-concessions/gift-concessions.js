@@ -418,7 +418,7 @@ async function loadRecentGifts() {
             .get();
         
         if (snapshot.empty) {
-            listDiv.innerHTML = '<p class="loading-message"><i class="fas fa-inbox"></i> No gifts found yet</p>';
+            listDiv.innerHTML = '<p class="empty-message"><i class="fas fa-inbox"></i> No gifts have been recorded yet</p>';
             return;
         }
         
@@ -447,7 +447,7 @@ async function loadRecentGifts() {
     } catch (error) {
         console.error('Error loading recent gifts:', error);
         document.getElementById('recent-gifts-list').innerHTML = 
-            '<p class="loading-message"><i class="fas fa-exclamation-triangle"></i> Failed to load recent gifts</p>';
+            '<p class="error-message"><i class="fas fa-exclamation-triangle"></i> Failed to load recent gifts. Please refresh the page.</p>';
     }
 }
 
