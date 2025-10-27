@@ -37,7 +37,7 @@
 
         <main class="dashboard-main">
             <div class="page-intro">
-                <p>Export Firestore collections to JSON files for backup and archival purposes</p>
+                <p>Export Firestore collections to JSON and CSV files for backup and archival purposes</p>
             </div>
 
             <div class="backup-container">
@@ -46,9 +46,10 @@
             <p>This tool creates a complete backup of your Firestore database by exporting collections to a ZIP file.</p>
             <ul>
                 <li>Select which collections to backup</li>
-                <li>Creates a single ZIP file containing all selected collections as JSON files</li>
+                <li>Creates a single ZIP file containing all selected collections in both JSON and CSV formats</li>
                 <li>ZIP file is timestamped for easy version tracking (e.g., backup-2025-10-22-15-30-00.zip)</li>
                 <li>Backups can be extracted and used for restoration or migration</li>
+                <li>CSV files are ideal for spreadsheet analysis, while JSON preserves complex data structures</li>
             </ul>
         </div>
 
@@ -124,6 +125,51 @@
 
     <script>
         // Function definitions first
+        function convertToCSV(data, collectionName) {
+            if (data.length === 0) {
+                return 'No data available';
+            }
+
+            // Get all unique headers from all documents
+            const headerSet = new Set();
+            data.forEach(doc => {
+                Object.keys(doc).forEach(key => headerSet.add(key));
+            });
+            const headers = Array.from(headerSet).sort();
+
+            // Helper function to escape CSV values
+            function escapeCSV(value) {
+                if (value === null || value === undefined) {
+                    return '';
+                }
+                
+                // Convert objects and arrays to JSON strings
+                if (typeof value === 'object') {
+                    value = JSON.stringify(value);
+                }
+                
+                // Convert to string
+                value = String(value);
+                
+                // Escape quotes and wrap in quotes if needed
+                if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                    value = '"' + value.replace(/"/g, '""') + '"';
+                }
+                
+                return value;
+            }
+
+            // Build CSV
+            let csv = headers.map(h => escapeCSV(h)).join(',') + '\n';
+            
+            data.forEach(row => {
+                const values = headers.map(header => escapeCSV(row[header]));
+                csv += values.join(',') + '\n';
+            });
+
+            return csv;
+        }
+
         function showStatus(type, message) {
             const status = document.getElementById('status');
             const statusMessage = document.getElementById('status-message');
@@ -378,8 +424,12 @@
 
                     totalDocs += data.length;
 
-                    // Add collection to ZIP file
+                    // Add JSON version to ZIP file
                     zip.file(`${collectionName}.json`, JSON.stringify(data, null, 2));
+                    
+                    // Add CSV version to ZIP file
+                    const csv = convertToCSV(data, collectionName);
+                    zip.file(`${collectionName}.csv`, csv);
                 }
 
                 // Update metadata with total documents
