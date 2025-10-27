@@ -28,17 +28,20 @@ async function deleteConcessionBlock(blockId) {
         const studentId = blockData.studentId;
         const transactionId = blockData.transactionId;
         
-        // Delete the associated transaction if it exists
+        // Mark the associated transaction as reversed if it exists
         if (transactionId) {
             try {
                 await firebase.firestore()
                     .collection('transactions')
                     .doc(transactionId)
-                    .delete();
-                console.log(`Deleted associated transaction: ${transactionId}`);
+                    .update({
+                        reversed: true,
+                        reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                console.log(`Reversed associated transaction: ${transactionId}`);
             } catch (transactionError) {
-                console.warn('Could not delete associated transaction:', transactionError);
-                // Continue with block deletion even if transaction deletion fails
+                console.warn('Could not reverse associated transaction:', transactionError);
+                // Continue with block deletion even if transaction reversal fails
             }
         }
         
