@@ -20,6 +20,26 @@ function showSelectedStudent(student) {
     
     // Setup entry type listeners
     setupEntryTypeListeners();
+    
+    // If student is a crew member, default to free entry with crew member reason
+    if (student.crewMember === true) {
+        setTimeout(() => {
+            const freeEntryRadio = document.getElementById('entry-free');
+            if (freeEntryRadio) {
+                freeEntryRadio.checked = true;
+                freeEntryRadio.dispatchEvent(new Event('change'));
+                
+                // Set crew member as the reason
+                const freeEntryReasonSelect = document.getElementById('free-entry-reason');
+                if (freeEntryReasonSelect) {
+                    freeEntryReasonSelect.value = 'crew-member';
+                }
+                
+                // Enable confirm button
+                document.getElementById('confirm-checkin-btn').disabled = false;
+            }
+        }, 100); // Small delay to ensure concession info is loaded first
+    }
 }
 
 /**

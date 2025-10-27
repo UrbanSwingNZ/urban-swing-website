@@ -60,6 +60,7 @@ function openStudentModal(student, mode) {
     document.getElementById('modal-pronouns').value = student.pronouns || '';
     document.getElementById('modal-emailConsent').checked = student.emailConsent || false;
     document.getElementById('modal-over16Confirmed').checked = student.over16Confirmed || false;
+    document.getElementById('modal-crewMember').checked = student.crewMember || false;
     document.getElementById('modal-adminNotes').value = student.adminNotes || '';
     
     // Populate timestamps
@@ -120,6 +121,7 @@ async function saveStudentChanges(event) {
             pronouns: document.getElementById('modal-pronouns').value,
             emailConsent: document.getElementById('modal-emailConsent').checked,
             over16Confirmed: document.getElementById('modal-over16Confirmed').checked,
+            crewMember: document.getElementById('modal-crewMember').checked,
             adminNotes: document.getElementById('modal-adminNotes').value
         };
         
