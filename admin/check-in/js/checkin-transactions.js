@@ -156,25 +156,36 @@ function createCheckinTransactionRow(transaction) {
     // Add reversed badge if transaction is reversed
     const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
     
+    // Determine payment method used
+    let paymentMethod = '';
+    if (transaction.cash > 0) {
+        paymentMethod = 'Cash';
+    } else if (transaction.eftpos > 0) {
+        paymentMethod = 'EFTPOS';
+    } else if (transaction.bankTransfer > 0) {
+        paymentMethod = 'Bank Transfer';
+    }
+    
     // Determine if delete button should be shown
     // Super admin can always delete, front desk can only delete today's transactions
     const canDelete = isSuperAdmin() || (typeof isSelectedDateToday === 'function' && isSelectedDateToday());
     
     row.innerHTML = `
-        <td>${formatDate(transaction.date)}</td>
-        <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
-        <td>${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
-        <td class="amount-cell">${formatCurrency(transaction.amount)}</td>
-        <td class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
+        <td data-label="Date">${formatDate(transaction.date)}</td>
+        <td data-label="Student"><strong>${escapeHtml(transaction.studentName)}</strong></td>
+        <td data-label="Type">${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
+        <td data-label="Amount" class="amount-cell">${formatCurrency(transaction.amount)}</td>
+        <td data-label="Payment Method" class="payment-method-cell">${paymentMethod}</td>
+        <td data-label="Cash" class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
             ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}
         </td>
-        <td class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
+        <td data-label="EFTPOS" class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
             ${transaction.eftpos > 0 ? formatCurrency(transaction.eftpos) : '-'}
         </td>
-        <td class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
+        <td data-label="Bank Transfer" class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
             ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
         </td>
-        <td>
+        <td data-label="Actions">
             <div class="action-buttons">
                 ${isSuperAdmin() ? `<button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
                         title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
