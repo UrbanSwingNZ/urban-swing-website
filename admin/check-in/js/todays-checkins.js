@@ -225,10 +225,13 @@ function purchaseConcessions(studentId) {
         return;
     }
     
+    // Get the selected check-in date
+    const selectedDate = getSelectedCheckinDateString();
+    
     openPurchaseConcessionsModal(studentId, (result) => {
         // Refresh check-ins after purchase
         loadTodaysCheckins();
-    });
+    }, null, null, selectedDate);
 }
 
 /**

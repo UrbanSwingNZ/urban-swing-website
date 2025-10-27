@@ -73,3 +73,24 @@ function getStudentFullName(student) {
     const lastName = toTitleCase(student.lastName || '');
     return `${firstName} ${lastName}`.trim();
 }
+
+/**
+ * Update student in Firestore
+ */
+async function updateStudent(studentId, updateData) {
+    try {
+        updateData.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection('students').doc(studentId).update(updateData);
+        
+        // Reload students to update cache
+        await loadStudents();
+        return true;
+    } catch (error) {
+        console.error('Error updating student:', error);
+        throw error;
+    }
+}
+
+// Aliases for student database modal compatibility
+const studentsData = studentsCache;
+const getStudentsData = getStudents;

@@ -84,8 +84,9 @@ function initializePurchaseConcessionsModal() {
  * @param {function} callback - Optional callback after successful purchase
  * @param {string} parentModalId - Optional parent modal ID to return to on cancel
  * @param {object} parentStudent - Optional student object to restore when canceling
+ * @param {Date|string} defaultDate - Optional default date for purchase (defaults to today if not provided)
  */
-async function openPurchaseConcessionsModal(studentId = null, callback = null, parentModalId = null, parentStudent = null) {
+async function openPurchaseConcessionsModal(studentId = null, callback = null, parentModalId = null, parentStudent = null, defaultDate = null) {
     purchaseModalStudentId = studentId;
     purchaseModalCallback = callback;
     purchaseModalParentModal = parentModalId;
@@ -93,10 +94,35 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
     
     const modal = document.getElementById('purchase-concessions-modal');
     
-    // Set default date to today
+    // Set default date - use provided defaultDate or today
     const datePicker = document.getElementById('purchase-date-picker');
     const today = new Date();
-    datePicker.value = today.toISOString().split('T')[0];
+    
+    let dateToUse;
+    if (defaultDate) {
+        // If defaultDate is provided, use it
+        if (defaultDate instanceof Date) {
+            dateToUse = defaultDate;
+        } else if (typeof defaultDate === 'string') {
+            // If it's already in YYYY-MM-DD format, use it directly
+            if (defaultDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                datePicker.value = defaultDate;
+                datePicker.max = today.toISOString().split('T')[0]; // Prevent future dates
+                dateToUse = null; // Already set
+            } else {
+                dateToUse = new Date(defaultDate);
+            }
+        }
+        
+        if (dateToUse) {
+            datePicker.value = dateToUse.toISOString().split('T')[0];
+        }
+    } else {
+        // No default date provided, use today
+        dateToUse = today;
+        datePicker.value = today.toISOString().split('T')[0];
+    }
+    
     datePicker.max = today.toISOString().split('T')[0]; // Prevent future dates
     
     // Show/hide Add Package button based on admin status

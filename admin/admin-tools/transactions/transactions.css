@@ -109,6 +109,93 @@ select.filter-input:focus {
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
+/* Student Filter Styles */
+.student-filter-wrapper {
+    position: relative;
+}
+
+#student-filter {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid rgba(154, 22, 245, 0.3);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+#student-filter:hover {
+    border-color: var(--admin-purple);
+}
+
+#student-filter:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+.clear-student-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.clear-student-btn:hover {
+    color: var(--text-color);
+}
+
+.student-filter-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--background-color);
+    border: 1px solid rgba(154, 22, 245, 0.3);
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.student-filter-item {
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.student-filter-item:last-child {
+    border-bottom: none;
+}
+
+.student-filter-item:hover {
+    background-color: rgba(154, 22, 245, 0.1);
+}
+
+.student-filter-item strong {
+    display: block;
+    color: var(--text-color);
+    margin-bottom: 2px;
+}
+
+.student-filter-item small {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
 .filter-actions {
     display: flex;
     gap: 0.5rem;
@@ -399,19 +486,16 @@ select.filter-input:focus {
     color: var(--danger-color);
 }
 
-.btn-invoice {
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s;
-    color: var(--text-muted);
+.btn-icon.btn-invoice.invoiced {
+    color: var(--admin-purple);
+    border-color: var(--admin-purple);
+    background: rgba(154, 22, 245, 0.1);
 }
 
-.btn-invoice:hover {
-    transform: scale(1.1);
-}
-
-.btn-invoice.invoiced {
-    color: var(--info-color);
+.btn-icon.btn-invoice:hover {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+    background: rgba(154, 22, 245, 0.1);
 }
 
 /* Buttons - using admin.css btn-primary-lg style */
