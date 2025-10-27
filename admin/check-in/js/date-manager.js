@@ -86,8 +86,26 @@ function handleDateChange(event) {
     // Update display
     updateDateDisplay(newDate, today);
     
+    // Update transactions date display
+    const transactionsDisplayElement = document.getElementById('transactions-date-display');
+    if (transactionsDisplayElement) {
+        if (newDate === today) {
+            transactionsDisplayElement.textContent = "Today's";
+        } else {
+            const date = parseDateString(newDate);
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-NZ', options);
+            transactionsDisplayElement.textContent = formattedDate;
+        }
+    }
+    
     // Reload check-ins for the new date
     loadTodaysCheckins();
+    
+    // Reload transactions for the new date
+    if (typeof loadCheckinTransactions === 'function') {
+        loadCheckinTransactions();
+    }
 }
 
 /**
