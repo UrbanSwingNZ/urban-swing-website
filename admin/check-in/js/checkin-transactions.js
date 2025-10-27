@@ -156,6 +156,10 @@ function createCheckinTransactionRow(transaction) {
     // Add reversed badge if transaction is reversed
     const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
     
+    // Determine if delete button should be shown
+    // Super admin can always delete, front desk can only delete today's transactions
+    const canDelete = isSuperAdmin() || (typeof isSelectedDateToday === 'function' && isSelectedDateToday());
+    
     row.innerHTML = `
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
@@ -184,7 +188,7 @@ function createCheckinTransactionRow(transaction) {
                         ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-edit"></i>
                 </button>
-                ${isSuperAdmin() ? `<button class="btn-icon btn-delete" 
+                ${canDelete ? `<button class="btn-icon btn-delete" 
                         title="${transaction.reversed ? 'Cannot delete reversed transaction' : 'Delete Transaction'}"
                         data-id="${transaction.id}"
                         data-collection="${transaction.collection}"
