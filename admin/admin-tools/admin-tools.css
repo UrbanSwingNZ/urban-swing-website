@@ -135,13 +135,78 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    /* Fix header layout on mobile */
+    .admin-header-content {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 12px !important;
+        text-align: left !important;
+    }
+
+    .admin-header-content .back-button {
+        order: 0;
+        flex-shrink: 0;
+    }
+
+    .admin-header-content h1,
+    .admin-header-content .page-heading {
+        order: 1;
+        flex: 0 0 auto;
+        font-size: 1.1rem !important;
+        margin: 0;
+    }
+
+    .admin-user-info {
+        order: 2;
+        flex-shrink: 0;
+        margin-left: auto !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Hide email on mobile */
+    .admin-user-info span {
+        display: none;
+    }
+
+    .tools-intro {
+        margin-bottom: 30px;
+        padding: 0;
+    }
+
     .tools-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+        padding: 0;
+        margin: 0 0 30px 0;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .tool-card {
         padding: 25px 20px;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    /* Disable Database Backup Tool on mobile */
+    .tool-card:first-child .tool-button {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+        background: linear-gradient(135deg, #888, #666);
+    }
+
+    .tool-card:first-child .tool-button::after {
+        content: ' (Desktop Only)';
+        font-size: 0.85rem;
+        font-weight: normal;
     }
 
     .tool-icon {
@@ -152,5 +217,51 @@
 
     .tool-card h3 {
         font-size: 1.3rem;
+        word-wrap: break-word;
+    }
+
+    .tool-card > p {
+        font-size: 0.95rem;
+        word-wrap: break-word;
+    }
+
+    .tool-features li {
+        font-size: 0.9rem;
+        word-wrap: break-word;
+    }
+
+    .tool-button {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .dashboard-main {
+        padding: 30px 15px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 }
+
+@media (max-width: 480px) {
+    .tools-intro p {
+        font-size: 1rem;
+    }
+
+    .tools-grid {
+        gap: 15px;
+    }
+
+    .tool-card {
+        padding: 20px 15px;
+    }
+
+    .dashboard-main {
+        padding: 20px 10px;
+    }
+}
+
