@@ -214,6 +214,189 @@
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+/* Transactions Section */
+.transactions-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Summary Row */
+.summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid rgba(154, 22, 245, 0.2);
+    border-bottom: 1px solid rgba(154, 22, 245, 0.2);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.summary-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+/* Table Container */
+.table-container {
+    background: var(--background-color);
+    border-radius: 8px;
+    border: 1px solid rgba(154, 22, 245, 0.2);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#checkin-transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#checkin-transactions-table thead {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+}
+
+#checkin-transactions-table thead th {
+    color: white;
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+#checkin-transactions-table thead th.align-right {
+    text-align: right;
+}
+
+#checkin-transactions-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+#checkin-transactions-table tbody tr:hover {
+    background-color: rgba(154, 22, 245, 0.05);
+}
+
+#checkin-transactions-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+#checkin-transactions-table tbody td {
+    padding: 16px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+#checkin-transactions-table tbody td.align-right {
+    text-align: right;
+}
+
+#checkin-transactions-table .amount-cell {
+    font-weight: 700;
+    color: var(--admin-purple);
+    text-align: right;
+}
+
+#checkin-transactions-table .payment-amount {
+    text-align: right;
+    font-weight: 600;
+}
+
+#checkin-transactions-table .payment-amount.empty {
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+/* Type Badge */
+.type-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.type-badge.concession {
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
+}
+
+.type-badge.casual-entry {
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
+}
+
+.type-badge.reversed {
+    background: #dc3545;
+    color: white;
+    margin-right: 5px;
+}
+
+/* Reversed Transaction Styling */
+.reversed-transaction {
+    opacity: 0.6;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.reversed-transaction td {
+    text-decoration: line-through;
+}
+
+/* Accordion Functionality */
+.accordion-header {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+    background-color: rgba(154, 22, 245, 0.03);
+    border-radius: 8px;
+}
+
+.accordion-header .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.accordion-icon {
+    font-size: 1rem;
+    color: var(--admin-purple);
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.collapsed .accordion-icon {
+    transform: rotate(-90deg);
+}
+
+.accordion-content {
+    max-height: 5000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.accordion-content.collapsed {
+    max-height: 0;
+    opacity: 0;
 }
 
 .section-header {
@@ -223,6 +406,11 @@
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--border-color);
+}
+
+.section-header.collapsed {
+    margin-bottom: 0;
+    padding-bottom: 15px;
 }
 
 .section-actions {
