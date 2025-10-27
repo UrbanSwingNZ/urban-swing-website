@@ -67,6 +67,12 @@ function initializeNavListeners() {
         historyBtn.addEventListener('click', openHistoryModal);
     }
     
+    // Show Reversed Checkins toggle
+    const showReversedToggle = document.getElementById('show-reversed-checkins-toggle');
+    if (showReversedToggle) {
+        showReversedToggle.addEventListener('change', toggleShowReversedCheckins);
+    }
+    
     // Logout button
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {

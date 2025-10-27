@@ -3,6 +3,7 @@
  */
 
 let todaysCheckins = [];
+let showReversedCheckins = false;
 
 /**
  * Load today's check-ins from Firestore
@@ -27,9 +28,28 @@ async function loadTodaysCheckins() {
             .orderBy('checkinDate', 'desc')
             .get();
         
-        // Convert to array
-        todaysCheckins = snapshot.docs.map(doc => {
+        // Convert to array and check for reversed transactions
+        const checkinPromises = snapshot.docs.map(async doc => {
             const data = doc.data();
+            
+            // Check if this check-in has a reversed transaction
+            let hasReversedTransaction = false;
+            if (data.amountPaid > 0) {
+                try {
+                    const transactionSnapshot = await firebase.firestore()
+                        .collection('transactions')
+                        .where('checkinId', '==', doc.id)
+                        .get();
+                    
+                    if (!transactionSnapshot.empty) {
+                        const transactionData = transactionSnapshot.docs[0].data();
+                        hasReversedTransaction = transactionData.reversed || false;
+                    }
+                } catch (error) {
+                    console.error('Error checking transaction status:', error);
+                }
+            }
+            
             return {
                 id: doc.id,
                 studentId: data.studentId,
@@ -39,9 +59,12 @@ async function loadTodaysCheckins() {
                 paymentMethod: data.paymentMethod,
                 freeEntryReason: data.freeEntryReason,
                 balance: 0, // TODO: Get actual balance from student or concessionBlocks
-                notes: data.notes
+                notes: data.notes,
+                hasReversedTransaction: hasReversedTransaction
             };
         });
+        
+        todaysCheckins = await Promise.all(checkinPromises);
         
         // Sort alphabetically by first name, then last name
         todaysCheckins.sort((a, b) => {
@@ -75,7 +98,12 @@ function displayTodaysCheckins() {
     const checkinsList = document.getElementById('checkins-list');
     const emptyState = document.getElementById('empty-state');
     
-    if (todaysCheckins.length === 0) {
+    // Filter based on toggle state
+    const checkinsToDisplay = showReversedCheckins 
+        ? todaysCheckins 
+        : todaysCheckins.filter(c => !c.hasReversedTransaction);
+    
+    if (checkinsToDisplay.length === 0) {
         emptyState.style.display = 'block';
         checkinsList.style.display = 'none';
         updateCheckinCount(0);
@@ -85,14 +113,18 @@ function displayTodaysCheckins() {
     emptyState.style.display = 'none';
     checkinsList.style.display = 'block';
     
-    checkinsList.innerHTML = todaysCheckins.map(checkin => {
+    checkinsList.innerHTML = checkinsToDisplay.map(checkin => {
         const typeClass = checkin.entryType;
         const typeLabel = checkin.entryType === 'concession' ? 'Concession' : 
                          checkin.entryType === 'casual' ? 'Casual Entry' : 'Free Entry';
         
-        return `<div class="checkin-item" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
+        // Add reversed class if applicable
+        const reversedClass = checkin.hasReversedTransaction ? 'reversed-checkin' : '';
+        
+        return `<div class="checkin-item ${reversedClass}" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
             <div class="checkin-info-row" data-action="edit">
                 <span class="checkin-name">${escapeHtml(checkin.studentName)}</span>
+                ${checkin.hasReversedTransaction ? '<span class="reversed-badge">REVERSED</span>' : ''}
             </div>
             <div class="checkin-actions">
                 <span class="checkin-type ${typeClass}">${typeLabel}</span>
@@ -109,7 +141,7 @@ function displayTodaysCheckins() {
     // Add event listeners to check-in items
     attachCheckinEventListeners();
     
-    updateCheckinCount(todaysCheckins.length);
+    updateCheckinCount(checkinsToDisplay.length);
 }
 
 /**
@@ -289,4 +321,12 @@ function updateCheckinCount(count) {
  */
 function getTodaysCheckins() {
     return todaysCheckins;
+}
+
+/**
+ * Toggle show reversed check-ins
+ */
+function toggleShowReversedCheckins(event) {
+    showReversedCheckins = event.target.checked;
+    displayTodaysCheckins();
 }

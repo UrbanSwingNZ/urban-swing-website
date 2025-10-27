@@ -84,9 +84,20 @@
                         <h2><span id="checkin-date-display">Today's</span> Check-Ins</h2>
                         <span class="checkin-count" id="checkin-count">0</span>
                     </div>
-                    <button class="btn-secondary" id="view-history-btn">
-                        <i class="fas fa-history"></i> View History
-                    </button>
+                    <div class="section-actions">
+                        <div class="toggle-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show-reversed-checkins-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label for="show-reversed-checkins-toggle" class="toggle-label">
+                                <i class="fas fa-undo"></i> Show Reversed
+                            </label>
+                        </div>
+                        <button class="btn-secondary" id="view-history-btn">
+                            <i class="fas fa-history"></i> View History
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Empty State -->
