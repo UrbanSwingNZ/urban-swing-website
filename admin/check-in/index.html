@@ -112,6 +112,64 @@
                     <!-- Today's check-ins will be populated here -->
                 </div>
             </div>
+
+            <!-- Financial Transactions -->
+            <div class="transactions-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2><span id="transactions-date-display">Today's</span> Transactions</h2>
+                    </div>
+                </div>
+
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Transactions:</span>
+                        <span class="summary-value" id="checkin-total-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Total Amount:</span>
+                        <span class="summary-value" id="checkin-total-amount">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Cash:</span>
+                        <span class="summary-value" id="checkin-total-cash">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">EFTPOS:</span>
+                        <span class="summary-value" id="checkin-total-eftpos">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Bank Transfer:</span>
+                        <span class="summary-value" id="checkin-total-bank">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="table-container">
+                    <table id="checkin-transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Student Name</th>
+                                <th>Type</th>
+                                <th class="align-right">Amount</th>
+                                <th class="align-right">Cash</th>
+                                <th class="align-right">EFTPOS</th>
+                                <th class="align-right">Bank Transfer</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkin-transactions-tbody">
+                            <!-- Transactions will be loaded here -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Empty State -->
+                    <div id="transactions-empty-state" class="empty-state" style="display: none;">
+                        <i class="fas fa-receipt"></i>
+                        <p>No transactions for this date</p>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -345,6 +403,7 @@
     <script src="js/history-modal.js"></script>
     
     <script src="js/todays-checkins.js"></script>
+    <script src="js/checkin-transactions.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

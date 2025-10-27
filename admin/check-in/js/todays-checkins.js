@@ -89,6 +89,11 @@ function addCheckinToDisplay(checkin) {
     todaysCheckins.unshift(checkin); // Add to beginning of array
     displayTodaysCheckins();
     updateCheckinCount(todaysCheckins.length);
+    
+    // Reload transactions to include the new one
+    if (typeof loadCheckinTransactions === 'function') {
+        loadCheckinTransactions();
+    }
 }
 
 /**
@@ -302,6 +307,11 @@ async function deleteCheckin(checkinId) {
         // Reload check-ins
         loadTodaysCheckins();
         
+        // Reload transactions
+        if (typeof loadCheckinTransactions === 'function') {
+            loadCheckinTransactions();
+        }
+        
     } catch (error) {
         console.error('Error deleting check-in:', error);
         showSnackbar('Failed to delete check-in', 'error');
@@ -329,4 +339,9 @@ function getTodaysCheckins() {
 function toggleShowReversedCheckins(event) {
     showReversedCheckins = event.target.checked;
     displayTodaysCheckins();
+    
+    // Also refresh transactions display
+    if (typeof refreshCheckinTransactionsDisplay === 'function') {
+        refreshCheckinTransactionsDisplay();
+    }
 }
