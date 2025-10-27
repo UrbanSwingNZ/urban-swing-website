@@ -8,6 +8,13 @@ let allTransactions = [];
 let filteredTransactions = [];
 let currentSort = { field: 'date', direction: 'desc' };
 
+/**
+ * Check if current user is super admin (dance@urbanswing.co.nz)
+ */
+function isSuperAdmin() {
+    return auth.currentUser && auth.currentUser.email === 'dance@urbanswing.co.nz';
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initializePage, 500);
