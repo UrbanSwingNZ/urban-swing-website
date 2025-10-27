@@ -6,8 +6,13 @@
 /**
  * Apply filters to transactions
  */
-function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter) {
+function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed = false) {
     return allTransactions.filter(transaction => {
+        // Filter out reversed transactions unless showReversed is true
+        if (!showReversed && transaction.reversed) {
+            return false;
+        }
+        
         // Date filter
         if (dateFrom) {
             const fromDate = new Date(dateFrom);

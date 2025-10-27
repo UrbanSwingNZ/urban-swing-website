@@ -70,14 +70,17 @@ function confirmDelete(transaction) {
 }
 
 /**
- * Delete a transaction
+ * Delete a transaction (mark as reversed instead of permanently deleting)
  */
 async function deleteTransaction(transaction) {
     try {
         await firebase.firestore()
             .collection(transaction.collection)
             .doc(transaction.id)
-            .delete();
+            .update({
+                reversed: true,
+                reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
         
         closeDeleteModal();
         
@@ -86,11 +89,11 @@ async function deleteTransaction(transaction) {
             window.onTransactionDeleted(transaction.id);
         }
         
-        showSnackbar('Transaction deleted successfully', 'success');
+        showSnackbar('Transaction reversed successfully', 'success');
         
     } catch (error) {
-        console.error('Error deleting transaction:', error);
-        showSnackbar('Error deleting transaction: ' + error.message, 'error');
+        console.error('Error reversing transaction:', error);
+        showSnackbar('Error reversing transaction: ' + error.message, 'error');
         closeDeleteModal();
     }
 }

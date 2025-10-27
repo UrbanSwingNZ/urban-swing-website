@@ -548,7 +548,7 @@ function confirmDeleteTransaction(transactionId) {
 }
 
 /**
- * Delete a transaction
+ * Delete a transaction (mark as reversed instead of permanently deleting)
  */
 async function deleteTransaction(transaction) {
     try {
@@ -561,30 +561,33 @@ async function deleteTransaction(transaction) {
             closeDeleteModal();
         }
         
-        // Delete the transaction from Firestore
+        // Mark the transaction as reversed in Firestore
         await firebase.firestore()
             .collection('transactions')
             .doc(transaction.id)
-            .delete();
+            .update({
+                reversed: true,
+                reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
         
         if (typeof showLoading === 'function') {
             showLoading(false);
         }
         
         if (typeof showSnackbar === 'function') {
-            showSnackbar('Transaction deleted successfully', 'success');
+            showSnackbar('Transaction reversed successfully', 'success');
         }
         
         // Reload the payments tab
         await loadTransactionHistoryPayments(transaction.studentId);
         
     } catch (error) {
-        console.error('Error deleting transaction:', error);
+        console.error('Error reversing transaction:', error);
         if (typeof showLoading === 'function') {
             showLoading(false);
         }
         if (typeof showSnackbar === 'function') {
-            showSnackbar('Error deleting transaction: ' + error.message, 'error');
+            showSnackbar('Error reversing transaction: ' + error.message, 'error');
         }
     }
 }
