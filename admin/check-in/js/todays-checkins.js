@@ -194,12 +194,14 @@ function attachCheckinEventListeners() {
             purchaseConcessions(studentId);
         });
         
-        // Delete button
+        // Delete button (only if it exists)
         const deleteBtn = item.querySelector('[data-action="delete"]');
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            confirmDeleteCheckin(checkinId);
-        });
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                confirmDeleteCheckin(checkinId);
+            });
+        }
     });
 }
 

@@ -105,10 +105,12 @@ function displayConcessionInfo(blocks, stats, studentId) {
             
             const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
             
-            // Expired blocks can be locked/unlocked
-            const lockButton = isLocked 
-                ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
-                : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+            // Expired blocks can be locked/unlocked (only by super admin)
+            const lockButton = isSuperAdmin()
+                ? (isLocked 
+                    ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
+                    : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`)
+                : '';
             
             // Expired blocks can only be deleted if no entries have been used (and only by super admin)
             const deleteButton = (!isSuperAdmin() || hasBeenUsed)
