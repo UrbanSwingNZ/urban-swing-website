@@ -100,13 +100,16 @@
                     <label for="pronouns">
                         <i class="fas fa-id-badge"></i> Pronouns
                     </label>
-                    <input 
-                        type="text" 
+                    <select 
                         id="pronouns" 
-                        name="pronouns" 
-                        placeholder="e.g., she/her, he/him, they/them" 
+                        name="pronouns"
                         autocomplete="off"
                     >
+                        <option value="">Select pronouns (optional)</option>
+                        <option value="she/her">she/her</option>
+                        <option value="he/him">he/him</option>
+                        <option value="they/them">they/them</option>
+                    </select>
                     <small class="form-help">Optional - helps us address you correctly</small>
                 </div>
 
