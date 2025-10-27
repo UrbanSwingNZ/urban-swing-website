@@ -90,14 +90,16 @@ function displayPaymentHistory(transactions) {
     transactions.forEach(transaction => {
         const date = formatDate(transaction.date);
         
-        // Add edit and delete buttons for all transactions
+        // Add edit and delete buttons - delete only for super admin
         const editButton = `<button class="btn-icon btn-edit-transaction" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
                <i class="fas fa-edit"></i>
            </button>`;
         
-        const deleteButton = `<button class="btn-icon btn-delete-transaction" onclick="confirmDeleteTransaction('${transaction.id}')" title="Delete transaction">
+        const deleteButton = isSuperAdmin() 
+            ? `<button class="btn-icon btn-delete-transaction" onclick="confirmDeleteTransaction('${transaction.id}')" title="Delete transaction">
                <i class="fas fa-trash-alt"></i>
-           </button>`;
+           </button>`
+            : '';
         
         html += `
             <div class="payment-item">

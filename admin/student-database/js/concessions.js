@@ -164,9 +164,9 @@ async function showConcessionsDetail(studentId) {
                 // Active blocks cannot be locked/unlocked
                 const lockButton = `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
                 
-                // Active blocks can only be deleted if no entries have been used
-                const deleteButton = hasBeenUsed
-                    ? `<button class="btn-delete-block" disabled title="Cannot delete - concession has been used"><i class="fas fa-trash"></i> Delete</button>`
+                // Active blocks can only be deleted if no entries have been used (and only by super admin)
+                const deleteButton = (!isSuperAdmin() || hasBeenUsed)
+                    ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
                     : `<button class="btn-delete-block" data-block-id="${block.id}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
                 
                 html += `
@@ -215,9 +215,9 @@ async function showConcessionsDetail(studentId) {
                     ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
                     : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
                 
-                // Expired blocks can only be deleted if no entries have been used
-                const deleteButton = hasBeenUsed
-                    ? `<button class="btn-delete-block" disabled title="Cannot delete - concession has been used"><i class="fas fa-trash"></i> Delete</button>`
+                // Expired blocks can only be deleted if no entries have been used (and only by super admin)
+                const deleteButton = (!isSuperAdmin() || hasBeenUsed)
+                    ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
                     : `<button class="btn-delete-block" data-block-id="${block.id}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
                 
                 html += `

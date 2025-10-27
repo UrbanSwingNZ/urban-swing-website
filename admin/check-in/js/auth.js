@@ -50,3 +50,10 @@ function logout() {
 function getCurrentUser() {
     return currentUser;
 }
+
+/**
+ * Check if current user is super admin (dance@urbanswing.co.nz)
+ */
+function isSuperAdmin() {
+    return currentUser && currentUser.email === 'dance@urbanswing.co.nz';
+}
