@@ -7,6 +7,8 @@
     <title>Student Check-In - Urban Swing Admin</title>
     <link rel="stylesheet" href="../admin.css">
     <link rel="stylesheet" href="../admin-modals.css">
+    <link rel="stylesheet" href="../student-database/student-database.css">
+    <link rel="stylesheet" href="../student-database/js/transaction-history/transaction-history.css">
     <link rel="stylesheet" href="../concessions/concessions.css">
     <link rel="stylesheet" href="check-in.css?v=8">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -161,6 +163,7 @@
                                     <th class="align-right">Cash</th>
                                     <th class="align-right">EFTPOS</th>
                                     <th class="align-right">Bank Transfer</th>
+                                    <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="checkin-transactions-tbody">
@@ -199,8 +202,15 @@
                 <!-- Selected Student Info -->
                 <div id="selected-student-info" style="display: none;">
                     <div class="student-info-card">
-                        <h4 id="selected-student-name">Student Name</h4>
-                        <p id="selected-student-email">email@example.com</p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h4 id="selected-student-name">Student Name</h4>
+                                <p id="selected-student-email">email@example.com</p>
+                            </div>
+                            <button type="button" class="btn-icon" id="view-student-details-btn" title="View Student Details">
+                                <i class="fas fa-user"></i>
+                            </button>
+                        </div>
                         <input type="hidden" id="selected-student-id">
                     </div>
 
@@ -365,6 +375,154 @@
         </div>
     </div>
 
+    <!-- Student Details Modal -->
+    <div id="student-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Student Details</h2>
+                <button class="modal-close" onclick="closeStudentModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="student-form" onsubmit="saveStudentChanges(event)">
+                    <input type="hidden" id="modal-student-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-firstName">First Name</label>
+                            <input type="text" id="modal-firstName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-lastName">Last Name</label>
+                            <input type="text" id="modal-lastName" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-email">Email</label>
+                        <input type="email" id="modal-email" readonly>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-phoneNumber">Phone Number</label>
+                            <input type="tel" id="modal-phoneNumber" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-pronouns">Pronouns</label>
+                            <input type="text" id="modal-pronouns" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row checkbox-row">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-emailConsent" disabled>
+                                <span>Email updates</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-over16Confirmed" disabled>
+                                <span>Over 16 confirmed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-adminNotes">
+                            <i class="fas fa-sticky-note"></i> Admin Notes
+                        </label>
+                        <textarea id="modal-adminNotes" rows="3" placeholder="Add internal notes about this student..."></textarea>
+                    </div>
+
+                    <div class="timestamps">
+                        <div class="timestamp-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span class="timestamp-label">Registered:</span>
+                            <span id="modal-registeredAt">—</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="timestamp-label">Created:</span>
+                            <span id="modal-createdAt">—</span>
+                        </div>
+                        <div class="timestamp-item">
+                            <i class="fas fa-edit"></i>
+                            <span class="timestamp-label">Updated:</span>
+                            <span id="modal-updatedAt">—</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="modal-actions-left">
+                            <button type="button" class="btn-icon" id="edit-student-modal-btn" title="Edit Student">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
+                                <i class="fas fa-history"></i>
+                            </button>
+                            <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                        <div class="modal-actions-right">
+                            <button type="button" class="btn-secondary" onclick="closeStudentModal()">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                            <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction History Modal -->
+    <div id="transaction-history-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Transaction History</h3>
+                <button class="modal-close" onclick="closeTransactionHistoryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-student-info">
+                    <h3 id="transaction-history-student-name"></h3>
+                    <p id="transaction-history-student-email"></p>
+                </div>
+                
+                <div class="transaction-tabs">
+                    <button class="transaction-tab active" data-tab="attendance-content">
+                        <i class="fas fa-calendar-check"></i> Attendance
+                    </button>
+                    <button class="transaction-tab" data-tab="payments-content">
+                        <i class="fas fa-dollar-sign"></i> Payments
+                    </button>
+                    <button class="transaction-tab" data-tab="concessions-content">
+                        <i class="fas fa-ticket-alt"></i> Concessions
+                    </button>
+                </div>
+                
+                <div class="transaction-tab-content active" id="attendance-content">
+                    <!-- Attendance content will be loaded here -->
+                </div>
+                
+                <div class="transaction-tab-content" id="payments-content">
+                    <!-- Payment content will be loaded here -->
+                </div>
+                
+                <div class="transaction-tab-content" id="concessions-content">
+                    <!-- Concession content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js"></script>
     
@@ -374,6 +532,15 @@
     <script src="js/date-manager.js"></script>
     <script src="js/students.js"></script>
     <script src="js/concessions.js"></script>
+    
+    <!-- Student Database Module (for student details modal) -->
+    <script src="../student-database/js/modal.js"></script>
+    
+    <!-- Transaction History Module -->
+    <script src="../student-database/js/transaction-history/transaction-history-modal.js"></script>
+    <script src="../student-database/js/transaction-history/transaction-history-attendance.js"></script>
+    <script src="../student-database/js/transaction-history/transaction-history-payments.js"></script>
+    <script src="../student-database/js/transaction-history/transaction-history-concessions.js"></script>
     
     <!-- Reusable Concessions Module (after students.js for dependencies) -->
     <script src="../concessions/js/concessions-data.js"></script>

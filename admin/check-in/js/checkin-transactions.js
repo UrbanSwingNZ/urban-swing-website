@@ -68,6 +68,7 @@ async function loadCheckinTransactions() {
             
             return {
                 id: doc.id,
+                collection: 'transactions', // Add collection for actions
                 type: transactionType,
                 typeName: typeName,
                 date: date,
@@ -78,6 +79,7 @@ async function loadCheckinTransactions() {
                 eftpos: paymentMethod === 'eftpos' ? amount : 0,
                 bankTransfer: (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') ? amount : 0,
                 paymentMethod: paymentMethod,
+                invoiced: data.invoiced || false,
                 reversed: data.reversed || false
             };
         });
@@ -168,7 +170,44 @@ function createCheckinTransactionRow(transaction) {
         <td class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
             ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
         </td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
+                        title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
+                        data-id="${transaction.id}"
+                        data-collection="${transaction.collection}"
+                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                    <i class="fas fa-file-invoice"></i>
+                </button>
+                <button class="btn-icon btn-edit" 
+                        title="Edit Transaction"
+                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon btn-delete" 
+                        title="${transaction.reversed ? 'Cannot delete reversed transaction' : 'Delete Transaction'}"
+                        data-id="${transaction.id}"
+                        data-collection="${transaction.collection}"
+                        data-student="${escapeHtml(transaction.studentName)}"
+                        data-amount="${transaction.amount}"
+                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </td>
     `;
+    
+    // Add event listeners
+    const invoiceBtn = row.querySelector('.btn-invoice');
+    invoiceBtn.addEventListener('click', () => toggleCheckinTransactionInvoiced(transaction));
+    
+    const editBtn = row.querySelector('.btn-edit');
+    if (!transaction.reversed) {
+        editBtn.addEventListener('click', () => editCheckinTransaction(transaction));
+    }
+    
+    const deleteBtn = row.querySelector('.btn-delete');
+    deleteBtn.addEventListener('click', () => confirmDeleteCheckinTransaction(transaction));
     
     return row;
 }
@@ -208,4 +247,114 @@ function refreshCheckinTransactionsDisplay() {
     
     transactionsToDisplay.sort((a, b) => b.date - a.date);
     displayCheckinTransactions(transactionsToDisplay);
+}
+
+/**
+ * Toggle invoiced status for a transaction
+ */
+async function toggleCheckinTransactionInvoiced(transaction) {
+    try {
+        const newStatus = !transaction.invoiced;
+        
+        await firebase.firestore()
+            .collection(transaction.collection)
+            .doc(transaction.id)
+            .update({
+                invoiced: newStatus
+            });
+        
+        // Update local data
+        transaction.invoiced = newStatus;
+        
+        // Update the button in the table
+        const btn = document.querySelector(`.btn-invoice[data-id="${transaction.id}"]`);
+        if (btn) {
+            if (newStatus) {
+                btn.classList.add('invoiced');
+                btn.title = 'Mark as Not Invoiced';
+            } else {
+                btn.classList.remove('invoiced');
+                btn.title = 'Mark as Invoiced';
+            }
+        }
+        
+        showSnackbar(`Transaction marked as ${newStatus ? 'invoiced' : 'not invoiced'}`, 'success');
+        
+    } catch (error) {
+        console.error('Error toggling invoiced status:', error);
+        showSnackbar('Error updating invoice status: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Edit transaction (placeholder - not yet implemented)
+ */
+function editCheckinTransaction(transaction) {
+    showSnackbar('Edit functionality coming soon', 'info');
+}
+
+/**
+ * Confirm transaction deletion
+ */
+function confirmDeleteCheckinTransaction(transaction) {
+    const modal = document.getElementById('delete-modal');
+    const titleEl = document.getElementById('delete-modal-title');
+    const messageEl = document.getElementById('delete-modal-message');
+    const infoEl = document.getElementById('delete-modal-info');
+    const btnTextEl = document.getElementById('delete-modal-btn-text');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+    
+    // Customize modal for transaction deletion
+    titleEl.textContent = 'Delete Transaction';
+    messageEl.textContent = 'Are you sure you want to delete this transaction?';
+    infoEl.innerHTML = `<strong>${transaction.studentName}</strong> - $${transaction.amount.toFixed(2)} - ${formatDate(transaction.date)}`;
+    btnTextEl.textContent = 'Delete Transaction';
+    
+    // Remove any existing event listeners by replacing the button
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Add click handler for confirm button
+    newConfirmBtn.addEventListener('click', () => {
+        deleteCheckinTransaction(transaction);
+    });
+    
+    modal.style.display = 'flex';
+}
+
+/**
+ * Delete a transaction (mark as reversed)
+ */
+async function deleteCheckinTransaction(transaction) {
+    try {
+        await firebase.firestore()
+            .collection(transaction.collection)
+            .doc(transaction.id)
+            .update({
+                reversed: true,
+                reversedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        closeDeleteModal();
+        
+        // Reload transactions
+        await loadCheckinTransactions();
+        
+        showSnackbar('Transaction reversed successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error reversing transaction:', error);
+        showSnackbar('Error reversing transaction: ' + error.message, 'error');
+        closeDeleteModal();
+    }
+}
+
+/**
+ * Close delete modal
+ */
+function closeDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }

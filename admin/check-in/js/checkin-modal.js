@@ -96,6 +96,19 @@ function closeCheckinModal() {
  * Initialize modal listeners
  */
 function initializeCheckinModalListeners() {
+    // View student details button
+    const viewStudentDetailsBtn = document.getElementById('view-student-details-btn');
+    
+    if (viewStudentDetailsBtn) {
+        viewStudentDetailsBtn.addEventListener('click', () => {
+            const student = getSelectedStudent();
+            if (student) {
+                // Open student details modal
+                openStudentModal(student, 'view');
+            }
+        });
+    }
+    
     // Purchase concessions button
     const purchaseBtn = document.getElementById('purchase-concessions-btn');
     
@@ -104,15 +117,18 @@ function initializeCheckinModalListeners() {
             // Hide check-in modal before opening purchase modal
             document.getElementById('checkin-modal').style.display = 'none';
             
+            // Get the selected check-in date
+            const selectedDate = getSelectedCheckinDateString();
+            
             const student = getSelectedStudent();
             if (student) {
-                // Open reusable purchase modal with student ID, callback, parent modal ID, and student object
+                // Open reusable purchase modal with student ID, callback, parent modal ID, student object, and check-in date
                 openPurchaseConcessionsModal(student.id, async (result) => {
                     // Re-set the selected student (state may have been lost)
                     setSelectedStudent(student);
                     // Refresh concession info after purchase
                     await updateConcessionInfo(student);
-                }, 'checkin-modal', student);
+                }, 'checkin-modal', student, selectedDate);
             } else {
                 // Fallback: Try to get the student ID from the hidden field
                 const studentIdField = document.getElementById('selected-student-id');
@@ -123,7 +139,7 @@ function initializeCheckinModalListeners() {
                             // Re-set the selected student (state may have been lost)
                             setSelectedStudent(fallbackStudent);
                             await updateConcessionInfo(fallbackStudent);
-                        }, 'checkin-modal', fallbackStudent);
+                        }, 'checkin-modal', fallbackStudent, selectedDate);
                     }
                 }
             }
