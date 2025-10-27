@@ -45,6 +45,8 @@ function createTransactionRow(transaction) {
     let typeBadgeClass;
     if (transaction.type === 'concession-purchase') {
         typeBadgeClass = 'concession';
+    } else if (transaction.type === 'concession-gift') {
+        typeBadgeClass = 'gift';
     } else if (transaction.type === 'casual-entry') {
         typeBadgeClass = 'casual-entry';
     } else {
@@ -78,8 +80,8 @@ function createTransactionRow(transaction) {
                     <i class="fas fa-file-invoice"></i>
                 </button>` : ''}
                 <button class="btn-icon btn-edit" 
-                        title="Edit Transaction"
-                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                        title="${transaction.type === 'concession-gift' ? 'Gifts cannot be edited' : 'Edit Transaction'}"
+                        ${transaction.reversed || transaction.type === 'concession-gift' ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-edit"></i>
                 </button>
                 ${isSuperAdmin() ? `<button class="btn-icon btn-delete" 
@@ -102,7 +104,7 @@ function createTransactionRow(transaction) {
     }
     
     const editBtn = row.querySelector('.btn-edit');
-    if (!transaction.reversed) {
+    if (!transaction.reversed && transaction.type !== 'concession-gift') {
         editBtn.addEventListener('click', () => window.editTransaction(transaction));
     }
     
