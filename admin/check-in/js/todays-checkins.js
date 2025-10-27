@@ -29,43 +29,41 @@ async function loadTodaysCheckins() {
             .get();
         
         // Convert to array and check for reversed transactions
-        // Filter out reversed check-ins
-        const checkinPromises = snapshot.docs
-            .filter(doc => !doc.data().reversed) // Exclude reversed check-ins
-            .map(async doc => {
-                const data = doc.data();
-                
-                // Check if this check-in has a reversed transaction
-                let hasReversedTransaction = false;
-                if (data.amountPaid > 0) {
-                    try {
-                        const transactionSnapshot = await firebase.firestore()
-                            .collection('transactions')
-                            .where('checkinId', '==', doc.id)
-                            .get();
-                        
-                        if (!transactionSnapshot.empty) {
-                            const transactionData = transactionSnapshot.docs[0].data();
-                            hasReversedTransaction = transactionData.reversed || false;
-                        }
-                    } catch (error) {
-                        console.error('Error checking transaction status:', error);
+        const checkinPromises = snapshot.docs.map(async doc => {
+            const data = doc.data();
+            
+            // Check if this check-in has a reversed transaction
+            let hasReversedTransaction = false;
+            if (data.amountPaid > 0) {
+                try {
+                    const transactionSnapshot = await firebase.firestore()
+                        .collection('transactions')
+                        .where('checkinId', '==', doc.id)
+                        .get();
+                    
+                    if (!transactionSnapshot.empty) {
+                        const transactionData = transactionSnapshot.docs[0].data();
+                        hasReversedTransaction = transactionData.reversed || false;
                     }
+                } catch (error) {
+                    console.error('Error checking transaction status:', error);
                 }
-                
-                return {
-                    id: doc.id,
-                    studentId: data.studentId,
-                    studentName: data.studentName,
-                    timestamp: data.checkinDate.toDate(),
-                    entryType: data.entryType,
-                    paymentMethod: data.paymentMethod,
-                    freeEntryReason: data.freeEntryReason,
-                    balance: 0, // TODO: Get actual balance from student or concessionBlocks
-                    notes: data.notes,
-                    hasReversedTransaction: hasReversedTransaction
-                };
-            });
+            }
+            
+            return {
+                id: doc.id,
+                studentId: data.studentId,
+                studentName: data.studentName,
+                timestamp: data.checkinDate.toDate(),
+                entryType: data.entryType,
+                paymentMethod: data.paymentMethod,
+                freeEntryReason: data.freeEntryReason,
+                balance: 0, // TODO: Get actual balance from student or concessionBlocks
+                notes: data.notes,
+                reversed: data.reversed || false, // Include reversed status
+                hasReversedTransaction: hasReversedTransaction
+            };
+        });
         
         todaysCheckins = await Promise.all(checkinPromises);
         
@@ -109,7 +107,7 @@ function displayTodaysCheckins() {
     // Filter based on toggle state
     const checkinsToDisplay = showReversedCheckins 
         ? todaysCheckins 
-        : todaysCheckins.filter(c => !c.hasReversedTransaction);
+        : todaysCheckins.filter(c => !c.reversed);
     
     if (checkinsToDisplay.length === 0) {
         emptyState.style.display = 'block';
@@ -126,13 +124,13 @@ function displayTodaysCheckins() {
         const typeLabel = checkin.entryType === 'concession' ? 'Concession' : 
                          checkin.entryType === 'casual' ? 'Casual Entry' : 'Free Entry';
         
-        // Add reversed class if applicable
-        const reversedClass = checkin.hasReversedTransaction ? 'reversed-checkin' : '';
+        // Add reversed class if check-in is reversed
+        const reversedClass = checkin.reversed ? 'reversed-checkin' : '';
         
         return `<div class="checkin-item ${reversedClass}" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
             <div class="checkin-info-row" data-action="edit">
                 <span class="checkin-name">${escapeHtml(checkin.studentName)}</span>
-                ${checkin.hasReversedTransaction ? '<span class="reversed-badge">REVERSED</span>' : ''}
+                ${checkin.reversed ? '<span class="reversed-badge">REVERSED</span>' : ''}
             </div>
             <div class="checkin-actions">
                 <span class="checkin-type ${typeClass}">${typeLabel}</span>
