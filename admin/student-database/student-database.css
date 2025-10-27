@@ -694,21 +694,26 @@ textarea:focus {
         background: rgba(154, 22, 245, 0.05);
     }
 
-    .students-table tbody tr.expanded td:nth-child(8) .action-buttons {
+    .students-table tbody tr.expanded td:nth-child(8).action-buttons {
         display: flex;
         gap: 0.5rem;
         justify-content: stretch;
         width: 100%;
+        flex-direction: row !important;
+        box-sizing: border-box;
     }
 
     .students-table tbody tr.expanded td:nth-child(8) .btn-icon {
         flex: 1;
-        padding: 0.75rem;
-        display: flex;
-        flex-direction: column;
+        padding: 0.5rem;
+        display: inline-flex;
+        flex-direction: row !important;
         align-items: center;
+        justify-content: center;
         gap: 0.25rem;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .students-table tbody tr.expanded td:nth-child(8) .btn-icon i {
