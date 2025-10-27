@@ -566,13 +566,167 @@ textarea:focus {
 
     /* Make table scrollable on mobile */
     .table-container {
-        overflow-x: auto;
+        overflow-x: visible;
         width: 100%;
         box-sizing: border-box;
+        max-height: none;
     }
 
-    .students-table {
-        min-width: 800px;
+    /* Hide table headers on mobile */
+    .students-table thead {
+        display: none;
+    }
+
+    /* Convert table to card layout */
+    .students-table,
+    .students-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .students-table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(154, 22, 245, 0.2);
+        border-radius: 8px;
+        background: var(--background-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .students-table tbody tr:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--admin-purple);
+    }
+
+    /* Accordion header - always visible */
+    .students-table tbody tr td:nth-child(1),
+    .students-table tbody tr td:nth-child(4) {
+        display: block;
+        padding: 1rem;
+        border: none;
+        text-align: left;
+    }
+
+    /* Name - prominent display */
+    .students-table tbody tr td:nth-child(1) {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-color);
+        border-bottom: 1px solid rgba(154, 22, 245, 0.1);
+        padding-bottom: 0.5rem;
+    }
+
+    /* Pronouns - below name */
+    .students-table tbody tr td:nth-child(4) {
+        font-size: 0.85rem;
+        color: #666;
+        padding-top: 0.5rem;
+        padding-bottom: 1rem;
+    }
+
+    .students-table tbody tr td:nth-child(4)::before {
+        content: '🏷️ ';
+        opacity: 0.7;
+    }
+
+    /* Accordion content - hidden by default */
+    .students-table tbody tr td:nth-child(2),
+    .students-table tbody tr td:nth-child(3),
+    .students-table tbody tr td:nth-child(5),
+    .students-table tbody tr td:nth-child(6),
+    .students-table tbody tr td:nth-child(7),
+    .students-table tbody tr td:nth-child(8) {
+        display: none;
+        padding: 0.75rem 1rem;
+        border: none;
+        text-align: left;
+        border-top: 1px solid rgba(154, 22, 245, 0.1);
+    }
+
+    /* When row is expanded, show all content */
+    .students-table tbody tr.expanded td:nth-child(2),
+    .students-table tbody tr.expanded td:nth-child(3),
+    .students-table tbody tr.expanded td:nth-child(5),
+    .students-table tbody tr.expanded td:nth-child(6),
+    .students-table tbody tr.expanded td:nth-child(7),
+    .students-table tbody tr.expanded td:nth-child(8) {
+        display: block;
+    }
+
+    /* Add labels for expanded content */
+    .students-table tbody tr.expanded td:nth-child(7)::before {
+        content: '📅 Registered: ';
+        font-weight: 600;
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(2)::before {
+        content: '📧 ';
+        opacity: 0.7;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(3)::before {
+        content: '📱 ';
+        opacity: 0.7;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(5)::before {
+        content: 'Email Consent: ';
+        font-weight: 600;
+        opacity: 0.8;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(6)::before {
+        content: 'Concessions: ';
+        font-weight: 600;
+        opacity: 0.8;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Action buttons - full width when expanded */
+    .students-table tbody tr.expanded td:nth-child(8) {
+        padding: 1rem;
+        background: rgba(154, 22, 245, 0.05);
+    }
+
+    .students-table tbody tr.expanded td:nth-child(8) .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: stretch;
+        width: 100%;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(8) .btn-icon {
+        flex: 1;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(8) .btn-icon i {
+        font-size: 1.2rem;
+    }
+
+    /* Add expand indicator */
+    .students-table tbody tr td:nth-child(1)::after {
+        content: '\f078';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        float: right;
+        opacity: 0.5;
+        transition: transform 0.3s ease;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(1)::after {
+        transform: rotate(180deg);
     }
 
     .register-card {
