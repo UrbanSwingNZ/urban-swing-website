@@ -275,7 +275,7 @@ let mobileNav;
 
 // Wait for dashboard to be visible before initializing
 function initializeMobileNav() {
-  const dashboard = document.getElementById('dashboard-container');
+  const dashboard = document.getElementById('dashboard-container') || document.getElementById('main-container');
   if (dashboard && dashboard.style.display !== 'none') {
     mobileNav = new MobileNavigation();
     
@@ -300,6 +300,16 @@ if (typeof auth !== 'undefined') {
     setTimeout(initializeMobileNav, 500);
   });
 }
+
+// Additional fallback: Check if main container is already visible (for pages that load quickly)
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const mainContainer = document.getElementById('dashboard-container') || document.getElementById('main-container');
+    if (mainContainer && mainContainer.style.display !== 'none' && !mobileNav) {
+      initializeMobileNav();
+    }
+  }, 1000);
+});
 
 // Export for potential use in other scripts
 window.MobileNavigation = MobileNavigation;
