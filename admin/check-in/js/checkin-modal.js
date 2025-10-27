@@ -96,6 +96,19 @@ function closeCheckinModal() {
  * Initialize modal listeners
  */
 function initializeCheckinModalListeners() {
+    // View student details button
+    const viewStudentDetailsBtn = document.getElementById('view-student-details-btn');
+    
+    if (viewStudentDetailsBtn) {
+        viewStudentDetailsBtn.addEventListener('click', () => {
+            const student = getSelectedStudent();
+            if (student) {
+                // Open student details modal
+                openStudentModal(student, 'view');
+            }
+        });
+    }
+    
     // Purchase concessions button
     const purchaseBtn = document.getElementById('purchase-concessions-btn');
     
