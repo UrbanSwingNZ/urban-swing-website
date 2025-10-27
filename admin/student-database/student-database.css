@@ -519,19 +519,56 @@ textarea:focus {
    ======================================== */
 
 @media (max-width: 768px) {
+    /* Reduce padding on main content for mobile */
+    .database-main {
+        padding: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     .database-header {
         flex-direction: column;
         align-items: stretch;
+        gap: 1rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
+    .database-title {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Register button - full width on mobile */
+    .database-header .btn-primary,
     .btn-primary-lg {
         width: 100%;
         justify-content: center;
+        box-sizing: border-box;
+    }
+
+    /* Search section - ensure no overflow */
+    .database-search {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .search-box {
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        box-sizing: border-box;
     }
 
     /* Make table scrollable on mobile */
     .table-container {
         overflow-x: auto;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .students-table {
