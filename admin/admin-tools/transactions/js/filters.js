@@ -6,7 +6,7 @@
 /**
  * Apply filters to transactions
  */
-function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed = false) {
+function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed = false, studentId = null) {
     return allTransactions.filter(transaction => {
         // Filter out reversed transactions unless showReversed is true
         if (!showReversed && transaction.reversed) {
@@ -30,6 +30,11 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, 
         if (typeFilter !== 'all') {
             if (typeFilter === 'concession-purchase' && transaction.type !== 'concession-purchase') return false;
             if (typeFilter === 'casual-entry' && transaction.type !== 'casual-entry') return false;
+        }
+        
+        // Student filter
+        if (studentId && transaction.studentId !== studentId) {
+            return false;
         }
         
         return true;
