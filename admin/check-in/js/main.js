@@ -39,6 +39,9 @@ async function initializeApp() {
         // Initialize nav button event listeners
         initializeNavListeners();
         
+        // Initialize accordions
+        initializeAccordions();
+        
         // Hide loading indicator
         showLoading(false);
         

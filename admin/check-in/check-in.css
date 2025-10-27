@@ -359,6 +359,46 @@
     text-decoration: line-through;
 }
 
+/* Accordion Functionality */
+.accordion-header {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+    background-color: rgba(154, 22, 245, 0.03);
+    border-radius: 8px;
+}
+
+.accordion-header .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.accordion-icon {
+    font-size: 1rem;
+    color: var(--admin-purple);
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.collapsed .accordion-icon {
+    transform: rotate(-90deg);
+}
+
+.accordion-content {
+    max-height: 5000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.accordion-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -366,6 +406,11 @@
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--border-color);
+}
+
+.section-header.collapsed {
+    margin-bottom: 0;
+    padding-bottom: 15px;
 }
 
 .section-actions {
