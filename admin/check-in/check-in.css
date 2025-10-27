@@ -1164,6 +1164,24 @@ textarea.form-control {
         box-sizing: border-box;
     }
 
+    /* Accordion Header - Stack badges on separate line */
+    .section-header .section-title {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .section-title h2 {
+        width: 100%;
+        font-size: 1.3rem;
+    }
+
+    .checkin-count,
+    .crew-count {
+        margin-left: 0;
+        font-size: 0.85rem;
+        padding: 3px 10px;
+    }
+
     /* Mobile Card Layout for Check-ins */
     .checkin-item {
         display: grid;
