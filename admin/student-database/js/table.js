@@ -156,10 +156,35 @@ function createStudentRow(student) {
         if (e.target.closest('.action-buttons') || e.target.closest('.concessions-cell')) {
             return;
         }
-        viewStudent(student.id);
+        
+        // On mobile (<=768px), toggle accordion instead of opening modal
+        if (window.innerWidth <= 768) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleMobileAccordion(row);
+        } else {
+            // Desktop: open detail modal
+            viewStudent(student.id);
+        }
     });
 
     return row;
+}
+
+/**
+ * Toggle mobile accordion for student row
+ */
+function toggleMobileAccordion(row) {
+    // Close other open accordions
+    const allRows = document.querySelectorAll('.students-table tbody tr');
+    allRows.forEach(r => {
+        if (r !== row && r.classList.contains('expanded')) {
+            r.classList.remove('expanded');
+        }
+    });
+    
+    // Toggle current row
+    row.classList.toggle('expanded');
 }
 
 /**
