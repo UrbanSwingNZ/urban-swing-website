@@ -892,16 +892,55 @@ textarea:focus {
 }
 
 @media (max-width: 768px) {
+    .pagination-wrapper {
+        margin-top: 20px;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
     .pagination {
-        flex-wrap: wrap;
-        gap: 8px;
+        flex-wrap: nowrap;
+        gap: 6px;
+        justify-content: center;
+        width: 100%;
+        overflow-x: auto;
+        padding: 0.25rem 0;
     }
     
-    .pagination-btn,
+    .pagination-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        min-width: auto;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .pagination-btn i {
+        display: inline;
+    }
+
+    .pagination-btn span {
+        display: none;
+    }
+    
+    .pagination-pages {
+        gap: 4px;
+    }
+
     .pagination-number {
         padding: 6px 10px;
         font-size: 0.85rem;
-        min-width: 36px;
+        min-width: 32px;
+        flex-shrink: 0;
+    }
+
+    .pagination-info-wrapper {
+        margin-top: 0;
+        order: 2;
+    }
+
+    .pagination-info {
+        font-size: 0.85rem;
     }
 }
 
