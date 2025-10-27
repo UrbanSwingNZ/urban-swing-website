@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Gift Concessions - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="gift-concessions.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div id="gift-concessions-container" class="dashboard-container">
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <a href="../index.html" class="back-button" title="Back to Admin Tools">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="page-heading">
+                    <i class="fas fa-gift"></i> Gift Concessions
+                </h1>
+                <div class="admin-user-info">
+                    <span id="user-email"></span>
+                    <button id="logout-btn" class="btn-logout" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="tool-intro">
+                <p><i class="fas fa-info-circle"></i> Gift concession packages to students for free. Perfect for scholarships, promotions, or rewards.</p>
+            </div>
+
+            <div class="gift-form-container">
+                <form id="gift-form" class="gift-form">
+                    <!-- Student Selection -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> Select Student</h3>
+                        <div class="form-group">
+                            <label for="student-search">Search by name or email</label>
+                            <div class="search-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="student-search" 
+                                    class="form-control search-input" 
+                                    placeholder="Type to search students..."
+                                    autocomplete="off"
+                                    required>
+                            </div>
+                            <div id="student-results" class="search-results" style="display: none;"></div>
+                            <div id="selected-student-card" class="selected-student-card" style="display: none;">
+                                <div class="student-info">
+                                    <h4 id="selected-student-name"></h4>
+                                    <p id="selected-student-email"></p>
+                                    <p class="balance-info">
+                                        Current Balance: <strong id="selected-student-balance">0</strong> classes
+                                    </p>
+                                </div>
+                                <button type="button" class="btn-clear" onclick="clearSelectedStudent()" title="Clear selection">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Package Details -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-ticket-alt"></i> Package Details</h3>
+                        
+                        <!-- Quick Presets -->
+                        <div class="form-group">
+                            <label>Quick Presets</label>
+                            <div class="preset-buttons">
+                                <button type="button" class="btn-preset" onclick="applyPreset(5, 6)">
+                                    <i class="fas fa-bolt"></i> 5 Classes (6 months)
+                                </button>
+                                <button type="button" class="btn-preset" onclick="applyPreset(10, 9)">
+                                    <i class="fas fa-bolt"></i> 10 Classes (9 months)
+                                </button>
+                                <button type="button" class="btn-preset" onclick="applyPreset(1, 3)">
+                                    <i class="fas fa-bolt"></i> 1 Class (3 months)
+                                </button>
+                                <button type="button" class="btn-preset" onclick="applyPreset(3, 3)">
+                                    <i class="fas fa-bolt"></i> 3 Classes (3 months)
+                                </button>
+                            </div>
+                            <p class="form-hint">Click a preset to quickly fill in quantity and expiry</p>
+                        </div>
+
+                        <!-- Manual Entry -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gift-quantity">
+                                    <i class="fas fa-hashtag"></i> Number of Classes
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="gift-quantity" 
+                                    class="form-control" 
+                                    min="1" 
+                                    max="100" 
+                                    placeholder="e.g., 5"
+                                    required>
+                                <p class="form-hint">Between 1 and 100 classes</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gift-expiry">
+                                    <i class="fas fa-calendar-alt"></i> Expiry Date
+                                </label>
+                                <input 
+                                    type="date" 
+                                    id="gift-expiry" 
+                                    class="form-control" 
+                                    required>
+                                <p class="form-hint">When these concessions expire</p>
+                            </div>
+                        </div>
+
+                        <!-- Gift Date -->
+                        <div class="form-group">
+                            <label for="gift-date">
+                                <i class="fas fa-calendar-day"></i> Gift Date
+                            </label>
+                            <input 
+                                type="date" 
+                                id="gift-date" 
+                                class="form-control" 
+                                required>
+                            <p class="form-hint">Date of gifting (defaults to today)</p>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="form-group">
+                            <label for="gift-notes">
+                                <i class="fas fa-sticky-note"></i> Reason / Notes
+                            </label>
+                            <textarea 
+                                id="gift-notes" 
+                                class="form-control" 
+                                rows="3" 
+                                placeholder="e.g., Scholarship award, Competition prize, Loyalty reward..."
+                                required></textarea>
+                            <p class="form-hint">Please provide a reason for this gift (required for audit trail)</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="form-section summary-section">
+                        <h3><i class="fas fa-clipboard-check"></i> Summary</h3>
+                        <div class="gift-summary">
+                            <div class="summary-row">
+                                <span>Student:</span>
+                                <strong id="summary-student">-</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Classes to Gift:</span>
+                                <strong id="summary-quantity">0</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>New Balance:</span>
+                                <strong id="summary-new-balance" class="balance-highlight">0</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Expires:</span>
+                                <strong id="summary-expiry">-</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Reason:</span>
+                                <strong id="summary-notes">-</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-redo"></i> Reset Form
+                        </button>
+                        <button type="submit" class="btn-primary" id="gift-submit-btn" disabled>
+                            <i class="fas fa-gift"></i> Gift Concessions
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Recent Gifts -->
+            <div class="recent-gifts-section">
+                <h3><i class="fas fa-history"></i> Recent Gifts</h3>
+                <div id="recent-gifts-list" class="recent-gifts-list">
+                    <p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Loading recent gifts...</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Gift Concessions Tool v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header success-header">
+                <h3><i class="fas fa-check-circle"></i> Gift Successful!</h3>
+            </div>
+            <div class="modal-body">
+                <div class="success-message">
+                    <p id="success-message-text"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-primary" onclick="closeSuccessModal()">
+                    <i class="fas fa-check"></i> Done
+                </button>
+                <button type="button" class="btn-secondary" onclick="closeSuccessModalAndReset()">
+                    <i class="fas fa-gift"></i> Gift Another
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing gift...</p>
+    </div>
+
+    <!-- Firebase Config & Scripts -->
+    <script src="../../../config/firebase-config.js"></script>
+    <script src="../../student-database/js/student-utils.js"></script>
+    <script src="../../concessions/js/concessions-data.js"></script>
+    <script src="gift-concessions.js"></script>
+</body>
+</html>

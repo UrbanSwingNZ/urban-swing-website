@@ -54,13 +54,15 @@ async function normalizeTransaction(transaction) {
     }
     
     // Determine transaction type and display name
-    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual-entry', etc.
+    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual-entry', 'concession-gift', etc.
     let typeName;
     
     // Handle both old and new type names for concession purchases
     if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
         transactionType = 'concession-purchase'; // Normalize to new name
         typeName = 'Concession Purchase';
+    } else if (transactionType === 'concession-gift') {
+        typeName = 'Gifted Concessions';
     } else if (transactionType === 'casual-entry' || transactionType === 'entry') {
         transactionType = 'casual-entry'; // Normalize to new name
         // Use the entry type for display (e.g., "Casual Entry")
