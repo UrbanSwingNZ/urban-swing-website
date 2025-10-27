@@ -50,8 +50,16 @@ async function getNextAvailableBlock(studentId, allowExpired = false) {
                 }
             })
             .sort((a, b) => {
-                // FIFO - sort by purchaseDate only (oldest first)
-                // This ensures we use the oldest block first, regardless of expiry status
+                // Sort by expiry date first (soonest to expire first)
+                // This ensures we use blocks that expire soonest, to minimize waste
+                const aExpiry = a.expiryDate?.toMillis ? a.expiryDate.toMillis() : Infinity;
+                const bExpiry = b.expiryDate?.toMillis ? b.expiryDate.toMillis() : Infinity;
+                
+                if (aExpiry !== bExpiry) {
+                    return aExpiry - bExpiry; // Earlier expiry date comes first
+                }
+                
+                // If expiry dates are the same (or both missing), use purchase date as tiebreaker (FIFO)
                 const aDate = a.purchaseDate?.toMillis ? a.purchaseDate.toMillis() : 0;
                 const bDate = b.purchaseDate?.toMillis ? b.purchaseDate.toMillis() : 0;
                 return aDate - bDate;
