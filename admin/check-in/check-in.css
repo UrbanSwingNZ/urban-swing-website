@@ -510,6 +510,16 @@
     font-weight: 600;
 }
 
+.crew-count {
+    background: #ff9800;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;

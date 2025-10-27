@@ -88,8 +88,7 @@ async function loadTodaysCheckins() {
  */
 function addCheckinToDisplay(checkin) {
     todaysCheckins.unshift(checkin); // Add to beginning of array
-    displayTodaysCheckins();
-    updateCheckinCount(todaysCheckins.length);
+    displayTodaysCheckins(); // This will update the counts
     
     // Reload transactions to include the new one
     if (typeof loadCheckinTransactions === 'function') {
@@ -112,7 +111,7 @@ function displayTodaysCheckins() {
     if (checkinsToDisplay.length === 0) {
         emptyState.style.display = 'block';
         checkinsList.style.display = 'none';
-        updateCheckinCount(0);
+        updateCheckinCount(0, 0);
         return;
     }
     
@@ -159,7 +158,13 @@ function displayTodaysCheckins() {
     // Add event listeners to check-in items
     attachCheckinEventListeners();
     
-    updateCheckinCount(checkinsToDisplay.length);
+    // Calculate separate counts for students and crew
+    const crewCount = checkinsToDisplay.filter(c => 
+        c.entryType === 'free' && c.freeEntryReason === 'crew-member'
+    ).length;
+    const studentCount = checkinsToDisplay.length - crewCount;
+    
+    updateCheckinCount(studentCount, crewCount);
 }
 
 /**
@@ -340,9 +345,15 @@ async function deleteCheckin(checkinId) {
 /**
  * Update check-in count badge
  */
-function updateCheckinCount(count) {
+function updateCheckinCount(studentCount, crewCount = 0) {
     const countElement = document.getElementById('checkin-count');
-    countElement.textContent = count;
+    const crewCountElement = document.getElementById('crew-count');
+    
+    countElement.textContent = studentCount;
+    crewCountElement.textContent = crewCount;
+    
+    // Hide crew count badge if zero
+    crewCountElement.style.display = crewCount > 0 ? 'inline-block' : 'none';
 }
 
 /**
