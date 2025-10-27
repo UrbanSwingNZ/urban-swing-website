@@ -79,8 +79,9 @@
 
             <!-- Today's Check-Ins -->
             <div class="checkins-section">
-                <div class="section-header">
+                <div class="section-header accordion-header" id="checkins-header">
                     <div class="section-title">
+                        <i class="fas fa-chevron-down accordion-icon"></i>
                         <h2><span id="checkin-date-display">Today's</span> Check-Ins</h2>
                         <span class="checkin-count" id="checkin-count">0</span>
                     </div>
@@ -100,62 +101,66 @@
                     </div>
                 </div>
 
-                <!-- Empty State -->
-                <div id="empty-state" class="empty-state">
-                    <i class="fas fa-clipboard-check"></i>
-                    <h3>No Check-Ins Yet</h3>
-                    <p>Click "Check In Student" to get started.</p>
-                </div>
+                <div class="accordion-content" id="checkins-content">
+                    <!-- Empty State -->
+                    <div id="empty-state" class="empty-state">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>No Check-Ins Yet</h3>
+                        <p>Click "Check In Student" to get started.</p>
+                    </div>
 
-                <!-- Check-Ins List -->
-                <div id="checkins-list" class="checkins-list" style="display: none;">
-                    <!-- Today's check-ins will be populated here -->
+                    <!-- Check-Ins List -->
+                    <div id="checkins-list" class="checkins-list" style="display: none;">
+                        <!-- Today's check-ins will be populated here -->
+                    </div>
                 </div>
             </div>
 
             <!-- Financial Transactions -->
             <div class="transactions-section">
-                <div class="section-header">
+                <div class="section-header accordion-header" id="transactions-header">
                     <div class="section-title">
+                        <i class="fas fa-chevron-down accordion-icon"></i>
                         <h2><span id="transactions-date-display">Today's</span> Transactions</h2>
                     </div>
                 </div>
 
-                <div class="summary-row">
-                    <div class="summary-item">
-                        <span class="summary-label">Total Transactions:</span>
-                        <span class="summary-value" id="checkin-total-count">0</span>
+                <div class="accordion-content" id="transactions-content">
+                    <div class="summary-row">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Transactions:</span>
+                            <span class="summary-value" id="checkin-total-count">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Total Amount:</span>
+                            <span class="summary-value" id="checkin-total-amount">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Cash:</span>
+                            <span class="summary-value" id="checkin-total-cash">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">EFTPOS:</span>
+                            <span class="summary-value" id="checkin-total-eftpos">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Bank Transfer:</span>
+                            <span class="summary-value" id="checkin-total-bank">$0.00</span>
+                        </div>
                     </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Total Amount:</span>
-                        <span class="summary-value" id="checkin-total-amount">$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Cash:</span>
-                        <span class="summary-value" id="checkin-total-cash">$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">EFTPOS:</span>
-                        <span class="summary-value" id="checkin-total-eftpos">$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Bank Transfer:</span>
-                        <span class="summary-value" id="checkin-total-bank">$0.00</span>
-                    </div>
-                </div>
 
-                <!-- Transactions Table -->
-                <div class="table-container">
-                    <table id="checkin-transactions-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Student Name</th>
-                                <th>Type</th>
-                                <th class="align-right">Amount</th>
-                                <th class="align-right">Cash</th>
-                                <th class="align-right">EFTPOS</th>
-                                <th class="align-right">Bank Transfer</th>
+                    <!-- Transactions Table -->
+                    <div class="table-container">
+                        <table id="checkin-transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Student Name</th>
+                                    <th>Type</th>
+                                    <th class="align-right">Amount</th>
+                                    <th class="align-right">Cash</th>
+                                    <th class="align-right">EFTPOS</th>
+                                    <th class="align-right">Bank Transfer</th>
                             </tr>
                         </thead>
                         <tbody id="checkin-transactions-tbody">
@@ -404,6 +409,7 @@
     
     <script src="js/todays-checkins.js"></script>
     <script src="js/checkin-transactions.js"></script>
+    <script src="js/accordion.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
