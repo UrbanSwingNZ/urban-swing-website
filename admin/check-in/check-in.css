@@ -1159,7 +1159,116 @@ textarea.form-control {
 
 @media (max-width: 768px) {
     .checkin-main {
-        padding: 20px;
+        padding: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Mobile Card Layout for Check-ins */
+    .checkin-item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        gap: 0.75rem;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(154, 22, 245, 0.2);
+        border-left: 4px solid var(--admin-purple);
+        background: var(--background-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+        align-items: start;
+    }
+
+    .checkin-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--admin-purple);
+    }
+
+    .checkin-item.reversed-checkin {
+        border-left-color: var(--danger-color);
+        opacity: 0.7;
+    }
+
+    /* Student Name - Top Left */
+    .checkin-info-row {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        flex: unset;
+    }
+
+    .checkin-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .reversed-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        background: var(--danger-color);
+        color: white;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    /* Entry Type Badge and Action Buttons - Top Right */
+    .checkin-actions {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
+
+    .checkin-type {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        border-radius: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* Action Buttons Row - Bottom, Spanning Both Columns */
+    .checkin-item .checkin-actions {
+        grid-row: 2;
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(154, 22, 245, 0.1);
+    }
+
+    /* Move type badge to row 1, right column only */
+    .checkin-type {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: start;
+    }
+
+    /* Action Buttons */
+    .checkin-actions .btn-icon {
+        display: inline-flex;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 6px;
+        flex: 1;
+    }
+
+    .checkin-actions .btn-icon i {
+        font-size: 1rem;
     }
 
     .checkin-header {
