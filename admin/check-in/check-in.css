@@ -1302,6 +1302,15 @@ textarea.form-control {
         width: 100%;
     }
 
+    /* On mobile, make both buttons use the same blue-to-purple gradient */
+    .btn-primary-inverted {
+        background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    }
+
+    .btn-primary-inverted:hover {
+        background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    }
+
     .date-picker-container {
         width: 100%;
         justify-content: space-between;
