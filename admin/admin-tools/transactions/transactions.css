@@ -392,6 +392,11 @@ select.filter-input:focus {
     color: var(--admin-blue);
 }
 
+.type-badge.gift {
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+}
+
 .type-badge.cash {
     background: #fff3e0;
     color: #e65100;
