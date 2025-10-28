@@ -404,6 +404,10 @@
     flex: 1;
 }
 
+.checkbox-label .required {
+    color: var(--admin-error);
+}
+
 .checkbox-label i {
     color: var(--admin-purple);
     margin-right: 5px;
