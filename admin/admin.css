@@ -31,6 +31,7 @@ html, body {
   --admin-border-dark: #404040;
   --admin-success: #28a745;
   --admin-error: #dc3545;
+  --admin-warning: #ffc107;
   --admin-shadow: rgba(0, 0, 0, 0.1);
   
   /* Theme-aware variables - Light mode defaults */
