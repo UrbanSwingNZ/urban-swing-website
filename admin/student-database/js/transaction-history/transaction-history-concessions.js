@@ -40,129 +40,223 @@ function displayConcessionInfo(blocks, stats, studentId) {
     
     let html = '';
     
-    // Active concessions section
-    if (stats.unexpiredBlocks.length > 0) {
-        html += `
-            <div class="concessions-section">
-                <h4><i class="fas fa-check-circle" style="color: var(--admin-success);"></i> Active Concessions (${stats.unexpiredCount} classes)</h4>
-                <div class="concessions-list">
-        `;
-        
-        stats.unexpiredBlocks.forEach(block => {
-            const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
-            const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
-            const isLocked = block.isLocked === true;
-            const hasBeenUsed = block.remainingQuantity < block.originalQuantity;
-            
-            const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
-            
-            // Active blocks cannot be locked/unlocked
-            const lockButton = `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
-            
-            // Active blocks can only be deleted if no entries have been used (and only by super admin)
-            const deleteButton = (!isSuperAdmin() || hasBeenUsed)
-                ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
-                : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
-            
-            html += `
-                <div class="concession-item ${isLocked ? 'locked' : ''}">
-                    <div class="concession-info">
-                        <strong>${block.remainingQuantity} of ${block.originalQuantity} classes remaining</strong>
-                        ${lockBadge}
-                    </div>
-                    <div class="concession-details">
-                        <span><i class="fas fa-calendar-alt"></i> Expires: ${formatDate(expiryDate)}</span>
-                        <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
-                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
-                    </div>
-                    <div class="concession-actions">
-                        ${lockButton}
-                        ${deleteButton}
-                    </div>
-                </div>
-            `;
-        });
-        
-        html += `
-                </div>
-            </div>
-        `;
+    // Active concessions section (accordion, expanded by default)
+    if (stats.activeBlocks.length > 0) {
+        html += buildTransactionConcessionSection(
+            'Active Concessions',
+            stats.activeCount,
+            stats.activeBlocks,
+            'active',
+            studentId,
+            true
+        );
     }
     
-    // Expired concessions section
+    // Expired concessions section (accordion, collapsed by default)
     if (stats.expiredBlocks.length > 0) {
-        html += `
-            <div class="concessions-section">
-                <h4><i class="fas fa-exclamation-circle" style="color: var(--admin-error);"></i> Expired Concessions (${stats.expiredCount} unused)</h4>
-                <div class="concessions-list">
-        `;
-        
-        stats.expiredBlocks.forEach(block => {
-            const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
-            const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
-            const isLocked = block.isLocked === true;
-            const hasBeenUsed = block.remainingQuantity < block.originalQuantity;
-            
-            const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
-            
-            // Expired blocks can be locked/unlocked (only by super admin)
-            const lockButton = isSuperAdmin()
-                ? (isLocked 
-                    ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
-                    : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`)
-                : '';
-            
-            // Expired blocks can only be deleted if no entries have been used (and only by super admin)
-            const deleteButton = (!isSuperAdmin() || hasBeenUsed)
-                ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
-                : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
-            
-            // Get existing notes
-            const existingNotes = block.lockNotes || '';
-            
-            html += `
-                <div class="concession-item expired ${isLocked ? 'locked' : ''}">
-                    <div class="concession-content">
-                        <div class="concession-left">
-                            <div class="concession-info">
-                                <strong>${block.remainingQuantity} of ${block.originalQuantity} classes unused</strong>
-                                ${lockBadge}
-                            </div>
-                            <div class="concession-details">
-                                <span><i class="fas fa-calendar-times"></i> Expired: ${formatDate(expiryDate)}</span>
-                                <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
-                                <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
-                            </div>
-                        </div>
-                        <div class="concession-notes">
-                            <label for="notes-${block.id}">Notes:</label>
-                            <textarea 
-                                id="notes-${block.id}" 
-                                class="concession-notes-input" 
-                                data-block-id="${block.id}"
-                                placeholder="Add notes about why this concession is locked/unlocked..."
-                                rows="4"
-                            >${existingNotes}</textarea>
-                            <span class="notes-save-status" id="notes-status-${block.id}"></span>
-                        </div>
-                    </div>
-                    <div class="concession-actions">
-                        ${lockButton}
-                        ${deleteButton}
-                    </div>
-                </div>
-            `;
-        });
-        
-        html += `
-                </div>
-            </div>
-        `;
+        html += buildTransactionConcessionSection(
+            'Expired Concessions',
+            stats.expiredCount,
+            stats.expiredBlocks,
+            'expired',
+            studentId,
+            false
+        );
+    }
+    
+    // Depleted concessions section (accordion, collapsed by default)
+    if (stats.depletedBlocks.length > 0) {
+        html += buildTransactionConcessionSection(
+            'Depleted Concessions',
+            stats.depletedBlocks.length,
+            stats.depletedBlocks,
+            'depleted',
+            studentId,
+            false
+        );
     }
     
     contentEl.innerHTML = html;
     
-    // Add event listeners for lock/unlock buttons
+    // Add accordion event listeners
+    attachTransactionConcessionEventListeners(contentEl, studentId);
+}
+
+/**
+ * Build HTML for a concession section (active, expired, or depleted)
+ */
+function buildTransactionConcessionSection(title, count, blocks, status, studentId, isExpanded) {
+    let icon, iconColor;
+    
+    switch (status) {
+        case 'active':
+            icon = 'fa-check-circle';
+            iconColor = 'var(--admin-success)';
+            break;
+        case 'expired':
+            icon = 'fa-exclamation-circle';
+            iconColor = 'var(--admin-error)';
+            break;
+        case 'depleted':
+            icon = 'fa-battery-empty';
+            iconColor = 'var(--admin-warning)';
+            break;
+        default:
+            icon = 'fa-circle';
+            iconColor = 'var(--text-muted)';
+    }
+    
+    const accordionId = `transaction-concession-accordion-${status}`;
+    
+    let html = `
+        <div class="concessions-section">
+            <h4 class="concession-accordion-header ${isExpanded ? 'active' : ''}" data-target="${accordionId}">
+                <i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count})
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </h4>
+            <div id="${accordionId}" class="concessions-list accordion-content ${isExpanded ? 'show' : ''}">
+    `;
+    
+    blocks.forEach(block => {
+        html += buildTransactionConcessionItem(block, status, studentId);
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
+    return html;
+}
+
+/**
+ * Build HTML for a single concession item
+ */
+function buildTransactionConcessionItem(block, status, studentId) {
+    const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
+    const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
+    const isLocked = block.isLocked === true;
+    const hasBeenUsed = block.remainingQuantity < block.originalQuantity;
+    
+    const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
+    
+    // Determine button states based on block status
+    let lockButton = '';
+    let deleteButton = '';
+    
+    if (status === 'active') {
+        // Active blocks cannot be locked/unlocked
+        lockButton = `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
+        // Active blocks can only be deleted if no entries have been used (and only by super admin)
+        deleteButton = (!isSuperAdmin() || hasBeenUsed)
+            ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
+            : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
+    } else {
+        // Expired and depleted blocks can be locked/unlocked (only by super admin)
+        if (isSuperAdmin()) {
+            lockButton = isLocked 
+                ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
+                : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+        }
+        
+        // Expired/depleted blocks can only be deleted if no entries have been used (and only by super admin)
+        deleteButton = (!isSuperAdmin() || hasBeenUsed)
+            ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
+            : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
+    }
+    
+    // Set labels and icons based on status
+    let expiryLabel, expiryIcon, entriesLabel, statusClass;
+    
+    switch (status) {
+        case 'expired':
+            expiryLabel = 'Expired';
+            expiryIcon = 'fa-calendar-times';
+            entriesLabel = 'classes unused';
+            statusClass = 'expired';
+            break;
+        case 'depleted':
+            expiryLabel = 'Expired';
+            expiryIcon = 'fa-calendar-alt';
+            entriesLabel = 'classes (all used)';
+            statusClass = 'depleted';
+            break;
+        case 'active':
+        default:
+            expiryLabel = 'Expires';
+            expiryIcon = 'fa-calendar-alt';
+            entriesLabel = 'classes remaining';
+            statusClass = '';
+    }
+    
+    // Get existing notes for expired/depleted items
+    const existingNotes = block.lockNotes || '';
+    const showNotes = status === 'expired' || status === 'depleted';
+    
+    let html = `
+        <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''}">
+            <div class="concession-content">
+                <div class="concession-left">
+                    <div class="concession-info">
+                        <strong>${block.remainingQuantity} of ${block.originalQuantity} ${entriesLabel}</strong>
+                        ${lockBadge}
+                    </div>
+                    <div class="concession-details">
+                        <span><i class="fas ${expiryIcon}"></i> ${expiryLabel}: ${formatDate(expiryDate)}</span>
+                        <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
+                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
+                    </div>
+                </div>
+    `;
+    
+    if (showNotes) {
+        html += `
+                <div class="concession-notes">
+                    <label for="notes-${block.id}">Notes:</label>
+                    <textarea 
+                        id="notes-${block.id}" 
+                        class="concession-notes-input" 
+                        data-block-id="${block.id}"
+                        placeholder="Add notes about why this concession is locked/unlocked..."
+                        rows="4"
+                    >${existingNotes}</textarea>
+                    <span class="notes-save-status" id="notes-status-${block.id}"></span>
+                </div>
+        `;
+    }
+    
+    html += `
+            </div>
+            <div class="concession-actions">
+                ${lockButton}
+                ${deleteButton}
+            </div>
+        </div>
+    `;
+    
+    return html;
+}
+
+/**
+ * Attach event listeners for transaction concession elements
+ */
+function attachTransactionConcessionEventListeners(contentEl, studentId) {
+    // Accordion headers
+    contentEl.querySelectorAll('.concession-accordion-header').forEach(header => {
+        header.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = header.dataset.target;
+            const content = document.getElementById(targetId);
+            
+            // Toggle active class on header
+            header.classList.toggle('active');
+            
+            // Toggle show class on content
+            content.classList.toggle('show');
+        });
+    });
+    
+    // Lock/unlock buttons
     contentEl.querySelectorAll('.btn-lock-toggle').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -193,7 +287,7 @@ function displayConcessionInfo(blocks, stats, studentId) {
         });
     });
     
-    // Add event listeners for delete buttons
+    // Delete buttons
     contentEl.querySelectorAll('.btn-delete-block').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -243,7 +337,7 @@ function displayConcessionInfo(blocks, stats, studentId) {
         });
     });
     
-    // Add event listeners for notes textareas with debouncing
+    // Notes textareas with debouncing
     const notesDebounceTimers = {};
     contentEl.querySelectorAll('.concession-notes-input').forEach(textarea => {
         textarea.addEventListener('input', (e) => {
