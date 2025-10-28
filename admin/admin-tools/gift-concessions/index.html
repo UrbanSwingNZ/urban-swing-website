@@ -73,29 +73,7 @@
                     <!-- Package Details -->
                     <div class="form-section">
                         <h3><i class="fas fa-ticket-alt"></i> Package Details</h3>
-                        
-                        <!-- Quick Presets -->
-                        <div class="form-group">
-                            <label>Quick Presets</label>
-                            <div class="preset-buttons">
-                                <button type="button" class="btn-preset" onclick="applyPreset(5, 6)">
-                                    <i class="fas fa-bolt"></i> 5 Classes (6 months)
-                                </button>
-                                <button type="button" class="btn-preset" onclick="applyPreset(10, 9)">
-                                    <i class="fas fa-bolt"></i> 10 Classes (9 months)
-                                </button>
-                                <button type="button" class="btn-preset" onclick="applyPreset(1, 1)">
-                                    <i class="fas fa-bolt"></i> 1 Class (1 month)
-                                </button>
-                                <button type="button" class="btn-preset" onclick="applyPreset(3, 3)">
-                                    <i class="fas fa-bolt"></i> 3 Classes (3 months)
-                                </button>
-                            </div>
-                            <p class="form-hint">Click a preset to quickly fill in quantity and expiry</p>
-                        </div>
-
-                        <!-- Manual Entry -->
-                        <div class="form-row">
+                        <div class="form-row form-row-three">
                             <div class="form-group">
                                 <label for="gift-quantity">
                                     <i class="fas fa-hashtag"></i> Number of Classes
@@ -108,7 +86,6 @@
                                     max="100" 
                                     placeholder="e.g., 5"
                                     required>
-                                <p class="form-hint">Between 1 and 100 classes</p>
                             </div>
 
                             <div class="form-group">
@@ -120,21 +97,18 @@
                                     id="gift-expiry" 
                                     class="form-control" 
                                     required>
-                                <p class="form-hint">When these concessions expire</p>
                             </div>
-                        </div>
 
-                        <!-- Gift Date -->
-                        <div class="form-group">
-                            <label for="gift-date">
-                                <i class="fas fa-calendar-day"></i> Gift Date
-                            </label>
-                            <input 
-                                type="date" 
-                                id="gift-date" 
-                                class="form-control" 
-                                required>
-                            <p class="form-hint">Date of gifting (defaults to today)</p>
+                            <div class="form-group">
+                                <label for="gift-date">
+                                    <i class="fas fa-calendar-day"></i> Gift Date
+                                </label>
+                                <input 
+                                    type="date" 
+                                    id="gift-date" 
+                                    class="form-control" 
+                                    required>
+                            </div>
                         </div>
 
                         <!-- Notes -->
