@@ -345,9 +345,6 @@ async function deleteStudent(studentId) {
         // Reload students
         await loadStudents();
         
-        // Show success message (you could enhance this with a toast notification)
-        alert('Student deleted successfully');
-        
     } catch (error) {
         console.error('Error deleting student:', error);
         showError('Failed to delete student: ' + error.message);
