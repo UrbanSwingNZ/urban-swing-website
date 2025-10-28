@@ -7,6 +7,7 @@
  * Get badge HTML for concession count
  */
 function getConcessionBadgeHTML(stats) {
+    // Show purchase button if no active or expired concessions (only depleted or nothing)
     if (stats.totalCount === 0) {
         return '<button class="btn-purchase-mini" style="font-size: 0.75rem; padding: 4px 10px;">Purchase</button>';
     }
@@ -14,16 +15,17 @@ function getConcessionBadgeHTML(stats) {
     let badgeClass = '';
     let badgeText = '';
     
-    if (stats.unexpiredCount > 0 && stats.expiredCount === 0) {
-        // Only unexpired - green badge
+    // Use activeCount and expiredCount (totalCount excludes depleted)
+    if (stats.activeCount > 0 && stats.expiredCount === 0) {
+        // Only active - green badge
         badgeClass = 'badge-yes';
-        badgeText = stats.unexpiredCount;
-    } else if (stats.expiredCount > 0 && stats.unexpiredCount === 0) {
+        badgeText = stats.activeCount;
+    } else if (stats.expiredCount > 0 && stats.activeCount === 0) {
         // Only expired - red badge
         badgeClass = 'badge-no';
         badgeText = stats.expiredCount;
-    } else if (stats.unexpiredCount > 0 && stats.expiredCount > 0) {
-        // Both - orange badge
+    } else if (stats.activeCount > 0 && stats.expiredCount > 0) {
+        // Both active and expired - orange badge
         badgeClass = 'badge-warning';
         badgeText = stats.totalCount;
     }

@@ -45,23 +45,33 @@ async function showConcessionsDetail(studentId) {
             }
         }
         
-        // Unexpired concessions section
-        if (stats.unexpiredBlocks.length > 0) {
+        // Active concessions section (balance > 0 and not expired)
+        if (stats.activeBlocks.length > 0) {
             html += buildConcessionSection(
                 'Active Concessions',
-                stats.unexpiredCount,
-                stats.unexpiredBlocks,
-                false
+                stats.activeCount,
+                stats.activeBlocks,
+                'active'
             );
         }
         
-        // Expired concessions section
+        // Expired concessions section (balance > 0 but past expiry)
         if (stats.expiredBlocks.length > 0) {
             html += buildConcessionSection(
                 'Expired Concessions',
                 stats.expiredCount,
                 stats.expiredBlocks,
-                true
+                'expired'
+            );
+        }
+        
+        // Depleted concessions section (balance = 0)
+        if (stats.depletedBlocks.length > 0) {
+            html += buildConcessionSection(
+                'Depleted Concessions',
+                stats.depletedBlocks.length,
+                stats.depletedBlocks,
+                'depleted'
             );
         }
     }
@@ -73,21 +83,37 @@ async function showConcessionsDetail(studentId) {
 }
 
 /**
- * Build HTML for a concession section (active or expired)
+ * Build HTML for a concession section (active, expired, or depleted)
  */
-function buildConcessionSection(title, count, blocks, isExpired) {
-    const icon = isExpired 
-        ? '<i class="fas fa-exclamation-circle" style="color: var(--admin-error);"></i>'
-        : '<i class="fas fa-check-circle" style="color: var(--admin-success);"></i>';
+function buildConcessionSection(title, count, blocks, status) {
+    let icon, iconColor;
+    
+    switch (status) {
+        case 'active':
+            icon = 'fa-check-circle';
+            iconColor = 'var(--admin-success)';
+            break;
+        case 'expired':
+            icon = 'fa-exclamation-circle';
+            iconColor = 'var(--admin-error)';
+            break;
+        case 'depleted':
+            icon = 'fa-battery-empty';
+            iconColor = 'var(--admin-warning)';
+            break;
+        default:
+            icon = 'fa-circle';
+            iconColor = 'var(--text-muted)';
+    }
     
     let html = `
         <div class="concessions-section">
-            <h4>${icon} ${title} (${count})</h4>
+            <h4><i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count})</h4>
             <div class="concessions-list">
     `;
     
     blocks.forEach(block => {
-        html += buildConcessionItem(block, isExpired);
+        html += buildConcessionItem(block, status);
     });
     
     html += `
@@ -101,7 +127,7 @@ function buildConcessionSection(title, count, blocks, isExpired) {
 /**
  * Build HTML for a single concession item
  */
-function buildConcessionItem(block, isExpired) {
+function buildConcessionItem(block, status) {
     const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
     const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
     const isLocked = block.isLocked === true;
@@ -110,15 +136,35 @@ function buildConcessionItem(block, isExpired) {
     const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> Locked</span>' : '';
     
     // Determine button states based on block status
-    const lockButton = buildLockButton(block, isExpired);
+    const lockButton = buildLockButton(block, status);
     const deleteButton = buildDeleteButton(block, hasBeenUsed);
     
-    const expiryLabel = isExpired ? 'Expired' : 'Expires';
-    const expiryIcon = isExpired ? 'fa-calendar-times' : 'fa-calendar-alt';
-    const entriesLabel = isExpired ? 'entries unused' : 'entries remaining';
+    // Set labels and icons based on status
+    let expiryLabel, expiryIcon, entriesLabel, statusClass;
+    
+    switch (status) {
+        case 'expired':
+            expiryLabel = 'Expired';
+            expiryIcon = 'fa-calendar-times';
+            entriesLabel = 'entries unused';
+            statusClass = 'expired';
+            break;
+        case 'depleted':
+            expiryLabel = 'Expired';
+            expiryIcon = 'fa-calendar-alt';
+            entriesLabel = 'entries (all used)';
+            statusClass = 'depleted';
+            break;
+        case 'active':
+        default:
+            expiryLabel = 'Expires';
+            expiryIcon = 'fa-calendar-alt';
+            entriesLabel = 'entries remaining';
+            statusClass = '';
+    }
     
     return `
-        <div class="concession-item ${isExpired ? 'expired' : ''} ${isLocked ? 'locked' : ''}">
+        <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''}">
             <div class="concession-info">
                 <strong>${block.remainingQuantity} ${entriesLabel}</strong>
                 <span class="text-muted">of ${block.originalQuantity} total</span>
@@ -139,15 +185,15 @@ function buildConcessionItem(block, isExpired) {
 /**
  * Build lock/unlock button HTML
  */
-function buildLockButton(block, isExpired) {
+function buildLockButton(block, status) {
     const isLocked = block.isLocked === true;
     
-    if (!isExpired) {
+    if (status === 'active') {
         // Active blocks cannot be locked/unlocked
         return `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
     }
     
-    // Expired blocks can be locked/unlocked (only by super admin)
+    // Expired and depleted blocks can be locked/unlocked (only by super admin)
     if (!isSuperAdmin()) {
         return '';
     }
