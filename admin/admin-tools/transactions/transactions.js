@@ -202,7 +202,10 @@ async function editTransaction(transaction) {
         const transactionData = transactionDoc.data();
         
         // Handle based on transaction type
-        if (transaction.type === 'casual-entry') {
+        if (transaction.type === 'concession-gift') {
+            showSnackbar('Gifted concessions cannot be edited. Please reverse and create a new gift if needed.', 'info');
+            return;
+        } else if (transaction.type === 'casual-entry') {
             await editCasualEntryTransaction(transaction, transactionData);
         } else if (transaction.type === 'concession-purchase') {
             await editConcessionPurchaseTransaction(transaction, transactionData);
