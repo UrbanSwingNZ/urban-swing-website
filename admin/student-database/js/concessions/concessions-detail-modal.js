@@ -106,10 +106,17 @@ function buildConcessionSection(title, count, blocks, status) {
             iconColor = 'var(--text-muted)';
     }
     
+    // Active sections are expanded by default, others are collapsed
+    const isExpanded = status === 'active';
+    const accordionId = `concession-accordion-${status}`;
+    
     let html = `
         <div class="concessions-section">
-            <h4><i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count})</h4>
-            <div class="concessions-list">
+            <h4 class="concession-accordion-header ${isExpanded ? 'active' : ''}" data-target="${accordionId}">
+                <i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count})
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </h4>
+            <div id="${accordionId}" class="concessions-list accordion-content ${isExpanded ? 'show' : ''}">
     `;
     
     blocks.forEach(block => {
@@ -223,6 +230,21 @@ function buildDeleteButton(block, hasBeenUsed) {
  * Attach event listeners to concession detail modal elements
  */
 function attachConcessionDetailEventListeners(contentEl, studentId) {
+    // Accordion headers
+    contentEl.querySelectorAll('.concession-accordion-header').forEach(header => {
+        header.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = header.dataset.target;
+            const content = document.getElementById(targetId);
+            
+            // Toggle active class on header
+            header.classList.toggle('active');
+            
+            // Toggle show class on content
+            content.classList.toggle('show');
+        });
+    });
+    
     // Lock/unlock buttons
     contentEl.querySelectorAll('.btn-lock-toggle').forEach(btn => {
         btn.addEventListener('click', async (e) => {

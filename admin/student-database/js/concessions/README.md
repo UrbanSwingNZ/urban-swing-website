@@ -21,12 +21,12 @@ This module has been refactored into smaller, focused files for better maintaina
 - `updateStudentConcessionBadge(studentId)` - Updates badge in the student table
 
 ### concessions-detail-modal.js
-- `showConcessionsDetail(studentId)` - Opens and populates the detail modal with three sections
-- `buildConcessionSection()` - Builds HTML for active/expired/depleted sections
+- `showConcessionsDetail(studentId)` - Opens and populates the detail modal with three accordion sections
+- `buildConcessionSection()` - Builds HTML for active/expired/depleted accordion sections
 - `buildConcessionItem()` - Builds HTML for individual concession blocks with appropriate styling
 - `buildLockButton()` - Generates lock/unlock button HTML (active blocks cannot be locked)
 - `buildDeleteButton()` - Generates delete button HTML
-- `attachConcessionDetailEventListeners()` - Attaches event handlers
+- `attachConcessionDetailEventListeners()` - Attaches event handlers including accordion toggle
 - `closeConcessionsDetailModal()` - Closes the modal
 - `initializePurchaseConcessionsButton()` - Initializes purchase button
 
@@ -39,21 +39,28 @@ This module has been refactored into smaller, focused files for better maintaina
 
 ### Active Concessions
 - **Condition**: Balance > 0 AND not past expiry date
-- **Display**: Green left border, normal opacity
+- **Display**: Green left border, normal opacity, accordion (expanded by default)
 - **Icon**: Check circle (green)
 - **Label**: "X entries remaining"
 
 ### Expired Concessions
 - **Condition**: Balance > 0 AND past expiry date
-- **Display**: Red left border, 70% opacity, light red background
+- **Display**: Red left border, 70% opacity, light red background, accordion (collapsed by default)
 - **Icon**: Exclamation circle (red)
 - **Label**: "X entries unused"
 
 ### Depleted Concessions
 - **Condition**: Balance = 0 (regardless of expiry date)
-- **Display**: Orange left border, 70% opacity, light orange background
+- **Display**: Orange left border, 70% opacity, light orange background, accordion (collapsed by default)
 - **Icon**: Battery empty (orange)
 - **Label**: "0 entries (all used)"
+
+### Accordion Behavior
+- Each section (Active, Expired, Depleted) is displayed as a collapsible accordion
+- Active concessions are expanded by default
+- Expired and Depleted concessions are collapsed by default
+- Click the section header to toggle expand/collapse
+- Chevron icon rotates to indicate state
 
 ## Load Order
 
