@@ -120,6 +120,8 @@
     border-radius: 4px;
     font-size: 1rem;
     width: 100%;
+    background: var(--input-bg);
+    color: var(--text-color);
 }
 
 .search-result-item {
@@ -294,6 +296,8 @@
     height: 44px; /* Consistent height for all inputs */
     box-sizing: border-box;
     max-width: 100%;
+    background: var(--input-bg);
+    color: var(--text-color);
 }
 
 /* Textarea should not have fixed height */
@@ -319,6 +323,8 @@ input[type="date"].form-control {
 /* Number input matching date input height */
 input[type="number"].form-control {
     height: 44px;
+    background: var(--input-bg);
+    color: var(--text-color);
 }
 
 input[type="date"].form-control:hover {
