@@ -303,6 +303,64 @@
     margin-right: 8px;
 }
 
+/* Accordion styles for concession sections in transaction history */
+.concession-accordion-header {
+    cursor: pointer;
+    user-select: none;
+    padding: 12px;
+    background: var(--bg-primary, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-left: 4px solid var(--border-color, #dee2e6);
+    border-radius: 6px;
+    margin: 0 0 0 0;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: var(--text-primary, #212529);
+}
+
+.concession-accordion-header:hover {
+    background: rgba(154, 22, 245, 0.05);
+    border-color: var(--admin-purple, #9a16f5);
+}
+
+/* Colored borders for different accordion states */
+.concession-accordion-header[data-target*="active"] {
+    border-left-color: var(--admin-success, #28a745);
+}
+
+.concession-accordion-header[data-target*="expired"] {
+    border-left-color: var(--admin-error, #dc3545);
+}
+
+.concession-accordion-header[data-target*="depleted"] {
+    border-left-color: var(--admin-warning, #ffc107);
+}
+
+.concession-accordion-header .accordion-icon {
+    transition: transform 0.2s ease;
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+}
+
+.concession-accordion-header.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-top: 0;
+}
+
+.accordion-content.show {
+    max-height: 2000px;
+    margin-top: 12px;
+}
+
 /* Concession Items - Reuse from existing concessions.css */
 .concession-item {
     padding: 12px 16px 16px 16px;
@@ -316,6 +374,11 @@
 .concession-item.expired {
     border-left-color: var(--admin-error, #dc3545);
     background: rgba(220, 53, 69, 0.02);
+}
+
+.concession-item.depleted {
+    border-left-color: var(--admin-warning, #ffc107);
+    background: rgba(255, 193, 7, 0.02);
 }
 
 .concession-info {
