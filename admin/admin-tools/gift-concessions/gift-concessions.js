@@ -90,6 +90,7 @@ async function loadStudents() {
 function initializeForm() {
     const form = document.getElementById('gift-form');
     const studentSearch = document.getElementById('student-search');
+    const clearSearchBtn = document.getElementById('clear-student-search');
     const giftDate = document.getElementById('gift-date');
     
     // Set default gift date to today
@@ -101,9 +102,21 @@ function initializeForm() {
     studentSearch.addEventListener('input', handleStudentSearch);
     studentSearch.addEventListener('focus', handleStudentSearch);
     
+    // Clear search button
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            studentSearch.value = '';
+            clearSearchBtn.style.display = 'none';
+            document.getElementById('student-results').style.display = 'none';
+            if (!selectedStudent) {
+                studentSearch.focus();
+            }
+        });
+    }
+    
     // Click outside to close search results
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.search-wrapper')) {
+        if (!e.target.closest('.search-input-wrapper')) {
             document.getElementById('student-results').style.display = 'none';
         }
     });
@@ -123,6 +136,12 @@ function initializeForm() {
 function handleStudentSearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     const resultsDiv = document.getElementById('student-results');
+    const clearBtn = document.getElementById('clear-student-search');
+    
+    // Show/hide clear button
+    if (clearBtn) {
+        clearBtn.style.display = searchTerm.length > 0 ? 'flex' : 'none';
+    }
     
     if (searchTerm.length === 0) {
         resultsDiv.style.display = 'none';
@@ -186,6 +205,7 @@ function clearSelectedStudent() {
     selectedStudent = null;
     document.getElementById('selected-student-card').style.display = 'none';
     document.getElementById('student-search').value = '';
+    document.getElementById('clear-student-search').style.display = 'none';
     updateSummary();
 }
 
