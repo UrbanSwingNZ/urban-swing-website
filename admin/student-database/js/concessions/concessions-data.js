@@ -35,33 +35,44 @@ async function getStudentConcessionBlocks(studentId) {
  */
 function calculateConcessionStats(blocks) {
     const now = new Date();
-    let unexpiredCount = 0;
+    let activeCount = 0;
     let expiredCount = 0;
-    const unexpiredBlocks = [];
+    let depletedCount = 0;
+    const activeBlocks = [];
     const expiredBlocks = [];
+    const depletedBlocks = [];
     
     blocks.forEach(block => {
         const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
-        const isExpired = expiryDate < now;
+        const isPastExpiry = expiryDate < now;
         // Treat undefined as false (unlocked) - for backwards compatibility with old blocks
         const isLocked = block.isLocked === true;
         
         // Use remainingQuantity (the actual field name in Firestore)
         const remaining = block.remainingQuantity || 0;
         
-        if (isExpired) {
-            // Always add to expiredBlocks array (for display)
+        // Categorize blocks:
+        // 1. Depleted (balance = 0) - regardless of expiry date
+        // 2. Expired (past expiry AND balance > 0)
+        // 3. Active (not expired AND balance > 0)
+        
+        if (remaining === 0) {
+            // Depleted blocks (no remaining entries)
+            depletedBlocks.push(block);
+            if (!isLocked) {
+                depletedCount += remaining; // Will be 0, but kept for consistency
+            }
+        } else if (isPastExpiry) {
+            // Expired blocks (past expiry date but still have balance)
             expiredBlocks.push(block);
-            // Only add to count if not locked
             if (!isLocked) {
                 expiredCount += remaining;
             }
         } else {
-            // Always add to unexpiredBlocks array (for display)
-            unexpiredBlocks.push(block);
-            // Only add to count if not locked
+            // Active blocks (not expired and have balance)
+            activeBlocks.push(block);
             if (!isLocked) {
-                unexpiredCount += remaining;
+                activeCount += remaining;
             }
         }
     });
@@ -73,14 +84,20 @@ function calculateConcessionStats(blocks) {
         return dateB - dateA; // Descending order (most recent first)
     };
     
-    unexpiredBlocks.sort(sortByExpiryDate);
+    activeBlocks.sort(sortByExpiryDate);
     expiredBlocks.sort(sortByExpiryDate);
+    depletedBlocks.sort(sortByExpiryDate);
     
     return {
-        unexpiredCount,
+        activeCount,
         expiredCount,
-        totalCount: unexpiredCount + expiredCount,
-        unexpiredBlocks,
-        expiredBlocks
+        depletedCount,
+        totalCount: activeCount + expiredCount, // Don't count depleted in total
+        activeBlocks,
+        expiredBlocks,
+        depletedBlocks,
+        // Keep old property names for backward compatibility
+        unexpiredCount: activeCount,
+        unexpiredBlocks: activeBlocks
     };
 }
