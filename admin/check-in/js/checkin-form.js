@@ -56,7 +56,7 @@ function setupEntryTypeListeners() {
             freeEntrySection.style.display = 'none';
             
             // Show appropriate section based on selection
-            if (radio.value === 'casual') {
+            if (radio.value === 'casual' || radio.value === 'casual-student') {
                 paymentSection.style.display = 'block';
                 // Check if payment method is selected
                 const paymentMethod = document.getElementById('payment-method').value;
@@ -73,10 +73,11 @@ function setupEntryTypeListeners() {
         });
     });
     
-    // Payment method required for casual
+    // Payment method required for casual entries
     document.getElementById('payment-method').addEventListener('change', (e) => {
         const casualRadio = document.getElementById('entry-casual');
-        if (casualRadio.checked) {
+        const casualStudentRadio = document.getElementById('entry-casual-student');
+        if (casualRadio.checked || casualStudentRadio.checked) {
             confirmBtn.disabled = e.target.value === '';
         }
     });

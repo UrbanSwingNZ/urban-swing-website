@@ -62,6 +62,9 @@ async function loadCheckinTransactions() {
             } else if (transactionType === 'casual-entry' || transactionType === 'entry') {
                 transactionType = 'casual-entry';
                 typeName = 'Casual Entry';
+            } else if (transactionType === 'casual-student') {
+                transactionType = 'casual-student';
+                typeName = 'Casual Student';
             } else {
                 typeName = 'Transaction';
             }

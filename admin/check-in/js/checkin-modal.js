@@ -63,8 +63,8 @@ function openCheckinModalWithData(student, checkinData) {
         entryTypeRadio.dispatchEvent(new Event('change'));
     }
     
-    // Prepopulate payment method if casual
-    if (checkinData.entryType === 'casual' && checkinData.paymentMethod) {
+    // Prepopulate payment method if casual or casual-student
+    if ((checkinData.entryType === 'casual' || checkinData.entryType === 'casual-student') && checkinData.paymentMethod) {
         document.getElementById('payment-method').value = checkinData.paymentMethod;
     }
     
