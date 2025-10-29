@@ -138,7 +138,7 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             entryType: entryType,
             paymentMethod: entryType === 'casual' ? paymentMethod : null,
             freeEntryReason: entryType === 'free' ? freeEntryReason : null,
-            amountPaid: entryType === 'casual' ? 15 : 0,
+            amountPaid: entryType === 'casual' ? getCurrentCasualPrice() : 0,
             concessionBlockId: concessionBlockId,
             notes: notes || '',
             reversed: false, // Explicitly set to false (un-reverses if previously reversed)
