@@ -16,6 +16,11 @@ async function initializeApp() {
         // Initialize date picker
         initializeDatePicker();
         
+        // Initialize casual rate display
+        if (typeof initializeCasualRateDisplay === 'function') {
+            await initializeCasualRateDisplay();
+        }
+        
         // Load students data
         await loadStudents();
         

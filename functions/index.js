@@ -170,6 +170,27 @@ exports.sendNewStudentEmail = onDocumentCreated(
     logger.info("New student registered:", studentId);
 
     try {
+      // Fetch casual rates from Firestore
+      const casualRatesSnapshot = await admin.firestore()
+        .collection('casualRates')
+        .where('isActive', '==', true)
+        .orderBy('displayOrder', 'asc')
+        .get();
+      
+      let casualRate = 15; // Default
+      let studentRate = 12; // Default
+      
+      casualRatesSnapshot.forEach(doc => {
+        const rate = doc.data();
+        if (rate.name && rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+          studentRate = rate.price;
+        } else if (rate.name && !rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+          casualRate = rate.price;
+        }
+      });
+      
+      logger.info(`Using casual rates: standard=$${casualRate}, student=$${studentRate}`);
+      
       // Create email transporter
       const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -305,11 +326,11 @@ View in admin database: https://urbanswing.co.nz/admin/student-database/
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$15</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${casualRate}</strong></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class (Student)</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$12</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${studentRate}</strong></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">5 Class Concession</td>
@@ -390,8 +411,8 @@ When: Every Thursday, 7:15 PM - 9:15 PM
 Where: Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
 
 PRICING
-- Single Class: $15
-- Single Class (Student): $12
+- Single Class: $${casualRate}
+- Single Class (Student): $${studentRate}
 - 5 Class Concession: $55 (Save $20!) - valid for 6 months
 - 10 Class Concession: $100 (Save $50!) - valid for 9 months
 

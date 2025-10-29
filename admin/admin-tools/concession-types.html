@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../admin-modals.css">
     <link rel="stylesheet" href="../concessions/concessions.css">
     <link rel="stylesheet" href="concession-types.css">
+    <link rel="stylesheet" href="casual-rates/casual-rates.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -39,21 +40,45 @@
 
         <main class="dashboard-main">
             <div class="page-intro">
-                <p>Manage concession package types, pricing, and availability</p>
+                <p>Manage casual rates and concession package types, pricing, and availability</p>
             </div>
 
-            <div class="page-actions">
-                <button id="add-package-btn" class="btn-primary-lg">
-                    <i class="fas fa-plus"></i> Add New Package
-                </button>
+            <!-- Casual Rates Section -->
+            <section class="casual-rates-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-dollar-sign"></i> Casual Rates</h2>
+                        <p class="section-description">Per-class pricing for casual entries</p>
+                    </div>
+                    <button id="add-rate-btn" class="btn-primary-lg">
+                        <i class="fas fa-plus"></i> Add Casual Rate
+                    </button>
+                </div>
+                <div id="casual-rates-container" class="casual-rates-container">
+                    <!-- Casual rates will be loaded here -->
+                </div>
+            </section>
+
+            <div class="divider-gradient" style="margin: 40px 0;"></div>
+
+            <!-- Concession Packages Section -->
+            <section class="concession-packages-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-ticket-alt"></i> Concession Packages</h2>
+                        <p class="section-description">Multi-class packages and blocks</p>
+                    </div>
+                    <button id="add-package-btn" class="btn-primary-lg">
+                        <i class="fas fa-plus"></i> Add New Package
+                    </button>
+                </div>
                 <div class="drag-hint" id="drag-hint" style="display: none;">
                     <i class="fas fa-arrows-alt"></i> Drag to reorder packages
                 </div>
-            </div>
-
-            <div id="packages-container" class="packages-container">
-                <!-- Packages will be loaded here -->
-            </div>
+                <div id="packages-container" class="packages-container">
+                    <!-- Packages will be loaded here -->
+                </div>
+            </section>
         </main>
 
         <footer class="admin-footer">
@@ -97,9 +122,109 @@
         </div>
     </div>
 
+    <!-- Casual Rate Add/Edit Modal -->
+    <div id="rate-modal" class="modal">
+        <div class="modal-content rate-modal">
+            <div class="modal-header">
+                <h2 id="rate-modal-title">
+                    <i class="fas fa-plus"></i> Add Casual Rate
+                </h2>
+                <button class="modal-close" onclick="closeRateModal()">&times;</button>
+            </div>
+            
+            <form id="rate-form" onsubmit="saveCasualRate(event)">
+                <div class="modal-body">
+                    <div class="rate-form-group">
+                        <label for="rate-name">
+                            <i class="fas fa-tag"></i> Rate Name <span style="color: red;">*</span>
+                        </label>
+                        <input type="text" id="rate-name" placeholder="e.g., Casual Entry, Student Casual Entry" required>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <label for="rate-price">
+                            <i class="fas fa-dollar-sign"></i> Price <span style="color: red;">*</span>
+                        </label>
+                        <div class="price-input-group">
+                            <input type="number" id="rate-price" step="0.01" min="0" placeholder="15.00" required>
+                        </div>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <label for="rate-description">
+                            <i class="fas fa-info-circle"></i> Description (Optional)
+                        </label>
+                        <textarea id="rate-description" placeholder="Additional information about this rate"></textarea>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rate-is-promo">
+                            <label for="rate-is-promo">
+                                <i class="fas fa-star"></i> Promotional Rate
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rate-is-active" checked>
+                            <label for="rate-is-active">
+                                <i class="fas fa-check-circle"></i> Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeRateModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Rate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Rate Confirmation Modal -->
+    <div id="delete-rate-modal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-exclamation-triangle"></i> Confirm Delete
+                </h2>
+            </div>
+            
+            <div class="modal-body">
+                <p>Are you sure you want to delete this casual rate?</p>
+                <p class="delete-warning">
+                    <strong id="delete-rate-name"></strong>
+                </p>
+                <p class="delete-note">
+                    <i class="fas fa-info-circle"></i> This will affect check-ins and pricing across the system.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDeleteRateModal()">
+                    Cancel
+                </button>
+                <button type="button" class="btn-danger" id="confirm-delete-rate-btn">
+                    <i class="fas fa-trash"></i> Delete Rate
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Logic -->
     <script src="../../config/firebase-config.js"></script>
+    <script src="../../js/casual-rates-utils.js"></script>
     <script src="../concessions/js/concessions-admin.js"></script>
+    
+    <!-- Casual Rates Scripts -->
+    <script src="casual-rates/casual-rates-display.js"></script>
     
     <!-- Refactored Modular Scripts -->
     <script src="concession-types/utils.js"></script>
@@ -108,5 +233,19 @@
     <script src="concession-types/package-display.js"></script>
     <script src="concession-types/modal-handlers.js"></script>
     <script src="concession-types/auth.js"></script>
+    
+    <script>
+        // Initialize casual rates when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load casual rates
+            loadCasualRates();
+            
+            // Setup add rate button
+            const addRateBtn = document.getElementById('add-rate-btn');
+            if (addRateBtn) {
+                addRateBtn.addEventListener('click', () => openRateModal());
+            }
+        });
+    </script>
 </body>
 </html>
