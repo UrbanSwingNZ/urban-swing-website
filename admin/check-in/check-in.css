@@ -338,9 +338,15 @@
     color: var(--admin-purple);
 }
 
+.type-badge.casual,
 .type-badge.casual-entry {
     background: rgba(53, 52, 250, 0.1);
     color: var(--admin-blue);
+}
+
+.type-badge.casual-student {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
 }
 
 .type-badge.reversed {
@@ -664,6 +670,11 @@
 .checkin-type.casual {
     background: rgba(53, 52, 250, 0.1);
     color: var(--admin-blue);
+}
+
+.checkin-type.casual-student {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
 }
 
 .checkin-type.free {

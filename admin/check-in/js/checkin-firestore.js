@@ -19,10 +19,28 @@ function handleCheckinSubmit() {
     const freeEntryReason = document.getElementById('free-entry-reason').value;
     const notes = document.getElementById('checkin-notes').value;
     
-    // Validate payment for casual
-    if (entryType === 'casual' && !paymentMethod) {
+    // Validate payment for casual entries
+    if ((entryType === 'casual' || entryType === 'casual-student') && !paymentMethod) {
         showSnackbar('Please select a payment method for casual entry', 'error');
         return;
+    }
+    
+    // Validate casual rate is loaded
+    if (entryType === 'casual') {
+        const casualPrice = getCurrentCasualPrice();
+        if (casualPrice === null) {
+            showSnackbar('Cannot process casual entry: Pricing not loaded. Please refresh the page or contact support.', 'error');
+            return;
+        }
+    }
+    
+    // Validate student casual rate is loaded
+    if (entryType === 'casual-student') {
+        const studentPrice = getCurrentStudentPrice();
+        if (studentPrice === null) {
+            showSnackbar('Cannot process casual student entry: Pricing not loaded. Please refresh the page or contact support.', 'error');
+            return;
+        }
     }
     
     // Validate reason for free entry
@@ -83,7 +101,7 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
                 // Normal update of existing active check-in
                 // Handle transaction changes when updating check-in
                 const hadPayment = existingData.amountPaid > 0;
-                const willHavePayment = entryType === 'casual';
+                const willHavePayment = (entryType === 'casual' || entryType === 'casual-student');
                 
                 if (hadPayment && !willHavePayment) {
                     // Changing FROM paid TO free - reverse the transaction
@@ -136,9 +154,10 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             studentName: getStudentFullName(student),
             checkinDate: firebase.firestore.Timestamp.fromDate(checkinDate),
             entryType: entryType,
-            paymentMethod: entryType === 'casual' ? paymentMethod : null,
+            paymentMethod: (entryType === 'casual' || entryType === 'casual-student') ? paymentMethod : null,
             freeEntryReason: entryType === 'free' ? freeEntryReason : null,
-            amountPaid: entryType === 'casual' ? 15 : 0,
+            amountPaid: entryType === 'casual' ? getCurrentCasualPrice() : 
+                       entryType === 'casual-student' ? getCurrentStudentPrice() : 0,
             concessionBlockId: concessionBlockId,
             notes: notes || '',
             reversed: false, // Explicitly set to false (un-reverses if previously reversed)
@@ -172,6 +191,11 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         // Reload today's check-ins to display the new one
         loadTodaysCheckins();
         
+        // Reload today's transactions if there was a payment
+        if (checkinData.amountPaid > 0 && typeof loadCheckinTransactions === 'function') {
+            loadCheckinTransactions();
+        }
+        
     } catch (error) {
         console.error('Error saving check-in:', error);
         showSnackbar('Failed to save check-in. Please try again.', 'error');
@@ -189,8 +213,7 @@ async function createCheckinTransaction(checkinId, studentId, entryType, amountP
     const transactionData = {
         studentId: studentId,
         transactionDate: firebase.firestore.Timestamp.fromDate(transactionDate),
-        type: 'casual-entry',
-        entryType: entryType, // 'casual', 'free', etc.
+        type: entryType, // Use the actual entry type ('casual' or 'casual-student')
         amountPaid: amountPaid,
         paymentMethod: paymentMethod,
         checkinId: checkinId, // Reference back to the check-in

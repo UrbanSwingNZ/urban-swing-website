@@ -14,7 +14,8 @@
     }
   ],
   "firestore": {
-    "rules": "firestore.rules"
+    "rules": "config/firestore.rules",
+    "indexes": "config/firestore.indexes.json"
   },
   "hosting": {
     "public": ".",

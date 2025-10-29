@@ -170,6 +170,62 @@ exports.sendNewStudentEmail = onDocumentCreated(
     logger.info("New student registered:", studentId);
 
     try {
+      // Fetch casual rates from Firestore
+      const casualRatesSnapshot = await admin.firestore()
+        .collection('casualRates')
+        .where('isActive', '==', true)
+        .orderBy('displayOrder', 'asc')
+        .get();
+      
+      let casualRate = null;
+      let studentRate = null;
+      
+      casualRatesSnapshot.forEach(doc => {
+        const rate = doc.data();
+        if (rate.name && rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+          studentRate = rate.price;
+        } else if (rate.name && !rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+          casualRate = rate.price;
+        }
+      });
+      
+      if (casualRate === null) {
+        throw new Error('Casual rate not found in Firestore');
+      }
+      if (studentRate === null) {
+        throw new Error('Student rate not found in Firestore');
+      }
+      
+      logger.info(`Using casual rates: standard=$${casualRate}, student=$${studentRate}`);
+      
+      // Fetch concession packages from Firestore
+      const concessionPackagesSnapshot = await admin.firestore()
+        .collection('concessionPackages')
+        .where('isActive', '==', true)
+        .orderBy('numberOfClasses', 'asc')
+        .get();
+      
+      let fiveClassPrice = null;
+      let tenClassPrice = null;
+      
+      concessionPackagesSnapshot.forEach(doc => {
+        const pkg = doc.data();
+        if (pkg.numberOfClasses === 5) {
+          fiveClassPrice = pkg.price;
+        } else if (pkg.numberOfClasses === 10) {
+          tenClassPrice = pkg.price;
+        }
+      });
+      
+      if (fiveClassPrice === null) {
+        throw new Error('5-class concession package not found in Firestore');
+      }
+      if (tenClassPrice === null) {
+        throw new Error('10-class concession package not found in Firestore');
+      }
+      
+      logger.info(`Using concession prices: 5-class=$${fiveClassPrice}, 10-class=$${tenClassPrice}`);
+      
       // Create email transporter
       const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -305,19 +361,19 @@ View in admin database: https://urbanswing.co.nz/admin/student-database/
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$15</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${casualRate}</strong></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class (Student)</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$12</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${studentRate}</strong></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">5 Class Concession</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$55</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $20!)</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${fiveClassPrice}</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $${casualRate * 5 - fiveClassPrice}!)</span></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">10 Class Concession</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$100</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $50!)</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${tenClassPrice}</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $${casualRate * 10 - tenClassPrice}!)</span></td>
               </tr>
             </table>
 
@@ -390,10 +446,10 @@ When: Every Thursday, 7:15 PM - 9:15 PM
 Where: Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
 
 PRICING
-- Single Class: $15
-- Single Class (Student): $12
-- 5 Class Concession: $55 (Save $20!) - valid for 6 months
-- 10 Class Concession: $100 (Save $50!) - valid for 9 months
+- Single Class: $${casualRate}
+- Single Class (Student): $${studentRate}
+- 5 Class Concession: $${fiveClassPrice} (Save $${casualRate * 5 - fiveClassPrice}!) - valid for 6 months
+- 10 Class Concession: $${tenClassPrice} (Save $${casualRate * 10 - tenClassPrice}!) - valid for 9 months
 
 WHAT TO EXPECT
 - Fun, energetic West Coast Swing classes for all levels
@@ -441,6 +497,82 @@ Email: dance@urbanswing.co.nz
       return null;
     } catch (error) {
       logger.error("Error sending student registration email:", error);
+      
+      // Send error notification email to admin
+      try {
+        const transporter = nodemailer.createTransport({
+          host: "smtp.gmail.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: "dance@urbanswing.co.nz",
+            pass: emailPassword.value(),
+          },
+        });
+        
+        await transporter.sendMail({
+          from: '"Urban Swing System" <dance@urbanswing.co.nz>',
+          to: "dance@urbanswing.co.nz",
+          subject: "⚠️ ERROR: Failed to send student welcome email",
+          text: `Error occurred while processing registration for ${student.firstName} ${student.lastName} (${student.email}):\n\nError: ${error.message}\n\nStudent ID: ${studentId}\n\nPlease check the pricing configuration in Admin Tools > Concession Types Manager and ensure all casual rates and concession packages are properly configured.\n\nView Firebase Functions logs: https://console.firebase.google.com/project/directed-curve-447204-j4/functions/logs`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: #dc3545; padding: 20px; text-align: center;">
+                <h1 style="color: white; margin: 0;">⚠️ System Error</h1>
+              </div>
+              
+              <div style="padding: 30px; background: #fff;">
+                <h2 style="color: #dc3545; margin-top: 0;">Failed to send student welcome email</h2>
+                
+                <p style="font-size: 1rem; line-height: 1.6; color: #333;">
+                  An error occurred while processing the registration for:
+                </p>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                  <p style="margin: 5px 0;"><strong>Name:</strong> ${student.firstName} ${student.lastName}</p>
+                  <p style="margin: 5px 0;"><strong>Email:</strong> ${student.email}</p>
+                  <p style="margin: 5px 0;"><strong>Student ID:</strong> ${studentId}</p>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;">
+                  <p style="margin: 0; color: #856404;">
+                    <strong>Error Message:</strong><br>
+                    ${error.message}
+                  </p>
+                </div>
+                
+                <h3 style="color: #dc3545;">Action Required:</h3>
+                <ul style="line-height: 1.8; color: #333;">
+                  <li>Check the pricing configuration in <strong>Admin Tools > Concession Types Manager</strong></li>
+                  <li>Ensure all casual rates are active (Casual Entry and Student Casual Entry)</li>
+                  <li>Ensure 5-class and 10-class concession packages are active</li>
+                  <li>Manually send the welcome email to the student once pricing is fixed</li>
+                </ul>
+                
+                <div style="margin-top: 30px; text-align: center;">
+                  <a href="https://console.firebase.google.com/project/directed-curve-447204-j4/functions/logs" 
+                     style="display: inline-block; padding: 12px 24px; background: #dc3545; color: white; text-decoration: none; border-radius: 6px; margin-right: 10px;">
+                    View Function Logs
+                  </a>
+                  <a href="https://urbanswing.co.nz/admin/admin-tools/concession-types.html" 
+                     style="display: inline-block; padding: 12px 24px; background: #9a16f5; color: white; text-decoration: none; border-radius: 6px;">
+                    Fix Pricing Configuration
+                  </a>
+                </div>
+              </div>
+              
+              <div style="padding: 20px; text-align: center; color: #666; font-size: 12px; background: #e9ecef;">
+                <p>This is an automated error notification from Urban Swing student registration system.</p>
+              </div>
+            </div>
+          `,
+        });
+        
+        logger.info("Error notification email sent to admin");
+      } catch (emailError) {
+        logger.error("Failed to send error notification email:", emailError);
+      }
+      
       // Don't throw - we don't want to fail the registration if email fails
       return null;
     }
