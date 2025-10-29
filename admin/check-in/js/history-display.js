@@ -25,7 +25,8 @@ function displayHistory(history) {
         const date = formatDate(item.timestamp);
         const typeClass = item.entryType;
         const typeLabel = item.entryType === 'concession' ? 'Concession' : 
-                         item.entryType === 'casual' ? 'Casual Entry' : 'Free Entry';
+                         item.entryType === 'casual' ? 'Casual Entry' : 
+                         item.entryType === 'casual-student' ? 'Casual Student' : 'Free Entry';
         return `<div class="history-item" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
             <div class="history-date-name" style="display:flex;align-items:center;gap:12px;">
                 <span class="history-date" style="font-weight:600;">${date}</span>

@@ -72,7 +72,13 @@ function displayAttendanceHistory(history) {
         if (item.entryType === 'concession') {
             typeLabel = 'Concession';
         } else if (item.entryType === 'casual') {
-            typeLabel = item.paymentMethod ? `Casual (${item.paymentMethod})` : 'Casual $15';
+            // Show payment method and amount if available
+            if (item.paymentMethod) {
+                const amount = item.amountPaid ? `$${item.amountPaid.toFixed(2)}` : '';
+                typeLabel = amount ? `Casual (${item.paymentMethod}) ${amount}` : `Casual (${item.paymentMethod})`;
+            } else {
+                typeLabel = item.amountPaid ? `Casual $${item.amountPaid.toFixed(2)}` : 'Casual';
+            }
         } else if (item.entryType === 'free') {
             typeLabel = item.freeEntryReason ? `Free (${item.freeEntryReason})` : 'Free Entry';
         }

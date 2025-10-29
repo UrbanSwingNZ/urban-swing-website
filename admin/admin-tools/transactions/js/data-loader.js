@@ -54,7 +54,7 @@ async function normalizeTransaction(transaction) {
     }
     
     // Determine transaction type and display name
-    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual-entry', 'concession-gift', etc.
+    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual', 'casual-student', 'concession-gift', etc.
     let typeName;
     
     // Handle both old and new type names for concession purchases
@@ -63,11 +63,16 @@ async function normalizeTransaction(transaction) {
         typeName = 'Concession Purchase';
     } else if (transactionType === 'concession-gift') {
         typeName = 'Gifted Concessions';
-    } else if (transactionType === 'casual-entry' || transactionType === 'entry') {
-        transactionType = 'casual-entry'; // Normalize to new name
-        // Use the entry type for display (e.g., "Casual Entry")
-        const entryType = transaction.entryType || 'entry';
-        typeName = entryType.charAt(0).toUpperCase() + entryType.slice(1) + ' Entry';
+    } else if (transactionType === 'casual-entry' || transactionType === 'entry' || transactionType === 'casual' || transactionType === 'casual-student') {
+        // For casual-entry transactions, check the entryType field (if it exists) to distinguish casual vs casual-student
+        // This handles both old transactions (type='casual-entry') and new ones (type='casual' or 'casual-student')
+        if (transaction.entryType === 'casual-student' || transactionType === 'casual-student') {
+            transactionType = 'casual-student';
+            typeName = 'Casual Student';
+        } else {
+            transactionType = 'casual';
+            typeName = 'Casual Entry';
+        }
     } else {
         typeName = 'Transaction';
     }

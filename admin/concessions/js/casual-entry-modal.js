@@ -132,8 +132,20 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
         paymentSelect.value = methodValue;
     }
     
-    // Set amount (display only)
-    document.getElementById('casual-entry-amount').textContent = `$${(amount || 15).toFixed(2)}`;
+    // Set amount (display only) - use provided amount or fetch current rate
+    let displayAmount = amount || 15;
+    try {
+        if (typeof getStandardCasualRate === 'function') {
+            const rate = await getStandardCasualRate();
+            if (rate && !amount) {
+                displayAmount = rate.price;
+            }
+        }
+    } catch (error) {
+        console.log('Could not fetch current casual rate, using provided amount');
+    }
+    
+    document.getElementById('casual-entry-amount').textContent = `$${displayAmount.toFixed(2)}`;
     
     // Enable button if all fields are filled
     updateCasualEntryButton();
