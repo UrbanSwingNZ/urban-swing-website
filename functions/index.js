@@ -308,8 +308,12 @@ View in admin database: https://urbanswing.co.nz/admin/student-database/
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$15</strong></td>
               </tr>
               <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class (Student)</td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$12</strong></td>
+              </tr>
+              <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">5 Class Concession</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$60</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $15!)</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$55</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $20!)</span></td>
               </tr>
               <tr>
                 <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">10 Class Concession</td>
@@ -319,7 +323,7 @@ View in admin database: https://urbanswing.co.nz/admin/student-database/
 
             <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; margin-top: 20px;">
               <p style="margin: 0; color: #1b5e20; font-size: 0.95rem;">
-                <strong>💡 Tip:</strong> 5-class concessions are valid for 6 months, and 10-class concessions are valid for 9 months from date of purchase.
+                <strong>💡 Tip:</strong> 5 Class Concessions are valid for 6 months, and 10 Class Concessions are valid for 9 months from date of purchase.
               </p>
             </div>
 
@@ -351,13 +355,25 @@ View in admin database: https://urbanswing.co.nz/admin/student-database/
           </div>
           
           <div style="padding: 20px; text-align: center; background: #f8f9fa; border-top: 1px solid #e0e0e0;">
-            <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #666;">
+            <p style="margin: 0 0 15px 0; font-size: 0.9rem; color: #666;">
               Follow us for updates and events:
             </p>
-            <p style="margin: 0; font-size: 0.85rem; color: #999;">
-              Website: <a href="https://urbanswing.co.nz" style="color: #9a16f5;">urbanswing.co.nz</a><br>
-              Email: <a href="mailto:dance@urbanswing.co.nz" style="color: #9a16f5;">dance@urbanswing.co.nz</a>
-            </p>
+            
+            <!-- Social Media Icons -->
+            <div style="margin-bottom: 15px;">
+              <a href="https://www.facebook.com/UrbanSwingNZ" style="display: inline-block; margin: 0 8px; color: #3b5998; text-decoration: none; font-size: 24px;" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 32px; height: 32px; vertical-align: middle;">
+              </a>
+              <a href="https://www.instagram.com/urbanswingnz" style="display: inline-block; margin: 0 8px; color: #E1306C; text-decoration: none; font-size: 24px;" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" style="width: 32px; height: 32px; vertical-align: middle;">
+              </a>
+              <a href="https://urbanswing.co.nz" style="display: inline-block; margin: 0 8px; color: #9a16f5; text-decoration: none; font-size: 24px;" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website" style="width: 32px; height: 32px; vertical-align: middle;">
+              </a>
+              <a href="mailto:dance@urbanswing.co.nz" style="display: inline-block; margin: 0 8px; color: #9a16f5; text-decoration: none; font-size: 24px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" style="width: 32px; height: 32px; vertical-align: middle;">
+              </a>
+            </div>
           </div>
         </div>
       `;
@@ -375,7 +391,8 @@ Where: Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
 
 PRICING
 - Single Class: $15
-- 5 Class Concession: $60 (Save $15!) - valid for 6 months
+- Single Class (Student): $12
+- 5 Class Concession: $55 (Save $20!) - valid for 6 months
 - 10 Class Concession: $100 (Save $50!) - valid for 9 months
 
 WHAT TO EXPECT
@@ -392,6 +409,9 @@ See you on the dance floor!
 The Urban Swing Team
 
 ---
+Follow us:
+Facebook: https://www.facebook.com/UrbanSwingNZ
+Instagram: https://www.instagram.com/urbanswingnz
 Website: https://urbanswing.co.nz
 Email: dance@urbanswing.co.nz
       `;
