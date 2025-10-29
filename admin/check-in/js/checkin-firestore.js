@@ -191,6 +191,11 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         // Reload today's check-ins to display the new one
         loadTodaysCheckins();
         
+        // Reload today's transactions if there was a payment
+        if (checkinData.amountPaid > 0 && typeof loadCheckinTransactions === 'function') {
+            loadCheckinTransactions();
+        }
+        
     } catch (error) {
         console.error('Error saving check-in:', error);
         showSnackbar('Failed to save check-in. Please try again.', 'error');
