@@ -28,6 +28,10 @@
   <link rel="icon" href="/images/icons/android-chrome-512x512.png" sizes="512x512" type="image/png">
   <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png">
   
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
@@ -127,19 +131,19 @@
           <table class="pricing-table">
             <tr>
               <td>Casual Rate</td>
-              <td>$ 15</td>
+              <td id="casual-rate-price">Loading...</td>
             </tr>
             <tr>
               <td>Student Rate*</td>
-              <td>$ 12</td>
+              <td id="student-rate-price">Loading...</td>
             </tr>
             <tr>
               <td>5 Class Concession<br><i>Valid for 6 months</i></td>
-              <td>$ 55</td>
+              <td id="five-class-price">Loading...</td>
             </tr>
             <tr>
               <td>10 Class Concession<br><i>Valid for 9 months</i></td>
-              <td>$100</td>
+              <td id="ten-class-price">Loading...</td>
             </tr>
             <tr>
               <td colspan="2"><i>*Current student ID required.<br>
@@ -165,6 +169,87 @@
   </main>
   <script src="../js/main.js" defer></script>
   <script src="../js/enhanced-features.js" defer></script>
+  
+  <!-- Firebase Config & Dynamic Pricing -->
+  <script src="../config/firebase-config.js"></script>
+  <script>
+    // Load pricing from Firestore
+    async function loadPricing() {
+      try {
+        let casualRateFound = false;
+        let studentRateFound = false;
+        let fiveClassFound = false;
+        let tenClassFound = false;
+        
+        // Fetch casual rates
+        const casualRatesSnapshot = await firebase.firestore()
+          .collection('casualRates')
+          .where('isActive', '==', true)
+          .orderBy('displayOrder', 'asc')
+          .get();
+        
+        casualRatesSnapshot.forEach(doc => {
+          const rate = doc.data();
+          if (rate.name && rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+            document.getElementById('student-rate-price').textContent = `$ ${rate.price.toFixed(0)}`;
+            studentRateFound = true;
+          } else if (rate.name && !rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+            document.getElementById('casual-rate-price').textContent = `$ ${rate.price.toFixed(0)}`;
+            casualRateFound = true;
+          }
+        });
+        
+        // Set error messages for missing casual rates
+        if (!casualRateFound) {
+          document.getElementById('casual-rate-price').innerHTML = '<span style="color: red;">Error: Price not found</span>';
+        }
+        if (!studentRateFound) {
+          document.getElementById('student-rate-price').innerHTML = '<span style="color: red;">Error: Price not found</span>';
+        }
+        
+        // Fetch concession packages
+        const concessionPackagesSnapshot = await firebase.firestore()
+          .collection('concessionPackages')
+          .where('isActive', '==', true)
+          .orderBy('numberOfClasses', 'asc')
+          .get();
+        
+        concessionPackagesSnapshot.forEach(doc => {
+          const pkg = doc.data();
+          if (pkg.numberOfClasses === 5) {
+            document.getElementById('five-class-price').textContent = `$ ${pkg.price.toFixed(0)}`;
+            fiveClassFound = true;
+          } else if (pkg.numberOfClasses === 10) {
+            document.getElementById('ten-class-price').textContent = `$${pkg.price.toFixed(0)}`;
+            tenClassFound = true;
+          }
+        });
+        
+        // Set error messages for missing concession packages
+        if (!fiveClassFound) {
+          document.getElementById('five-class-price').innerHTML = '<span style="color: red;">Error: Price not found</span>';
+        }
+        if (!tenClassFound) {
+          document.getElementById('ten-class-price').innerHTML = '<span style="color: red;">Error: Price not found</span>';
+        }
+        
+      } catch (error) {
+        console.error('Error loading pricing:', error);
+        // Show error messages if Firestore query fails
+        document.getElementById('casual-rate-price').innerHTML = '<span style="color: red;">Error loading price</span>';
+        document.getElementById('student-rate-price').innerHTML = '<span style="color: red;">Error loading price</span>';
+        document.getElementById('five-class-price').innerHTML = '<span style="color: red;">Error loading price</span>';
+        document.getElementById('ten-class-price').innerHTML = '<span style="color: red;">Error loading price</span>';
+      }
+    }
+    
+    // Load pricing when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadPricing);
+    } else {
+      loadPricing();
+    }
+  </script>
 </body>
 
 </html>
