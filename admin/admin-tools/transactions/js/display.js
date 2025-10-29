@@ -47,8 +47,10 @@ function createTransactionRow(transaction) {
         typeBadgeClass = 'concession';
     } else if (transaction.type === 'concession-gift') {
         typeBadgeClass = 'gift';
-    } else if (transaction.type === 'casual-entry') {
-        typeBadgeClass = 'casual-entry';
+    } else if (transaction.type === 'casual') {
+        typeBadgeClass = 'casual';
+    } else if (transaction.type === 'casual-student') {
+        typeBadgeClass = 'casual-student';
     } else {
         typeBadgeClass = 'other';
     }

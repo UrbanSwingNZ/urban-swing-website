@@ -208,8 +208,7 @@ async function createCheckinTransaction(checkinId, studentId, entryType, amountP
     const transactionData = {
         studentId: studentId,
         transactionDate: firebase.firestore.Timestamp.fromDate(transactionDate),
-        type: 'casual-entry',
-        entryType: entryType, // 'casual', 'free', etc.
+        type: entryType, // Use the actual entry type ('casual' or 'casual-student')
         amountPaid: amountPaid,
         paymentMethod: paymentMethod,
         checkinId: checkinId, // Reference back to the check-in
