@@ -59,12 +59,16 @@ async function loadCheckinTransactions() {
             if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
                 transactionType = 'concession-purchase';
                 typeName = 'Concession Purchase';
-            } else if (transactionType === 'casual-entry' || transactionType === 'entry') {
-                transactionType = 'casual-entry';
-                typeName = 'Casual Entry';
-            } else if (transactionType === 'casual-student') {
-                transactionType = 'casual-student';
-                typeName = 'Casual Student';
+            } else if (transactionType === 'casual-entry' || transactionType === 'entry' || transactionType === 'casual' || transactionType === 'casual-student') {
+                // For casual-entry transactions, check the entryType field (if it exists) to distinguish casual vs casual-student
+                // This handles both old transactions (type='casual-entry') and new ones (type='casual' or 'casual-student')
+                if (data.entryType === 'casual-student' || transactionType === 'casual-student') {
+                    transactionType = 'casual-student';
+                    typeName = 'Casual Student';
+                } else {
+                    transactionType = 'casual';
+                    typeName = 'Casual Entry';
+                }
             } else {
                 typeName = 'Transaction';
             }
@@ -150,8 +154,10 @@ function createCheckinTransactionRow(transaction) {
     let typeBadgeClass;
     if (transaction.type === 'concession-purchase') {
         typeBadgeClass = 'concession';
-    } else if (transaction.type === 'casual-entry') {
-        typeBadgeClass = 'casual-entry';
+    } else if (transaction.type === 'casual') {
+        typeBadgeClass = 'casual';
+    } else if (transaction.type === 'casual-student') {
+        typeBadgeClass = 'casual-student';
     } else {
         typeBadgeClass = 'other';
     }
@@ -178,7 +184,6 @@ function createCheckinTransactionRow(transaction) {
         <td data-label="Student"><strong>${escapeHtml(transaction.studentName)}</strong></td>
         <td data-label="Type">${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
         <td data-label="Amount" class="amount-cell">${formatCurrency(transaction.amount)}</td>
-        <td data-label="Payment Method" class="payment-method-cell">${paymentMethod}</td>
         <td data-label="Cash" class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
             ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}
         </td>
