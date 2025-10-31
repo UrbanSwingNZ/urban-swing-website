@@ -137,6 +137,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
     const purchaseDate = block.purchaseDate?.toDate ? block.purchaseDate.toDate() : new Date(block.purchaseDate);
     const isLocked = block.isLocked === true;
     const hasBeenUsed = block.remainingQuantity < block.originalQuantity;
+    const isGifted = block.packageId === 'gifted-concessions';
     
     const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
     
@@ -194,7 +195,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
     const showNotes = status === 'expired' || status === 'depleted';
     
     let html = `
-        <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''}">
+        <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''} ${isGifted ? 'gifted' : ''}">
             <div class="concession-content">
                 <div class="concession-left">
                     <div class="concession-info">
@@ -203,7 +204,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
                     </div>
                     <div class="concession-details">
                         <span><i class="fas ${expiryIcon}"></i> ${expiryLabel}: ${formatDate(expiryDate)}</span>
-                        <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
+                        <span><i class="fas fa-shopping-cart"></i> ${isGifted ? 'Gifted' : 'Purchased'}: ${formatDate(purchaseDate)}</span>
                         <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
                     </div>
                 </div>
@@ -228,8 +229,11 @@ function buildTransactionConcessionItem(block, status, studentId) {
     html += `
             </div>
             <div class="concession-actions">
-                ${lockButton}
-                ${deleteButton}
+                <div class="concession-actions-left">
+                    ${lockButton}
+                    ${deleteButton}
+                </div>
+                ${isGifted ? '<div class="concession-actions-right"><span class="badge badge-gifted"><i class="fas fa-gift"></i> Gifted Concession</span></div>' : ''}
             </div>
         </div>
     `;
@@ -306,6 +310,7 @@ function attachTransactionConcessionEventListeners(contentEl, studentId) {
             titleEl.textContent = 'Delete Concession';
             messageEl.textContent = 'Are you sure you want to delete this concession block?';
             infoEl.innerHTML = ''; // Clear any student info
+            infoEl.style.display = 'none'; // Hide the empty info box
             btnTextEl.textContent = 'Delete Block';
             
             // Remove any existing event listeners by replacing the button

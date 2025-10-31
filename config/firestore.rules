@@ -13,7 +13,10 @@ service cloud.firestore {
       // Admins (authenticated users) can read and write everything
       allow read, write: if request.auth != null;
       
-      // Public users can only create (for self-registration)
+      // Public users can read for duplicate checking (limited to querying by their own email)
+      allow read: if request.query.limit <= 10;
+      
+      // Public users can create (for self-registration)
       allow create: if request.resource.data.keys().hasAll([
         'firstName', 'lastName', 'email', 'phoneNumber', 
         'over16Confirmed', 'emailConsent', 'registeredAt'

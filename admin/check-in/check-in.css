@@ -338,6 +338,11 @@
     color: var(--admin-purple);
 }
 
+.type-badge.gift {
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+}
+
 .type-badge.casual,
 .type-badge.casual-entry {
     background: rgba(53, 52, 250, 0.1);
