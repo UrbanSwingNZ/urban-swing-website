@@ -381,6 +381,20 @@
     background: rgba(255, 193, 7, 0.02);
 }
 
+.concession-item.gifted {
+    border-left-color: var(--admin-purple, #9a16f5);
+    border-left-width: 4px;
+    background: rgba(154, 22, 245, 0.02);
+}
+
+.concession-item.gifted.expired {
+    border-left-color: var(--admin-error, #dc3545);
+}
+
+.concession-item.gifted.depleted {
+    border-left-color: var(--admin-warning, #ffc107);
+}
+
 .concession-info {
     margin-bottom: 8px;
 }
@@ -424,7 +438,36 @@
     margin-top: 8px;
     display: flex;
     gap: 8px;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.concession-actions-left {
+    display: flex;
+    gap: 8px;
+}
+
+.concession-actions-right {
+    display: flex;
+    align-items: center;
+}
+
+.badge-gifted {
+    background: var(--admin-purple, #9a16f5);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-gifted i {
+    font-size: 0.85rem;
 }
 
 .btn-lock-toggle {
