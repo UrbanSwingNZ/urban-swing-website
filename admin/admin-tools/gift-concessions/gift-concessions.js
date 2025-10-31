@@ -465,10 +465,9 @@ async function loadRecentGifts() {
         const listDiv = document.getElementById('recent-gifts-list');
         listDiv.innerHTML = '<p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Loading recent gifts...</p>';
         
+        // Fetch all gift transactions, then sort in JavaScript to avoid needing composite index
         const snapshot = await db.collection('transactions')
             .where('type', '==', 'concession-gift')
-            .orderBy('transactionDate', 'desc')
-            .limit(10)
             .get();
         
         if (snapshot.empty) {
@@ -476,7 +475,15 @@ async function loadRecentGifts() {
             return;
         }
         
-        const gifts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Get all gifts and sort by date in JavaScript
+        const gifts = snapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .sort((a, b) => {
+                const dateA = a.transactionDate?.toDate() || new Date(0);
+                const dateB = b.transactionDate?.toDate() || new Date(0);
+                return dateB - dateA; // Descending order (newest first)
+            })
+            .slice(0, 10); // Limit to 10 most recent
         
         listDiv.innerHTML = gifts.map(gift => {
             const date = gift.transactionDate?.toDate() || new Date();
