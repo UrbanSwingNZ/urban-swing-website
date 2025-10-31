@@ -171,17 +171,21 @@ exports.sendNewStudentEmail = onDocumentCreated(
 
     try {
       // Fetch casual rates from Firestore
+      logger.info('Fetching casual rates from Firestore...');
       const casualRatesSnapshot = await admin.firestore()
         .collection('casualRates')
         .where('isActive', '==', true)
         .orderBy('displayOrder', 'asc')
         .get();
       
+      logger.info(`Found ${casualRatesSnapshot.size} casual rates`);
+      
       let casualRate = null;
       let studentRate = null;
       
       casualRatesSnapshot.forEach(doc => {
         const rate = doc.data();
+        logger.info(`Processing rate: ${rate.name} - $${rate.price} (isPromo: ${rate.isPromo})`);
         if (rate.name && rate.name.toLowerCase().includes('student') && !rate.isPromo) {
           studentRate = rate.price;
         } else if (rate.name && !rate.name.toLowerCase().includes('student') && !rate.isPromo) {
@@ -190,26 +194,30 @@ exports.sendNewStudentEmail = onDocumentCreated(
       });
       
       if (casualRate === null) {
-        throw new Error('Casual rate not found in Firestore');
+        throw new Error('Casual rate not found in Firestore. Please check Admin Tools > Concession Types Manager and ensure "Casual Entry" is active.');
       }
       if (studentRate === null) {
-        throw new Error('Student rate not found in Firestore');
+        throw new Error('Student rate not found in Firestore. Please check Admin Tools > Concession Types Manager and ensure "Student Casual Entry" is active.');
       }
       
       logger.info(`Using casual rates: standard=$${casualRate}, student=$${studentRate}`);
       
       // Fetch concession packages from Firestore
+      logger.info('Fetching concession packages from Firestore...');
       const concessionPackagesSnapshot = await admin.firestore()
         .collection('concessionPackages')
         .where('isActive', '==', true)
         .orderBy('numberOfClasses', 'asc')
         .get();
       
+      logger.info(`Found ${concessionPackagesSnapshot.size} concession packages`);
+      
       let fiveClassPrice = null;
       let tenClassPrice = null;
       
       concessionPackagesSnapshot.forEach(doc => {
         const pkg = doc.data();
+        logger.info(`Processing package: ${pkg.numberOfClasses} classes - $${pkg.price}`);
         if (pkg.numberOfClasses === 5) {
           fiveClassPrice = pkg.price;
         } else if (pkg.numberOfClasses === 10) {
@@ -218,10 +226,10 @@ exports.sendNewStudentEmail = onDocumentCreated(
       });
       
       if (fiveClassPrice === null) {
-        throw new Error('5-class concession package not found in Firestore');
+        throw new Error('5-class concession package not found in Firestore. Please check Admin Tools > Concession Types Manager and ensure the 5-class package is active.');
       }
       if (tenClassPrice === null) {
-        throw new Error('10-class concession package not found in Firestore');
+        throw new Error('10-class concession package not found in Firestore. Please check Admin Tools > Concession Types Manager and ensure the 10-class package is active.');
       }
       
       logger.info(`Using concession prices: 5-class=$${fiveClassPrice}, 10-class=$${tenClassPrice}`);
@@ -473,15 +481,20 @@ Email: dance@urbanswing.co.nz
       `;
 
       // Send admin notification email
-      await transporter.sendMail({
-        from: '"Urban Swing" <dance@urbanswing.co.nz>',
-        to: "dance@urbanswing.co.nz",
-        subject: `New Student Registration: ${student.firstName} ${student.lastName}`,
-        text: adminEmailText,
-        html: adminEmailHtml,
-      });
+      try {
+        await transporter.sendMail({
+          from: '"Urban Swing" <dance@urbanswing.co.nz>',
+          to: "dance@urbanswing.co.nz",
+          subject: `New Student Registration: ${student.firstName} ${student.lastName}`,
+          text: adminEmailText,
+          html: adminEmailHtml,
+        });
 
-      logger.info("Admin notification sent for student:", studentId);
+        logger.info("Admin notification sent for student:", studentId);
+      } catch (emailError) {
+        logger.error("Failed to send admin notification email:", emailError);
+        // Continue to attempt welcome email even if admin notification fails
+      }
 
       // Send welcome email to student
       await transporter.sendMail({
