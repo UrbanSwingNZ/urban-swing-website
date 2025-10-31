@@ -444,6 +444,39 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     transform: translateX(4px);
 }
 
+/* Reversed gift styling */
+.gift-item-reversed {
+    opacity: 0.6;
+    border-left-color: #999;
+}
+
+.gift-item-reversed:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gift-item-reversed .gift-item-header h4,
+.gift-item-reversed .gift-item-details,
+.gift-item-reversed .gift-item-notes {
+    color: var(--text-muted) !important;
+}
+
+.gift-item-reversed .gift-item-details strong {
+    color: #999 !important;
+}
+
+.reversed-badge {
+    display: inline-block;
+    background: #e53935;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .gift-item-header {
     display: flex;
     justify-content: space-between;
@@ -455,6 +488,10 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     margin: 0;
     color: var(--text-color);
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .gift-item-date {

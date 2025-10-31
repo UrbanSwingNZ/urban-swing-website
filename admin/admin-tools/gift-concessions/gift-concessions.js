@@ -485,15 +485,26 @@ async function loadRecentGifts() {
             })
             .slice(0, 10); // Limit to 10 most recent
         
-        listDiv.innerHTML = gifts.map(gift => {
+        // Check if gifts have been reversed
+        // The reversed flag is stored directly on the transaction document
+        const giftStatuses = gifts.map(gift => ({
+            ...gift,
+            isReversed: gift.reversed === true
+        }));
+        
+        listDiv.innerHTML = giftStatuses.map(gift => {
             const date = gift.transactionDate?.toDate() || new Date();
             const student = allStudents.find(s => s.id === gift.studentId);
             const studentName = student ? getStudentFullName(student) : 'Unknown Student';
+            const reversedClass = gift.isReversed ? ' gift-item-reversed' : '';
             
             return `
-                <div class="gift-item">
+                <div class="gift-item${reversedClass}">
                     <div class="gift-item-header">
-                        <h4><i class="fas fa-gift"></i> ${escapeHtml(studentName)}</h4>
+                        <h4>
+                            <i class="fas fa-gift"></i> ${escapeHtml(studentName)}
+                            ${gift.isReversed ? '<span class="reversed-badge">Reversed</span>' : ''}
+                        </h4>
                         <span class="gift-item-date">${formatDate(date)}</span>
                     </div>
                     <p class="gift-item-details">
