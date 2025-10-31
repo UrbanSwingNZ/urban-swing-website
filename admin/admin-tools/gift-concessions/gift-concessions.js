@@ -288,13 +288,47 @@ async function handleFormSubmit(e) {
         return;
     }
     
-    // Confirm action
+    // Show confirmation modal
     const fullName = getStudentFullName(selectedStudent);
-    const confirmMessage = `Gift ${quantity} concession${quantity !== 1 ? 's' : ''} to ${fullName}?\n\nReason: ${notes}\nExpires: ${formatDate(expiryDate)}`;
+    showConfirmModal(fullName, quantity, expiryDate, notes);
+}
+
+/**
+ * Show confirmation modal
+ */
+function showConfirmModal(studentName, quantity, expiryDate, notes) {
+    const modal = document.getElementById('confirm-modal');
+    document.getElementById('confirm-student-name').textContent = studentName;
+    document.getElementById('confirm-quantity').textContent = `${quantity} class${quantity !== 1 ? 'es' : ''}`;
+    document.getElementById('confirm-expiry').textContent = formatDate(expiryDate);
+    document.getElementById('confirm-notes').textContent = notes;
     
-    if (!confirm(confirmMessage)) {
-        return;
-    }
+    modal.style.display = 'flex';
+    
+    // Set up confirm button
+    const confirmBtn = document.getElementById('confirm-gift-btn');
+    confirmBtn.onclick = async () => {
+        closeConfirmModal();
+        await processGift();
+    };
+}
+
+/**
+ * Close confirmation modal
+ */
+function closeConfirmModal() {
+    const modal = document.getElementById('confirm-modal');
+    modal.style.display = 'none';
+}
+
+/**
+ * Process the gift after confirmation
+ */
+async function processGift() {
+    const quantity = parseInt(document.getElementById('gift-quantity').value);
+    const expiryDate = new Date(document.getElementById('gift-expiry').value);
+    const giftDate = new Date(document.getElementById('gift-date').value);
+    const notes = document.getElementById('gift-notes').value.trim();
     
     try {
         showLoading(true);
