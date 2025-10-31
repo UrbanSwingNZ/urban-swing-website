@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Urban Swing</title>
+    <link rel="stylesheet" href="css/student-portal.css">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="login-container">
+        <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
+        <h1>Student Portal</h1>
+        
+        <div class="button-group">
+            <button id="newStudentBtn" class="toggle-btn active">New Student</button>
+            <button id="existingStudentBtn" class="toggle-btn">Existing Student</button>
+        </div>
+
+        <!-- New Student Form -->
+        <div id="newStudentForm" class="auth-form active">
+            <div class="form-group">
+                <label for="newStudentEmail">Email Address</label>
+                <input type="email" id="newStudentEmail" placeholder="your.email@example.com" required>
+            </div>
+            <button class="action-btn">Register</button>
+        </div>
+
+        <!-- Existing Student Form -->
+        <div id="existingStudentForm" class="auth-form">
+            <div class="form-group">
+                <label for="existingStudentEmail">Email Address</label>
+                <input type="email" id="existingStudentEmail" placeholder="your.email@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="existingStudentPassword">Password</label>
+                <input type="password" id="existingStudentPassword" placeholder="••••••••" required>
+            </div>
+            <button class="action-btn">Login</button>
+            <button class="reset-btn">Reset Password</button>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+/* ========================================
+   STUDENT PORTAL - LOGIN PAGE STYLES
+   ======================================== */
+
+/* Import base variables */
+@import url('../../css/base/variables.css');
+
+/* Body with gradient background */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Login Container */
+.login-container {
+    text-align: center;
+    padding: var(--space-lg);
+    max-width: 500px;
+    width: 90%;
+}
+
+/* Logo */
+.logo {
+    width: 70%;
+    max-width: 250px;
+    height: auto;
+    margin: 0 auto var(--space-sm);
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+/* Student Portal Heading */
+h1 {
+    color: white;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-md);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+/* Toggle Buttons */
+.toggle-btn {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    backdrop-filter: blur(10px);
+}
+
+.toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.toggle-btn.active {
+    background-color: white;
+    color: var(--urban-purple);
+    border-color: white;
+}
+
+/* Auth Forms */
+.auth-form {
+    display: none;
+    background-color: white;
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    animation: fadeIn 0.3s ease;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: var(--space-md);
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-light);
+}
+
+.form-group input {
+    width: 100%;
+    padding: var(--space-sm);
+    font-size: var(--font-size-base);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--urban-purple);
+}
+
+/* Action Buttons */
+.action-btn {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    background: var(--bg-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+/* Reset Password Button */
+.reset-btn {
+    width: 100%;
+    margin-top: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    background-color: transparent;
+    color: var(--urban-purple);
+    border: 2px solid var(--urban-purple);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.reset-btn:hover {
+    background-color: var(--urban-purple);
+    color: white;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .login-container {
+        padding: var(--space-lg);
+    }
+    
+    h1 {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+}
