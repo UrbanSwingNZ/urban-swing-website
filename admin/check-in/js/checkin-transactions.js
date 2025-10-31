@@ -59,6 +59,8 @@ async function loadCheckinTransactions() {
             if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
                 transactionType = 'concession-purchase';
                 typeName = 'Concession Purchase';
+            } else if (transactionType === 'concession-gift') {
+                typeName = 'Gifted Concessions';
             } else if (transactionType === 'casual-entry' || transactionType === 'entry' || transactionType === 'casual' || transactionType === 'casual-student') {
                 // For casual-entry transactions, check the entryType field (if it exists) to distinguish casual vs casual-student
                 // This handles both old transactions (type='casual-entry') and new ones (type='casual' or 'casual-student')
@@ -154,6 +156,8 @@ function createCheckinTransactionRow(transaction) {
     let typeBadgeClass;
     if (transaction.type === 'concession-purchase') {
         typeBadgeClass = 'concession';
+    } else if (transaction.type === 'concession-gift') {
+        typeBadgeClass = 'gift';
     } else if (transaction.type === 'casual') {
         typeBadgeClass = 'casual';
     } else if (transaction.type === 'casual-student') {
