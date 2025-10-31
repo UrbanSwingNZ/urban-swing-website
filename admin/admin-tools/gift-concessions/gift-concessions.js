@@ -288,13 +288,48 @@ async function handleFormSubmit(e) {
         return;
     }
     
-    // Confirm action
+    // Show confirmation modal
     const fullName = getStudentFullName(selectedStudent);
-    const confirmMessage = `Gift ${quantity} concession${quantity !== 1 ? 's' : ''} to ${fullName}?\n\nReason: ${notes}\nExpires: ${formatDate(expiryDate)}`;
+    showConfirmModal(fullName, quantity, expiryDate, notes);
+}
+
+/**
+ * Show confirmation modal
+ */
+function showConfirmModal(studentName, quantity, expiryDate, notes) {
+    const modal = document.getElementById('confirm-modal');
+    document.getElementById('confirm-student-name').textContent = studentName;
+    document.getElementById('confirm-quantity').textContent = `${quantity} class${quantity !== 1 ? 'es' : ''}`;
+    document.getElementById('confirm-expiry').textContent = formatDate(expiryDate);
+    document.getElementById('confirm-notes').textContent = notes;
     
-    if (!confirm(confirmMessage)) {
-        return;
-    }
+    modal.style.display = 'flex';
+    
+    // Set up confirm button
+    const confirmBtn = document.getElementById('confirm-gift-btn');
+    confirmBtn.onclick = async () => {
+        closeConfirmModal();
+        await processGift();
+    };
+}
+
+/**
+ * Close confirmation modal
+ */
+function closeConfirmModal() {
+    const modal = document.getElementById('confirm-modal');
+    modal.style.display = 'none';
+}
+
+/**
+ * Process the gift after confirmation
+ */
+async function processGift() {
+    const quantity = parseInt(document.getElementById('gift-quantity').value);
+    const expiryDate = new Date(document.getElementById('gift-expiry').value);
+    const giftDate = new Date(document.getElementById('gift-date').value);
+    const notes = document.getElementById('gift-notes').value.trim();
+    const fullName = getStudentFullName(selectedStudent);
     
     try {
         showLoading(true);
@@ -310,15 +345,26 @@ async function handleFormSubmit(e) {
         
         showLoading(false);
         
-        // Show success message
-        const successMessage = `Successfully gifted ${quantity} concession${quantity !== 1 ? 's' : ''} to ${fullName}!
+        // Show success message with structured format
+        const successMessageHTML = `
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">Successfully gifted <strong>${quantity} class${quantity !== 1 ? 'es' : ''}</strong> to <strong>${fullName}</strong>!</p>
+            <div class="success-summary">
+                <div class="success-row highlight">
+                    <span class="label">New Balance:</span>
+                    <span class="value">${result.newBalance} classes</span>
+                </div>
+                <div class="success-row">
+                    <span class="label">Expires:</span>
+                    <span class="value">${formatDate(expiryDate)}</span>
+                </div>
+                <div class="success-reason">
+                    <span class="label">Reason:</span>
+                    <span class="value">${escapeHtml(notes)}</span>
+                </div>
+            </div>
+        `;
         
-New balance: ${result.newBalance} classes
-Expires: ${formatDate(expiryDate)}
-
-Reason: ${notes}`;
-        
-        document.getElementById('success-message-text').textContent = successMessage;
+        document.getElementById('success-message-text').innerHTML = successMessageHTML;
         document.getElementById('success-modal').style.display = 'flex';
         
         // Reload recent gifts
@@ -360,17 +406,22 @@ async function giftConcessions(studentId, quantity, expiryDate, giftDate, notes)
         transactionId      // transactionId
     );
     
-    // Update student balance
+    // Get current balance before updating
+    const currentBalance = selectedStudent.concessionBalance || 0;
+    const newBalance = currentBalance + quantity;
+    
+    // Update student balance in Firestore
     await updateStudentBalance(studentId, quantity);
     
-    // Get updated student data
-    const studentDoc = await db.collection('students').doc(studentId).get();
-    const newBalance = studentDoc.data().concessionBalance || 0;
-    
-    // Update local student cache
+    // Update local student cache with calculated balance
     const studentIndex = allStudents.findIndex(s => s.id === studentId);
     if (studentIndex !== -1) {
         allStudents[studentIndex].concessionBalance = newBalance;
+    }
+    
+    // Update the selected student reference
+    if (selectedStudent && selectedStudent.id === studentId) {
+        selectedStudent.concessionBalance = newBalance;
     }
     
     return {
@@ -431,10 +482,9 @@ async function loadRecentGifts() {
         const listDiv = document.getElementById('recent-gifts-list');
         listDiv.innerHTML = '<p class="loading-message"><i class="fas fa-spinner fa-spin"></i> Loading recent gifts...</p>';
         
+        // Fetch all gift transactions, then sort in JavaScript to avoid needing composite index
         const snapshot = await db.collection('transactions')
             .where('type', '==', 'concession-gift')
-            .orderBy('transactionDate', 'desc')
-            .limit(10)
             .get();
         
         if (snapshot.empty) {
@@ -442,17 +492,36 @@ async function loadRecentGifts() {
             return;
         }
         
-        const gifts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Get all gifts and sort by date in JavaScript
+        const gifts = snapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .sort((a, b) => {
+                const dateA = a.transactionDate?.toDate() || new Date(0);
+                const dateB = b.transactionDate?.toDate() || new Date(0);
+                return dateB - dateA; // Descending order (newest first)
+            })
+            .slice(0, 10); // Limit to 10 most recent
         
-        listDiv.innerHTML = gifts.map(gift => {
+        // Check if gifts have been reversed
+        // The reversed flag is stored directly on the transaction document
+        const giftStatuses = gifts.map(gift => ({
+            ...gift,
+            isReversed: gift.reversed === true
+        }));
+        
+        listDiv.innerHTML = giftStatuses.map(gift => {
             const date = gift.transactionDate?.toDate() || new Date();
             const student = allStudents.find(s => s.id === gift.studentId);
             const studentName = student ? getStudentFullName(student) : 'Unknown Student';
+            const reversedClass = gift.isReversed ? ' gift-item-reversed' : '';
             
             return `
-                <div class="gift-item">
+                <div class="gift-item${reversedClass}">
                     <div class="gift-item-header">
-                        <h4><i class="fas fa-gift"></i> ${escapeHtml(studentName)}</h4>
+                        <h4>
+                            <i class="fas fa-gift"></i> ${escapeHtml(studentName)}
+                            ${gift.isReversed ? '<span class="reversed-badge">Reversed</span>' : ''}
+                        </h4>
                         <span class="gift-item-date">${formatDate(date)}</span>
                     </div>
                     <p class="gift-item-details">
