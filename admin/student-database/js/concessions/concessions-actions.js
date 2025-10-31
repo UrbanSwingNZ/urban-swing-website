@@ -30,6 +30,7 @@ function showDeleteConfirmationModal(blockId, studentId) {
     titleEl.textContent = 'Delete Concession';
     messageEl.textContent = 'Are you sure you want to delete this concession block?';
     infoEl.innerHTML = ''; // Clear any student info
+    infoEl.style.display = 'none'; // Hide the empty info box
     btnTextEl.textContent = 'Delete Block';
     
     // Remove any existing event listeners by replacing the button
