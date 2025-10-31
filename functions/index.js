@@ -21,6 +21,11 @@ const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
 // Initialize Firebase Admin
 admin.initializeApp();
 
+// Get Firestore with explicit settings
+const getFirestore = () => {
+  return admin.firestore();
+};
+
 // Set global options
 setGlobalOptions({
   maxInstances: 10,
@@ -172,24 +177,28 @@ exports.sendNewStudentEmail = onDocumentCreated(
     try {
       // Fetch casual rates from Firestore
       logger.info('Fetching casual rates from Firestore...');
-      const casualRatesSnapshot = await admin.firestore()
-        .collection('casualRates')
-        .where('isActive', '==', true)
-        .orderBy('displayOrder', 'asc')
-        .get();
+      logger.info('Project ID:', process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT || 'unknown');
       
-      logger.info(`Found ${casualRatesSnapshot.size} casual rates`);
+      const db = getFirestore();
+      logger.info('Firestore instance obtained');
+      
+      const casualRatesSnapshot = await db.collection('casualRates').get();
+      
+      logger.info(`Found ${casualRatesSnapshot.size} total casual rates`);
       
       let casualRate = null;
       let studentRate = null;
       
       casualRatesSnapshot.forEach(doc => {
         const rate = doc.data();
-        logger.info(`Processing rate: ${rate.name} - $${rate.price} (isPromo: ${rate.isPromo})`);
-        if (rate.name && rate.name.toLowerCase().includes('student') && !rate.isPromo) {
-          studentRate = rate.price;
-        } else if (rate.name && !rate.name.toLowerCase().includes('student') && !rate.isPromo) {
-          casualRate = rate.price;
+        // Only process active, non-promo rates
+        if (rate.isActive && !rate.isPromo) {
+          logger.info(`Processing rate: ${rate.name} - $${rate.price}`);
+          if (rate.name && rate.name.toLowerCase().includes('student')) {
+            studentRate = rate.price;
+          } else if (rate.name) {
+            casualRate = rate.price;
+          }
         }
       });
       
@@ -202,26 +211,27 @@ exports.sendNewStudentEmail = onDocumentCreated(
       
       logger.info(`Using casual rates: standard=$${casualRate}, student=$${studentRate}`);
       
-      // Fetch concession packages from Firestore
+      // Fetch concession packages from Firestore - fetch all then filter in code
       logger.info('Fetching concession packages from Firestore...');
       const concessionPackagesSnapshot = await admin.firestore()
         .collection('concessionPackages')
-        .where('isActive', '==', true)
-        .orderBy('numberOfClasses', 'asc')
         .get();
       
-      logger.info(`Found ${concessionPackagesSnapshot.size} concession packages`);
+      logger.info(`Found ${concessionPackagesSnapshot.size} total concession packages`);
       
       let fiveClassPrice = null;
       let tenClassPrice = null;
       
       concessionPackagesSnapshot.forEach(doc => {
         const pkg = doc.data();
-        logger.info(`Processing package: ${pkg.numberOfClasses} classes - $${pkg.price}`);
-        if (pkg.numberOfClasses === 5) {
-          fiveClassPrice = pkg.price;
-        } else if (pkg.numberOfClasses === 10) {
-          tenClassPrice = pkg.price;
+        // Only process active packages
+        if (pkg.isActive) {
+          logger.info(`Processing package: ${pkg.numberOfClasses} classes - $${pkg.price}`);
+          if (pkg.numberOfClasses === 5) {
+            fiveClassPrice = pkg.price;
+          } else if (pkg.numberOfClasses === 10) {
+            tenClassPrice = pkg.price;
+          }
         }
       });
       
