@@ -178,6 +178,44 @@
         </footer>
     </div>
 
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-gift"></i> Confirm Gift</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem;">Are you sure you want to gift these concessions?</p>
+                <div class="confirm-details">
+                    <div class="confirm-row">
+                        <span>Student:</span>
+                        <strong id="confirm-student-name"></strong>
+                    </div>
+                    <div class="confirm-row">
+                        <span>Classes:</span>
+                        <strong id="confirm-quantity"></strong>
+                    </div>
+                    <div class="confirm-row">
+                        <span>Expiry Date:</span>
+                        <strong id="confirm-expiry"></strong>
+                    </div>
+                    <div class="confirm-row">
+                        <span>Reason:</span>
+                        <strong id="confirm-notes"></strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeConfirmModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" id="confirm-gift-btn">
+                    <i class="fas fa-check"></i> Yes, Gift Concessions
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="success-modal" class="modal" style="display: none;">
         <div class="modal-content modal-small">
