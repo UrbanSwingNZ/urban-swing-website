@@ -163,7 +163,15 @@ async function handleFormSubmit() {
             return;
         }
 
-        // Check for duplicates (only for admins)
+        // Check for duplicate registration (same name AND email) for all users
+        const isDuplicate = await checkForDuplicateStudent(formData.firstName, formData.lastName, formData.email);
+        
+        if (isDuplicate) {
+            showError(`A student with the name "${formData.firstName} ${formData.lastName}" and email "${formData.email}" is already registered. If you've already registered, you don't need to register again. Please contact us at dance@urbanswing.co.nz if you need assistance.`);
+            return;
+        }
+
+        // Check for duplicate names (only for admins - to warn about potential duplicates with different emails)
         if (isAdmin) {
             const hasDuplicates = await checkForDuplicates(formData.firstName, formData.lastName);
             
@@ -247,6 +255,37 @@ function validateFormData(data) {
     }
 
     return true;
+}
+
+// ========================================
+// Check for Duplicate Student (Name + Email)
+// ========================================
+
+async function checkForDuplicateStudent(firstName, lastName, email) {
+    try {
+        // First, query by email (has automatic single-field index)
+        const studentsRef = db.collection('students');
+        const snapshot = await studentsRef
+            .where('email', '==', email)
+            .limit(10)
+            .get();
+
+        // Then filter by name in JavaScript to avoid needing a composite index
+        let foundDuplicate = false;
+        snapshot.forEach((doc) => {
+            const student = doc.data();
+            if (student.firstName === firstName && student.lastName === lastName) {
+                foundDuplicate = true;
+            }
+        });
+
+        return foundDuplicate;
+
+    } catch (error) {
+        console.error('Error checking for duplicate student:', error);
+        // Don't block registration if duplicate check fails
+        return false;
+    }
 }
 
 // ========================================
@@ -385,13 +424,6 @@ async function saveStudent(data) {
         document.getElementById('emailConsent').checked = true;
 
         showLoading(false);
-
-        // If public user (not admin), redirect to classes page after a delay
-        if (!isAdmin) {
-            setTimeout(() => {
-                window.location.href = 'pages/classes.html';
-            }, 2000);
-        }
 
     } catch (error) {
         console.error('Error saving student:', error);
