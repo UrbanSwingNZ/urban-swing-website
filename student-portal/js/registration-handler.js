@@ -65,8 +65,8 @@ async function handleRegistrationSubmit() {
             showEmailExistsModal(
                 result.students,
                 () => {
-                    // Continue callback - will be implemented later
-                    console.log('User chose to continue with registration');
+                    // Continue callback - redirect to registration form
+                    redirectToRegistrationForm(email);
                 },
                 () => {
                     // Cancel callback - return to login page
@@ -74,9 +74,8 @@ async function handleRegistrationSubmit() {
                 }
             );
         } else {
-            // Email doesn't exist - proceed with registration
-            // This will be implemented in the happy path
-            console.log('Email available - proceed with registration');
+            // Email doesn't exist - proceed with registration form
+            redirectToRegistrationForm(email);
         }
         
     } catch (error) {
@@ -94,6 +93,18 @@ async function handleRegistrationSubmit() {
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+}
+
+/**
+ * Redirect to registration form with email
+ * @param {string} email - Email address to pre-fill
+ */
+function redirectToRegistrationForm(email) {
+    // Store email in sessionStorage to pre-fill on registration page
+    sessionStorage.setItem('registrationEmail', email);
+    
+    // Redirect to registration form
+    window.location.href = 'register.html';
 }
 
 /**
