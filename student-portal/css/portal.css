@@ -2,13 +2,12 @@
 
 /* Admin Banner */
 .admin-banner {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
     color: white;
     padding: 16px 24px;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .banner-content {
@@ -23,6 +22,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
 }
 
 .banner-left i {
@@ -33,23 +33,27 @@
     font-weight: 700;
     font-size: 1.1rem;
     letter-spacing: 1px;
+    white-space: nowrap;
 }
 
-.viewing-as {
+.banner-left .student-dropdown {
+    flex: 1;
+    max-width: 500px;
+    padding: 10px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
     font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.viewing-as strong {
-    font-weight: 600;
-}
-
-.student-id {
-    font-size: 0.85rem;
-    opacity: 0.9;
-    font-family: monospace;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 4px 8px;
-    border-radius: 4px;
+.banner-left .student-dropdown:focus {
+    outline: none;
+    border-color: white;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
 
 .btn-back-admin {
@@ -78,7 +82,7 @@
 
 /* Header */
 .portal-header {
-    background: white;
+    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
     padding: 24px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -98,58 +102,9 @@
 
 .portal-header h1 {
     font-size: 1.8rem;
-    color: var(--admin-purple);
+    color: white;
     margin: 0;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Student Selector */
-.student-selector {
-    background: white;
-    padding: 20px 24px;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.selector-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.selector-content label {
-    font-weight: 600;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.selector-content label i {
-    color: var(--admin-purple);
-}
-
-.student-dropdown {
-    flex: 1;
-    max-width: 500px;
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.student-dropdown:focus {
-    outline: none;
-    border-color: var(--admin-purple);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    font-weight: 700;
 }
 
 /* Dashboard Content */

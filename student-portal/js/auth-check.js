@@ -19,19 +19,25 @@ let isAuthorized = false;
  */
 async function checkUserAccess() {
     try {
-        // Wait for Firebase Auth to initialize
-        await new Promise((resolve) => {
+        console.log('Starting user access check...');
+        
+        // Wait for Firebase Auth to initialize and check auth state
+        currentUser = await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject(new Error('Firebase auth timeout'));
+            }, 10000); // 10 second timeout
+            
             const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+                clearTimeout(timeout);
                 unsubscribe();
+                console.log('Auth state changed:', user ? `User: ${user.email}` : 'No user');
                 resolve(user);
             });
         });
-
-        currentUser = firebase.auth().currentUser;
         
         if (!currentUser) {
             console.log('No user logged in - redirecting to login');
-            // Redirect to login page (to be implemented)
+            // Redirect to login page
             window.location.href = '../index.html';
             return false;
         }
@@ -43,16 +49,16 @@ async function checkUserAccess() {
         isAuthorized = AUTHORIZED_ADMINS.includes(currentUserEmail);
 
         if (isAuthorized) {
-            console.log('Admin user detected - showing student selector');
+            console.log('✅ Admin user detected - showing student selector');
             showAdminView();
             return true;
         } else {
-            console.log('Regular student user - showing personal view');
+            console.log('👤 Regular student user - showing personal view');
             showStudentView();
             return false;
         }
     } catch (error) {
-        console.error('Error checking user access:', error);
+        console.error('❌ Error checking user access:', error);
         // On error, redirect to login
         window.location.href = '../index.html';
         return false;
@@ -65,7 +71,6 @@ async function checkUserAccess() {
 function showAdminView() {
     document.getElementById('main-container').style.display = 'block';
     document.getElementById('admin-banner').style.display = 'block';
-    document.getElementById('student-selector').style.display = 'block';
     // Show empty state until student is selected
     document.getElementById('empty-state').style.display = 'block';
 }
@@ -76,7 +81,6 @@ function showAdminView() {
 function showStudentView() {
     document.getElementById('main-container').style.display = 'block';
     document.getElementById('admin-banner').style.display = 'none';
-    document.getElementById('student-selector').style.display = 'none';
     // Show dashboard with current user's data
     loadCurrentStudentData();
 }
