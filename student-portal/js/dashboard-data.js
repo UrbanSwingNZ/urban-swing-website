@@ -37,7 +37,7 @@ function setupNavigationCards() {
     // Check-In History
     document.getElementById('nav-checkins').addEventListener('click', (e) => {
         e.preventDefault();
-        alert('Check-In History page coming soon!\n\nThis will show all class attendance records.');
+        window.location.href = '../check-ins/index.html';
     });
     
     // Profile

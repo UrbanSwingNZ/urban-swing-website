@@ -1,0 +1,269 @@
+/* Check-In History Page Styles */
+
+.checkins-content {
+    padding: 40px 24px;
+    background: var(--bg-light);
+    min-height: calc(100vh - 300px);
+}
+
+.checkins-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Back Navigation */
+.back-nav {
+    margin-bottom: 24px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-back:active {
+    transform: translateY(0);
+}
+
+/* Header */
+.checkins-header {
+    background: white;
+    padding: 24px 32px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-info h2 {
+    font-size: 1.75rem;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.total-count {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.total-count span {
+    font-weight: 600;
+    color: var(--admin-purple);
+}
+
+/* Check-Ins List */
+.checkins-list {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checkin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.checkin-item:last-child {
+    border-bottom: none;
+}
+
+.checkin-item:hover {
+    background-color: var(--bg-light);
+}
+
+.checkin-item.reversed {
+    opacity: 0.6;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.checkin-date {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.date-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.date-icon .day {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.date-icon .month {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.date-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-details .full-date {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.checkin-type {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Type Badges - matching check-in screen */
+.type-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.type-badge.concession {
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
+}
+
+.type-badge.gift {
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+}
+
+.type-badge.casual,
+.type-badge.casual-entry {
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
+}
+
+.type-badge.casual-student {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.type-badge.free {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.type-badge.reversed {
+    background: #dc3545;
+    color: white;
+}
+
+/* No Data State */
+.no-data {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text-muted);
+}
+
+.no-data i {
+    font-size: 4rem;
+    color: var(--border-color);
+    margin-bottom: 20px;
+}
+
+.no-data h3 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 12px;
+}
+
+.no-data p {
+    font-size: 1rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--admin-purple);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+    margin-top: 16px;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .checkins-content {
+        padding: 24px 16px;
+    }
+    
+    .checkin-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+    }
+    
+    .checkin-type {
+        align-self: flex-start;
+    }
+    
+    .checkins-header {
+        padding: 20px;
+    }
+}
