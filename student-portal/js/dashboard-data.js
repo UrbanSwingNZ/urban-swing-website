@@ -43,7 +43,11 @@ function setupNavigationCards() {
     // Profile
     document.getElementById('nav-profile').addEventListener('click', (e) => {
         e.preventDefault();
-        alert('Profile & Settings page coming soon!\n\nThis will allow viewing and updating student information.');
+        // Store selected student ID in sessionStorage if viewing as admin
+        if (typeof selectedStudent !== 'undefined' && selectedStudent) {
+            sessionStorage.setItem('selectedStudentId', selectedStudent.id);
+        }
+        window.location.href = '../profile/index.html';
     });
     
     // Disabled cards (prepay and purchase) - do nothing
