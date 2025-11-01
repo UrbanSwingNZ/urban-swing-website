@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile & Settings - Urban Swing</title>
+    <link rel="stylesheet" href="../css/base/variables.css">
+    <link rel="stylesheet" href="../css/base/reset.css">
+    <link rel="stylesheet" href="../css/base/typography.css">
+    <link rel="stylesheet" href="../css/portal.css">
+    <link rel="stylesheet" href="profile.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Admin Banner (only visible for admin users) -->
+    <div id="admin-banner" class="admin-banner" style="display: none;">
+        <div class="banner-content">
+            <div class="banner-left">
+                <i class="fas fa-user-shield"></i>
+                <span class="banner-title">ADMIN VIEW</span>
+                <select id="student-dropdown" class="student-dropdown">
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+            <div class="banner-right">
+                <a href="../../admin/index.html" class="btn-back-admin">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="portal-container" style="display: none;">
+        <!-- Header -->
+        <header class="portal-header">
+            <div class="header-content">
+                <a href="../dashboard/index.html">
+                    <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
+                </a>
+                <h1>Profile & Settings</h1>
+            </div>
+        </header>
+
+        <!-- Profile Content -->
+        <div id="profile-content" class="profile-content" style="display: none;">
+            <div class="profile-container">
+                <div class="back-nav">
+                    <a href="../dashboard/index.html" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+
+                <div class="profile-header">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h2 id="profile-name">Student Profile</h2>
+                    <p id="profile-id" class="profile-id"></p>
+                </div>
+
+                <form id="profile-form" class="profile-form">
+                    <div class="form-section">
+                        <h3>Personal Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pronouns">Pronouns</label>
+                                <select id="pronouns" name="pronouns">
+                                    <option value="">Select pronouns (optional)</option>
+                                    <option value="she/her">she/her</option>
+                                    <option value="he/him">he/him</option>
+                                    <option value="they/them">they/them</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Communication Preferences</h3>
+                        
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="emailConsent" name="emailConsent">
+                                <span>I consent to receiving emails from Urban Swing about classes, events, and updates</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Admin Notes Section (only visible to admins) -->
+                    <div id="admin-notes-section" class="form-section" style="display: none;">
+                        <h3>Admin Notes</h3>
+                        <div class="admin-note">
+                            <i class="fas fa-info-circle"></i>
+                            <p>These notes are only visible to administrators and are not shown to the student.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="adminNotes">Notes</label>
+                            <textarea id="adminNotes" name="adminNotes" rows="4" placeholder="Add any administrative notes about this student..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="cancel-btn" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" id="save-btn" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Empty State (No Student Selected - Admin Only) -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-user-friends"></i>
+            <h2>Select a Student</h2>
+            <p>Choose a student from the dropdown above to view their profile.</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Saving changes...</p>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="../../config/firebase-config.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth-check.js"></script>
+    <script src="../js/student-loader.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
