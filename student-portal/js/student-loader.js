@@ -111,18 +111,12 @@ function handleStudentSelection(event) {
 
 /**
  * Update the admin banner with selected student info
+ * Note: We don't display the selected student name in the banner anymore
+ * The dropdown selection makes it clear which student is being viewed
  */
 function updateAdminBanner(student) {
-    const studentNameEl = document.getElementById('student-name');
-    const studentIdEl = document.getElementById('student-display-id');
-    
-    if (student) {
-        studentNameEl.textContent = `${student.firstName} ${student.lastName}`;
-        studentIdEl.textContent = `(ID: ${student.id})`;
-    } else {
-        studentNameEl.textContent = 'No student selected';
-        studentIdEl.textContent = '';
-    }
+    // No banner updates needed - the dropdown selection is sufficient
+    console.log('Admin banner update:', student ? `${student.firstName} ${student.lastName}` : 'No student');
 }
 
 /**
