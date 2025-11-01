@@ -81,6 +81,18 @@ function populateStudentDropdown() {
         dropdown.appendChild(option);
     });
     
+    // Restore previously selected student from sessionStorage
+    const currentStudentId = sessionStorage.getItem('currentStudentId');
+    if (currentStudentId) {
+        dropdown.value = currentStudentId;
+        // Load that student's data
+        selectedStudent = allStudents.find(s => s.id === currentStudentId);
+        if (selectedStudent) {
+            console.log('Restored selected student:', selectedStudent);
+            loadStudentDashboard(selectedStudent);
+        }
+    }
+    
     // Add change event listener
     dropdown.addEventListener('change', handleStudentSelection);
 }
@@ -94,6 +106,7 @@ function handleStudentSelection(event) {
     if (!studentId) {
         // No student selected
         selectedStudent = null;
+        sessionStorage.removeItem('currentStudentId');
         showEmptyState();
         updateAdminBanner(null);
         return;
@@ -104,6 +117,8 @@ function handleStudentSelection(event) {
     
     if (selectedStudent) {
         console.log('Selected student:', selectedStudent);
+        // Store selected student ID in sessionStorage to persist across pages
+        sessionStorage.setItem('currentStudentId', studentId);
         updateAdminBanner(selectedStudent);
         loadStudentDashboard(selectedStudent);
     }

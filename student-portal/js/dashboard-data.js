@@ -43,10 +43,6 @@ function setupNavigationCards() {
     // Profile
     document.getElementById('nav-profile').addEventListener('click', (e) => {
         e.preventDefault();
-        // Store selected student ID in sessionStorage if viewing as admin
-        if (typeof selectedStudent !== 'undefined' && selectedStudent) {
-            sessionStorage.setItem('selectedStudentId', selectedStudent.id);
-        }
         window.location.href = '../profile/index.html';
     });
     
