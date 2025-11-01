@@ -27,12 +27,20 @@ async function loadDashboardData(student) {
  */
 async function loadActiveConcessions(studentId) {
     try {
+        // Query only by studentId to avoid compound index requirement
         const concessionsSnapshot = await window.db.collection('concessionBlocks')
             .where('studentId', '==', studentId)
-            .where('balance', '>', 0)
             .get();
         
-        const activeCount = concessionsSnapshot.size;
+        // Filter for active (balance > 0) in JavaScript
+        let activeCount = 0;
+        concessionsSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.balance > 0) {
+                activeCount++;
+            }
+        });
+        
         document.getElementById('active-concessions').textContent = activeCount;
         
     } catch (error) {
@@ -64,19 +72,21 @@ async function loadTotalCheckins(studentId) {
  */
 async function loadAccountBalance(studentId) {
     try {
+        // Query only by studentId to avoid compound index requirement
         const concessionsSnapshot = await window.db.collection('concessionBlocks')
             .where('studentId', '==', studentId)
-            .where('balance', '>', 0)
             .get();
         
+        // Calculate total balance from active concessions (balance > 0) in JavaScript
         let totalBalance = 0;
         concessionsSnapshot.forEach(doc => {
             const data = doc.data();
-            totalBalance += (data.balance || 0);
+            if (data.balance > 0) {
+                totalBalance += (data.balance || 0);
+            }
         });
         
-        // For now, display as class count rather than dollar amount
-        // Once we have pricing info, we can calculate monetary value
+        // Display as class count
         document.getElementById('account-balance').textContent = `${totalBalance} classes`;
         
     } catch (error) {
