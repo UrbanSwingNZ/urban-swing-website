@@ -192,17 +192,29 @@ async function handleFormSubmit(event) {
             emailConsent: document.getElementById('emailConsent').checked
         };
         
-        // Include admin notes if viewing as admin
-        if (isViewingAsAdmin) {
-            updatedData.adminNotes = document.getElementById('adminNotes').value.trim();
-        }
-        
         // Validate required fields
         if (!updatedData.firstName || !updatedData.lastName || !updatedData.email || !updatedData.phoneNumber) {
             alert('Please fill in all required fields (First Name, Last Name, Email, Phone Number)');
             document.getElementById('loading-spinner').style.display = 'none';
             return;
         }
+        
+        // Generate audit log for changes (excluding admin notes)
+        const auditEntries = generateAuditLog(originalData, updatedData, isViewingAsAdmin);
+        
+        // Get existing admin notes
+        let adminNotes = originalData.adminNotes || '';
+        
+        // If admin is editing, use the admin notes field value
+        if (isViewingAsAdmin) {
+            adminNotes = document.getElementById('adminNotes').value.trim();
+        }
+        
+        // Append audit entries to admin notes
+        adminNotes = appendAuditLog(adminNotes, auditEntries);
+        
+        // Include admin notes in update
+        updatedData.adminNotes = adminNotes;
         
         // Update Firestore
         await window.db.collection('students').doc(currentStudentId).update(updatedData);
@@ -213,16 +225,31 @@ async function handleFormSubmit(event) {
         currentStudent = { ...currentStudent, ...updatedData };
         originalData = { ...currentStudent };
         
+        // Reload the form with updated data (including audit log in admin notes)
+        loadProfileData(currentStudent, currentStudentId);
+        
+        // If student updated their own email, update Firebase Auth email
+        if (!isViewingAsAdmin && updatedData.email !== originalData.email) {
+            try {
+                const user = firebase.auth().currentUser;
+                await user.updateEmail(updatedData.email);
+                console.log('Firebase Auth email updated successfully');
+            } catch (authError) {
+                console.error('Error updating Firebase Auth email:', authError);
+                
+                // If email update fails, still keep the profile updated in Firestore
+                // but let the user know they need to contact support
+                document.getElementById('loading-spinner').style.display = 'none';
+                alert('Your profile has been updated, but there was an issue updating your login email. Please contact support to complete the email change.');
+                return;
+            }
+        }
+        
         // Hide loading spinner
         document.getElementById('loading-spinner').style.display = 'none';
         
         // Show success message
         alert('Profile updated successfully!');
-        
-        // If student updated their own email, they may need to re-authenticate
-        if (!isViewingAsAdmin && updatedData.email !== firebase.auth().currentUser.email) {
-            alert('Your email has been updated. You may need to contact an administrator to update your login credentials.');
-        }
         
     } catch (error) {
         console.error('Error updating profile:', error);
