@@ -16,14 +16,13 @@ async function initializeProfile() {
     isViewingAsAdmin = isAuthorized;
     
     if (isViewingAsAdmin) {
-        // Admin view - check if there's a selected student from previous page
-        const selectedStudentId = sessionStorage.getItem('selectedStudentId');
+        // Admin view - check if there's a selected student from persistence
+        const currentStudentId = sessionStorage.getItem('currentStudentId');
         
-        if (selectedStudentId) {
-            console.log('Loading student from session:', selectedStudentId);
-            await loadStudentById(selectedStudentId);
-            // Clear the session storage
-            sessionStorage.removeItem('selectedStudentId');
+        if (currentStudentId) {
+            console.log('Loading student from session:', currentStudentId);
+            await loadStudentById(currentStudentId);
+            // Don't clear the session storage - keep it for navigation between pages
         } else {
             // No student selected - show empty state
             console.log('Admin view - waiting for student selection');
@@ -110,6 +109,9 @@ async function loadStudentById(studentId) {
 async function loadStudentProfile(student) {
     currentStudent = student;
     currentStudentId = student.id;
+    
+    // Ensure we're tracking admin status correctly
+    isViewingAsAdmin = isAuthorized;
     
     console.log('Loading profile for selected student:', student);
     loadProfileData(student, student.id);
