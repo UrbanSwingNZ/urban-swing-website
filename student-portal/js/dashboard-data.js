@@ -1,6 +1,6 @@
 /**
  * Dashboard Data Loader
- * Loads and displays student dashboard statistics and information
+ * Loads and displays student dashboard information
  */
 
 /**
@@ -10,88 +10,11 @@ async function loadDashboardData(student) {
     try {
         console.log('Loading dashboard data for:', student.firstName, student.lastName);
         
-        // Load all data in parallel
-        await Promise.all([
-            loadActiveConcessions(student.id),
-            loadTotalCheckins(student.id),
-            loadAccountBalance(student.id)
-        ]);
+        // Dashboard data loading removed - stats tiles were removed from UI
+        // Future: Will load data for My Concessions, Check-In History, and Transaction pages
         
     } catch (error) {
         console.error('Error loading dashboard data:', error);
-    }
-}
-
-/**
- * Load active concessions count
- */
-async function loadActiveConcessions(studentId) {
-    try {
-        // Query only by studentId to avoid compound index requirement
-        const concessionsSnapshot = await window.db.collection('concessionBlocks')
-            .where('studentId', '==', studentId)
-            .get();
-        
-        // Filter for active (balance > 0) in JavaScript
-        let activeCount = 0;
-        concessionsSnapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.balance > 0) {
-                activeCount++;
-            }
-        });
-        
-        document.getElementById('active-concessions').textContent = activeCount;
-        
-    } catch (error) {
-        console.error('Error loading active concessions:', error);
-        document.getElementById('active-concessions').textContent = 'Error';
-    }
-}
-
-/**
- * Load total check-ins count
- */
-async function loadTotalCheckins(studentId) {
-    try {
-        const checkinsSnapshot = await window.db.collection('checkins')
-            .where('studentId', '==', studentId)
-            .get();
-        
-        const totalCount = checkinsSnapshot.size;
-        document.getElementById('total-checkins').textContent = totalCount;
-        
-    } catch (error) {
-        console.error('Error loading total check-ins:', error);
-        document.getElementById('total-checkins').textContent = 'Error';
-    }
-}
-
-/**
- * Load account balance (sum of active concession balances)
- */
-async function loadAccountBalance(studentId) {
-    try {
-        // Query only by studentId to avoid compound index requirement
-        const concessionsSnapshot = await window.db.collection('concessionBlocks')
-            .where('studentId', '==', studentId)
-            .get();
-        
-        // Calculate total balance from active concessions (balance > 0) in JavaScript
-        let totalBalance = 0;
-        concessionsSnapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.balance > 0) {
-                totalBalance += (data.balance || 0);
-            }
-        });
-        
-        // Display as class count
-        document.getElementById('account-balance').textContent = `${totalBalance} classes`;
-        
-    } catch (error) {
-        console.error('Error loading account balance:', error);
-        document.getElementById('account-balance').textContent = 'Error';
     }
 }
 
