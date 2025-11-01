@@ -23,8 +23,9 @@
             <div class="banner-left">
                 <i class="fas fa-user-shield"></i>
                 <span class="banner-title">ADMIN VIEW</span>
-                <span class="viewing-as">Viewing as: <strong id="student-name">No student selected</strong></span>
-                <span class="student-id" id="student-display-id"></span>
+                <select id="student-dropdown" class="student-dropdown">
+                    <option value="">Loading students...</option>
+                </select>
             </div>
             <div class="banner-right">
                 <a href="../../admin/index.html" class="btn-back-admin">
@@ -34,29 +35,17 @@
         </div>
     </div>
 
-    <!-- Main Container -->
+    <!-- Main Container (visible to all users) -->
     <div id="main-container" class="portal-container" style="display: none;">
         <!-- Header -->
         <header class="portal-header">
             <div class="header-content">
                 <a href="../../index.html">
-                    <img src="/images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
+                    <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
                 </a>
                 <h1>Student Portal</h1>
             </div>
         </header>
-
-        <!-- Student Selector (only visible for admin users) -->
-        <div id="student-selector" class="student-selector" style="display: none;">
-            <div class="selector-content">
-                <label for="student-dropdown">
-                    <i class="fas fa-users"></i> Select Student to View:
-                </label>
-                <select id="student-dropdown" class="student-dropdown">
-                    <option value="">Loading students...</option>
-                </select>
-            </div>
-        </div>
 
         <!-- Student Dashboard -->
         <div id="student-dashboard" class="dashboard-content" style="display: none;">
