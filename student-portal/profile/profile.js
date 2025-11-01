@@ -125,7 +125,15 @@ function loadProfileData(student, studentId) {
     
     // Update header
     document.getElementById('profile-name').textContent = `${student.firstName} ${student.lastName}`;
-    document.getElementById('profile-id').textContent = `Student ID: ${studentId}`;
+    
+    // Show student ID only for admin users
+    const profileIdElement = document.getElementById('profile-id');
+    if (isViewingAsAdmin) {
+        profileIdElement.textContent = `Student ID: ${studentId}`;
+        profileIdElement.style.display = 'block';
+    } else {
+        profileIdElement.style.display = 'none';
+    }
     
     // Load form fields
     document.getElementById('firstName').value = student.firstName || '';
