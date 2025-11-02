@@ -61,18 +61,8 @@ async function handleRegistrationSubmit() {
         showLoading(false);
         
         if (result.exists) {
-            // Show warning modal
-            showEmailExistsModal(
-                result.students,
-                () => {
-                    // Continue callback - redirect to registration form
-                    redirectToRegistrationForm(email);
-                },
-                () => {
-                    // Cancel callback - return to login page
-                    returnToLoginPage();
-                }
-            );
+            // Show warning modal - email already exists, cannot proceed
+            showEmailExistsModal(result.students);
         } else {
             // Email doesn't exist - proceed with registration form
             redirectToRegistrationForm(email);
