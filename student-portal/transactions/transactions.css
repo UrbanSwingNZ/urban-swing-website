@@ -318,6 +318,82 @@
     text-align: center;
 }
 
+/* Transaction Cards (Mobile Only) */
+.cards-container {
+    display: none;
+}
+
+.transaction-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.transaction-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.transaction-card.reversed {
+    opacity: 0.6;
+    background: repeating-linear-gradient(
+        45deg,
+        white,
+        white 10px,
+        rgba(255, 0, 0, 0.02) 10px,
+        rgba(255, 0, 0, 0.02) 20px
+    );
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.card-date {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.card-amount {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #2c5282;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.card-value {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .transactions-content {
@@ -337,19 +413,13 @@
         gap: 0.5rem;
     }
 
-    /* Make table scrollable on mobile */
+    /* Hide table on mobile, show cards */
     .table-container {
-        overflow-x: auto;
+        display: none !important;
     }
 
-    #transactions-table {
-        min-width: 600px;
-    }
-
-    #transactions-table th,
-    #transactions-table td {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
+    .cards-container {
+        display: block;
     }
 
     .type-badge {
