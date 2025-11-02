@@ -247,6 +247,51 @@
     font-weight: 600;
 }
 
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    background: white;
+    border-radius: 12px;
+    margin-top: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #ccc;
+    transform: none;
+}
+
+.pagination-info {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .checkins-content {
@@ -266,5 +311,23 @@
     
     .checkins-header {
         padding: 20px;
+    }
+
+    .pagination-controls {
+        padding: 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .pagination-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .pagination-info {
+        width: 100%;
+        text-align: center;
+        order: -1;
+        font-size: 0.9rem;
     }
 }

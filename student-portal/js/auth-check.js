@@ -19,7 +19,11 @@ let isAuthorized = false;
  */
 async function checkUserAccess() {
     try {
-        console.log('Starting user access check...');
+        // Wait for Firebase to be initialized
+        if (typeof firebase === 'undefined') {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return checkUserAccess(); // Retry
+        }
         
         // Wait for Firebase Auth to initialize and check auth state
         currentUser = await new Promise((resolve, reject) => {
@@ -30,30 +34,31 @@ async function checkUserAccess() {
             const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
                 clearTimeout(timeout);
                 unsubscribe();
-                console.log('Auth state changed:', user ? `User: ${user.email}` : 'No user');
                 resolve(user);
             });
         });
         
         if (!currentUser) {
-            console.log('No user logged in - redirecting to login');
             // Redirect to login page
             window.location.href = '../index.html';
             return false;
         }
 
         currentUserEmail = currentUser.email.toLowerCase();
-        console.log('Checking access for:', currentUserEmail);
 
         // Check if user email is in authorized admin list
         isAuthorized = AUTHORIZED_ADMINS.includes(currentUserEmail);
 
         if (isAuthorized) {
-            console.log('✅ Admin user detected - showing student selector');
             showAdminView();
+            
+            // Trigger student loading if the function exists
+            if (typeof loadStudents === 'function') {
+                loadStudents();
+            }
+            
             return true;
         } else {
-            console.log('👤 Regular student user - showing personal view');
             showStudentView();
             return false;
         }
