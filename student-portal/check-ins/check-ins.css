@@ -65,8 +65,9 @@
 }
 
 .total-count span {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--admin-purple);
+    font-size: 1.1rem;
 }
 
 /* Check-Ins List */

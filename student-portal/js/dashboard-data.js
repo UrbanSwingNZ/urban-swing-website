@@ -25,7 +25,7 @@ function setupNavigationCards() {
     // Transaction History
     document.getElementById('nav-transactions').addEventListener('click', (e) => {
         e.preventDefault();
-        alert('Transaction History page coming soon!\n\nThis will show all purchases and payments.');
+        window.location.href = '../transactions/index.html';
     });
     
     // My Concessions
