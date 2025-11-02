@@ -52,9 +52,10 @@ function setupNavigationCards() {
         window.location.href = '../purchase/index.html';
     });
     
-    // Pre-Pay for Class - disabled (coming soon)
+    // Pre-Pay for Class
     document.getElementById('nav-prepay').addEventListener('click', (e) => {
         e.preventDefault();
+        window.location.href = '../prepay/index.html';
     });
 }
 
