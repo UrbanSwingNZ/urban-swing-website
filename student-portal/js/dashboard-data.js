@@ -46,12 +46,14 @@ function setupNavigationCards() {
         window.location.href = '../profile/index.html';
     });
     
-    // Disabled cards (prepay and purchase) - do nothing
-    document.getElementById('nav-prepay').addEventListener('click', (e) => {
+    // Purchase Concessions
+    document.getElementById('nav-purchase').addEventListener('click', (e) => {
         e.preventDefault();
+        window.location.href = '../purchase/index.html';
     });
     
-    document.getElementById('nav-purchase').addEventListener('click', (e) => {
+    // Pre-Pay for Class - disabled (coming soon)
+    document.getElementById('nav-prepay').addEventListener('click', (e) => {
         e.preventDefault();
     });
 }

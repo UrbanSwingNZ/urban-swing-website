@@ -157,13 +157,19 @@ async function loadStudentDashboard(student) {
     try {
         showDashboard();
         
-        // Update dashboard name
-        document.getElementById('dashboard-student-name').textContent = student.firstName;
+        // Update dashboard name (only if element exists)
+        const dashboardNameElement = document.getElementById('dashboard-student-name');
+        if (dashboardNameElement) {
+            dashboardNameElement.textContent = student.firstName;
+        }
         
         // Load dashboard data (will be implemented in dashboard-data.js)
         if (typeof loadDashboardData === 'function') {
             await loadDashboardData(student);
         }
+        
+        // Trigger custom event for other pages that need to know when student is loaded
+        window.dispatchEvent(new CustomEvent('studentSelected', { detail: student }));
     } catch (error) {
         console.error('Error loading student dashboard:', error);
     }
