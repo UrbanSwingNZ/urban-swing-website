@@ -58,7 +58,7 @@ async function loadCurrentStudentProfile() {
         
         if (studentSnapshot.empty) {
             console.error('Student not found');
-            alert('Error: Your student record could not be found.');
+            showSnackbar('Error: Your student record could not be found.', 'error');
             return;
         }
         
@@ -71,7 +71,7 @@ async function loadCurrentStudentProfile() {
         
     } catch (error) {
         console.error('Error loading student profile:', error);
-        alert('Error loading your profile. Please try again.');
+        showSnackbar('Error loading your profile. Please try again.', 'error');
     }
 }
 
@@ -83,8 +83,8 @@ async function loadStudentById(studentId) {
         const studentDoc = await window.db.collection('students').doc(studentId).get();
         
         if (!studentDoc.exists) {
-            console.error('Student not found:', studentId);
-            alert('Error: Student not found.');
+            console.error('Student not found');
+            showSnackbar('Error: Student not found.', 'error');
             return;
         }
         
@@ -97,8 +97,8 @@ async function loadStudentById(studentId) {
         loadStudentProfile(student);
         
     } catch (error) {
-        console.error('Error loading student by ID:', error);
-        alert('Error loading student profile. Please try again.');
+        console.error('Error loading student profile:', error);
+        showSnackbar('Error loading student profile. Please try again.', 'error');
     }
 }
 
@@ -156,6 +156,9 @@ function loadProfileData(student, studentId) {
     
     // Store original data for comparison
     originalData = { ...student };
+    
+    // Disable buttons initially (no changes yet)
+    updateButtonStates(false);
 }
 
 /**
@@ -167,6 +170,50 @@ function setupFormHandlers() {
     
     // Cancel button
     document.getElementById('cancel-btn').addEventListener('click', handleCancel);
+    
+    // Add change listeners to all form fields
+    const formFields = [
+        'firstName', 'lastName', 'email', 'phoneNumber', 
+        'pronouns', 'emailConsent'
+    ];
+    
+    formFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', handleFormChange);
+            field.addEventListener('change', handleFormChange);
+        }
+    });
+    
+    // Add listener for admin notes if visible
+    const adminNotesField = document.getElementById('adminNotes');
+    if (adminNotesField) {
+        adminNotesField.addEventListener('input', handleFormChange);
+    }
+}
+
+/**
+ * Handle form field changes
+ */
+function handleFormChange() {
+    const hasChanges = checkForChanges();
+    updateButtonStates(hasChanges);
+}
+
+/**
+ * Update button states based on whether there are changes
+ */
+function updateButtonStates(hasChanges) {
+    const saveButton = document.querySelector('.btn-primary');
+    const cancelButton = document.getElementById('cancel-btn');
+    
+    if (saveButton) {
+        saveButton.disabled = !hasChanges;
+    }
+    
+    if (cancelButton) {
+        cancelButton.disabled = !hasChanges;
+    }
 }
 
 /**
@@ -175,8 +222,8 @@ function setupFormHandlers() {
 async function handleFormSubmit(event) {
     event.preventDefault();
     
-    if (!currentStudentId) {
-        alert('No student selected');
+    if (!currentStudent) {
+        showSnackbar('No student selected', 'error');
         return;
     }
     
@@ -196,7 +243,7 @@ async function handleFormSubmit(event) {
         
         // Validate required fields
         if (!updatedData.firstName || !updatedData.lastName || !updatedData.email || !updatedData.phoneNumber) {
-            alert('Please fill in all required fields (First Name, Last Name, Email, Phone Number)');
+            showSnackbar('Please fill in all required fields (First Name, Last Name, Email, Phone Number)', 'warning');
             document.getElementById('loading-spinner').style.display = 'none';
             return;
         }
@@ -242,7 +289,7 @@ async function handleFormSubmit(event) {
                 // If email update fails, still keep the profile updated in Firestore
                 // but let the user know they need to contact support
                 document.getElementById('loading-spinner').style.display = 'none';
-                alert('Your profile has been updated, but there was an issue updating your login email. Please contact support to complete the email change.');
+                showSnackbar('Your profile has been updated, but there was an issue updating your login email. Please contact support to complete the email change.', 'warning', 5000);
                 return;
             }
         }
@@ -250,13 +297,17 @@ async function handleFormSubmit(event) {
         // Hide loading spinner
         document.getElementById('loading-spinner').style.display = 'none';
         
+        // Update original data and disable buttons
+        originalData = { ...updatedData, adminNotes: finalAdminNotes };
+        updateButtonStates(false);
+        
         // Show success message
-        alert('Profile updated successfully!');
+        showSnackbar('Profile updated successfully!', 'success');
         
     } catch (error) {
         console.error('Error updating profile:', error);
         document.getElementById('loading-spinner').style.display = 'none';
-        alert('Error updating profile. Please try again.');
+        showSnackbar('Error updating profile. Please try again.', 'error');
     }
 }
 
@@ -268,14 +319,34 @@ function handleCancel() {
     const hasChanges = checkForChanges();
     
     if (hasChanges) {
-        const confirmCancel = confirm('You have unsaved changes. Are you sure you want to cancel?');
-        if (!confirmCancel) {
-            return;
-        }
+        // Show confirmation modal
+        showCancelModal();
+    } else {
+        // Navigate back to dashboard
+        window.location.href = '../dashboard/index.html';
     }
+}
+
+/**
+ * Show cancel confirmation modal
+ */
+function showCancelModal() {
+    const modal = document.getElementById('cancel-modal');
+    modal.style.display = 'flex';
     
-    // Navigate back to dashboard
-    window.location.href = '../dashboard/index.html';
+    // Add event listeners
+    document.getElementById('cancel-modal-stay').onclick = closeCancelModal;
+    document.getElementById('cancel-modal-leave').onclick = () => {
+        window.location.href = '../dashboard/index.html';
+    };
+}
+
+/**
+ * Close cancel confirmation modal
+ */
+function closeCancelModal() {
+    const modal = document.getElementById('cancel-modal');
+    modal.style.display = 'none';
 }
 
 /**
@@ -299,8 +370,19 @@ function checkForChanges() {
     
     // Compare with original data
     for (const key in currentFormData) {
-        if (currentFormData[key] !== (originalData[key] || '')) {
-            return true;
+        const originalValue = originalData[key];
+        const currentValue = currentFormData[key];
+        
+        // Handle boolean fields (emailConsent)
+        if (typeof currentValue === 'boolean') {
+            if (currentValue !== (originalValue || false)) {
+                return true;
+            }
+        } else {
+            // Handle string fields
+            if (currentValue !== (originalValue || '')) {
+                return true;
+            }
         }
     }
     
@@ -312,6 +394,38 @@ function checkForChanges() {
  */
 function loadStudentDashboard(student) {
     loadStudentProfile(student);
+}
+
+/**
+ * Show snackbar notification
+ */
+function showSnackbar(message, type = 'success', duration = 3000) {
+    const snackbar = document.getElementById('snackbar');
+    
+    // Remove existing classes
+    snackbar.className = 'snackbar';
+    snackbar.classList.add(`snackbar-${type}`);
+    
+    // Add icon based on type
+    let icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    if (type === 'info') icon = 'fa-info-circle';
+    
+    snackbar.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Show snackbar
+    setTimeout(() => {
+        snackbar.classList.add('show');
+    }, 10);
+    
+    // Hide after duration
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+    }, duration);
 }
 
 // Initialize when DOM is ready
