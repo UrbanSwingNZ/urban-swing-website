@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-In History - Urban Swing</title>
+    <link rel="stylesheet" href="../css/base/variables.css">
+    <link rel="stylesheet" href="../css/base/reset.css">
+    <link rel="stylesheet" href="../css/base/typography.css">
+    <link rel="stylesheet" href="../css/portal.css">
+    <link rel="stylesheet" href="check-ins.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Admin Banner (only visible for admin users) -->
+    <div id="admin-banner" class="admin-banner" style="display: none;">
+        <div class="banner-content">
+            <div class="banner-left">
+                <i class="fas fa-user-shield"></i>
+                <span class="banner-title">ADMIN VIEW</span>
+                <select id="student-dropdown" class="student-dropdown">
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+            <div class="banner-right">
+                <a href="../../admin/index.html" class="btn-back-admin">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="portal-container" style="display: none;">
+        <!-- Header -->
+        <header class="portal-header">
+            <div class="header-content">
+                <a href="../dashboard/index.html">
+                    <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
+                </a>
+                <h1>Check-In History</h1>
+            </div>
+        </header>
+
+        <!-- Check-Ins Content -->
+        <div id="checkins-content" class="checkins-content" style="display: none;">
+            <div class="checkins-container">
+                <div class="back-nav">
+                    <a href="../dashboard/index.html" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+
+                <div class="checkins-header">
+                    <div class="header-info">
+                        <h2 id="student-name">Check-In History</h2>
+                        <p class="total-count">Total Check-Ins: <span id="total-count">0</span></p>
+                    </div>
+                </div>
+
+                <!-- Check-Ins List -->
+                <div class="checkins-list" id="checkins-list">
+                    <!-- Check-ins will be loaded here -->
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" class="pagination-controls" style="display: none;">
+                    <button class="pagination-btn" id="prev-page" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                        Previous
+                    </button>
+                    <div class="pagination-info">
+                        <span id="page-info">Page 1 of 1</span>
+                    </div>
+                    <button class="pagination-btn" id="next-page" disabled>
+                        Next
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="no-checkins" class="no-data" style="display: none;">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No Check-Ins Yet</h3>
+                    <p>This student hasn't checked in to any classes yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (No Student Selected - Admin Only) -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-user-friends"></i>
+            <h2>Select a Student</h2>
+            <p>Choose a student from the dropdown above to view their check-in history.</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading check-ins...</p>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="../../config/firebase-config.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth-check.js"></script>
+    <script src="../js/student-loader.js"></script>
+    <script src="check-ins.js"></script>
+</body>
+</html>
