@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Pay for Class - Urban Swing</title>
+    <link rel="stylesheet" href="../css/base/variables.css">
+    <link rel="stylesheet" href="../css/base/reset.css">
+    <link rel="stylesheet" href="../css/base/typography.css">
+    <link rel="stylesheet" href="../css/portal.css">
+    <link rel="stylesheet" href="prepay.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <!-- Admin Banner (only visible for admin users) -->
+    <div id="admin-banner" class="admin-banner" style="display: none;">
+        <div class="banner-content">
+            <div class="banner-left">
+                <i class="fas fa-user-shield"></i>
+                <span class="banner-title">ADMIN VIEW</span>
+                <select id="student-dropdown" class="student-dropdown">
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+            <div class="banner-right">
+                <a href="../../admin/index.html" class="btn-back-admin">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="portal-container" style="display: none;">
+        <!-- Header -->
+        <header class="portal-header">
+            <div class="header-content">
+                <a href="../dashboard/index.html">
+                    <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
+                </a>
+                <h1>Pre-Pay for Class</h1>
+            </div>
+        </header>
+
+        <!-- Prepay Content -->
+        <div id="prepay-content" class="prepay-content" style="display: none;">
+            <div class="prepay-container">
+                <div class="back-nav">
+                    <a href="../dashboard/index.html" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+
+                <!-- Coming Soon Notice -->
+                <div class="coming-soon-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <p><strong>Online payments coming soon!</strong> This feature is currently under development. Please contact us to pre-pay for a class.</p>
+                </div>
+
+                <div class="prepay-card">
+                    <form id="prepay-form">
+                        <!-- Class Information Section -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-calendar-check"></i> Class Information</h3>
+                            
+                            <!-- Class Date Selection -->
+                            <div class="form-group">
+                                <label for="class-date">
+                                    <i class="fas fa-calendar-alt"></i> Class Date
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="date-input-wrapper">
+                                    <input 
+                                        type="text" 
+                                        id="class-date" 
+                                        required
+                                        readonly
+                                        placeholder="Click to select a Thursday"
+                                    >
+                                    <i class="fas fa-calendar-alt date-input-icon"></i>
+                                </div>
+                                <div id="custom-calendar" class="custom-calendar" style="display: none;"></div>
+                                <p class="field-help">Select a Thursday - classes are only held on Thursdays</p>
+                            </div>
+
+                            <!-- Entry Type Selection -->
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-ticket-alt"></i> Entry Type
+                                    <span class="required">*</span>
+                                </label>
+                                <div id="entry-type-options" class="radio-group">
+                                    <p class="loading-text">Loading entry types...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Information Section -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+
+                            <!-- Card Number -->
+                            <div class="form-group">
+                                <label for="card-number">
+                                    <i class="fas fa-credit-card"></i> Card Number
+                                    <span class="required">*</span>
+                                </label>
+                                <div id="card-number" class="stripe-element"></div>
+                                <div id="card-errors" class="error-message"></div>
+                            </div>
+
+                            <!-- Expiry Date and CVV -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="card-expiry">
+                                        <i class="fas fa-calendar-alt"></i> Expiry Date
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div id="card-expiry" class="stripe-element"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-cvc">
+                                        <i class="fas fa-lock"></i> CVV
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div id="card-cvc" class="stripe-element"></div>
+                                </div>
+                            </div>
+
+                            <!-- Name on Card -->
+                            <div class="form-group">
+                                <label for="card-name">
+                                    <i class="fas fa-user"></i> Name on Card
+                                    <span class="required">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="card-name" 
+                                    placeholder="Name as it appears on card"
+                                    required
+                                >
+                            </div>
+
+                            <!-- Security Notice -->
+                            <div class="security-notice">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Your payment information is secure and encrypted</span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancel-btn">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-primary" id="submit-btn">
+                                <i class="fas fa-credit-card"></i>
+                                <span id="submit-text">Pay Now</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (No Student Selected - Admin Only) -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-user-friends"></i>
+            <h2>Select a Student</h2>
+            <p>Choose a student from the dropdown above to pre-pay for class.</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="../../config/firebase-config.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="../js/firebase-init.js"></script>
+    <script src="../js/auth-check.js"></script>
+    <script src="../js/student-loader.js"></script>
+    <script src="prepay.js"></script>
+</body>
+</html>

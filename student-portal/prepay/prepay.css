@@ -1,0 +1,685 @@
+/* Pre-Pay for Class Styles */
+
+.prepay-content {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.prepay-container {
+    width: 100%;
+}
+
+/* Back Navigation */
+.back-nav {
+    margin-bottom: 24px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-back:active {
+    transform: translateY(0);
+}
+
+/* Prepay Card */
+.prepay-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    font-size: 1.4rem;
+    color: var(--admin-purple);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-section h3 i {
+    font-size: 1.6rem;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group label i {
+    color: var(--admin-purple);
+    font-size: 1rem;
+}
+
+.required {
+    color: #e74c3c;
+    margin-left: 0.25rem;
+}
+
+/* Field Help Text */
+.field-help {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+/* Date Input Wrapper */
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Date Input */
+#class-date {
+    width: 100%;
+    padding: 12px 48px 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    height: 48px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background: white;
+}
+
+#class-date:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+}
+
+#class-date::placeholder {
+    color: #999;
+}
+
+/* Calendar Icon in Input */
+.date-input-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--admin-purple);
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+/* Custom Calendar */
+.custom-calendar {
+    position: absolute;
+    background: white;
+    border: 2px solid var(--admin-purple);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    z-index: 1000;
+    min-width: 320px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.calendar-nav-btn {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.calendar-nav-btn:hover {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+    background: rgba(139, 69, 255, 0.05);
+}
+
+.calendar-month-year {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    padding: 0.5rem;
+}
+
+.calendar-weekday.thursday {
+    color: var(--admin-purple);
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: default;
+    transition: all 0.2s ease;
+}
+
+.calendar-day.empty {
+    visibility: hidden;
+}
+
+.calendar-day.past {
+    color: #ccc;
+    background: #f9f9f9;
+}
+
+.calendar-day.not-thursday {
+    color: #999;
+    background: #f5f5f5;
+}
+
+.calendar-day.thursday {
+    color: var(--admin-purple);
+    background: rgba(139, 69, 255, 0.1);
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.calendar-day.thursday:hover {
+    background: rgba(139, 69, 255, 0.2);
+    border-color: var(--admin-purple);
+    transform: scale(1.05);
+}
+
+.calendar-day.thursday.selected {
+    background: var(--admin-purple);
+    color: white;
+    border-color: var(--admin-purple);
+}
+
+.calendar-day.today.thursday {
+    border: 2px solid var(--admin-purple);
+}
+
+/* Radio Group */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.loading-text {
+    color: #666;
+    font-style: italic;
+}
+
+.radio-option {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.radio-option:hover {
+    border-color: var(--admin-purple);
+    background: rgba(139, 69, 255, 0.02);
+}
+
+.radio-option.selected {
+    border-color: var(--admin-purple);
+    background: rgba(139, 69, 255, 0.05);
+}
+
+.radio-option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.radio-content {
+    flex: 1;
+}
+
+.radio-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.radio-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.radio-price {
+    font-weight: 700;
+    color: var(--admin-purple);
+    font-size: 1.1rem;
+}
+
+.radio-description {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.radio-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #fff3cd;
+    border-left: 3px solid #ffc107;
+    border-radius: 4px;
+}
+
+.radio-notice i {
+    color: #f57c00;
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+}
+
+.radio-notice p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #663c00;
+    line-height: 1.4;
+}
+
+.promo-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #4caf50;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+}
+
+/* Stripe Elements */
+.stripe-element {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.3s ease;
+    height: 48px;
+    display: flex;
+    align-items: center;
+}
+
+.stripe-element:focus-within {
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+}
+
+/* Text Input */
+input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    height: 48px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+}
+
+input[type="text"]::placeholder {
+    color: #999;
+}
+
+/* Form Row (for side-by-side inputs) */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Error Messages */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.error-message.visible {
+    display: block;
+}
+
+/* Security Notice */
+.security-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 16px;
+    font-size: 0.9rem;
+}
+
+.security-notice i {
+    font-size: 1.2rem;
+}
+
+.security-notice span {
+    color: inherit;
+    font-weight: normal;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.btn-primary {
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+/* Loading State */
+.btn-primary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Coming Soon Notice */
+.coming-soon-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #fff3cd, #fff8e1);
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.coming-soon-notice i {
+    color: #f57c00;
+    font-size: 1.1rem;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+}
+
+.coming-soon-notice p {
+    margin: 0;
+    color: #663c00;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.coming-soon-notice strong {
+    color: #f57c00;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .prepay-content {
+        padding: 1rem;
+    }
+
+    .prepay-card {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-section h3 {
+        font-size: 1.2rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .coming-soon-notice {
+        padding: 0.875rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .radio-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .radio-option {
+        padding: 0.875rem;
+    }
+
+    .radio-description {
+        font-size: 0.85rem;
+    }
+
+    .radio-notice {
+        padding: 0.625rem;
+    }
+
+    .radio-notice p {
+        font-size: 0.8rem;
+    }
+
+    .back-nav {
+        margin-bottom: 16px;
+    }
+
+    /* Calendar adjustments for mobile */
+    .custom-calendar {
+        left: 0;
+        right: 0;
+        min-width: unset;
+        width: calc(100vw - 2rem);
+        max-width: 400px;
+    }
+
+    .calendar-day {
+        font-size: 0.85rem;
+    }
+
+    .calendar-weekday {
+        font-size: 0.75rem;
+        padding: 0.375rem;
+    }
+
+    .calendar-month-year {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Urban Swing Student Portal</title>
+    <link rel="stylesheet" href="css/base/variables.css">
+    <link rel="stylesheet" href="css/base/reset.css">
+    <link rel="stylesheet" href="css/base/typography.css">
+    <link rel="stylesheet" href="css/registration-form.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing registration...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="register-container">
+        <div class="register-card">
+            <a href="index.html" title="Back to Login">
+                <img src="/images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
+            </a>
+            <h1>Student Registration</h1>
+            <p class="subtitle">Join the Urban Swing community</p>
+
+            <!-- Registration Form -->
+            <form id="registration-form" class="registration-form" autocomplete="off">
+                <!-- First Name -->
+                <div class="form-group">
+                    <label for="firstName">
+                        <i class="fas fa-user"></i> First Name <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="firstName" 
+                        name="firstName" 
+                        placeholder="Enter your first name" 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Last Name -->
+                <div class="form-group">
+                    <label for="lastName">
+                        <i class="fas fa-user"></i> Last Name <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="lastName" 
+                        name="lastName" 
+                        placeholder="Enter your last name" 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email Address <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="your.email@example.com" 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phoneNumber">
+                        <i class="fas fa-phone"></i> Phone Number <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        name="phoneNumber" 
+                        placeholder="021 123 4567" 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Pronouns -->
+                <div class="form-group">
+                    <label for="pronouns">
+                        <i class="fas fa-id-badge"></i> Pronouns
+                    </label>
+                    <select 
+                        id="pronouns" 
+                        name="pronouns"
+                        autocomplete="off"
+                    >
+                        <option value="">Select pronouns (optional)</option>
+                        <option value="she/her">she/her</option>
+                        <option value="he/him">he/him</option>
+                        <option value="they/them">they/them</option>
+                    </select>
+                    <small class="form-help">Optional - helps us address you correctly</small>
+                </div>
+
+                <!-- Age Confirmation -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="over16Confirmed" 
+                            name="over16Confirmed" 
+                            required
+                        >
+                        <span>
+                            I confirm I am 16 years or older <span class="required">*</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="termsAccepted" 
+                            name="termsAccepted" 
+                            required
+                        >
+                        <span>
+                            I accept the <a href="#" id="terms-link" class="terms-link">Terms and Conditions</a> <span class="required">*</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Email Consent (Hidden - defaults to true) -->
+                <div class="form-group checkbox-group" style="display: none;">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="emailConsent" 
+                            name="emailConsent"
+                            checked
+                        >
+                        <span>
+                            <i class="fas fa-envelope-open-text"></i> 
+                            I'd like to receive updates and news from Urban Swing
+                        </span>
+                    </label>
+                    <small class="form-help">We'll only send occasional updates about classes and events</small>
+                </div>
+
+                <!-- Payment Section -->
+                <!-- NOTE: These payment fields are placeholders and will be replaced with Stripe Elements when payment processing is integrated.
+                     Stripe Elements will:
+                     - Automatically detect card type (Visa, Mastercard, Amex, etc.) as user types
+                     - Display appropriate card brand icons
+                     - Provide real-time validation
+                     - Handle PCI compliance (card data never touches our server)
+                     - Be configured through Stripe Dashboard to accept specific card brands -->
+                <div class="payment-section">
+                    <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+                    
+                    <!-- Payment Option Selection -->
+                    <div class="form-group">
+                        <label style="margin-bottom: 12px;">
+                            <i class="fas fa-money-bill-wave"></i> Select Payment Option <span class="required">*</span>
+                        </label>
+                        <div class="rate-options" id="rate-options">
+                            <label class="rate-option">
+                                <input 
+                                    type="radio" 
+                                    name="rateType" 
+                                    value="casual-entry" 
+                                    required
+                                >
+                                <span class="rate-label">
+                                    <span class="rate-name">Casual Entry</span>
+                                    <span class="rate-price" id="casual-entry-price">Loading...</span>
+                                </span>
+                            </label>
+                            
+                            <label class="rate-option">
+                                <input 
+                                    type="radio" 
+                                    name="rateType" 
+                                    value="casual-student" 
+                                    required
+                                >
+                                <span class="rate-label">
+                                    <span class="rate-name">Casual Student</span>
+                                    <span class="rate-price" id="casual-student-price">Loading...</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- TODO: Replace with Stripe Card Element -->
+                    <div class="form-group">
+                        <label for="cardNumber">
+                            <i class="fas fa-credit-card"></i> Card Number
+                        </label>
+                        <input 
+                            type="text" 
+                            id="cardNumber" 
+                            name="cardNumber" 
+                            placeholder="1234 5678 9012 3456"
+                            maxlength="19"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <!-- TODO: Replace with Stripe Card Expiry Element -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiryDate">
+                                <i class="fas fa-calendar"></i> Expiry Date
+                            </label>
+                            <input 
+                                type="text" 
+                                id="expiryDate" 
+                                name="expiryDate" 
+                                placeholder="MM/YY"
+                                maxlength="5"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <!-- TODO: Replace with Stripe Card CVC Element -->
+                        <div class="form-group">
+                            <label for="cvv">
+                                <i class="fas fa-lock"></i> CVV
+                            </label>
+                            <input 
+                                type="text" 
+                                id="cvv" 
+                                name="cvv" 
+                                placeholder="123"
+                                maxlength="4"
+                                autocomplete="off"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cardName">
+                            <i class="fas fa-user"></i> Name on Card
+                        </label>
+                        <input 
+                            type="text" 
+                            id="cardName" 
+                            name="cardName" 
+                            placeholder="Name as it appears on card"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div class="payment-notice">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Your payment information is secure and encrypted</span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary btn-submit" id="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Complete Registration & Pay
+                </button>
+
+                <!-- Messages -->
+                <div id="success-message" class="success-message" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Registration successful! Welcome to Urban Swing!</span>
+                </div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
+            </form>
+
+            <!-- Back to Login Link -->
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div id="terms-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-contract"></i> Terms and Conditions</h3>
+                <button class="modal-close" id="terms-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body terms-content">
+                <h4>Urban Swing Terms and Conditions</h4>
+                <p><strong>Last Updated: 10 January 2025</strong></p>
+                
+                <h5>Liability Waiver & Acknowledgment of Risk</h5>
+                <p>I understand that participating in dance classes, events, or activities at Urban Swing involves inherent risks, including but not limited to physical injury. While Urban Swing will take all reasonable precautions to ensure a safe environment and minimize these risks, I acknowledge that the ultimate responsibility for my safety lies with me as the participant.</p>
+                
+                <p>By participating in Urban Swing's classes or events, I agree to assume full responsibility for any injuries, accidents, or other incidents that may occur during my participation. I understand that Urban Swing cannot be held liable for any injuries or damages sustained while attending or engaging in its activities.</p>
+                
+                <p>I hereby release Urban Swing, its instructors, crew, and affiliates from any and all claims, demands, or causes of action related to injury, loss, or damage that may arise during my participation in classes or events.</p>
+                
+                <h5>Media</h5>
+                <p>By submitting this form, I give permission to Urban Swing Limited to capture photos, videos, and other media of my participation in dance classes, events, or performances. These images and videos may be used for advertising, educational, training, or other promotional purposes across various platforms, including social media, websites, and other digital media.</p>
+                
+                <p>I understand that my participation in media captured by Urban Swing may be shared publicly. However, if I have any concerns or would prefer not to be included in such media, I will inform an owner of Urban Swing upon my arrival at a class or event. Urban Swing respects my right to privacy and will make every effort to exclude me from media coverage if requested.</p>
+                
+                <p><strong>By submitting this form, I acknowledge that I fully understand and agree to these terms.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="terms-accept-btn">
+                    <i class="fas fa-check"></i> Accept and Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="../config/firebase-config.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="js/firebase-init.js"></script>
+    <script src="js/services/casual-rates-loader.js"></script>
+    <script src="js/ui/terms-modal.js"></script>
+    <script src="js/registration-form-handler.js"></script>
+</body>
+</html>

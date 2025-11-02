@@ -1,0 +1,285 @@
+/* My Concessions Page Styles */
+
+.concessions-content {
+    padding: 2rem;
+}
+
+.concessions-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-nav {
+    margin-bottom: 2rem;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-back:active {
+    transform: translateY(0);
+}
+
+/* Concessions Header */
+.concessions-header {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.header-info h2 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.5rem;
+}
+
+/* Concessions Sections */
+.concessions-section {
+    margin-bottom: 2rem;
+}
+
+.concession-accordion-header {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.concession-accordion-header:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.concession-accordion-header i.fas:first-child {
+    margin-right: 10px;
+}
+
+.accordion-icon {
+    transition: transform 0.3s ease;
+    font-size: 1rem;
+}
+
+.concession-accordion-header.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+/* Accordion Content */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-top: 1rem;
+}
+
+.accordion-content.show {
+    max-height: none;
+}
+
+/* Concessions List */
+.concessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Concession Item */
+.concession-item {
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--admin-success);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.concession-item:hover {
+    border-color: var(--admin-purple);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+}
+
+.concession-item.expired {
+    opacity: 0.7;
+    background: rgba(220, 53, 69, 0.05);
+    border-left: 4px solid var(--admin-error);
+}
+
+.concession-item.depleted {
+    opacity: 0.7;
+    background: rgba(255, 193, 7, 0.05);
+    border-left: 4px solid var(--admin-warning);
+}
+
+.concession-item.locked {
+    opacity: 0.6;
+    background: rgba(128, 128, 128, 0.1);
+}
+
+.concession-item.expired.locked {
+    border-left: 4px solid var(--admin-error);
+}
+
+.concession-item.depleted.locked {
+    border-left: 4px solid var(--admin-warning);
+}
+
+.concession-item.locked:not(.expired):not(.depleted) {
+    border-left: 4px solid #6c757d;
+}
+
+.concession-item.gifted {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.03) 0%, rgba(76, 175, 80, 0.08) 100%);
+}
+
+/* Concession Content */
+.concession-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.concession-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.concession-info strong {
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.concession-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+.concession-details span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.concession-details i {
+    width: 18px;
+    text-align: center;
+    color: var(--admin-purple);
+    opacity: 0.7;
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-locked {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}
+
+.badge-gifted {
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.badge i {
+    font-size: 0.75rem;
+}
+
+/* Empty State */
+.no-data {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.no-data i {
+    font-size: 4rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
+}
+
+.no-data h3 {
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.no-data p {
+    color: #999;
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .concessions-content {
+        padding: 1rem;
+    }
+
+    .concessions-header {
+        padding: 1rem;
+    }
+
+    .header-info h2 {
+        font-size: 1.25rem;
+    }
+
+    .concession-item {
+        padding: 1rem;
+    }
+
+    .concession-info strong {
+        font-size: 1rem;
+    }
+
+    .concession-details {
+        font-size: 0.85rem;
+    }
+}

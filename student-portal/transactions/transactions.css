@@ -1,0 +1,374 @@
+/* Transaction History Styles */
+
+.transactions-content {
+    padding: 2rem;
+}
+
+.transactions-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-nav {
+    margin-bottom: 2rem;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-back:active {
+    transform: translateY(0);
+}
+
+/* Transactions Header */
+.transactions-header {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.header-info h2 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-size: 1.5rem;
+}
+
+.total-info {
+    display: flex;
+    gap: 2rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.total-count,
+.total-amount {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.total-count span,
+.total-amount span {
+    font-weight: 700;
+    color: var(--admin-purple);
+    font-size: 1.1rem;
+}
+
+/* Table Container */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+#transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#transactions-table thead {
+    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    color: white;
+}
+
+#transactions-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#transactions-table th.align-right {
+    text-align: right;
+}
+
+#transactions-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+#transactions-table tbody tr:hover {
+    background-color: #f8f9ff;
+}
+
+#transactions-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+#transactions-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+#transactions-table td.align-right {
+    text-align: right;
+}
+
+/* Reversed Transaction Styling */
+#transactions-table tbody tr.reversed {
+    opacity: 0.6;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 0, 0, 0.02) 10px,
+        rgba(255, 0, 0, 0.02) 20px
+    );
+}
+
+/* Date Column */
+.transaction-date {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Type Column with Badges */
+.transaction-type {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Type Badges - matching admin transactions page exactly */
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.type-badge.concession {
+    background: rgba(154, 22, 245, 0.1);
+    color: var(--admin-purple);
+}
+
+.type-badge.casual,
+.type-badge.casual-entry {
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
+}
+
+.type-badge.casual-student {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.type-badge.gift {
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+}
+
+.type-badge.reversed {
+    background: #ffebee;
+    color: #c62828;
+    margin-right: 0.5rem;
+}
+
+/* Payment Method Badges */
+.payment-method {
+    padding: 1rem;
+}
+
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.payment-badge i {
+    font-size: 0.9rem;
+}
+
+.payment-badge.cash {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.payment-badge.eftpos {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.payment-badge.bank {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+.payment-badge.unknown {
+    background: #f5f5f5;
+    color: #616161;
+}
+
+/* Amount Column */
+.amount {
+    font-weight: 700;
+    color: #2c5282;
+    font-size: 1rem;
+}
+
+/* Empty State */
+.no-data {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.no-data i {
+    font-size: 4rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
+}
+
+.no-data h3 {
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.no-data p {
+    color: #999;
+    font-size: 1rem;
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.pagination-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    min-width: 120px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .transactions-content {
+        padding: 1rem;
+    }
+
+    .transactions-header {
+        padding: 1rem;
+    }
+
+    .header-info h2 {
+        font-size: 1.25rem;
+    }
+
+    .total-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* Make table scrollable on mobile */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    #transactions-table {
+        min-width: 600px;
+    }
+
+    #transactions-table th,
+    #transactions-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .type-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .pagination-controls {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .pagination-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .page-info {
+        width: 100%;
+        order: -1;
+    }
+}

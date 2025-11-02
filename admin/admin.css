@@ -510,14 +510,17 @@ html, body {
   }
 }
 
+/* Top border gradient - consistent across all tiles */
 .dashboard-tile::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, var(--tile-color-1), var(--tile-color-2));
+  height: 6px;
+  background: linear-gradient(to right, var(--tile-color-1), var(--tile-color-2));
+  border-radius: 20px 20px 0 0;
+  z-index: 1;
 }
 
 .dashboard-tile:hover {
@@ -525,25 +528,25 @@ html, body {
   box-shadow: 0 15px 40px var(--admin-shadow);
 }
 
-/* Tile Colors */
+/* Tile Colors - All tiles use the same gradient: purple → pink → blue */
 .tile-playlist {
   --tile-color-1: var(--admin-purple);
   --tile-color-2: var(--admin-pink);
 }
 
 .tile-students {
-  --tile-color-1: var(--admin-pink);
-  --tile-color-2: var(--admin-blue);
+  --tile-color-1: var(--admin-purple);
+  --tile-color-2: var(--admin-pink);
 }
 
 .tile-checkin {
-  --tile-color-1: var(--admin-blue);
-  --tile-color-2: var(--admin-purple);
+  --tile-color-1: var(--admin-purple);
+  --tile-color-2: var(--admin-pink);
 }
 
-.tile-transactions {
-  --tile-color-1: var(--admin-blue);
-  --tile-color-2: var(--admin-purple);
+.tile-portal {
+  --tile-color-1: var(--admin-purple);
+  --tile-color-2: var(--admin-pink);
 }
 
 .tile-tools {
@@ -551,6 +554,7 @@ html, body {
   --tile-color-2: var(--admin-pink);
 }
 
+/* Tile icon - consistent across all tiles */
 .tile-icon {
   width: 80px;
   height: 80px;
@@ -563,6 +567,8 @@ html, body {
   background: linear-gradient(135deg, var(--tile-color-1), var(--tile-color-2));
   color: white;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 2;
 }
 
 .dashboard-tile h3 {
@@ -577,6 +583,7 @@ html, body {
   line-height: 1.6;
 }
 
+/* Tile button - consistent across all tiles */
 .tile-button {
   padding: 12px 30px;
   background: linear-gradient(135deg, var(--tile-color-1), var(--tile-color-2));
@@ -587,6 +594,8 @@ html, body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .tile-button:hover:not(:disabled) {
