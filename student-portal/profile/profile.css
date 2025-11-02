@@ -275,18 +275,22 @@ label:has(+ textarea[required])::after {
     background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
 }
 
-.btn-secondary {
+.form-actions .btn-secondary {
     background: white;
     color: var(--text-color);
     border: 2px solid var(--border-color);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
-.btn-secondary:hover:not(:disabled) {
+.form-actions .btn-secondary:hover:not(:disabled) {
     border-color: var(--admin-purple);
     color: var(--admin-purple);
 }
 
-.btn-secondary:disabled {
+.form-actions .btn-secondary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     border-color: var(--border-color);
@@ -352,7 +356,7 @@ label:has(+ textarea[required])::after {
 }
 
 /* Modal Button Styles */
-.btn-secondary {
+.modal-footer .btn-secondary {
     padding: 10px 20px;
     background: transparent;
     border: 2px solid var(--border-color);
@@ -371,12 +375,12 @@ label:has(+ textarea[required])::after {
     line-height: 1;
 }
 
-.btn-secondary:hover {
+.modal-footer .btn-secondary:hover {
     background: var(--border-color);
     transform: translateY(-2px);
 }
 
-.btn-danger {
+.modal-footer .btn-danger {
     background: #dc3545;
     color: white;
     border: none;
@@ -395,13 +399,13 @@ label:has(+ textarea[required])::after {
     line-height: 1;
 }
 
-.btn-danger:hover {
+.modal-footer .btn-danger:hover {
     background: #c82333;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
 }
 
-.btn-danger i {
+.modal-footer .btn-danger i {
     font-size: 0.9rem;
 }
 
