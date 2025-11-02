@@ -194,9 +194,9 @@ function updateSubmitButton() {
     const submitText = document.getElementById('submit-text');
     
     if (selectedPackage) {
-        submitText.innerHTML = `<i class="fas fa-shopping-cart"></i> Purchase for $${selectedPackage.price.toFixed(2)}`;
+        submitText.textContent = `Purchase for $${selectedPackage.price.toFixed(2)}`;
     } else {
-        submitText.innerHTML = '<i class="fas fa-shopping-cart"></i> Purchase Concessions';
+        submitText.textContent = 'Purchase Concessions';
     }
 }
 
