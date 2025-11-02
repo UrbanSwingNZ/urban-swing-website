@@ -547,17 +547,47 @@ async function processPayment(classDate, cardName) {
 // Cancel button handler
 document.getElementById('cancel-btn').addEventListener('click', () => {
     // Check if form has been modified
-    const classDate = document.getElementById('class-date');
-    const cardName = document.getElementById('card-name');
-    
-    if (classDate.value || cardName.value) {
-        if (confirm('Are you sure you want to cancel? Any entered information will be lost.')) {
-            window.location.href = '../dashboard/index.html';
-        }
+    if (checkForChanges()) {
+        // Show confirmation modal
+        showCancelModal();
     } else {
+        // Navigate back to dashboard
         window.location.href = '../dashboard/index.html';
     }
 });
+
+/**
+ * Check if form has unsaved changes
+ */
+function checkForChanges() {
+    const classDate = document.getElementById('class-date');
+    const cardName = document.getElementById('card-name');
+    
+    // Check if any field has been filled
+    return classDate.value.trim() || cardName.value.trim();
+}
+
+/**
+ * Show cancel confirmation modal
+ */
+function showCancelModal() {
+    const modal = document.getElementById('cancel-modal');
+    modal.style.display = 'flex';
+    
+    // Add event listeners
+    document.getElementById('cancel-modal-stay').onclick = closeCancelModal;
+    document.getElementById('cancel-modal-leave').onclick = () => {
+        window.location.href = '../dashboard/index.html';
+    };
+}
+
+/**
+ * Close cancel confirmation modal
+ */
+function closeCancelModal() {
+    const modal = document.getElementById('cancel-modal');
+    modal.style.display = 'none';
+}
 
 // Show snackbar notification
 function showSnackbar(message, type = 'info', duration = 3000) {

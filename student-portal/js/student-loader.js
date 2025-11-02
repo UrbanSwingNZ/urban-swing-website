@@ -72,7 +72,7 @@ function populateStudentDropdown() {
     allStudents.forEach(student => {
         const option = document.createElement('option');
         option.value = student.id;
-        option.textContent = `${student.firstName} ${student.lastName} (${student.email})`;
+        option.textContent = `${student.firstName} ${student.lastName}`;
         dropdown.appendChild(option);
     });
     
