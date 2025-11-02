@@ -4,9 +4,17 @@
  */
 
 /**
- * Check if an email address already exists in the students collection
+ * Check if an email address exists in students and/or users collections
  * @param {string} email - The email address to check
- * @returns {Promise<Object>} Object with exists flag and matching students array
+ * @returns {Promise<Object>} Object with status and student data if applicable
+ * 
+ * Return object structure:
+ * {
+ *   status: 'new' | 'existing-complete' | 'existing-incomplete',
+ *   hasStudent: boolean,
+ *   hasUser: boolean,
+ *   studentData: Object | null - Full student data if exists
+ * }
  */
 async function checkEmailExists(email) {
     try {
@@ -17,30 +25,52 @@ async function checkEmailExists(email) {
         
         const normalizedEmail = email.toLowerCase().trim();
         
-        const snapshot = await window.db.collection('students')
-            .where('email', '==', normalizedEmail)
-            .limit(10)
-            .get();
+        // Query both collections in parallel
+        const [studentSnapshot, userSnapshot] = await Promise.all([
+            window.db.collection('students')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get(),
+            window.db.collection('users')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get()
+        ]);
         
-        if (snapshot.empty) {
-            return {
-                exists: false,
-                students: []
+        const hasStudent = !studentSnapshot.empty;
+        const hasUser = !userSnapshot.empty;
+        
+        // Extract student data if exists
+        let studentData = null;
+        if (hasStudent) {
+            const doc = studentSnapshot.docs[0];
+            studentData = {
+                id: doc.id,
+                ...doc.data()
             };
         }
         
-        const students = snapshot.docs.map(doc => ({
-            id: doc.id,
-            firstName: doc.data().firstName || '',
-            lastName: doc.data().lastName || '',
-            email: doc.data().email || '',
-            phoneNumber: doc.data().phoneNumber || ''
-        }));
+        // Determine status
+        let status;
+        if (!hasStudent && !hasUser) {
+            status = 'new';
+        } else if (hasStudent && hasUser) {
+            status = 'existing-complete';
+        } else if (hasStudent && !hasUser) {
+            status = 'existing-incomplete';
+        } else {
+            // Edge case: user exists but no student (shouldn't happen, but handle it)
+            console.warn('User exists without student record for email:', normalizedEmail);
+            status = 'existing-complete'; // Treat as complete to prevent registration
+        }
         
         return {
-            exists: true,
-            students: students
+            status,
+            hasStudent,
+            hasUser,
+            studentData
         };
+        
     } catch (error) {
         console.error('Error checking email:', error);
         throw new Error('Failed to check email address');
