@@ -6,10 +6,8 @@
 /**
  * Show the email exists warning modal
  * @param {Array} students - Array of students with matching email
- * @param {Function} onContinue - Callback function when user continues
- * @param {Function} onCancel - Callback function when user cancels
  */
-function showEmailExistsModal(students, onContinue, onCancel) {
+function showEmailExistsModal(students) {
     const modal = document.getElementById('email-exists-modal');
     if (!modal) {
         console.error('Email exists modal not found');
@@ -24,25 +22,16 @@ function showEmailExistsModal(students, onContinue, onCancel) {
         </div>
     `).join('');
     
-    // Set up button handlers
-    const continueBtn = document.getElementById('continue-registration-btn');
-    const cancelBtn = document.getElementById('cancel-registration-btn');
+    // Set up button handler
+    const closeBtn = document.getElementById('close-modal-btn');
     
-    // Remove any existing event listeners by cloning buttons
-    const newContinueBtn = continueBtn.cloneNode(true);
-    const newCancelBtn = cancelBtn.cloneNode(true);
-    continueBtn.parentNode.replaceChild(newContinueBtn, continueBtn);
-    cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+    // Remove any existing event listeners by cloning button
+    const newCloseBtn = closeBtn.cloneNode(true);
+    closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
     
-    // Add new event listeners
-    newContinueBtn.addEventListener('click', () => {
+    // Add new event listener
+    newCloseBtn.addEventListener('click', () => {
         hideEmailExistsModal();
-        if (onContinue) onContinue();
-    });
-    
-    newCancelBtn.addEventListener('click', () => {
-        hideEmailExistsModal();
-        if (onCancel) onCancel();
     });
     
     // Show modal
