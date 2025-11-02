@@ -1,5 +1,10 @@
 // Transaction History Page
 
+// Pagination
+let allTransactions = [];
+let currentPage = 1;
+const itemsPerPage = 12;
+
 // Page Initialization
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Transaction History page loaded');
@@ -100,8 +105,13 @@ async function loadStudentTransactions(studentId) {
         
         console.log(`Found ${transactions.length} transactions`);
         
+        // Store all transactions for pagination
+        allTransactions = transactions;
+        currentPage = 1;
+        
         // Display transactions
-        displayTransactions(transactions);
+        displayTransactionsPage();
+        setupPagination();
         
         // Show content
         document.getElementById('transactions-content').style.display = 'block';
@@ -115,17 +125,18 @@ async function loadStudentTransactions(studentId) {
     }
 }
 
-function displayTransactions(transactions) {
+function displayTransactionsPage() {
     const tbody = document.getElementById('transactions-tbody');
     const noDataDiv = document.getElementById('no-transactions');
     
     // Clear existing rows
     tbody.innerHTML = '';
     
-    if (transactions.length === 0) {
+    if (allTransactions.length === 0) {
         noDataDiv.style.display = 'block';
         document.querySelector('.table-container').style.display = 'none';
         document.querySelector('.total-info').style.display = 'none';
+        document.getElementById('pagination-controls').style.display = 'none';
         return;
     }
     
@@ -133,22 +144,77 @@ function displayTransactions(transactions) {
     document.querySelector('.table-container').style.display = 'block';
     document.querySelector('.total-info').style.display = 'flex';
     
-    // Calculate totals
-    let totalAmount = 0;
-    transactions.forEach(transaction => {
-        if (!transaction.reversed) {
-            totalAmount += transaction.amountPaid || 0;
+    // Update summary (showing total count)
+    document.getElementById('total-count').textContent = allTransactions.length;
+    
+    // Calculate pagination
+    const totalPages = Math.ceil(allTransactions.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, allTransactions.length);
+    const pageTransactions = allTransactions.slice(startIndex, endIndex);
+    
+    // Create table rows for current page
+    pageTransactions.forEach(transaction => {
+        const row = createTransactionRow(transaction);
+        tbody.appendChild(row);
+    });
+    
+    // Update pagination controls
+    updatePaginationControls(totalPages);
+}
+
+/**
+ * Update pagination controls state
+ */
+function updatePaginationControls(totalPages) {
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    const paginationControls = document.getElementById('pagination-controls');
+    
+    // Show/hide pagination controls
+    if (totalPages <= 1) {
+        paginationControls.style.display = 'none';
+        return;
+    } else {
+        paginationControls.style.display = 'flex';
+    }
+    
+    // Update page info
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    
+    // Enable/disable buttons
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+}
+
+/**
+ * Setup pagination button handlers
+ */
+function setupPagination() {
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    // Remove existing listeners by cloning
+    const newPrevBtn = prevBtn.cloneNode(true);
+    const newNextBtn = nextBtn.cloneNode(true);
+    prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+    nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+    
+    // Add new listeners
+    newPrevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayTransactionsPage();
         }
     });
     
-    // Update summary
-    document.getElementById('total-count').textContent = transactions.length;
-    document.getElementById('total-amount').textContent = `$${totalAmount.toFixed(2)}`;
-    
-    // Create table rows
-    transactions.forEach(transaction => {
-        const row = createTransactionRow(transaction);
-        tbody.appendChild(row);
+    newNextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(allTransactions.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayTransactionsPage();
+        }
     });
 }
 

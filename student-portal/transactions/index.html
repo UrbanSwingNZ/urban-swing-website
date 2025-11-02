@@ -64,7 +64,6 @@
                         <h2 id="student-name">Transaction History</h2>
                         <p class="total-info">
                             <span class="total-count">Total: <span id="total-count">0</span> transactions</span>
-                            <span class="total-amount">Amount: <span id="total-amount">$0.00</span></span>
                         </p>
                     </div>
                 </div>
@@ -84,6 +83,19 @@
                             <!-- Transactions will be loaded here -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" class="pagination-controls" style="display: none;">
+                    <button id="prev-page" class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i>
+                        Previous
+                    </button>
+                    <span id="page-info" class="page-info">Page 1 of 1</span>
+                    <button id="next-page" class="pagination-btn">
+                        Next
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
 
                 <!-- Empty State -->

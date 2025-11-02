@@ -371,8 +371,13 @@ input[type="text"]::placeholder {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .purchase-content {
+        padding: 1rem;
+    }
+
     .purchase-card {
         padding: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .form-section h3 {
@@ -385,6 +390,7 @@ input[type="text"]::placeholder {
 
     .form-actions {
         flex-direction: column-reverse;
+        gap: 12px;
     }
 
     .btn-primary,
@@ -394,7 +400,19 @@ input[type="text"]::placeholder {
     }
 
     .coming-soon-notice {
-        flex-direction: column;
-        text-align: center;
+        padding: 0.875rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .package-details {
+        padding: 0.875rem;
+    }
+
+    select {
+        font-size: 0.95rem;
+    }
+
+    .back-nav {
+        margin-bottom: 16px;
     }
 }

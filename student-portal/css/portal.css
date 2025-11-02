@@ -280,35 +280,113 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .admin-banner {
+        padding: 12px 16px;
+    }
+
     .banner-content {
         flex-direction: column;
         gap: 12px;
-        text-align: center;
+        align-items: stretch;
     }
     
     .banner-left {
         flex-direction: column;
         gap: 8px;
+        width: 100%;
+    }
+
+    .banner-title {
+        font-size: 0.95rem;
     }
     
-    .selector-content {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .student-dropdown {
+    .banner-left .student-dropdown {
         max-width: none;
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .btn-back-admin {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .portal-header {
+        padding: 16px;
+    }
+
+    .header-content {
+        gap: 12px;
+    }
+
+    .portal-header .logo {
+        width: 80px;
+    }
+
+    .portal-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .dashboard-content {
+        padding: 24px 16px;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
     }
     
     .nav-cards {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .nav-card {
+        padding: 24px;
     }
     
+    .welcome-section {
+        margin-bottom: 24px;
+    }
+
     .welcome-section h2 {
         font-size: 1.5rem;
+    }
+
+    .welcome-message {
+        font-size: 1rem;
+    }
+
+    .empty-state {
+        padding: 60px 16px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+    }
+
+    .empty-state h2 {
+        font-size: 1.5rem;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
     }
 }

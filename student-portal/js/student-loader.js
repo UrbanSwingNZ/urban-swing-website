@@ -11,20 +11,11 @@ let selectedStudent = null;
  */
 async function loadStudents() {
     try {
-        // Wait for authorization check
-        if (!isAuthorized) {
-            console.log('Not authorized to load students');
-            return;
-        }
-
         // Wait for Firebase to be initialized
         if (!window.db) {
-            console.error('Firebase not initialized');
             setTimeout(loadStudents, 500);
             return;
         }
-
-        console.log('Loading students...');
 
         // Fetch all students (no ordering in query to avoid index requirement)
         const studentsSnapshot = await window.db.collection('students').get();
@@ -47,7 +38,6 @@ async function loadStudents() {
             return (a.lastName || '').localeCompare(b.lastName || '');
         });
 
-        console.log(`Loaded ${allStudents.length} students`);
         populateStudentDropdown();
     } catch (error) {
         console.error('Error loading students:', error);
@@ -63,6 +53,11 @@ async function loadStudents() {
  */
 function populateStudentDropdown() {
     const dropdown = document.getElementById('student-dropdown');
+    
+    if (!dropdown) {
+        console.error('student-dropdown element not found');
+        return;
+    }
     
     // Clear existing options
     dropdown.innerHTML = '';
@@ -88,7 +83,6 @@ function populateStudentDropdown() {
         // Load that student's data
         selectedStudent = allStudents.find(s => s.id === currentStudentId);
         if (selectedStudent) {
-            console.log('Restored selected student:', selectedStudent);
             loadStudentDashboard(selectedStudent);
         }
     }
@@ -116,7 +110,6 @@ function handleStudentSelection(event) {
     selectedStudent = allStudents.find(s => s.id === studentId);
     
     if (selectedStudent) {
-        console.log('Selected student:', selectedStudent);
         // Store selected student ID in sessionStorage to persist across pages
         sessionStorage.setItem('currentStudentId', studentId);
         updateAdminBanner(selectedStudent);
@@ -131,23 +124,54 @@ function handleStudentSelection(event) {
  */
 function updateAdminBanner(student) {
     // No banner updates needed - the dropdown selection is sufficient
-    console.log('Admin banner update:', student ? `${student.firstName} ${student.lastName}` : 'No student');
 }
 
 /**
  * Show empty state (no student selected)
  */
 function showEmptyState() {
-    document.getElementById('student-dashboard').style.display = 'none';
-    document.getElementById('empty-state').style.display = 'block';
+    const studentDashboard = document.getElementById('student-dashboard');
+    const transactionsContent = document.getElementById('transactions-content');
+    const checkinsContent = document.getElementById('checkins-content');
+    const concessionsContent = document.getElementById('concessions-content');
+    const profileContent = document.getElementById('profile-content');
+    const purchaseContent = document.getElementById('purchase-content');
+    const prepayContent = document.getElementById('prepay-content');
+    
+    if (studentDashboard) studentDashboard.style.display = 'none';
+    if (transactionsContent) transactionsContent.style.display = 'none';
+    if (checkinsContent) checkinsContent.style.display = 'none';
+    if (concessionsContent) concessionsContent.style.display = 'none';
+    if (profileContent) profileContent.style.display = 'none';
+    if (purchaseContent) purchaseContent.style.display = 'none';
+    if (prepayContent) prepayContent.style.display = 'none';
+    
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) emptyState.style.display = 'block';
 }
 
 /**
- * Show student dashboard
+ * Show student dashboard or content
  */
 function showDashboard() {
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('student-dashboard').style.display = 'block';
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) emptyState.style.display = 'none';
+    
+    const studentDashboard = document.getElementById('student-dashboard');
+    const transactionsContent = document.getElementById('transactions-content');
+    const checkinsContent = document.getElementById('checkins-content');
+    const concessionsContent = document.getElementById('concessions-content');
+    const profileContent = document.getElementById('profile-content');
+    const purchaseContent = document.getElementById('purchase-content');
+    const prepayContent = document.getElementById('prepay-content');
+    
+    if (studentDashboard) studentDashboard.style.display = 'block';
+    if (transactionsContent) transactionsContent.style.display = 'block';
+    if (checkinsContent) checkinsContent.style.display = 'block';
+    if (concessionsContent) concessionsContent.style.display = 'block';
+    if (profileContent) profileContent.style.display = 'block';
+    if (purchaseContent) purchaseContent.style.display = 'block';
+    if (prepayContent) prepayContent.style.display = 'block';
 }
 
 /**
@@ -178,9 +202,18 @@ async function loadStudentDashboard(student) {
 // Initialize when authorized
 document.addEventListener('DOMContentLoaded', () => {
     // Wait for authorization check to complete
-    setTimeout(() => {
-        if (isAuthorized) {
-            loadStudents();
+    const checkAuth = setInterval(() => {
+        if (typeof isAuthorized !== 'undefined') {
+            clearInterval(checkAuth);
+            
+            if (isAuthorized) {
+                loadStudents();
+            }
         }
-    }, 1000);
+    }, 100); // Check every 100ms
+    
+    // Timeout after 10 seconds
+    setTimeout(() => {
+        clearInterval(checkAuth);
+    }, 10000);
 });

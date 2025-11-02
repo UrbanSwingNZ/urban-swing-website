@@ -7,6 +7,11 @@ let currentStudent = null;
 let currentStudentId = null;
 let isViewingAsAdmin = false;
 
+// Pagination
+let allCheckIns = [];
+let currentPage = 1;
+const itemsPerPage = 12;
+
 /**
  * Initialize check-ins page
  */
@@ -149,6 +154,10 @@ async function loadCheckIns(studentId, student) {
         
         console.log(`Loaded ${checkins.length} check-ins`);
         
+        // Store all check-ins for pagination
+        allCheckIns = checkins;
+        currentPage = 1;
+        
         // Update count
         document.getElementById('total-count').textContent = checkins.length;
         
@@ -156,10 +165,12 @@ async function loadCheckIns(studentId, student) {
         if (checkins.length === 0) {
             document.getElementById('checkins-list').style.display = 'none';
             document.getElementById('no-checkins').style.display = 'block';
+            document.getElementById('pagination-controls').style.display = 'none';
         } else {
             document.getElementById('checkins-list').style.display = 'block';
             document.getElementById('no-checkins').style.display = 'none';
-            displayCheckIns(checkins);
+            displayCheckInsPage();
+            setupPagination();
         }
         
         // Hide loading spinner
@@ -173,13 +184,20 @@ async function loadCheckIns(studentId, student) {
 }
 
 /**
- * Display check-ins in the list
+ * Display check-ins for current page
  */
-function displayCheckIns(checkins) {
+function displayCheckInsPage() {
     const listElement = document.getElementById('checkins-list');
     listElement.innerHTML = '';
     
-    checkins.forEach(checkin => {
+    // Calculate pagination
+    const totalPages = Math.ceil(allCheckIns.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, allCheckIns.length);
+    const pageCheckIns = allCheckIns.slice(startIndex, endIndex);
+    
+    // Display check-ins for current page
+    pageCheckIns.forEach(checkin => {
         const checkinDate = checkin.checkinDate;
         const typeBadgeClass = getTypeBadgeClass(checkin.entryType);
         const typeDisplayName = getTypeDisplayName(checkin.entryType);
@@ -209,6 +227,64 @@ function displayCheckIns(checkins) {
         `;
         
         listElement.appendChild(checkinItem);
+    });
+    
+    // Update pagination controls
+    updatePaginationControls(totalPages);
+}
+
+/**
+ * Update pagination controls state
+ */
+function updatePaginationControls(totalPages) {
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    const paginationControls = document.getElementById('pagination-controls');
+    
+    // Show/hide pagination controls
+    if (totalPages <= 1) {
+        paginationControls.style.display = 'none';
+        return;
+    } else {
+        paginationControls.style.display = 'flex';
+    }
+    
+    // Update page info
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    
+    // Enable/disable buttons
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+}
+
+/**
+ * Setup pagination button handlers
+ */
+function setupPagination() {
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    // Remove existing listeners by cloning
+    const newPrevBtn = prevBtn.cloneNode(true);
+    const newNextBtn = nextBtn.cloneNode(true);
+    prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+    nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+    
+    // Add new listeners
+    newPrevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayCheckInsPage();
+        }
+    });
+    
+    newNextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(allCheckIns.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayCheckInsPage();
+        }
     });
 }
 
