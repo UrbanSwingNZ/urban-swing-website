@@ -170,6 +170,25 @@
         <p>Loading...</p>
     </div>
 
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancel-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Unsaved Changes</h3>
+            </div>
+            <div class="modal-body">
+                <p>You have unsaved changes. Are you sure you want to cancel?</p>
+                <p class="text-muted">Your changes will be lost if you leave this page.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancel-modal-stay">Stay on Page</button>
+                <button type="button" class="btn-danger" id="cancel-modal-leave">
+                    <i class="fas fa-sign-out-alt"></i> Leave Page
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config -->
     <script src="../../config/firebase-config.js"></script>
     

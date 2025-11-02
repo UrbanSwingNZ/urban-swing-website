@@ -127,14 +127,17 @@ async function loadStudentTransactions(studentId) {
 
 function displayTransactionsPage() {
     const tbody = document.getElementById('transactions-tbody');
+    const cardsContainer = document.getElementById('transactions-cards');
     const noDataDiv = document.getElementById('no-transactions');
     
-    // Clear existing rows
+    // Clear existing rows and cards
     tbody.innerHTML = '';
+    cardsContainer.innerHTML = '';
     
     if (allTransactions.length === 0) {
         noDataDiv.style.display = 'block';
         document.querySelector('.table-container').style.display = 'none';
+        cardsContainer.style.display = 'none';
         document.querySelector('.total-info').style.display = 'none';
         document.getElementById('pagination-controls').style.display = 'none';
         return;
@@ -142,6 +145,7 @@ function displayTransactionsPage() {
     
     noDataDiv.style.display = 'none';
     document.querySelector('.table-container').style.display = 'block';
+    cardsContainer.style.display = 'block';
     document.querySelector('.total-info').style.display = 'flex';
     
     // Update summary (showing total count)
@@ -153,10 +157,15 @@ function displayTransactionsPage() {
     const endIndex = Math.min(startIndex + itemsPerPage, allTransactions.length);
     const pageTransactions = allTransactions.slice(startIndex, endIndex);
     
-    // Create table rows for current page
+    // Create table rows and cards for current page
     pageTransactions.forEach(transaction => {
+        // Create table row (for desktop)
         const row = createTransactionRow(transaction);
         tbody.appendChild(row);
+        
+        // Create card (for mobile)
+        const card = createTransactionCard(transaction);
+        cardsContainer.appendChild(card);
     });
     
     // Update pagination controls
@@ -283,6 +292,64 @@ function createTransactionRow(transaction) {
     row.appendChild(paymentCell);
     
     return row;
+}
+
+function createTransactionCard(transaction) {
+    const card = document.createElement('div');
+    card.className = 'transaction-card';
+    
+    // Add reversed class if transaction is reversed
+    if (transaction.reversed) {
+        card.classList.add('reversed');
+    }
+    
+    // Format date
+    const date = transaction.transactionDate?.toDate() || new Date();
+    const formattedDate = formatDate(date);
+    
+    // Get type info
+    const typeInfo = normalizeTransactionType(transaction);
+    
+    // Build type badges HTML
+    let typeBadgesHTML = '';
+    if (transaction.reversed) {
+        typeBadgesHTML += '<span class="type-badge reversed">REVERSED</span>';
+    }
+    typeBadgesHTML += `<span class="type-badge ${typeInfo.badgeClass}">${typeInfo.typeName}</span>`;
+    
+    // Get payment method badge
+    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+    let paymentBadgeHTML = '';
+    
+    if (paymentMethod === 'cash') {
+        paymentBadgeHTML = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+    } else if (paymentMethod === 'eftpos') {
+        paymentBadgeHTML = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+        paymentBadgeHTML = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    } else {
+        paymentBadgeHTML = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+    }
+    
+    // Build card HTML
+    card.innerHTML = `
+        <div class="card-header">
+            <div class="card-date">${formattedDate}</div>
+            <div class="card-amount">$${(transaction.amountPaid || 0).toFixed(2)}</div>
+        </div>
+        <div class="card-body">
+            <div class="card-row">
+                <div class="card-label">Type</div>
+                <div class="card-value">${typeBadgesHTML}</div>
+            </div>
+            <div class="card-row">
+                <div class="card-label">Payment</div>
+                <div class="card-value">${paymentBadgeHTML}</div>
+            </div>
+        </div>
+    `;
+    
+    return card;
 }
 
 // Normalize transaction type and get display info
