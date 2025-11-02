@@ -31,7 +31,7 @@ function setupNavigationCards() {
     // My Concessions
     document.getElementById('nav-concessions').addEventListener('click', (e) => {
         e.preventDefault();
-        alert('My Concessions page coming soon!\n\nThis will show active concession blocks with balances and expiry dates.');
+        window.location.href = '../concessions/index.html';
     });
     
     // Check-In History
