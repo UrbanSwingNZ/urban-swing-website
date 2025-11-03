@@ -31,12 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         newStudentForm.classList.remove('active');
     });
 
-    // Placeholder: Register button (non-functional for now)
-    const registerBtn = newStudentForm.querySelector('.action-btn');
-    registerBtn.addEventListener('click', function() {
-        console.log('Register button clicked - functionality coming soon');
-        // TODO: Navigate to registration page
-    });
+    // Note: Register button handler is now in registration-handler.js
 
     // Placeholder: Login button (non-functional for now)
     const loginBtn = existingStudentForm.querySelector('.action-btn');

@@ -40,6 +40,12 @@ async function checkEmailExists(email) {
         const hasStudent = !studentSnapshot.empty;
         const hasUser = !userSnapshot.empty;
         
+        console.log(`Email check for ${normalizedEmail}:`);
+        console.log(`  - Student docs found: ${studentSnapshot.size}`);
+        console.log(`  - User docs found: ${userSnapshot.size}`);
+        console.log(`  - hasStudent: ${hasStudent}`);
+        console.log(`  - hasUser: ${hasUser}`);
+        
         // Extract student data if exists
         let studentData = null;
         if (hasStudent) {
@@ -48,20 +54,25 @@ async function checkEmailExists(email) {
                 id: doc.id,
                 ...doc.data()
             };
+            console.log(`  - Student ID: ${doc.id}`);
         }
         
         // Determine status
         let status;
         if (!hasStudent && !hasUser) {
             status = 'new';
+            console.log(`  - Status: NEW (no student, no user)`);
         } else if (hasStudent && hasUser) {
             status = 'existing-complete';
+            console.log(`  - Status: EXISTING-COMPLETE (has both student and user)`);
         } else if (hasStudent && !hasUser) {
             status = 'existing-incomplete';
+            console.log(`  - Status: EXISTING-INCOMPLETE (has student, no user)`);
         } else {
             // Edge case: user exists but no student (shouldn't happen, but handle it)
             console.warn('User exists without student record for email:', normalizedEmail);
             status = 'existing-complete'; // Treat as complete to prevent registration
+            console.log(`  - Status: EXISTING-COMPLETE (edge case - user without student)`);
         }
         
         return {

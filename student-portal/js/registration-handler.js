@@ -58,17 +58,25 @@ async function handleRegistrationSubmit() {
         // Check if email exists in students and/or users collections
         const result = await checkEmailExists(email);
         
+        console.log('Email check result:', result);
+        console.log('Status:', result.status);
+        console.log('Has student:', result.hasStudent);
+        console.log('Has user:', result.hasUser);
+        
         showLoading(false);
         
         // Route based on status
         if (result.status === 'existing-complete') {
             // Both student and user exist - show modal, redirect to login
+            console.log('Showing email exists modal - user already has portal account');
             showEmailExistsModal([result.studentData]);
         } else if (result.status === 'existing-incomplete') {
             // Student exists but no user - proceed to registration with pre-filled data
+            console.log('Redirecting to registration form - existing student without portal account');
             redirectToRegistrationForm(email, 'existing-incomplete', result.studentData);
         } else {
             // New student - proceed to blank registration form
+            console.log('Redirecting to registration form - brand new student');
             redirectToRegistrationForm(email, 'new', null);
         }
         
