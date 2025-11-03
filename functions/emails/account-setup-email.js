@@ -39,7 +39,7 @@ function generateAccountSetupEmail(student, user, setupDate) {
         
         <div style="text-align: center; margin: 40px 0;">
           <a href="https://urbanswing.co.nz/student-portal/" 
-             style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #9a16f5 0%, #ed217c 100%); 
+             style="display: inline-block; padding: 16px 32px; background: #9a16f5; 
                     color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem;">
             Access Your Portal
           </a>
