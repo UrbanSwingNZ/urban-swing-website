@@ -131,57 +131,18 @@ exports.createStudentWithPayment = onCall(
       
       console.log('Student document created:', studentId);
       
-      // Step 7: Create user account with Firebase Auth
-      let userRecord;
-      try {
-        userRecord = await admin.auth().createUser({
-          email: email,
-          displayName: `${studentData.firstName} ${studentData.lastName}`,
-          disabled: false
-        });
-        
-        console.log('Firebase Auth user created:', userRecord.uid);
-      } catch (authError) {
-        console.error('Error creating Firebase Auth user:', authError);
-        // Continue - student document is created, they can contact support
-      }
+      // Note: We DON'T create Firebase Auth user or user document here
+      // The frontend will handle that after successful payment, so they can set their own password
+      // The student document creation will trigger sendNewStudentEmail with welcome email
       
-      // Step 8: Create user document in Firestore (if auth user was created)
-      if (userRecord) {
-        await db.collection('users').doc(userRecord.uid).set({
-          email: email,
-          studentId: studentId,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          registrationSource: 'student-portal-with-payment'
-        });
-        
-        console.log('User document created for:', userRecord.uid);
-      }
-      
-      // Step 9: Send password reset link for account setup
-      if (userRecord) {
-        try {
-          const resetLink = await admin.auth().generatePasswordResetLink(email);
-          console.log('Password reset link generated:', resetLink);
-          // Note: The user document creation will trigger sendAccountSetupEmail
-          // which will send an email with the portal access button
-        } catch (linkError) {
-          console.error('Error generating password reset link:', linkError);
-          // Continue - they can request reset from login page
-        }
-      }
-      
-      // Step 10: Return success
-      // Note: The student document creation will trigger sendNewStudentEmail
-      // The user document creation will trigger sendAccountSetupEmail
+      // Step 7: Return success
       return {
         success: true,
         studentId: studentId,
-        userId: userRecord?.uid,
         customerId: customer.id,
         paymentIntentId: paymentResult.paymentIntentId,
         receiptUrl: paymentResult.receiptUrl,
-        message: 'Registration successful! Check your email for login instructions.'
+        message: 'Payment successful! Completing registration...'
       };
       
     } catch (error) {
