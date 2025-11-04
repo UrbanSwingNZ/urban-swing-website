@@ -1,17 +1,26 @@
 /**
  * firebase-init.js - Firebase Initialization
- * Initializes Firebase and provides db reference
+ * Sets up global references to Firebase services initialized in firebase-config.js
  */
 
-// Global Firestore reference
+// Global references
 window.db = null;
+window.functions = null;
 
-// Initialize Firestore once DOM is ready and Firebase is loaded
+// Wait for Firebase to be initialized by firebase-config.js
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof firebase !== 'undefined' && firebase.firestore) {
-        window.db = firebase.firestore();
-        console.log('Firestore initialized successfully');
+    // Check if Firebase was initialized in firebase-config.js
+    if (typeof db !== 'undefined' && db) {
+        window.db = db;
+        console.log('Firestore reference set');
     } else {
-        console.error('Firebase not loaded properly');
+        console.error('Firestore not initialized');
+    }
+    
+    if (typeof functions !== 'undefined' && functions) {
+        window.functions = functions;
+        console.log('Functions reference set');
+    } else {
+        console.error('Firebase Functions not initialized');
     }
 });

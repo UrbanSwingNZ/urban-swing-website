@@ -192,7 +192,13 @@ async function processRegistrationWithPayment(formData) {
         
         // Call Firebase Function
         console.log('Calling createStudentWithPayment function...');
-        const createStudentWithPayment = firebase.functions().httpsCallable('createStudentWithPayment');
+        
+        // Check if functions is initialized
+        if (!window.functions) {
+            throw new Error('Firebase Functions not initialized');
+        }
+        
+        const createStudentWithPayment = window.functions.httpsCallable('createStudentWithPayment');
         
         const result = await createStudentWithPayment({
             email: formData.email,
@@ -240,7 +246,7 @@ function showError(message) {
 document.addEventListener('DOMContentLoaded', function() {
     // Wait for Firebase to be initialized
     const checkFirebase = setInterval(() => {
-        if (window.db && typeof Stripe !== 'undefined' && typeof stripeConfig !== 'undefined') {
+        if (window.db && window.functions && typeof Stripe !== 'undefined' && typeof stripeConfig !== 'undefined') {
             clearInterval(checkFirebase);
             initializeStripe();
             loadCasualRates();
@@ -252,6 +258,12 @@ document.addEventListener('DOMContentLoaded', function() {
         clearInterval(checkFirebase);
         if (!stripe) {
             console.error('Failed to initialize Stripe - timeout');
+            console.error('Debug info:', {
+                db: !!window.db,
+                functions: !!window.functions,
+                Stripe: typeof Stripe !== 'undefined',
+                stripeConfig: typeof stripeConfig !== 'undefined'
+            });
             showError('Failed to load payment system. Please refresh the page.');
         }
     }, 10000);
