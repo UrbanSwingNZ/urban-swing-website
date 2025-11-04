@@ -20,6 +20,10 @@ const { generateAdminNotificationEmail, generateWelcomeEmail } = require('./emai
 const { generateAccountSetupEmail } = require('./emails/account-setup-email');
 const { generateErrorNotificationEmail } = require('./emails/error-notification-email');
 
+// Import Stripe payment functions
+const { createStudentWithPayment } = require('./create-student-payment');
+const { getAvailablePackages } = require('./get-available-packages');
+
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
 
@@ -458,3 +462,7 @@ exports.sendAccountSetupEmail = onDocumentCreated(
     }
   }
 );
+
+// Export Stripe payment functions
+exports.createStudentWithPayment = createStudentWithPayment;
+exports.getAvailablePackages = getAvailablePackages;
