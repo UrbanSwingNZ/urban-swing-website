@@ -15,6 +15,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <!-- Loading Spinner -->
@@ -225,113 +229,37 @@
                 </div>
 
                 <!-- Payment Section -->
-                <!-- NOTE: These payment fields are placeholders and will be replaced with Stripe Elements when payment processing is integrated.
-                     Stripe Elements will:
-                     - Automatically detect card type (Visa, Mastercard, Amex, etc.) as user types
-                     - Display appropriate card brand icons
-                     - Provide real-time validation
-                     - Handle PCI compliance (card data never touches our server)
-                     - Be configured through Stripe Dashboard to accept specific card brands -->
                 <div class="payment-section">
                     <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
                     
                     <!-- Payment Option Selection -->
                     <div class="form-group">
                         <label style="margin-bottom: 12px;">
-                            <i class="fas fa-money-bill-wave"></i> Select Payment Option <span class="required">*</span>
+                            Select Payment Option <span class="required">*</span>
                         </label>
                         <div class="rate-options" id="rate-options">
-                            <label class="rate-option">
-                                <input 
-                                    type="radio" 
-                                    name="rateType" 
-                                    value="casual-entry" 
-                                    required
-                                >
-                                <span class="rate-label">
-                                    <span class="rate-name">Casual Entry</span>
-                                    <span class="rate-price" id="casual-entry-price">Loading...</span>
-                                </span>
-                            </label>
-                            
-                            <label class="rate-option">
-                                <input 
-                                    type="radio" 
-                                    name="rateType" 
-                                    value="casual-student" 
-                                    required
-                                >
-                                <span class="rate-label">
-                                    <span class="rate-name">Casual Student</span>
-                                    <span class="rate-price" id="casual-student-price">Loading...</span>
-                                </span>
-                            </label>
+                            <!-- Casual rates will be loaded dynamically from Firestore -->
+                            <div class="loading-rates">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Loading payment options...</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- TODO: Replace with Stripe Card Element -->
+                    <!-- Stripe Card Element -->
                     <div class="form-group">
-                        <label for="cardNumber">
-                            <i class="fas fa-credit-card"></i> Card Number
+                        <label>
+                            <i class="fas fa-credit-card"></i> Card Details <span class="required">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            id="cardNumber" 
-                            name="cardNumber" 
-                            placeholder="1234 5678 9012 3456"
-                            maxlength="19"
-                            autocomplete="off"
-                        >
-                    </div>
-
-                    <!-- TODO: Replace with Stripe Card Expiry Element -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="expiryDate">
-                                <i class="fas fa-calendar"></i> Expiry Date
-                            </label>
-                            <input 
-                                type="text" 
-                                id="expiryDate" 
-                                name="expiryDate" 
-                                placeholder="MM/YY"
-                                maxlength="5"
-                                autocomplete="off"
-                            >
+                        <div id="card-element" class="stripe-card-element">
+                            <!-- Stripe will inject card input here -->
                         </div>
-
-                        <!-- TODO: Replace with Stripe Card CVC Element -->
-                        <div class="form-group">
-                            <label for="cvv">
-                                <i class="fas fa-lock"></i> CVV
-                            </label>
-                            <input 
-                                type="text" 
-                                id="cvv" 
-                                name="cvv" 
-                                placeholder="123"
-                                maxlength="4"
-                                autocomplete="off"
-                            >
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cardName">
-                            <i class="fas fa-user"></i> Name on Card
-                        </label>
-                        <input 
-                            type="text" 
-                            id="cardName" 
-                            name="cardName" 
-                            placeholder="Name as it appears on card"
-                            autocomplete="off"
-                        >
+                        <div id="card-errors" class="error-message" style="display: none;"></div>
                     </div>
 
                     <div class="payment-notice">
                         <i class="fas fa-shield-alt"></i>
-                        <span>Your payment information is secure and encrypted</span>
+                        <span>Your payment information is secure and encrypted. Powered by Stripe.</span>
                     </div>
                 </div>
 
@@ -395,12 +323,16 @@
     <!-- Firebase Config -->
     <script src="../config/firebase-config.js"></script>
     
+    <!-- Stripe Config -->
+    <script src="../config/stripe-config.js"></script>
+    
     <!-- Application Scripts -->
     <script src="js/firebase-init.js"></script>
     <script src="js/utils/password-generator.js"></script>
     <script src="js/services/auth-service.js"></script>
     <script src="js/services/student-service.js"></script>
     <script src="js/services/casual-rates-loader.js"></script>
+    <script src="js/stripe/payment-handler.js"></script>
     <script src="js/ui/terms-modal.js"></script>
     <script src="js/ui/password-ui.js"></script>
     <script src="js/registration-form-handler.js"></script>
