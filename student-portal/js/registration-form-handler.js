@@ -201,15 +201,28 @@ async function processExistingIncompleteRegistration(formData) {
  * Process registration for new student
  */
 async function processNewStudentRegistration(formData) {
-    // 1. Create Firebase Auth user
+    // Step 1: Process payment and create student document via Firebase Function
+    // This function handles:
+    // 1. Payment processing via Stripe
+    // 2. Creating student document (triggers welcome email)
+    const result = await processRegistrationWithPayment({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phoneNumber
+    });
+    
+    if (!result.success) {
+        throw new Error('Payment processing failed');
+    }
+    
+    console.log('Payment successful, student created:', result.studentId);
+    
+    // Step 2: Create Firebase Auth user with their chosen password
     const authUser = await createAuthUser(formData.email, formData.password);
     console.log('Firebase Auth user created:', authUser.uid);
     
-    // 2. Create student document
-    const studentId = await createStudent(formData);
-    console.log('Student document created:', studentId);
-    
-    // 3. Create user document
+    // Step 3: Create user document linking to student
     const userData = {
         email: formData.email,
         firstName: formData.firstName,
@@ -217,11 +230,8 @@ async function processNewStudentRegistration(formData) {
         authUid: authUser.uid
     };
     
-    await createUser(userData, studentId);
-    console.log('User document created');
-    
-    // TODO: Process payment (future implementation)
-    // await processPayment(formData.rateType, formData.cardDetails);
+    await createUser(userData, result.studentId);
+    console.log('User document created, account setup complete');
 }
 
 /**
