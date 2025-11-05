@@ -7,6 +7,7 @@ const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
 const { createCustomer, processPayment } = require('./stripe/stripe-payment');
 const { fetchPricing } = require('./stripe/stripe-config');
+const { determineTransactionType } = require('./utils/transaction-utils');
 const cors = require('cors')({ origin: true });
 
 /**
@@ -208,22 +209,7 @@ exports.createStudentWithPayment = onRequest(
         console.log('Creating transaction with ID:', transactionId);
         
         // Determine transaction type based on package type
-        let transactionType;
-        if (packageInfo.type === 'concession-package') {
-          transactionType = 'concession-purchase';
-        } else if (packageInfo.type === 'casual-rate') {
-          // Check packageId to distinguish casual vs casual-student
-          // Common casual-student IDs: 'casual-student', 'casual-student-price', 'student-casual-entry'
-          const packageIdLower = data.packageId.toLowerCase();
-          if (packageIdLower.includes('student')) {
-            transactionType = 'casual-student';
-          } else {
-            transactionType = 'casual';
-          }
-        } else {
-          // Fallback
-          transactionType = 'concession-purchase';
-        }
+        const transactionType = determineTransactionType(packageInfo, data.packageId);
         
         const transactionData = {
           studentId: studentId,
