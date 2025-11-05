@@ -87,7 +87,7 @@ async function processPayment(paymentData) {
         paymentIntentId: paymentIntent.id,
         amount: amount,
         currency: CURRENCY,
-        receiptUrl: paymentIntent.charges.data[0]?.receipt_url
+        receiptUrl: paymentIntent.charges?.data?.[0]?.receipt_url || null
       };
     } else if (paymentIntent.status === 'requires_action') {
       // 3D Secure or other authentication required
