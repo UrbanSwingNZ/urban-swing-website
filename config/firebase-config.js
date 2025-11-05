@@ -19,8 +19,7 @@ try {
   app = firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
   db = firebase.firestore();
-  functions = firebase.functions(); // Initialize functions
-  functions.useRegion('us-central1'); // Set region to match deployed functions
+  functions = firebase.app().functions('us-central1'); // Initialize functions with region
   console.log('Firebase initialized successfully');
 } catch (error) {
   console.error('Firebase initialization error:', error);

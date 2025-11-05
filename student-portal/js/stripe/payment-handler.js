@@ -190,35 +190,43 @@ async function processRegistrationWithPayment(formData) {
             throw new Error('Failed to create payment method');
         }
         
-        // Call Firebase Function
+        // Call Firebase Function (HTTP endpoint)
         console.log('Calling createStudentWithPayment function...');
         
-        // Check if functions is initialized
-        if (!window.functions) {
-            throw new Error('Firebase Functions not initialized');
-        }
+        const functionUrl = 'https://us-central1-directed-curve-447204-j4.cloudfunctions.net/createStudentWithPayment';
         
-        const createStudentWithPayment = window.functions.httpsCallable('createStudentWithPayment');
-        
-        const result = await createStudentWithPayment({
-            email: formData.email,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            phone: formData.phone,
-            packageId: selectedPackageId,
-            paymentMethodId: paymentMethodId
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: formData.email,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                phone: formData.phone,
+                packageId: selectedPackageId,
+                paymentMethodId: paymentMethodId
+            })
         });
         
-        console.log('Payment result:', result.data);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Payment processing failed');
+        }
         
-        if (result.data.success) {
+        const result = await response.json();
+        
+        console.log('Payment result:', result);
+        
+        if (result.success) {
             return {
                 success: true,
-                studentId: result.data.studentId,
-                receiptUrl: result.data.receiptUrl
+                studentId: result.studentId,
+                receiptUrl: result.receiptUrl
             };
         } else {
-            throw new Error(result.data.error || 'Payment processing failed');
+            throw new Error(result.error || 'Payment processing failed');
         }
         
     } catch (error) {
