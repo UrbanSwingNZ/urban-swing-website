@@ -33,17 +33,105 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Note: Register button handler is now in registration-handler.js
 
-    // Placeholder: Login button (non-functional for now)
+    // Login button handler
     const loginBtn = existingStudentForm.querySelector('.action-btn');
-    loginBtn.addEventListener('click', function() {
-        console.log('Login button clicked - functionality coming soon');
-        // TODO: Implement Firebase authentication
+    loginBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('existingStudentEmail').value.trim();
+        const password = document.getElementById('existingStudentPassword').value;
+        
+        // Validate inputs
+        if (!email || !password) {
+            alert('Please enter both email and password');
+            return;
+        }
+        
+        // Disable button and show loading state
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+        
+        try {
+            // Sign in with Firebase Auth
+            const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+            console.log('Login successful:', userCredential.user.uid);
+            
+            // Check if user document exists and has student role
+            const userDoc = await firebase.firestore().collection('users').doc(userCredential.user.uid).get();
+            
+            if (!userDoc.exists) {
+                throw new Error('User profile not found');
+            }
+            
+            const userData = userDoc.data();
+            if (userData.role !== 'student') {
+                // Not a student - sign them out
+                await firebase.auth().signOut();
+                throw new Error('This portal is for students only. Please use the admin portal.');
+            }
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard/index.html';
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            // Show user-friendly error messages
+            let errorMessage = 'Login failed. Please try again.';
+            
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                errorMessage = 'Invalid email or password';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = 'Invalid email address';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage = 'Too many failed attempts. Please try again later.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            alert(errorMessage);
+            
+            // Re-enable button
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
+        }
     });
 
-    // Placeholder: Reset Password button (non-functional for now)
+    // Reset Password button handler
     const resetBtn = existingStudentForm.querySelector('.reset-btn');
-    resetBtn.addEventListener('click', function() {
-        console.log('Reset Password button clicked - functionality coming soon');
-        // TODO: Implement password reset
+    resetBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('existingStudentEmail').value.trim();
+        
+        if (!email) {
+            alert('Please enter your email address');
+            return;
+        }
+        
+        // Disable button and show loading state
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'Sending...';
+        
+        try {
+            await firebase.auth().sendPasswordResetEmail(email);
+            alert('Password reset email sent! Please check your inbox.');
+            resetBtn.disabled = false;
+            resetBtn.textContent = 'Reset Password';
+        } catch (error) {
+            console.error('Password reset error:', error);
+            
+            let errorMessage = 'Failed to send reset email. Please try again.';
+            
+            if (error.code === 'auth/user-not-found') {
+                errorMessage = 'No account found with this email address';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = 'Invalid email address';
+            }
+            
+            alert(errorMessage);
+            resetBtn.disabled = false;
+            resetBtn.textContent = 'Reset Password';
+        }
     });
 });
