@@ -403,6 +403,12 @@ select.filter-input:focus {
     color: #2e7d32;
 }
 
+.type-badge.online {
+    background: rgba(0, 150, 136, 0.1);
+    color: #00796b;
+    margin-left: 5px;
+}
+
 .type-badge.cash {
     background: #fff3e0;
     color: #e65100;
