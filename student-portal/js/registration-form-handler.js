@@ -152,16 +152,22 @@ async function handleFormSubmit(e) {
         // Process based on mode
         if (registrationConfig.mode === 'existing-incomplete') {
             await processExistingIncompleteRegistration(formData);
+            
+            // Show success and redirect to dashboard
+            showSuccessMessage('Registration successful! Redirecting to dashboard...');
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard/index.html';
+            }, 2000);
         } else {
             await processNewStudentRegistration(formData);
+            
+            // Debug banner is shown by processNewStudentRegistration
+            // Redirect disabled for debugging
+            // setTimeout(() => {
+            //     window.location.href = 'index.html';
+            // }, 15000);
         }
-        
-        // Show success and redirect
-        showSuccessMessage('Registration successful! Redirecting to login...');
-        
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
         
     } catch (error) {
         console.error('Registration error:', error);
@@ -201,10 +207,9 @@ async function processExistingIncompleteRegistration(formData) {
  * Process registration for new student
  */
 async function processNewStudentRegistration(formData) {
-    // Step 1: Process payment and create student document via Firebase Function
-    // This function handles:
-    // 1. Payment processing via Stripe
-    // 2. Creating student document (triggers welcome email)
+    // Step 1: Call backend Firebase Function to process payment and create documents
+    // Backend creates: student document, user document (authUid: null), transaction document
+    // Backend also: processes Stripe payment, creates Stripe customer
     const result = await processRegistrationWithPayment({
         email: formData.email,
         firstName: formData.firstName,
@@ -216,22 +221,20 @@ async function processNewStudentRegistration(formData) {
         throw new Error('Payment processing failed');
     }
     
-    console.log('Payment successful, student created:', result.studentId);
+    console.log('Payment successful. Documents created:', result);
     
     // Step 2: Create Firebase Auth user with their chosen password
     const authUser = await createAuthUser(formData.email, formData.password);
     console.log('Firebase Auth user created:', authUser.uid);
     
-    // Step 3: Create user document linking to student
-    const userData = {
-        email: formData.email,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+    // Step 3: Update user document with authUid (backend created it with null)
+    await window.db.collection('users').doc(result.studentId).update({
         authUid: authUser.uid
-    };
+    });
+    console.log('User document updated with authUid');
     
-    await createUser(userData, result.studentId);
-    console.log('User document created, account setup complete');
+    // Step 4: Redirect to dashboard (user is now fully registered and signed in)
+    window.location.href = 'dashboard/index.html';
 }
 
 /**
