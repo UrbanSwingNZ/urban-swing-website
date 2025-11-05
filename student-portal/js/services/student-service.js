@@ -107,7 +107,12 @@ async function createUser(userData, studentId) {
         }
         
         // Use the same ID as the student document
-        const userId = studentId;
+        // Use authUid as document ID (not studentId)
+        const userId = userData.authUid;
+        
+        if (!userId) {
+            throw new Error('Auth UID is required to create user document');
+        }
         
         // Prepare user data
         const userDoc = {
@@ -115,11 +120,11 @@ async function createUser(userData, studentId) {
             firstName: userData.firstName,
             lastName: userData.lastName,
             studentId: studentId,
-            authUid: userData.authUid,
+            role: 'student', // Set role for access control
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
-        // Save to users collection
+        // Save to users collection with authUid as document ID
         await window.db.collection('users').doc(userId).set(userDoc);
         
         console.log('User document created:', userId, 'linked to student:', studentId);
@@ -169,13 +174,17 @@ async function getUserByStudentId(studentId) {
             throw new Error('Database not initialized');
         }
         
-        // User document has the same ID as student document
-        const doc = await window.db.collection('users').doc(studentId).get();
+        // Query users collection by studentId field (document ID is authUid)
+        const snapshot = await window.db.collection('users')
+            .where('studentId', '==', studentId)
+            .limit(1)
+            .get();
         
-        if (!doc.exists) {
+        if (snapshot.empty) {
             return null;
         }
         
+        const doc = snapshot.docs[0];
         return {
             id: doc.id,
             ...doc.data()

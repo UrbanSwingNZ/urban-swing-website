@@ -47,6 +47,8 @@ function generateStudentId(firstName, lastName) {
  *   packageId: string (document ID from casualRates or concessionPackages),
  *   paymentMethodId: string (from Stripe Elements)
  * }
+ * 
+ * Note: Auth user and user document are created by frontend after successful payment
  */
 exports.createStudentWithPayment = onRequest(
   { 
@@ -179,18 +181,8 @@ exports.createStudentWithPayment = onRequest(
         await db.collection('students').doc(studentId).set(studentData);
         console.log('Student document created:', studentId);
         
-        // Step 6.5: Create user document (linked to student, auth user will be created by frontend)
-        const userData = {
-          email: email,
-          firstName: data.firstName.trim(),
-          lastName: data.lastName.trim(),
-          studentId: studentId,
-          authUid: null, // Will be updated by frontend after auth user is created
-          createdAt: admin.firestore.FieldValue.serverTimestamp()
-        };
-        
-        await db.collection('users').doc(studentId).set(userData);
-        console.log('User document created:', studentId);
+        // Note: User document and auth user will be created by frontend after payment
+        // This avoids IAM permission issues with backend creating auth users
         
         // Step 6.6: Create transaction record
         const timestamp = new Date().getTime();
@@ -229,10 +221,6 @@ exports.createStudentWithPayment = onRequest(
         
         await db.collection('transactions').doc(transactionId).set(transactionData);
         console.log('Transaction document created:', transactionId);
-        
-        // Note: We DON'T create Firebase Auth user here
-        // The frontend will handle that after successful payment, so they can set their own password
-        // The student document creation will trigger sendNewStudentEmail with welcome email
         
         // Step 7: Return success with all document IDs
         response.status(200).json({

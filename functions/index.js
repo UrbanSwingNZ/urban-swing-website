@@ -274,8 +274,12 @@ exports.sendNewStudentEmail = onDocumentCreated(
         : 'N/A';
 
       // Check if user document exists (to determine if they have portal access)
-      const userDoc = await db.collection('users').doc(studentId).get();
-      const hasUserAccount = userDoc.exists;
+      // Query by studentId field since document ID is authUid
+      const userSnapshot = await db.collection('users')
+        .where('studentId', '==', studentId)
+        .limit(1)
+        .get();
+      const hasUserAccount = !userSnapshot.empty;
       logger.info(`User account exists for student ${studentId}: ${hasUserAccount}`);
 
       // Generate email content using templates
