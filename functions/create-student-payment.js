@@ -176,17 +176,84 @@ exports.createStudentWithPayment = onRequest(
         
         // Create student document with the generated ID
         await db.collection('students').doc(studentId).set(studentData);
-        
         console.log('Student document created:', studentId);
         
-        // Note: We DON'T create Firebase Auth user or user document here
+        // Step 6.5: Create user document (linked to student, auth user will be created by frontend)
+        const userData = {
+          email: email,
+          firstName: data.firstName.trim(),
+          lastName: data.lastName.trim(),
+          studentId: studentId,
+          authUid: null, // Will be updated by frontend after auth user is created
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('users').doc(studentId).set(userData);
+        console.log('User document created:', studentId);
+        
+        // Step 6.6: Create transaction record
+        const timestamp = new Date().getTime();
+        const firstNameClean = data.firstName.trim().toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        
+        const lastNameClean = data.lastName.trim().toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        
+        const transactionId = `${firstNameClean}-${lastNameClean}-${data.packageId}-${timestamp}`;
+        
+        console.log('Creating transaction with ID:', transactionId);
+        
+        // Determine transaction type based on package type
+        let transactionType;
+        if (packageInfo.type === 'concession-package') {
+          transactionType = 'concession-purchase';
+        } else if (packageInfo.type === 'casual-rate') {
+          // Check packageId to distinguish casual vs casual-student
+          // Common casual-student IDs: 'casual-student', 'casual-student-price', 'student-casual-entry'
+          const packageIdLower = data.packageId.toLowerCase();
+          if (packageIdLower.includes('student')) {
+            transactionType = 'casual-student';
+          } else {
+            transactionType = 'casual';
+          }
+        } else {
+          // Fallback
+          transactionType = 'concession-purchase';
+        }
+        
+        const transactionData = {
+          studentId: studentId,
+          transactionDate: admin.firestore.FieldValue.serverTimestamp(),
+          type: transactionType,
+          packageId: data.packageId,
+          packageName: packageInfo.name,
+          packageType: packageInfo.type,
+          amountPaid: paymentResult.amount / 100, // Convert from cents to dollars
+          paymentMethod: 'stripe',
+          checkinId: null,
+          paymentIntentId: paymentResult.paymentIntentId,
+          stripeCustomerId: customer.id,
+          receiptUrl: paymentResult.receiptUrl,
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('transactions').doc(transactionId).set(transactionData);
+        console.log('Transaction document created:', transactionId);
+        
+        // Note: We DON'T create Firebase Auth user here
         // The frontend will handle that after successful payment, so they can set their own password
         // The student document creation will trigger sendNewStudentEmail with welcome email
         
-        // Step 7: Return success
+        // Step 7: Return success with all document IDs
         response.status(200).json({
           success: true,
           studentId: studentId,
+          userId: studentId,
+          transactionId: transactionId,
           customerId: customer.id,
           paymentIntentId: paymentResult.paymentIntentId,
           receiptUrl: paymentResult.receiptUrl,

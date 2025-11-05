@@ -263,6 +263,14 @@ function createTransactionRow(transaction) {
     typeBadge.textContent = typeInfo.typeName;
     typeCell.appendChild(typeBadge);
     
+    // Add online badge if transaction has stripeCustomerId
+    if (transaction.stripeCustomerId) {
+        const onlineBadge = document.createElement('span');
+        onlineBadge.className = 'type-badge online';
+        onlineBadge.textContent = 'Online';
+        typeCell.appendChild(onlineBadge);
+    }
+    
     row.appendChild(typeCell);
     
     // Amount column
@@ -316,6 +324,11 @@ function createTransactionCard(transaction) {
         typeBadgesHTML += '<span class="type-badge reversed">REVERSED</span>';
     }
     typeBadgesHTML += `<span class="type-badge ${typeInfo.badgeClass}">${typeInfo.typeName}</span>`;
+    
+    // Add online badge if transaction has stripeCustomerId
+    if (transaction.stripeCustomerId) {
+        typeBadgesHTML += '<span class="type-badge online">Online</span>';
+    }
     
     // Get payment method badge
     const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
