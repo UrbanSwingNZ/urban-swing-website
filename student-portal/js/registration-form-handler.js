@@ -208,7 +208,7 @@ async function processExistingIncompleteRegistration(formData) {
  */
 async function processNewStudentRegistration(formData) {
     // Step 1: Call backend Firebase Function to process payment and create documents
-    // Backend creates: student document, user document (authUid: null), transaction document
+    // Backend creates: student document, transaction document
     // Backend also: processes Stripe payment, creates Stripe customer
     const result = await processRegistrationWithPayment({
         email: formData.email,
@@ -223,15 +223,20 @@ async function processNewStudentRegistration(formData) {
     
     console.log('Payment successful. Documents created:', result);
     
-    // Step 2: Create Firebase Auth user with their chosen password
+    // Step 2: Create Firebase Auth user (frontend)
     const authUser = await createAuthUser(formData.email, formData.password);
     console.log('Firebase Auth user created:', authUser.uid);
     
-    // Step 3: Update user document with authUid (backend created it with null)
-    await window.db.collection('users').doc(result.studentId).update({
-        authUid: authUser.uid
+    // Step 3: Create user document with authUid as document ID
+    await window.db.collection('users').doc(authUser.uid).set({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        studentId: result.studentId,
+        role: 'student',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    console.log('User document updated with authUid');
+    console.log('User document created:', authUser.uid);
     
     // Step 4: Redirect to dashboard (user is now fully registered and signed in)
     window.location.href = 'dashboard/index.html';
