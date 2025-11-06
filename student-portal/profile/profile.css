@@ -242,7 +242,6 @@ label:has(+ textarea[required])::after {
     gap: 16px;
     margin-top: 32px;
     padding-top: 24px;
-    border-top: 2px solid var(--border-color);
 }
 
 .btn {

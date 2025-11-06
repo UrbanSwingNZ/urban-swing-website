@@ -66,7 +66,6 @@ async function loadCurrentStudentProfile() {
         currentStudentId = studentDoc.id;
         currentStudent = studentDoc.data();
         
-        console.log('Loaded student profile:', currentStudent);
         loadProfileData(currentStudent, currentStudentId);
         
     } catch (error) {

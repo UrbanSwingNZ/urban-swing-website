@@ -185,6 +185,11 @@
     color: #28a745;
 }
 
+.type-badge.online {
+    background: rgba(0, 150, 136, 0.1);
+    color: #00796b;
+}
+
 .type-badge.reversed {
     background: #dc3545;
     color: white;

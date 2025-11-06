@@ -15,6 +15,15 @@ const nodemailer = require("nodemailer");
 // Load environment variables
 require('dotenv').config();
 
+// Import email templates
+const { generateAdminNotificationEmail, generateWelcomeEmail } = require('./emails/new-student-emails');
+const { generateAccountSetupEmail } = require('./emails/account-setup-email');
+const { generateErrorNotificationEmail } = require('./emails/error-notification-email');
+
+// Import Stripe payment functions
+const { createStudentWithPayment } = require('./create-student-payment');
+const { getAvailablePackages } = require('./get-available-packages');
+
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
 
@@ -264,231 +273,18 @@ exports.sendNewStudentEmail = onDocumentCreated(
           })
         : 'N/A';
 
-      // --- EMAIL 1: Admin Notification ---
-      const adminEmailHtml = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3534Fa 0%, #9a16f5 50%, #e800f2 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">New Student Registration</h1>
-          </div>
-          
-          <div style="padding: 30px; background: #f8f9fa;">
-            <h2 style="color: #9a16f5; margin-top: 0;">Student Details</h2>
-            
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Name:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.firstName} ${student.lastName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><a href="mailto:${student.email}">${student.email}</a></td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Phone:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.phoneNumber || 'N/A'}</td>
-              </tr>
-              ${student.pronouns ? `
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Pronouns:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.pronouns}</td>
-              </tr>
-              ` : ''}
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Registered:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${registeredAt}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Email Consent:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.emailConsent ? '✅ Yes' : '❌ No'}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Student ID:</strong></td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;"><code>${studentId}</code></td>
-              </tr>
-            </table>
-            
-            ${student.adminNotes ? `
-            <div style="margin-top: 20px; padding: 15px; background: #fff; border-left: 4px solid #9a16f5;">
-              <strong>Admin Notes:</strong><br>
-              ${student.adminNotes}
-            </div>
-            ` : ''}
-            
-            <div style="margin-top: 30px; text-align: center;">
-              <p style="color: #666;">View this student in the admin database:</p>
-              <a href="https://urbanswing.co.nz/admin/student-database/" 
-                 style="display: inline-block; padding: 12px 24px; background: #9a16f5; color: white; text-decoration: none; border-radius: 6px;">
-                Open Student Database
-              </a>
-            </div>
-          </div>
-          
-          <div style="padding: 20px; text-align: center; color: #666; font-size: 12px; background: #e9ecef;">
-            <p>This is an automated notification from Urban Swing student registration system.</p>
-          </div>
-        </div>
-      `;
+      // Check if user document exists (to determine if they have portal access)
+      // Query by studentId field since document ID is authUid
+      const userSnapshot = await db.collection('users')
+        .where('studentId', '==', studentId)
+        .limit(1)
+        .get();
+      const hasUserAccount = !userSnapshot.empty;
+      logger.info(`User account exists for student ${studentId}: ${hasUserAccount}`);
 
-      const adminEmailText = `
-New Student Registration
-
-Name: ${student.firstName} ${student.lastName}
-Email: ${student.email}
-Phone: ${student.phoneNumber || 'N/A'}
-${student.pronouns ? `Pronouns: ${student.pronouns}\n` : ''}
-Registered: ${registeredAt}
-Email Consent: ${student.emailConsent ? 'Yes' : 'No'}
-Student ID: ${studentId}
-${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}` : ''}
-
-View in admin database: https://urbanswing.co.nz/admin/student-database/
-      `;
-
-      // --- EMAIL 2: Welcome Email to Student ---
-      const welcomeEmailHtml = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3534Fa 0%, #9a16f5 50%, #e800f2 100%); padding: 30px; text-align: center;">
-            <h1 style="color: white; margin: 0 0 10px 0;">Welcome to Urban Swing!</h1>
-            <p style="color: white; margin: 0; font-size: 1.1rem;">Get ready to dance</p>
-          </div>
-          
-          <div style="padding: 30px; background: #fff;">
-            <h2 style="color: #9a16f5; margin-top: 0;">Hi ${student.firstName}! 👋</h2>
-            
-            <p style="font-size: 1rem; line-height: 1.6; color: #333;">
-              Thank you for registering with Urban Swing! We're excited to have you join our dance community.
-            </p>
-            
-            <h3 style="color: #9a16f5; margin-top: 30px;">📅 Class Information</h3>
-            
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-              <p style="margin: 0 0 15px 0; font-size: 1rem; color: #333;">
-                <strong style="color: #9a16f5;">When:</strong> Every Thursday, 7:15 PM - 9:15 PM
-              </p>
-              <p style="margin: 0; font-size: 1rem; color: #333;">
-                <strong style="color: #9a16f5;">Where:</strong> Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
-              </p>
-            </div>
-
-            <h3 style="color: #9a16f5; margin-top: 30px;">💰 Pricing</h3>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-              <tr>
-                <td style="padding: 12px; border-bottom: 2px solid #e0e0e0; font-weight: bold; color: #9a16f5;">Option</td>
-                <td style="padding: 12px; border-bottom: 2px solid #e0e0e0; font-weight: bold; color: #9a16f5;">Price</td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${casualRate}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class (Student)</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${studentRate}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">5 Class Concession</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${fiveClassPrice}</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $${casualRate * 5 - fiveClassPrice}!)</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">10 Class Concession</td>
-                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${tenClassPrice}</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $${casualRate * 10 - tenClassPrice}!)</span></td>
-              </tr>
-            </table>
-
-            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; margin-top: 20px;">
-              <p style="margin: 0; color: #1b5e20; font-size: 0.95rem;">
-                <strong>💡 Tip:</strong> 5 Class Concessions are valid for 6 months, and 10 Class Concessions are valid for 9 months from date of purchase.
-              </p>
-            </div>
-
-            <h3 style="color: #9a16f5; margin-top: 30px;">🎉 What to Expect</h3>
-            
-            <ul style="line-height: 1.8; color: #333;">
-              <li>Fun, energetic West Coast Swing classes for all levels</li>
-              <li>Welcoming community of dancers</li>
-              <li>No partner required - we rotate partners during class</li>
-              <li>Beginner-friendly instruction</li>
-            </ul>
-
-            <div style="margin-top: 30px; text-align: center;">
-              <a href="https://urbanswing.co.nz/pages/classes.html" 
-                 style="display: inline-block; padding: 14px 28px; background: #9a16f5; color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold;">
-                View Full Class Schedule
-              </a>
-            </div>
-
-            <p style="margin-top: 30px; font-size: 0.95rem; color: #666; line-height: 1.6;">
-              If you have any questions, feel free to reply to this email or contact us at 
-              <a href="mailto:dance@urbanswing.co.nz" style="color: #9a16f5;">dance@urbanswing.co.nz</a>.
-            </p>
-
-            <p style="font-size: 1rem; color: #333; margin-top: 20px;">
-              See you on the dance floor!<br>
-              <strong style="color: #9a16f5;">The Urban Swing Team</strong>
-            </p>
-          </div>
-          
-          <div style="padding: 20px; text-align: center; background: #f8f9fa; border-top: 1px solid #e0e0e0;">
-            <p style="margin: 0 0 15px 0; font-size: 0.9rem; color: #666;">
-              Follow us for updates and events:
-            </p>
-            
-            <!-- Social Media Icons -->
-            <div style="margin-bottom: 15px;">
-              <a href="https://www.facebook.com/UrbanSwingNZ" style="display: inline-block; margin: 0 8px; color: #3b5998; text-decoration: none; font-size: 24px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 32px; height: 32px; vertical-align: middle;">
-              </a>
-              <a href="https://www.instagram.com/urbanswingnz" style="display: inline-block; margin: 0 8px; color: #E1306C; text-decoration: none; font-size: 24px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" style="width: 32px; height: 32px; vertical-align: middle;">
-              </a>
-              <a href="https://urbanswing.co.nz" style="display: inline-block; margin: 0 8px; color: #9a16f5; text-decoration: none; font-size: 24px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website" style="width: 32px; height: 32px; vertical-align: middle;">
-              </a>
-              <a href="mailto:dance@urbanswing.co.nz" style="display: inline-block; margin: 0 8px; color: #9a16f5; text-decoration: none; font-size: 24px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" style="width: 32px; height: 32px; vertical-align: middle;">
-              </a>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const welcomeEmailText = `
-Welcome to Urban Swing!
-
-Hi ${student.firstName}!
-
-Thank you for registering with Urban Swing! We're excited to have you join our dance community.
-
-CLASS INFORMATION
-When: Every Thursday, 7:15 PM - 9:15 PM
-Where: Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
-
-PRICING
-- Single Class: $${casualRate}
-- Single Class (Student): $${studentRate}
-- 5 Class Concession: $${fiveClassPrice} (Save $${casualRate * 5 - fiveClassPrice}!) - valid for 6 months
-- 10 Class Concession: $${tenClassPrice} (Save $${casualRate * 10 - tenClassPrice}!) - valid for 9 months
-
-WHAT TO EXPECT
-- Fun, energetic West Coast Swing classes for all levels
-- Welcoming community of dancers
-- No partner required - we rotate partners during class
-- Beginner-friendly instruction
-
-View full class schedule: https://urbanswing.co.nz/pages/classes.html
-
-If you have any questions, feel free to reply to this email or contact us at dance@urbanswing.co.nz.
-
-See you on the dance floor!
-The Urban Swing Team
-
----
-Follow us:
-Facebook: https://www.facebook.com/UrbanSwingNZ
-Instagram: https://www.instagram.com/urbanswingnz
-Website: https://urbanswing.co.nz
-Email: dance@urbanswing.co.nz
-      `;
+      // Generate email content using templates
+      const adminEmail = generateAdminNotificationEmail(student, studentId, registeredAt);
+      const welcomeEmail = generateWelcomeEmail(student, casualRate, studentRate, fiveClassPrice, tenClassPrice, hasUserAccount);
 
       // Send admin notification email
       try {
@@ -496,8 +292,8 @@ Email: dance@urbanswing.co.nz
           from: '"Urban Swing" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
           subject: `New Student Registration: ${student.firstName} ${student.lastName}`,
-          text: adminEmailText,
-          html: adminEmailHtml,
+          text: adminEmail.text,
+          html: adminEmail.html,
         });
 
         logger.info("Admin notification sent for student:", studentId);
@@ -511,8 +307,8 @@ Email: dance@urbanswing.co.nz
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
         subject: "Welcome to Urban Swing! 🎉",
-        text: welcomeEmailText,
-        html: welcomeEmailHtml,
+        text: welcomeEmail.text,
+        html: welcomeEmail.html,
       });
 
       logger.info("Welcome email sent to student:", student.email);
@@ -533,62 +329,14 @@ Email: dance@urbanswing.co.nz
           },
         });
         
+        const errorEmail = generateErrorNotificationEmail(student, studentId, error);
+        
         await transporter.sendMail({
           from: '"Urban Swing System" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
           subject: "⚠️ ERROR: Failed to send student welcome email",
-          text: `Error occurred while processing registration for ${student.firstName} ${student.lastName} (${student.email}):\n\nError: ${error.message}\n\nStudent ID: ${studentId}\n\nPlease check the pricing configuration in Admin Tools > Concession Types Manager and ensure all casual rates and concession packages are properly configured.\n\nView Firebase Functions logs: https://console.firebase.google.com/project/directed-curve-447204-j4/functions/logs`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="background: #dc3545; padding: 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">⚠️ System Error</h1>
-              </div>
-              
-              <div style="padding: 30px; background: #fff;">
-                <h2 style="color: #dc3545; margin-top: 0;">Failed to send student welcome email</h2>
-                
-                <p style="font-size: 1rem; line-height: 1.6; color: #333;">
-                  An error occurred while processing the registration for:
-                </p>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                  <p style="margin: 5px 0;"><strong>Name:</strong> ${student.firstName} ${student.lastName}</p>
-                  <p style="margin: 5px 0;"><strong>Email:</strong> ${student.email}</p>
-                  <p style="margin: 5px 0;"><strong>Student ID:</strong> ${studentId}</p>
-                </div>
-                
-                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;">
-                  <p style="margin: 0; color: #856404;">
-                    <strong>Error Message:</strong><br>
-                    ${error.message}
-                  </p>
-                </div>
-                
-                <h3 style="color: #dc3545;">Action Required:</h3>
-                <ul style="line-height: 1.8; color: #333;">
-                  <li>Check the pricing configuration in <strong>Admin Tools > Concession Types Manager</strong></li>
-                  <li>Ensure all casual rates are active (Casual Entry and Student Casual Entry)</li>
-                  <li>Ensure 5-class and 10-class concession packages are active</li>
-                  <li>Manually send the welcome email to the student once pricing is fixed</li>
-                </ul>
-                
-                <div style="margin-top: 30px; text-align: center;">
-                  <a href="https://console.firebase.google.com/project/directed-curve-447204-j4/functions/logs" 
-                     style="display: inline-block; padding: 12px 24px; background: #dc3545; color: white; text-decoration: none; border-radius: 6px; margin-right: 10px;">
-                    View Function Logs
-                  </a>
-                  <a href="https://urbanswing.co.nz/admin/admin-tools/concession-types.html" 
-                     style="display: inline-block; padding: 12px 24px; background: #9a16f5; color: white; text-decoration: none; border-radius: 6px;">
-                    Fix Pricing Configuration
-                  </a>
-                </div>
-              </div>
-              
-              <div style="padding: 20px; text-align: center; color: #666; font-size: 12px; background: #e9ecef;">
-                <p>This is an automated error notification from Urban Swing student registration system.</p>
-              </div>
-            </div>
-          `,
+          text: errorEmail.text,
+          html: errorEmail.html,
         });
         
         logger.info("Error notification email sent to admin");
@@ -601,3 +349,188 @@ Email: dance@urbanswing.co.nz
     }
   }
 );
+
+/**
+ * Send account setup confirmation email when a user creates their portal account
+ * Triggers on new document creation in the 'users' collection
+ * This handles existing students who are setting up their portal account
+ */
+exports.sendAccountSetupEmail = onDocumentCreated(
+  {
+    document: "users/{userId}",
+    secrets: [emailPassword],
+  },
+  async (event) => {
+    const user = event.data.data();
+    const userId = event.params.userId;
+
+    logger.info("User account created:", userId);
+
+    try {
+      // Check if this is a new student or existing student
+      const db = getFirestore();
+      const studentDoc = await db.collection('students').doc(user.studentId).get();
+      
+      if (!studentDoc.exists) {
+        logger.error("Student document not found for user:", userId);
+        return null;
+      }
+      
+      const student = studentDoc.data();
+      
+      // Check if student document was just created (within last 5 minutes)
+      // If so, the sendNewStudentEmail function will handle the emails
+      const studentCreatedAt = student.createdAt?.toDate() || new Date(student.registeredAt);
+      const now = new Date();
+      const timeDiff = (now - studentCreatedAt) / 1000 / 60; // difference in minutes
+      
+      if (timeDiff < 5) {
+        logger.info("Student was just created, skipping account setup email (will be sent by sendNewStudentEmail)");
+        return null;
+      }
+      
+      // This is an existing student setting up their account - send account setup confirmation
+      logger.info("Existing student setting up portal account:", user.studentId);
+      
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+      
+      const setupDate = new Date().toLocaleString('en-NZ', {
+        timeZone: 'Pacific/Auckland',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      // Generate account setup email using template
+      const accountSetupEmail = generateAccountSetupEmail(student, user, setupDate);
+      
+      // Send account setup confirmation email to student
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: user.email,
+        subject: "Your Urban Swing Portal Account is Ready! 🎉",
+        text: accountSetupEmail.text,
+        html: accountSetupEmail.html,
+      });
+
+      logger.info("Account setup confirmation email sent to:", user.email);
+      
+      return null;
+    } catch (error) {
+      logger.error("Error sending account setup email:", error);
+      
+      // Send error notification email to admin
+      try {
+        const errorTransporter = nodemailer.createTransport({
+          host: "smtp.gmail.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: "dance@urbanswing.co.nz",
+            pass: emailPassword.value(),
+          },
+        });
+        
+        // Fetch student data for error email
+        const db = getFirestore();
+        const studentDoc = await db.collection('students').doc(user.studentId).get();
+        const student = studentDoc.exists ? studentDoc.data() : { firstName: 'Unknown', lastName: 'Unknown', email: user.email };
+        
+        const errorEmail = generateErrorNotificationEmail(student, user.studentId, error);
+        
+        await errorTransporter.sendMail({
+          from: '"Urban Swing System" <dance@urbanswing.co.nz>',
+          to: "dance@urbanswing.co.nz",
+          subject: "⚠️ ERROR: Failed to send account setup email",
+          text: errorEmail.text,
+          html: errorEmail.html,
+        });
+        
+        logger.info("Error notification email sent to admin");
+      } catch (emailError) {
+        logger.error("Failed to send error notification email:", emailError);
+      }
+      
+      // Don't throw - we don't want to fail the account creation if email fails
+      return null;
+    }
+  }
+);
+
+/**
+ * Export all Firebase Authentication users
+ * Returns list of all auth users with their UIDs and profile data
+ * Requires admin authentication
+ */
+exports.exportAuthUsers = onCall(async (request) => {
+  // Verify user is authenticated
+  if (!request.auth) {
+    logger.error("Unauthenticated request to exportAuthUsers");
+    throw new Error("Authentication required");
+  }
+
+  logger.info("Exporting auth users for admin:", request.auth.uid);
+
+  try {
+    // Verify the requesting user is an admin
+    const db = getFirestore();
+    const userDoc = await db.collection('users').doc(request.auth.uid).get();
+    
+    if (!userDoc.exists) {
+      logger.error("User document not found:", request.auth.uid);
+      throw new Error("User not authorized");
+    }
+
+    const userData = userDoc.data();
+    if (!userData.isAdmin) {
+      logger.error("Non-admin user attempted to export auth users:", request.auth.uid);
+      throw new Error("Admin privileges required");
+    }
+
+    // List all auth users
+    const listUsersResult = await admin.auth().listUsers();
+    const authUsers = listUsersResult.users.map(userRecord => ({
+      uid: userRecord.uid,
+      email: userRecord.email,
+      emailVerified: userRecord.emailVerified,
+      displayName: userRecord.displayName,
+      photoURL: userRecord.photoURL,
+      disabled: userRecord.disabled,
+      metadata: {
+        creationTime: userRecord.metadata.creationTime,
+        lastSignInTime: userRecord.metadata.lastSignInTime,
+      },
+      providerData: userRecord.providerData,
+    }));
+
+    logger.info(`Exported ${authUsers.length} auth users`);
+
+    return {
+      users: authUsers,
+      count: authUsers.length,
+      exportedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    logger.error("Error exporting auth users:", error);
+    throw new Error(`Auth export failed: ${error.message}`);
+  }
+});
+
+// Export Stripe payment functions
+const { processCasualPayment } = require('./process-casual-payment');
+const { processConcessionPurchase } = require('./process-concession-purchase');
+
+exports.createStudentWithPayment = createStudentWithPayment;
+exports.getAvailablePackages = getAvailablePackages;
+exports.processCasualPayment = processCasualPayment;
+exports.processConcessionPurchase = processConcessionPurchase;

@@ -91,6 +91,7 @@ async function normalizeTransaction(transaction) {
         paymentMethod: paymentMethod,
         invoiced: transaction.invoiced || false,
         reversed: transaction.reversed || false,
+        stripeCustomerId: transaction.stripeCustomerId || null,
         collection: 'transactions',
         rawData: transaction
     };

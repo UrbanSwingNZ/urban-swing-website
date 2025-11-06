@@ -13,12 +13,18 @@ const firebaseConfig = {
 
 // Initialize Firebase (this will be used by admin.js)
 // Don't modify below unless you know what you're doing
-let app, auth, db;
+let app, auth, db, functions;
 
 try {
   app = firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
   db = firebase.firestore();
+  
+  // Only initialize functions if the SDK is loaded
+  if (firebase.app().functions) {
+    functions = firebase.app().functions('us-central1');
+  }
+  
   console.log('Firebase initialized successfully');
 } catch (error) {
   console.error('Firebase initialization error:', error);

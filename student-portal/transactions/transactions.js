@@ -18,29 +18,38 @@ async function initializePage() {
         // Wait for auth to be ready
         await waitForAuth();
         
-        // Check if student is selected (from sessionStorage or URL)
-        const studentId = sessionStorage.getItem('currentStudentId');
-        
-        if (!studentId && !isAuthorized) {
-            // Student not logged in and no student selected
-            console.error('No student selected');
-            window.location.href = '../dashboard/index.html';
-            return;
-        }
-        
         // Show main container
         document.getElementById('main-container').style.display = 'block';
         
-        if (studentId) {
-            // Load transactions for the selected student
-            await loadStudentTransactions(studentId);
+        // Determine which student to load
+        let studentId = null;
+        
+        if (isAuthorized) {
+            // Admin view - check sessionStorage for selected student
+            studentId = sessionStorage.getItem('currentStudentId');
+            
+            if (!studentId) {
+                // Show empty state (admin only - no student selected)
+                document.getElementById('empty-state').style.display = 'flex';
+                return;
+            }
         } else {
-            // Show empty state (admin only)
-            document.getElementById('empty-state').style.display = 'flex';
+            // Student view - load their own data
+            studentId = await getCurrentStudentId();
+            
+            if (!studentId) {
+                console.error('Could not load student data');
+                alert('Error loading your data. Please try refreshing the page.');
+                return;
+            }
         }
+        
+        // Load transactions for the student
+        await loadStudentTransactions(studentId);
         
     } catch (error) {
         console.error('Error initializing page:', error);
+        alert('Error loading page. Please try refreshing.');
     }
 }
 
@@ -59,10 +68,45 @@ function waitForAuth() {
     });
 }
 
+// Get the current logged-in student's ID
+async function getCurrentStudentId() {
+    try {
+        // Wait for Firebase Auth to be ready
+        const user = await new Promise((resolve) => {
+            const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+                unsubscribe();
+                resolve(user);
+            });
+        });
+        
+        if (!user) {
+            console.error('No user logged in');
+            return null;
+        }
+        
+        const email = user.email.toLowerCase();
+        
+        // Find student by email
+        const studentSnapshot = await window.db.collection('students')
+            .where('email', '==', email)
+            .limit(1)
+            .get();
+        
+        if (studentSnapshot.empty) {
+            console.error('Student not found for email:', email);
+            return null;
+        }
+        
+        return studentSnapshot.docs[0].id;
+        
+    } catch (error) {
+        console.error('Error getting current student ID:', error);
+        return null;
+    }
+}
+
 // Load transactions for a specific student
 async function loadStudentTransactions(studentId) {
-    console.log('Loading transactions for student:', studentId);
-    
     try {
         showLoading(true);
         
@@ -275,20 +319,26 @@ function createTransactionRow(transaction) {
     const paymentCell = document.createElement('td');
     paymentCell.className = 'payment-method';
     
-    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
-    let paymentBadge = '';
-    
-    if (paymentMethod === 'cash') {
-        paymentBadge = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
-    } else if (paymentMethod === 'eftpos') {
-        paymentBadge = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
-    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
-        paymentBadge = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    // Check if online payment first (has stripeCustomerId)
+    if (transaction.stripeCustomerId) {
+        paymentCell.innerHTML = '<span class="payment-badge online">Online</span>';
     } else {
-        paymentBadge = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+        let paymentBadge = '';
+        
+        if (paymentMethod === 'cash') {
+            paymentBadge = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+        } else if (paymentMethod === 'eftpos') {
+            paymentBadge = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+        } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+            paymentBadge = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+        } else {
+            paymentBadge = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        }
+        
+        paymentCell.innerHTML = paymentBadge;
     }
     
-    paymentCell.innerHTML = paymentBadge;
     row.appendChild(paymentCell);
     
     return row;
@@ -318,17 +368,23 @@ function createTransactionCard(transaction) {
     typeBadgesHTML += `<span class="type-badge ${typeInfo.badgeClass}">${typeInfo.typeName}</span>`;
     
     // Get payment method badge
-    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
     let paymentBadgeHTML = '';
     
-    if (paymentMethod === 'cash') {
-        paymentBadgeHTML = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
-    } else if (paymentMethod === 'eftpos') {
-        paymentBadgeHTML = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
-    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
-        paymentBadgeHTML = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    // Check if online payment first (has stripeCustomerId)
+    if (transaction.stripeCustomerId) {
+        paymentBadgeHTML = '<span class="payment-badge online">Online</span>';
     } else {
-        paymentBadgeHTML = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+        
+        if (paymentMethod === 'cash') {
+            paymentBadgeHTML = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+        } else if (paymentMethod === 'eftpos') {
+            paymentBadgeHTML = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+        } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+            paymentBadgeHTML = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+        } else {
+            paymentBadgeHTML = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        }
     }
     
     // Build card HTML
