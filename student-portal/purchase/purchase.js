@@ -31,29 +31,38 @@ async function initializePage() {
         // Wait for auth to be ready
         await waitForAuth();
         
-        // Check if student is selected (from sessionStorage)
-        const studentId = sessionStorage.getItem('currentStudentId');
-        
-        if (!studentId && !isAuthorized) {
-            // Student not logged in and no student selected
-            console.error('No student selected');
-            window.location.href = '../dashboard/index.html';
-            return;
-        }
-        
         // Show main container
         document.getElementById('main-container').style.display = 'block';
         
-        if (studentId) {
-            // Load purchase page for the selected student
-            await loadPurchasePage(studentId);
+        // Determine which student to load
+        let studentId = null;
+        
+        if (isAuthorized) {
+            // Admin view - check sessionStorage for selected student
+            studentId = sessionStorage.getItem('currentStudentId');
+            
+            if (!studentId) {
+                // Show empty state (admin only - no student selected)
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            }
         } else {
-            // Show empty state (admin only)
-            document.getElementById('empty-state').style.display = 'block';
+            // Student view - load their own data
+            studentId = await getCurrentStudentId();
+            
+            if (!studentId) {
+                console.error('Could not load student data');
+                alert('Error loading your data. Please try refreshing the page.');
+                return;
+            }
         }
+        
+        // Load purchase page for the student
+        await loadPurchasePage(studentId);
         
     } catch (error) {
         console.error('Error initializing page:', error);
+        alert('Error loading page. Please try refreshing.');
     }
 }
 
@@ -70,6 +79,43 @@ function waitForAuth() {
             }, 100);
         }
     });
+}
+
+// Get the current logged-in student's ID
+async function getCurrentStudentId() {
+    try {
+        // Wait for Firebase Auth to be ready
+        const user = await new Promise((resolve) => {
+            const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+                unsubscribe();
+                resolve(user);
+            });
+        });
+        
+        if (!user) {
+            console.error('No user logged in');
+            return null;
+        }
+        
+        const email = user.email.toLowerCase();
+        
+        // Find student by email
+        const studentSnapshot = await window.db.collection('students')
+            .where('email', '==', email)
+            .limit(1)
+            .get();
+        
+        if (studentSnapshot.empty) {
+            console.error('Student not found for email:', email);
+            return null;
+        }
+        
+        return studentSnapshot.docs[0].id;
+        
+    } catch (error) {
+        console.error('Error getting current student ID:', error);
+        return null;
+    }
 }
 
 async function loadPurchasePage(studentId) {
