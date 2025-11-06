@@ -580,6 +580,53 @@ h1 {
     outline-offset: 2px;
 }
 
+/* Password Generator Helper */
+.password-generator-helper {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(133, 18, 214, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--admin-purple);
+}
+
+.password-generator-helper .helper-text {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.password-generator-helper .helper-text i {
+    color: var(--admin-purple);
+    font-size: 1rem;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--admin-purple);
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.btn-link:hover {
+    color: var(--admin-blue);
+    text-decoration: none;
+}
+
+.btn-link:focus {
+    outline: 2px solid var(--admin-purple);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 .btn-secondary {
     background: linear-gradient(135deg, var(--admin-blue) 0%, var(--admin-purple) 100%);
     color: white;
