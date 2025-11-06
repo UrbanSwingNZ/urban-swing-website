@@ -55,17 +55,29 @@ async function handleRegistrationSubmit() {
     try {
         showLoading(true);
         
-        // Check if email exists
+        // Check if email exists in students and/or users collections
         const result = await checkEmailExists(email);
+        
+        console.log('Email check result:', result);
+        console.log('Status:', result.status);
+        console.log('Has student:', result.hasStudent);
+        console.log('Has user:', result.hasUser);
         
         showLoading(false);
         
-        if (result.exists) {
-            // Show warning modal - email already exists, cannot proceed
-            showEmailExistsModal(result.students);
+        // Route based on status
+        if (result.status === 'existing-complete') {
+            // Both student and user exist - show modal, redirect to login
+            console.log('Showing email exists modal - user already has portal account');
+            showEmailExistsModal([result.studentData]);
+        } else if (result.status === 'existing-incomplete') {
+            // Student exists but no user - proceed to registration with pre-filled data
+            console.log('Redirecting to registration form - existing student without portal account');
+            redirectToRegistrationForm(email, 'existing-incomplete', result.studentData);
         } else {
-            // Email doesn't exist - proceed with registration form
-            redirectToRegistrationForm(email);
+            // New student - proceed to blank registration form
+            console.log('Redirecting to registration form - brand new student');
+            redirectToRegistrationForm(email, 'new', null);
         }
         
     } catch (error) {
@@ -86,12 +98,19 @@ function isValidEmail(email) {
 }
 
 /**
- * Redirect to registration form with email
+ * Redirect to registration form with email and mode
  * @param {string} email - Email address to pre-fill
+ * @param {string} mode - Registration mode: 'new' or 'existing-incomplete'
+ * @param {Object|null} studentData - Existing student data if mode is 'existing-incomplete'
  */
-function redirectToRegistrationForm(email) {
-    // Store email in sessionStorage to pre-fill on registration page
+function redirectToRegistrationForm(email, mode, studentData) {
+    // Store registration data in sessionStorage
     sessionStorage.setItem('registrationEmail', email);
+    sessionStorage.setItem('registrationMode', mode);
+    
+    if (mode === 'existing-incomplete' && studentData) {
+        sessionStorage.setItem('registrationStudentData', JSON.stringify(studentData));
+    }
     
     // Redirect to registration form
     window.location.href = 'register.html';

@@ -1,63 +1,38 @@
 // My Concessions Page
 
 // Page Initialization
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('My Concessions page loaded');
+// Wait for auth check to complete and student data to be loaded
+window.addEventListener('authCheckComplete', async (event) => {
+    // Show main container
+    document.getElementById('main-container').style.display = 'block';
     
-    // Initialize page
-    initializePage();
+    if (event.detail.isAuthorized) {
+        // Admin viewing student portal
+        // Check if we have a selected student in sessionStorage (from navigation)
+        const currentStudentId = sessionStorage.getItem('currentStudentId');
+        if (currentStudentId) {
+            // Hide empty state immediately - student-loader will load the data
+            document.getElementById('empty-state').style.display = 'none';
+        }
+    } else {
+        // Regular student - check if data already loaded
+        if (window.currentStudent) {
+            await loadStudentConcessions(window.currentStudent.id);
+        }
+    }
 });
 
-async function initializePage() {
-    try {
-        // Wait for auth to be ready
-        await waitForAuth();
-        
-        // Check if student is selected (from sessionStorage or URL)
-        const studentId = sessionStorage.getItem('currentStudentId');
-        
-        if (!studentId && !isAuthorized) {
-            // Student not logged in and no student selected
-            console.error('No student selected');
-            window.location.href = '../dashboard/index.html';
-            return;
-        }
-        
-        // Show main container
-        document.getElementById('main-container').style.display = 'block';
-        
-        if (studentId) {
-            // Load concessions for the selected student
-            await loadStudentConcessions(studentId);
-        } else {
-            // Show empty state (admin only)
-            document.getElementById('empty-state').style.display = 'flex';
-        }
-        
-    } catch (error) {
-        console.error('Error initializing page:', error);
-    }
-}
+// Listen for student selection (admin) or student loaded (regular student)
+window.addEventListener('studentSelected', async (event) => {
+    await loadStudentConcessions(event.detail.id);
+});
 
-function waitForAuth() {
-    return new Promise((resolve) => {
-        if (typeof isAuthorized !== 'undefined') {
-            resolve();
-        } else {
-            const checkAuth = setInterval(() => {
-                if (typeof isAuthorized !== 'undefined') {
-                    clearInterval(checkAuth);
-                    resolve();
-                }
-            }, 100);
-        }
-    });
-}
+window.addEventListener('studentLoaded', async (event) => {
+    await loadStudentConcessions(event.detail.id);
+});
 
 // Load concessions for a specific student
 async function loadStudentConcessions(studentId) {
-    console.log('Loading concessions for student:', studentId);
-    
     try {
         showLoading(true);
         
@@ -77,6 +52,7 @@ async function loadStudentConcessions(studentId) {
         // Query concession blocks for this student
         const concessionsSnapshot = await window.db.collection('concessionBlocks')
             .where('studentId', '==', studentId)
+            .limit(100)
             .get();
         
         const blocks = [];
@@ -93,8 +69,6 @@ async function loadStudentConcessions(studentId) {
             const dateB = b.purchaseDate?.toDate ? b.purchaseDate.toDate() : new Date(b.purchaseDate || 0);
             return dateB - dateA;
         });
-        
-        console.log(`Found ${blocks.length} concession blocks`);
         
         // Calculate stats and display
         const stats = calculateConcessionStats(blocks);

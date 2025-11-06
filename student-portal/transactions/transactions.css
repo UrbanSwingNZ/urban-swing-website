@@ -188,6 +188,11 @@
     color: #2e7d32;
 }
 
+.type-badge.online {
+    background: rgba(0, 150, 136, 0.1);
+    color: #00796b;
+}
+
 .type-badge.reversed {
     background: #ffebee;
     color: #c62828;
@@ -227,6 +232,11 @@
 .payment-badge.bank {
     background: #f3e5f5;
     color: #6a1b9a;
+}
+
+.payment-badge.online {
+    background: rgba(0, 150, 136, 0.1);
+    color: #00796b;
 }
 
 .payment-badge.unknown {
@@ -320,7 +330,13 @@
 
 /* Transaction Cards (Mobile Only) */
 .cards-container {
-    display: none;
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .cards-container {
+        display: block !important;
+    }
 }
 
 .transaction-card {
@@ -413,13 +429,9 @@
         gap: 0.5rem;
     }
 
-    /* Hide table on mobile, show cards */
+    /* Hide table on mobile */
     .table-container {
         display: none !important;
-    }
-
-    .cards-container {
-        display: block;
     }
 
     .type-badge {

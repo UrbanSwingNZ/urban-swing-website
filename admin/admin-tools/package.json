@@ -1,0 +1,21 @@
+{
+  "name": "urban-swing-auth-restore",
+  "version": "1.0.0",
+  "description": "Restore Firebase Authentication users from backup",
+  "main": "restore-auth-users.js",
+  "scripts": {
+    "restore": "node restore-auth-users.js",
+    "dry-run": "DRY_RUN=true node restore-auth-users.js"
+  },
+  "keywords": [
+    "firebase",
+    "auth",
+    "backup",
+    "restore"
+  ],
+  "author": "Urban Swing",
+  "license": "MIT",
+  "dependencies": {
+    "firebase-admin": "^12.6.0"
+  }
+}

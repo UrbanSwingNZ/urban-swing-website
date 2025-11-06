@@ -1,0 +1,330 @@
+/**
+ * new-student-emails.js
+ * Email templates for new student registrations
+ */
+
+/**
+ * Generate admin notification email for new student registration
+ * @param {Object} student - Student data
+ * @param {string} studentId - Student document ID
+ * @param {string} registeredAt - Formatted registration date
+ * @returns {Object} Object with html and text versions
+ */
+function generateAdminNotificationEmail(student, studentId, registeredAt) {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #3534Fa 0%, #9a16f5 50%, #e800f2 100%); padding: 20px; text-align: center;">
+        <h1 style="color: white; margin: 0;">New Student Registration</h1>
+      </div>
+      
+      <div style="padding: 30px; background: #f8f9fa;">
+        <h2 style="color: #9a16f5; margin-top: 0;">Student Details</h2>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Name:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.firstName} ${student.lastName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><a href="mailto:${student.email}">${student.email}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Phone:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.phoneNumber || 'N/A'}</td>
+          </tr>
+          ${student.pronouns ? `
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Pronouns:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.pronouns}</td>
+          </tr>
+          ` : ''}
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Registered:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${registeredAt}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Email Consent:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${student.emailConsent ? '✅ Yes' : '❌ No'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Student ID:</strong></td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;"><code>${studentId}</code></td>
+          </tr>
+        </table>
+        
+        ${student.adminNotes ? `
+        <div style="margin-top: 20px; padding: 15px; background: #fff; border-left: 4px solid #9a16f5;">
+          <strong>Admin Notes:</strong><br>
+          ${student.adminNotes}
+        </div>
+        ` : ''}
+        
+        <div style="margin-top: 30px; text-align: center;">
+          <p style="color: #666;">View this student in the admin database:</p>
+          <a href="https://urbanswing.co.nz/admin/student-database/" 
+             style="display: inline-block; padding: 12px 24px; background: #9a16f5; color: white; text-decoration: none; border-radius: 6px;">
+            Open Student Database
+          </a>
+        </div>
+      </div>
+      
+      <div style="padding: 20px; text-align: center; color: #666; font-size: 12px; background: #e9ecef;">
+        <p>This is an automated notification from Urban Swing student registration system.</p>
+      </div>
+    </div>
+  `;
+
+  const text = `
+New Student Registration
+
+Name: ${student.firstName} ${student.lastName}
+Email: ${student.email}
+Phone: ${student.phoneNumber || 'N/A'}
+${student.pronouns ? `Pronouns: ${student.pronouns}\n` : ''}
+Registered: ${registeredAt}
+Email Consent: ${student.emailConsent ? 'Yes' : 'No'}
+Student ID: ${studentId}
+${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}` : ''}
+
+View in admin database: https://urbanswing.co.nz/admin/student-database/
+  `;
+
+  return { html, text };
+}
+
+/**
+ * Generate welcome email for new student
+ * @param {Object} student - Student data
+ * @param {number} casualRate - Casual entry price
+ * @param {number} studentRate - Student casual entry price
+ * @param {number} fiveClassPrice - 5-class concession price
+ * @param {number} tenClassPrice - 10-class concession price
+ * @param {boolean} hasUserAccount - Whether student has a user account (portal access)
+ * @returns {Object} Object with html and text versions
+ */
+function generateWelcomeEmail(student, casualRate, studentRate, fiveClassPrice, tenClassPrice, hasUserAccount = false) {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #3534Fa 0%, #9a16f5 50%, #e800f2 100%); padding: 30px; text-align: center;">
+        <h1 style="color: white; margin: 0 0 10px 0;">Welcome to Urban Swing!</h1>
+        <p style="color: white; margin: 0; font-size: 1.1rem;">Get ready to dance</p>
+      </div>
+      
+      <div style="padding: 30px; background: #fff;">
+        <h2 style="color: #9a16f5; margin-top: 0;">Hi ${student.firstName}! 👋</h2>
+        
+        <p style="font-size: 1rem; line-height: 1.6; color: #333;">
+          Thank you for registering with Urban Swing! We're excited to have you join our dance community.
+        </p>
+        
+        <h3 style="color: #9a16f5; margin-top: 30px;">📅 Class Information</h3>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <p style="margin: 0 0 15px 0; font-size: 1rem; color: #333;">
+            <strong style="color: #9a16f5;">When:</strong> Every Thursday, 7:15 PM - 9:15 PM
+          </p>
+          <p style="margin: 0; font-size: 1rem; color: #333;">
+            <strong style="color: #9a16f5;">Where:</strong> Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
+          </p>
+        </div>
+
+        <h3 style="color: #9a16f5; margin-top: 30px;">💰 Pricing</h3>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="padding: 12px; border-bottom: 2px solid #e0e0e0; font-weight: bold; color: #9a16f5;">Option</td>
+            <td style="padding: 12px; border-bottom: 2px solid #e0e0e0; font-weight: bold; color: #9a16f5;">Price</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class</td>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${casualRate}</strong></td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">Single Class (Student)</td>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${studentRate}</strong></td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">5 Class Concession</td>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${fiveClassPrice}</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $${casualRate * 5 - fiveClassPrice}!)</span></td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">10 Class Concession</td>
+            <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><strong>$${tenClassPrice}</strong> <span style="color: #28a745; font-size: 0.9rem;">(Save $${casualRate * 10 - tenClassPrice}!)</span></td>
+          </tr>
+        </table>
+
+        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; margin-top: 20px;">
+          <p style="margin: 0; color: #1b5e20; font-size: 0.95rem;">
+            <strong>💡 Tip:</strong> 5 Class Concessions are valid for 6 months, and 10 Class Concessions are valid for 9 months from date of purchase.
+          </p>
+        </div>
+
+        <h3 style="color: #9a16f5; margin-top: 30px;">🎉 What to Expect</h3>
+        
+        <ul style="line-height: 1.8; color: #333;">
+          <li>Fun, energetic West Coast Swing classes for all levels</li>
+          <li>Welcoming community of dancers</li>
+          <li>No partner required - we rotate partners during class</li>
+          <li>Beginner-friendly instruction</li>
+        </ul>
+
+        ${hasUserAccount ? `
+        <h3 style="color: #9a16f5; margin-top: 30px;">📱 Your Student Portal</h3>
+        
+        <p style="font-size: 1rem; line-height: 1.6; color: #333;">
+          As a registered student, you now have access to your own Student Portal where you can:
+        </p>
+        
+        <ul style="line-height: 1.8; color: #333;">
+          <li>View your class check-in history</li>
+          <li>Manage your concession packages</li>
+          <li>Purchase new concessions online</li>
+          <li>Update your profile information</li>
+          <li>View your transaction history</li>
+        </ul>
+
+        <div style="margin-top: 30px; text-align: center;">
+          <a href="https://urbanswing.co.nz/pages/classes.html" 
+             style="display: inline-block; padding: 14px 28px; background: #9a16f5; color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-right: 10px; margin-bottom: 10px;">
+            View Full Class Schedule
+          </a>
+          <a href="https://urbanswing.co.nz/student-portal/" 
+             style="display: inline-block; padding: 14px 28px; background: #9a16f5; color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px;">
+            Access Student Portal
+          </a>
+        </div>
+        ` : `
+        <h3 style="color: #9a16f5; margin-top: 30px;">📱 Create Your Student Portal Account</h3>
+        
+        <p style="font-size: 1rem; line-height: 1.6; color: #333;">
+          We're excited to introduce our new <strong>Student Portal</strong> – your personal hub for managing everything Urban Swing!
+        </p>
+        
+        <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; border-left: 4px solid #9a16f5; margin: 20px 0;">
+          <p style="margin: 0 0 15px 0; color: #333; font-weight: bold;">With your Student Portal account, you can:</p>
+          <ul style="line-height: 1.8; color: #333; margin: 0;">
+            <li>View your complete class check-in history</li>
+            <li>Track your concession packages and remaining classes</li>
+            <li>Purchase new concessions online</li>
+            <li>Update your profile information anytime</li>
+            <li>Review your transaction history</li>
+          </ul>
+        </div>
+        
+        <p style="font-size: 1rem; line-height: 1.6; color: #333;">
+          Creating your account is quick and easy – it only takes a minute! Click the button below to get started and unlock all these features.
+        </p>
+
+        <div style="margin-top: 30px; text-align: center;">
+          <a href="https://urbanswing.co.nz/pages/classes.html" 
+             style="display: inline-block; padding: 14px 28px; background: #9a16f5; color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-right: 10px; margin-bottom: 10px;">
+            View Full Class Schedule
+          </a>
+          <a href="https://urbanswing.co.nz/student-portal/" 
+             style="display: inline-block; padding: 14px 28px; background: #9a16f5; color: white; text-decoration: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px;">
+            Create Portal Account
+          </a>
+        </div>
+        `}
+
+        <p style="margin-top: 30px; font-size: 0.95rem; color: #666; line-height: 1.6;">
+          If you have any questions, feel free to reply to this email or contact us at 
+          <a href="mailto:dance@urbanswing.co.nz" style="color: #9a16f5;">dance@urbanswing.co.nz</a>.
+        </p>
+
+        <p style="font-size: 1rem; color: #333; margin-top: 20px;">
+          See you on the dance floor!<br>
+          <strong style="color: #9a16f5;">The Urban Swing Team</strong>
+        </p>
+      </div>
+      
+      <div style="padding: 20px; text-align: center; background: #f8f9fa; border-top: 1px solid #e0e0e0;">
+        <p style="margin: 0 0 15px 0; font-size: 0.9rem; color: #666;">
+          Follow us for updates and events:
+        </p>
+        
+        <div style="margin-bottom: 15px;">
+          <a href="https://www.facebook.com/UrbanSwingNZ" style="display: inline-block; margin: 0 8px;" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 32px; height: 32px; vertical-align: middle;">
+          </a>
+          <a href="https://www.instagram.com/urbanswingnz" style="display: inline-block; margin: 0 8px;" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" style="width: 32px; height: 32px; vertical-align: middle;">
+          </a>
+          <a href="https://urbanswing.co.nz" style="display: inline-block; margin: 0 8px;" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website" style="width: 32px; height: 32px; vertical-align: middle;">
+          </a>
+          <a href="mailto:dance@urbanswing.co.nz" style="display: inline-block; margin: 0 8px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" style="width: 32px; height: 32px; vertical-align: middle;">
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const text = `
+Welcome to Urban Swing!
+
+Hi ${student.firstName}!
+
+Thank you for registering with Urban Swing! We're excited to have you join our dance community.
+
+CLASS INFORMATION
+When: Every Thursday, 7:15 PM - 9:15 PM
+Where: Dance Express Studios, Cnr Taradale Rd & Austin St, Onekawa, Napier
+
+PRICING
+- Single Class: $${casualRate}
+- Single Class (Student): $${studentRate}
+- 5 Class Concession: $${fiveClassPrice} (Save $${casualRate * 5 - fiveClassPrice}!) - valid for 6 months
+- 10 Class Concession: $${tenClassPrice} (Save $${casualRate * 10 - tenClassPrice}!) - valid for 9 months
+
+WHAT TO EXPECT
+- Fun, energetic West Coast Swing classes for all levels
+- Welcoming community of dancers
+- No partner required - we rotate partners during class
+- Beginner-friendly instruction
+
+${hasUserAccount ? `YOUR STUDENT PORTAL
+As a registered student, you now have access to your own Student Portal where you can:
+- View your class check-in history
+- Manage your concession packages
+- Purchase new concessions online
+- Update your profile information
+- View your transaction history
+
+Access your portal: https://urbanswing.co.nz/student-portal/` : `CREATE YOUR STUDENT PORTAL ACCOUNT
+We're excited to introduce our new Student Portal – your personal hub for managing everything Urban Swing!
+
+With your Student Portal account, you can:
+- View your complete class check-in history
+- Track your concession packages and remaining classes
+- Purchase new concessions online
+- Update your profile information anytime
+- Review your transaction history
+
+Creating your account is quick and easy – it only takes a minute!
+Create your account: https://urbanswing.co.nz/student-portal/`}
+
+View full class schedule: https://urbanswing.co.nz/pages/classes.html
+
+If you have any questions, feel free to reply to this email or contact us at dance@urbanswing.co.nz.
+
+See you on the dance floor!
+The Urban Swing Team
+
+---
+Follow us:
+Facebook: https://www.facebook.com/UrbanSwingNZ
+Instagram: https://www.instagram.com/urbanswingnz
+Website: https://urbanswing.co.nz
+Email: dance@urbanswing.co.nz
+  `;
+
+  return { html, text };
+}
+
+module.exports = {
+  generateAdminNotificationEmail,
+  generateWelcomeEmail
+};

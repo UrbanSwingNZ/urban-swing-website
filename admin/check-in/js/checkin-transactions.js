@@ -89,7 +89,8 @@ async function loadCheckinTransactions() {
                 bankTransfer: (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') ? amount : 0,
                 paymentMethod: paymentMethod,
                 invoiced: data.invoiced || false,
-                reversed: data.reversed || false
+                reversed: data.reversed || false,
+                stripeCustomerId: data.stripeCustomerId || null
             };
         });
         
@@ -169,6 +170,9 @@ function createCheckinTransactionRow(transaction) {
     // Add reversed badge if transaction is reversed
     const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
     
+    // Add online badge if transaction has stripeCustomerId
+    const onlineBadge = transaction.stripeCustomerId ? '<span class="type-badge online">Online</span> ' : '';
+    
     // Determine payment method used
     let paymentMethod = '';
     if (transaction.cash > 0) {
@@ -186,7 +190,7 @@ function createCheckinTransactionRow(transaction) {
     row.innerHTML = `
         <td data-label="Date">${formatDate(transaction.date)}</td>
         <td data-label="Student"><strong>${escapeHtml(transaction.studentName)}</strong></td>
-        <td data-label="Type">${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
+        <td data-label="Type">${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span>${onlineBadge}</td>
         <td data-label="Amount" class="amount-cell">${formatCurrency(transaction.amount)}</td>
         <td data-label="Cash" class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
             ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}

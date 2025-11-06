@@ -57,9 +57,16 @@ async function checkUserAccess() {
                 loadStudents();
             }
             
+            // Dispatch event for other pages to know auth check is complete
+            window.dispatchEvent(new CustomEvent('authCheckComplete', { detail: { isAuthorized: true } }));
+            
             return true;
         } else {
             showStudentView();
+            
+            // Dispatch event for other pages to know auth check is complete
+            window.dispatchEvent(new CustomEvent('authCheckComplete', { detail: { isAuthorized: false } }));
+            
             return false;
         }
     } catch (error) {
@@ -76,8 +83,14 @@ async function checkUserAccess() {
 function showAdminView() {
     document.getElementById('main-container').style.display = 'block';
     document.getElementById('admin-banner').style.display = 'block';
-    // Show empty state until student is selected
-    document.getElementById('empty-state').style.display = 'block';
+    
+    // Check if we have a selected student in sessionStorage
+    const currentStudentId = sessionStorage.getItem('currentStudentId');
+    
+    // Only show empty state if no student is selected
+    if (!currentStudentId) {
+        document.getElementById('empty-state').style.display = 'block';
+    }
 }
 
 /**
@@ -86,8 +99,29 @@ function showAdminView() {
 function showStudentView() {
     document.getElementById('main-container').style.display = 'block';
     document.getElementById('admin-banner').style.display = 'none';
+    
+    // Show logout button for students
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.style.display = 'block';
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    
     // Show dashboard with current user's data
     loadCurrentStudentData();
+}
+
+/**
+ * Handle logout
+ */
+async function handleLogout() {
+    try {
+        await firebase.auth().signOut();
+        window.location.href = '../index.html';
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out. Please try again.');
+    }
 }
 
 /**
@@ -102,7 +136,7 @@ async function loadCurrentStudentData() {
             .get();
         
         if (studentSnapshot.empty) {
-            console.error('No student record found for:', currentUserEmail);
+            console.error('Student record not found');
             alert('Error: Your student record could not be found. Please contact support.');
             return;
         }
@@ -113,17 +147,26 @@ async function loadCurrentStudentData() {
             ...studentDoc.data()
         };
         
-        console.log('Loaded student data for:', student.firstName, student.lastName);
+        // Store student data globally for other pages to use
+        window.currentStudent = student;
         
-        // Show dashboard with student's data
-        document.getElementById('empty-state').style.display = 'none';
-        document.getElementById('student-dashboard').style.display = 'block';
-        document.getElementById('dashboard-student-name').textContent = student.firstName;
+        // Show dashboard with student's data (only if these elements exist on this page)
+        const emptyState = document.getElementById('empty-state');
+        const studentDashboard = document.getElementById('student-dashboard');
+        const studentNameEl = document.getElementById('dashboard-student-name');
         
-        // Load dashboard data
+        if (emptyState) emptyState.style.display = 'none';
+        if (studentDashboard) studentDashboard.style.display = 'block';
+        if (studentNameEl) studentNameEl.textContent = student.firstName;
+        
+        // Load dashboard data (only if function exists)
         if (typeof loadDashboardData === 'function') {
             await loadDashboardData(student);
         }
+        
+        // Dispatch event for other pages
+        window.dispatchEvent(new CustomEvent('studentLoaded', { detail: student }));
+        
     } catch (error) {
         console.error('Error loading current student data:', error);
         alert('Error loading your data. Please try refreshing the page.');

@@ -26,12 +26,43 @@ function initializeAuth() {
   showLoading(true);
 
   // Listen for authentication state changes
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async (user) => {
     showLoading(false);
     
     if (user) {
-      // User is logged in
-      showDashboard(user);
+      // Check if user has admin or front-desk role
+      try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (!userDoc.exists) {
+          // No user document - deny access
+          console.error('User document not found');
+          showError('Access denied: Invalid user account');
+          await auth.signOut();
+          showLogin();
+          return;
+        }
+        
+        const userData = userDoc.data();
+        const role = userData.role;
+        
+        if (role !== 'admin' && role !== 'front-desk') {
+          // Not an admin or front-desk user - deny access
+          console.error('Access denied: User role is', role);
+          showError('Access denied: You do not have permission to access the admin area');
+          await auth.signOut();
+          showLogin();
+          return;
+        }
+        
+        // User is authorized - show dashboard
+        showDashboard(user);
+      } catch (error) {
+        console.error('Error checking user role:', error);
+        showError('Error verifying access permissions');
+        await auth.signOut();
+        showLogin();
+      }
     } else {
       // User is logged out
       showLogin();
