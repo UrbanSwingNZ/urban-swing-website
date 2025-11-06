@@ -35,8 +35,11 @@ service cloud.firestore {
     
     // Students collection (for student database system)
     match /students/{studentId} {
-      // Only admins and front-desk can read and write
+      // Admins and front-desk can read and write everything
       allow read, write: if isAdminOrFrontDesk();
+      
+      // Students can read their own student document
+      allow read: if isStudent() && studentId == getStudentId();
       
       // Public users can read for duplicate checking (limited to querying by their own email)
       allow read: if request.query.limit <= 10;
@@ -60,22 +63,25 @@ service cloud.firestore {
       allow write: if isAdminOrFrontDesk();
     }
     
-    // Concession Blocks - admins can read/write, students can read their own
+    // Concession Blocks - TEMPORARY: allow all reads for testing
     match /concessionBlocks/{blockId} {
-      allow read, write: if isAdminOrFrontDesk();
-      allow read: if isStudent() && resource.data.studentId == getStudentId();
+      allow write: if isAdminOrFrontDesk();
+      // TEMPORARY: Allow all reads
+      allow read: if true;
     }
     
-    // Transactions - admins can read/write, students can read their own
+    // Transactions - TEMPORARY: allow all reads for testing
     match /transactions/{transactionId} {
-      allow read, write: if isAdminOrFrontDesk();
-      allow read: if isStudent() && resource.data.studentId == getStudentId();
+      allow write: if isAdminOrFrontDesk();
+      // TEMPORARY: Allow all reads
+      allow read: if true;
     }
     
-    // Check-ins - admins can read/write, students can read their own
+    // Check-ins - TEMPORARY: allow all reads for testing
     match /checkins/{checkinId} {
-      allow read, write: if isAdminOrFrontDesk();
-      allow read: if isStudent() && resource.data.studentId == getStudentId();
+      allow write: if isAdminOrFrontDesk();
+      // TEMPORARY: Allow all reads
+      allow read: if true;
     }
     
     // Users collection (for student portal authentication)
@@ -83,8 +89,8 @@ service cloud.firestore {
       // Admins and front-desk can read and write everything
       allow read, write: if isAdminOrFrontDesk();
       
-      // Students can read their own user document
-      allow read: if isStudent() && request.auth.uid == userId;
+      // Any authenticated user can read their own user document (needed for isStudent() check)
+      allow read: if request.auth != null && request.auth.uid == userId;
       
       // Allow querying by studentId (for backend functions)
       allow read: if request.query.limit <= 10;

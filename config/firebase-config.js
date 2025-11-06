@@ -19,7 +19,12 @@ try {
   app = firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
   db = firebase.firestore();
-  functions = firebase.app().functions('us-central1'); // Initialize functions with region
+  
+  // Only initialize functions if the SDK is loaded
+  if (firebase.app().functions) {
+    functions = firebase.app().functions('us-central1');
+  }
+  
   console.log('Firebase initialized successfully');
 } catch (error) {
   console.error('Firebase initialization error:', error);
