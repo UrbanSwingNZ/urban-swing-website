@@ -41,6 +41,19 @@ service cloud.firestore {
       // Students can read their own student document
       allow read: if isStudent() && studentId == getStudentId();
       
+      // Students can update specific fields in their own profile
+      allow update: if isStudent() && 
+                       studentId == getStudentId() &&
+                       // Only allow updating these specific fields
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['firstName', 'lastName', 'email', 'phoneNumber', 
+                                  'pronouns', 'emailConsent']) &&
+                       // Ensure required fields remain present
+                       request.resource.data.keys().hasAll([
+                         'firstName', 'lastName', 'email', 'phoneNumber', 
+                         'emailConsent', 'registeredAt'
+                       ]);
+      
       // Public users can read for duplicate checking (limited to querying by their own email)
       allow read: if request.query.limit <= 10;
       
@@ -63,25 +76,31 @@ service cloud.firestore {
       allow write: if isAdminOrFrontDesk();
     }
     
-    // Concession Blocks - TEMPORARY: allow all reads for testing
+    // Concession Blocks
     match /concessionBlocks/{blockId} {
-      allow write: if isAdminOrFrontDesk();
-      // TEMPORARY: Allow all reads
-      allow read: if true;
+      // Admins and front-desk can read and write everything
+      allow read, write: if isAdminOrFrontDesk();
+      
+      // Students can read their own concession blocks
+      allow read: if isStudent() && resource.data.studentId == getStudentId();
     }
     
-    // Transactions - TEMPORARY: allow all reads for testing
+    // Transactions
     match /transactions/{transactionId} {
-      allow write: if isAdminOrFrontDesk();
-      // TEMPORARY: Allow all reads
-      allow read: if true;
+      // Admins and front-desk can read and write everything
+      allow read, write: if isAdminOrFrontDesk();
+      
+      // Students can read their own transactions
+      allow read: if isStudent() && resource.data.studentId == getStudentId();
     }
     
-    // Check-ins - TEMPORARY: allow all reads for testing
+    // Check-ins
     match /checkins/{checkinId} {
-      allow write: if isAdminOrFrontDesk();
-      // TEMPORARY: Allow all reads
-      allow read: if true;
+      // Admins and front-desk can read and write everything
+      allow read, write: if isAdminOrFrontDesk();
+      
+      // Students can read their own check-ins
+      allow read: if isStudent() && resource.data.studentId == getStudentId();
     }
     
     // Users collection (for student portal authentication)
