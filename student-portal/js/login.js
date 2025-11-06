@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Note: Register button handler is now in registration-handler.js
 
-    // Login button handler
+    // Login handler function
     const loginBtn = existingStudentForm.querySelector('.action-btn');
-    loginBtn.addEventListener('click', async function(e) {
+    const handleLogin = async function(e) {
         e.preventDefault();
         
         const email = document.getElementById('existingStudentEmail').value.trim();
@@ -94,6 +94,22 @@ document.addEventListener('DOMContentLoaded', function() {
             // Re-enable button
             loginBtn.disabled = false;
             loginBtn.textContent = 'Login';
+        }
+    };
+    
+    // Login button click handler
+    loginBtn.addEventListener('click', handleLogin);
+    
+    // Enter key handler for login form
+    document.getElementById('existingStudentPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleLogin(e);
+        }
+    });
+    
+    document.getElementById('existingStudentEmail').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleLogin(e);
         }
     });
 
