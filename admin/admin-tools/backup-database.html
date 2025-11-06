@@ -14,6 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 </head>
 <body>
     <!-- Database Backup Page -->
@@ -43,13 +44,14 @@
             <div class="backup-container">
                 <div class="info">
             <h3><i class="fas fa-info-circle"></i> About This Tool</h3>
-            <p>This tool creates a complete backup of your Firestore database by exporting collections to a ZIP file.</p>
+            <p>This tool creates a complete backup of your Firestore database and Firebase Authentication users by exporting collections to a ZIP file.</p>
             <ul>
-                <li>Select which collections to backup</li>
+                <li>Select which collections to backup (Firestore data and Auth users)</li>
                 <li>Creates a single ZIP file containing all selected collections in both JSON and CSV formats</li>
                 <li>ZIP file is timestamped for easy version tracking (e.g., backup-2025-10-22-15-30-00.zip)</li>
                 <li>Backups can be extracted and used for restoration or migration</li>
                 <li>CSV files are ideal for spreadsheet analysis, while JSON preserves complex data structures</li>
+                <li><strong>Auth Users backup includes UIDs, emails, and metadata</strong> - essential for complete disaster recovery</li>
             </ul>
         </div>
 
@@ -193,14 +195,18 @@
 
         function updateStats() {
             const statsDiv = document.getElementById('stats');
-            const totalDocs = Array.from(selectedCollections).reduce((sum, name) => sum + collectionCounts[name], 0);
+            const totalDocs = Array.from(selectedCollections).reduce((sum, name) => {
+                const count = collectionCounts[name];
+                // Skip auth collections (which show "Available" instead of a number)
+                return sum + (typeof count === 'number' ? count : 0);
+            }, 0);
             const estimatedSize = Math.round(totalDocs * 2); // Rough estimate: 2KB per document
 
             document.getElementById('total-collections').textContent = selectedCollections.size;
-            document.getElementById('total-documents').textContent = totalDocs;
+            document.getElementById('total-documents').textContent = totalDocs > 0 ? totalDocs : '—';
             document.getElementById('backup-size').textContent = estimatedSize > 1024 
                 ? `${(estimatedSize / 1024).toFixed(1)} MB` 
-                : `${estimatedSize} KB`;
+                : estimatedSize > 0 ? `${estimatedSize} KB` : '—';
 
             statsDiv.style.display = selectedCollections.size > 0 ? 'grid' : 'none';
         }
@@ -233,11 +239,14 @@
         });
 
         const COLLECTIONS = [
-            { name: 'students', label: 'Students', icon: 'fa-users' },
-            { name: 'checkins', label: 'Check-ins', icon: 'fa-clipboard-check' },
-            { name: 'transactions', label: 'Transactions', icon: 'fa-receipt' },
-            { name: 'concessionBlocks', label: 'Concession Blocks', icon: 'fa-ticket-alt' },
-            { name: 'concessionPackages', label: 'Concession Packages', icon: 'fa-box' }
+            { name: 'students', label: 'Students', icon: 'fa-users', type: 'firestore' },
+            { name: 'checkins', label: 'Check-ins', icon: 'fa-clipboard-check', type: 'firestore' },
+            { name: 'transactions', label: 'Transactions', icon: 'fa-receipt', type: 'firestore' },
+            { name: 'concessionBlocks', label: 'Concession Blocks', icon: 'fa-ticket-alt', type: 'firestore' },
+            { name: 'concessionPackages', label: 'Concession Packages', icon: 'fa-box', type: 'firestore' },
+            { name: 'casualRates', label: 'Casual Rates', icon: 'fa-money-bill-wave', type: 'firestore' },
+            { name: 'users', label: 'Users (Firestore)', icon: 'fa-user-shield', type: 'firestore' },
+            { name: 'authUsers', label: 'Auth Users', icon: 'fa-key', type: 'auth' }
         ];
 
         let collectionCounts = {};
@@ -298,9 +307,18 @@
                 // Get counts for each collection
                 for (const collection of COLLECTIONS) {
                     console.log(`Fetching count for ${collection.name}...`);
-                    const snapshot = await db.collection(collection.name).get();
-                    collectionCounts[collection.name] = snapshot.size;
-                    console.log(`${collection.name}: ${snapshot.size} documents`);
+                    
+                    if (collection.type === 'auth') {
+                        // For Auth users, we'll show "Available" instead of count
+                        // Actual count will be fetched during backup
+                        collectionCounts[collection.name] = 'Available';
+                        console.log(`${collection.name}: Auth users available`);
+                    } else {
+                        // Firestore collections
+                        const snapshot = await db.collection(collection.name).get();
+                        collectionCounts[collection.name] = snapshot.size;
+                        console.log(`${collection.name}: ${snapshot.size} documents`);
+                    }
                 }
 
                 console.log('Collection counts:', collectionCounts);
@@ -310,12 +328,15 @@
                 COLLECTIONS.forEach(collection => {
                     const card = document.createElement('div');
                     card.className = 'collection-card';
+                    const countText = collection.type === 'auth' 
+                        ? collectionCounts[collection.name]
+                        : `${collectionCounts[collection.name]} documents`;
                     card.innerHTML = `
                         <label>
                             <input type="checkbox" value="${collection.name}" class="collection-checkbox">
                             <i class="fas ${collection.icon}"></i> ${collection.label}
                         </label>
-                        <div class="collection-count">${collectionCounts[collection.name]} documents</div>
+                        <div class="collection-count">${countText}</div>
                     `;
                     
                     const checkbox = card.querySelector('input');
@@ -412,17 +433,40 @@
                     const collectionName = collectionsToBackup[i];
                     updateProgress(i, collectionsToBackup.length, `Backing up ${collectionName}...`);
 
-                    const snapshot = await db.collection(collectionName).get();
-                    const data = [];
-
-                    snapshot.forEach(doc => {
-                        data.push({
-                            id: doc.id,
-                            ...doc.data()
+                    let data = [];
+                    
+                    // Check if this is an Auth collection
+                    const collectionConfig = COLLECTIONS.find(c => c.name === collectionName);
+                    
+                    if (collectionConfig && collectionConfig.type === 'auth') {
+                        // Export Auth users via Cloud Function
+                        try {
+                            console.log('Calling exportAuthUsers Cloud Function...');
+                            const functions = firebase.functions();
+                            const exportAuthUsers = functions.httpsCallable('exportAuthUsers');
+                            const result = await exportAuthUsers();
+                            
+                            console.log(`Received ${result.data.count} auth users`);
+                            data = result.data.users;
+                            totalDocs += data.length;
+                        } catch (error) {
+                            console.error('Error exporting auth users:', error);
+                            showStatus('error', `<i class="fas fa-exclamation-circle"></i> Failed to export Auth users: ${error.message}`);
+                            throw error;
+                        }
+                    } else {
+                        // Firestore collection
+                        const snapshot = await db.collection(collectionName).get();
+                        
+                        snapshot.forEach(doc => {
+                            data.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
                         });
-                    });
-
-                    totalDocs += data.length;
+                        
+                        totalDocs += data.length;
+                    }
 
                     // Add JSON version to ZIP file
                     zip.file(`${collectionName}.json`, JSON.stringify(data, null, 2));
