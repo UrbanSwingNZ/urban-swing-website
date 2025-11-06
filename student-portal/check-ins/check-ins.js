@@ -24,11 +24,7 @@ async function initializeCheckIns() {
         const currentStudentId = sessionStorage.getItem('currentStudentId');
         
         if (currentStudentId) {
-            console.log('Loading student from session:', currentStudentId);
             await loadStudentById(currentStudentId);
-        } else {
-            // No student selected - show empty state
-            console.log('Admin view - waiting for student selection');
         }
     } else {
         // Student view - load current user's check-ins
@@ -66,7 +62,6 @@ async function loadCurrentStudentCheckIns() {
         currentStudentId = studentDoc.id;
         currentStudent = studentDoc.data();
         
-        console.log('Loaded student:', currentStudent);
         await loadCheckIns(currentStudentId, currentStudent);
         
     } catch (error) {
@@ -93,7 +88,6 @@ async function loadStudentById(studentId) {
             ...studentDoc.data()
         };
         
-        console.log('Loaded student by ID:', student);
         currentStudent = student;
         currentStudentId = student.id;
         await loadCheckIns(student.id, student);
@@ -113,7 +107,6 @@ async function loadStudentCheckIns(student) {
     currentStudentId = student.id;
     isViewingAsAdmin = isAuthorized;
     
-    console.log('Loading check-ins for selected student:', student);
     await loadCheckIns(student.id, student);
 }
 
@@ -151,8 +144,6 @@ async function loadCheckIns(studentId, student) {
         
         // Sort by checkinDate (most recent first)
         checkins.sort((a, b) => b.checkinDate - a.checkinDate);
-        
-        console.log(`Loaded ${checkins.length} check-ins`);
         
         // Store all check-ins for pagination
         allCheckIns = checkins;

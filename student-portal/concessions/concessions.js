@@ -3,29 +3,20 @@
 // Page Initialization
 // Wait for auth check to complete and student data to be loaded
 window.addEventListener('authCheckComplete', async (event) => {
-    console.log('Auth check complete, initializing concessions page');
-    
     // Show main container
     document.getElementById('main-container').style.display = 'block';
     
     if (event.detail.isAuthorized) {
         // Admin viewing student portal
-        console.log('Admin view - checking for selected student in sessionStorage');
-        
         // Check if we have a selected student in sessionStorage (from navigation)
         const currentStudentId = sessionStorage.getItem('currentStudentId');
         if (currentStudentId) {
-            console.log('Found student in sessionStorage:', currentStudentId);
             // Hide empty state immediately - student-loader will load the data
             document.getElementById('empty-state').style.display = 'none';
-        } else {
-            console.log('No student in sessionStorage - waiting for selection');
         }
     } else {
         // Regular student - check if data already loaded
-        console.log('Student view - checking for student data');
         if (window.currentStudent) {
-            console.log('Student data already loaded:', window.currentStudent);
             await loadStudentConcessions(window.currentStudent.id);
         }
     }
@@ -33,12 +24,10 @@ window.addEventListener('authCheckComplete', async (event) => {
 
 // Listen for student selection (admin) or student loaded (regular student)
 window.addEventListener('studentSelected', async (event) => {
-    console.log('Student selected (admin view):', event.detail);
     await loadStudentConcessions(event.detail.id);
 });
 
 window.addEventListener('studentLoaded', async (event) => {
-    console.log('Student data loaded (student view):', event.detail);
     await loadStudentConcessions(event.detail.id);
 });
 

@@ -61,8 +61,6 @@ function waitForAuth() {
 
 // Load transactions for a specific student
 async function loadStudentTransactions(studentId) {
-    console.log('Loading transactions for student:', studentId);
-    
     try {
         showLoading(true);
         
