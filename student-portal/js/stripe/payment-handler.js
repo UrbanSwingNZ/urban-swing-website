@@ -204,7 +204,11 @@ async function processRegistrationWithPayment(formData) {
                 email: formData.email,
                 firstName: formData.firstName,
                 lastName: formData.lastName,
-                phone: formData.phone,
+                phoneNumber: formData.phoneNumber,
+                pronouns: formData.pronouns,
+                over16Confirmed: formData.over16Confirmed,
+                termsAccepted: formData.termsAccepted,
+                emailConsent: formData.emailConsent,
                 packageId: selectedPackageId,
                 paymentMethodId: paymentMethodId
             })
