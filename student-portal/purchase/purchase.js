@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Listen for student selection changes (from admin dropdown)
 window.addEventListener('studentSelected', async (event) => {
-    console.log('Student selection changed:', event.detail);
     const student = event.detail;
     
     if (student) {
@@ -74,8 +73,6 @@ function waitForAuth() {
 }
 
 async function loadPurchasePage(studentId) {
-    console.log('Loading purchase page for student:', studentId);
-    
     // Show content
     document.getElementById('purchase-content').style.display = 'block';
     document.getElementById('empty-state').style.display = 'none';

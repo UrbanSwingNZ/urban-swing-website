@@ -150,7 +150,6 @@ function renderCalendar() {
 
 // Listen for student selection changes (from admin dropdown)
 window.addEventListener('studentSelected', async (event) => {
-    console.log('Student selection changed:', event.detail);
     const student = event.detail;
     
     if (student) {
@@ -206,8 +205,6 @@ function waitForAuth() {
 }
 
 async function loadPrepayPage(studentId) {
-    console.log('Loading prepay page for student:', studentId);
-    
     // Show content
     document.getElementById('prepay-content').style.display = 'block';
     document.getElementById('empty-state').style.display = 'none';
