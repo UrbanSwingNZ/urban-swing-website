@@ -4,9 +4,7 @@
 console.log('Purchase page loaded');
 
 let stripe = null;
-let cardNumber = null;
-let cardExpiry = null;
-let cardCvc = null;
+let cardElement = null;
 let selectedPackage = null;
 let concessionPackages = [];
 
@@ -126,8 +124,8 @@ async function loadPurchasePage(studentId) {
     // Load concession packages
     await loadConcessionPackages();
     
-    // Initialize Stripe (disabled for now - coming soon)
-    // initializeStripe();
+    // Initialize Stripe
+    initializeStripe();
 }
 
 // Load concession packages from Firestore
@@ -243,65 +241,54 @@ function updateSubmitButton() {
     }
 }
 
-// Initialize Stripe Elements (disabled for now - coming soon)
+// Initialize Stripe Elements
 function initializeStripe() {
     console.log('Initializing Stripe...');
     
-    // NOTE: This is disabled until payment processing is set up
-    // You'll need to add your Stripe publishable key here
-    const STRIPE_PUBLISHABLE_KEY = 'YOUR_STRIPE_PUBLISHABLE_KEY';
-    
-    // Initialize Stripe
-    stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-    const elements = stripe.elements();
-    
-    // Create card elements
-    const elementStyles = {
-        base: {
-            fontSize: '16px',
-            color: '#333',
-            fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-            '::placeholder': {
-                color: '#999'
+    try {
+        // Initialize Stripe with publishable key from config
+        stripe = Stripe(stripeConfig.publishableKey);
+        
+        // Create card element
+        const elements = stripe.elements();
+        cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#333',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+                invalid: {
+                    color: '#e74c3c',
+                    iconColor: '#e74c3c'
+                }
+            },
+            hidePostalCode: true,  // Hide postal code field for NZ market
+            disableLink: true      // Disable "Save with Link" feature
+        });
+        
+        // Mount card element to the DOM
+        cardElement.mount('#card-element');
+        
+        // Handle real-time validation errors
+        cardElement.on('change', function(event) {
+            const cardErrors = document.getElementById('card-errors');
+            if (event.error) {
+                cardErrors.textContent = event.error.message;
+                cardErrors.style.display = 'block';
+            } else {
+                cardErrors.textContent = '';
+                cardErrors.style.display = 'none';
             }
-        },
-        invalid: {
-            color: '#e74c3c'
-        }
-    };
-    
-    cardNumber = elements.create('cardNumber', {
-        style: elementStyles,
-        placeholder: '1234 5678 9012 3456'
-    });
-    cardNumber.mount('#card-number');
-    
-    cardExpiry = elements.create('cardExpiry', {
-        style: elementStyles
-    });
-    cardExpiry.mount('#card-expiry');
-    
-    cardCvc = elements.create('cardCvc', {
-        style: elementStyles,
-        placeholder: '123'
-    });
-    cardCvc.mount('#card-cvc');
-    
-    // Add error handling
-    cardNumber.on('change', handleStripeError);
-    cardExpiry.on('change', handleStripeError);
-    cardCvc.on('change', handleStripeError);
-}
-
-// Handle Stripe errors
-function handleStripeError(event) {
-    const errorDiv = document.getElementById('card-errors');
-    if (event.error) {
-        errorDiv.textContent = event.error.message;
-        errorDiv.classList.add('visible');
-    } else {
-        errorDiv.textContent = '';
-        errorDiv.classList.remove('visible');
+        });
+        
+        console.log('Stripe initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Stripe:', error);
+        showSnackbar('Failed to initialize payment system. Please refresh the page.', 'error');
     }
 }
 
@@ -315,54 +302,92 @@ document.getElementById('purchase-form').addEventListener('submit', async (event
         return;
     }
     
-    const cardName = document.getElementById('card-name').value.trim();
-    if (!cardName) {
-        showSnackbar('Please enter the name on the card.', 'error');
-        return;
-    }
-    
-    // Show coming soon message (since payment processing is not yet set up)
-    showSnackbar('Online payments are coming soon! Please contact us to purchase concessions.', 'info', 5000);
-    
-    // Disabled until Stripe is fully set up:
-    // await processPurchase(cardName);
+    // Process purchase
+    await processPurchase();
 });
 
-// Process the purchase (placeholder for future Stripe integration)
-async function processPurchase(cardName) {
+// Process the purchase
+async function processPurchase() {
     console.log('Processing purchase...');
     
     const submitBtn = document.getElementById('submit-btn');
+    const submitText = document.getElementById('submit-text');
+    const originalText = submitText.textContent;
+    
     submitBtn.disabled = true;
-    submitBtn.classList.add('loading');
+    submitText.textContent = 'Processing...';
+    showLoading(true);
     
     try {
-        // Get current student
-        const currentStudentId = sessionStorage.getItem('currentStudentId');
-        if (!currentStudentId) {
+        // Get current student ID (works for both admin and student views)
+        let studentId;
+        if (isAuthorized) {
+            studentId = sessionStorage.getItem('currentStudentId');
+        } else {
+            studentId = await getCurrentStudentId();
+        }
+        
+        if (!studentId) {
             throw new Error('No student selected');
         }
         
-        // TODO: Implement Stripe payment processing
-        // 1. Create payment intent on server
-        // 2. Confirm card payment with Stripe
-        // 3. Create concession block in Firestore
-        // 4. Create transaction record
-        // 5. Send confirmation email
+        if (!selectedPackage) {
+            throw new Error('No package selected');
+        }
         
-        showSnackbar('Purchase successful!', 'success');
+        // Create payment method from card element
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement
+        });
         
-        // Redirect to concessions page after short delay
-        setTimeout(() => {
-            window.location.href = '../concessions/index.html';
-        }, 2000);
+        if (error) {
+            throw new Error(error.message);
+        }
+        
+        console.log('Payment method created:', paymentMethod.id);
+        
+        // Call Firebase Function to process payment, create concession block, and create transaction
+        const functionUrl = 'https://us-central1-directed-curve-447204-j4.cloudfunctions.net/processConcessionPurchase';
+        
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                studentId: studentId,
+                packageId: selectedPackage.id,
+                paymentMethodId: paymentMethod.id
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Purchase processing failed');
+        }
+        
+        const result = await response.json();
+        
+        console.log('Purchase result:', result);
+        
+        if (result.success) {
+            showSnackbar(`Purchase successful! ${result.numberOfClasses} classes added to your account.`, 'success');
+            
+            // Redirect to concessions page after short delay
+            setTimeout(() => {
+                window.location.href = '../concessions/index.html';
+            }, 2000);
+        } else {
+            throw new Error(result.error || 'Purchase failed');
+        }
         
     } catch (error) {
         console.error('Purchase error:', error);
         showSnackbar(error.message || 'Purchase failed. Please try again.', 'error');
-    } finally {
         submitBtn.disabled = false;
-        submitBtn.classList.remove('loading');
+        submitText.textContent = originalText;
+        showLoading(false);
     }
 }
 

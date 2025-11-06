@@ -527,5 +527,10 @@ exports.exportAuthUsers = onCall(async (request) => {
 });
 
 // Export Stripe payment functions
+const { processCasualPayment } = require('./process-casual-payment');
+const { processConcessionPurchase } = require('./process-concession-purchase');
+
 exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;
+exports.processCasualPayment = processCasualPayment;
+exports.processConcessionPurchase = processConcessionPurchase;
