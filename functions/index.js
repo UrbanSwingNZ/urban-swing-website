@@ -467,6 +467,65 @@ exports.sendAccountSetupEmail = onDocumentCreated(
   }
 );
 
+/**
+ * Export all Firebase Authentication users
+ * Returns list of all auth users with their UIDs and profile data
+ * Requires admin authentication
+ */
+exports.exportAuthUsers = onCall(async (request) => {
+  // Verify user is authenticated
+  if (!request.auth) {
+    logger.error("Unauthenticated request to exportAuthUsers");
+    throw new Error("Authentication required");
+  }
+
+  logger.info("Exporting auth users for admin:", request.auth.uid);
+
+  try {
+    // Verify the requesting user is an admin
+    const db = getFirestore();
+    const userDoc = await db.collection('users').doc(request.auth.uid).get();
+    
+    if (!userDoc.exists) {
+      logger.error("User document not found:", request.auth.uid);
+      throw new Error("User not authorized");
+    }
+
+    const userData = userDoc.data();
+    if (!userData.isAdmin) {
+      logger.error("Non-admin user attempted to export auth users:", request.auth.uid);
+      throw new Error("Admin privileges required");
+    }
+
+    // List all auth users
+    const listUsersResult = await admin.auth().listUsers();
+    const authUsers = listUsersResult.users.map(userRecord => ({
+      uid: userRecord.uid,
+      email: userRecord.email,
+      emailVerified: userRecord.emailVerified,
+      displayName: userRecord.displayName,
+      photoURL: userRecord.photoURL,
+      disabled: userRecord.disabled,
+      metadata: {
+        creationTime: userRecord.metadata.creationTime,
+        lastSignInTime: userRecord.metadata.lastSignInTime,
+      },
+      providerData: userRecord.providerData,
+    }));
+
+    logger.info(`Exported ${authUsers.length} auth users`);
+
+    return {
+      users: authUsers,
+      count: authUsers.length,
+      exportedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    logger.error("Error exporting auth users:", error);
+    throw new Error(`Auth export failed: ${error.message}`);
+  }
+});
+
 // Export Stripe payment functions
 exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;

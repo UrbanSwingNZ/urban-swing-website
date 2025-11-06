@@ -64,6 +64,19 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.env.local
+*.local
 
 # dataconnect generated files
 .dataconnect
+
+# Service Account Keys (NEVER COMMIT THESE!)
+serviceAccountKey.json
+*serviceAccount*.json
+
+# Backup files (contain sensitive user data)
+admin/admin-tools/authUsers.json
+admin/admin-tools/*.zip
+admin/admin-tools/backup-*.zip
+admin/admin-tools/restored-users.txt
+admin/admin-tools/restore-log.txt
