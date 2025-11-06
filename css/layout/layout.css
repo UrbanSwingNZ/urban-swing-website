@@ -214,15 +214,15 @@
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
   .content-wrapper {
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-lg) var(--space-sm);
   }
   
   .container {
-    padding: 0 var(--space-md);
+    padding: 0 var(--space-sm);
   }
   
   .hero {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-xl) var(--space-sm);
   }
   
   .hero h1 {
