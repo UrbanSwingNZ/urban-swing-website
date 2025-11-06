@@ -261,14 +261,6 @@ function createTransactionRow(transaction) {
     typeBadge.textContent = typeInfo.typeName;
     typeCell.appendChild(typeBadge);
     
-    // Add online badge if transaction has stripeCustomerId
-    if (transaction.stripeCustomerId) {
-        const onlineBadge = document.createElement('span');
-        onlineBadge.className = 'type-badge online';
-        onlineBadge.textContent = 'Online';
-        typeCell.appendChild(onlineBadge);
-    }
-    
     row.appendChild(typeCell);
     
     // Amount column
@@ -281,20 +273,26 @@ function createTransactionRow(transaction) {
     const paymentCell = document.createElement('td');
     paymentCell.className = 'payment-method';
     
-    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
-    let paymentBadge = '';
-    
-    if (paymentMethod === 'cash') {
-        paymentBadge = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
-    } else if (paymentMethod === 'eftpos') {
-        paymentBadge = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
-    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
-        paymentBadge = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    // Check if online payment first (has stripeCustomerId)
+    if (transaction.stripeCustomerId) {
+        paymentCell.innerHTML = '<span class="payment-badge online">Online</span>';
     } else {
-        paymentBadge = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+        let paymentBadge = '';
+        
+        if (paymentMethod === 'cash') {
+            paymentBadge = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+        } else if (paymentMethod === 'eftpos') {
+            paymentBadge = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+        } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+            paymentBadge = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+        } else {
+            paymentBadge = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        }
+        
+        paymentCell.innerHTML = paymentBadge;
     }
     
-    paymentCell.innerHTML = paymentBadge;
     row.appendChild(paymentCell);
     
     return row;
@@ -323,23 +321,24 @@ function createTransactionCard(transaction) {
     }
     typeBadgesHTML += `<span class="type-badge ${typeInfo.badgeClass}">${typeInfo.typeName}</span>`;
     
-    // Add online badge if transaction has stripeCustomerId
-    if (transaction.stripeCustomerId) {
-        typeBadgesHTML += '<span class="type-badge online">Online</span>';
-    }
-    
     // Get payment method badge
-    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
     let paymentBadgeHTML = '';
     
-    if (paymentMethod === 'cash') {
-        paymentBadgeHTML = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
-    } else if (paymentMethod === 'eftpos') {
-        paymentBadgeHTML = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
-    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
-        paymentBadgeHTML = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    // Check if online payment first (has stripeCustomerId)
+    if (transaction.stripeCustomerId) {
+        paymentBadgeHTML = '<span class="payment-badge online">Online</span>';
     } else {
-        paymentBadgeHTML = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+        
+        if (paymentMethod === 'cash') {
+            paymentBadgeHTML = '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+        } else if (paymentMethod === 'eftpos') {
+            paymentBadgeHTML = '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+        } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+            paymentBadgeHTML = '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+        } else {
+            paymentBadgeHTML = '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+        }
     }
     
     // Build card HTML
