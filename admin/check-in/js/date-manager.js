@@ -45,26 +45,53 @@ function initializeDatePicker() {
     
     // Use saved date if exists, otherwise use today
     const initialDate = savedDate || today;
-    dateInput.value = initialDate;
     selectedCheckinDate = parseDateString(initialDate);
     
     // Update display
     updateDateDisplay(initialDate, today);
     
-    // Listen for date changes
-    dateInput.addEventListener('change', handleDateChange);
+    // Initialize custom DatePicker component
+    const checkinDatePicker = new DatePicker('checkin-date', 'checkin-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false, // Allow past dates
+        onDateSelected: (date, formattedDate) => {
+            // Convert d/mm/yyyy to YYYY-MM-DD for consistency
+            const [day, month, year] = formattedDate.split('/');
+            const dateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            
+            // Save to localStorage
+            localStorage.setItem(CHECKIN_DATE_KEY, dateString);
+            
+            // Update selected date
+            selectedCheckinDate = date;
+            
+            // Update display
+            updateDateDisplay(dateString, getTodayDateString());
+            
+            // Update transactions date display
+            const transactionsDisplayElement = document.getElementById('transactions-date-display');
+            if (transactionsDisplayElement) {
+                if (dateString === getTodayDateString()) {
+                    transactionsDisplayElement.textContent = "Today's";
+                } else {
+                    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                    const displayDate = date.toLocaleDateString('en-NZ', options);
+                    transactionsDisplayElement.textContent = displayDate;
+                }
+            }
+            
+            // Reload check-ins for the new date
+            loadTodaysCheckins();
+            
+            // Reload transactions for the new date
+            if (typeof loadCheckinTransactions === 'function') {
+                loadCheckinTransactions();
+            }
+        }
+    });
     
-    // Make custom calendar button trigger the native date picker
-    const calendarButton = document.querySelector('.calendar-button');
-    if (calendarButton) {
-        calendarButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dateInput.showPicker(); // Modern browsers support this
-        });
-        // Enable pointer events on the button
-        calendarButton.style.pointerEvents = 'auto';
-    }
+    // Set initial date on the date picker
+    checkinDatePicker.setDate(selectedCheckinDate);
     
     // Date persists in localStorage across page refreshes
     // Only cleared manually or when user navigates away from check-in page
@@ -72,40 +99,11 @@ function initializeDatePicker() {
 
 /**
  * Handle date change
+ * (Legacy function - now handled by DatePicker component callback)
  */
 function handleDateChange(event) {
-    const newDate = event.target.value;
-    const today = getTodayDateString();
-    
-    // Save to localStorage
-    localStorage.setItem(CHECKIN_DATE_KEY, newDate);
-    
-    // Update selected date
-    selectedCheckinDate = parseDateString(newDate);
-    
-    // Update display
-    updateDateDisplay(newDate, today);
-    
-    // Update transactions date display
-    const transactionsDisplayElement = document.getElementById('transactions-date-display');
-    if (transactionsDisplayElement) {
-        if (newDate === today) {
-            transactionsDisplayElement.textContent = "Today's";
-        } else {
-            const date = parseDateString(newDate);
-            const options = { day: 'numeric', month: 'short', year: 'numeric' };
-            const formattedDate = date.toLocaleDateString('en-NZ', options);
-            transactionsDisplayElement.textContent = formattedDate;
-        }
-    }
-    
-    // Reload check-ins for the new date
-    loadTodaysCheckins();
-    
-    // Reload transactions for the new date
-    if (typeof loadCheckinTransactions === 'function') {
-        loadCheckinTransactions();
-    }
+    // This function is kept for backwards compatibility
+    // but is no longer used with the custom DatePicker component
 }
 
 /**
