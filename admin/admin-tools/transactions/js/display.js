@@ -68,6 +68,9 @@ function createTransactionRow(transaction) {
     // Add online badge if transaction has stripeCustomerId
     const onlineBadge = transaction.stripeCustomerId ? '<span class="type-badge online">Online</span> ' : '';
     
+    // Calculate online amount (stripe payments)
+    const onlineAmount = transaction.paymentMethod === 'stripe' ? transaction.amount : 0;
+    
     row.innerHTML = `
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
@@ -78,6 +81,9 @@ function createTransactionRow(transaction) {
         </td>
         <td class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
             ${transaction.eftpos > 0 ? formatCurrency(transaction.eftpos) : '-'}
+        </td>
+        <td class="payment-amount ${onlineAmount > 0 ? '' : 'empty'}">
+            ${onlineAmount > 0 ? formatCurrency(onlineAmount) : '-'}
         </td>
         <td class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
             ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
@@ -136,6 +142,7 @@ function updateSummaryDisplay(summary) {
     document.getElementById('total-amount').textContent = formatCurrency(summary.totalAmount);
     document.getElementById('total-cash').textContent = formatCurrency(summary.totalCash);
     document.getElementById('total-eftpos').textContent = formatCurrency(summary.totalEftpos);
+    document.getElementById('total-online').textContent = formatCurrency(summary.totalOnline);
     document.getElementById('total-bank').textContent = formatCurrency(summary.totalBank);
 }
 
