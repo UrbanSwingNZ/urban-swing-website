@@ -17,6 +17,7 @@
  * - allowedDays: array of day numbers (0=Sunday, 4=Thursday, etc.) - defaults to [4] (Thursday only)
  * - disablePastDates: boolean to disable past dates - defaults to true
  * - dateFormat: format for display - defaults to { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
+ * - excludeDateRanges: array of {start: Date, end: Date} objects to exclude from selection
  */
 
 class DatePicker {
@@ -29,13 +30,15 @@ class DatePicker {
             allowedDays: options.allowedDays || [4], // Default to Thursday only
             disablePastDates: options.disablePastDates !== undefined ? options.disablePastDates : true,
             dateFormat: options.dateFormat || { year: 'numeric', month: 'short', day: 'numeric' },
-            highlightToday: options.highlightToday !== undefined ? options.highlightToday : true
+            highlightToday: options.highlightToday !== undefined ? options.highlightToday : true,
+            excludeDateRanges: options.excludeDateRanges || [] // Array of {start: Date, end: Date}
         };
         
         // State
         this.currentMonth = new Date().getMonth();
         this.currentYear = new Date().getFullYear();
         this.selectedDate = null;
+        this.closedownNights = []; // Will be populated from Firestore
         
         // Elements
         this.dateInput = null;
@@ -55,6 +58,9 @@ class DatePicker {
             return;
         }
         
+        // Load closedown nights from Firestore
+        this.loadClosedownNights();
+        
         // Setup event listeners
         this.setupEventListeners();
     }
@@ -71,6 +77,56 @@ class DatePicker {
             if (!this.dateInput.contains(e.target) && !this.calendar.contains(e.target)) {
                 this.calendar.style.display = 'none';
             }
+        });
+    }
+    
+    async loadClosedownNights() {
+        // Check if Firebase is available
+        if (typeof firebase === 'undefined' || !firebase.firestore) {
+            console.warn('DatePicker: Firebase not available, closedown nights will not be loaded');
+            return;
+        }
+        
+        try {
+            const db = firebase.firestore();
+            // Don't use orderBy to avoid requiring a Firestore index
+            const snapshot = await db.collection('closedownNights').get();
+            
+            this.closedownNights = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    startDate: data.startDate.toDate(),
+                    endDate: data.endDate.toDate()
+                };
+            }).sort((a, b) => a.startDate - b.startDate); // Sort in JavaScript instead
+            
+            console.log('DatePicker: Loaded', this.closedownNights.length, 'closedown periods');
+            
+            // Re-render calendar if it's currently visible
+            if (this.calendar && this.calendar.style.display === 'block') {
+                this.renderCalendar();
+            }
+        } catch (error) {
+            console.error('DatePicker: Error loading closedown nights:', error);
+            // Don't throw - calendar should still work without closedown data
+        }
+    }
+    
+    isDateInClosedownPeriod(date) {
+        // Normalize the date to start of day for comparison
+        const checkDate = new Date(date);
+        checkDate.setHours(0, 0, 0, 0);
+        
+        // Check if date falls within any closedown period
+        return this.closedownNights.some(period => {
+            const start = new Date(period.startDate);
+            start.setHours(0, 0, 0, 0);
+            
+            const end = new Date(period.endDate);
+            end.setHours(23, 59, 59, 999);
+            
+            return checkDate >= start && checkDate <= end;
         });
     }
     
@@ -117,12 +173,16 @@ class DatePicker {
             const dayOfWeek = date.getDay();
             const isAllowedDay = this.options.allowedDays.includes(dayOfWeek);
             const isPast = this.options.disablePastDates && date < today;
+            const isClosedown = this.isDateInClosedownPeriod(date);
             const isToday = this.options.highlightToday && date.toDateString() === today.toDateString();
             const isSelected = this.selectedDate && date.toDateString() === this.selectedDate.toDateString();
             
             let classes = ['calendar-day'];
             if (isPast) {
                 classes.push('past');
+            } else if (isClosedown) {
+                // Closedown dates - use the same 'not-allowed' class as non-allowed days
+                classes.push('not-allowed');
             } else if (isAllowedDay) {
                 classes.push('allowed-day');
                 // Legacy support: add 'thursday' class if Thursday is an allowed day
@@ -155,10 +215,8 @@ class DatePicker {
             this.navigateToNextMonth();
         });
         
-        // Add click listeners to allowed dates
-        const allowedSelector = this.options.disablePastDates 
-            ? '.calendar-day.allowed-day:not(.past)'
-            : '.calendar-day.allowed-day';
+        // Add click listeners to allowed dates (excluding past and closedown dates via not-allowed class)
+        const allowedSelector = '.calendar-day.allowed-day:not(.past)';
             
         this.calendar.querySelectorAll(allowedSelector).forEach(dayElement => {
             dayElement.addEventListener('click', (e) => {
