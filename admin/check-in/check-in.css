@@ -1633,18 +1633,8 @@ textarea.form-control {
         color: var(--admin-purple);
     }
 
-    /* Payment Method - Row 3, Full Width */
-    #checkin-transactions-table tbody td:nth-child(5) {
-        grid-column: 1 / -1;
-        grid-row: 3;
-        padding-top: 0.5rem;
-        border-top: 1px solid rgba(154, 22, 245, 0.1);
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    /* Hide the individual payment amount columns (Cash, EFTPOS, Bank Transfer) on mobile */
+    /* Hide the individual payment amount columns (Cash, EFTPOS, Online, Bank Transfer) on mobile */
+    #checkin-transactions-table tbody td:nth-child(5),
     #checkin-transactions-table tbody td:nth-child(6),
     #checkin-transactions-table tbody td:nth-child(7),
     #checkin-transactions-table tbody td:nth-child(8) {
@@ -1656,12 +1646,6 @@ textarea.form-control {
         grid-column: 1 / -1;
         grid-row: 4;
         padding-top: 0.5rem;
-    }
-
-    /* Style payment amounts */
-    #checkin-transactions-table tbody td:nth-child(5) {
-        font-size: 0.95rem;
-        font-weight: 500;
     }
 
     #checkin-transactions-table .payment-amount {
