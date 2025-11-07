@@ -8,7 +8,7 @@
 
 /* Base Styles */
 @import url('base/variables.css');
-@import url('base/reset.css');
+@import url('../styles/core/reset.css');
 @import url('base/typography.css');
 
 /* Layout */

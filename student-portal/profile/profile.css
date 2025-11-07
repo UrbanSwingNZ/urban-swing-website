@@ -36,6 +36,7 @@
 
 .btn-back:hover {
     background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
 }
