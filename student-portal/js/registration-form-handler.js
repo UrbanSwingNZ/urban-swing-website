@@ -9,8 +9,20 @@ let registrationConfig = {
     email: null
 };
 
+// Date picker instance
+let firstClassDatePicker = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     initializeRegistrationForm();
+    
+    // Initialize date picker for first class date
+    firstClassDatePicker = new DatePicker('first-class-date', 'first-class-calendar', {
+        allowedDays: [4], // Thursday only
+        disablePastDates: true,
+        onDateSelected: (date, formattedDate) => {
+            console.log('First class date selected:', date);
+        }
+    });
 });
 
 /**
@@ -218,7 +230,8 @@ async function processNewStudentRegistration(formData) {
         pronouns: formData.pronouns,
         over16Confirmed: formData.over16Confirmed,
         termsAccepted: formData.termsAccepted,
-        emailConsent: formData.emailConsent
+        emailConsent: formData.emailConsent,
+        firstClassDate: formData.firstClassDate
     });
     
     if (!result.success) {
@@ -261,7 +274,8 @@ function getFormData() {
         over16Confirmed: document.getElementById('over16Confirmed').checked,
         termsAccepted: document.getElementById('termsAccepted').checked,
         emailConsent: document.getElementById('emailConsent').checked,
-        rateType: document.querySelector('input[name="rateType"]:checked')?.value || ''
+        rateType: document.querySelector('input[name="rateType"]:checked')?.value || '',
+        firstClassDate: firstClassDatePicker ? firstClassDatePicker.getSelectedDate() : null
     };
 }
 
@@ -318,6 +332,11 @@ function validateFormData(formData) {
         
         if (!formData.rateType) {
             showErrorMessage('Please select a payment option');
+            return false;
+        }
+        
+        if (!formData.firstClassDate) {
+            showErrorMessage('Please select the date of your first class');
             return false;
         }
     }
