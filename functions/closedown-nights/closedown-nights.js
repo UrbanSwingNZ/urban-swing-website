@@ -12,7 +12,7 @@
  */
 
 /**
- * Initialize and display the closedown banner
+ * Initialize and display the closedown banner with real-time updates
  */
 async function initClosedownBanner() {
     try {
@@ -24,50 +24,72 @@ async function initClosedownBanner() {
 
         const db = firebase.firestore();
         
-        // Get the look-ahead period setting (default 4 weeks)
-        let lookAheadWeeks = 4;
-        try {
-            const settingsDoc = await db.collection('settings').doc('closedownNights').get();
-            if (settingsDoc.exists) {
-                lookAheadWeeks = settingsDoc.data().bannerLookAheadWeeks || 4;
+        // Listen for settings changes with onSnapshot
+        db.collection('settings').doc('closedownNights').onSnapshot(
+            (settingsDoc) => {
+                const lookAheadWeeks = settingsDoc.exists 
+                    ? (settingsDoc.data().bannerLookAheadWeeks || 4)
+                    : 4;
+                
+                // Set up real-time listener for closedown nights
+                setupClosedownListener(db, lookAheadWeeks);
+            },
+            (error) => {
+                console.warn('Closedown Banner: Could not load settings, using default 4 weeks');
+                // Use default if settings can't be loaded
+                setupClosedownListener(db, 4);
             }
-        } catch (error) {
-            console.warn('Closedown Banner: Could not load settings, using default 4 weeks');
-        }
-
-        // Calculate date range to check
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        const futureDate = new Date(today);
-        futureDate.setDate(futureDate.getDate() + (lookAheadWeeks * 7));
-        futureDate.setHours(23, 59, 59, 999);
-
-        // Fetch closedown nights within the look-ahead period
-        const snapshot = await db.collection('closedownNights').get();
-        
-        // Filter for upcoming closedown periods within the look-ahead window
-        const upcomingClosedowns = snapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                startDate: doc.data().startDate.toDate(),
-                endDate: doc.data().endDate.toDate()
-            }))
-            .filter(period => {
-                // End date must be in the future (not already passed)
-                // Start date must be within the look-ahead window
-                return period.endDate >= today && period.startDate <= futureDate;
-            })
-            .sort((a, b) => a.startDate - b.startDate);
-
-        if (upcomingClosedowns.length > 0) {
-            displayClosedownBanner(upcomingClosedowns);
-        }
+        );
 
     } catch (error) {
-        console.error('Closedown Banner: Error loading closedown nights:', error);
+        console.error('Closedown Banner: Error initializing closedown banner:', error);
     }
+}
+
+/**
+ * Set up real-time listener for closedown nights
+ */
+function setupClosedownListener(db, lookAheadWeeks) {
+    // Calculate date range to check
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const futureDate = new Date(today);
+    futureDate.setDate(futureDate.getDate() + (lookAheadWeeks * 7));
+    futureDate.setHours(23, 59, 59, 999);
+
+    // Listen for real-time updates to closedown nights
+    db.collection('closedownNights').onSnapshot(
+        (snapshot) => {
+            // Filter for upcoming closedown periods within the look-ahead window
+            const upcomingClosedowns = snapshot.docs
+                .map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    startDate: doc.data().startDate.toDate(),
+                    endDate: doc.data().endDate.toDate()
+                }))
+                .filter(period => {
+                    // End date must be in the future (not already passed)
+                    // Start date must be within the look-ahead window
+                    return period.endDate >= today && period.startDate <= futureDate;
+                })
+                .sort((a, b) => a.startDate - b.startDate);
+
+            if (upcomingClosedowns.length > 0) {
+                displayClosedownBanner(upcomingClosedowns);
+            } else {
+                // Remove banner if no upcoming closedowns
+                const banner = document.getElementById('closedown-banner');
+                if (banner) {
+                    banner.remove();
+                }
+            }
+        },
+        (error) => {
+            console.error('Closedown Banner: Error listening to closedown nights:', error);
+        }
+    );
 }
 
 /**
