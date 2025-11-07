@@ -1,6 +1,5 @@
-// Initialize Firebase
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Closedown Nights Admin Tool
+// Firebase auth and db are already initialized in firebase-config.js
 
 // State
 let currentUser = null;
@@ -146,14 +145,13 @@ async function loadClosedownPeriods() {
     listContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><span>Loading closedown periods...</span></div>';
     
     try {
-        const snapshot = await db.collection('closedownNights')
-            .orderBy('startDate', 'asc')
-            .get();
+        // Don't use orderBy to avoid requiring a Firestore index
+        const snapshot = await db.collection('closedownNights').get();
         
         closedownPeriods = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-        }));
+        })).sort((a, b) => a.startDate.toMillis() - b.startDate.toMillis()); // Sort in JavaScript instead
         
         renderClosedownList();
     } catch (error) {
