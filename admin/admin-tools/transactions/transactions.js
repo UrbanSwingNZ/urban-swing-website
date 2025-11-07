@@ -7,6 +7,28 @@
 let allTransactions = [];
 let filteredTransactions = [];
 let currentSort = { field: 'date', direction: 'desc' };
+let dateFromPicker = null;
+let dateToPicker = null;
+
+/**
+ * Convert date from d/mm/yyyy format to Date object
+ */
+function parseDateFromInput(dateString) {
+    if (!dateString) return null;
+    const [day, month, year] = dateString.split('/').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+/**
+ * Format Date object to YYYY-MM-DD string for filtering
+ */
+function formatDateToYYYYMMDD(date) {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 /**
  * Check if current user is super admin (dance@urbanswing.co.nz)
@@ -37,9 +59,35 @@ function initializePage() {
         initializeStudentFilter();
     }
     
+    // Initialize date pickers
+    initializeDatePickers();
+    
     setupEventListeners();
     setDefaultDateRange();
     loadTransactions();
+}
+
+/**
+ * Initialize custom date pickers
+ */
+function initializeDatePickers() {
+    // From Date picker
+    dateFromPicker = new DatePicker('date-from', 'date-from-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false, // Allow past dates
+        onDateSelected: (date, formattedDate) => {
+            applyFilters();
+        }
+    });
+    
+    // To Date picker (right-aligned)
+    dateToPicker = new DatePicker('date-to', 'date-to-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false, // Allow past dates
+        onDateSelected: (date, formattedDate) => {
+            applyFilters();
+        }
+    });
 }
 
 /**
@@ -71,8 +119,13 @@ function setDefaultDateRange() {
     const thirtyDaysAgo = new Date(today);
     thirtyDaysAgo.setDate(today.getDate() - 30);
     
-    document.getElementById('date-from').value = formatDateForInput(thirtyDaysAgo);
-    document.getElementById('date-to').value = formatDateForInput(today);
+    // Set dates using DatePicker instances
+    if (dateFromPicker) {
+        dateFromPicker.setDate(thirtyDaysAgo);
+    }
+    if (dateToPicker) {
+        dateToPicker.setDate(today);
+    }
 }
 
 /**
@@ -99,8 +152,13 @@ async function loadTransactions() {
  * Apply filters to transactions
  */
 function applyFilters() {
-    const dateFrom = document.getElementById('date-from').value;
-    const dateTo = document.getElementById('date-to').value;
+    const dateFromInput = document.getElementById('date-from').value;
+    const dateToInput = document.getElementById('date-to').value;
+    
+    // Convert d/mm/yyyy to yyyy-mm-dd format
+    const dateFrom = dateFromInput ? formatDateToYYYYMMDD(parseDateFromInput(dateFromInput)) : '';
+    const dateTo = dateToInput ? formatDateToYYYYMMDD(parseDateFromInput(dateToInput)) : '';
+    
     const typeFilter = document.getElementById('transaction-type').value;
     const showReversed = document.getElementById('show-reversed-toggle').checked;
     const studentId = typeof getSelectedStudentId === 'function' ? getSelectedStudentId() : null;
