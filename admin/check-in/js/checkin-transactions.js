@@ -87,6 +87,7 @@ async function loadCheckinTransactions() {
                 cash: paymentMethod === 'cash' ? amount : 0,
                 eftpos: paymentMethod === 'eftpos' ? amount : 0,
                 bankTransfer: (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') ? amount : 0,
+                online: paymentMethod === 'stripe' ? amount : 0,
                 paymentMethod: paymentMethod,
                 invoiced: data.invoiced || false,
                 reversed: data.reversed || false,
@@ -198,6 +199,9 @@ function createCheckinTransactionRow(transaction) {
         <td data-label="EFTPOS" class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
             ${transaction.eftpos > 0 ? formatCurrency(transaction.eftpos) : '-'}
         </td>
+        <td data-label="Online" class="payment-amount ${transaction.online > 0 ? '' : 'empty'}">
+            ${transaction.online > 0 ? formatCurrency(transaction.online) : '-'}
+        </td>
         <td data-label="Bank Transfer" class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
             ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
         </td>
@@ -255,12 +259,14 @@ function updateCheckinTransactionSummary(transactions) {
     const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
     const totalCash = transactions.reduce((sum, t) => sum + t.cash, 0);
     const totalEftpos = transactions.reduce((sum, t) => sum + t.eftpos, 0);
+    const totalOnline = transactions.reduce((sum, t) => sum + t.online, 0);
     const totalBank = transactions.reduce((sum, t) => sum + t.bankTransfer, 0);
     
     document.getElementById('checkin-total-count').textContent = totalCount;
     document.getElementById('checkin-total-amount').textContent = formatCurrency(totalAmount);
     document.getElementById('checkin-total-cash').textContent = formatCurrency(totalCash);
     document.getElementById('checkin-total-eftpos').textContent = formatCurrency(totalEftpos);
+    document.getElementById('checkin-total-online').textContent = formatCurrency(totalOnline);
     document.getElementById('checkin-total-bank').textContent = formatCurrency(totalBank);
 }
 
