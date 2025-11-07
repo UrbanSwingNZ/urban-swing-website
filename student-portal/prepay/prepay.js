@@ -237,7 +237,7 @@ function populateRateOptions() {
         // Add student ID notice for student rates
         if (rate.name.toLowerCase().includes('student')) {
             optionHTML += `
-                <div class="radio-notice">
+                <div class="radio-notice" style="display: none;">
                     <i class="fas fa-id-card"></i>
                     <p><strong>Note:</strong> You will be required to present a valid student ID when you arrive for class.</p>
                 </div>
@@ -252,6 +252,7 @@ function populateRateOptions() {
             const radio = option.querySelector('input[type="radio"]');
             radio.checked = true;
             handleRateSelection();
+            toggleStudentNotices();
         });
         
         container.appendChild(option);
@@ -266,7 +267,30 @@ function populateRateOptions() {
     
     // Add change listeners to all radio buttons
     container.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', handleRateSelection);
+        radio.addEventListener('change', () => {
+            handleRateSelection();
+            toggleStudentNotices();
+        });
+    });
+    
+    // Show notice for initially selected student rate
+    toggleStudentNotices();
+}
+
+// Toggle student ID notices based on selection
+function toggleStudentNotices() {
+    document.querySelectorAll('.radio-notice').forEach(notice => {
+        const parentOption = notice.closest('.radio-option');
+        const parentRadio = parentOption.querySelector('input[type="radio"]');
+        
+        if (parentRadio.checked) {
+            notice.style.display = 'flex';
+            // Trigger animation
+            setTimeout(() => notice.classList.add('show'), 10);
+        } else {
+            notice.classList.remove('show');
+            setTimeout(() => notice.style.display = 'none', 300);
+        }
     });
 }
 

@@ -122,6 +122,7 @@ async function loadCasualRates() {
             if (pkg.name.toLowerCase().includes('student')) {
                 const notice = document.createElement('div');
                 notice.className = 'radio-notice';
+                notice.style.display = 'none';
                 notice.innerHTML = `
                     <i class="fas fa-id-card"></i>
                     <p><strong>Note:</strong> You will be required to present a valid student ID when you arrive for class.</p>
@@ -134,6 +135,21 @@ async function loadCasualRates() {
             radioInput.addEventListener('change', function() {
                 selectedPackageId = this.value;
                 console.log('Selected package:', selectedPackageId, availablePackages[selectedPackageId]);
+                
+                // Show/hide student ID notices based on selection
+                document.querySelectorAll('.radio-notice').forEach(notice => {
+                    const parentOption = notice.closest('.rate-option');
+                    const parentRadio = parentOption.querySelector('input[type="radio"]');
+                    
+                    if (parentRadio.checked) {
+                        notice.style.display = 'flex';
+                        // Trigger animation
+                        setTimeout(() => notice.classList.add('show'), 10);
+                    } else {
+                        notice.classList.remove('show');
+                        setTimeout(() => notice.style.display = 'none', 300);
+                    }
+                });
             });
             
             rateOptionsContainer.appendChild(rateOption);
@@ -143,6 +159,19 @@ async function loadCasualRates() {
         if (packages.length > 0) {
             selectedPackageId = packages[0].id;
             console.log('Default package selected:', selectedPackageId);
+            
+            // Show notice for initially selected student rate
+            setTimeout(() => {
+                const checkedRadio = rateOptionsContainer.querySelector('input[type="radio"]:checked');
+                if (checkedRadio) {
+                    const parentOption = checkedRadio.closest('.rate-option');
+                    const notice = parentOption.querySelector('.radio-notice');
+                    if (notice) {
+                        notice.style.display = 'flex';
+                        setTimeout(() => notice.classList.add('show'), 10);
+                    }
+                }
+            }, 50);
         }
         
     } catch (error) {
