@@ -9,6 +9,15 @@ let selectedStudent = null;
 let currentUser = null;
 
 /**
+ * Convert date from d/mm/yyyy format to Date object
+ */
+function parseDateFromInput(dateString) {
+    if (!dateString) return null;
+    const [day, month, year] = dateString.split('/').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+/**
  * Initialize on page load
  */
 document.addEventListener('DOMContentLoaded', async () => {
@@ -93,10 +102,27 @@ function initializeForm() {
     const clearSearchBtn = document.getElementById('clear-student-search');
     const giftDate = document.getElementById('gift-date');
     
-    // Set default gift date to today
-    const today = new Date().toISOString().split('T')[0];
-    giftDate.value = today;
-    giftDate.max = today; // Prevent future dates
+    // Initialize custom date pickers
+    const today = new Date();
+    
+    // Gift Date picker (defaults to today, no future dates)
+    const giftDatePicker = new DatePicker('gift-date', 'gift-date-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false, // Allow past dates
+        onDateSelected: (date, formattedDate) => {
+            updateSummary();
+        }
+    });
+    giftDatePicker.setDate(today);
+    
+    // Expiry Date picker (future dates only)
+    const expiryDatePicker = new DatePicker('gift-expiry', 'gift-expiry-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: true, // Only future dates
+        onDateSelected: (date, formattedDate) => {
+            updateSummary();
+        }
+    });
     
     // Student search
     studentSearch.addEventListener('input', handleStudentSearch);
@@ -123,7 +149,7 @@ function initializeForm() {
     
     // Form field listeners for live summary update
     document.getElementById('gift-quantity').addEventListener('input', updateSummary);
-    document.getElementById('gift-expiry').addEventListener('change', updateSummary);
+    // Note: Date pickers now handle their own change events via onDateSelected callback
     document.getElementById('gift-notes').addEventListener('input', updateSummary);
     
     // Form submission
@@ -268,8 +294,8 @@ async function handleFormSubmit(e) {
     }
     
     const quantity = parseInt(document.getElementById('gift-quantity').value);
-    const expiryDate = new Date(document.getElementById('gift-expiry').value);
-    const giftDate = new Date(document.getElementById('gift-date').value);
+    const expiryDate = parseDateFromInput(document.getElementById('gift-expiry').value);
+    const giftDate = parseDateFromInput(document.getElementById('gift-date').value);
     const notes = document.getElementById('gift-notes').value.trim();
     
     // Validation
@@ -326,8 +352,8 @@ function closeConfirmModal() {
  */
 async function processGift() {
     const quantity = parseInt(document.getElementById('gift-quantity').value);
-    const expiryDate = new Date(document.getElementById('gift-expiry').value);
-    const giftDate = new Date(document.getElementById('gift-date').value);
+    const expiryDate = parseDateFromInput(document.getElementById('gift-expiry').value);
+    const giftDate = parseDateFromInput(document.getElementById('gift-date').value);
     const notes = document.getElementById('gift-notes').value.trim();
     const fullName = getStudentFullName(selectedStudent);
     

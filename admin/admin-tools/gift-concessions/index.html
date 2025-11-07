@@ -7,6 +7,7 @@
     <title>Gift Concessions - Urban Swing Admin</title>
     <link rel="stylesheet" href="../../admin.css">
     <link rel="stylesheet" href="gift-concessions.css">
+    <link rel="stylesheet" href="../../../styles/date-picker/date-picker.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -92,22 +93,34 @@
                                 <label for="gift-expiry">
                                     <i class="fas fa-calendar-alt"></i> Expiry Date
                                 </label>
-                                <input 
-                                    type="date" 
-                                    id="gift-expiry" 
-                                    class="form-control" 
-                                    required>
+                                <div class="date-input-wrapper">
+                                    <input 
+                                        type="text" 
+                                        id="gift-expiry" 
+                                        class="form-control" 
+                                        readonly
+                                        placeholder="Select expiry date"
+                                        required>
+                                    <i class="fas fa-calendar-alt date-input-icon"></i>
+                                </div>
+                                <div id="gift-expiry-calendar" class="custom-calendar" style="display: none;"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="gift-date">
                                     <i class="fas fa-calendar-day"></i> Gift Date
                                 </label>
-                                <input 
-                                    type="date" 
-                                    id="gift-date" 
-                                    class="form-control" 
-                                    required>
+                                <div class="date-input-wrapper">
+                                    <input 
+                                        type="text" 
+                                        id="gift-date" 
+                                        class="form-control" 
+                                        readonly
+                                        placeholder="Select gift date"
+                                        required>
+                                    <i class="fas fa-calendar-alt date-input-icon"></i>
+                                </div>
+                                <div id="gift-date-calendar" class="custom-calendar" style="display: none;"></div>
                             </div>
                         </div>
 
@@ -245,6 +258,7 @@
 
     <!-- Firebase Config & Scripts -->
     <script src="../../../config/firebase-config.js"></script>
+    <script src="../../../functions/date-picker/date-picker.js"></script>
     <script src="../../concessions/js/concessions-data.js"></script>
     <script src="gift-concessions.js"></script>
 </body>

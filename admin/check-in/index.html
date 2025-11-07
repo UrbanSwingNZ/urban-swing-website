@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../student-database/student-database.css?v=2">
     <link rel="stylesheet" href="../student-database/js/transaction-history/transaction-history.css?v=2">
     <link rel="stylesheet" href="../concessions/concessions.css?v=2">
+    <link rel="stylesheet" href="../../styles/date-picker/date-picker.css">
     <link rel="stylesheet" href="check-in.css?v=8">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
@@ -72,11 +73,10 @@
                         <i class="fas fa-calendar-alt"></i> Check-In Date:
                     </label>
                     <div class="date-input-wrapper">
-                        <input type="date" id="checkin-date" class="date-input" />
-                        <button type="button" class="calendar-button" aria-label="Open calendar">
-                            <i class="fas fa-calendar-day"></i>
-                        </button>
+                        <input type="text" id="checkin-date" class="date-input" readonly placeholder="Select date" />
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
                     </div>
+                    <div id="checkin-calendar" class="custom-calendar" style="display: none;"></div>
                 </div>
             </div>
 
@@ -537,6 +537,10 @@
 
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js"></script>
+    
+    <!-- Date Picker Component -->
+    <script src="../../functions/date-picker/date-picker.js"></script>
+    
     <script src="../../js/casual-rates-utils.js"></script>
     
     <!-- Check-In Modules (load in dependency order) -->
