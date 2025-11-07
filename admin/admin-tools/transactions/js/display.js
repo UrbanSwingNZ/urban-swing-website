@@ -16,18 +16,25 @@ function displayTransactions(transactions, currentSort) {
     if (transactions.length === 0) {
         table.style.display = 'none';
         emptyState.style.display = 'block';
+        renderPagination(0);
+        updatePaginationInfo(0);
         return;
     }
     
     table.style.display = 'table';
     emptyState.style.display = 'none';
     
-    transactions.forEach(transaction => {
+    // Get paginated data
+    const paginatedTransactions = getPaginatedData(transactions);
+    
+    paginatedTransactions.forEach(transaction => {
         const row = createTransactionRow(transaction);
         tbody.appendChild(row);
     });
     
     updateSortIcons(currentSort);
+    renderPagination(transactions.length);
+    updatePaginationInfo(transactions.length);
 }
 
 /**
