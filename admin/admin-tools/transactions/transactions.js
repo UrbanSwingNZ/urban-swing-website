@@ -106,6 +106,10 @@ function applyFilters() {
     const studentId = typeof getSelectedStudentId === 'function' ? getSelectedStudentId() : null;
     
     filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed, studentId);
+    
+    // Reset to first page when filters change
+    setCurrentPage(1);
+    
     sortFilteredTransactions();
     displayFilteredTransactions();
     updateSummary();
