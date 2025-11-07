@@ -250,7 +250,8 @@ async function processRegistrationWithPayment(formData) {
                 termsAccepted: formData.termsAccepted,
                 emailConsent: formData.emailConsent,
                 packageId: selectedPackageId,
-                paymentMethodId: paymentMethodId
+                paymentMethodId: paymentMethodId,
+                firstClassDate: formData.firstClassDate ? formData.firstClassDate.toISOString() : null
             })
         });
         
