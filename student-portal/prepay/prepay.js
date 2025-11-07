@@ -8,143 +8,23 @@ let cardElement = null;
 let selectedRateId = null;
 let casualRates = [];
 
-// Calendar state
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-let selectedDate = null;
+// Date picker instance
+let datePicker = null;
 
 // Page Initialization
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Pre-pay page DOM loaded');
     initializePage();
     
-    // Setup custom calendar
-    setupCustomCalendar();
+    // Setup custom calendar using the reusable DatePicker component
+    datePicker = new DatePicker('class-date', 'custom-calendar', {
+        allowedDays: [4], // Thursday only
+        disablePastDates: true,
+        onDateSelected: (date, formattedDate) => {
+            console.log('Date selected:', date);
+        }
+    });
 });
-
-// Setup custom calendar
-function setupCustomCalendar() {
-    const dateInput = document.getElementById('class-date');
-    const calendar = document.getElementById('custom-calendar');
-    
-    // Show calendar when input is clicked
-    dateInput.addEventListener('click', () => {
-        calendar.style.display = 'block';
-        renderCalendar();
-    });
-    
-    // Close calendar when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!dateInput.contains(e.target) && !calendar.contains(e.target)) {
-            calendar.style.display = 'none';
-        }
-    });
-}
-
-// Render the calendar
-function renderCalendar() {
-    const calendar = document.getElementById('custom-calendar');
-    const firstDay = new Date(currentYear, currentMonth, 1);
-    const lastDay = new Date(currentYear, currentMonth + 1, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                        'July', 'August', 'September', 'October', 'November', 'December'];
-    
-    let html = `
-        <div class="calendar-header">
-            <button type="button" class="calendar-nav-btn" id="prev-month">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <div class="calendar-month-year">${monthNames[currentMonth]} ${currentYear}</div>
-            <button type="button" class="calendar-nav-btn" id="next-month">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-        <div class="calendar-weekdays">
-            <div class="calendar-weekday">Sun</div>
-            <div class="calendar-weekday">Mon</div>
-            <div class="calendar-weekday">Tue</div>
-            <div class="calendar-weekday">Wed</div>
-            <div class="calendar-weekday thursday">Thu</div>
-            <div class="calendar-weekday">Fri</div>
-            <div class="calendar-weekday">Sat</div>
-        </div>
-        <div class="calendar-days">
-    `;
-    
-    // Add empty cells for days before the first day of month
-    const startDay = firstDay.getDay();
-    for (let i = 0; i < startDay; i++) {
-        html += '<div class="calendar-day empty"></div>';
-    }
-    
-    // Add days of the month
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-        const date = new Date(currentYear, currentMonth, day);
-        const dayOfWeek = date.getDay();
-        const isThursday = dayOfWeek === 4;
-        const isPast = date < today;
-        const isToday = date.toDateString() === today.toDateString();
-        const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
-        
-        let classes = ['calendar-day'];
-        if (isPast) {
-            classes.push('past');
-        } else if (isThursday) {
-            classes.push('thursday');
-            if (isToday) classes.push('today');
-            if (isSelected) classes.push('selected');
-        } else {
-            classes.push('not-thursday');
-        }
-        
-        html += `<div class="${classes.join(' ')}" data-date="${date.toISOString()}">${day}</div>`;
-    }
-    
-    html += '</div>';
-    calendar.innerHTML = html;
-    
-    // Add event listeners
-    document.getElementById('prev-month').addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
-        }
-        renderCalendar();
-    });
-    
-    document.getElementById('next-month').addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        renderCalendar();
-    });
-    
-    // Add click listeners to Thursday dates
-    calendar.querySelectorAll('.calendar-day.thursday:not(.past)').forEach(dayElement => {
-        dayElement.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const dateStr = dayElement.dataset.date;
-            selectedDate = new Date(dateStr);
-            
-            // Format date for display
-            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-            const formattedDate = selectedDate.toLocaleDateString('en-US', options);
-            
-            document.getElementById('class-date').value = formattedDate;
-            document.getElementById('custom-calendar').style.display = 'none';
-            
-            console.log('Date selected:', selectedDate);
-        });
-    });
-}
 
 // Listen for student selection changes (from admin dropdown)
 window.addEventListener('studentSelected', async (event) => {
@@ -497,7 +377,9 @@ document.getElementById('prepay-form').addEventListener('submit', async (event) 
         return;
     }
     
+    const selectedDate = datePicker.getSelectedDate();
     const classDate = document.getElementById('class-date').value;
+    
     if (!classDate || !selectedDate) {
         showSnackbar('Please select a class date.', 'error');
         return;
