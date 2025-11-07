@@ -30,7 +30,8 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, 
         if (typeFilter !== 'all') {
             if (typeFilter === 'concession-purchase' && transaction.type !== 'concession-purchase') return false;
             if (typeFilter === 'concession-gift' && transaction.type !== 'concession-gift') return false;
-            if (typeFilter === 'casual-entry' && transaction.type !== 'casual-entry') return false;
+            // Match all casual entry types: 'casual-entry', 'casual', 'casual-student'
+            if (typeFilter === 'casual-entry' && !['casual-entry', 'casual', 'casual-student'].includes(transaction.type)) return false;
         }
         
         // Student filter
