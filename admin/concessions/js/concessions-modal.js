@@ -7,6 +7,7 @@ let purchaseModalStudentId = null;
 let purchaseModalCallback = null;
 let purchaseModalParentModal = null;
 let purchaseModalParentStudent = null; // Store student object for restoration
+let purchaseDatePicker = null; // DatePicker instance
 
 /**
  * Initialize the purchase modal HTML (call once on page load)
@@ -23,7 +24,13 @@ function initializePurchaseConcessionsModal() {
         <div class="modal-content modal-small">
             <div class="modal-header">
                 <h3><i class="fas fa-shopping-cart"></i> Purchase Concessions</h3>
-                <input type="date" id="purchase-date-picker" class="purchase-date-picker" title="Purchase date (defaults to today)">
+                <div class="header-date-picker">
+                    <div class="date-input-wrapper date-input-compact">
+                        <input type="text" id="purchase-date-picker" class="purchase-date-picker" readonly placeholder="Select date" title="Purchase date">
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
+                    </div>
+                    <div id="purchase-date-calendar" class="custom-calendar" style="display: none;"></div>
+                </div>
                 <button class="modal-close" onclick="closePurchaseConcessionsModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -74,6 +81,12 @@ function initializePurchaseConcessionsModal() {
     // Append to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     
+    // Initialize custom date picker (allow any day, allow any date)
+    purchaseDatePicker = new DatePicker('purchase-date-picker', 'purchase-date-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false // Allow backdating and future dating
+    });
+    
     // Initialize event listeners
     setupPurchaseModalListeners();
 }
@@ -94,36 +107,28 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
     
     const modal = document.getElementById('purchase-concessions-modal');
     
-    // Set default date - use provided defaultDate or today
-    const datePicker = document.getElementById('purchase-date-picker');
+    // Set default date using custom date picker
     const today = new Date();
     
-    let dateToUse;
     if (defaultDate) {
         // If defaultDate is provided, use it
+        let dateToSet;
         if (defaultDate instanceof Date) {
-            dateToUse = defaultDate;
+            dateToSet = defaultDate;
         } else if (typeof defaultDate === 'string') {
-            // If it's already in YYYY-MM-DD format, use it directly
-            if (defaultDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                datePicker.value = defaultDate;
-                datePicker.max = today.toISOString().split('T')[0]; // Prevent future dates
-                dateToUse = null; // Already set
-            } else {
-                dateToUse = new Date(defaultDate);
-            }
+            dateToSet = new Date(defaultDate);
         }
         
-        if (dateToUse) {
-            datePicker.value = dateToUse.toISOString().split('T')[0];
+        if (dateToSet && !isNaN(dateToSet.getTime())) {
+            purchaseDatePicker.setDate(dateToSet);
+        } else {
+            // Invalid date, use today
+            purchaseDatePicker.setDate(today);
         }
     } else {
         // No default date provided, use today
-        dateToUse = today;
-        datePicker.value = today.toISOString().split('T')[0];
+        purchaseDatePicker.setDate(today);
     }
-    
-    datePicker.max = today.toISOString().split('T')[0]; // Prevent future dates
     
     // Show/hide Add Package button based on admin status
     const addPackageBtn = document.querySelector('.btn-add-package');
@@ -230,26 +235,6 @@ function setupPurchaseModalListeners() {
     const packageSelect = document.getElementById('purchase-package-select');
     const paymentSelect = document.getElementById('purchase-payment-select');
     const confirmBtn = document.getElementById('confirm-purchase-concessions-btn');
-    const datePicker = document.getElementById('purchase-date-picker');
-    
-    // Date picker validation
-    datePicker.addEventListener('change', () => {
-        const selectedDate = new Date(datePicker.value);
-        const today = new Date();
-        const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
-        
-        // Warn if backdating more than 30 days
-        if (daysDiff > 30) {
-            datePicker.style.borderColor = 'var(--warning-color, #ff9800)';
-            datePicker.title = `Warning: Backdating by ${daysDiff} days`;
-        } else if (daysDiff > 0) {
-            datePicker.style.borderColor = 'var(--info-color, #2196F3)';
-            datePicker.title = `Backdating by ${daysDiff} day${daysDiff === 1 ? '' : 's'}`;
-        } else {
-            datePicker.style.borderColor = '';
-            datePicker.title = 'Purchase date (defaults to today)';
-        }
-    });
     
     // Package selection updates amount
     packageSelect.addEventListener('change', () => {
@@ -291,7 +276,7 @@ function updatePurchaseButton() {
 async function handlePurchaseSubmit() {
     const packageId = document.getElementById('purchase-package-select').value;
     const paymentMethod = document.getElementById('purchase-payment-select').value;
-    const purchaseDate = document.getElementById('purchase-date-picker').value;
+    const parsedDate = purchaseDatePicker.getSelectedDate();
     
     if (!packageId || !paymentMethod) {
         showError('Please select package and payment method');
@@ -303,7 +288,7 @@ async function handlePurchaseSubmit() {
         return;
     }
     
-    if (!purchaseDate) {
+    if (!parsedDate) {
         showError('Please select a purchase date');
         return;
     }
@@ -311,24 +296,13 @@ async function handlePurchaseSubmit() {
     try {
         showLoading();
         
-        // Parse date string to local date (not UTC midnight)
-        // purchaseDate is in format YYYY-MM-DD from the date picker
-        let parsedDate;
-        if (typeof purchaseDate === 'string' && purchaseDate.includes('-')) {
-            // Parse as local date at noon to avoid timezone issues
-            const [year, month, day] = purchaseDate.split('-').map(Number);
-            parsedDate = new Date(year, month - 1, day, 12, 0, 0);
-        } else {
-            parsedDate = new Date(purchaseDate);
-        }
-        
         // Validate the date
         if (isNaN(parsedDate.getTime())) {
             showError('Invalid purchase date selected');
             return;
         }
         
-        console.log('Parsed date:', parsedDate, 'Original:', purchaseDate);
+        console.log('Purchase date:', parsedDate);
         
         // Complete purchase in Firestore
         const result = await completeConcessionPurchase(
