@@ -1,10 +1,10 @@
-/* Closedown Nights Admin Tool Styles */
-
 /* Import color variables from admin.css */
 :root {
     --admin-pink: #e800f2;
     --admin-blue: #3534Fa;
     --admin-purple: #9a16f5;
+    --text-color: #333;
+    --border-color: #e0e0e0;
 }
 
 .dashboard-main {
@@ -292,39 +292,45 @@
 }
 
 .btn-icon {
-    padding: 0.5rem 0.75rem;
-    border: none;
-    border-radius: 4px;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
     font-size: 0.9rem;
-    transition: all 0.2s;
 }
 
-.btn-edit {
-    background: #007bff;
+.btn-icon:hover {
+    background: var(--admin-purple);
     color: white;
+    border-color: var(--admin-purple);
+    transform: translateY(-2px);
 }
 
-.btn-edit:hover {
-    background: #0056b3;
-}
-
-.btn-delete {
-    background: #dc3545;
-    color: white;
-}
-
-.btn-delete:hover {
-    background: #c82333;
+.btn-icon i {
+    font-size: 0.9rem;
+    margin-right: 0.25rem;
 }
 
 .btn-icon:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
-.btn-icon i {
-    margin-right: 0.25rem;
+.btn-icon:disabled:hover {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--border-color);
+    transform: none;
+}
+
+.btn-icon.btn-delete:hover:not(:disabled) {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
 }
 
 /* Buttons */
