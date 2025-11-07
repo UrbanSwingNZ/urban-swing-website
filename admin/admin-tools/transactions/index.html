@@ -54,12 +54,20 @@
                 <div class="filters-row">
                     <div class="filter-group">
                         <label for="date-from"><i class="fas fa-calendar-alt"></i> From:</label>
-                        <input type="date" id="date-from" class="filter-input">
+                        <div class="date-input-wrapper">
+                            <input type="text" id="date-from" class="filter-input" readonly placeholder="Select from date">
+                            <i class="fas fa-calendar-alt date-input-icon"></i>
+                        </div>
+                        <div id="date-from-calendar" class="custom-calendar" style="display: none;"></div>
                     </div>
                     
                     <div class="filter-group">
                         <label for="date-to"><i class="fas fa-calendar-alt"></i> To:</label>
-                        <input type="date" id="date-to" class="filter-input">
+                        <div class="date-input-wrapper">
+                            <input type="text" id="date-to" class="filter-input" readonly placeholder="Select to date">
+                            <i class="fas fa-calendar-alt date-input-icon"></i>
+                        </div>
+                        <div id="date-to-calendar" class="custom-calendar calendar-align-right" style="display: none;"></div>
                     </div>
                     
                     <div class="filter-group">
