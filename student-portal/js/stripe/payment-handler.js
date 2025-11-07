@@ -118,6 +118,17 @@ async function loadCasualRates() {
                 </span>
             `;
             
+            // Add student ID notice for student rates
+            if (pkg.name.toLowerCase().includes('student')) {
+                const notice = document.createElement('div');
+                notice.className = 'radio-notice';
+                notice.innerHTML = `
+                    <i class="fas fa-id-card"></i>
+                    <p><strong>Note:</strong> You will be required to present a valid student ID when you arrive for class.</p>
+                `;
+                rateOption.appendChild(notice);
+            }
+            
             // Add change event listener
             const radioInput = rateOption.querySelector('input[type="radio"]');
             radioInput.addEventListener('change', function() {
