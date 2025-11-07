@@ -102,6 +102,9 @@
             <h3 style="margin-bottom: 10px;"><i class="fas fa-file-archive"></i> Backup Complete</h3>
             <p><strong>Timestamp:</strong> <span id="backup-timestamp"></span></p>
             <p><strong>Collections Backed Up:</strong> <span id="backup-collections"></span></p>
+            <p id="skipped-collections-container" style="display: none; color: #856404; background: #fff3cd; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                <strong><i class="fas fa-exclamation-triangle"></i> Collections Skipped:</strong> <span id="skipped-collections"></span>
+            </p>
             <p><strong>Total Documents:</strong> <span id="backup-docs"></span></p>
             <p><strong>ZIP File Downloaded:</strong> <span id="backup-files"></span></p>
         </div>
@@ -195,6 +198,10 @@
 
         function updateStats() {
             const statsDiv = document.getElementById('stats');
+            
+            // Expand collections to get actual count
+            const expandedCollections = expandCollectionsList(Array.from(selectedCollections));
+            
             const totalDocs = Array.from(selectedCollections).reduce((sum, name) => {
                 const count = collectionCounts[name];
                 // Skip auth collections (which show "Available" instead of a number)
@@ -202,7 +209,7 @@
             }, 0);
             const estimatedSize = Math.round(totalDocs * 2); // Rough estimate: 2KB per document
 
-            document.getElementById('total-collections').textContent = selectedCollections.size;
+            document.getElementById('total-collections').textContent = expandedCollections.length;
             document.getElementById('total-documents').textContent = totalDocs > 0 ? totalDocs : '—';
             document.getElementById('backup-size').textContent = estimatedSize > 1024 
                 ? `${(estimatedSize / 1024).toFixed(1)} MB` 
@@ -245,6 +252,7 @@
             { name: 'concessionBlocks', label: 'Concession Blocks', icon: 'fa-ticket-alt', type: 'firestore' },
             { name: 'concessionPackages', label: 'Concession Packages', icon: 'fa-box', type: 'firestore' },
             { name: 'casualRates', label: 'Casual Rates', icon: 'fa-money-bill-wave', type: 'firestore' },
+            { name: 'closedownNights', label: 'Closedown Nights (incl Settings)', icon: 'fa-calendar-times', type: 'firestore', includesCollections: ['closedownNights', 'settings'] },
             { name: 'users', label: 'Users (Firestore)', icon: 'fa-user-shield', type: 'firestore' },
             { name: 'authUsers', label: 'Auth Users', icon: 'fa-key', type: 'auth' }
         ];
@@ -252,6 +260,29 @@
         let collectionCounts = {};
         let selectedCollections = new Set();
         let currentUser = null;
+
+        /**
+         * Expand collection names that include multiple collections
+         * For example, 'closedownNights' expands to ['closedownNights', 'settings']
+         */
+        function expandCollectionsList(collectionNames) {
+            const expanded = new Set();
+            
+            collectionNames.forEach(name => {
+                const config = COLLECTIONS.find(c => c.name === name);
+                if (config && config.includesCollections) {
+                    // Add all the included collections
+                    config.includesCollections.forEach(includedName => {
+                        expanded.add(includedName);
+                    });
+                } else {
+                    // Add the collection as-is
+                    expanded.add(name);
+                }
+            });
+            
+            return Array.from(expanded);
+        }
 
         function initializeAuth() {
             showLoading(true);
@@ -313,8 +344,18 @@
                         // Actual count will be fetched during backup
                         collectionCounts[collection.name] = 'Available';
                         console.log(`${collection.name}: Auth users available`);
+                    } else if (collection.includesCollections) {
+                        // For collections that include multiple collections, get combined count
+                        let totalCount = 0;
+                        for (const includedCollection of collection.includesCollections) {
+                            const snapshot = await db.collection(includedCollection).get();
+                            totalCount += snapshot.size;
+                            console.log(`${includedCollection}: ${snapshot.size} documents`);
+                        }
+                        collectionCounts[collection.name] = totalCount;
+                        console.log(`${collection.name} (combined): ${totalCount} documents`);
                     } else {
-                        // Firestore collections
+                        // Regular Firestore collections
                         const snapshot = await db.collection(collection.name).get();
                         collectionCounts[collection.name] = snapshot.size;
                         console.log(`${collection.name}: ${snapshot.size} documents`);
@@ -386,7 +427,9 @@
                 return;
             }
 
-            await runBackup(Array.from(selectedCollections));
+            // Expand collections that include multiple collections
+            const expandedCollections = expandCollectionsList(Array.from(selectedCollections));
+            await runBackup(expandedCollections);
         });
 
         document.getElementById('backup-all-btn').addEventListener('click', async () => {
@@ -394,7 +437,9 @@
                 return;
             }
 
-            await runBackup(COLLECTIONS.map(c => c.name));
+            // Expand collections that include multiple collections
+            const expandedCollections = expandCollectionsList(COLLECTIONS.map(c => c.name));
+            await runBackup(expandedCollections);
         });
 
         function downloadZip(blob, filename) {
@@ -412,6 +457,7 @@
             try {
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
                 let totalDocs = 0;
+                const successfulCollections = []; // Track which collections were actually backed up
 
                 showStatus('loading', '<i class="fas fa-spinner fa-spin"></i> Starting backup...');
                 document.getElementById('backup-selected-btn').disabled = true;
@@ -421,19 +467,12 @@
                 // Create a new ZIP file
                 const zip = new JSZip();
 
-                // Add metadata file
-                const metadata = {
-                    timestamp: new Date().toISOString(),
-                    timestampReadable: new Date().toLocaleString(),
-                    collections: collectionsToBackup,
-                    totalCollections: collectionsToBackup.length
-                };
-
                 for (let i = 0; i < collectionsToBackup.length; i++) {
                     const collectionName = collectionsToBackup[i];
                     updateProgress(i, collectionsToBackup.length, `Backing up ${collectionName}...`);
 
                     let data = [];
+                    let backupSuccessful = false;
                     
                     // Check if this is an Auth collection
                     const collectionConfig = COLLECTIONS.find(c => c.name === collectionName);
@@ -449,35 +488,69 @@
                             console.log(`Received ${result.data.count} auth users`);
                             data = result.data.users;
                             totalDocs += data.length;
+                            backupSuccessful = true;
                         } catch (error) {
                             console.error('Error exporting auth users:', error);
-                            showStatus('error', `<i class="fas fa-exclamation-circle"></i> Failed to export Auth users: ${error.message}`);
-                            throw error;
+                            console.warn('Auth users backup failed - this is expected in local development due to CORS. Continuing with other collections...');
+                            // Don't throw - just skip auth users and continue with other collections
+                            data = [];
+                            backupSuccessful = false;
                         }
                     } else {
                         // Firestore collection
-                        const snapshot = await db.collection(collectionName).get();
-                        
-                        snapshot.forEach(doc => {
-                            data.push({
-                                id: doc.id,
-                                ...doc.data()
+                        try {
+                            const snapshot = await db.collection(collectionName).get();
+                            
+                            snapshot.forEach(doc => {
+                                data.push({
+                                    id: doc.id,
+                                    ...doc.data()
+                                });
                             });
-                        });
-                        
-                        totalDocs += data.length;
+                            
+                            totalDocs += data.length;
+                            backupSuccessful = true;
+                            console.log(`Backed up ${collectionName}: ${data.length} documents`);
+                        } catch (error) {
+                            console.error(`Error backing up ${collectionName}:`, error);
+                            // Continue with other collections even if one fails
+                            showStatus('warning', `<i class="fas fa-exclamation-triangle"></i> Warning: Failed to backup ${collectionName}: ${error.message}`);
+                            backupSuccessful = false;
+                        }
                     }
 
                     // Add JSON version to ZIP file
-                    zip.file(`${collectionName}.json`, JSON.stringify(data, null, 2));
-                    
-                    // Add CSV version to ZIP file
-                    const csv = convertToCSV(data, collectionName);
-                    zip.file(`${collectionName}.csv`, csv);
+                    if (data.length > 0) {
+                        zip.file(`${collectionName}.json`, JSON.stringify(data, null, 2));
+                        
+                        // Add CSV version to ZIP file
+                        try {
+                            const csv = convertToCSV(data, collectionName);
+                            zip.file(`${collectionName}.csv`, csv);
+                        } catch (csvError) {
+                            console.warn(`Could not create CSV for ${collectionName}:`, csvError);
+                            // CSV creation failed, but we still have JSON
+                        }
+                        successfulCollections.push(collectionName);
+                    } else {
+                        if (backupSuccessful) {
+                            // Empty collection - still count as successful
+                            console.log(`Skipping empty collection: ${collectionName}`);
+                            successfulCollections.push(collectionName);
+                        } else {
+                            console.log(`Skipping failed collection: ${collectionName}`);
+                        }
+                    }
                 }
 
-                // Update metadata with total documents
-                metadata.totalDocuments = totalDocs;
+                // Add metadata file with successful collections only
+                const metadata = {
+                    timestamp: new Date().toISOString(),
+                    timestampReadable: new Date().toLocaleString(),
+                    collections: successfulCollections,
+                    totalCollections: successfulCollections.length,
+                    totalDocuments: totalDocs
+                };
                 zip.file('backup-info.json', JSON.stringify(metadata, null, 2));
 
                 // Generate ZIP file
@@ -494,15 +567,35 @@
 
                 updateProgress(collectionsToBackup.length, collectionsToBackup.length, 'Backup complete!');
                 
-                showStatus('success', `<i class="fas fa-check-circle"></i> Backup completed successfully!`);
+                // Calculate skipped collections
+                const skippedCollections = collectionsToBackup.filter(c => !successfulCollections.includes(c));
+                
+                // Show appropriate status message
+                if (skippedCollections.length > 0) {
+                    showStatus('warning', `<i class="fas fa-exclamation-triangle"></i> Backup completed with ${skippedCollections.length} collection(s) skipped`);
+                } else {
+                    showStatus('success', `<i class="fas fa-check-circle"></i> Backup completed successfully!`);
+                }
 
                 // Show backup info
                 const infoDiv = document.getElementById('backup-info');
                 document.getElementById('backup-timestamp').textContent = new Date().toLocaleString();
-                document.getElementById('backup-collections').textContent = collectionsToBackup.join(', ');
+                document.getElementById('backup-collections').textContent = successfulCollections.join(', ');
                 document.getElementById('backup-docs').textContent = totalDocs.toLocaleString();
                 document.getElementById('backup-files').textContent = zipFilename;
+                
+                // Show skipped collections if any
+                if (skippedCollections.length > 0) {
+                    document.getElementById('skipped-collections-container').style.display = 'block';
+                    document.getElementById('skipped-collections').textContent = skippedCollections.join(', ');
+                } else {
+                    document.getElementById('skipped-collections-container').style.display = 'none';
+                }
+                
                 infoDiv.style.display = 'block';
+                
+                // Scroll to the backup info section
+                infoDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
                 document.getElementById('backup-selected-btn').disabled = false;
                 document.getElementById('backup-all-btn').disabled = false;
