@@ -1,0 +1,82 @@
+/**
+ * Closedown Banner Styles
+ * Styled to match the student ID notice banner
+ */
+
+.closedown-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 0 0 2rem 0;
+    padding: 1rem 1.5rem;
+    background: #fff3cd;
+    border-bottom: 3px solid #ffc107;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.closedown-banner-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.closedown-banner-content i {
+    color: #f57c00;
+    font-size: 1.25rem;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+}
+
+.closedown-banner-text {
+    flex: 1;
+    color: #663c00;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.closedown-banner-text strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.closedown-dates-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    list-style-type: disc;
+}
+
+.closedown-dates-list li {
+    margin: 0.25rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .closedown-banner {
+        padding: 0.875rem 1rem;
+    }
+
+    .closedown-banner-content {
+        gap: 0.5rem;
+    }
+
+    .closedown-banner-content i {
+        font-size: 1.1rem;
+    }
+
+    .closedown-banner-text {
+        font-size: 0.875rem;
+    }
+
+    .closedown-banner-text strong {
+        font-size: 0.95rem;
+    }
+
+    .closedown-dates-list {
+        padding-left: 1rem;
+    }
+}

@@ -208,7 +208,7 @@ function renderClosedownList() {
                     </div>
                 </div>
                 <div class="closedown-actions">
-                    <button class="btn-icon btn-edit" 
+                    <button class="btn-icon" 
                             onclick="openEditModal('${period.id}')" 
                             ${!canEdit ? 'disabled' : ''}>
                         <i class="fas fa-edit"></i>
@@ -216,7 +216,7 @@ function renderClosedownList() {
                     <button class="btn-icon btn-delete" 
                             onclick="openDeleteModal('${period.id}')" 
                             ${!canEdit ? 'disabled' : ''}>
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </div>
