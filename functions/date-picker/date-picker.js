@@ -28,7 +28,7 @@ class DatePicker {
             onDateSelected: options.onDateSelected || null,
             allowedDays: options.allowedDays || [4], // Default to Thursday only
             disablePastDates: options.disablePastDates !== undefined ? options.disablePastDates : true,
-            dateFormat: options.dateFormat || { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' },
+            dateFormat: options.dateFormat || { year: 'numeric', month: 'short', day: 'numeric' },
             highlightToday: options.highlightToday !== undefined ? options.highlightToday : true
         };
         
@@ -189,8 +189,11 @@ class DatePicker {
     selectDate(dateStr) {
         this.selectedDate = new Date(dateStr);
         
-        // Format date for display
-        const formattedDate = this.selectedDate.toLocaleDateString('en-US', this.options.dateFormat);
+        // Format date for display (d/mm/yyyy)
+        const day = this.selectedDate.getDate();
+        const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+        const year = this.selectedDate.getFullYear();
+        const formattedDate = `${day}/${month}/${year}`;
         
         this.dateInput.value = formattedDate;
         this.calendar.style.display = 'none';
