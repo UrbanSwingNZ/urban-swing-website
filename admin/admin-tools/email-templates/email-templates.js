@@ -1,10 +1,10 @@
 /**
  * email-templates.js
  * Main logic for Email Templates Management Tool
+ * Version: 1.0.1
  */
 
-// Global state
-let db;
+// Global state (db is already declared in firebase-config.js)
 let currentUser = null;
 let currentTemplate = null;
 let htmlEditor = null;
@@ -14,9 +14,6 @@ let hasUnsavedChanges = false;
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Initialize Firebase
-        db = firebase.firestore();
-        
         // Check authentication
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
@@ -188,15 +185,22 @@ async function loadTemplates() {
     try {
         showLoading(true);
         
-        const snapshot = await db.collection('emailTemplates')
-            .orderBy('category')
-            .orderBy('name')
-            .get();
+        const snapshot = await db.collection('emailTemplates').get();
         
         templates = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
+        
+        // Sort in JavaScript instead of using Firestore orderBy (avoids index requirement)
+        templates.sort((a, b) => {
+            // Sort by category first
+            const categoryCompare = (a.category || '').localeCompare(b.category || '');
+            if (categoryCompare !== 0) return categoryCompare;
+            
+            // Then by name
+            return (a.name || '').localeCompare(b.name || '');
+        });
         
         renderTemplateList();
         showLoading(false);
@@ -443,7 +447,7 @@ async function saveTemplate() {
         // Create new version
         const newVersion = {
             version: (currentTemplate.currentVersion || 0) + 1,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: new Date(), // Use regular Date for arrays
             createdBy: currentUser.email,
             subject,
             htmlTemplate,
@@ -702,7 +706,7 @@ async function restoreVersion(versionNumber) {
         // Create new version with restored content
         const newVersion = {
             version: currentTemplate.currentVersion + 1,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: new Date(), // Use regular Date for arrays
             createdBy: currentUser.email,
             subject: version.subject,
             htmlTemplate: version.htmlTemplate,
@@ -803,6 +807,7 @@ async function migrateTemplates() {
         
         const batch = db.batch();
         const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+        const now = new Date(); // Use regular Date for array timestamps
         
         // Template 1: Welcome Student
         const welcomeRef = db.collection('emailTemplates').doc('welcome-student');
@@ -826,7 +831,7 @@ async function migrateTemplates() {
             currentVersion: 1,
             versions: [{
                 version: 1,
-                createdAt: timestamp,
+                createdAt: now,
                 createdBy: currentUser.email,
                 subject: 'Welcome to Urban Swing!',
                 htmlTemplate: getWelcomeStudentHtmlTemplate(),
@@ -857,7 +862,7 @@ async function migrateTemplates() {
             currentVersion: 1,
             versions: [{
                 version: 1,
-                createdAt: timestamp,
+                createdAt: now,
                 createdBy: currentUser.email,
                 subject: 'New Student Registration',
                 htmlTemplate: getAdminNotificationHtmlTemplate(),
@@ -888,7 +893,7 @@ async function migrateTemplates() {
             currentVersion: 1,
             versions: [{
                 version: 1,
-                createdAt: timestamp,
+                createdAt: now,
                 createdBy: currentUser.email,
                 subject: 'Your Urban Swing Portal Account is Ready!',
                 htmlTemplate: getAccountSetupHtmlTemplate(),
@@ -919,7 +924,7 @@ async function migrateTemplates() {
             currentVersion: 1,
             versions: [{
                 version: 1,
-                createdAt: timestamp,
+                createdAt: now,
                 createdBy: currentUser.email,
                 subject: '⚠️ System Error: Failed to send welcome email',
                 htmlTemplate: getErrorNotificationHtmlTemplate(),
