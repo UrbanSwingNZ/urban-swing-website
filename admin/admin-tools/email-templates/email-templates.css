@@ -6,55 +6,10 @@
 /* ===== Layout ===== */
 .templates-layout {
     display: flex;
-    gap: 0;
     height: calc(100vh - 120px);
-    background: #f5f5f5;
+    overflow: hidden;
 }
 
-/* ===== Migration Banner ===== */
-.migration-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.migration-content {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.migration-content i {
-    font-size: 2.5rem;
-}
-
-.migration-content h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.2rem;
-}
-
-.migration-content p {
-    margin: 0;
-    opacity: 0.9;
-}
-
-.migration-content .btn-primary {
-    margin-left: auto;
-    background: white;
-    color: #667eea;
-    border: none;
-    padding: 12px 24px;
-    font-weight: bold;
-}
-
-.migration-content .btn-primary:hover {
-    background: #f0f0f0;
-}
-
-/* ===== Sidebar ===== */
 .templates-sidebar {
     width: 300px;
     background: white;
