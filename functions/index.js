@@ -530,7 +530,64 @@ exports.exportAuthUsers = onCall(async (request) => {
 const { processCasualPayment } = require('./process-casual-payment');
 const { processConcessionPurchase } = require('./process-concession-purchase');
 
+/**
+ * Send test email (for testing email templates in admin tool)
+ * Restricted to dance@urbanswing.co.nz only
+ */
+exports.sendTestEmail = onCall(
+  { secrets: [emailPassword] },
+  async (request) => {
+    try {
+      // Verify authentication
+      if (!request.auth) {
+        throw new Error('Authentication required');
+      }
+
+      // Restrict to authorized email only
+      if (request.auth.token.email !== 'dance@urbanswing.co.nz') {
+        throw new Error('Unauthorized: This function is restricted to dance@urbanswing.co.nz');
+      }
+
+      const { to, subject, html, text, templateId } = request.data;
+
+      // Validate required fields
+      if (!to || !subject || !html) {
+        throw new Error('Missing required fields: to, subject, html');
+      }
+
+      // Create transporter
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'dance@urbanswing.co.nz',
+          pass: emailPassword.value()
+        }
+      });
+
+      // Send email
+      await transporter.sendMail({
+        from: 'Urban Swing <dance@urbanswing.co.nz>',
+        to: to,
+        subject: subject,
+        text: text || 'This is a test email from Urban Swing email template manager.',
+        html: html
+      });
+
+      logger.info(`Test email sent successfully for template: ${templateId}`);
+
+      return {
+        success: true,
+        message: 'Test email sent successfully'
+      };
+    } catch (error) {
+      logger.error('Error sending test email:', error);
+      throw new Error(`Failed to send test email: ${error.message}`);
+    }
+  }
+);
+
 exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;
 exports.processCasualPayment = processCasualPayment;
 exports.processConcessionPurchase = processConcessionPurchase;
+
