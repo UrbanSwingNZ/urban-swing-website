@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
     
+    <!-- TinyMCE (self-hosted via CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="origin"></script>
+    
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -115,6 +118,16 @@
                                         <input type="text" id="email-subject" class="form-control" placeholder="Email subject line">
                                     </div>
 
+                                    <!-- Editor Mode Toggle -->
+                                    <div class="editor-mode-tabs">
+                                        <button class="editor-mode-btn active" data-mode="visual">
+                                            <i class="fas fa-eye"></i> Visual Editor
+                                        </button>
+                                        <button class="editor-mode-btn" data-mode="code">
+                                            <i class="fas fa-code"></i> Code Editor
+                                        </button>
+                                    </div>
+
                                     <div class="editor-section">
                                         <div class="editor-header">
                                             <label>HTML Template</label>
@@ -123,7 +136,14 @@
                                                 Use <code>${variableName}</code> for variables
                                             </div>
                                         </div>
-                                        <div class="editor-wrapper">
+                                        
+                                        <!-- Visual Editor (TinyMCE) -->
+                                        <div id="visual-editor-container" class="editor-wrapper">
+                                            <textarea id="visual-editor"></textarea>
+                                        </div>
+                                        
+                                        <!-- Code Editor (CodeMirror) -->
+                                        <div id="code-editor-container" class="editor-wrapper" style="display: none;">
                                             <textarea id="html-editor"></textarea>
                                         </div>
                                     </div>
@@ -212,14 +232,14 @@
             </div>
             <div class="modal-body">
                 <div class="preview-controls">
-                    <h3>Sample Data</h3>
-                    <p>Enter sample values for template variables:</p>
-                    <div id="preview-variables" class="preview-variables">
-                        <!-- Variable inputs will be generated here -->
+                    <h3>Student Selection</h3>
+                    <p>Select a student to preview the email with their data:</p>
+                    <div class="student-selection">
+                        <label for="preview-student-select">Student:</label>
+                        <select id="preview-student-select" class="form-control">
+                            <option value="">Loading students...</option>
+                        </select>
                     </div>
-                    <button id="update-preview-btn" class="btn-primary">
-                        <i class="fas fa-sync"></i> Update Preview
-                    </button>
                 </div>
                 <div class="preview-display">
                     <h3>Preview</h3>
@@ -297,6 +317,6 @@
     <!-- Firebase Config & App Logic -->
     <script src="../../../config/firebase-config.js"></script>
     <script src="template-renderer.js"></script>
-    <script src="email-templates.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

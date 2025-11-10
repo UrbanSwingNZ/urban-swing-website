@@ -8,8 +8,10 @@
 let currentUser = null;
 let currentTemplate = null;
 let htmlEditor = null;
+let visualEditor = null;
 let templates = [];
 let hasUnsavedChanges = false;
+let currentEditorMode = 'visual'; // 'visual' or 'code'
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
@@ -65,9 +67,10 @@ async function initializeApp() {
 }
 
 /**
- * Initialize CodeMirror editor
+ * Initialize editors (CodeMirror and TinyMCE)
  */
 function initializeCodeMirror() {
+    // Initialize CodeMirror for code editing
     const textarea = document.getElementById('html-editor');
     htmlEditor = CodeMirror.fromTextArea(textarea, {
         mode: 'htmlmixed',
@@ -79,10 +82,66 @@ function initializeCodeMirror() {
         autoCloseTags: true
     });
     
-    // Track changes
+    // Track changes in CodeMirror
     htmlEditor.on('change', () => {
         hasUnsavedChanges = true;
         updateSaveButton();
+    });
+    
+    // Initialize TinyMCE for visual editing
+    tinymce.init({
+        selector: '#visual-editor',
+        height: 600,
+        menubar: false,
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
+        ],
+        toolbar: 'undo redo | blocks | ' +
+            'bold italic forecolor backcolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'removeformat | link image | code | help',
+        content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
+        // Custom content CSS for email preview
+        content_css: false,
+        // Allow all HTML tags and attributes for email templates
+        valid_elements: '*[*]',
+        extended_valid_elements: '*[*]',
+        valid_children: '+body[style]',
+        // Don't convert URLs or encode entities - keep raw HTML
+        convert_urls: false,
+        relative_urls: false,
+        remove_script_host: false,
+        entity_encoding: 'raw',
+        // Don't cleanup or verify HTML
+        verify_html: false,
+        cleanup: false,
+        // Keep template literals intact
+        protect: [
+            /\$\{[^}]+\}/g,  // Protect ${variableName} patterns
+            /\`[^`]*\`/g      // Protect backtick strings
+        ],
+        // Setup callback
+        setup: function(editor) {
+            editor.on('init', function() {
+                visualEditor = editor;
+            });
+            editor.on('change keyup', function() {
+                hasUnsavedChanges = true;
+                updateSaveButton();
+            });
+            // Prevent TinyMCE from encoding special characters in template variables
+            editor.on('BeforeSetContent', function(e) {
+                // Don't let TinyMCE mess with our template syntax
+                if (e.content) {
+                    e.content = e.content.replace(/&lt;!--mce:protected[^>]+--&gt;/g, function(match) {
+                        // Decode any protected content back to original
+                        return match;
+                    });
+                }
+            });
+        }
     });
 }
 
@@ -101,6 +160,11 @@ function setupEventListeners() {
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    
+    // Editor mode tabs
+    document.querySelectorAll('.editor-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchEditorMode(btn.dataset.mode));
     });
     
     // Save button
@@ -135,9 +199,6 @@ function setupEventListeners() {
     document.querySelectorAll('.preview-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchPreviewTab(btn.dataset.previewTab));
     });
-    
-    // Update preview button
-    document.getElementById('update-preview-btn').addEventListener('click', updatePreview);
     
     // Confirm test send
     document.getElementById('confirm-test-send').addEventListener('click', sendTestEmail);
@@ -327,9 +388,18 @@ function loadTemplateIntoEditor() {
     statusBadge.textContent = currentTemplate.active ? 'Active' : 'Inactive';
     statusBadge.className = `status-badge ${currentTemplate.active ? 'active' : 'inactive'}`;
     
-    // Load content
+    // Load content into both editors
     document.getElementById('email-subject').value = currentTemplate.subject || '';
-    htmlEditor.setValue(currentTemplate.htmlTemplate || '');
+    const htmlContent = currentTemplate.htmlTemplate || '';
+    
+    // Update CodeMirror
+    htmlEditor.setValue(htmlContent);
+    
+    // Update TinyMCE (if initialized)
+    if (visualEditor) {
+        visualEditor.setContent(htmlContent);
+    }
+    
     document.getElementById('text-template').value = currentTemplate.textTemplate || '';
     document.getElementById('template-active').checked = currentTemplate.active !== false;
     
@@ -404,17 +474,73 @@ function switchTab(tabName) {
 }
 
 /**
+ * Switch between visual and code editor modes
+ */
+function switchEditorMode(mode) {
+    // Sync content before switching
+    if (currentEditorMode === 'visual' && visualEditor) {
+        // Save visual editor content to code editor
+        const visualContent = visualEditor.getContent();
+        htmlEditor.setValue(visualContent);
+    } else if (currentEditorMode === 'code' && visualEditor) {
+        // Save code editor content to visual editor
+        const codeContent = htmlEditor.getValue();
+        visualEditor.setContent(codeContent);
+    }
+    
+    // Update current mode
+    currentEditorMode = mode;
+    
+    // Update button states
+    document.querySelectorAll('.editor-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    
+    // Show/hide appropriate editor
+    const visualContainer = document.getElementById('visual-editor-container');
+    const codeContainer = document.getElementById('code-editor-container');
+    
+    if (mode === 'visual') {
+        visualContainer.style.display = 'block';
+        codeContainer.style.display = 'none';
+    } else {
+        visualContainer.style.display = 'none';
+        codeContainer.style.display = 'block';
+        // Refresh CodeMirror display
+        htmlEditor.refresh();
+    }
+}
+
+/**
  * Save template changes
  */
 async function saveTemplate() {
     if (!currentTemplate) return;
     
     try {
+        // Clear unsaved changes flag immediately to prevent confirmation dialog
+        hasUnsavedChanges = false;
+        updateSaveButton();
+        
         showLoading(true);
         
         // Get current values
         const subject = document.getElementById('email-subject').value.trim();
-        const htmlTemplate = htmlEditor.getValue();
+        
+        // Get HTML content from the active editor
+        let htmlTemplate;
+        if (currentEditorMode === 'visual' && visualEditor) {
+            htmlTemplate = visualEditor.getContent();
+            // Also sync to code editor
+            htmlEditor.setValue(htmlTemplate);
+        } else {
+            htmlTemplate = htmlEditor.getValue();
+            // Also sync to visual editor if it exists
+            if (visualEditor) {
+                visualEditor.setContent(htmlTemplate);
+            }
+        }
+        
         const textTemplate = document.getElementById('text-template').value;
         const active = document.getElementById('template-active').checked;
         
@@ -477,48 +603,152 @@ async function saveTemplate() {
 /**
  * Show preview modal
  */
-function showPreview() {
+async function showPreview() {
     if (!currentTemplate) return;
     
     const modal = document.getElementById('preview-modal');
     
-    // Generate variable inputs
-    const variablesContainer = document.getElementById('preview-variables');
-    const sampleData = getSampleData(currentTemplate.id);
+    // Load students into dropdown
+    await loadStudentsForPreview();
     
-    let html = '';
-    if (currentTemplate.variables && currentTemplate.variables.length > 0) {
-        currentTemplate.variables.forEach(variable => {
-            const value = sampleData[variable.name] !== undefined ? sampleData[variable.name] : (variable.example || '');
-            html += `
-                <div class="preview-variable-input">
-                    <label>${variable.name}</label>
-                    <input type="text" data-variable="${variable.name}" value="${value}" placeholder="${variable.description || ''}">
-                </div>
-            `;
-        });
-    } else {
-        html = '<p style="color: #999;">No variables for this template</p>';
-    }
-    
-    variablesContainer.innerHTML = html;
-    
-    // Initial preview
+    // Initial preview with first student or sample data
     updatePreview();
     
     modal.classList.add('active');
 }
 
 /**
+ * Load students into preview dropdown
+ */
+async function loadStudentsForPreview() {
+    const select = document.getElementById('preview-student-select');
+    
+    try {
+        // Fetch all students from Firestore (no orderBy to avoid index requirement)
+        const snapshot = await db.collection('students').get();
+        
+        // Convert to array and sort in JavaScript
+        const students = [];
+        snapshot.forEach(doc => {
+            students.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        // Sort by firstName, then lastName
+        students.sort((a, b) => {
+            const firstNameCompare = (a.firstName || '').localeCompare(b.firstName || '');
+            if (firstNameCompare !== 0) return firstNameCompare;
+            return (a.lastName || '').localeCompare(b.lastName || '');
+        });
+        
+        let options = '<option value="sample">Sample Data (Sarah Johnson)</option>';
+        
+        students.forEach(student => {
+            const name = `${student.firstName} ${student.lastName}`;
+            const email = student.email || '';
+            options += `<option value="${student.id}">${name}${email ? ' - ' + email : ''}</option>`;
+        });
+        
+        select.innerHTML = options;
+        
+        // Add change event listener
+        select.onchange = updatePreview;
+    } catch (error) {
+        console.error('Error loading students:', error);
+        select.innerHTML = '<option value="sample">Sample Data (Sarah Johnson)</option>';
+    }
+}
+
+/**
+ * Get student data for preview
+ */
+async function getStudentDataForPreview() {
+    const select = document.getElementById('preview-student-select');
+    const selectedId = select.value;
+    
+    // If sample data is selected, use the getSampleData function
+    if (!selectedId || selectedId === 'sample') {
+        return getSampleData(currentTemplate.id);
+    }
+    
+    // Otherwise, fetch the student from Firestore
+    try {
+        const doc = await db.collection('students').doc(selectedId).get();
+        
+        if (!doc.exists) {
+            return getSampleData(currentTemplate.id);
+        }
+        
+        const student = doc.data();
+        
+        // Map student data to template variables based on template type
+        return mapStudentToTemplateVariables(student, selectedId);
+    } catch (error) {
+        console.error('Error fetching student:', error);
+        return getSampleData(currentTemplate.id);
+    }
+}
+
+/**
+ * Map student data to template variables
+ */
+function mapStudentToTemplateVariables(student, studentId) {
+    const baseData = {
+        student: {
+            firstName: student.firstName || '',
+            lastName: student.lastName || '',
+            email: student.email || '',
+            phoneNumber: student.phoneNumber || '',
+            pronouns: student.pronouns || '',
+            emailConsent: student.emailConsent !== false,
+            adminNotes: student.adminNotes || ''
+        },
+        studentId: studentId,
+        registeredAt: student.createdAt ? formatDate(student.createdAt) : 'Unknown',
+        casualRate: 20, // Default pricing
+        studentRate: 15,
+        fiveClassPrice: 90,
+        tenClassPrice: 170,
+        hasUserAccount: !!student.userId,
+        setupDate: formatDate(new Date())
+    };
+    
+    // Template-specific additions
+    if (currentTemplate.id === 'account-setup' && student.userId) {
+        baseData.user = {
+            email: student.email || ''
+        };
+    }
+    
+    if (currentTemplate.id === 'error-notification') {
+        baseData.error = {
+            message: 'Sample error message'
+        };
+    }
+    
+    return baseData;
+}
+
+/**
  * Update preview with current values
  */
-function updatePreview() {
+async function updatePreview() {
     const subject = document.getElementById('email-subject').value;
-    const htmlTemplate = htmlEditor.getValue();
+    
+    // Get HTML from the active editor
+    let htmlTemplate;
+    if (currentEditorMode === 'visual' && visualEditor) {
+        htmlTemplate = visualEditor.getContent();
+    } else {
+        htmlTemplate = htmlEditor.getValue();
+    }
+    
     const textTemplate = document.getElementById('text-template').value;
     
-    // Get variable values from form
-    const variables = getVariablesFromForm(document.getElementById('preview-variables'));
+    // Get student data for preview (either selected student or sample data)
+    const variables = await getStudentDataForPreview();
     
     // Render templates
     const renderedSubject = renderTemplate(subject, variables);
@@ -733,9 +963,7 @@ async function restoreVersion(versionNumber) {
 function updateSaveButton() {
     const saveBtn = document.getElementById('save-btn');
     saveBtn.disabled = !hasUnsavedChanges;
-    saveBtn.innerHTML = hasUnsavedChanges 
-        ? '<i class="fas fa-save"></i> Save Changes *'
-        : '<i class="fas fa-save"></i> Save Changes';
+    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
 }
 
 /**
@@ -773,14 +1001,49 @@ function showLoading(show) {
  * Show success message
  */
 function showSuccess(message) {
-    alert('✅ ' + message);
+    showSnackbar(message, 'success');
 }
 
 /**
  * Show error message
  */
 function showError(message) {
-    alert('❌ ' + message);
+    showSnackbar(message, 'error');
+}
+
+/**
+ * Show snackbar notification
+ */
+function showSnackbar(message, type = 'success') {
+    // Remove any existing snackbar
+    const existing = document.querySelector('.snackbar');
+    if (existing) {
+        existing.remove();
+    }
+    
+    // Create snackbar
+    const snackbar = document.createElement('div');
+    snackbar.className = `snackbar ${type}`;
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 
+                 type === 'error' ? 'fa-exclamation-circle' : 
+                 'fa-info-circle';
+    
+    snackbar.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span class="snackbar-message">${message}</span>
+    `;
+    
+    document.body.appendChild(snackbar);
+    
+    // Trigger animation
+    setTimeout(() => snackbar.classList.add('show'), 10);
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+        setTimeout(() => snackbar.remove(), 300);
+    }, 3000);
 }
 
 // Make restoreVersion available globally for onclick
