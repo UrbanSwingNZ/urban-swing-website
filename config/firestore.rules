@@ -132,6 +132,12 @@ service cloud.firestore {
       allow write: if isAdminOrFrontDesk();
     }
     
+    // Email Templates - restricted to dance@urbanswing.co.nz only
+    match /emailTemplates/{templateId} {
+      allow read, write: if request.auth != null && 
+                            request.auth.token.email == 'dance@urbanswing.co.nz';
+    }
+    
     // Deny all other access by default
     match /{document=**} {
       allow read, write: if false;

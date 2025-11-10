@@ -3,7 +3,7 @@
  * Securely exchanges Spotify authorization codes for access tokens
  */
 
-const {onCall} = require("firebase-functions/v2/https");
+const {onCall, onRequest} = require("firebase-functions/v2/https");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {setGlobalOptions} = require("firebase-functions/v2");
 const {defineSecret} = require("firebase-functions/params");
@@ -11,14 +11,10 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
+const cors = require("cors")({ origin: true });
 
 // Load environment variables
 require('dotenv').config();
-
-// Import email templates
-const { generateAdminNotificationEmail, generateWelcomeEmail } = require('./emails/new-student-emails');
-const { generateAccountSetupEmail } = require('./emails/account-setup-email');
-const { generateErrorNotificationEmail } = require('./emails/error-notification-email');
 
 // Import Stripe payment functions
 const { createStudentWithPayment } = require('./create-student-payment');
@@ -40,6 +36,41 @@ setGlobalOptions({
   maxInstances: 10,
   region: "us-central1",
 });
+
+/**
+ * Fetches an email template from Firestore and renders it with variables
+ * @param {string} templateId - The template document ID (e.g., 'admin-notification')
+ * @param {Object} variables - Key-value pairs to replace in the template
+ * @returns {Promise<{subject: string, text: string, html: string}>}
+ */
+async function renderEmailTemplate(templateId, variables) {
+  const db = getFirestore();
+  const templateDoc = await db.collection('emailTemplates').doc(templateId).get();
+  
+  if (!templateDoc.exists) {
+    throw new Error(`Email template '${templateId}' not found`);
+  }
+  
+  const template = templateDoc.data();
+  let subject = template.subject || '';
+  let textContent = template.textContent || '';
+  let htmlContent = template.htmlContent || '';
+  
+  // Replace all variables in the format {{variableName}}
+  Object.entries(variables).forEach(([key, value]) => {
+    const placeholder = `{{${key}}}`;
+    const stringValue = value !== null && value !== undefined ? String(value) : '';
+    subject = subject.split(placeholder).join(stringValue);
+    textContent = textContent.split(placeholder).join(stringValue);
+    htmlContent = htmlContent.split(placeholder).join(stringValue);
+  });
+  
+  return {
+    subject,
+    text: textContent,
+    html: htmlContent
+  };
+}
 
 /**
  * Exchange Spotify authorization code for access and refresh tokens
@@ -282,16 +313,33 @@ exports.sendNewStudentEmail = onDocumentCreated(
       const hasUserAccount = !userSnapshot.empty;
       logger.info(`User account exists for student ${studentId}: ${hasUserAccount}`);
 
-      // Generate email content using templates
-      const adminEmail = generateAdminNotificationEmail(student, studentId, registeredAt);
-      const welcomeEmail = generateWelcomeEmail(student, casualRate, studentRate, fiveClassPrice, tenClassPrice, hasUserAccount);
+      // Generate email content using Firestore templates
+      const adminEmail = await renderEmailTemplate('admin-notification', {
+        firstName: student.firstName,
+        lastName: student.lastName,
+        email: student.email,
+        phone: student.phone || 'Not provided',
+        studentId: studentId,
+        registeredAt: registeredAt,
+        emergencyName: student.emergencyName || 'Not provided',
+        emergencyPhone: student.emergencyPhone || 'Not provided'
+      });
+      
+      const welcomeEmail = await renderEmailTemplate('welcome-student', {
+        firstName: student.firstName,
+        casualRate: `$${casualRate}`,
+        studentRate: `$${studentRate}`,
+        fiveClassPrice: `$${fiveClassPrice}`,
+        tenClassPrice: `$${tenClassPrice}`,
+        portalAccess: hasUserAccount ? 'Yes - you can log in at urbanswing.co.nz/student-portal' : 'Not yet - you\'ll receive login details after your first payment'
+      });
 
       // Send admin notification email
       try {
         await transporter.sendMail({
           from: '"Urban Swing" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: `New Student Registration: ${student.firstName} ${student.lastName}`,
+          subject: adminEmail.subject,
           text: adminEmail.text,
           html: adminEmail.html,
         });
@@ -306,7 +354,7 @@ exports.sendNewStudentEmail = onDocumentCreated(
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
-        subject: "Welcome to Urban Swing! 🎉",
+        subject: welcomeEmail.subject,
         text: welcomeEmail.text,
         html: welcomeEmail.html,
       });
@@ -329,12 +377,25 @@ exports.sendNewStudentEmail = onDocumentCreated(
           },
         });
         
-        const errorEmail = generateErrorNotificationEmail(student, studentId, error);
+        const errorEmail = await renderEmailTemplate('error-notification', {
+          firstName: student.firstName,
+          lastName: student.lastName,
+          email: student.email,
+          studentId: studentId,
+          errorType: 'Failed to send student welcome email',
+          errorMessage: error.message,
+          errorStack: error.stack || 'No stack trace available',
+          timestamp: new Date().toLocaleString('en-NZ', {
+            dateStyle: 'full',
+            timeStyle: 'long',
+            timeZone: 'Pacific/Auckland'
+          })
+        });
         
         await transporter.sendMail({
           from: '"Urban Swing System" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: "⚠️ ERROR: Failed to send student welcome email",
+          subject: errorEmail.subject,
           text: errorEmail.text,
           html: errorEmail.html,
         });
@@ -411,14 +472,19 @@ exports.sendAccountSetupEmail = onDocumentCreated(
         minute: '2-digit'
       });
       
-      // Generate account setup email using template
-      const accountSetupEmail = generateAccountSetupEmail(student, user, setupDate);
+      // Generate account setup email using Firestore template
+      const accountSetupEmail = await renderEmailTemplate('account-setup', {
+        firstName: student.firstName,
+        email: user.email,
+        setupDate: setupDate,
+        portalUrl: 'https://urbanswing.co.nz/student-portal'
+      });
       
       // Send account setup confirmation email to student
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: user.email,
-        subject: "Your Urban Swing Portal Account is Ready! 🎉",
+        subject: accountSetupEmail.subject,
         text: accountSetupEmail.text,
         html: accountSetupEmail.html,
       });
@@ -446,12 +512,25 @@ exports.sendAccountSetupEmail = onDocumentCreated(
         const studentDoc = await db.collection('students').doc(user.studentId).get();
         const student = studentDoc.exists ? studentDoc.data() : { firstName: 'Unknown', lastName: 'Unknown', email: user.email };
         
-        const errorEmail = generateErrorNotificationEmail(student, user.studentId, error);
+        const errorEmail = await renderEmailTemplate('error-notification', {
+          firstName: student.firstName,
+          lastName: student.lastName,
+          email: student.email || user.email,
+          studentId: user.studentId,
+          errorType: 'Failed to send account setup email',
+          errorMessage: error.message,
+          errorStack: error.stack || 'No stack trace available',
+          timestamp: new Date().toLocaleString('en-NZ', {
+            dateStyle: 'full',
+            timeStyle: 'long',
+            timeZone: 'Pacific/Auckland'
+          })
+        });
         
         await errorTransporter.sendMail({
           from: '"Urban Swing System" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: "⚠️ ERROR: Failed to send account setup email",
+          subject: errorEmail.subject,
           text: errorEmail.text,
           html: errorEmail.html,
         });
@@ -530,7 +609,69 @@ exports.exportAuthUsers = onCall(async (request) => {
 const { processCasualPayment } = require('./process-casual-payment');
 const { processConcessionPurchase } = require('./process-concession-purchase');
 
+/**
+ * Send test email from admin email template manager
+ * Restricted to dance@urbanswing.co.nz only
+ */
+exports.sendTestEmail = onCall(
+  { 
+    region: 'us-central1',
+    cors: true,
+    invoker: 'public',
+    secrets: [emailPassword]
+  },
+  async (request) => {
+    try {
+      // Verify authentication
+      if (!request.auth) {
+        throw new Error('Authentication required');
+      }
+
+      // Restrict to authorized email only
+      if (request.auth.token.email !== 'dance@urbanswing.co.nz') {
+        throw new Error('Unauthorized: This function is restricted to dance@urbanswing.co.nz');
+      }
+
+      const { to, subject, html, text, templateId } = request.data;
+
+      // Validate required fields
+      if (!to || !subject || !html) {
+        throw new Error('Missing required fields: to, subject, html');
+      }
+
+      // Create transporter
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'dance@urbanswing.co.nz',
+          pass: emailPassword.value()
+        }
+      });
+
+      // Send email
+      await transporter.sendMail({
+        from: 'Urban Swing <dance@urbanswing.co.nz>',
+        to: to,
+        subject: subject,
+        text: text || 'This is a test email from Urban Swing email template manager.',
+        html: html
+      });
+
+      logger.info(`Test email sent successfully for template: ${templateId}`);
+
+      return {
+        success: true,
+        message: 'Test email sent successfully'
+      };
+    } catch (error) {
+      logger.error('Error sending test email:', error);
+      throw new Error(`Failed to send test email: ${error.message}`);
+    }
+  }
+);
+
 exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;
 exports.processCasualPayment = processCasualPayment;
 exports.processConcessionPurchase = processConcessionPurchase;
+
