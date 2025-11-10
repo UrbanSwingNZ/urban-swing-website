@@ -35,7 +35,7 @@ export async function loadStudentsForPreview() {
             return (a.lastName || '').localeCompare(b.lastName || '');
         });
         
-        let options = '<option value="sample">Sample Data (Sarah Johnson)</option>';
+        let options = '';
         
         students.forEach(student => {
             const name = `${student.firstName} ${student.lastName}`;
@@ -49,7 +49,7 @@ export async function loadStudentsForPreview() {
         select.onchange = updatePreview;
     } catch (error) {
         console.error('Error loading students:', error);
-        select.innerHTML = '<option value="sample">Sample Data (Sarah Johnson)</option>';
+        select.innerHTML = '<option value="">No students available</option>';
     }
 }
 
@@ -60,12 +60,12 @@ export async function getStudentDataForPreview() {
     const select = document.getElementById('preview-student-select');
     const selectedId = select.value;
     
-    // If sample data is selected, use the getSampleData function
-    if (!selectedId || selectedId === 'sample') {
+    // If no student selected, return sample data
+    if (!selectedId) {
         return getSampleData(state.currentTemplate.id);
     }
     
-    // Otherwise, fetch the student from Firestore
+    // Fetch the student from Firestore
     try {
         const doc = await db.collection('students').doc(selectedId).get();
         
