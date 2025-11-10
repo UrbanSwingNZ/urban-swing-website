@@ -84,16 +84,13 @@
                                     <button id="preview-btn" class="btn-primary btn-primary-lg">
                                         <i class="fas fa-eye"></i> Preview
                                     </button>
-                                    <button id="save-btn" class="btn-primary btn-primary-lg">
-                                        <i class="fas fa-save"></i> Save Changes
-                                    </button>
-                                </div>
-                                <div class="toolbar-button-row">
                                     <button id="history-btn" class="btn-primary btn-primary-lg">
                                         <i class="fas fa-history"></i> History
                                     </button>
-                                    <button id="test-send-btn" class="btn-primary btn-primary-lg">
-                                        <i class="fas fa-paper-plane"></i> Test Send
+                                </div>
+                                <div class="toolbar-button-row">
+                                    <button id="save-btn" class="btn-primary btn-primary-lg">
+                                        <i class="fas fa-save"></i> Save Changes
                                     </button>
                                 </div>
                             </div>
@@ -243,6 +240,9 @@
                         <select id="preview-student-select" class="form-control">
                             <option value="">Loading students...</option>
                         </select>
+                        <button id="test-send-btn" class="btn-primary btn-primary-lg">
+                            <i class="fas fa-paper-plane"></i> Send Test Email
+                        </button>
                     </div>
                 </div>
                 <div class="preview-display">
@@ -277,31 +277,6 @@
             <div class="modal-body">
                 <div id="version-list" class="version-list">
                     <!-- Version history will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Test Send Modal -->
-    <div id="test-send-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Send Test Email</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Send a test email with sample data to <strong>dance@urbanswing.co.nz</strong></p>
-                <div class="form-group">
-                    <label>Sample Data</label>
-                    <div id="test-send-variables" class="test-send-variables">
-                        <!-- Variable inputs will be generated here -->
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button id="confirm-test-send" class="btn-primary">
-                        <i class="fas fa-paper-plane"></i> Send Test Email
-                    </button>
-                    <button class="btn-secondary modal-close">Cancel</button>
                 </div>
             </div>
         </div>
