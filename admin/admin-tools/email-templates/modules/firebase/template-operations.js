@@ -135,11 +135,12 @@ export async function saveTemplate() {
             throw new Error('HTML template is required');
         }
         
-        // Validate template syntax
-        const { validateTemplate } = await import('./template-renderer.js');
-        const htmlValidation = validateTemplate(htmlTemplate);
-        if (!htmlValidation.valid) {
-            throw new Error('HTML template has errors:\n' + htmlValidation.errors.join('\n'));
+        // Validate template syntax (using global function from template-renderer.js)
+        if (typeof validateTemplate === 'function') {
+            const htmlValidation = validateTemplate(htmlTemplate);
+            if (!htmlValidation.valid) {
+                throw new Error('HTML template has errors:\n' + htmlValidation.errors.join('\n'));
+            }
         }
         
         // Create new version
