@@ -46,7 +46,7 @@ export async function loadStudentsForPreview() {
         select.innerHTML = options;
         
         // Add change event listener
-        select.onchange = updatePreview;
+        select.onchange = async () => await updatePreview();
     } catch (error) {
         console.error('Error loading students:', error);
         select.innerHTML = '<option value="">No students available</option>';
@@ -60,38 +60,47 @@ export async function getStudentDataForPreview() {
     const select = document.getElementById('preview-student-select');
     const selectedId = select.value;
     
-    // If no student selected, return sample data
+    // If no student selected, throw error
     if (!selectedId) {
-        return getSampleData(state.currentTemplate.id);
+        throw new Error('No student selected for preview');
     }
     
     // Fetch the student from Firestore
-    try {
-        const doc = await db.collection('students').doc(selectedId).get();
-        
-        if (!doc.exists) {
-            return getSampleData(state.currentTemplate.id);
-        }
-        
-        const student = doc.data();
-        
-        // Map student data to template variables based on template type
-        return mapStudentToTemplateVariables(student, selectedId);
-    } catch (error) {
-        console.error('Error fetching student:', error);
-        return getSampleData(state.currentTemplate.id);
+    const doc = await db.collection('students').doc(selectedId).get();
+    
+    if (!doc.exists) {
+        throw new Error(`Student with ID ${selectedId} not found`);
     }
+    
+    const student = doc.data();
+    
+    // Map student data to template variables based on template type
+    return await mapStudentToTemplateVariables(student, selectedId);
 }
 
 /**
  * Map student data to template variables
  */
-function mapStudentToTemplateVariables(student, studentId) {
+async function mapStudentToTemplateVariables(student, studentId) {
+    // Validate required student fields
+    if (!student.firstName) {
+        throw new Error('Student missing required field: firstName');
+    }
+    if (!student.lastName) {
+        throw new Error('Student missing required field: lastName');
+    }
+    if (!student.email) {
+        throw new Error('Student missing required field: email');
+    }
+    
+    // Fetch pricing data from Firestore - will throw error if not found
+    const pricingData = await fetchPricingData();
+    
     const baseData = {
         student: {
-            firstName: student.firstName || '',
-            lastName: student.lastName || '',
-            email: student.email || '',
+            firstName: student.firstName,
+            lastName: student.lastName,
+            email: student.email,
             phoneNumber: student.phoneNumber || '',
             pronouns: student.pronouns || '',
             emailConsent: student.emailConsent !== false,
@@ -99,18 +108,18 @@ function mapStudentToTemplateVariables(student, studentId) {
         },
         studentId: studentId,
         registeredAt: student.createdAt ? formatDate(student.createdAt) : 'Unknown',
-        casualRate: 20, // Default pricing
-        studentRate: 15,
-        fiveClassPrice: 90,
-        tenClassPrice: 170,
+        casualRate: pricingData.casualRate,
+        studentRate: pricingData.studentRate,
+        fiveClassPrice: pricingData.fiveClassPrice,
+        tenClassPrice: pricingData.tenClassPrice,
         hasUserAccount: !!student.userId,
         setupDate: formatDate(new Date())
     };
     
     // Template-specific additions
-    if (state.currentTemplate.id === 'account-setup' && student.userId) {
+    if (state.currentTemplate.id === 'account-setup') {
         baseData.user = {
-            email: student.email || ''
+            email: student.email
         };
     }
     
@@ -121,4 +130,67 @@ function mapStudentToTemplateVariables(student, studentId) {
     }
     
     return baseData;
+}
+
+/**
+ * Fetch pricing data from Firestore collections
+ */
+async function fetchPricingData() {
+    // Fetch casual rates
+    const casualRatesSnapshot = await db.collection('casualRates').get();
+    
+    let casualRate = null;
+    let studentRate = null;
+    
+    casualRatesSnapshot.forEach(doc => {
+        const rate = doc.data();
+        // Only process active, non-promo rates
+        if (rate.isActive && !rate.isPromo) {
+            if (rate.name && rate.name.toLowerCase().includes('student')) {
+                studentRate = rate.price;
+            } else if (rate.name) {
+                casualRate = rate.price;
+            }
+        }
+    });
+    
+    // Validate casual rates were found
+    if (casualRate === null) {
+        throw new Error('Casual rate not found in database. Please check Admin Tools > Concession Types Manager and ensure "Casual Entry" is active.');
+    }
+    if (studentRate === null) {
+        throw new Error('Student rate not found in database. Please check Admin Tools > Concession Types Manager and ensure "Student Casual Entry" is active.');
+    }
+    
+    // Fetch concession packages
+    const concessionPackagesSnapshot = await db.collection('concessionPackages').get();
+    
+    let fiveClassPrice = null;
+    let tenClassPrice = null;
+    
+    concessionPackagesSnapshot.forEach(doc => {
+        const pkg = doc.data();
+        if (pkg.isActive && !pkg.isPromo) {
+            if (pkg.numberOfClasses === 5) {
+                fiveClassPrice = pkg.price;
+            } else if (pkg.numberOfClasses === 10) {
+                tenClassPrice = pkg.price;
+            }
+        }
+    });
+    
+    // Validate concession packages were found
+    if (fiveClassPrice === null) {
+        throw new Error('5-class concession package not found in database. Please check Admin Tools > Concession Types Manager.');
+    }
+    if (tenClassPrice === null) {
+        throw new Error('10-class concession package not found in database. Please check Admin Tools > Concession Types Manager.');
+    }
+    
+    return {
+        casualRate,
+        studentRate,
+        fiveClassPrice,
+        tenClassPrice
+    };
 }
