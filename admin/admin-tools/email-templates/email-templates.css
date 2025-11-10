@@ -271,6 +271,48 @@
     display: block;
 }
 
+/* ===== Editor Mode Tabs ===== */
+.editor-mode-tabs {
+    display: flex;
+    gap: 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 15px;
+    width: fit-content;
+}
+
+.editor-mode-btn {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editor-mode-btn:hover {
+    color: #333;
+    background: rgba(154, 22, 245, 0.1);
+}
+
+.editor-mode-btn.active {
+    background: white;
+    color: #9a16f5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.editor-mode-btn i {
+    font-size: 0.85rem;
+}
+
+
 /* ===== Editor Panel ===== */
 .editor-panel {
     padding: 24px;
@@ -609,6 +651,39 @@
     font-size: 1rem;
 }
 
+.preview-controls p {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.student-selection {
+    margin: 20px 0;
+}
+
+.student-selection label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.student-selection select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: white;
+    cursor: pointer;
+}
+
+.student-selection select:focus {
+    outline: none;
+    border-color: #9a16f5;
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
 .preview-variables {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -860,4 +935,50 @@
     .info-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ===== Snackbar Messages ===== */
+.snackbar {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 300px;
+    max-width: 500px;
+    padding: 16px 24px;
+    background: #323232;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    transition: bottom 0.3s ease;
+}
+
+.snackbar.show {
+    bottom: 30px;
+}
+
+.snackbar.success {
+    background: #4caf50;
+}
+
+.snackbar.error {
+    background: #f44336;
+}
+
+.snackbar.warning {
+    background: #ff9800;
+}
+
+.snackbar i {
+    font-size: 1.2rem;
+}
+
+.snackbar-message {
+    flex: 1;
 }
