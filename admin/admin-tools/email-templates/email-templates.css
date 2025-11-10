@@ -221,7 +221,18 @@
 
 .toolbar-right {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toolbar-button-row {
+    display: flex;
     gap: 10px;
+}
+
+.toolbar-button-row button {
+    flex: 1;
+    min-width: 0;
 }
 
 /* ===== Tabs ===== */
@@ -535,15 +546,44 @@
     color: white;
 }
 
+.btn-primary-lg {
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
 .btn-primary:hover {
     background: #8612d6;
     box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
 }
 
-.btn-primary:disabled {
+.btn-primary-lg:hover {
+    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
+}
+
+.btn-primary-lg:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled,
+.btn-primary-lg:disabled {
     background: #ccc;
     cursor: not-allowed;
     box-shadow: none;
+    transform: none;
 }
 
 .btn-secondary {
