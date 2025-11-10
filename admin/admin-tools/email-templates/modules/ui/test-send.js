@@ -6,62 +6,51 @@
 import { state } from '../core/state.js';
 import { showLoading, showSuccess, showError } from './notifications.js';
 
-/* global db, firebase, getSampleData, renderTemplate, getVariablesFromForm */
+/* global renderTemplate, functions */
 
 /**
- * Show test send modal
- */
-export function showTestSendModal() {
-    if (!state.currentTemplate) return;
-    
-    const modal = document.getElementById('test-send-modal');
-    const container = document.getElementById('test-send-variables');
-    
-    // Generate variable inputs
-    const sampleData = getSampleData(state.currentTemplate.id);
-    
-    let html = '';
-    if (state.currentTemplate.variables && state.currentTemplate.variables.length > 0) {
-        state.currentTemplate.variables.forEach(variable => {
-            const value = sampleData[variable.name] !== undefined ? sampleData[variable.name] : (variable.example || '');
-            html += `
-                <div class="form-group">
-                    <label>${variable.name} ${variable.required ? '*' : ''}</label>
-                    <input type="text" data-variable="${variable.name}" value="${value}" placeholder="${variable.description || ''}">
-                </div>
-            `;
-        });
-    } else {
-        html = '<p style="color: #999;">No variables for this template</p>';
-    }
-    
-    container.innerHTML = html;
-    modal.classList.add('active');
-}
-
-/**
- * Send test email
+ * Send test email directly using selected student data
  */
 export async function sendTestEmail() {
-    if (!state.currentTemplate) return;
+    if (!state.currentTemplate) {
+        showError('No template selected.');
+        return;
+    }
     
     try {
         showLoading(true);
         
-        const subject = document.getElementById('email-subject').value;
-        const htmlTemplate = state.htmlEditor.getValue();
-        const textTemplate = document.getElementById('text-template').value;
+        // Get selected student
+        const previewStudentSelect = document.getElementById('preview-student-select');
+        const selectedStudentId = previewStudentSelect?.value;
         
-        // Get variable values
-        const variables = getVariablesFromForm(document.getElementById('test-send-variables'));
+        if (!selectedStudentId || selectedStudentId === '') {
+            showError('Please select a student to send a test email.');
+            showLoading(false);
+            return;
+        }
+        
+        // Get student data
+        const { getStudentDataForPreview } = await import('../firebase/student-operations.js');
+        const variables = await getStudentDataForPreview(selectedStudentId);
+        
+        // Get current template content
+        const subject = document.getElementById('email-subject').value;
+        let htmlTemplate;
+        if (state.currentEditorMode === 'visual' && state.visualEditor) {
+            htmlTemplate = state.visualEditor.getContent();
+        } else {
+            htmlTemplate = state.htmlEditor.getValue();
+        }
+        const textTemplate = document.getElementById('text-template').value;
         
         // Render templates
         const renderedSubject = renderTemplate(subject, variables);
         const renderedHtml = renderTemplate(htmlTemplate, variables);
         const renderedText = renderTemplate(textTemplate, variables);
         
-        // Call cloud function to send email
-        const sendEmail = firebase.functions().httpsCallable('sendTestEmail');
+        // Call cloud function using Firebase SDK (onCall function)
+        const sendEmail = functions.httpsCallable('sendTestEmail');
         const result = await sendEmail({
             to: 'dance@urbanswing.co.nz',
             subject: `[TEST] ${renderedSubject}`,
@@ -70,7 +59,6 @@ export async function sendTestEmail() {
             templateId: state.currentTemplate.id
         });
         
-        document.getElementById('test-send-modal').classList.remove('active');
         showSuccess('Test email sent to dance@urbanswing.co.nz');
         showLoading(false);
     } catch (error) {
@@ -79,3 +67,4 @@ export async function sendTestEmail() {
         showLoading(false);
     }
 }
+

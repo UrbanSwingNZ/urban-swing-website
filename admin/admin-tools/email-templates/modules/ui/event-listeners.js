@@ -8,7 +8,7 @@ import { switchEditorMode } from '../core/editor.js';
 import { loadTemplates, saveTemplate } from '../firebase/template-operations.js';
 import { switchTab, switchPreviewTab } from './tabs.js';
 import { showPreview } from './preview.js';
-import { showTestSendModal, sendTestEmail } from './test-send.js';
+import { sendTestEmail } from './test-send.js';
 import { showVersionHistory } from './version-history.js';
 import { updateSaveButton } from './save-button.js';
 
@@ -42,8 +42,8 @@ export function setupEventListeners() {
     // Preview button
     document.getElementById('preview-btn').addEventListener('click', showPreview);
     
-    // Test send button
-    document.getElementById('test-send-btn').addEventListener('click', showTestSendModal);
+    // Test send button - sends directly without modal
+    document.getElementById('test-send-btn').addEventListener('click', sendTestEmail);
     
     // History button
     document.getElementById('history-btn').addEventListener('click', showVersionHistory);
@@ -68,9 +68,6 @@ export function setupEventListeners() {
     document.querySelectorAll('.preview-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchPreviewTab(btn.dataset.previewTab));
     });
-    
-    // Confirm test send
-    document.getElementById('confirm-test-send').addEventListener('click', sendTestEmail);
     
     // Track changes in form fields
     document.getElementById('email-subject').addEventListener('input', () => {

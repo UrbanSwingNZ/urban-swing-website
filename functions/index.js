@@ -3,7 +3,7 @@
  * Securely exchanges Spotify authorization codes for access tokens
  */
 
-const {onCall} = require("firebase-functions/v2/https");
+const {onCall, onRequest} = require("firebase-functions/v2/https");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {setGlobalOptions} = require("firebase-functions/v2");
 const {defineSecret} = require("firebase-functions/params");
@@ -11,6 +11,7 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
+const cors = require("cors")({ origin: true });
 
 // Load environment variables
 require('dotenv').config();
@@ -531,11 +532,16 @@ const { processCasualPayment } = require('./process-casual-payment');
 const { processConcessionPurchase } = require('./process-concession-purchase');
 
 /**
- * Send test email (for testing email templates in admin tool)
+ * Send test email from admin email template manager
  * Restricted to dance@urbanswing.co.nz only
  */
 exports.sendTestEmail = onCall(
-  { secrets: [emailPassword] },
+  { 
+    region: 'us-central1',
+    cors: true,
+    invoker: 'public',
+    secrets: [emailPassword]
+  },
   async (request) => {
     try {
       // Verify authentication

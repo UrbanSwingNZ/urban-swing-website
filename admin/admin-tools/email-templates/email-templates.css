@@ -699,17 +699,20 @@
 
 .student-selection {
     margin: 20px 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    gap: 15px;
 }
 
 .student-selection label {
-    display: block;
     font-weight: 500;
-    margin-bottom: 8px;
     color: #333;
+    margin: 0;
+    padding-bottom: 10px;
 }
 
 .student-selection select {
-    width: 100%;
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 6px;

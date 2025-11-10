@@ -7,7 +7,7 @@ import { state } from '../core/state.js';
 import { updatePreview } from '../ui/preview.js';
 import { formatDate } from '../utils/format.js';
 
-/* global db, getSampleData */
+/* global db */
 
 /**
  * Load students into preview dropdown
