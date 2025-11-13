@@ -11,6 +11,8 @@ let studentsCache = [];
 async function loadStudents() {
     try {
         const snapshot = await db.collection('students')
+            .where('deleted', '!=', true)
+            .orderBy('deleted')
             .orderBy('firstName', 'asc')
             .get();
         

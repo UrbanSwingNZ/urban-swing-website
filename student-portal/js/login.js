@@ -83,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorMessage = 'Invalid email or password';
             } else if (error.code === 'auth/invalid-email') {
                 errorMessage = 'Invalid email address';
+            } else if (error.code === 'auth/user-disabled') {
+                // Show "email not found" instead of "account disabled" for soft-deleted students
+                errorMessage = 'No account found with this email address';
             } else if (error.code === 'auth/too-many-requests') {
                 errorMessage = 'Too many failed attempts. Please try again later.';
             } else if (error.message) {
