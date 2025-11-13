@@ -39,6 +39,21 @@ function initializeApp() {
     
     // Initialize search
     initializeSearch();
+    
+    // Initialize filter controls
+    initializeFilterControls();
+}
+
+/**
+ * Initialize filter controls (show deleted checkbox)
+ */
+function initializeFilterControls() {
+    const showDeletedCheckbox = document.getElementById('show-deleted-checkbox');
+    if (showDeletedCheckbox) {
+        showDeletedCheckbox.addEventListener('change', (e) => {
+            toggleShowDeleted(e.target.checked);
+        });
+    }
 }
 
 /**

@@ -82,7 +82,8 @@ async function signInUser(email, password) {
         } else if (error.code === 'auth/invalid-email') {
             message = 'Invalid email address.';
         } else if (error.code === 'auth/user-disabled') {
-            message = 'This account has been disabled.';
+            // Show "email not found" instead of "account disabled" for soft-deleted students
+            message = 'No account found with this email address.';
         } else if (error.code === 'auth/network-request-failed') {
             message = 'Network error. Please check your connection and try again.';
         }
