@@ -598,7 +598,7 @@ async function deleteStudent(studentId) {
  */
 
 /**
- * Confirm restore student (simple confirmation)
+ * Confirm restore student (show modal)
  */
 function confirmRestoreStudent(studentId) {
     const student = findStudentById(studentId);
@@ -607,12 +607,30 @@ function confirmRestoreStudent(studentId) {
     const firstName = toTitleCase(student.firstName || '');
     const lastName = toTitleCase(student.lastName || '');
     const fullName = `${firstName} ${lastName}`.trim();
+    const email = student.email || '';
     
-    const confirmed = confirm(`Are you sure you want to restore ${fullName}?\n\nThis will reactivate their account and they will be able to log in to the student portal.`);
+    // Populate modal
+    document.getElementById('restore-modal-info').innerHTML = `
+        <strong>${fullName}</strong><br>
+        ${email}
+    `;
     
-    if (confirmed) {
+    // Show modal
+    document.getElementById('restore-modal').style.display = 'flex';
+    
+    // Set up confirm button
+    const confirmBtn = document.getElementById('confirm-restore-btn');
+    confirmBtn.onclick = () => {
+        closeRestoreModal();
         restoreStudent(studentId);
-    }
+    };
+}
+
+/**
+ * Close restore modal
+ */
+function closeRestoreModal() {
+    document.getElementById('restore-modal').style.display = 'none';
 }
 
 /**
