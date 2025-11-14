@@ -45,7 +45,8 @@ function generateStudentId(firstName, lastName) {
  *   lastName: string,
  *   phone: string,
  *   packageId: string (document ID from casualRates or concessionPackages),
- *   paymentMethodId: string (from Stripe Elements)
+ *   paymentMethodId: string (from Stripe Elements),
+ *   firstClassDate: string (ISO date string - required for casual-rate packages)
  * }
  * 
  * Note: Auth user and user document are created by frontend after successful payment
@@ -95,6 +96,15 @@ exports.createStudentWithPayment = onRequest(
         
         const packageInfo = packages[data.packageId];
         
+        console.log('Package info:', { type: packageInfo.type, firstClassDate: data.firstClassDate });
+        
+        // Validate classDate for casual-rate packages
+        if (packageInfo.type === 'casual-rate' && (!data.firstClassDate || data.firstClassDate === 'null')) {
+          console.error('Missing class date for casual entry. Received:', data.firstClassDate);
+          response.status(400).json({ error: 'Missing class date for casual entry' });
+          return;
+        }
+        
         if (!data.paymentMethodId) {
           response.status(400).json({ error: 'Missing payment method' });
           return;
@@ -111,6 +121,41 @@ exports.createStudentWithPayment = onRequest(
           .get();
         
         if (!studentSnapshot.empty) {
+          // Student exists - check for duplicate casual class purchase if this is a casual rate
+          if (packageInfo.type === 'casual-rate' && data.firstClassDate) {
+            const existingStudent = studentSnapshot.docs[0];
+            const existingStudentId = existingStudent.id;
+            
+            const classDateObj = new Date(data.firstClassDate);
+            const startOfDay = new Date(classDateObj);
+            startOfDay.setHours(0, 0, 0, 0);
+            
+            const endOfDay = new Date(classDateObj);
+            endOfDay.setHours(23, 59, 59, 999);
+            
+            // Query for existing casual transactions for this student on this date
+            const existingTransactions = await db.collection('transactions')
+              .where('studentId', '==', existingStudentId)
+              .where('classDate', '>=', admin.firestore.Timestamp.fromDate(startOfDay))
+              .where('classDate', '<=', admin.firestore.Timestamp.fromDate(endOfDay))
+              .get();
+            
+            // Check if any non-reversed casual/casual-student transactions exist
+            const hasCasualClass = existingTransactions.docs.some(doc => {
+              const txData = doc.data();
+              return (txData.type === 'casual' || txData.type === 'casual-student') && 
+                     !txData.reversed;
+            });
+            
+            if (hasCasualClass) {
+              console.log('Duplicate casual class purchase prevented for existing student:', existingStudentId, 'on', data.firstClassDate);
+              response.status(409).json({ 
+                error: 'You already have a class booked for this date. Please select a different date.' 
+              });
+              return;
+            }
+          }
+          
           response.status(409).json({ error: 'A student with this email already exists' });
           return;
         }
@@ -218,6 +263,14 @@ exports.createStudentWithPayment = onRequest(
           receiptUrl: paymentResult.receiptUrl,
           createdAt: admin.firestore.FieldValue.serverTimestamp()
         };
+        
+        // Add classDate for casual-rate purchases
+        if (packageInfo.type === 'casual-rate' && data.firstClassDate && data.firstClassDate !== 'null') {
+          console.log('Adding classDate to transaction:', data.firstClassDate);
+          transactionData.classDate = admin.firestore.Timestamp.fromDate(new Date(data.firstClassDate));
+        } else if (packageInfo.type === 'casual-rate') {
+          console.warn('Casual rate purchase but no valid firstClassDate:', data.firstClassDate);
+        }
         
         await db.collection('transactions').doc(transactionId).set(transactionData);
         console.log('Transaction document created:', transactionId);
