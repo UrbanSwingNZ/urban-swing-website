@@ -16,18 +16,20 @@ export async function loadStudentsForPreview() {
     const select = document.getElementById('preview-student-select');
     
     try {
-        // Fetch all active students from Firestore (exclude deleted)
-        const snapshot = await db.collection('students')
-            .where('deleted', '!=', true)
-            .get();
+        // Fetch all students from Firestore
+        const snapshot = await db.collection('students').get();
         
-        // Convert to array and sort in JavaScript
+        // Convert to array, filter out deleted students, and sort in JavaScript
         const students = [];
         snapshot.forEach(doc => {
-            students.push({
-                id: doc.id,
-                ...doc.data()
-            });
+            const data = doc.data();
+            // Exclude deleted students
+            if (data.deleted !== true) {
+                students.push({
+                    id: doc.id,
+                    ...data
+                });
+            }
         });
         
         // Sort by firstName, then lastName
