@@ -290,6 +290,11 @@ async function confirmDeleteStudent(studentId) {
     
     // Show loading state in modal
     const modal = document.getElementById('delete-modal');
+    if (!modal) {
+        console.error('Delete modal not found in DOM');
+        showError('Modal not found. Please refresh the page.');
+        return;
+    }
     modal.style.display = 'flex';
     
     const titleEl = document.getElementById('delete-modal-title');
@@ -297,6 +302,13 @@ async function confirmDeleteStudent(studentId) {
     const infoDiv = document.getElementById('delete-modal-info');
     const btnTextEl = document.getElementById('delete-modal-btn-text');
     const warningEl = document.getElementById('delete-modal-warning');
+    
+    if (!titleEl || !messageEl || !infoDiv || !btnTextEl || !warningEl) {
+        console.error('Modal elements not found - modal may need reset');
+        showError('Modal elements not found. Please refresh the page.');
+        modal.style.display = 'none';
+        return;
+    }
     
     titleEl.textContent = 'Checking student data...';
     messageEl.textContent = 'Please wait...';
@@ -341,6 +353,7 @@ async function confirmDeleteStudent(studentId) {
             messageEl.textContent = `Are you sure you want to permanently delete ${fullName}?`;
             btnTextEl.textContent = 'Permanently Delete';
             warningEl.textContent = 'This action cannot be undone.';
+            warningEl.style.color = ''; // Reset color to default
             
             infoDiv.innerHTML = `
                 <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
@@ -434,8 +447,9 @@ async function confirmDeleteStudent(studentId) {
         
     } catch (error) {
         console.error('Error checking student data:', error);
+        console.error('Error details:', error.message, error.stack);
         closeDeleteModal();
-        showError('Failed to check student data. Please try again.');
+        showError('Failed to check student data: ' + (error.message || 'Please try again.'));
     }
 }
 
@@ -474,6 +488,13 @@ function closeDeleteModal() {
     const modal = document.getElementById('delete-modal');
     modal.style.display = 'none';
     studentToDelete = null;
+    
+    // Reset button state and restore original HTML structure
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span id="delete-modal-btn-text">Delete Student</span>';
+    }
 }
 
 /**
