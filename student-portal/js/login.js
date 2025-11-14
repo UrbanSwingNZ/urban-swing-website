@@ -64,6 +64,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const userData = userDoc.data();
+            
+            // Check if user has been soft-deleted
+            if (userData.deleted === true) {
+                await firebase.auth().signOut();
+                throw new Error('No account found with this email address');
+            }
+            
             if (userData.role !== 'student') {
                 // Not a student - sign them out
                 await firebase.auth().signOut();

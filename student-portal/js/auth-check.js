@@ -46,6 +46,16 @@ async function checkUserAccess() {
 
         currentUserEmail = currentUser.email.toLowerCase();
 
+        // Check if this user has been soft-deleted
+        const userDoc = await window.db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists && userDoc.data().deleted === true) {
+            // User has been deleted - sign them out and redirect to login
+            await firebase.auth().signOut();
+            alert('No account found with this email address.');
+            window.location.href = '../index.html';
+            return false;
+        }
+
         // Check if user email is in authorized admin list
         isAuthorized = AUTHORIZED_ADMINS.includes(currentUserEmail);
 

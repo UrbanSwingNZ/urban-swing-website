@@ -17,12 +17,18 @@ const getFirestore = () => {
  * Used when soft-deleting a student
  * Requires admin authentication
  */
-exports.disableUserAccount = onCall(async (request) => {
-  // Verify user is authenticated
-  if (!request.auth) {
-    logger.error("Unauthenticated request to disableUserAccount");
-    throw new Error("Authentication required");
-  }
+exports.disableUserAccount = onCall(
+  {
+    region: 'us-central1',
+    cors: true,
+    invoker: 'public'
+  },
+  async (request) => {
+    // Verify user is authenticated
+    if (!request.auth) {
+      logger.error("Unauthenticated request to disableUserAccount");
+      throw new Error("Authentication required");
+    }
 
   logger.info("Disabling user account, requested by:", request.auth.uid);
 
@@ -70,12 +76,18 @@ exports.disableUserAccount = onCall(async (request) => {
  * Used when restoring a soft-deleted student
  * Requires admin authentication
  */
-exports.enableUserAccount = onCall(async (request) => {
-  // Verify user is authenticated
-  if (!request.auth) {
-    logger.error("Unauthenticated request to enableUserAccount");
-    throw new Error("Authentication required");
-  }
+exports.enableUserAccount = onCall(
+  {
+    region: 'us-central1',
+    cors: true,
+    invoker: 'public'
+  },
+  async (request) => {
+    // Verify user is authenticated
+    if (!request.auth) {
+      logger.error("Unauthenticated request to enableUserAccount");
+      throw new Error("Authentication required");
+    }
 
   logger.info("Enabling user account, requested by:", request.auth.uid);
 
