@@ -80,7 +80,19 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             .doc(docId)
             .get();
         
-        if (existingCheckin.exists) {
+        // Prevent duplicate check-ins (unless we're editing)
+        if (existingCheckin.exists && !isEditMode()) {
+            const existingData = existingCheckin.data();
+            
+            // If the existing check-in is not reversed, it's a duplicate
+            if (!existingData.reversed) {
+                showSnackbar(`${getStudentFullName(student)} is already checked in for this date.`, 'error');
+                return;
+            }
+        }
+        
+        // Handle existing check-in updates
+        if (existingCheckin.exists && (isEditMode() || existingCheckin.data().reversed)) {
             const existingData = existingCheckin.data();
             
             // If the check-in was previously reversed, un-reverse it
