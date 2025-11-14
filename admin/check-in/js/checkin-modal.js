@@ -43,17 +43,24 @@ function openCheckinModal(studentId = null) {
 /**
  * Open check-in modal with prepopulated data (for editing)
  */
-function openCheckinModalWithData(student, checkinData) {
+function openCheckinModalWithData(student, checkinData, checkinId) {
     const modal = document.getElementById('checkin-modal');
     const studentSelection = document.getElementById('student-selection');
     
     // Reset form first
     resetCheckinForm();
     
+    // Set editing mode
+    setEditingCheckin(checkinId);
+    
     // Set selected student
     setSelectedStudent(student);
     studentSelection.style.display = 'none';
     showSelectedStudent(student);
+    
+    // Wait for concession info to load before prepopulating entry type
+    // This prevents the auto-selection logic from overwriting our edit data
+    setTimeout(() => {
     
     // Prepopulate entry type
     const entryTypeRadio = document.querySelector(`input[name="entry-type"][value="${checkinData.entryType}"]`);
@@ -61,22 +68,31 @@ function openCheckinModalWithData(student, checkinData) {
         entryTypeRadio.checked = true;
         // Trigger change event to show relevant sections
         entryTypeRadio.dispatchEvent(new Event('change'));
-    }
-    
-    // Prepopulate payment method if casual or casual-student
-    if ((checkinData.entryType === 'casual' || checkinData.entryType === 'casual-student') && checkinData.paymentMethod) {
-        document.getElementById('payment-method').value = checkinData.paymentMethod;
-    }
-    
-    // Prepopulate free entry reason if free
-    if (checkinData.entryType === 'free' && checkinData.freeEntryReason) {
-        document.getElementById('free-entry-reason').value = checkinData.freeEntryReason;
+        
+        // After triggering change event, set the payment method or reason
+        setTimeout(() => {
+            // Prepopulate payment method if casual or casual-student
+            if ((checkinData.entryType === 'casual' || checkinData.entryType === 'casual-student') && checkinData.paymentMethod) {
+                document.getElementById('payment-method').value = checkinData.paymentMethod;
+                // Enable the submit button
+                document.getElementById('confirm-checkin-btn').disabled = false;
+            }
+            
+            // Prepopulate free entry reason if free
+            if (checkinData.entryType === 'free' && checkinData.freeEntryReason) {
+                document.getElementById('free-entry-reason').value = checkinData.freeEntryReason;
+                // Enable the submit button
+                document.getElementById('confirm-checkin-btn').disabled = false;
+            }
+        }, 0);
     }
     
     // Prepopulate notes
     if (checkinData.notes) {
         document.getElementById('checkin-notes').value = checkinData.notes;
     }
+    
+    }, 150); // Wait for concession info to load
     
     modal.style.display = 'flex';
 }
@@ -88,6 +104,7 @@ function closeCheckinModal() {
     const modal = document.getElementById('checkin-modal');
     modal.style.display = 'none';
     clearSelectedStudent();
+    clearEditingCheckin();
 }
 
 
