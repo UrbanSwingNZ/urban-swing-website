@@ -234,7 +234,7 @@ async function editCheckin(checkinId, studentId) {
         }
         
         // Open check-in modal with prepopulated data
-        openCheckinModalWithData(student, checkinData);
+        openCheckinModalWithData(student, checkinData, checkinId);
         
     } catch (error) {
         console.error('Error loading check-in:', error);
@@ -272,10 +272,14 @@ function confirmDeleteCheckin(checkinId) {
     const btnTextEl = document.getElementById('delete-modal-btn-text');
     const confirmBtn = document.getElementById('confirm-delete-btn');
     
+    // Find the check-in to get student name
+    const checkin = todaysCheckins.find(c => c.id === checkinId);
+    const studentName = checkin ? checkin.studentName : 'Unknown Student';
+    
     // Customize modal for check-in deletion
     titleEl.textContent = 'Delete Check-In';
     messageEl.textContent = 'Are you sure you want to delete this check-in?';
-    infoEl.innerHTML = ''; // No additional info needed
+    infoEl.innerHTML = `<strong>${escapeHtml(studentName)}</strong>`;
     btnTextEl.textContent = 'Delete Check-In';
     
     // Remove any existing event listeners by replacing the button
