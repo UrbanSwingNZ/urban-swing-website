@@ -572,15 +572,7 @@ async function deleteStudent(studentId) {
                     deletedBy: deletedBy
                 });
                 
-                // Disable Firebase Auth user via Cloud Function
-                try {
-                    const disableUserAccount = firebase.functions().httpsCallable('disableUserAccount');
-                    await disableUserAccount({ authUid: authUid });
-                    console.log('Disabled Firebase Auth user:', authUid);
-                } catch (authError) {
-                    console.error('Error disabling auth user:', authError);
-                    // Continue even if auth disable fails
-                }
+                console.log('Soft delete completed - user document marked as deleted');
             }
             
             console.log('Soft delete completed');
@@ -656,15 +648,7 @@ async function restoreStudent(studentId) {
                 deletedBy: null
             });
             
-            // Re-enable Firebase Auth user via Cloud Function
-            try {
-                const enableUserAccount = firebase.functions().httpsCallable('enableUserAccount');
-                await enableUserAccount({ authUid: authUid });
-                console.log('Enabled Firebase Auth user:', authUid);
-            } catch (authError) {
-                console.error('Error enabling auth user:', authError);
-                showError('Student restored but failed to enable login. Please contact support.');
-            }
+            console.log('Restore completed - user document restored');
         }
         
         console.log('Restore completed');

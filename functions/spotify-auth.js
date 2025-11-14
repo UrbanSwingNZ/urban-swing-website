@@ -1,31 +1,31 @@
 /**
  * Spotify Authentication Cloud Functions
  * Handles Spotify token exchange and refresh operations
+ * NOTE: Using v1 for compatibility with existing deployed functions
  */
 
-const {onCall} = require("firebase-functions/v2/https");
+const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const axios = require("axios");
 
 /**
  * Exchange Spotify authorization code for access and refresh tokens
  */
-exports.exchangeSpotifyToken = onCall(async (request) => {
+exports.exchangeSpotifyToken = functions.https.onCall(async (data, context) => {
   // Verify user is authenticated
-  if (!request.auth) {
-    logger.error("Unauthenticated request to exchangeSpotifyToken");
-    throw new Error("Authentication required");
+  if (!context.auth) {
+    console.error("Unauthenticated request to exchangeSpotifyToken");
+    throw new functions.https.HttpsError("unauthenticated", "Authentication required");
   }
 
-  const {code, redirectUri} = request.data;
+  const {code, redirectUri} = data;
 
   if (!code) {
-    logger.error("Missing authorization code");
-    throw new Error("Authorization code required");
+    console.error("Missing authorization code");
+    throw new functions.https.HttpsError("invalid-argument", "Authorization code required");
   }
 
-  logger.info("Exchanging Spotify token for user:", request.auth.uid);
+  console.log("Exchanging Spotify token for user:", context.auth.uid);
 
   try {
     // Get Spotify credentials from environment variables
@@ -33,8 +33,8 @@ exports.exchangeSpotifyToken = onCall(async (request) => {
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-      logger.error("Spotify credentials not configured");
-      throw new Error("Spotify credentials not configured");
+      console.error("Spotify credentials not configured");
+      throw new functions.https.HttpsError("failed-precondition", "Spotify credentials not configured");
     }
 
     // Exchange code for tokens
@@ -57,13 +57,13 @@ exports.exchangeSpotifyToken = onCall(async (request) => {
     // Store refresh token in Firestore
     await admin.firestore()
         .collection("admin_tokens")
-        .doc(request.auth.uid)
+        .doc(context.auth.uid)
         .set({
           refreshToken: tokens.refresh_token,
           lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-    logger.info("Successfully exchanged and stored Spotify tokens for user:", request.auth.uid);
+    console.log("Successfully exchanged and stored Spotify tokens for user:", context.auth.uid);
 
     // Return access token (short-lived) to client
     return {
@@ -73,29 +73,29 @@ exports.exchangeSpotifyToken = onCall(async (request) => {
       scope: tokens.scope,
     };
   } catch (error) {
-    logger.error("Error exchanging Spotify token:", error);
-    throw new Error(`Token exchange failed: ${error.message}`);
+    console.error("Error exchanging Spotify token:", error);
+    throw new functions.https.HttpsError("internal", `Token exchange failed: ${error.message}`);
   }
 });
 
 /**
  * Refresh Spotify access token using refresh token
  */
-exports.refreshSpotifyToken = onCall(async (request) => {
+exports.refreshSpotifyToken = functions.https.onCall(async (data, context) => {
   // Verify user is authenticated
-  if (!request.auth) {
-    logger.error("Unauthenticated request to refreshSpotifyToken");
-    throw new Error("Authentication required");
+  if (!context.auth) {
+    console.error("Unauthenticated request to refreshSpotifyToken");
+    throw new functions.https.HttpsError("unauthenticated", "Authentication required");
   }
 
-  const {refreshToken} = request.data;
+  const {refreshToken} = data;
 
   if (!refreshToken) {
-    logger.error("Missing refresh token");
-    throw new Error("Refresh token required");
+    console.error("Missing refresh token");
+    throw new functions.https.HttpsError("invalid-argument", "Refresh token required");
   }
 
-  logger.info("Refreshing Spotify token for user:", request.auth.uid);
+  console.log("Refreshing Spotify token for user:", context.auth.uid);
 
   try {
     // Get Spotify credentials from environment variables
@@ -103,8 +103,8 @@ exports.refreshSpotifyToken = onCall(async (request) => {
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-      logger.error("Spotify credentials not configured");
-      throw new Error("Spotify credentials not configured");
+      console.error("Spotify credentials not configured");
+      throw new functions.https.HttpsError("failed-precondition", "Spotify credentials not configured");
     }
 
     // Refresh the access token
@@ -123,14 +123,14 @@ exports.refreshSpotifyToken = onCall(async (request) => {
 
     const tokens = tokenResponse.data;
 
-    logger.info("Successfully refreshed Spotify token");
+    console.log("Successfully refreshed Spotify token");
 
     return {
       accessToken: tokens.access_token,
       expiresIn: tokens.expires_in,
     };
   } catch (error) {
-    logger.error("Error refreshing Spotify token:", error);
-    throw new Error(`Token refresh failed: ${error.message}`);
+    console.error("Error refreshing Spotify token:", error);
+    throw new functions.https.HttpsError("internal", `Token refresh failed: ${error.message}`);
   }
 });
