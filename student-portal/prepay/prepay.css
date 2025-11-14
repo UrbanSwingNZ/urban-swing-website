@@ -105,6 +105,34 @@
     margin-bottom: 0;
 }
 
+/* Validation Message */
+.validation-message {
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.validation-message.error {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+}
+
+.validation-message.success {
+    background-color: #efe;
+    border: 1px solid #cfc;
+    color: #3c3;
+}
+
+.validation-message i {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
 /* Radio Group */
 .radio-group {
     display: flex;

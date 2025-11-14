@@ -11,6 +11,14 @@ let casualRates = [];
 // Date picker instance
 let datePicker = null;
 
+// Show/hide loading spinner
+function showLoading(show) {
+    const spinner = document.getElementById('loading-spinner');
+    if (spinner) {
+        spinner.style.display = show ? 'flex' : 'none';
+    }
+}
+
 // Page Initialization
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Pre-pay page DOM loaded');
@@ -20,8 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     datePicker = new DatePicker('class-date', 'custom-calendar', {
         allowedDays: [4], // Thursday only
         disablePastDates: true,
-        onDateSelected: (date, formattedDate) => {
+        onDateSelected: async (date, formattedDate) => {
             console.log('Date selected:', date);
+            // Validate if student already has a class on this date
+            await validateSelectedDate(date);
         }
     });
 });
@@ -427,6 +437,109 @@ document.getElementById('prepay-form').addEventListener('submit', async (event) 
     // Process payment
     await processPayment();
 });
+
+// Validate selected date for duplicate purchases
+async function validateSelectedDate(selectedDate) {
+    const messageEl = document.getElementById('date-validation-message');
+    const submitBtn = document.getElementById('submit-btn');
+    const fieldHelp = document.querySelector('.field-help');
+    
+    if (!messageEl) {
+        return;
+    }
+    
+    try {
+        // Get current student ID
+        let studentId;
+        if (isAuthorized) {
+            studentId = sessionStorage.getItem('currentStudentId');
+        } else {
+            studentId = await getCurrentStudentId();
+        }
+        
+        if (!studentId) {
+            return; // No validation if no student selected
+        }
+        
+        // Query for existing transactions for this student
+        // We'll filter by date in JavaScript to avoid needing a composite index
+        const snapshot = await firebase.firestore().collection('transactions')
+            .where('studentId', '==', studentId)
+            .get();
+        
+        // Filter by date and type in JavaScript
+        const startOfDay = new Date(selectedDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const endOfDay = new Date(selectedDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        
+        const matchingTransactions = [];
+        snapshot.docs.forEach(doc => {
+            const data = doc.data();
+            
+            // Check if it's a casual transaction (not reversed)
+            if ((data.type === 'casual' || data.type === 'casual-student') && !data.reversed) {
+                // For casual transactions, check classDate if it exists
+                // Otherwise fall back to transactionDate for backwards compatibility
+                let dateToCheck = null;
+                
+                if (data.classDate) {
+                    dateToCheck = data.classDate.toDate();
+                } else if (data.transactionDate) {
+                    // Backwards compatibility: use transactionDate for old transactions without classDate
+                    dateToCheck = data.transactionDate.toDate();
+                }
+                
+                if (dateToCheck && dateToCheck >= startOfDay && dateToCheck <= endOfDay) {
+                    matchingTransactions.push({
+                        id: doc.id,
+                        type: data.type,
+                        date: dateToCheck,
+                        hasClassDate: !!data.classDate
+                    });
+                }
+            }
+        });
+        
+        const hasExistingClass = matchingTransactions.length > 0;
+        
+        if (hasExistingClass) {
+            // Show error message
+            messageEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> You have already pre-paid for a class on this date. Please select a different date.';
+            messageEl.className = 'validation-message error';
+            messageEl.style.display = 'block';
+            
+            // Hide the help text
+            if (fieldHelp) fieldHelp.style.display = 'none';
+            
+            // Disable submit button
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+        } else {
+            // Clear error message
+            messageEl.style.display = 'none';
+            
+            // Show help text
+            if (fieldHelp) fieldHelp.style.display = 'block';
+            
+            // Enable submit button (if rate is selected)
+            if (submitBtn && selectedRateId) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error validating date:', error);
+        // Don't block user if validation fails
+        if (messageEl) messageEl.style.display = 'none';
+    }
+}
 
 // Process the payment
 async function processPayment() {
