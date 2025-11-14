@@ -96,11 +96,8 @@ exports.createStudentWithPayment = onRequest(
         
         const packageInfo = packages[data.packageId];
         
-        console.log('Package info:', { type: packageInfo.type, firstClassDate: data.firstClassDate });
-        
         // Validate classDate for casual-rate packages
         if (packageInfo.type === 'casual-rate' && (!data.firstClassDate || data.firstClassDate === 'null')) {
-          console.error('Missing class date for casual entry. Received:', data.firstClassDate);
           response.status(400).json({ error: 'Missing class date for casual entry' });
           return;
         }
@@ -169,7 +166,11 @@ exports.createStudentWithPayment = onRequest(
           firstName: data.firstName.trim(),
           lastName: data.lastName.trim(),
           email: email,
-          phone: data.phone?.trim() || null,
+          phoneNumber: data.phoneNumber?.trim() || null,
+          pronouns: data.pronouns?.trim() || '',
+          over16Confirmed: data.over16Confirmed || false,
+          termsAccepted: data.termsAccepted || false,
+          emailConsent: data.emailConsent !== undefined ? data.emailConsent : true,
           registeredAt: admin.firestore.FieldValue.serverTimestamp(),
           registrationSource: 'student-portal-with-payment',
           packageId: data.packageId,
@@ -266,10 +267,7 @@ exports.createStudentWithPayment = onRequest(
         
         // Add classDate for casual-rate purchases
         if (packageInfo.type === 'casual-rate' && data.firstClassDate && data.firstClassDate !== 'null') {
-          console.log('Adding classDate to transaction:', data.firstClassDate);
           transactionData.classDate = admin.firestore.Timestamp.fromDate(new Date(data.firstClassDate));
-        } else if (packageInfo.type === 'casual-rate') {
-          console.warn('Casual rate purchase but no valid firstClassDate:', data.firstClassDate);
         }
         
         await db.collection('transactions').doc(transactionId).set(transactionData);
