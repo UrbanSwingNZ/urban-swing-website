@@ -11,15 +11,16 @@ let studentsCache = [];
 async function loadStudents() {
     try {
         const snapshot = await db.collection('students')
-            .where('deleted', '!=', true)
-            .orderBy('deleted')
             .orderBy('firstName', 'asc')
             .get();
         
-        studentsCache = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        // Filter out deleted students in JavaScript
+        studentsCache = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(student => student.deleted !== true);
         
         return studentsCache;
     } catch (error) {
