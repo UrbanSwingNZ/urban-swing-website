@@ -89,6 +89,38 @@ exports.processCasualPayment = onRequest(
         
         const rateInfo = packages[data.rateId];
         
+        // Step 2.5: Check for duplicate casual class purchase on same date (casual-rate only)
+        if (rateInfo.type === 'casual-rate') {
+          const classDateObj = new Date(data.classDate);
+          const startOfDay = new Date(classDateObj);
+          startOfDay.setHours(0, 0, 0, 0);
+          
+          const endOfDay = new Date(classDateObj);
+          endOfDay.setHours(23, 59, 59, 999);
+          
+          // Query for existing casual transactions for this student on this date
+          const existingTransactions = await db.collection('transactions')
+            .where('studentId', '==', data.studentId)
+            .where('classDate', '>=', admin.firestore.Timestamp.fromDate(startOfDay))
+            .where('classDate', '<=', admin.firestore.Timestamp.fromDate(endOfDay))
+            .get();
+          
+          // Check if any non-reversed casual/casual-student transactions exist
+          const hasCasualClass = existingTransactions.docs.some(doc => {
+            const txData = doc.data();
+            return (txData.type === 'casual' || txData.type === 'casual-student') && 
+                   !txData.reversed;
+          });
+          
+          if (hasCasualClass) {
+            console.log('Duplicate casual class purchase prevented for:', data.studentId, 'on', data.classDate);
+            response.status(409).json({ 
+              error: 'You already have a class booked for this date. Please select a different date.' 
+            });
+            return;
+          }
+        }
+        
         // Step 3: Get or create Stripe customer
         let customerId = studentData.stripeCustomerId;
         
