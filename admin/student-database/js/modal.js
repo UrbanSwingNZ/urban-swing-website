@@ -296,10 +296,12 @@ async function confirmDeleteStudent(studentId) {
     const messageEl = document.getElementById('delete-modal-message');
     const infoDiv = document.getElementById('delete-modal-info');
     const btnTextEl = document.getElementById('delete-modal-btn-text');
+    const warningEl = document.getElementById('delete-modal-warning');
     
     titleEl.textContent = 'Checking student data...';
     messageEl.textContent = 'Please wait...';
     infoDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    warningEl.textContent = '';
     
     try {
         // Query for transactions
@@ -338,6 +340,7 @@ async function confirmDeleteStudent(studentId) {
             titleEl.textContent = 'Permanently Delete Student';
             messageEl.textContent = `Are you sure you want to permanently delete ${fullName}?`;
             btnTextEl.textContent = 'Permanently Delete';
+            warningEl.textContent = 'This action cannot be undone.';
             
             infoDiv.innerHTML = `
                 <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
@@ -350,8 +353,10 @@ async function confirmDeleteStudent(studentId) {
         } else {
             // Soft delete - has activity
             titleEl.textContent = 'Soft Delete Student';
-            messageEl.textContent = `${fullName} has activity history. They will be soft-deleted (can be restored later).`;
+            messageEl.textContent = `${fullName} has activity history. They will be soft-deleted.`;
             btnTextEl.textContent = 'Soft Delete';
+            warningEl.innerHTML = '<i class="fas fa-info-circle"></i> This student can be restored later from the "Show deleted students" filter.';
+            warningEl.style.color = '#0066cc';
             
             // Build activity list HTML
             let activityHTML = '<div class="activity-list">';
@@ -363,24 +368,28 @@ async function confirmDeleteStudent(studentId) {
             // Add transactions
             studentTransactions.forEach(txn => {
                 const date = txn.createdAt?.toDate ? txn.createdAt.toDate() : new Date(txn.createdAt);
+                const amount = txn.amountPaid !== undefined ? `$${txn.amountPaid.toFixed(2)}` : (txn.amount ? `$${txn.amount.toFixed(2)}` : '$0.00');
+                
+                // Determine payment method display - show "Online" if stripeCustomerId exists
+                const paymentMethod = txn.stripeCustomerId ? 'Online' : formatPaymentMethod(txn.paymentMethod);
+                
                 allActivity.push({
                     date: date,
                     type: getTransactionTypeLabel(txn.type),
-                    paymentMethod: txn.paymentMethod || 'N/A',
-                    amount: txn.amount ? `$${txn.amount.toFixed(2)}` : 'N/A',
-                    status: txn.reversed ? 'Reversed' : 'Active'
+                    paymentMethod: paymentMethod,
+                    amount: amount
                 });
             });
             
             // Add free check-ins
             studentFreeCheckIns.forEach(checkIn => {
-                const date = checkIn.checkInTime?.toDate ? checkIn.checkInTime.toDate() : new Date(checkIn.checkInTime);
+                const date = checkIn.checkinDate?.toDate ? checkIn.checkinDate.toDate() : new Date(checkIn.checkinDate);
+                
                 allActivity.push({
                     date: date,
                     type: 'Free Class',
                     paymentMethod: 'N/A',
-                    amount: 'Free',
-                    status: 'N/A'
+                    amount: '$0.00'
                 });
             });
             
@@ -389,22 +398,26 @@ async function confirmDeleteStudent(studentId) {
             
             // Build table
             activityHTML += '<table class="activity-table">';
-            activityHTML += '<thead><tr><th>Date</th><th>Type</th><th>Payment Method</th><th>Amount</th><th>Status</th></tr></thead>';
+            activityHTML += '<thead><tr><th>Date</th><th>Type</th><th>Payment Method</th><th>Amount</th></tr></thead>';
             activityHTML += '<tbody>';
             
             allActivity.forEach(activity => {
-                const dateStr = activity.date.toLocaleDateString('en-NZ', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
+                // Safely format date, with fallback for invalid dates
+                let dateStr = 'N/A';
+                if (activity.date && activity.date instanceof Date && !isNaN(activity.date)) {
+                    dateStr = activity.date.toLocaleDateString('en-NZ', { 
+                        day: 'numeric',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                }
+                
                 activityHTML += `
                     <tr>
                         <td>${dateStr}</td>
                         <td>${escapeHtml(activity.type)}</td>
                         <td>${escapeHtml(activity.paymentMethod)}</td>
                         <td>${escapeHtml(activity.amount)}</td>
-                        <td>${escapeHtml(activity.status)}</td>
                     </tr>
                 `;
             });
@@ -437,6 +450,21 @@ function getTransactionTypeLabel(type) {
         'refund': 'Refund'
     };
     return labels[type] || type;
+}
+
+/**
+ * Format payment method for display
+ */
+function formatPaymentMethod(method) {
+    if (!method) return '-';
+    
+    // EFTPOS stays uppercase
+    if (method.toUpperCase() === 'EFTPOS') {
+        return 'EFTPOS';
+    }
+    
+    // Everything else in Title Case
+    return toTitleCase(method);
 }
 
 /**
