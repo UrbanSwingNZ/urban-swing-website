@@ -4,27 +4,63 @@
  */
 
 let studentsData = [];
+let allStudentsData = []; // Store all students including deleted ones
+let showDeletedStudents = false;
+let studentsUnsubscribe = null; // Store unsubscribe function for snapshot listener
 
 /**
- * Load students from Firestore
+ * Toggle showing deleted students
+ */
+function toggleShowDeleted(show) {
+    showDeletedStudents = show;
+    // Filter existing data instead of reloading
+    filterAndDisplayStudents();
+}
+
+/**
+ * Filter and display students based on current settings
+ */
+function filterAndDisplayStudents() {
+    if (showDeletedStudents) {
+        studentsData = [...allStudentsData];
+    } else {
+        studentsData = allStudentsData.filter(student => student.deleted !== true);
+    }
+    displayStudents();
+}
+
+/**
+ * Get show deleted students state
+ */
+function getShowDeletedStudents() {
+    return showDeletedStudents;
+}
+
+/**
+ * Load students from Firestore with real-time updates
  */
 function loadStudentsV2() {
     showLoading(true);
     
-    // Fetch all students from Firestore (no orderBy to avoid index requirements)
-    return db.collection('students')
-        .get()
-        .then((studentsSnapshot) => {
-            studentsData = [];
+    // Unsubscribe from previous listener if it exists
+    if (studentsUnsubscribe) {
+        studentsUnsubscribe();
+    }
+    
+    // Set up real-time listener
+    studentsUnsubscribe = db.collection('students')
+        .onSnapshot((studentsSnapshot) => {
+            allStudentsData = [];
             studentsSnapshot.forEach((doc) => {
-                studentsData.push({
+                const studentData = {
                     id: doc.id,
                     ...doc.data()
-                });
+                };
+                allStudentsData.push(studentData);
             });
 
             // Sort by firstName then lastName in JavaScript
-            studentsData.sort((a, b) => {
+            allStudentsData.sort((a, b) => {
                 const firstNameA = (a.firstName || '').toLowerCase();
                 const firstNameB = (b.firstName || '').toLowerCase();
                 const lastNameA = (a.lastName || '').toLowerCase();
@@ -41,14 +77,22 @@ function loadStudentsV2() {
                 return 0;
             });
 
-            displayStudents();
-            initializeSortListeners();
+            // Filter and display based on current settings
+            filterAndDisplayStudents();
+            
+            // Only initialize sort listeners on first load
+            if (!document.querySelector('.sortable[data-initialized]')) {
+                initializeSortListeners();
+                document.querySelectorAll('.sortable').forEach(el => {
+                    el.setAttribute('data-initialized', 'true');
+                });
+            }
+            
             showLoading(false);
 
             // Show main container
             document.getElementById('main-container').style.display = 'flex';
-        })
-        .catch((error) => {
+        }, (error) => {
             console.error('Error loading students:', error);
             showError('Failed to load students. Please try refreshing the page.');
             showLoading(false);
@@ -80,11 +124,19 @@ async function updateStudent(studentId, updateData) {
         updateData.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
         await db.collection('students').doc(studentId).update(updateData);
         
-        // Reload students
-        await loadStudents();
+        // No need to reload - onSnapshot will update automatically
         return true;
     } catch (error) {
         console.error('Error updating student:', error);
         throw error;
     }
 }
+
+/**
+ * Clean up snapshot listener when page unloads
+ */
+window.addEventListener('beforeunload', () => {
+    if (studentsUnsubscribe) {
+        studentsUnsubscribe();
+    }
+});

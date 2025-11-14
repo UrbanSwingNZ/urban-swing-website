@@ -55,6 +55,34 @@
 
 /* Search box styles moved to admin.css (shared component) */
 
+/* Filter Controls */
+.filter-controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    user-select: none;
+}
+
+.filter-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.filter-checkbox:hover span {
+    color: var(--admin-purple);
+}
+
 /* ========================================
    STUDENTS TABLE
    ======================================== */
@@ -210,6 +238,21 @@
     color: #ff8800;
 }
 
+/* Deleted Student Row Styling */
+.deleted-student {
+    color: #dc3545;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.deleted-student td {
+    color: #dc3545;
+}
+
+.deleted-student strong {
+    color: #dc3545;
+}
+
 .concession-badge {
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -285,6 +328,17 @@
 .btn-icon.btn-delete:hover {
     background: #dc3545;
     border-color: #dc3545;
+    color: white;
+}
+
+.btn-icon.btn-restore {
+    color: var(--admin-success);
+    border-color: var(--admin-success);
+}
+
+.btn-icon.btn-restore:hover {
+    background: var(--admin-success);
+    border-color: var(--admin-success);
     color: white;
 }
 
@@ -1041,6 +1095,50 @@ textarea:focus {
     color: var(--text-color);
     opacity: 0.7;
     font-family: inherit;
+}
+
+/* Activity List in Delete Modal */
+.activity-list {
+    margin: 15px 0;
+}
+
+.activity-list h4 {
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.activity-table thead {
+    background: var(--admin-purple);
+    color: white;
+}
+
+.activity-table th,
+.activity-table td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.activity-table tbody tr:hover {
+    background: rgba(154, 22, 245, 0.05);
+}
+
+.warning-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(255, 165, 0, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid #ff8800;
 }
 
 /* ========================================

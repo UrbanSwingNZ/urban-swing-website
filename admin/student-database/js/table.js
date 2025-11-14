@@ -99,6 +99,14 @@ function createStudentRow(student) {
     const row = document.createElement('tr');
     row.dataset.studentId = student.id; // Store student ID for click handler
     
+    // Check if student is deleted
+    const isDeleted = student.deleted === true;
+    
+    // Add deleted class to row if applicable
+    if (isDeleted) {
+        row.classList.add('deleted-student');
+    }
+    
     // Format name in title case
     const firstName = toTitleCase(student.firstName || '');
     const lastName = toTitleCase(student.lastName || '');
@@ -128,6 +136,15 @@ function createStudentRow(student) {
     const notesButtonClass = hasNotes ? 'btn-icon has-notes' : 'btn-icon';
     const notesIcon = hasNotes ? ' <i class="fas fa-sticky-note note-indicator"></i>' : '';
 
+    // Action buttons - show restore button for deleted students, delete button for active students
+    const actionButtons = isDeleted
+        ? `<button class="btn-icon btn-restore" onclick="confirmRestoreStudent('${student.id}')" title="Restore Student">
+                <i class="fas fa-undo"></i>
+            </button>`
+        : `${isSuperAdmin() ? `<button class="btn-icon btn-delete" onclick="confirmDeleteStudent('${student.id}')" title="Delete Student">
+                <i class="fas fa-trash-alt"></i>
+            </button>` : ''}`;
+
     row.innerHTML = `
         <td><strong>${escapeHtml(fullName)}</strong>${notesIcon}</td>
         <td>${escapeHtml(student.email || 'N/A')}</td>
@@ -145,9 +162,7 @@ function createStudentRow(student) {
             <button class="btn-icon" onclick="editStudent('${student.id}')" title="Edit Student">
                 <i class="fas fa-edit"></i>
             </button>
-            ${isSuperAdmin() ? `<button class="btn-icon btn-delete" onclick="confirmDeleteStudent('${student.id}')" title="Delete Student">
-                <i class="fas fa-trash-alt"></i>
-            </button>` : ''}
+            ${actionButtons}
         </td>
     `;
 
