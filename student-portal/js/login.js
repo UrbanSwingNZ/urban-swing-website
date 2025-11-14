@@ -35,15 +35,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Login handler function
     const loginBtn = existingStudentForm.querySelector('.action-btn');
+    const loginErrorEl = document.getElementById('login-error');
+    
     const handleLogin = async function(e) {
         e.preventDefault();
+        
+        // Clear previous error
+        loginErrorEl.textContent = '';
         
         const email = document.getElementById('existingStudentEmail').value.trim();
         const password = document.getElementById('existingStudentPassword').value;
         
         // Validate inputs
         if (!email || !password) {
-            alert('Please enter both email and password');
+            loginErrorEl.textContent = 'Please enter both email and password';
             return;
         }
         
@@ -99,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorMessage = error.message;
             }
             
-            alert(errorMessage);
+            loginErrorEl.textContent = errorMessage;
             
             // Re-enable button
             loginBtn.disabled = false;

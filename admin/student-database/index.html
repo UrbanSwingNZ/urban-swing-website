@@ -319,6 +319,28 @@
         </div>
     </div>
 
+    <!-- Restore Confirmation Modal -->
+    <div id="restore-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-undo"></i> Restore Student</h3>
+            </div>
+            <div class="modal-body">
+                <p id="restore-modal-message">Are you sure you want to restore this student?</p>
+                <div class="student-info-delete" id="restore-modal-info">
+                    <!-- Student info will be inserted here -->
+                </div>
+                <p class="text-muted">This will reactivate their account and they will be able to log in to the student portal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeRestoreModal()">Cancel</button>
+                <button type="button" class="btn-success" id="confirm-restore-btn">
+                    <i class="fas fa-undo"></i> Restore Student
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Concessions Detail Modal -->
     <div id="concessions-detail-modal" class="modal" style="display: none;">
         <div class="modal-content modal-small">

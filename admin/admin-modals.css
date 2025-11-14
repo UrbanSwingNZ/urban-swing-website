@@ -87,6 +87,31 @@
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
 }
 
+.btn-success {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.btn-success:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
 /* Dark mode button styles */
 @media (prefers-color-scheme: dark) {
     .btn-secondary {

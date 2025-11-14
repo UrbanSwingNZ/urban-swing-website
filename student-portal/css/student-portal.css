@@ -121,6 +121,15 @@ h1 {
     border-color: var(--urban-purple);
 }
 
+/* Error Message */
+.error-message {
+    color: #dc2626;
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-xs);
+    min-height: 20px;
+    font-weight: var(--font-weight-medium);
+}
+
 /* Action Buttons */
 .action-btn {
     width: 100%;
