@@ -35,15 +35,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Login handler function
     const loginBtn = existingStudentForm.querySelector('.action-btn');
+    const loginErrorEl = document.getElementById('login-error');
+    
     const handleLogin = async function(e) {
         e.preventDefault();
+        
+        // Clear previous error
+        loginErrorEl.textContent = '';
         
         const email = document.getElementById('existingStudentEmail').value.trim();
         const password = document.getElementById('existingStudentPassword').value;
         
         // Validate inputs
         if (!email || !password) {
-            alert('Please enter both email and password');
+            loginErrorEl.textContent = 'Please enter both email and password';
             return;
         }
         
@@ -64,6 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const userData = userDoc.data();
+            
+            // Check if user has been soft-deleted
+            if (userData.deleted === true) {
+                await firebase.auth().signOut();
+                throw new Error('No account found with this email address');
+            }
+            
             if (userData.role !== 'student') {
                 // Not a student - sign them out
                 await firebase.auth().signOut();
@@ -83,13 +95,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorMessage = 'Invalid email or password';
             } else if (error.code === 'auth/invalid-email') {
                 errorMessage = 'Invalid email address';
+            } else if (error.code === 'auth/user-disabled') {
+                // Show "email not found" instead of "account disabled" for soft-deleted students
+                errorMessage = 'No account found with this email address';
             } else if (error.code === 'auth/too-many-requests') {
                 errorMessage = 'Too many failed attempts. Please try again later.';
             } else if (error.message) {
                 errorMessage = error.message;
             }
             
-            alert(errorMessage);
+            loginErrorEl.textContent = errorMessage;
             
             // Re-enable button
             loginBtn.disabled = false;

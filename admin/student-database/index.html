@@ -20,6 +20,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 </head>
 <body>
     <!-- Loading Spinner -->
@@ -76,6 +77,12 @@
                     <button id="clear-search" class="clear-search" style="display: none;" title="Clear search">
                         <i class="fas fa-times"></i>
                     </button>
+                </div>
+                <div class="filter-controls">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="show-deleted-checkbox">
+                        <span>Show deleted students</span>
+                    </label>
                 </div>
                 <p class="search-results-info" id="search-results-info" style="display: none;"></p>
             </div>
@@ -301,12 +308,34 @@
                 <div class="student-info-delete" id="delete-modal-info">
                     <!-- Additional info will be inserted here -->
                 </div>
-                <p class="text-muted">This action cannot be undone.</p>
+                <p class="text-muted" id="delete-modal-warning">This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
                 <button type="button" class="btn-danger" id="confirm-delete-btn">
                     <i class="fas fa-trash"></i> <span id="delete-modal-btn-text">Delete Student</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore Confirmation Modal -->
+    <div id="restore-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-undo"></i> Restore Student</h3>
+            </div>
+            <div class="modal-body">
+                <p id="restore-modal-message">Are you sure you want to restore this student?</p>
+                <div class="student-info-delete" id="restore-modal-info">
+                    <!-- Student info will be inserted here -->
+                </div>
+                <p class="text-muted">This will reactivate their account and they will be able to log in to the student portal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeRestoreModal()">Cancel</button>
+                <button type="button" class="btn-success" id="confirm-restore-btn">
+                    <i class="fas fa-undo"></i> Restore Student
                 </button>
             </div>
         </div>

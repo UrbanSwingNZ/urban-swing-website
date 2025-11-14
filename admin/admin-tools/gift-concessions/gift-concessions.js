@@ -74,7 +74,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadStudents() {
     try {
         showLoading(true);
-        const snapshot = await db.collection('students').get();
+        const snapshot = await db.collection('students')
+            .where('deleted', '!=', true)
+            .get();
         
         allStudents = snapshot.docs.map(doc => ({
             id: doc.id,

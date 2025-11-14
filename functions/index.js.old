@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Urban Swing Cloud Functions - Main Entry Point
  * 
  * This file orchestrates all Firebase Cloud Functions by importing

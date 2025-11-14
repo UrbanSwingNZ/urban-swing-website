@@ -275,44 +275,210 @@ function initializeModalListeners() {
  */
 
 let studentToDelete = null;
+let deleteMode = 'soft'; // 'soft' or 'hard'
+let studentTransactions = [];
+let studentFreeCheckIns = [];
 
 /**
  * Confirm delete student (opens confirmation modal)
  */
-function confirmDeleteStudent(studentId) {
+async function confirmDeleteStudent(studentId) {
     const student = findStudentById(studentId);
     if (!student) return;
     
     studentToDelete = student;
     
+    // Show loading state in modal
     const modal = document.getElementById('delete-modal');
+    if (!modal) {
+        console.error('Delete modal not found in DOM');
+        showError('Modal not found. Please refresh the page.');
+        return;
+    }
+    modal.style.display = 'flex';
+    
     const titleEl = document.getElementById('delete-modal-title');
     const messageEl = document.getElementById('delete-modal-message');
     const infoDiv = document.getElementById('delete-modal-info');
     const btnTextEl = document.getElementById('delete-modal-btn-text');
+    const warningEl = document.getElementById('delete-modal-warning');
     
-    // Format name
-    const firstName = toTitleCase(student.firstName || '');
-    const lastName = toTitleCase(student.lastName || '');
-    const fullName = `${firstName} ${lastName}`.trim();
+    if (!titleEl || !messageEl || !infoDiv || !btnTextEl || !warningEl) {
+        console.error('Modal elements not found - modal may need reset');
+        showError('Modal elements not found. Please refresh the page.');
+        modal.style.display = 'none';
+        return;
+    }
     
-    // Customize modal for student deletion
-    titleEl.textContent = 'Delete Student';
-    messageEl.textContent = `Are you sure you want to delete ${fullName}?`;
-    btnTextEl.textContent = 'Delete Student';
+    titleEl.textContent = 'Checking student data...';
+    messageEl.textContent = 'Please wait...';
+    infoDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    warningEl.textContent = '';
     
-    // Populate student info
-    infoDiv.innerHTML = `
-        <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
-        <p><strong>Phone:</strong> ${escapeHtml(student.phoneNumber || 'N/A')}</p>
-    `;
+    try {
+        // Query for transactions
+        const transactionsSnapshot = await db.collection('transactions')
+            .where('studentId', '==', studentId)
+            .get();
+        
+        studentTransactions = [];
+        transactionsSnapshot.forEach(doc => {
+            studentTransactions.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Query for free check-ins
+        const checkInsSnapshot = await db.collection('checkins')
+            .where('studentId', '==', studentId)
+            .where('entryType', '==', 'free')
+            .get();
+        
+        studentFreeCheckIns = [];
+        checkInsSnapshot.forEach(doc => {
+            studentFreeCheckIns.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Determine delete mode
+        const hasActivity = studentTransactions.length > 0 || studentFreeCheckIns.length > 0;
+        deleteMode = hasActivity ? 'soft' : 'hard';
+        
+        // Format name
+        const firstName = toTitleCase(student.firstName || '');
+        const lastName = toTitleCase(student.lastName || '');
+        const fullName = `${firstName} ${lastName}`.trim();
+        
+        // Update modal based on delete mode
+        if (deleteMode === 'hard') {
+            // Hard delete - no activity
+            titleEl.textContent = 'Permanently Delete Student';
+            messageEl.textContent = `Are you sure you want to permanently delete ${fullName}?`;
+            btnTextEl.textContent = 'Permanently Delete';
+            warningEl.textContent = 'This action cannot be undone.';
+            warningEl.style.color = ''; // Reset color to default
+            
+            infoDiv.innerHTML = `
+                <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
+                <p><strong>Phone:</strong> ${escapeHtml(student.phoneNumber || 'N/A')}</p>
+                <p class="warning-text" style="margin-top: 15px; color: #ff8800;">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    This student has no transaction or free class history and will be permanently deleted from the database.
+                </p>
+            `;
+        } else {
+            // Soft delete - has activity
+            titleEl.textContent = 'Soft Delete Student';
+            messageEl.textContent = `${fullName} has activity history. They will be soft-deleted.`;
+            btnTextEl.textContent = 'Soft Delete';
+            warningEl.innerHTML = '<i class="fas fa-info-circle"></i> This student can be restored later from the "Show deleted students" filter.';
+            warningEl.style.color = '#0066cc';
+            
+            // Build activity list HTML
+            let activityHTML = '<div class="activity-list">';
+            activityHTML += '<h4>Activity History:</h4>';
+            
+            // Combine transactions and free check-ins
+            const allActivity = [];
+            
+            // Add transactions
+            studentTransactions.forEach(txn => {
+                const date = txn.createdAt?.toDate ? txn.createdAt.toDate() : new Date(txn.createdAt);
+                const amount = txn.amountPaid !== undefined ? `$${txn.amountPaid.toFixed(2)}` : (txn.amount ? `$${txn.amount.toFixed(2)}` : '$0.00');
+                
+                // Determine payment method display - show "Online" if stripeCustomerId exists
+                const paymentMethod = txn.stripeCustomerId ? 'Online' : formatPaymentMethod(txn.paymentMethod);
+                
+                allActivity.push({
+                    date: date,
+                    type: getTransactionTypeLabel(txn.type),
+                    paymentMethod: paymentMethod,
+                    amount: amount
+                });
+            });
+            
+            // Add free check-ins
+            studentFreeCheckIns.forEach(checkIn => {
+                const date = checkIn.checkinDate?.toDate ? checkIn.checkinDate.toDate() : new Date(checkIn.checkinDate);
+                
+                allActivity.push({
+                    date: date,
+                    type: 'Free Class',
+                    paymentMethod: 'N/A',
+                    amount: '$0.00'
+                });
+            });
+            
+            // Sort by date (newest first)
+            allActivity.sort((a, b) => b.date - a.date);
+            
+            // Build table
+            activityHTML += '<table class="activity-table">';
+            activityHTML += '<thead><tr><th>Date</th><th>Type</th><th>Payment Method</th><th>Amount</th></tr></thead>';
+            activityHTML += '<tbody>';
+            
+            allActivity.forEach(activity => {
+                // Safely format date, with fallback for invalid dates
+                let dateStr = 'N/A';
+                if (activity.date && activity.date instanceof Date && !isNaN(activity.date)) {
+                    dateStr = activity.date.toLocaleDateString('en-NZ', { 
+                        day: 'numeric',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                }
+                
+                activityHTML += `
+                    <tr>
+                        <td>${dateStr}</td>
+                        <td>${escapeHtml(activity.type)}</td>
+                        <td>${escapeHtml(activity.paymentMethod)}</td>
+                        <td>${escapeHtml(activity.amount)}</td>
+                    </tr>
+                `;
+            });
+            
+            activityHTML += '</tbody></table>';
+            activityHTML += '</div>';
+            
+            infoDiv.innerHTML = activityHTML;
+        }
+        
+        // Set up delete button click handler
+        const deleteBtn = document.getElementById('confirm-delete-btn');
+        deleteBtn.onclick = () => deleteStudent(student.id);
+        
+    } catch (error) {
+        console.error('Error checking student data:', error);
+        console.error('Error details:', error.message, error.stack);
+        closeDeleteModal();
+        showError('Failed to check student data: ' + (error.message || 'Please try again.'));
+    }
+}
+
+/**
+ * Get readable label for transaction type
+ */
+function getTransactionTypeLabel(type) {
+    const labels = {
+        'casual': 'Casual Entry',
+        'concession': 'Concession Purchase',
+        'package': 'Class Package',
+        'refund': 'Refund'
+    };
+    return labels[type] || type;
+}
+
+/**
+ * Format payment method for display
+ */
+function formatPaymentMethod(method) {
+    if (!method) return '-';
     
-    // Show modal
-    modal.style.display = 'flex';
+    // EFTPOS stays uppercase
+    if (method.toUpperCase() === 'EFTPOS') {
+        return 'EFTPOS';
+    }
     
-    // Set up delete button click handler
-    const deleteBtn = document.getElementById('confirm-delete-btn');
-    deleteBtn.onclick = () => deleteStudent(student.id);
+    // Everything else in Title Case
+    return toTitleCase(method);
 }
 
 /**
@@ -322,10 +488,17 @@ function closeDeleteModal() {
     const modal = document.getElementById('delete-modal');
     modal.style.display = 'none';
     studentToDelete = null;
+    
+    // Reset button state and restore original HTML structure
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span id="delete-modal-btn-text">Delete Student</span>';
+    }
 }
 
 /**
- * Delete student from Firestore
+ * Delete student from Firestore (hard or soft delete based on mode)
  */
 async function deleteStudent(studentId) {
     const deleteBtn = document.getElementById('confirm-delete-btn');
@@ -336,14 +509,79 @@ async function deleteStudent(studentId) {
         deleteBtn.disabled = true;
         deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
         
-        // Delete from Firestore
-        await db.collection('students').doc(studentId).delete();
+        if (deleteMode === 'hard') {
+            // Hard delete - remove everything
+            console.log('Performing hard delete for student:', studentId);
+            
+            // Delete from students collection
+            await db.collection('students').doc(studentId).delete();
+            
+            // Check for user document (query by studentId field)
+            const userSnapshot = await db.collection('users')
+                .where('studentId', '==', studentId)
+                .limit(1)
+                .get();
+            
+            if (!userSnapshot.empty) {
+                const userDoc = userSnapshot.docs[0];
+                const authUid = userDoc.id;
+                
+                // Delete user document
+                await db.collection('users').doc(authUid).delete();
+                
+                // Delete Firebase Auth user
+                try {
+                    await firebase.auth().deleteUser(authUid);
+                    console.log('Deleted Firebase Auth user:', authUid);
+                } catch (authError) {
+                    // Auth deletion might fail if user doesn't exist - that's okay
+                    console.warn('Could not delete auth user (may not exist):', authError);
+                }
+            }
+            
+            console.log('Hard delete completed');
+            
+        } else {
+            // Soft delete - mark as deleted
+            console.log('Performing soft delete for student:', studentId);
+            
+            const currentUser = firebase.auth().currentUser;
+            const deletedBy = currentUser ? currentUser.email : 'unknown';
+            
+            // Update student document
+            await db.collection('students').doc(studentId).update({
+                deleted: true,
+                deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                deletedBy: deletedBy
+            });
+            
+            // Check for user document
+            const userSnapshot = await db.collection('users')
+                .where('studentId', '==', studentId)
+                .limit(1)
+                .get();
+            
+            if (!userSnapshot.empty) {
+                const userDoc = userSnapshot.docs[0];
+                const authUid = userDoc.id;
+                
+                // Update user document
+                await db.collection('users').doc(authUid).update({
+                    deleted: true,
+                    deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    deletedBy: deletedBy
+                });
+                
+                console.log('Soft delete completed - user document marked as deleted');
+            }
+            
+            console.log('Soft delete completed');
+        }
         
         // Close modal
         closeDeleteModal();
         
-        // Reload students
-        await loadStudents();
+        // Data will update automatically via onSnapshot listener
         
     } catch (error) {
         console.error('Error deleting student:', error);
@@ -354,3 +592,93 @@ async function deleteStudent(studentId) {
         deleteBtn.innerHTML = originalText;
     }
 }
+
+/**
+ * Restore Student Functionality
+ */
+
+/**
+ * Confirm restore student (show modal)
+ */
+function confirmRestoreStudent(studentId) {
+    const student = findStudentById(studentId);
+    if (!student) return;
+    
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    const fullName = `${firstName} ${lastName}`.trim();
+    const email = student.email || '';
+    
+    // Populate modal
+    document.getElementById('restore-modal-info').innerHTML = `
+        <strong>${fullName}</strong><br>
+        ${email}
+    `;
+    
+    // Show modal
+    document.getElementById('restore-modal').style.display = 'flex';
+    
+    // Set up confirm button
+    const confirmBtn = document.getElementById('confirm-restore-btn');
+    confirmBtn.onclick = () => {
+        closeRestoreModal();
+        restoreStudent(studentId);
+    };
+}
+
+/**
+ * Close restore modal
+ */
+function closeRestoreModal() {
+    document.getElementById('restore-modal').style.display = 'none';
+}
+
+/**
+ * Restore a soft-deleted student
+ */
+async function restoreStudent(studentId) {
+    try {
+        showLoading(true);
+        
+        console.log('Restoring student:', studentId);
+        
+        // Update student document
+        await db.collection('students').doc(studentId).update({
+            deleted: false,
+            deletedAt: null,
+            deletedBy: null
+        });
+        
+        // Check for user document
+        const userSnapshot = await db.collection('users')
+            .where('studentId', '==', studentId)
+            .limit(1)
+            .get();
+        
+        if (!userSnapshot.empty) {
+            const userDoc = userSnapshot.docs[0];
+            const authUid = userDoc.id;
+            
+            // Update user document
+            await db.collection('users').doc(authUid).update({
+                deleted: false,
+                deletedAt: null,
+                deletedBy: null
+            });
+            
+            console.log('Restore completed - user document restored');
+        }
+        
+        console.log('Restore completed');
+        
+        // Data will update automatically via onSnapshot listener
+        
+        showLoading(false);
+        
+    } catch (error) {
+        console.error('Error restoring student:', error);
+        showError('Failed to restore student: ' + error.message);
+        showLoading(false);
+    }
+}
+

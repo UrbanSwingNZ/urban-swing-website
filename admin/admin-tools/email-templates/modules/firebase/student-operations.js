@@ -16,8 +16,10 @@ export async function loadStudentsForPreview() {
     const select = document.getElementById('preview-student-select');
     
     try {
-        // Fetch all students from Firestore (no orderBy to avoid index requirement)
-        const snapshot = await db.collection('students').get();
+        // Fetch all active students from Firestore (exclude deleted)
+        const snapshot = await db.collection('students')
+            .where('deleted', '!=', true)
+            .get();
         
         // Convert to array and sort in JavaScript
         const students = [];
