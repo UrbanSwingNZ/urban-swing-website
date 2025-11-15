@@ -199,7 +199,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
             <div class="concession-content">
                 <div class="concession-left">
                     <div class="concession-info">
-                        <strong>${block.remainingQuantity} of ${block.originalQuantity} ${entriesLabel}</strong>
+                        <strong>${block.remainingQuantity || 0} of ${block.initialQuantity || block.originalQuantity || 0} ${entriesLabel}</strong>
                         ${lockBadge}
                     </div>
                     <div class="concession-details">

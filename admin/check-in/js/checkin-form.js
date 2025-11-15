@@ -47,13 +47,18 @@ function setupEntryTypeListeners() {
     const entryRadios = document.querySelectorAll('input[name="entry-type"]');
     const paymentSection = document.getElementById('payment-section');
     const freeEntrySection = document.getElementById('free-entry-section');
+    const onlinePaymentMessages = document.getElementById('online-payment-messages');
     const confirmBtn = document.getElementById('confirm-checkin-btn');
     
     entryRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            // Hide both sections first
+        radio.addEventListener('change', async () => {
+            // Hide all sections first
             paymentSection.style.display = 'none';
             freeEntrySection.style.display = 'none';
+            if (onlinePaymentMessages) {
+                onlinePaymentMessages.style.display = 'none';
+                onlinePaymentMessages.innerHTML = '';
+            }
             
             // Show appropriate section based on selection
             if (radio.value === 'casual' || radio.value === 'casual-student') {
@@ -66,6 +71,17 @@ function setupEntryTypeListeners() {
                 // Check if reason is selected
                 const freeReason = document.getElementById('free-entry-reason').value;
                 confirmBtn.disabled = freeReason === '';
+            } else if (radio.value === 'online-payment') {
+                // Online payment selected - validate and show available transactions
+                const student = getSelectedStudent();
+                const checkinDate = getSelectedCheckinDate();
+                
+                if (student && checkinDate) {
+                    confirmBtn.disabled = true; // Disable until valid transaction is selected
+                    await validateOnlinePayment(student.id, checkinDate);
+                } else {
+                    confirmBtn.disabled = true;
+                }
             } else {
                 // Concession - no additional selection needed
                 confirmBtn.disabled = false;

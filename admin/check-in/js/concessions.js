@@ -43,7 +43,7 @@ function formatConcessionBlock(block) {
     
     return `<div class="concession-block${expiredClass}">
         <i class="fas ${icon}"></i>
-        ${block.remaining} ${block.remaining === 1 ? 'concession' : 'concessions'} 
+        ${block.remainingQuantity || block.remaining || 0} ${(block.remainingQuantity || block.remaining || 0) === 1 ? 'concession' : 'concessions'} 
         ${expired ? 'expired' : 'expires'} ${dateStr}
     </div>`;
 }

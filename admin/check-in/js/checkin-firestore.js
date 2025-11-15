@@ -25,6 +25,15 @@ function handleCheckinSubmit() {
         return;
     }
     
+    // Validate online payment transaction is selected
+    if (entryType === 'online-payment') {
+        const selectedTransaction = getSelectedOnlineTransaction();
+        if (!selectedTransaction) {
+            showSnackbar('Please select an online payment transaction', 'error');
+            return;
+        }
+    }
+    
     // Validate casual rate is loaded
     if (entryType === 'casual') {
         const casualPrice = getCurrentCasualPrice();
@@ -73,6 +82,39 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         const docId = `checkin-${dateStr}-${firstName}-${lastName}`;
         
         let concessionBlockId = null;
+        let onlineTransactionId = null;
+        let actualEntryType = entryType;
+        let actualAmountPaid = 0;
+        let actualPaymentMethod = paymentMethod;
+        
+        // Handle online payment
+        if (entryType === 'online-payment') {
+            const selectedTransaction = getSelectedOnlineTransaction();
+            if (!selectedTransaction) {
+                showSnackbar('No online transaction selected', 'error');
+                return;
+            }
+            
+            // Use the transaction details
+            onlineTransactionId = selectedTransaction.id;
+            actualEntryType = selectedTransaction.type; // 'casual' or 'casual-student'
+            actualAmountPaid = selectedTransaction.amount;
+            actualPaymentMethod = 'online';
+            
+            // Update the transaction's classDate if needed
+            const transactionDate = new Date(selectedTransaction.classDate);
+            transactionDate.setHours(0, 0, 0, 0);
+            const checkDate = new Date(checkinDate);
+            checkDate.setHours(0, 0, 0, 0);
+            
+            if (transactionDate.getTime() !== checkDate.getTime()) {
+                await updateTransactionDate(onlineTransactionId, checkinDate);
+            }
+        } else {
+            // Regular entry types
+            actualAmountPaid = entryType === 'casual' ? getCurrentCasualPrice() : 
+                              entryType === 'casual-student' ? getCurrentStudentPrice() : 0;
+        }
         
         // Check if this student already has a check-in for this date
         const existingCheckin = await firebase.firestore()
@@ -108,14 +150,80 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
                     await useBlockEntry(block.id);
                     concessionBlockId = block.id;
                 }
-                // Transaction will be re-created if it's a paid entry (handled after save)
+                // If it's an online payment, mark the transaction as used (handled after save)
             } else {
                 // Normal update of existing active check-in
-                // Handle transaction changes when updating check-in
                 const hadPayment = existingData.amountPaid > 0;
-                const willHavePayment = (entryType === 'casual' || entryType === 'casual-student');
+                const hadOnlineTransaction = existingData.onlineTransactionId;
+                const willHavePayment = (actualEntryType === 'casual' || actualEntryType === 'casual-student');
+                const willHaveOnlineTransaction = onlineTransactionId;
                 
-                if (hadPayment && !willHavePayment) {
+                // Handle transition FROM one online transaction TO a different online transaction
+                if (hadOnlineTransaction && willHaveOnlineTransaction && hadOnlineTransaction !== willHaveOnlineTransaction) {
+                    // Un-link the old online transaction and restore its original classDate
+                    try {
+                        const transactionDoc = await firebase.firestore()
+                            .collection('transactions')
+                            .doc(existingData.onlineTransactionId)
+                            .get();
+                        
+                        if (transactionDoc.exists) {
+                            const transactionData = transactionDoc.data();
+                            const updateData = {
+                                usedForCheckin: false,
+                                checkinId: firebase.firestore.FieldValue.delete()
+                            };
+                            
+                            // Restore original classDate if it exists
+                            if (transactionData.originalClassDate) {
+                                updateData.classDate = transactionData.originalClassDate;
+                                updateData.originalClassDate = firebase.firestore.FieldValue.delete();
+                            }
+                            
+                            await firebase.firestore()
+                                .collection('transactions')
+                                .doc(existingData.onlineTransactionId)
+                                .update(updateData);
+                        }
+                    } catch (error) {
+                        console.error('Error un-linking old online transaction:', error);
+                    }
+                }
+                
+                // Handle transition FROM online payment TO something else
+                if (hadOnlineTransaction && !willHaveOnlineTransaction) {
+                    // Un-link the old online transaction and restore its original classDate
+                    try {
+                        const transactionDoc = await firebase.firestore()
+                            .collection('transactions')
+                            .doc(existingData.onlineTransactionId)
+                            .get();
+                        
+                        if (transactionDoc.exists) {
+                            const transactionData = transactionDoc.data();
+                            const updateData = {
+                                usedForCheckin: false,
+                                checkinId: firebase.firestore.FieldValue.delete()
+                            };
+                            
+                            // Restore original classDate if it exists
+                            if (transactionData.originalClassDate) {
+                                updateData.classDate = transactionData.originalClassDate;
+                                updateData.originalClassDate = firebase.firestore.FieldValue.delete();
+                            }
+                            
+                            await firebase.firestore()
+                                .collection('transactions')
+                                .doc(existingData.onlineTransactionId)
+                                .update(updateData);
+                        }
+                    } catch (error) {
+                        console.error('Error un-linking online transaction:', error);
+                    }
+                }
+                
+                // Handle transition FROM in-person payment TO online or free
+                if (hadPayment && !willHavePayment && !hadOnlineTransaction) {
                     // Changing FROM paid TO free - reverse the transaction
                     try {
                         await reverseTransaction(docId);
@@ -123,7 +231,9 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
                         console.error('Error reversing transaction on update:', error);
                     }
                 }
-                // Note: If changing FROM free TO paid, new transaction will be created after save
+                
+                // Handle transition TO online payment FROM something else
+                // (Online transaction will be marked as used after save)
                 
                 // If they're changing FROM concession TO another type, restore the concession
                 if (existingData.entryType === 'concession' && entryType !== 'concession' && existingData.concessionBlockId) {
@@ -165,12 +275,12 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             studentId: student.id,
             studentName: getStudentFullName(student),
             checkinDate: firebase.firestore.Timestamp.fromDate(checkinDate),
-            entryType: entryType,
-            paymentMethod: (entryType === 'casual' || entryType === 'casual-student') ? paymentMethod : null,
+            entryType: actualEntryType,
+            paymentMethod: actualPaymentMethod,
             freeEntryReason: entryType === 'free' ? freeEntryReason : null,
-            amountPaid: entryType === 'casual' ? getCurrentCasualPrice() : 
-                       entryType === 'casual-student' ? getCurrentStudentPrice() : 0,
+            amountPaid: actualAmountPaid,
             concessionBlockId: concessionBlockId,
+            onlineTransactionId: onlineTransactionId,
             notes: notes || '',
             reversed: false, // Explicitly set to false (un-reverses if previously reversed)
             reversedAt: firebase.firestore.FieldValue.delete(), // Remove reversedAt field if it exists
@@ -185,8 +295,24 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
             .doc(docId)
             .set(checkinData, { merge: true });
         
-        // Create transaction record if there's a payment
-        if (checkinData.amountPaid > 0 && checkinData.paymentMethod) {
+        // If using online payment, mark the transaction as used
+        if (onlineTransactionId) {
+            try {
+                await firebase.firestore()
+                    .collection('transactions')
+                    .doc(onlineTransactionId)
+                    .update({
+                        usedForCheckin: true,
+                        checkinId: docId,
+                        classDate: firebase.firestore.Timestamp.fromDate(checkinDate)
+                    });
+            } catch (transactionError) {
+                console.error('Error updating online transaction:', transactionError);
+                showSnackbar('Check-in saved, but transaction update failed', 'warning');
+            }
+        }
+        // Create transaction record if there's an in-person payment (not online)
+        else if (checkinData.amountPaid > 0 && checkinData.paymentMethod && checkinData.paymentMethod !== 'online') {
             try {
                 await createCheckinTransaction(docId, student.id, checkinData.entryType, checkinData.amountPaid, checkinData.paymentMethod, checkinDate);
             } catch (transactionError) {
@@ -199,6 +325,11 @@ async function saveCheckinToFirestore(student, entryType, paymentMethod, freeEnt
         // Close modal and show success
         closeCheckinModal();
         showSnackbar(`${getStudentFullName(student)} checked in successfully!`, 'success');
+        
+        // Clear the selected online transaction
+        if (typeof clearSelectedOnlineTransaction === 'function') {
+            clearSelectedOnlineTransaction();
+        }
         
         // Reload today's check-ins to display the new one
         loadTodaysCheckins();

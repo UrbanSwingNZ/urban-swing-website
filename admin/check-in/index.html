@@ -257,9 +257,18 @@
                                 <span class="radio-label">Casual Student ($12)</span>
                             </label>
                             <label class="radio-option">
+                                <input type="radio" name="entry-type" value="online-payment" id="entry-online-payment">
+                                <span class="radio-label">Online Payment</span>
+                            </label>
+                            <label class="radio-option">
                                 <input type="radio" name="entry-type" value="free" id="entry-free">
                                 <span class="radio-label">Free Entry</span>
                             </label>
+                        </div>
+                        
+                        <!-- Online Payment Validation Messages -->
+                        <div id="online-payment-messages" class="online-payment-messages" style="display: none;">
+                            <!-- Messages will be displayed here -->
                         </div>
                     </div>
 
@@ -583,6 +592,7 @@
     
     <!-- Check-in modal modules (load in dependency order) -->
     <script src="js/checkin-state.js"></script>
+    <script src="js/checkin-online-payment.js"></script>
     <script src="js/checkin-form.js"></script>
     <script src="js/checkin-student-search.js"></script>
     <script src="js/checkin-concession-display.js"></script>
