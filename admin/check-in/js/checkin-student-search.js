@@ -88,4 +88,15 @@ function selectStudentInModal(studentId) {
     document.getElementById('student-selection').style.display = 'none';
     document.getElementById('modal-search-results').style.display = 'none';
     showSelectedStudent(student);
+    
+    // Check if student has any available online payments (hide/show radio button)
+    if (typeof checkStudentHasOnlinePayments === 'function') {
+        checkStudentHasOnlinePayments(student.id);
+    }
+    
+    // Check if student has a matching online payment for the current check-in date
+    const checkinDate = getSelectedCheckinDate();
+    if (checkinDate && typeof checkAndAutoSelectOnlinePayment === 'function') {
+        checkAndAutoSelectOnlinePayment(student.id, checkinDate);
+    }
 }

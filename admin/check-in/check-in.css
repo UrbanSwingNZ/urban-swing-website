@@ -1250,8 +1250,18 @@ textarea.form-control {
     transition: all 0.2s ease;
 }
 
+.online-payment-transaction.current-transaction {
+    background: rgba(154, 22, 245, 0.08);
+    border-color: var(--admin-purple);
+}
+
 .online-payment-transaction:hover {
     background: rgba(154, 22, 245, 0.05);
+    border-color: var(--admin-purple);
+}
+
+.online-payment-transaction.current-transaction:hover {
+    background: rgba(154, 22, 245, 0.12);
     border-color: var(--admin-purple);
 }
 
@@ -1259,6 +1269,17 @@ textarea.form-control {
     flex: 1;
     font-size: 0.9rem;
     color: var(--text-color);
+}
+
+.current-badge {
+    padding: 6px 16px;
+    background: rgba(154, 22, 245, 0.15);
+    color: var(--admin-purple);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: default;
 }
 
 .btn-use-transaction,
