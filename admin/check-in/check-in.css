@@ -1176,6 +1176,124 @@ textarea.form-control {
 }
 
 /* ========================================
+   ONLINE PAYMENT VALIDATION MESSAGES
+   ======================================== */
+
+.online-payment-messages {
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.online-payment-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.online-payment-message:last-child {
+    margin-bottom: 0;
+}
+
+.online-payment-message i {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.online-payment-message span {
+    flex: 1;
+}
+
+.online-payment-message.success {
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #2e7d32;
+}
+
+.online-payment-message.success i {
+    color: #4caf50;
+}
+
+.online-payment-message.warning {
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    color: #e65100;
+}
+
+.online-payment-message.warning i {
+    color: #ff9800;
+}
+
+.online-payment-message.error {
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #c62828;
+}
+
+.online-payment-message.error i {
+    color: #f44336;
+}
+
+.online-payment-transaction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-top: 8px;
+    transition: all 0.2s ease;
+}
+
+.online-payment-transaction:hover {
+    background: rgba(154, 22, 245, 0.05);
+    border-color: var(--admin-purple);
+}
+
+.transaction-info {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.btn-use-transaction,
+.btn-change-transaction {
+    padding: 6px 14px;
+    background: var(--admin-purple);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-use-transaction:hover,
+.btn-change-transaction:hover {
+    background: var(--admin-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.3);
+}
+
+.btn-change-transaction {
+    background: transparent;
+    color: var(--admin-purple);
+    border: 1px solid var(--admin-purple);
+}
+
+.btn-change-transaction:hover {
+    background: var(--admin-purple);
+    color: white;
+}
+
+/* ========================================
    RESPONSIVE
    ======================================== */
 
