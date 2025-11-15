@@ -84,7 +84,7 @@ exports.processConcessionPurchase = onRequest(
         const packageInfo = packages[data.packageId];
         
         // Validate it's a concession package
-        if (packageInfo.type !== 'concession') {
+        if (packageInfo.type !== 'concession-package') {
           response.status(400).json({ error: 'Invalid package type. Must be a concession package.' });
           return;
         }
