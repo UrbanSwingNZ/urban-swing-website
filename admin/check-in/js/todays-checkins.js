@@ -323,8 +323,39 @@ async function deleteCheckin(checkinId) {
             await restoreBlockEntry(checkinData.concessionBlockId);
         }
         
-        // If this check-in had a payment, reverse the transaction
-        if (checkinData.amountPaid > 0) {
+        // If this check-in used an online transaction, un-link it
+        if (checkinData.onlineTransactionId) {
+            try {
+                const transactionDoc = await firebase.firestore()
+                    .collection('transactions')
+                    .doc(checkinData.onlineTransactionId)
+                    .get();
+                
+                if (transactionDoc.exists) {
+                    const transactionData = transactionDoc.data();
+                    const updateData = {
+                        usedForCheckin: false,
+                        checkinId: firebase.firestore.FieldValue.delete()
+                    };
+                    
+                    // Restore original classDate if it exists
+                    if (transactionData.originalClassDate) {
+                        updateData.classDate = transactionData.originalClassDate;
+                        updateData.originalClassDate = firebase.firestore.FieldValue.delete();
+                    }
+                    
+                    await firebase.firestore()
+                        .collection('transactions')
+                        .doc(checkinData.onlineTransactionId)
+                        .update(updateData);
+                }
+            } catch (transactionError) {
+                console.error('Error un-linking online transaction:', transactionError);
+                // Continue with reversal even if transaction un-linking fails
+            }
+        }
+        // If this check-in had an in-person payment, reverse the transaction
+        else if (checkinData.amountPaid > 0) {
             try {
                 await reverseTransaction(checkinId);
             } catch (transactionError) {

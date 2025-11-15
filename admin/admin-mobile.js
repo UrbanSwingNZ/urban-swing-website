@@ -26,8 +26,6 @@ class MobileNavigation {
     
     // Setup event listeners
     this.setupEventListeners();
-    
-    console.log('Mobile navigation initialized');
   }
 
   createMobileNav() {

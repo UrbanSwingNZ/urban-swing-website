@@ -152,8 +152,9 @@ async function getConcessionData(studentId) {
             blocks.push({
                 id: doc.id,
                 packageName: data.packageName,
-                remaining: data.remainingQuantity,
-                original: data.originalQuantity,
+                remainingQuantity: data.remainingQuantity,
+                originalQuantity: data.originalQuantity,
+                initialQuantity: data.initialQuantity,
                 status: isExpired ? 'expired' : 'active', // Calculate status dynamically
                 purchaseDate: data.purchaseDate ? data.purchaseDate.toDate() : null,
                 expiryDate: expiryDate
@@ -201,7 +202,7 @@ function formatConcessionBlock(block) {
                 Expires: ${expiryInfo}
             </div>
             <div style="font-size: 0.95rem; font-weight: 500;">
-                ${block.remaining} / ${block.original} remaining
+                ${block.remainingQuantity} of ${block.initialQuantity || block.originalQuantity} classes remaining
             </div>
         </div>
     `;

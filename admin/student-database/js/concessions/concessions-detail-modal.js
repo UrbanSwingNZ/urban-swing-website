@@ -173,8 +173,8 @@ function buildConcessionItem(block, status) {
     return `
         <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''}">
             <div class="concession-info">
-                <strong>${block.remainingQuantity} ${entriesLabel}</strong>
-                <span class="text-muted">of ${block.originalQuantity} total</span>
+                <strong>${block.remainingQuantity || 0} ${entriesLabel}</strong>
+                <span class="text-muted">of ${block.initialQuantity || block.originalQuantity || 0} total</span>
                 ${lockBadge}
             </div>
             <div class="concession-details">
