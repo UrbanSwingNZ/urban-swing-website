@@ -55,6 +55,7 @@ async function fetchPricing() {
           name: pkg.name || `${pkg.numberOfClasses}-Class Package`,
           type: 'concession-package',
           numberOfClasses: pkg.numberOfClasses,
+          expiryMonths: pkg.expiryMonths,
           description: pkg.description || null
         };
       }
