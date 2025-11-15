@@ -15,6 +15,149 @@
     margin-bottom: 24px;
 }
 
+/* Prepaid Classes Section */
+.prepaid-classes-section {
+    margin-bottom: 2rem;
+}
+
+.prepaid-classes-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.prepaid-header {
+    margin-bottom: 1.5rem;
+}
+
+.prepaid-header h3 {
+    font-size: 1.4rem;
+    color: var(--admin-purple);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.prepaid-header h3 i {
+    font-size: 1.6rem;
+}
+
+.prepaid-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.prepaid-classes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.prepaid-class-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    border: 2px solid #f0f0f0;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.prepaid-class-item:hover {
+    border-color: var(--admin-purple);
+    background: rgba(139, 69, 255, 0.02);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.prepaid-class-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.prepaid-class-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.prepaid-class-date .day {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.prepaid-class-date .month-year {
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.prepaid-class-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.prepaid-class-details .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.prepaid-class-details .detail-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.prepaid-class-details .detail-value {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.prepaid-class-badge {
+    margin-left: auto;
+}
+
+/* Type Badges - matching transaction history page exactly */
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.type-badge.casual,
+.type-badge.casual-entry {
+    background: rgba(53, 52, 250, 0.1);
+    color: var(--admin-blue);
+}
+
+.type-badge.casual-student {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -651,6 +794,59 @@ input[type="text"]::placeholder {
 @media (max-width: 768px) {
     .prepay-content {
         padding: 1rem;
+    }
+
+    .prepaid-classes-section {
+        margin-bottom: 1rem;
+    }
+
+    .prepaid-classes-card {
+        padding: 1.25rem;
+    }
+
+    .prepaid-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .prepaid-class-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .prepaid-class-info {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .prepaid-class-date {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 0.75rem;
+    }
+
+    .prepaid-class-date .day {
+        font-size: 1.75rem;
+    }
+
+    .prepaid-class-date .month-year {
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .prepaid-class-details {
+        width: 100%;
+    }
+
+    .prepaid-class-badge {
+        margin-left: 0;
+        align-self: flex-start;
     }
 
     .prepay-card {
