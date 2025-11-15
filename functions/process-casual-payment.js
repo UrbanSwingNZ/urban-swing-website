@@ -98,18 +98,30 @@ exports.processCasualPayment = onRequest(
           const endOfDay = new Date(classDateObj);
           endOfDay.setHours(23, 59, 59, 999);
           
-          // Query for existing casual transactions for this student on this date
+          // Query for existing transactions for this student (no compound index required)
           const existingTransactions = await db.collection('transactions')
             .where('studentId', '==', data.studentId)
-            .where('classDate', '>=', admin.firestore.Timestamp.fromDate(startOfDay))
-            .where('classDate', '<=', admin.firestore.Timestamp.fromDate(endOfDay))
             .get();
           
-          // Check if any non-reversed casual/casual-student transactions exist
+          // Filter by date in JavaScript to avoid needing a compound index
           const hasCasualClass = existingTransactions.docs.some(doc => {
             const txData = doc.data();
-            return (txData.type === 'casual' || txData.type === 'casual-student') && 
-                   !txData.reversed;
+            
+            // Skip if reversed or not a casual type
+            if (txData.reversed || (txData.type !== 'casual' && txData.type !== 'casual-student')) {
+              return false;
+            }
+            
+            // Check if classDate is on the same day
+            if (txData.classDate) {
+              const txDate = txData.classDate.toDate();
+              const txStartOfDay = new Date(txDate);
+              txStartOfDay.setHours(0, 0, 0, 0);
+              
+              return txStartOfDay.getTime() === startOfDay.getTime();
+            }
+            
+            return false;
           });
           
           if (hasCasualClass) {

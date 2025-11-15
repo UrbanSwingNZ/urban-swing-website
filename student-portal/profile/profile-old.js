@@ -1,9 +1,8 @@
 /**
- * Profile & Settings Page (Refactored)
+ * Profile & Settings Page
  * Handles loading and updating student profile information
  */
 
-// Current state
 let currentStudent = null;
 let currentStudentId = null;
 let isViewingAsAdmin = false;
@@ -14,22 +13,23 @@ let originalData = {};
  */
 async function initializeProfile() {
     // Check if viewing as admin or as student
-    isViewingAsAdmin = isAdminView();
+    isViewingAsAdmin = isAuthorized;
     
     if (isViewingAsAdmin) {
         // Admin view - check if there's a selected student from persistence
-        currentStudentId = sessionStorage.getItem('currentStudentId');
+        const currentStudentId = sessionStorage.getItem('currentStudentId');
         
         if (currentStudentId) {
             console.log('Loading student from session:', currentStudentId);
             await loadStudentById(currentStudentId);
+            // Don't clear the session storage - keep it for navigation between pages
         } else {
             // No student selected - show empty state
             console.log('Admin view - waiting for student selection');
         }
     } else {
         // Student view - load current user's profile
-        await loadCurrentStudentProfile();
+        loadCurrentStudentProfile();
     }
     
     // Setup form handlers
@@ -41,19 +41,30 @@ async function initializeProfile() {
  */
 async function loadCurrentStudentProfile() {
     try {
-        const student = await getCurrentStudent();
-        
-        if (!student) {
-            console.error('Student not found');
-            showSnackbar('Error: Your student record could not be found.', 'error');
-            setTimeout(() => {
-                navigateTo('../index.html');
-            }, 2000);
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            console.error('No user logged in');
+            window.location.href = '../index.html';
             return;
         }
         
-        currentStudentId = student.id;
-        currentStudent = student;
+        const email = user.email.toLowerCase();
+        
+        // Find student by email
+        const studentSnapshot = await window.db.collection('students')
+            .where('email', '==', email)
+            .limit(1)
+            .get();
+        
+        if (studentSnapshot.empty) {
+            console.error('Student not found');
+            showSnackbar('Error: Your student record could not be found.', 'error');
+            return;
+        }
+        
+        const studentDoc = studentSnapshot.docs[0];
+        currentStudentId = studentDoc.id;
+        currentStudent = studentDoc.data();
         
         loadProfileData(currentStudent, currentStudentId);
         
@@ -68,13 +79,20 @@ async function loadCurrentStudentProfile() {
  */
 async function loadStudentById(studentId) {
     try {
-        const student = await getStudentById(studentId);
+        const studentDoc = await window.db.collection('students').doc(studentId).get();
         
-        if (!student) {
+        if (!studentDoc.exists) {
+            console.error('Student not found');
             showSnackbar('Error: Student not found.', 'error');
             return;
         }
         
+        const student = {
+            id: studentDoc.id,
+            ...studentDoc.data()
+        };
+        
+        console.log('Loaded student by ID:', student);
         loadStudentProfile(student);
         
     } catch (error) {
@@ -92,8 +110,9 @@ async function loadStudentProfile(student) {
     currentStudentId = student.id;
     
     // Ensure we're tracking admin status correctly
-    isViewingAsAdmin = isAdminView();
+    isViewingAsAdmin = isAuthorized;
     
+    console.log('Loading profile for selected student:', student);
     loadProfileData(student, student.id);
 }
 
@@ -209,7 +228,7 @@ async function handleFormSubmit(event) {
     
     try {
         // Show loading spinner
-        showLoading(true);
+        document.getElementById('loading-spinner').style.display = 'flex';
         
         // Collect form data
         const updatedData = {
@@ -224,14 +243,7 @@ async function handleFormSubmit(event) {
         // Validate required fields
         if (!updatedData.firstName || !updatedData.lastName || !updatedData.email || !updatedData.phoneNumber) {
             showSnackbar('Please fill in all required fields (First Name, Last Name, Email, Phone Number)', 'warning');
-            showLoading(false);
-            return;
-        }
-        
-        // Validate email format
-        if (!isValidEmail(updatedData.email)) {
-            showSnackbar('Please enter a valid email address', 'warning');
-            showLoading(false);
+            document.getElementById('loading-spinner').style.display = 'none';
             return;
         }
         
@@ -255,7 +267,7 @@ async function handleFormSubmit(event) {
         // Update Firestore
         await window.db.collection('students').doc(currentStudentId).update(updatedData);
         
-        console.log('Profile updated successfully.');
+        console.log('Profile updated successfully:', updatedData);
         
         // Update current student object
         currentStudent = { ...currentStudent, ...updatedData };
@@ -274,17 +286,18 @@ async function handleFormSubmit(event) {
                 console.error('Error updating Firebase Auth email:', authError);
                 
                 // If email update fails, still keep the profile updated in Firestore
-                showLoading(false);
+                // but let the user know they need to contact support
+                document.getElementById('loading-spinner').style.display = 'none';
                 showSnackbar('Your profile has been updated, but there was an issue updating your login email. Please contact support to complete the email change.', 'warning', 5000);
                 return;
             }
         }
         
         // Hide loading spinner
-        showLoading(false);
+        document.getElementById('loading-spinner').style.display = 'none';
         
         // Update original data and disable buttons
-        originalData = { ...updatedData };
+        originalData = { ...updatedData, adminNotes: finalAdminNotes };
         updateButtonStates(false);
         
         // Show success message
@@ -292,7 +305,7 @@ async function handleFormSubmit(event) {
         
     } catch (error) {
         console.error('Error updating profile:', error);
-        showLoading(false);
+        document.getElementById('loading-spinner').style.display = 'none';
         showSnackbar('Error updating profile. Please try again.', 'error');
     }
 }
@@ -309,7 +322,7 @@ function handleCancel() {
         showCancelModal();
     } else {
         // Navigate back to dashboard
-        navigateTo('../dashboard/index.html');
+        window.location.href = '../dashboard/index.html';
     }
 }
 
@@ -323,7 +336,7 @@ function showCancelModal() {
     // Add event listeners
     document.getElementById('cancel-modal-stay').onclick = closeCancelModal;
     document.getElementById('cancel-modal-leave').onclick = () => {
-        navigateTo('../dashboard/index.html');
+        window.location.href = '../dashboard/index.html';
     };
 }
 
@@ -356,10 +369,20 @@ function checkForChanges() {
     
     // Compare with original data
     for (const key in currentFormData) {
-        if (!hasFieldChanged(currentFormData[key], originalData[key])) {
-            continue;
+        const originalValue = originalData[key];
+        const currentValue = currentFormData[key];
+        
+        // Handle boolean fields (emailConsent)
+        if (typeof currentValue === 'boolean') {
+            if (currentValue !== (originalValue || false)) {
+                return true;
+            }
+        } else {
+            // Handle string fields
+            if (currentValue !== (originalValue || '')) {
+                return true;
+            }
         }
-        return true;
     }
     
     return false;
@@ -370,6 +393,38 @@ function checkForChanges() {
  */
 function loadStudentDashboard(student) {
     loadStudentProfile(student);
+}
+
+/**
+ * Show snackbar notification
+ */
+function showSnackbar(message, type = 'success', duration = 3000) {
+    const snackbar = document.getElementById('snackbar');
+    
+    // Remove existing classes
+    snackbar.className = 'snackbar';
+    snackbar.classList.add(`snackbar-${type}`);
+    
+    // Add icon based on type
+    let icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    if (type === 'info') icon = 'fa-info-circle';
+    
+    snackbar.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Show snackbar
+    setTimeout(() => {
+        snackbar.classList.add('show');
+    }, 10);
+    
+    // Hide after duration
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+    }, duration);
 }
 
 // Initialize when DOM is ready

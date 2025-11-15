@@ -254,7 +254,7 @@ function buildConcessionItem(block, status) {
         <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''} ${isGifted ? 'gifted' : ''}">
             <div class="concession-content">
                 <div class="concession-info">
-                    <strong>${block.remainingQuantity} of ${block.originalQuantity} ${entriesLabel}</strong>
+                    <strong>${block.remainingQuantity} of ${block.initialQuantity || block.originalQuantity} ${entriesLabel}</strong>
                     ${lockBadge}
                     ${giftedBadge}
                 </div>

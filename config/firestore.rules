@@ -38,16 +38,33 @@ service cloud.firestore {
       // Admins and front-desk can read and write everything
       allow read, write: if isAdminOrFrontDesk();
       
-      // Students can read their own student document
+      // Students can read their own student document (via users collection link)
       allow read: if isStudent() && studentId == getStudentId();
       
-      // Students can update specific fields in their own profile
+      // Students can also read their own document by matching email
+      allow read: if request.auth != null && 
+                     resource.data.email == request.auth.token.email;
+      
+      // Students can update specific fields in their own profile (via users collection link)
       allow update: if isStudent() && 
                        studentId == getStudentId() &&
                        // Only allow updating these specific fields
                        request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['firstName', 'lastName', 'email', 'phoneNumber', 
-                                  'pronouns', 'emailConsent']) &&
+                                  'pronouns', 'emailConsent', 'adminNotes']) &&
+                       // Ensure required fields remain present
+                       request.resource.data.keys().hasAll([
+                         'firstName', 'lastName', 'email', 'phoneNumber', 
+                         'emailConsent', 'registeredAt'
+                       ]);
+      
+      // Students can also update their own profile by matching email (for direct student portal access)
+      allow update: if request.auth != null && 
+                       resource.data.email == request.auth.token.email &&
+                       // Only allow updating these specific fields
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['firstName', 'lastName', 'email', 'phoneNumber', 
+                                  'pronouns', 'emailConsent', 'adminNotes']) &&
                        // Ensure required fields remain present
                        request.resource.data.keys().hasAll([
                          'firstName', 'lastName', 'email', 'phoneNumber', 
