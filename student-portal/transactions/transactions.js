@@ -6,104 +6,37 @@ let currentPage = 1;
 const itemsPerPage = 12;
 
 // Page Initialization
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Transaction History page loaded');
+// Wait for auth check to complete and student data to be loaded
+window.addEventListener('authCheckComplete', async (event) => {
+    // Show main container
+    document.getElementById('main-container').style.display = 'block';
     
-    // Initialize page
-    initializePage();
+    if (event.detail.isAuthorized) {
+        // Admin viewing student portal
+        // Check if we have a selected student in sessionStorage (from navigation)
+        const currentStudentId = sessionStorage.getItem('currentStudentId');
+        if (currentStudentId) {
+            // Student already selected - hide empty state
+            document.getElementById('empty-state').style.display = 'none';
+            // Data will be loaded by studentSelected event
+        } else {
+            // No student selected - show empty state
+            document.getElementById('empty-state').style.display = 'flex';
+        }
+    } else {
+        // Regular student - data will be loaded by studentLoaded event
+        // Do nothing here, wait for the event
+    }
 });
 
-async function initializePage() {
-    try {
-        // Wait for auth to be ready
-        await waitForAuth();
-        
-        // Show main container
-        document.getElementById('main-container').style.display = 'block';
-        
-        // Determine which student to load
-        let studentId = null;
-        
-        if (isAuthorized) {
-            // Admin view - check sessionStorage for selected student
-            studentId = sessionStorage.getItem('currentStudentId');
-            
-            if (!studentId) {
-                // Show empty state (admin only - no student selected)
-                document.getElementById('empty-state').style.display = 'flex';
-                return;
-            }
-        } else {
-            // Student view - load their own data
-            studentId = await getCurrentStudentId();
-            
-            if (!studentId) {
-                console.error('Could not load student data');
-                alert('Error loading your data. Please try refreshing the page.');
-                return;
-            }
-        }
-        
-        // Load transactions for the student
-        await loadStudentTransactions(studentId);
-        
-    } catch (error) {
-        console.error('Error initializing page:', error);
-        alert('Error loading page. Please try refreshing.');
-    }
-}
+// Listen for student selection (admin) or student loaded (regular student)
+window.addEventListener('studentSelected', async (event) => {
+    await loadStudentTransactions(event.detail.id);
+});
 
-function waitForAuth() {
-    return new Promise((resolve) => {
-        if (typeof isAuthorized !== 'undefined') {
-            resolve();
-        } else {
-            const checkAuth = setInterval(() => {
-                if (typeof isAuthorized !== 'undefined') {
-                    clearInterval(checkAuth);
-                    resolve();
-                }
-            }, 100);
-        }
-    });
-}
-
-// Get the current logged-in student's ID
-async function getCurrentStudentId() {
-    try {
-        // Wait for Firebase Auth to be ready
-        const user = await new Promise((resolve) => {
-            const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-                unsubscribe();
-                resolve(user);
-            });
-        });
-        
-        if (!user) {
-            console.error('No user logged in');
-            return null;
-        }
-        
-        const email = user.email.toLowerCase();
-        
-        // Find student by email
-        const studentSnapshot = await window.db.collection('students')
-            .where('email', '==', email)
-            .limit(1)
-            .get();
-        
-        if (studentSnapshot.empty) {
-            console.error('Student not found for email:', email);
-            return null;
-        }
-        
-        return studentSnapshot.docs[0].id;
-        
-    } catch (error) {
-        console.error('Error getting current student ID:', error);
-        return null;
-    }
-}
+window.addEventListener('studentLoaded', async (event) => {
+    await loadStudentTransactions(event.detail.id);
+});
 
 // Load transactions for a specific student
 async function loadStudentTransactions(studentId) {
