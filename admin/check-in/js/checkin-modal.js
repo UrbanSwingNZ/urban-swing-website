@@ -21,6 +21,17 @@ function openCheckinModal(studentId = null) {
             setSelectedStudent(student);
             studentSelection.style.display = 'none';
             showSelectedStudent(student);
+            
+            // Check if student has any available online payments (hide/show radio button)
+            if (typeof checkStudentHasOnlinePayments === 'function') {
+                checkStudentHasOnlinePayments(student.id);
+            }
+            
+            // Check if student has a matching online payment for the current check-in date
+            const checkinDate = getSelectedCheckinDate();
+            if (checkinDate && typeof checkAndAutoSelectOnlinePayment === 'function') {
+                checkAndAutoSelectOnlinePayment(student.id, checkinDate);
+            }
         }
     } else {
         // No student selected, show search
@@ -128,6 +139,10 @@ async function loadOnlineTransactionForEdit(transactionId) {
         const transactionDate = data.transactionDate?.toDate ? data.transactionDate.toDate() : new Date(data.transactionDate);
         const classDate = data.classDate?.toDate ? data.classDate.toDate() : transactionDate;
         
+        // Store the current transaction ID so validation can include it in the list
+        if (!window.checkinOnlinePayment) window.checkinOnlinePayment = {};
+        window.checkinOnlinePayment.currentTransactionId = transactionId;
+        
         // Set the selected transaction
         if (typeof selectOnlineTransaction === 'function') {
             // Manually create the transaction object and set it
@@ -153,7 +168,7 @@ async function loadOnlineTransactionForEdit(transactionId) {
                 messagesContainer.innerHTML = `
                     <div class="online-payment-message success">
                         <i class="fas fa-check-circle"></i>
-                        <span>✓ Using: ${typeLabel} for ${formatDate(displayDate)} - ${formatCurrency(selectedOnlineTransaction.amount)}</span>
+                        <span>Using: ${typeLabel} for ${formatDate(displayDate)} - ${formatCurrency(selectedOnlineTransaction.amount)}</span>
                         <button type="button" class="btn-change-transaction" onclick="showAllOnlineTransactions()">Change</button>
                     </div>
                 `;
