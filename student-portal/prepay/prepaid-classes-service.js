@@ -224,12 +224,21 @@ class PrepaidClassesService {
      */
     async updateClassDate(transactionId, newClassDate) {
         try {
+            // Update via Firestore (security rules allow students to update classDate only)
             await this.db.collection('transactions').doc(transactionId).update({
                 classDate: firebase.firestore.Timestamp.fromDate(newClassDate)
             });
         } catch (error) {
             console.error('Error updating class date:', error);
-            throw error;
+            
+            // Provide user-friendly error messages
+            if (error.code === 'permission-denied') {
+                throw new Error('You do not have permission to update this transaction');
+            } else if (error.message) {
+                throw new Error(error.message);
+            } else {
+                throw new Error('Failed to update class date. Please try again.');
+            }
         }
     }
 }
