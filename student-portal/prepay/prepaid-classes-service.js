@@ -27,9 +27,9 @@ class PrepaidClassesService {
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
                 
-                // Check if it's a casual transaction (not reversed) with a future class date
+                // Check if it's a casual transaction (not reversed, not used for check-in) with a future class date
                 if ((data.type === 'casual' || data.type === 'casual-student' || 
-                     data.type === 'casual-entry') && !data.reversed) {
+                     data.type === 'casual-entry') && !data.reversed && !data.usedForCheckin) {
                     
                     let classDate = null;
                     if (data.classDate) {
@@ -97,6 +97,7 @@ class PrepaidClassesService {
     createPrepaidClassItem(classItem) {
         const item = document.createElement('div');
         item.className = 'prepaid-class-item';
+        item.dataset.transactionId = classItem.id;
         
         // Ensure dates are Date objects (in case they're Firestore Timestamps)
         const classDate = classItem.classDate instanceof Date 
@@ -113,6 +114,16 @@ class PrepaidClassesService {
         
         // Determine entry type and badge class
         const typeInfo = this.getEntryTypeInfo(classItem);
+        
+        // Check if date can be edited (before 7pm on class date)
+        const canEdit = this.canEditClassDate(classDate);
+        
+        const changeDateButton = canEdit ? `
+            <button type="button" class="btn-change-date" data-transaction-id="${classItem.id}">
+                <i class="fas fa-edit"></i>
+                Change Date
+            </button>
+        ` : '';
         
         item.innerHTML = `
             <div class="prepaid-class-info">
@@ -133,6 +144,7 @@ class PrepaidClassesService {
             </div>
             <div class="prepaid-class-badge">
                 <span class="type-badge ${typeInfo.badgeClass}">${typeInfo.typeName}</span>
+                ${changeDateButton}
             </div>
         `;
         
@@ -186,5 +198,38 @@ class PrepaidClassesService {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return `${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+    
+    /**
+     * Check if class date can be edited (before 7pm on class date)
+     * @param {Date} classDate - Class date to check
+     * @returns {boolean} - True if can edit
+     */
+    canEditClassDate(classDate) {
+        const now = new Date();
+        const classDateCopy = new Date(classDate);
+        
+        // Set cutoff time to 7pm (19:00) on class date
+        classDateCopy.setHours(19, 0, 0, 0);
+        
+        // Can edit if current time is before 7pm on class date
+        return now < classDateCopy;
+    }
+    
+    /**
+     * Update class date for a transaction
+     * @param {string} transactionId - Transaction ID
+     * @param {Date} newClassDate - New class date
+     * @returns {Promise<void>}
+     */
+    async updateClassDate(transactionId, newClassDate) {
+        try {
+            await this.db.collection('transactions').doc(transactionId).update({
+                classDate: firebase.firestore.Timestamp.fromDate(newClassDate)
+            });
+        } catch (error) {
+            console.error('Error updating class date:', error);
+            throw error;
+        }
     }
 }
