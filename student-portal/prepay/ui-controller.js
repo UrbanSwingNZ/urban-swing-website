@@ -178,18 +178,20 @@ class UIController {
         const classDateInput = document.getElementById('class-date');
         const classDate = classDateInput ? classDateInput.value : '';
         const selectedRate = this.rateService.getSelectedRate();
+        const termsCheckbox = document.getElementById('terms-accepted');
         
         // Check if all required fields are filled
         const hasDate = classDate && classDate.trim() !== '';
         const hasRate = selectedRate !== null;
         const hasValidCard = this.paymentService && this.paymentService.cardElement && this.paymentService.isCardComplete;
+        const hasAcceptedTerms = termsCheckbox && termsCheckbox.checked;
         
         // Check if date validation passed (no error message shown)
         const validationMessage = document.getElementById('date-validation-message');
         const hasValidDate = hasDate && (!validationMessage || validationMessage.style.display === 'none');
         
         // Enable button only if all conditions are met
-        if (hasValidDate && hasRate && hasValidCard) {
+        if (hasValidDate && hasRate && hasValidCard && hasAcceptedTerms) {
             submitBtn.disabled = false;
         } else {
             submitBtn.disabled = true;
@@ -203,6 +205,13 @@ class UIController {
     resetForm(datePicker) {
         document.getElementById('prepay-form').reset();
         document.getElementById('class-date').value = '';
+        
+        // Uncheck terms checkbox
+        const termsCheckbox = document.getElementById('terms-accepted');
+        if (termsCheckbox) {
+            termsCheckbox.checked = false;
+        }
+        
         if (datePicker) {
             datePicker.clearDate();
         }
