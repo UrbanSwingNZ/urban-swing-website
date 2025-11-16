@@ -7,6 +7,9 @@
 let paymentService = null;
 let rateService = null;
 let validationService = null;
+let prepaidClassesService = null;
+let uiController = null;
+let modalService = null;
 
 // Date picker instance
 let datePicker = null;
@@ -30,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
             await handleDateSelection(date);
         }
     });
+    
+    // Note: changeDatePicker will be initialized by modal-service with callbacks
 });
 
 /**
@@ -85,6 +90,9 @@ async function loadPrepayPage(studentId) {
     // Initialize services
     initializeServices();
     
+    // Load prepaid classes
+    await loadPrepaidClasses(studentId);
+    
     // Load casual rates
     await loadCasualRates();
 }
@@ -97,12 +105,47 @@ function initializeServices() {
     paymentService = new PaymentService();
     rateService = new RateService();
     validationService = new ValidationService();
+    prepaidClassesService = new PrepaidClassesService();
+    uiController = new UIController(rateService, validationService, paymentService);
+    modalService = new ModalService(prepaidClassesService, validationService);
+    
+    // Initialize modal service (will create its own changeDatePicker with callbacks)
+    modalService.initialize(null, currentStudentId, () => loadPrepaidClasses(currentStudentId));
     
     // Initialize Stripe payment
     paymentService.initialize('card-element', 'card-errors');
     
     // Setup form handlers
     setupFormHandlers();
+}
+
+/**
+ * Load prepaid classes for the student
+ */
+async function loadPrepaidClasses(studentId) {
+    try {
+        const prepaidClasses = await prepaidClassesService.loadPrepaidClasses(studentId);
+        prepaidClassesService.displayPrepaidClasses(prepaidClasses);
+        
+        // Update modal service with current student ID
+        if (modalService) {
+            modalService.setStudentId(studentId);
+        }
+        
+        // Attach event listeners to change date buttons
+        document.querySelectorAll('.btn-change-date').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const transactionId = btn.dataset.transactionId;
+                if (modalService) {
+                    modalService.show(transactionId);
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error loading prepaid classes:', error);
+        document.getElementById('prepaid-classes-section').style.display = 'none';
+    }
 }
 
 /**
@@ -118,159 +161,14 @@ async function loadCasualRates() {
         }
         
         // Populate radio buttons
-        populateRateOptions(rates);
+        uiController.populateRateOptions(rates);
+        
+        // Initial button state check after everything is loaded
+        updateSubmitButtonState();
         
     } catch (error) {
         console.error('Error loading casual rates:', error);
         showSnackbar('Failed to load entry types. Please try again.', 'error');
-    }
-}
-
-/**
- * Populate the rate radio buttons
- */
-function populateRateOptions(rates) {
-    const container = document.getElementById('entry-type-options');
-    
-    if (rates.length === 0) {
-        container.innerHTML = '<p class="loading-text">No entry types available</p>';
-        return;
-    }
-    
-    // Clear loading text
-    container.innerHTML = '';
-    
-    // Add radio options
-    rates.forEach((rate) => {
-        const option = document.createElement('div');
-        option.className = 'radio-option';
-        
-        // Check if this is the "Casual Entry" (default selection)
-        const isDefault = rate.name.toLowerCase() === 'casual entry';
-        if (isDefault) {
-            option.classList.add('selected');
-        }
-        
-        let optionHTML = `
-            <input 
-                type="radio" 
-                name="entry-type" 
-                id="rate-${rate.id}" 
-                value="${rate.id}"
-                data-rate='${JSON.stringify(rate)}'
-                ${isDefault ? 'checked' : ''}
-            >
-            <div class="radio-content">
-                <div class="radio-header">
-                    <span class="radio-title">
-                        ${escapeHtml(rate.name)}
-                        ${rate.isPromo ? '<span class="promo-badge">PROMO</span>' : ''}
-                    </span>
-                    <span class="radio-price">${formatCurrency(rate.price)}</span>
-                </div>
-        `;
-        
-        if (rate.description) {
-            optionHTML += `<p class="radio-description">${escapeHtml(rate.description)}</p>`;
-        }
-        
-        // Add student ID notice for student rates
-        if (rate.name.toLowerCase().includes('student')) {
-            optionHTML += `
-                <div class="radio-notice" style="display: none;">
-                    <i class="fas fa-id-card"></i>
-                    <p><strong>Note:</strong> You will be required to present a valid student ID when you arrive for class.</p>
-                </div>
-            `;
-        }
-        
-        optionHTML += `</div>`;
-        option.innerHTML = optionHTML;
-        
-        // Add click handler
-        option.addEventListener('click', () => {
-            const radio = option.querySelector('input[type="radio"]');
-            radio.checked = true;
-            handleRateSelection();
-            toggleStudentNotices();
-        });
-        
-        container.appendChild(option);
-    });
-    
-    // Set initial selection
-    const checkedRadio = container.querySelector('input[type="radio"]:checked');
-    if (checkedRadio) {
-        rateService.selectRate(checkedRadio.value);
-        updateSubmitButton();
-    }
-    
-    // Add change listeners to all radio buttons
-    container.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            handleRateSelection();
-            toggleStudentNotices();
-        });
-    });
-    
-    // Show notice for initially selected student rate
-    toggleStudentNotices();
-}
-
-/**
- * Toggle student ID notices based on selection
- */
-function toggleStudentNotices() {
-    document.querySelectorAll('.radio-notice').forEach(notice => {
-        const parentOption = notice.closest('.radio-option');
-        const parentRadio = parentOption.querySelector('input[type="radio"]');
-        
-        if (parentRadio.checked) {
-            notice.style.display = 'flex';
-            setTimeout(() => notice.classList.add('show'), 10);
-        } else {
-            notice.classList.remove('show');
-            setTimeout(() => notice.style.display = 'none', 300);
-        }
-    });
-}
-
-/**
- * Handle rate selection
- */
-function handleRateSelection() {
-    const selectedRadio = document.querySelector('input[name="entry-type"]:checked');
-    
-    if (!selectedRadio) {
-        rateService.clearSelection();
-        updateSubmitButton();
-        return;
-    }
-    
-    rateService.selectRate(selectedRadio.value);
-    const rateData = JSON.parse(selectedRadio.dataset.rate);
-    
-    // Update selected styling
-    document.querySelectorAll('.radio-option').forEach(opt => {
-        opt.classList.remove('selected');
-    });
-    selectedRadio.closest('.radio-option').classList.add('selected');
-    
-    // Update submit button
-    updateSubmitButton();
-}
-
-/**
- * Update submit button text based on selection
- */
-function updateSubmitButton() {
-    const submitText = document.getElementById('submit-text');
-    const selectedRate = rateService.getSelectedRate();
-    
-    if (selectedRate) {
-        submitText.innerHTML = `Pay ${formatCurrency(selectedRate.price)}`;
-    } else {
-        submitText.innerHTML = 'Pay Now';
     }
 }
 
@@ -290,6 +188,19 @@ async function handleDateSelection(date) {
         validation.isValid,
         validation.message
     );
+    
+    // Update submit button state
+    updateSubmitButtonState();
+}
+
+/**
+ * Update submit button state based on form completion
+ * This is a global function so it can be called from payment-service.js
+ */
+function updateSubmitButtonState() {
+    if (uiController) {
+        uiController.updateSubmitButtonState();
+    }
 }
 
 /**
@@ -365,12 +276,24 @@ async function processPayment(rate, classDate) {
             throw new Error(result.error);
         }
         
-        showSnackbar('Payment successful! Your class has been pre-paid.', 'success');
+        // Hide loading spinner first
+        showLoading(false);
         
-        // Redirect to dashboard after short delay
-        setTimeout(() => {
-            navigateTo('../dashboard/index.html');
-        }, 2000);
+        // Show success message
+        showSnackbar('Payment successful! Your class has been pre-paid.', 'success', 4000);
+        
+        // Reset form and reload prepaid classes
+        uiController.resetForm(datePicker);
+        
+        // Reload prepaid classes to show the new one
+        await loadPrepaidClasses(currentStudentId);
+        
+        // Re-enable submit button with correct state
+        submitBtn.disabled = false;
+        submitText.textContent = originalText;
+        
+        // Update button state to reflect empty form
+        updateSubmitButtonState();
         
     } catch (error) {
         console.error('Payment error:', error);
@@ -386,7 +309,7 @@ async function processPayment(rate, classDate) {
  */
 function handleCancel() {
     if (checkForChanges()) {
-        showCancelModal();
+        uiController.showCancelModal();
     } else {
         navigateTo('../dashboard/index.html');
     }
@@ -398,25 +321,4 @@ function handleCancel() {
 function checkForChanges() {
     const classDate = document.getElementById('class-date');
     return classDate.value.trim() !== '';
-}
-
-/**
- * Show cancel confirmation modal
- */
-function showCancelModal() {
-    const modal = document.getElementById('cancel-modal');
-    modal.style.display = 'flex';
-    
-    document.getElementById('cancel-modal-stay').onclick = closeCancelModal;
-    document.getElementById('cancel-modal-leave').onclick = () => {
-        navigateTo('../dashboard/index.html');
-    };
-}
-
-/**
- * Close cancel confirmation modal
- */
-function closeCancelModal() {
-    const modal = document.getElementById('cancel-modal');
-    modal.style.display = 'none';
 }
