@@ -17,6 +17,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     
     <!-- Stripe -->
     <script src="https://js.stripe.com/v3/"></script>
@@ -63,6 +64,24 @@
                     </a>
                 </div>
 
+                <!-- Prepaid Classes Section -->
+                <div id="prepaid-classes-section" class="prepaid-classes-section" style="display: none;">
+                    <div class="prepaid-classes-card">
+                        <div class="prepaid-header" id="prepaid-header">
+                            <div class="prepaid-header-content">
+                                <h3><i class="fas fa-ticket-alt"></i> Your Prepaid Classes</h3>
+                                <p class="prepaid-subtitle">You have prepaid for the following classes</p>
+                            </div>
+                            <button type="button" class="accordion-toggle" id="prepaid-accordion-toggle">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                        <div id="prepaid-classes-list" class="prepaid-classes-list">
+                            <!-- Prepaid classes will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
                 <div class="prepay-card">
                     <form id="prepay-form">
                         <!-- Class Information Section -->
@@ -83,7 +102,6 @@
                                         readonly
                                         placeholder="Click to select a Thursday"
                                     >
-                                    <i class="fas fa-calendar-alt date-input-icon"></i>
                                 </div>
                                 <div id="custom-calendar" class="custom-calendar" style="display: none;"></div>
                                 <p class="field-help">Select a Thursday - classes are only held on Thursdays</p>
@@ -174,6 +192,42 @@
         </div>
     </div>
 
+    <!-- Change Class Date Modal -->
+    <div id="change-date-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-alt"></i> Change Class Date</h3>
+            </div>
+            <div class="modal-body">
+                <p>Change the class date for your prepaid entry.</p>
+                <div class="form-group">
+                    <label for="new-class-date">
+                        <i class="fas fa-calendar-alt"></i> New Class Date
+                        <span class="required">*</span>
+                    </label>
+                    <div class="date-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="new-class-date" 
+                            required
+                            readonly
+                            placeholder="Click to select a Thursday"
+                        >
+                    </div>
+                    <div id="new-custom-calendar" class="custom-calendar" style="display: none;"></div>
+                    <p class="field-help">Select a Thursday - classes are only held on Thursdays</p>
+                    <div id="new-date-validation-message" class="validation-message" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="change-date-cancel">Cancel</button>
+                <button type="button" class="btn-primary" id="change-date-confirm" disabled>
+                    <i class="fas fa-check"></i> Confirm Change
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config -->
     <script src="../../config/firebase-config.js"></script>
     
@@ -191,6 +245,9 @@
     <script src="payment-service.js"></script>
     <script src="rate-service.js"></script>
     <script src="validation-service.js"></script>
+    <script src="prepaid-classes-service.js"></script>
+    <script src="ui-controller.js"></script>
+    <script src="modal-service.js"></script>
     
     <!-- Application Scripts -->
     <script src="../js/firebase-init.js"></script>

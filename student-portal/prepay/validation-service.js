@@ -160,7 +160,6 @@ class ValidationService {
     updateValidationUI(isValid, message, messageElementId = 'date-validation-message', 
                        submitButtonId = 'submit-btn', fieldHelpClass = 'field-help') {
         const messageEl = document.getElementById(messageElementId);
-        const submitBtn = document.getElementById(submitButtonId);
         const fieldHelp = document.querySelector(`.${fieldHelpClass}`);
         
         if (!messageEl) return;
@@ -173,26 +172,14 @@ class ValidationService {
             
             // Hide help text
             if (fieldHelp) fieldHelp.style.display = 'none';
-            
-            // Disable submit button
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.5';
-                submitBtn.style.cursor = 'not-allowed';
-            }
         } else {
             // Clear error message
             messageEl.style.display = 'none';
             
             // Show help text
             if (fieldHelp) fieldHelp.style.display = 'block';
-            
-            // Enable submit button
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.cursor = 'pointer';
-            }
         }
+        
+        // Don't directly control submit button - let updateSubmitButtonState handle it
     }
 }

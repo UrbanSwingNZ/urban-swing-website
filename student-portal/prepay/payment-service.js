@@ -8,6 +8,7 @@ class PaymentService {
         this.stripe = null;
         this.cardElement = null;
         this.initialized = false;
+        this.isCardComplete = false;
     }
     
     /**
@@ -55,12 +56,20 @@ class PaymentService {
             // Handle real-time validation errors
             const cardErrorsElement = document.getElementById(cardErrorsId);
             this.cardElement.on('change', (event) => {
+                // Track if card is complete
+                this.isCardComplete = event.complete;
+                
                 if (event.error) {
                     cardErrorsElement.textContent = event.error.message;
                     cardErrorsElement.style.display = 'block';
                 } else {
                     cardErrorsElement.textContent = '';
                     cardErrorsElement.style.display = 'none';
+                }
+                
+                // Trigger update of submit button state if function exists
+                if (typeof updateSubmitButtonState === 'function') {
+                    updateSubmitButtonState();
                 }
             });
             
@@ -248,6 +257,12 @@ class PaymentService {
     reset() {
         if (this.cardElement) {
             this.cardElement.clear();
+            this.isCardComplete = false;
+            
+            // Trigger update of submit button state if function exists
+            if (typeof updateSubmitButtonState === 'function') {
+                updateSubmitButtonState();
+            }
         }
     }
     
@@ -261,5 +276,6 @@ class PaymentService {
         }
         this.stripe = null;
         this.initialized = false;
+        this.isCardComplete = false;
     }
 }
