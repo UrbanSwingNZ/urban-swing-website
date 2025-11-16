@@ -258,6 +258,38 @@ input[type="text"]::placeholder {
     font-weight: normal;
 }
 
+/* Terms Acceptance */
+.terms-acceptance {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(154, 22, 245, 0.05);
+    border-left: 3px solid var(--admin-purple);
+    border-radius: 6px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 4px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkbox-text {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
 /* Form Actions */
 .form-actions {
     display: flex;
