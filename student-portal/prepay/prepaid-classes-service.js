@@ -112,9 +112,6 @@ class PrepaidClassesService {
         const classDayFormatted = this.formatDateDDMMYYYY(classDate);
         const purchaseDateFormatted = this.formatDateDDMMYYYY(purchaseDate);
         
-        // Determine entry type and badge class
-        const typeInfo = this.getEntryTypeInfo(classItem);
-        
         // Check if date can be edited (before 7pm on class date)
         const canEdit = this.canEditClassDate(classDate);
         
@@ -143,7 +140,6 @@ class PrepaidClassesService {
                 </div>
             </div>
             <div class="prepaid-class-badge">
-                <span class="type-badge ${typeInfo.badgeClass}">${typeInfo.typeName}</span>
                 ${changeDateButton}
             </div>
         `;
@@ -168,27 +164,6 @@ class PrepaidClassesService {
      * @param {Object} classItem - Prepaid class data
      * @returns {Object} - Type name and badge class
      */
-    getEntryTypeInfo(classItem) {
-        const entryType = classItem.entryType || classItem.type;
-        
-        if (entryType === 'casual-student') {
-            return {
-                typeName: 'Casual Student',
-                badgeClass: 'casual-student'
-            };
-        } else if (entryType === 'casual' || entryType === 'casual-entry') {
-            return {
-                typeName: 'Casual Entry',
-                badgeClass: 'casual'
-            };
-        } else {
-            return {
-                typeName: 'Casual Entry',
-                badgeClass: 'casual'
-            };
-        }
-    }
-    
     /**
      * Format month and year (e.g., "Nov 2025")
      * @param {Date} date - Date to format

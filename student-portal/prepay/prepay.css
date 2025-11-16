@@ -209,27 +209,6 @@
     font-size: 0.9rem;
 }
 
-/* Type Badges - matching transaction history page exactly */
-.type-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.type-badge.casual,
-.type-badge.casual-entry {
-    background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
-}
-
-.type-badge.casual-student {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
-}
-
 .btn-back {
     display: inline-flex;
     align-items: center;
