@@ -109,6 +109,19 @@ service cloud.firestore {
       
       // Students can read their own transactions
       allow read: if isStudent() && resource.data.studentId == getStudentId();
+      
+      // Students can update only the classDate field on their own casual transactions
+      // (for prepaid class date changes)
+      allow update: if isStudent() && 
+                       resource.data.studentId == getStudentId() &&
+                       // Only allow updating classDate
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['classDate']) &&
+                       // Must be a casual transaction
+                       resource.data.type in ['casual', 'casual-student', 'casual-entry'] &&
+                       // Transaction must not be reversed
+                       (!('reversed' in resource.data) || !resource.data.reversed) &&
+                       // Transaction must not be used for check-in
+                       (!('usedForCheckin' in resource.data) || !resource.data.usedForCheckin);
     }
     
     // Check-ins

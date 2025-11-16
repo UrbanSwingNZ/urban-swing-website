@@ -75,3 +75,10 @@ exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;
 exports.processCasualPayment = processCasualPayment;
 exports.processConcessionPurchase = processConcessionPurchase;
+
+// ========================================
+// TRANSACTION MANAGEMENT
+// ========================================
+const { updateClassDate } = require('./update-class-date');
+
+exports.updateClassDate = updateClassDate;
