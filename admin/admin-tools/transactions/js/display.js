@@ -65,9 +65,6 @@ function createTransactionRow(transaction) {
     // Add reversed badge if transaction is reversed
     const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
     
-    // Add online badge if transaction has stripeCustomerId
-    const onlineBadge = transaction.stripeCustomerId ? '<span class="type-badge online">Online</span> ' : '';
-    
     // Get payment badge HTML
     const paymentBadgeHTML = getPaymentBadgeHTML(transaction);
     
@@ -77,7 +74,7 @@ function createTransactionRow(transaction) {
     row.innerHTML = `
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
-        <td>${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span> ${onlineBadge}</td>
+        <td>${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
         <td>${classDateHTML}</td>
         <td class="amount-cell">${formatCurrency(transaction.amount)}</td>
         <td>${paymentBadgeHTML}</td>
