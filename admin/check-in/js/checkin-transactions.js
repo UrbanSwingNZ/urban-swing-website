@@ -171,18 +171,8 @@ function createCheckinTransactionRow(transaction) {
     // Add reversed badge if transaction is reversed
     const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
     
-    // Add online badge if transaction has stripeCustomerId
-    const onlineBadge = transaction.stripeCustomerId ? '<span class="type-badge online">Online</span> ' : '';
-    
-    // Determine payment method used
-    let paymentMethod = '';
-    if (transaction.cash > 0) {
-        paymentMethod = 'Cash';
-    } else if (transaction.eftpos > 0) {
-        paymentMethod = 'EFTPOS';
-    } else if (transaction.bankTransfer > 0) {
-        paymentMethod = 'Bank Transfer';
-    }
+    // Get payment badge HTML
+    const paymentBadgeHTML = getCheckinPaymentBadgeHTML(transaction);
     
     // Determine if delete button should be shown
     // Super admin can always delete, front desk can only delete today's transactions
@@ -191,20 +181,9 @@ function createCheckinTransactionRow(transaction) {
     row.innerHTML = `
         <td data-label="Date">${formatDate(transaction.date)}</td>
         <td data-label="Student"><strong>${escapeHtml(transaction.studentName)}</strong></td>
-        <td data-label="Type">${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span>${onlineBadge}</td>
+        <td data-label="Type">${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
         <td data-label="Amount" class="amount-cell">${formatCurrency(transaction.amount)}</td>
-        <td data-label="Cash" class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
-            ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}
-        </td>
-        <td data-label="EFTPOS" class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
-            ${transaction.eftpos > 0 ? formatCurrency(transaction.eftpos) : '-'}
-        </td>
-        <td data-label="Online" class="payment-amount ${transaction.online > 0 ? '' : 'empty'}">
-            ${transaction.online > 0 ? formatCurrency(transaction.online) : '-'}
-        </td>
-        <td data-label="Bank Transfer" class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
-            ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
-        </td>
+        <td data-label="Payment Method">${paymentBadgeHTML}</td>
         <td data-label="Actions">
             <div class="action-buttons">
                 ${isSuperAdmin() ? `<button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
@@ -268,6 +247,28 @@ function updateCheckinTransactionSummary(transactions) {
     document.getElementById('checkin-total-eftpos').textContent = formatCurrency(totalEftpos);
     document.getElementById('checkin-total-online').textContent = formatCurrency(totalOnline);
     document.getElementById('checkin-total-bank').textContent = formatCurrency(totalBank);
+}
+
+/**
+ * Get payment method badge HTML
+ */
+function getCheckinPaymentBadgeHTML(transaction) {
+    // Check if online payment first (has stripeCustomerId)
+    if (transaction.stripeCustomerId) {
+        return '<span class="payment-badge online"><i class="fas fa-globe"></i> Online</span>';
+    }
+    
+    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+    
+    if (paymentMethod === 'cash') {
+        return '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+    } else if (paymentMethod === 'eftpos') {
+        return '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+        return '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    } else {
+        return '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+    }
 }
 
 /**

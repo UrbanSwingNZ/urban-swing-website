@@ -51,9 +51,28 @@
         <main class="main-content">
             <!-- Filters Section -->
             <div class="filters-container">
-                <div class="filters-row">
+                <!-- Row 1: Filter Labels -->
+                <div class="filters-labels-row">
                     <div class="filter-group">
                         <label for="date-from"><i class="fas fa-calendar-alt"></i> From:</label>
+                    </div>
+                    <div class="filter-group">
+                        <label for="date-to"><i class="fas fa-calendar-alt"></i> To:</label>
+                    </div>
+                    <div class="filter-group">
+                        <label for="transaction-type"><i class="fas fa-filter"></i> Type:</label>
+                    </div>
+                    <div class="filter-group">
+                        <label for="payment-method-filter"><i class="fas fa-credit-card"></i> Payment Method:</label>
+                    </div>
+                    <div class="filter-group">
+                        <label for="student-filter"><i class="fas fa-user"></i> Student:</label>
+                    </div>
+                </div>
+                
+                <!-- Row 2: Filter Controls -->
+                <div class="filters-controls-row">
+                    <div class="filter-group">
                         <div class="date-input-wrapper">
                             <input type="text" id="date-from" class="filter-input" readonly placeholder="Select from date">
                             <i class="fas fa-calendar-alt date-input-icon"></i>
@@ -62,7 +81,6 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="date-to"><i class="fas fa-calendar-alt"></i> To:</label>
                         <div class="date-input-wrapper">
                             <input type="text" id="date-to" class="filter-input" readonly placeholder="Select to date">
                             <i class="fas fa-calendar-alt date-input-icon"></i>
@@ -71,7 +89,6 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="transaction-type"><i class="fas fa-filter"></i> Type:</label>
                         <select id="transaction-type" class="filter-input">
                             <option value="all">All Transactions</option>
                             <option value="concession-purchase">Concession Purchase</option>
@@ -81,30 +98,40 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="student-filter"><i class="fas fa-user"></i> Student:</label>
+                        <select id="payment-method-filter" class="filter-input">
+                            <option value="all">All Methods</option>
+                            <option value="cash">Cash</option>
+                            <option value="eftpos">EFTPOS</option>
+                            <option value="online">Online</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
                         <div class="student-filter-wrapper">
                             <input type="text" id="student-filter" class="filter-input" placeholder="All Students" autocomplete="off">
                             <button type="button" class="clear-student-btn" id="clear-student-filter" style="display: none;">&times;</button>
                             <div id="student-filter-results" class="student-filter-dropdown" style="display: none;"></div>
                         </div>
                     </div>
-                    
-                    <div class="filter-actions">
-                        <button id="apply-filters-btn" class="btn-primary">
-                            <i class="fas fa-search"></i> Apply Filters
-                        </button>
-                        <button id="reset-filters-btn" class="btn-secondary">
-                            <i class="fas fa-redo"></i> Reset
-                        </button>
-                        <div class="toggle-group">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="show-reversed-toggle">
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <label for="show-reversed-toggle" class="toggle-label">
-                                <i class="fas fa-undo"></i> Show Reversed
-                            </label>
-                        </div>
+                </div>
+                
+                <!-- Row 3: Action Buttons -->
+                <div class="filters-actions-row">
+                    <button id="apply-filters-btn" class="btn-primary">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    <button id="reset-filters-btn" class="btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                    <div class="toggle-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="show-reversed-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <label for="show-reversed-toggle" class="toggle-label">
+                            <i class="fas fa-undo"></i> Show Reversed
+                        </label>
                     </div>
                 </div>
                 
@@ -150,20 +177,14 @@
                             <th class="sortable" data-sort="type">
                                 Type <i class="fas fa-sort sort-icon"></i>
                             </th>
+                            <th class="sortable" data-sort="classDate">
+                                Date of Prepaid Class <i class="fas fa-sort sort-icon"></i>
+                            </th>
                             <th class="sortable align-right" data-sort="amount">
                                 Amount <i class="fas fa-sort sort-icon"></i>
                             </th>
-                            <th class="sortable align-right" data-sort="cash">
-                                Cash <i class="fas fa-sort sort-icon"></i>
-                            </th>
-                            <th class="sortable align-right" data-sort="eftpos">
-                                EFTPOS <i class="fas fa-sort sort-icon"></i>
-                            </th>
-                            <th class="sortable align-right" data-sort="online">
-                                Online <i class="fas fa-sort sort-icon"></i>
-                            </th>
-                            <th class="sortable align-right" data-sort="bank">
-                                Bank Transfer <i class="fas fa-sort sort-icon"></i>
+                            <th class="sortable" data-sort="payment">
+                                Payment Method <i class="fas fa-sort sort-icon"></i>
                             </th>
                             <th>Actions</th>
                         </tr>

@@ -6,7 +6,7 @@
 /**
  * Apply filters to transactions
  */
-function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed = false, studentId = null) {
+function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, paymentMethodFilter, showReversed = false, studentId = null) {
     return allTransactions.filter(transaction => {
         // Filter out reversed transactions unless showReversed is true
         if (!showReversed && transaction.reversed) {
@@ -32,6 +32,18 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, 
             if (typeFilter === 'concession-gift' && transaction.type !== 'concession-gift') return false;
             // Match all casual entry types: 'casual-entry', 'casual', 'casual-student'
             if (typeFilter === 'casual-entry' && !['casual-entry', 'casual', 'casual-student'].includes(transaction.type)) return false;
+        }
+        
+        // Payment method filter
+        if (paymentMethodFilter && paymentMethodFilter !== 'all') {
+            // Check if transaction is online (has stripeCustomerId)
+            if (paymentMethodFilter === 'online') {
+                if (!transaction.stripeCustomerId && transaction.paymentMethod !== 'stripe') return false;
+            } else {
+                // For other payment methods, check the paymentMethod field
+                const transactionPaymentMethod = transaction.paymentMethod?.toLowerCase().replace(/\s+/g, '-') || '';
+                if (transactionPaymentMethod !== paymentMethodFilter) return false;
+            }
         }
         
         // Student filter
