@@ -118,8 +118,12 @@
                 </div>
 
                 <!-- Password Section -->
-                <div class="password-section">
-                    <h3><i class="fas fa-lock"></i> Create Password</h3>
+                <div class="password-section accordion-section">
+                    <h3 class="accordion-header">
+                        <span><i class="fas fa-lock"></i> Create Password</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </h3>
+                    <div class="accordion-content">
                     
                     <!-- Password -->
                     <div class="form-group">
@@ -186,6 +190,7 @@
                             <small class="form-help">Save this password somewhere safe!</small>
                         </div>
                     </div>
+                    </div>
                 </div>
 
                 <!-- Age Confirmation -->
@@ -235,9 +240,26 @@
                     <small class="form-help">We'll only send occasional updates about classes and events</small>
                 </div>
 
+                <!-- Admin Notes (Only visible to admins) -->
+                <div class="form-group admin-only" id="admin-notes-group" style="display: none;">
+                    <label for="adminNotes">
+                        <i class="fas fa-sticky-note"></i> Admin Notes
+                    </label>
+                    <textarea 
+                        id="adminNotes" 
+                        name="adminNotes" 
+                        rows="3"
+                        placeholder="Internal notes (only visible to admin)"
+                    ></textarea>
+                </div>
+
                 <!-- Payment Section -->
-                <div class="payment-section">
-                    <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+                <div class="payment-section accordion-section">
+                    <h3 class="accordion-header">
+                        <span><i class="fas fa-credit-card"></i> Payment Information</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </h3>
+                    <div class="accordion-content">
                     
                     <!-- Payment Option Selection -->
                     <div class="form-group">
@@ -288,6 +310,7 @@
                         <i class="fas fa-shield-alt"></i>
                         <span>Your payment information is secure and encrypted. Powered by Stripe.</span>
                     </div>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -305,8 +328,18 @@
 
             <!-- Back to Login Link -->
             <div style="text-align: center; margin-top: 20px;">
-                <a href="index.html" class="back-link">
+                <a href="index.html" class="back-link" id="back-to-login">
                     <i class="fas fa-arrow-left"></i> Back to Login
+                </a>
+            </div>
+
+            <!-- Back to Admin Links (Only for admins) -->
+            <div class="admin-only" id="back-to-admin" style="display: none; text-align: center; margin-top: 20px;">
+                <a href="../admin/student-database/index.html" class="back-link" style="margin-right: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Student Database
+                </a>
+                <a href="../admin/check-in/index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Student Check In
                 </a>
             </div>
         </div>
