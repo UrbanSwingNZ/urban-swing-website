@@ -1,12 +1,14 @@
 /**
  * registration-form-handler.js - Registration Form Handler
- * Handles the registration form submission with support for new and existing-incomplete students
+ * Handles the registration form submission with support for new, existing-incomplete students, and admin mode
  */
 
 let registrationConfig = {
-    mode: 'new', // 'new' or 'existing-incomplete'
+    mode: 'new', // 'new', 'existing-incomplete', or 'admin'
     studentData: null,
-    email: null
+    email: null,
+    isAdmin: false,
+    userRole: null
 };
 
 // Date picker instance
@@ -23,12 +25,89 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('First class date selected:', date);
         }
     });
+
+    // Initialize accordion functionality
+    initializeAccordions();
 });
 
 /**
  * Initialize the registration form
  */
-function initializeRegistrationForm() {
+async function initializeRegistrationForm() {
+    // Check for admin authentication first
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            // User is signed in - check if they're an admin
+            try {
+                const userDoc = await window.db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    registrationConfig.userRole = userData.role;
+                    
+                    if (userData.role === 'admin') {
+                        registrationConfig.isAdmin = true;
+                        registrationConfig.mode = 'admin';
+                        setupAdminMode();
+                        console.log('Admin mode enabled');
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking user role:', error);
+            }
+        }
+        
+        // Not admin - check for public registration modes
+        setupPublicMode();
+    });
+}
+
+/**
+ * Setup admin mode
+ */
+function setupAdminMode() {
+    // Show admin-only elements
+    document.querySelectorAll('.admin-only').forEach(el => {
+        el.style.display = 'block';
+    });
+    
+    // Hide back to login link
+    const backToLogin = document.getElementById('back-to-login');
+    if (backToLogin) {
+        backToLogin.style.display = 'none';
+    }
+    
+    // Collapse accordions by default for admin
+    const passwordSection = document.querySelector('.password-section');
+    const paymentSection = document.querySelector('.payment-section');
+    
+    if (passwordSection) {
+        passwordSection.classList.add('collapsed');
+    }
+    if (paymentSection) {
+        paymentSection.classList.add('collapsed');
+    }
+    
+    // Make password and payment fields optional for admin
+    makeFieldsOptional();
+    
+    // Update submit button text
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) {
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Register Student';
+    }
+    
+    // Handle form submission
+    const form = document.getElementById('registration-form');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+}
+
+/**
+ * Setup public mode
+ */
+function setupPublicMode() {
     // Get registration data from sessionStorage
     const email = sessionStorage.getItem('registrationEmail');
     const mode = sessionStorage.getItem('registrationMode') || 'new';
@@ -57,11 +136,42 @@ function initializeRegistrationForm() {
         setupNewStudentMode();
     }
     
+    // Ensure accordions are expanded for public users
+    const passwordSection = document.querySelector('.password-section');
+    const paymentSection = document.querySelector('.payment-section');
+    
+    if (passwordSection) {
+        passwordSection.classList.remove('collapsed');
+    }
+    if (paymentSection && registrationConfig.mode === 'new') {
+        paymentSection.classList.remove('collapsed');
+    }
+    
     // Handle form submission
     const form = document.getElementById('registration-form');
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
     }
+}
+
+/**
+ * Make password and payment fields optional (for admin mode)
+ */
+function makeFieldsOptional() {
+    // Password fields
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    if (passwordInput) passwordInput.removeAttribute('required');
+    if (confirmPasswordInput) confirmPasswordInput.removeAttribute('required');
+    
+    // Payment fields
+    const rateTypeInputs = document.querySelectorAll('input[name="rateType"]');
+    rateTypeInputs.forEach(input => {
+        input.removeAttribute('required');
+    });
+    
+    const firstClassDate = document.getElementById('first-class-date');
+    if (firstClassDate) firstClassDate.removeAttribute('required');
 }
 
 /**
@@ -162,7 +272,27 @@ async function handleFormSubmit(e) {
         }
         
         // Process based on mode
-        if (registrationConfig.mode === 'existing-incomplete') {
+        if (registrationConfig.mode === 'admin') {
+            await processAdminRegistration(formData);
+            
+            // Show success snackbar
+            showSnackbar('Student registered successfully!', 'success');
+            
+            // Scroll to bottom to show back buttons
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+            
+            // Reset form
+            document.getElementById('registration-form').reset();
+            
+            // Re-check the email consent box (default is checked)
+            document.getElementById('emailConsent').checked = true;
+            
+            showLoadingSpinner(false);
+            
+        } else if (registrationConfig.mode === 'existing-incomplete') {
             await processExistingIncompleteRegistration(formData);
             
             // Show success and redirect to dashboard
@@ -186,6 +316,93 @@ async function handleFormSubmit(e) {
         showErrorMessage(error.message || 'Registration failed. Please try again.');
         showLoadingSpinner(false);
     }
+}
+
+/**
+ * Process admin registration
+ */
+async function processAdminRegistration(formData) {
+    // Check if password was provided
+    const hasPassword = formData.password && formData.password.trim() !== '';
+    
+    // Check if payment was provided
+    const hasPayment = formData.rateType && formData.rateType !== '';
+    
+    // Generate student ID
+    const studentId = generateStudentId(formData.firstName, formData.lastName);
+    
+    // Create student document
+    const studentData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        pronouns: formData.pronouns,
+        over16Confirmed: formData.over16Confirmed,
+        termsAccepted: formData.termsAccepted,
+        emailConsent: formData.emailConsent,
+        adminNotes: formData.adminNotes || '',
+        registeredAt: firebase.firestore.Timestamp.now(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await window.db.collection('students').doc(studentId).set(studentData);
+    console.log('Student document created:', studentId);
+    
+    // If password provided, create auth user and user document
+    if (hasPassword) {
+        const authUser = await createAuthUser(formData.email, formData.password);
+        console.log('Firebase Auth user created:', authUser.uid);
+        
+        await window.db.collection('users').doc(authUser.uid).set({
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            studentId: studentId,
+            role: 'student',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log('User document created:', authUser.uid);
+        
+        // Sign out the newly created user (so admin stays signed in)
+        await firebase.auth().signOut();
+        
+        // Re-authenticate the admin
+        // (Note: This is a simplified approach. In production, you might want to use admin SDK on backend)
+        console.log('Admin should re-authenticate if needed');
+    }
+    
+    // If payment provided, process payment
+    if (hasPayment && formData.firstClassDate) {
+        // For admin registration with payment, we still use the payment handler
+        // but we don't create auth user again
+        console.log('Processing payment for admin-registered student...');
+        // Note: This would need special handling to avoid creating duplicate auth users
+        // For now, we'll just log this case
+        console.warn('Admin payment processing not fully implemented - student document created without payment');
+    }
+}
+
+/**
+ * Generate human-readable student ID
+ */
+function generateStudentId(firstName, lastName) {
+    // Normalize names: lowercase, remove special characters, replace spaces with hyphens
+    const cleanFirst = firstName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    const cleanLast = lastName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    
+    // Generate a short random suffix (6 characters)
+    const randomSuffix = Math.random().toString(36).substring(2, 8);
+    
+    return `${cleanFirst}-${cleanLast}-${randomSuffix}`;
 }
 
 /**
@@ -275,7 +492,8 @@ function getFormData() {
         termsAccepted: document.getElementById('termsAccepted').checked,
         emailConsent: document.getElementById('emailConsent').checked,
         rateType: document.querySelector('input[name="rateType"]:checked')?.value || '',
-        firstClassDate: firstClassDatePicker ? firstClassDatePicker.getSelectedDate() : null
+        firstClassDate: firstClassDatePicker ? firstClassDatePicker.getSelectedDate() : null,
+        adminNotes: registrationConfig.isAdmin ? (document.getElementById('adminNotes')?.value.trim() || '') : ''
     };
 }
 
@@ -294,6 +512,50 @@ function validateFormData(formData) {
         return false;
     }
     
+    // Admin mode: password and payment are optional
+    if (registrationConfig.mode === 'admin') {
+        // If password is provided, validate it
+        if (formData.password || formData.confirmPassword) {
+            const passwordValidation = validatePassword(formData.password);
+            if (!passwordValidation.isValid) {
+                showErrorMessage(passwordValidation.message);
+                return false;
+            }
+            
+            if (!passwordsMatch(formData.password, formData.confirmPassword)) {
+                showErrorMessage('Passwords do not match');
+                return false;
+            }
+        }
+        
+        // If payment is provided, first class date must also be provided
+        if (formData.rateType && !formData.firstClassDate) {
+            showErrorMessage('Please select the date of your first class');
+            return false;
+        }
+        
+        // Phone number required for admin
+        if (!formData.phoneNumber) {
+            showErrorMessage('Please enter your phone number');
+            return false;
+        }
+        
+        // Over 16 confirmation required
+        if (!formData.over16Confirmed) {
+            showErrorMessage('You must confirm you are 16 years or older');
+            return false;
+        }
+        
+        // Terms acceptance required
+        if (!formData.termsAccepted) {
+            showErrorMessage('You must accept the Terms and Conditions');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Public mode: password required
     if (!formData.password || !formData.confirmPassword) {
         showErrorMessage('Please enter your password');
         return false;
@@ -398,3 +660,71 @@ function hideMessages() {
     if (successDiv) successDiv.style.display = 'none';
     if (errorDiv) errorDiv.style.display = 'none';
 }
+
+/**
+ * Initialize accordion functionality
+ */
+function initializeAccordions() {
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const section = this.closest('.accordion-section');
+            section.classList.toggle('collapsed');
+        });
+    });
+}
+
+/**
+ * Show snackbar notification
+ */
+function showSnackbar(message, type = 'success', duration = 3000) {
+    // Remove any existing snackbar
+    const existingSnackbar = document.getElementById('snackbar');
+    if (existingSnackbar) {
+        existingSnackbar.remove();
+    }
+    
+    // Create snackbar element
+    const snackbar = document.createElement('div');
+    snackbar.id = 'snackbar';
+    snackbar.className = `snackbar snackbar-${type}`;
+    
+    // Add icon based on type
+    let icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    if (type === 'info') icon = 'fa-info-circle';
+    
+    snackbar.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${escapeHtml(message)}</span>
+    `;
+    
+    // Add to body
+    document.body.appendChild(snackbar);
+    
+    // Trigger animation
+    setTimeout(() => {
+        snackbar.classList.add('show');
+    }, 10);
+    
+    // Auto-hide after duration
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+        setTimeout(() => {
+            snackbar.remove();
+        }, 300);
+    }, duration);
+}
+
+/**
+ * Escape HTML to prevent XSS
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+

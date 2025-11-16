@@ -7,7 +7,7 @@
  * Navigate to registration page
  */
 function navigateToRegister() {
-    window.location.href = '../../register.html';
+    window.location.href = '../../student-portal/register.html';
 }
 
 /**
