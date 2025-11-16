@@ -160,10 +160,11 @@ function applyFilters() {
     const dateTo = dateToInput ? formatDateToYYYYMMDD(parseDateFromInput(dateToInput)) : '';
     
     const typeFilter = document.getElementById('transaction-type').value;
+    const paymentMethodFilter = document.getElementById('payment-method-filter').value;
     const showReversed = document.getElementById('show-reversed-toggle').checked;
     const studentId = typeof getSelectedStudentId === 'function' ? getSelectedStudentId() : null;
     
-    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, showReversed, studentId);
+    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, paymentMethodFilter, showReversed, studentId);
     
     // Reset to first page when filters change
     setCurrentPage(1);
@@ -179,6 +180,7 @@ function applyFilters() {
 function resetFilters() {
     setDefaultDateRange();
     document.getElementById('transaction-type').value = 'all';
+    document.getElementById('payment-method-filter').value = 'all';
     document.getElementById('show-reversed-toggle').checked = false;
     
     // Clear student filter
