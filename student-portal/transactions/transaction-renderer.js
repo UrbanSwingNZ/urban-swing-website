@@ -144,7 +144,7 @@ class TransactionRenderer {
     getPaymentBadgeHTML(transaction) {
         // Check if online payment first (has stripeCustomerId)
         if (transaction.stripeCustomerId) {
-            return '<span class="payment-badge online">Online</span>';
+            return '<span class="payment-badge online"><i class="fas fa-globe"></i> Online</span>';
         }
         
         const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();

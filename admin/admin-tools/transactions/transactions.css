@@ -465,6 +465,52 @@ select.filter-input:focus {
     text-align: right;
 }
 
+/* Payment badges */
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.payment-badge i {
+    font-size: 0.9rem;
+}
+
+.payment-badge.cash {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.payment-badge.eftpos {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.payment-badge.online {
+    background: rgba(0, 150, 136, 0.1);
+    color: #00796b;
+}
+
+.payment-badge.bank {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+.payment-badge.unknown {
+    background: #f5f5f5;
+    color: #616161;
+}
+
+.na-text {
+    color: #999;
+    font-style: italic;
+}
+
 .payment-amount {
     font-weight: 500;
     color: var(--text-color);
