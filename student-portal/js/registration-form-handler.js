@@ -158,11 +158,7 @@ function setupPublicMode() {
  * Make password and payment fields optional (for admin mode)
  */
 function makeFieldsOptional() {
-    // Password fields
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    if (passwordInput) passwordInput.removeAttribute('required');
-    if (confirmPasswordInput) confirmPasswordInput.removeAttribute('required');
+    // Password fields - already optional in HTML now
     
     // Payment fields
     const rateTypeInputs = document.querySelectorAll('input[name="rateType"]');
@@ -436,6 +432,8 @@ async function processExistingIncompleteRegistration(formData) {
  * Process registration for new student
  */
 async function processNewStudentRegistration(formData) {
+    const hasPassword = formData.password && formData.password.trim() !== '';
+    
     // Step 1: Call backend Firebase Function to process payment and create documents
     // Backend creates: student document, transaction document
     // Backend also: processes Stripe payment, creates Stripe customer
@@ -457,23 +455,32 @@ async function processNewStudentRegistration(formData) {
     
     console.log('Payment successful. Documents created:', result);
     
-    // Step 2: Create Firebase Auth user (frontend)
-    const authUser = await createAuthUser(formData.email, formData.password);
-    console.log('Firebase Auth user created:', authUser.uid);
-    
-    // Step 3: Create user document with authUid as document ID
-    await window.db.collection('users').doc(authUser.uid).set({
-        email: formData.email,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        studentId: result.studentId,
-        role: 'student',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    console.log('User document created:', authUser.uid);
-    
-    // Step 4: Redirect to dashboard (user is now fully registered and signed in)
-    window.location.href = 'dashboard/index.html';
+    // Step 2: If password provided, create Firebase Auth user and user document
+    if (hasPassword) {
+        const authUser = await createAuthUser(formData.email, formData.password);
+        console.log('Firebase Auth user created:', authUser.uid);
+        
+        // Step 3: Create user document with authUid as document ID
+        await window.db.collection('users').doc(authUser.uid).set({
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            studentId: result.studentId,
+            role: 'student',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log('User document created:', authUser.uid);
+        
+        // Step 4: Redirect to dashboard (user is now fully registered and signed in)
+        window.location.href = 'dashboard/index.html';
+    } else {
+        // No password - just show success message and redirect to login
+        showSuccessMessage('Registration successful! You can create a student portal account later by logging in.');
+        
+        setTimeout(() => {
+            window.location.href = '../pages/classes.html';
+        }, 3000);
+    }
 }
 
 /**
@@ -512,66 +519,31 @@ function validateFormData(formData) {
         return false;
     }
     
-    // Admin mode: password and payment are optional
-    if (registrationConfig.mode === 'admin') {
-        // If password is provided, validate it
-        if (formData.password || formData.confirmPassword) {
-            const passwordValidation = validatePassword(formData.password);
-            if (!passwordValidation.isValid) {
-                showErrorMessage(passwordValidation.message);
-                return false;
-            }
-            
-            if (!passwordsMatch(formData.password, formData.confirmPassword)) {
-                showErrorMessage('Passwords do not match');
-                return false;
-            }
-        }
-        
-        // If payment is provided, first class date must also be provided
-        if (formData.rateType && !formData.firstClassDate) {
-            showErrorMessage('Please select the date of your first class');
-            return false;
-        }
-        
-        // Phone number required for admin
-        if (!formData.phoneNumber) {
-            showErrorMessage('Please enter your phone number');
-            return false;
-        }
-        
-        // Over 16 confirmation required
-        if (!formData.over16Confirmed) {
-            showErrorMessage('You must confirm you are 16 years or older');
-            return false;
-        }
-        
-        // Terms acceptance required
-        if (!formData.termsAccepted) {
-            showErrorMessage('You must accept the Terms and Conditions');
-            return false;
-        }
-        
-        return true;
-    }
+    // Password validation - if either field has content, both must be valid
+    const hasPassword = formData.password && formData.password.trim() !== '';
+    const hasConfirmPassword = formData.confirmPassword && formData.confirmPassword.trim() !== '';
     
-    // Public mode: password required
-    if (!formData.password || !formData.confirmPassword) {
-        showErrorMessage('Please enter your password');
-        return false;
-    }
-    
-    // Password validation
-    const passwordValidation = validatePassword(formData.password);
-    if (!passwordValidation.isValid) {
-        showErrorMessage(passwordValidation.message);
-        return false;
-    }
-    
-    // Password match validation
-    if (!passwordsMatch(formData.password, formData.confirmPassword)) {
-        showErrorMessage('Passwords do not match');
-        return false;
+    if (hasPassword || hasConfirmPassword) {
+        if (!hasPassword) {
+            showErrorMessage('Please enter a password');
+            return false;
+        }
+        
+        if (!hasConfirmPassword) {
+            showErrorMessage('Please confirm your password');
+            return false;
+        }
+        
+        const passwordValidation = validatePassword(formData.password);
+        if (!passwordValidation.isValid) {
+            showErrorMessage(passwordValidation.message);
+            return false;
+        }
+        
+        if (!passwordsMatch(formData.password, formData.confirmPassword)) {
+            showErrorMessage('Passwords do not match');
+            return false;
+        }
     }
     
     // Terms acceptance
@@ -581,6 +553,29 @@ function validateFormData(formData) {
     }
     
     // Mode-specific validation
+    if (registrationConfig.mode === 'admin') {
+        // Phone number required for admin
+        if (!formData.phoneNumber) {
+            showErrorMessage('Please enter a phone number');
+            return false;
+        }
+        
+        // Over 16 confirmation required
+        if (!formData.over16Confirmed) {
+            showErrorMessage('You must confirm the student is 16 years or older');
+            return false;
+        }
+        
+        // If payment is provided, first class date must also be provided
+        if (formData.rateType && !formData.firstClassDate) {
+            showErrorMessage('Please select the date of the first class');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Public mode validation
     if (registrationConfig.mode === 'new') {
         if (!formData.phoneNumber) {
             showErrorMessage('Please enter your phone number');
