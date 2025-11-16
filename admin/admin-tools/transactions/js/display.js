@@ -68,26 +68,19 @@ function createTransactionRow(transaction) {
     // Add online badge if transaction has stripeCustomerId
     const onlineBadge = transaction.stripeCustomerId ? '<span class="type-badge online">Online</span> ' : '';
     
-    // Calculate online amount (stripe payments)
-    const onlineAmount = transaction.paymentMethod === 'stripe' ? transaction.amount : 0;
+    // Get payment badge HTML
+    const paymentBadgeHTML = getPaymentBadgeHTML(transaction);
+    
+    // Get class date for casual online purchases
+    const classDateHTML = getClassDateHTML(transaction);
     
     row.innerHTML = `
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
         <td>${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span> ${onlineBadge}</td>
+        <td>${classDateHTML}</td>
         <td class="amount-cell">${formatCurrency(transaction.amount)}</td>
-        <td class="payment-amount ${transaction.cash > 0 ? '' : 'empty'}">
-            ${transaction.cash > 0 ? formatCurrency(transaction.cash) : '-'}
-        </td>
-        <td class="payment-amount ${transaction.eftpos > 0 ? '' : 'empty'}">
-            ${transaction.eftpos > 0 ? formatCurrency(transaction.eftpos) : '-'}
-        </td>
-        <td class="payment-amount ${onlineAmount > 0 ? '' : 'empty'}">
-            ${onlineAmount > 0 ? formatCurrency(onlineAmount) : '-'}
-        </td>
-        <td class="payment-amount ${transaction.bankTransfer > 0 ? '' : 'empty'}">
-            ${transaction.bankTransfer > 0 ? formatCurrency(transaction.bankTransfer) : '-'}
-        </td>
+        <td>${paymentBadgeHTML}</td>
         <td>
             <div class="action-buttons">
                 ${isSuperAdmin() ? `<button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
@@ -144,6 +137,44 @@ function updateSummaryDisplay(summary) {
     document.getElementById('total-eftpos').textContent = formatCurrency(summary.totalEftpos);
     document.getElementById('total-online').textContent = formatCurrency(summary.totalOnline);
     document.getElementById('total-bank').textContent = formatCurrency(summary.totalBank);
+}
+
+/**
+ * Get payment method badge HTML
+ */
+function getPaymentBadgeHTML(transaction) {
+    // Check if online payment first (has stripeCustomerId)
+    if (transaction.stripeCustomerId) {
+        return '<span class="payment-badge online"><i class="fas fa-globe"></i> Online</span>';
+    }
+    
+    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+    
+    if (paymentMethod === 'cash') {
+        return '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+    } else if (paymentMethod === 'eftpos') {
+        return '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+    } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
+        return '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    } else {
+        return '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+    }
+}
+
+/**
+ * Get class date HTML for casual online purchases
+ */
+function getClassDateHTML(transaction) {
+    // Only show class date for casual transactions with online payment
+    const isCasual = ['casual', 'casual-student', 'casual-entry'].includes(transaction.type);
+    const isOnline = transaction.stripeCustomerId || transaction.paymentMethod === 'online';
+    
+    if (isCasual && isOnline && transaction.rawData && transaction.rawData.classDate) {
+        const classDate = transaction.rawData.classDate?.toDate ? transaction.rawData.classDate.toDate() : new Date();
+        return formatDate(classDate);
+    } else {
+        return '<span class="na-text">N/A</span>';
+    }
 }
 
 /**
