@@ -27,6 +27,8 @@ class DatePicker {
         this.calendarId = calendarId;
         this.options = {
             onDateSelected: options.onDateSelected || null,
+            onCalendarOpen: options.onCalendarOpen || null,
+            onCalendarClose: options.onCalendarClose || null,
             allowedDays: options.allowedDays || [4], // Default to Thursday only
             disablePastDates: options.disablePastDates !== undefined ? options.disablePastDates : true,
             dateFormat: options.dateFormat || { year: 'numeric', month: 'short', day: 'numeric' },
@@ -70,12 +72,23 @@ class DatePicker {
         this.dateInput.addEventListener('click', () => {
             this.calendar.style.display = 'block';
             this.renderCalendar();
+            
+            // Trigger callback if provided
+            if (this.options.onCalendarOpen) {
+                this.options.onCalendarOpen();
+            }
         });
         
         // Close calendar when clicking outside
         document.addEventListener('click', (e) => {
             if (!this.dateInput.contains(e.target) && !this.calendar.contains(e.target)) {
+                const wasVisible = this.calendar.style.display === 'block';
                 this.calendar.style.display = 'none';
+                
+                // Trigger callback if calendar was visible and is now closing
+                if (wasVisible && this.options.onCalendarClose) {
+                    this.options.onCalendarClose();
+                }
             }
         });
     }

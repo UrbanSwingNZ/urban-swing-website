@@ -9,6 +9,7 @@ let rateService = null;
 let validationService = null;
 let prepaidClassesService = null;
 let uiController = null;
+let modalService = null;
 
 // Date picker instance
 let datePicker = null;
@@ -32,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
             await handleDateSelection(date);
         }
     });
+    
+    // Note: changeDatePicker will be initialized by modal-service with callbacks
 });
 
 /**
@@ -104,6 +107,10 @@ function initializeServices() {
     validationService = new ValidationService();
     prepaidClassesService = new PrepaidClassesService();
     uiController = new UIController(rateService, validationService, paymentService);
+    modalService = new ModalService(prepaidClassesService, validationService);
+    
+    // Initialize modal service (will create its own changeDatePicker with callbacks)
+    modalService.initialize(null, currentStudentId, () => loadPrepaidClasses(currentStudentId));
     
     // Initialize Stripe payment
     paymentService.initialize('card-element', 'card-errors');
@@ -119,9 +126,24 @@ async function loadPrepaidClasses(studentId) {
     try {
         const prepaidClasses = await prepaidClassesService.loadPrepaidClasses(studentId);
         prepaidClassesService.displayPrepaidClasses(prepaidClasses);
+        
+        // Update modal service with current student ID
+        if (modalService) {
+            modalService.setStudentId(studentId);
+        }
+        
+        // Attach event listeners to change date buttons
+        document.querySelectorAll('.btn-change-date').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const transactionId = btn.dataset.transactionId;
+                if (modalService) {
+                    modalService.show(transactionId);
+                }
+            });
+        });
     } catch (error) {
         console.error('Error loading prepaid classes:', error);
-        // Don't show error to user - just hide the section
         document.getElementById('prepaid-classes-section').style.display = 'none';
     }
 }
