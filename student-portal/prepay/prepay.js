@@ -212,6 +212,12 @@ function setupFormHandlers() {
     
     // Cancel button
     document.getElementById('cancel-btn').addEventListener('click', handleCancel);
+    
+    // Terms checkbox
+    const termsCheckbox = document.getElementById('terms-accepted');
+    if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', updateSubmitButtonState);
+    }
 }
 
 /**
