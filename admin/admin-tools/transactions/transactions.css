@@ -50,19 +50,35 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.filters-row {
-    display: flex;
-    flex-wrap: wrap;
+/* Filter Labels Row */
+.filters-labels-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
-    align-items: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+/* Filter Controls Row */
+.filters-controls-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Filter Actions Row */
+.filters-actions-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    min-width: 200px;
+    gap: 0;
 }
 
 .filter-group label {
@@ -194,13 +210,6 @@ select.filter-input:focus {
 .student-filter-item small {
     color: var(--text-muted);
     font-size: 0.85rem;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-    align-items: center;
 }
 
 /* Toggle Switch Styles */
@@ -404,12 +413,6 @@ select.filter-input:focus {
 .type-badge.gift {
     background: rgba(76, 175, 80, 0.1);
     color: #2e7d32;
-}
-
-.type-badge.online {
-    background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
-    margin-left: 5px;
 }
 
 .type-badge.cash {
