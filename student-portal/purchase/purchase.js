@@ -107,6 +107,9 @@ async function loadConcessionPackages() {
         // Populate dropdown
         populatePackageDropdown(packages);
         
+        // Set initial button state (should be disabled)
+        updateSubmitButtonState();
+        
     } catch (error) {
         console.error('Error loading concession packages:', error);
         showSnackbar('Failed to load concession packages. Please try again.', 'error');
@@ -147,6 +150,7 @@ function handlePackageSelection(event) {
         packageService.clearSelection();
         document.getElementById('package-details').style.display = 'none';
         updateSubmitButton();
+        updateSubmitButtonState();
         return;
     }
     
@@ -163,8 +167,9 @@ function handlePackageSelection(event) {
     descriptionSpan.textContent = packageService.formatPackageDescription(pkg);
     detailsDiv.style.display = 'block';
     
-    // Update submit button text
+    // Update submit button text and state
     updateSubmitButton();
+    updateSubmitButtonState();
 }
 
 /**
@@ -182,6 +187,27 @@ function updateSubmitButton() {
 }
 
 /**
+ * Update submit button state based on form completion
+ */
+function updateSubmitButtonState() {
+    const submitBtn = document.getElementById('submit-btn');
+    const selectedPackage = packageService.getSelectedPackage();
+    const termsCheckbox = document.getElementById('terms-accepted');
+    
+    // Check if all required fields are filled
+    const hasPackage = selectedPackage !== null;
+    const hasValidCard = paymentService && paymentService.cardElement && paymentService.isCardComplete;
+    const hasAcceptedTerms = termsCheckbox && termsCheckbox.checked;
+    
+    // Enable button only if all conditions are met
+    if (hasPackage && hasValidCard && hasAcceptedTerms) {
+        submitBtn.disabled = false;
+    } else {
+        submitBtn.disabled = true;
+    }
+}
+
+/**
  * Setup form event handlers
  */
 function setupFormHandlers() {
@@ -190,6 +216,12 @@ function setupFormHandlers() {
     
     // Cancel button
     document.getElementById('cancel-btn').addEventListener('click', handleCancel);
+    
+    // Terms checkbox
+    const termsCheckbox = document.getElementById('terms-accepted');
+    if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', updateSubmitButtonState);
+    }
 }
 
 /**
