@@ -70,6 +70,11 @@ function setupPublicMode() {
     sessionStorage.removeItem('registrationMode');
     sessionStorage.removeItem('registrationStudentData');
     
+    // Show public-only elements (like create portal account checkbox)
+    document.querySelectorAll('.public-only').forEach(el => {
+        el.style.display = 'block';
+    });
+    
     // Configure form based on mode
     if (mode === 'existing-incomplete') {
         setupExistingIncompleteMode();
@@ -77,16 +82,50 @@ function setupPublicMode() {
         setupNewStudentMode();
     }
     
-    // Ensure accordions are expanded for public users
+    // For new students, hide password section by default
+    // It will be shown when they check "Create portal account"
+    if (mode === 'new') {
+        const passwordSection = document.querySelector('.password-section');
+        if (passwordSection) {
+            passwordSection.style.display = 'none';
+        }
+        
+        // Setup checkbox listener
+        setupCreatePortalAccountCheckbox();
+        
+        // Payment section should be expanded for new students
+        const paymentSection = document.querySelector('.payment-section');
+        if (paymentSection) {
+            paymentSection.classList.remove('collapsed');
+        }
+    }
+}
+
+/**
+ * Setup create portal account checkbox listener
+ */
+function setupCreatePortalAccountCheckbox() {
+    const checkbox = document.getElementById('createPortalAccount');
     const passwordSection = document.querySelector('.password-section');
-    const paymentSection = document.querySelector('.payment-section');
     
-    if (passwordSection) {
-        passwordSection.classList.remove('collapsed');
+    if (!checkbox || !passwordSection) {
+        return;
     }
-    if (paymentSection && mode === 'new') {
-        paymentSection.classList.remove('collapsed');
-    }
+    
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Show password section
+            passwordSection.style.display = 'block';
+            // Expand it
+            passwordSection.classList.remove('collapsed');
+        } else {
+            // Hide password section
+            passwordSection.style.display = 'none';
+            // Clear password fields
+            document.getElementById('password').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+    });
 }
 
 /**
@@ -124,6 +163,19 @@ function setupExistingIncompleteMode() {
         rateTypeInputs.forEach(input => {
             input.required = false;
         });
+    }
+    
+    // Hide create portal account checkbox (they must create account)
+    const createPortalAccountGroup = document.getElementById('create-portal-account-group');
+    if (createPortalAccountGroup) {
+        createPortalAccountGroup.style.display = 'none';
+    }
+    
+    // Show password section (they need to create their password)
+    const passwordSection = document.querySelector('.password-section');
+    if (passwordSection) {
+        passwordSection.style.display = 'block';
+        passwordSection.classList.remove('collapsed');
     }
     
     // Pre-check over16Confirmed and emailConsent if they exist in student data
