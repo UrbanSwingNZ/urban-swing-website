@@ -184,6 +184,57 @@ h1 {
     color: #8512d6;
 }
 
+/* Portal Info Section */
+.portal-info {
+    background: var(--bg-light);
+    border-left: 4px solid var(--admin-purple);
+    padding: 16px;
+    margin-top: 12px;
+    border-radius: 4px;
+}
+
+.portal-info p {
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+}
+
+.portal-info p:first-child {
+    font-weight: 600;
+    color: var(--admin-purple);
+    margin-bottom: 12px;
+}
+
+.portal-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.portal-info ul li {
+    padding: 6px 0;
+    color: var(--text-color);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.portal-info ul li i {
+    color: var(--admin-purple);
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.portal-info-note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 12px !important;
+}
+
+.portal-info-note i {
+    color: var(--admin-blue);
+}
+
 /* Payment Section */
 .payment-section {
     background: var(--bg-light);
@@ -800,3 +851,114 @@ h1 {
         font-size: 0.95rem;
     }
 }
+
+/* Accordion Styles */
+.accordion-section .accordion-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.accordion-section .accordion-header:hover {
+    opacity: 0.8;
+}
+
+.accordion-icon {
+    transition: transform 0.3s ease;
+    font-size: 1rem;
+}
+
+.accordion-section.collapsed .accordion-icon {
+    transform: rotate(-90deg);
+}
+
+.accordion-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+    padding-top: 4px;
+}
+
+.accordion-section.collapsed .accordion-content {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.accordion-section.collapsed {
+    padding-bottom: 16px;
+}
+
+/* Admin Only Elements */
+.admin-only {
+    display: none;
+}
+
+/* Admin Notes Textarea */
+#adminNotes {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: var(--input-bg);
+    font-family: inherit;
+    resize: vertical;
+}
+
+#adminNotes:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+/* Snackbar */
+.snackbar {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: bottom 0.3s ease;
+    max-width: 90%;
+}
+
+.snackbar.show {
+    bottom: 30px;
+}
+
+.snackbar-success {
+    background: #4caf50;
+}
+
+.snackbar-error {
+    background: #dc3545;
+}
+
+.snackbar-warning {
+    background: #ff9800;
+}
+
+.snackbar-info {
+    background: #2196f3;
+}
+
+.snackbar i {
+    font-size: 1.2rem;
+}
+

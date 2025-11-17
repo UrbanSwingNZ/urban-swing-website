@@ -57,7 +57,30 @@ document.addEventListener('DOMContentLoaded', function() {
         loginBtn.textContent = 'Logging in...';
         
         try {
-            // Sign in with Firebase Auth
+            // First, check if email exists in students collection
+            const normalizedEmail = email.toLowerCase().trim();
+            const studentsQuery = await firebase.firestore().collection('students')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get();
+            
+            if (studentsQuery.empty) {
+                // Email not found in students collection
+                throw new Error('Email address not found.');
+            }
+            
+            // Email exists in students - now check if they have a users document
+            const usersQuery = await firebase.firestore().collection('users')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get();
+            
+            if (usersQuery.empty) {
+                // Student exists but no user account
+                throw new Error('Email address not registered for student portal.');
+            }
+            
+            // Both student and user exist - now try to sign in (password check)
             const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
             console.log('Login successful:', userCredential.user.uid);
             
@@ -91,8 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show user-friendly error messages
             let errorMessage = 'Login failed. Please try again.';
             
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                errorMessage = 'Invalid email or password';
+            // Check for custom error messages first
+            if (error.message === 'Email address not found.' || 
+                error.message === 'Email address not registered for student portal.') {
+                errorMessage = error.message;
+            } else if (error.code === 'auth/invalid-login-credentials' || 
+                       error.code === 'auth/wrong-password') {
+                // Password is wrong (student and user exist, but wrong password)
+                errorMessage = 'Invalid password. Please try again.';
+            } else if (error.code === 'auth/user-not-found') {
+                // This shouldn't happen since we checked above, but handle it
+                errorMessage = 'Email address not found.';
             } else if (error.code === 'auth/invalid-email') {
                 errorMessage = 'Invalid email address';
             } else if (error.code === 'auth/user-disabled') {
@@ -100,7 +132,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorMessage = 'No account found with this email address';
             } else if (error.code === 'auth/too-many-requests') {
                 errorMessage = 'Too many failed attempts. Please try again later.';
-            } else if (error.message) {
+            } else if (error.message && !error.code) {
+                // Custom error messages (like from our checks above)
                 errorMessage = error.message;
             }
             

@@ -117,14 +117,44 @@
                     <small class="form-help">Optional - helps us address you correctly</small>
                 </div>
 
+                <!-- Create Portal Account Checkbox (Only visible to public users) -->
+                <div class="form-group checkbox-group public-only" id="create-portal-account-group" style="display: none;">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="createPortalAccount" 
+                            name="createPortalAccount"
+                        >
+                        <span>
+                            <i class="fas fa-user-circle"></i> Create a student portal account
+                        </span>
+                    </label>
+                    <div class="portal-info">
+                        <p><strong>What is the student portal?</strong></p>
+                        <p>The student portal allows you to:</p>
+                        <ul>
+                            <li><i class="fas fa-calendar-check"></i> View your class check-ins and attendance history</li>
+                            <li><i class="fas fa-ticket-alt"></i> Manage your concessions and class packages</li>
+                            <li><i class="fas fa-credit-card"></i> Pre-pay for upcoming classes</li>
+                            <li><i class="fas fa-receipt"></i> Access your transaction history and receipts</li>
+                            <li><i class="fas fa-user-edit"></i> Update your profile information</li>
+                        </ul>
+                        <p class="portal-info-note"><i class="fas fa-info-circle"></i> You can always create a portal account later if you prefer.</p>
+                    </div>
+                </div>
+
                 <!-- Password Section -->
-                <div class="password-section">
-                    <h3><i class="fas fa-lock"></i> Create Password</h3>
+                <div class="password-section accordion-section">
+                    <h3 class="accordion-header">
+                        <span><i class="fas fa-lock"></i> Create Password</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </h3>
+                    <div class="accordion-content">
                     
                     <!-- Password -->
                     <div class="form-group">
                         <label for="password">
-                            <i class="fas fa-key"></i> Password <span class="required">*</span>
+                            <i class="fas fa-key"></i> Password
                         </label>
                         <div class="password-input-wrapper">
                             <input 
@@ -132,7 +162,6 @@
                                 id="password" 
                                 name="password" 
                                 placeholder="At least 8 characters" 
-                                required
                                 autocomplete="new-password"
                             >
                             <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password">
@@ -145,7 +174,7 @@
                     <!-- Confirm Password -->
                     <div class="form-group">
                         <label for="confirmPassword">
-                            <i class="fas fa-key"></i> Confirm Password <span class="required">*</span>
+                            <i class="fas fa-key"></i> Confirm Password
                         </label>
                         <div class="password-input-wrapper">
                             <input 
@@ -153,13 +182,13 @@
                                 id="confirmPassword" 
                                 name="confirmPassword" 
                                 placeholder="Re-enter your password" 
-                                required
                                 autocomplete="new-password"
                             >
                             <button type="button" class="password-toggle" id="confirm-password-toggle" aria-label="Show password">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
+                        <small class="form-help">Leave blank if you don't want to create a student portal account yet</small>
                     </div>
 
                     <!-- Generate Password Helper -->
@@ -185,6 +214,7 @@
                             </div>
                             <small class="form-help">Save this password somewhere safe!</small>
                         </div>
+                    </div>
                     </div>
                 </div>
 
@@ -235,9 +265,26 @@
                     <small class="form-help">We'll only send occasional updates about classes and events</small>
                 </div>
 
+                <!-- Admin Notes (Only visible to admins) -->
+                <div class="form-group admin-only" id="admin-notes-group" style="display: none;">
+                    <label for="adminNotes">
+                        <i class="fas fa-sticky-note"></i> Admin Notes
+                    </label>
+                    <textarea 
+                        id="adminNotes" 
+                        name="adminNotes" 
+                        rows="3"
+                        placeholder="Internal notes (only visible to admin)"
+                    ></textarea>
+                </div>
+
                 <!-- Payment Section -->
-                <div class="payment-section">
-                    <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+                <div class="payment-section accordion-section">
+                    <h3 class="accordion-header">
+                        <span><i class="fas fa-credit-card"></i> Payment Information</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </h3>
+                    <div class="accordion-content">
                     
                     <!-- Payment Option Selection -->
                     <div class="form-group">
@@ -288,6 +335,7 @@
                         <i class="fas fa-shield-alt"></i>
                         <span>Your payment information is secure and encrypted. Powered by Stripe.</span>
                     </div>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -305,8 +353,18 @@
 
             <!-- Back to Login Link -->
             <div style="text-align: center; margin-top: 20px;">
-                <a href="index.html" class="back-link">
+                <a href="index.html" class="back-link" id="back-to-login">
                     <i class="fas fa-arrow-left"></i> Back to Login
+                </a>
+            </div>
+
+            <!-- Back to Admin Links (Only for admins) -->
+            <div class="admin-only" id="back-to-admin" style="display: none; text-align: center; margin-top: 20px;">
+                <a href="../admin/student-database/index.html" class="back-link" style="margin-right: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Student Database
+                </a>
+                <a href="../admin/check-in/index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Student Check In
                 </a>
             </div>
         </div>
@@ -375,6 +433,13 @@
     <script src="js/stripe/payment-handler.js"></script>
     <script src="js/ui/terms-modal.js"></script>
     <script src="js/ui/password-ui.js"></script>
-    <script src="js/registration-form-handler.js"></script>
+    
+    <!-- Registration Module Scripts -->
+    <script src="js/registration/config.js"></script>
+    <script src="js/registration/ui-helpers.js"></script>
+    <script src="js/registration/validation.js"></script>
+    <script src="js/registration/mode-setup.js"></script>
+    <script src="js/registration/processors.js"></script>
+    <script src="js/registration/form-handler.js"></script>
 </body>
 </html>
