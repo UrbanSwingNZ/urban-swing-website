@@ -184,6 +184,57 @@ h1 {
     color: #8512d6;
 }
 
+/* Portal Info Section */
+.portal-info {
+    background: var(--bg-light);
+    border-left: 4px solid var(--admin-purple);
+    padding: 16px;
+    margin-top: 12px;
+    border-radius: 4px;
+}
+
+.portal-info p {
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+}
+
+.portal-info p:first-child {
+    font-weight: 600;
+    color: var(--admin-purple);
+    margin-bottom: 12px;
+}
+
+.portal-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.portal-info ul li {
+    padding: 6px 0;
+    color: var(--text-color);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.portal-info ul li i {
+    color: var(--admin-purple);
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.portal-info-note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 12px !important;
+}
+
+.portal-info-note i {
+    color: var(--admin-blue);
+}
+
 /* Payment Section */
 .payment-section {
     background: var(--bg-light);
