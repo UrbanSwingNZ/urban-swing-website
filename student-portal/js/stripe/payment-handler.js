@@ -295,6 +295,12 @@ function showError(message) {
     }
 }
 
+// Expose functions for use in registration processors
+window.paymentHandler = {
+    createPaymentMethod,
+    getSelectedPackageId: () => selectedPackageId
+};
+
 // Initialize Stripe when DOM is ready and Firebase is initialized
 document.addEventListener('DOMContentLoaded', function() {
     // Wait for Firebase to be initialized

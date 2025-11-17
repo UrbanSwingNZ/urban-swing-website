@@ -28,16 +28,77 @@ async function processAdminRegistration(formData) {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
-    await window.db.collection('students').doc(studentId).set(studentData);
-    console.log('Student document created:', studentId);
-    
     // Note: Admin users cannot create portal accounts directly to avoid logout issues
     // Students can create their own portal accounts by visiting the student portal
     
-    // If payment provided, process payment
+    // If payment provided, process payment and create transaction
     if (hasPayment && formData.firstClassDate) {
         console.log('Processing payment for admin-registered student...');
-        console.warn('Admin payment processing not fully implemented - student document created without payment');
+        
+        // Get selected package ID from payment handler
+        const selectedPackageId = window.paymentHandler.getSelectedPackageId();
+        if (!selectedPackageId) {
+            throw new Error('Please select a payment option');
+        }
+        
+        // Create payment method from card element
+        const paymentMethodId = await window.paymentHandler.createPaymentMethod();
+        if (!paymentMethodId) {
+            throw new Error('Failed to create payment method');
+        }
+        
+        // Call the same Firebase function that handles new student payments
+        const functionUrl = 'https://us-central1-directed-curve-447204-j4.cloudfunctions.net/createStudentWithPayment';
+        
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: formData.email,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                phoneNumber: formData.phoneNumber,
+                pronouns: formData.pronouns,
+                over16Confirmed: formData.over16Confirmed,
+                termsAccepted: formData.termsAccepted,
+                emailConsent: formData.emailConsent,
+                packageId: selectedPackageId,
+                paymentMethodId: paymentMethodId,
+                firstClassDate: formData.firstClassDate ? formData.firstClassDate.toISOString() : null
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Payment processing failed');
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Payment processing failed');
+        }
+        
+        console.log('Payment successful. Student and transaction created:', result.studentId);
+        
+        // Admin notes are not included in the function - need to update student doc separately
+        if (formData.adminNotes && formData.adminNotes.trim() !== '') {
+            await window.db.collection('students').doc(result.studentId).update({
+                adminNotes: formData.adminNotes,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log('Admin notes added to student document');
+        }
+        
+        // Return the student ID from the payment result
+        return result.studentId;
+    } else {
+        // No payment - create student document manually
+        await window.db.collection('students').doc(studentId).set(studentData);
+        console.log('Student document created:', studentId);
+        return studentId;
     }
 }
 
