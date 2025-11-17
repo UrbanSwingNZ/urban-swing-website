@@ -70,7 +70,7 @@ function initializeNavListeners() {
     const registerBtn = document.getElementById('register-student-btn');
     if (registerBtn) {
         registerBtn.addEventListener('click', () => {
-            window.location.href = '../../register.html';
+            window.location.href = '../../student-portal/register.html';
         });
     }
     

@@ -80,11 +80,11 @@ async function updateStudentTerms(studentId) {
             throw new Error('Database not initialized');
         }
         
-        // Update only termsAccepted and updatedAt, preserve all other fields
-        await window.db.collection('students').doc(studentId).update({
+        // Use set with merge to add termsAccepted without requiring all fields
+        await window.db.collection('students').doc(studentId).set({
             termsAccepted: true,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        }, { merge: true });
         
         console.log('Student terms accepted:', studentId);
         
