@@ -79,12 +79,6 @@ function validateAdminMode(formData) {
         return false;
     }
     
-    // If payment is provided, first class date must also be provided
-    if (formData.rateType && !formData.firstClassDate) {
-        showErrorMessage('Please select the date of the first class');
-        return false;
-    }
-    
     return true;
 }
 

@@ -18,13 +18,14 @@ function setupAdminMode() {
         backToLogin.style.display = 'none';
     }
     
-    // Collapse accordions by default for admin
+    // Hide password section for admin (students can create portal accounts themselves)
     const passwordSection = document.querySelector('.password-section');
-    const paymentSection = document.querySelector('.payment-section');
-    
     if (passwordSection) {
-        passwordSection.classList.add('collapsed');
+        passwordSection.style.display = 'none';
     }
+    
+    // Collapse payment accordion by default for admin
+    const paymentSection = document.querySelector('.payment-section');
     if (paymentSection) {
         paymentSection.classList.add('collapsed');
     }
