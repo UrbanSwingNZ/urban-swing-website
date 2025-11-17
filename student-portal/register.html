@@ -117,107 +117,6 @@
                     <small class="form-help">Optional - helps us address you correctly</small>
                 </div>
 
-                <!-- Create Portal Account Checkbox (Only visible to public users) -->
-                <div class="form-group checkbox-group public-only" id="create-portal-account-group" style="display: none;">
-                    <label class="checkbox-label">
-                        <input 
-                            type="checkbox" 
-                            id="createPortalAccount" 
-                            name="createPortalAccount"
-                        >
-                        <span>
-                            <i class="fas fa-user-circle"></i> Create a student portal account
-                        </span>
-                    </label>
-                    <div class="portal-info">
-                        <p><strong>What is the student portal?</strong></p>
-                        <p>The student portal allows you to:</p>
-                        <ul>
-                            <li><i class="fas fa-calendar-check"></i> View your class check-ins and attendance history</li>
-                            <li><i class="fas fa-ticket-alt"></i> Manage your concessions and class packages</li>
-                            <li><i class="fas fa-credit-card"></i> Pre-pay for upcoming classes</li>
-                            <li><i class="fas fa-receipt"></i> Access your transaction history and receipts</li>
-                            <li><i class="fas fa-user-edit"></i> Update your profile information</li>
-                        </ul>
-                        <p class="portal-info-note"><i class="fas fa-info-circle"></i> You can always create a portal account later if you prefer.</p>
-                    </div>
-                </div>
-
-                <!-- Password Section -->
-                <div class="password-section accordion-section">
-                    <h3 class="accordion-header">
-                        <span><i class="fas fa-lock"></i> Create Password</span>
-                        <i class="fas fa-chevron-down accordion-icon"></i>
-                    </h3>
-                    <div class="accordion-content">
-                    
-                    <!-- Password -->
-                    <div class="form-group">
-                        <label for="password">
-                            <i class="fas fa-key"></i> Password
-                        </label>
-                        <div class="password-input-wrapper">
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="At least 8 characters" 
-                                autocomplete="new-password"
-                            >
-                            <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <small class="form-help">Minimum 8 characters with uppercase and lowercase letters</small>
-                    </div>
-
-                    <!-- Confirm Password -->
-                    <div class="form-group">
-                        <label for="confirmPassword">
-                            <i class="fas fa-key"></i> Confirm Password
-                        </label>
-                        <div class="password-input-wrapper">
-                            <input 
-                                type="password" 
-                                id="confirmPassword" 
-                                name="confirmPassword" 
-                                placeholder="Re-enter your password" 
-                                autocomplete="new-password"
-                            >
-                            <button type="button" class="password-toggle" id="confirm-password-toggle" aria-label="Show password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <small class="form-help">Leave blank if you don't want to create a student portal account yet</small>
-                    </div>
-
-                    <!-- Generate Password Helper -->
-                    <div class="password-generator-helper">
-                        <p class="helper-text">
-                            <i class="fas fa-lightbulb"></i> 
-                            Need help creating a password? 
-                            <button type="button" class="btn-link" id="generate-password-btn">
-                                Generate one here
-                            </button>
-                        </p>
-                    </div>
-
-                    <!-- Generated Password Display (hidden by default) -->
-                    <div id="generated-password-display" class="generated-password" style="display: none;">
-                        <div class="generated-password-content">
-                            <span class="generated-password-label">Your Generated Password:</span>
-                            <div class="generated-password-value-wrapper">
-                                <span id="generated-password-value" class="generated-password-value"></span>
-                                <button type="button" class="btn-copy" id="copy-password-btn" title="Copy password">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                            </div>
-                            <small class="form-help">Save this password somewhere safe!</small>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
                 <!-- Age Confirmation -->
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
@@ -334,6 +233,106 @@
                     <div class="payment-notice">
                         <i class="fas fa-shield-alt"></i>
                         <span>Your payment information is secure and encrypted. Powered by Stripe.</span>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Create Portal Account Checkbox (Only visible to public users) -->
+                <div class="form-group checkbox-group public-only" id="create-portal-account-group" style="display: none;">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="createPortalAccount" 
+                            name="createPortalAccount"
+                        >
+                        <span>
+                            <i class="fas fa-user-circle"></i> Create a student portal account (optional)
+                        </span>
+                    </label>
+                    <div class="portal-info">
+                        <p><strong>What is the student portal?</strong></p>
+                        <p>The student portal allows you to:</p>
+                        <ul>
+                            <li><i class="fas fa-calendar-check"></i> View your class check-ins and attendance history</li>
+                            <li><i class="fas fa-ticket-alt"></i> Manage your concessions and class packages</li>
+                            <li><i class="fas fa-credit-card"></i> Pre-pay for upcoming classes</li>
+                            <li><i class="fas fa-receipt"></i> Access your transaction history and receipts</li>
+                            <li><i class="fas fa-user-edit"></i> Update your profile information</li>
+                        </ul>
+                        <p class="portal-info-note"><i class="fas fa-info-circle"></i> You can always create a portal account later if you prefer.</p>
+                    </div>
+                </div>
+
+                <!-- Password Section -->
+                <div class="password-section accordion-section">
+                    <h3 class="accordion-header">
+                        <span><i class="fas fa-lock"></i> Create Password</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </h3>
+                    <div class="accordion-content">
+                    
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-key"></i> Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="At least 8 characters" 
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="form-help">Minimum 8 characters with uppercase and lowercase letters</small>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            <i class="fas fa-key"></i> Confirm Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Re-enter your password" 
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" id="confirm-password-toggle" aria-label="Show password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generate Password Helper -->
+                    <div class="password-generator-helper">
+                        <p class="helper-text">
+                            <i class="fas fa-lightbulb"></i> 
+                            Need help creating a password? 
+                            <button type="button" class="btn-link" id="generate-password-btn">
+                                Generate one here
+                            </button>
+                        </p>
+                    </div>
+
+                    <!-- Generated Password Display (hidden by default) -->
+                    <div id="generated-password-display" class="generated-password" style="display: none;">
+                        <div class="generated-password-content">
+                            <span class="generated-password-label">Your Generated Password:</span>
+                            <div class="generated-password-value-wrapper">
+                                <span id="generated-password-value" class="generated-password-value"></span>
+                                <button type="button" class="btn-copy" id="copy-password-btn" title="Copy password">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <small class="form-help">Save this password somewhere safe!</small>
+                        </div>
                     </div>
                     </div>
                 </div>
