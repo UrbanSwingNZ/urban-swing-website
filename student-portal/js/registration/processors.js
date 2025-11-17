@@ -7,7 +7,6 @@
  * Process admin registration
  */
 async function processAdminRegistration(formData) {
-    const hasPassword = formData.password && formData.password.trim() !== '';
     const hasPayment = formData.rateType && formData.rateType !== '';
     
     // Generate student ID
@@ -32,26 +31,8 @@ async function processAdminRegistration(formData) {
     await window.db.collection('students').doc(studentId).set(studentData);
     console.log('Student document created:', studentId);
     
-    // If password provided, create auth user and user document
-    if (hasPassword) {
-        const authUser = await createAuthUser(formData.email, formData.password);
-        console.log('Firebase Auth user created:', authUser.uid);
-        
-        await window.db.collection('users').doc(authUser.uid).set({
-            email: formData.email,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            studentId: studentId,
-            role: 'student',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        console.log('User document created:', authUser.uid);
-        
-        // Sign out the newly created user (so admin stays signed in)
-        await firebase.auth().signOut();
-        
-        console.log('Admin should re-authenticate if needed');
-    }
+    // Note: Admin users cannot create portal accounts directly to avoid logout issues
+    // Students can create their own portal accounts by visiting the student portal
     
     // If payment provided, process payment
     if (hasPayment && formData.firstClassDate) {
@@ -119,24 +100,57 @@ async function processExistingIncompleteRegistration(formData) {
     const studentData = getStudentData();
     const studentId = studentData.id;
     
-    // 1. Create Firebase Auth user
-    const authUser = await createAuthUser(formData.email, formData.password);
-    console.log('Firebase Auth user created:', authUser.uid);
+    // Check if auth user already exists for this email
+    let authUser;
+    try {
+        // Try to create Firebase Auth user
+        authUser = await createAuthUser(formData.email, formData.password);
+        console.log('Firebase Auth user created:', authUser.uid);
+    } catch (error) {
+        // If error is "email already in use", it means they have an auth account
+        if (error.message.includes('already registered') || error.message.includes('email-already-in-use')) {
+            // Check if they also have a user document
+            const usersQuery = await window.db.collection('users')
+                .where('email', '==', formData.email.toLowerCase().trim())
+                .limit(1)
+                .get();
+            
+            if (!usersQuery.empty) {
+                // They have both auth account AND user document - fully registered
+                throw new Error('This email is already registered. Please login instead.');
+            } else {
+                // They have auth account but no user document - should not happen, but recover
+                // Sign them in and continue
+                const signInResult = await firebase.auth().signInWithEmailAndPassword(
+                    formData.email.toLowerCase().trim(),
+                    formData.password
+                );
+                authUser = {
+                    uid: signInResult.user.uid,
+                    email: signInResult.user.email
+                };
+                console.log('User signed in with existing auth account:', authUser.uid);
+            }
+        } else {
+            // Some other error - rethrow
+            throw error;
+        }
+    }
     
-    // 2. Update student document (add termsAccepted)
-    await updateStudentTerms(studentId);
-    console.log('Student document updated with terms acceptance');
-    
-    // 3. Create user document
-    const userData = {
+    // 2. Create user document (linking auth UID to student ID)
+    await window.db.collection('users').doc(authUser.uid).set({
         email: formData.email,
         firstName: studentData.firstName,
         lastName: studentData.lastName,
-        authUid: authUser.uid
-    };
+        studentId: studentId,
+        role: 'student',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    console.log('User document created:', authUser.uid);
     
-    await createUser(userData, studentId);
-    console.log('User document created');
+    // 3. Update student document (add termsAccepted) - now security rules will pass
+    await updateStudentTerms(studentId);
+    console.log('Student document updated with terms acceptance');
 }
 
 /**

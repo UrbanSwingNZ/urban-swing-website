@@ -51,7 +51,7 @@ service cloud.firestore {
                        // Only allow updating these specific fields
                        request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['firstName', 'lastName', 'email', 'phoneNumber', 
-                                  'pronouns', 'emailConsent', 'adminNotes']) &&
+                                  'pronouns', 'emailConsent', 'adminNotes', 'termsAccepted', 'updatedAt']) &&
                        // Ensure required fields remain present
                        request.resource.data.keys().hasAll([
                          'firstName', 'lastName', 'email', 'phoneNumber', 
@@ -64,7 +64,7 @@ service cloud.firestore {
                        // Only allow updating these specific fields
                        request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['firstName', 'lastName', 'email', 'phoneNumber', 
-                                  'pronouns', 'emailConsent', 'adminNotes']) &&
+                                  'pronouns', 'emailConsent', 'adminNotes', 'termsAccepted', 'updatedAt']) &&
                        // Ensure required fields remain present
                        request.resource.data.keys().hasAll([
                          'firstName', 'lastName', 'email', 'phoneNumber', 
