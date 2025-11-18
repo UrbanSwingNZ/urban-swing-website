@@ -34,16 +34,67 @@ async function renderEmailTemplate(templateId, variables) {
   
   const template = templateDoc.data();
   let subject = template.subject || '';
-  let textContent = template.textContent || '';
-  let htmlContent = template.htmlContent || '';
+  let textContent = template.textTemplate || template.textContent || '';
+  let htmlContent = template.htmlTemplate || template.htmlContent || '';
   
-  // Replace all variables in the format {{variableName}}
+  // Replace all variables - handles both {{var}} and ${var} formats
   Object.entries(variables).forEach(([key, value]) => {
-    const placeholder = `{{${key}}}`;
-    const stringValue = value !== null && value !== undefined ? String(value) : '';
-    subject = subject.split(placeholder).join(stringValue);
-    textContent = textContent.split(placeholder).join(stringValue);
-    htmlContent = htmlContent.split(placeholder).join(stringValue);
+    // Handle both placeholder formats
+    const doubleBracePlaceholder = `{{${key}}}`;
+    const dollarBracePlaceholder = `\${${key}}`;
+    
+    let stringValue;
+    if (typeof value === 'boolean') {
+      stringValue = value;
+    } else {
+      stringValue = value !== null && value !== undefined ? String(value) : '';
+    }
+    
+    // Replace simple placeholders
+    subject = subject.split(doubleBracePlaceholder).join(stringValue);
+    subject = subject.split(dollarBracePlaceholder).join(stringValue);
+    
+    textContent = textContent.split(doubleBracePlaceholder).join(stringValue);
+    textContent = textContent.split(dollarBracePlaceholder).join(stringValue);
+    
+    htmlContent = htmlContent.split(doubleBracePlaceholder).join(stringValue);
+    htmlContent = htmlContent.split(dollarBracePlaceholder).join(stringValue);
+  });
+  
+  // Handle conditional expressions ${var ? 'yes' : 'no'}
+  Object.entries(variables).forEach(([key, value]) => {
+    // Ternary with single quotes
+    const ternaryRegex = new RegExp(`\\$\\{${key.replace(/\./g, '\\.')}\\s*\\?\\s*'([^']*)'\\s*:\\s*'([^']*)'\\}`, 'g');
+    const ternaryReplacement = value ? '$1' : '$2';
+    htmlContent = htmlContent.replace(ternaryRegex, (match, trueVal, falseVal) => value ? trueVal : falseVal);
+    textContent = textContent.replace(ternaryRegex, (match, trueVal, falseVal) => value ? trueVal : falseVal);
+    
+    // OR operator with single quotes
+    const orRegex = new RegExp(`\\$\\{${key.replace(/\./g, '\\.')}\\s*\\|\\|\\s*'([^']*)'\\}`, 'g');
+    htmlContent = htmlContent.replace(orRegex, (match, defaultVal) => value || defaultVal);
+    textContent = textContent.replace(orRegex, (match, defaultVal) => value || defaultVal);
+  });
+  
+  // Handle math expressions like ${casualRate * 5 - fiveClassPrice}
+  const mathRegex = /\$\{([^}]+)\}/g;
+  htmlContent = htmlContent.replace(mathRegex, (match, expression) => {
+    try {
+      // Create a safe evaluation context with only the variables
+      const evalContext = {...variables};
+      // Replace variable names in the expression with their values
+      let evalExpression = expression;
+      Object.entries(variables).forEach(([key, value]) => {
+        // Use word boundaries to avoid partial matches
+        const regex = new RegExp(`\\b${key.replace(/\./g, '\\.')}\\b`, 'g');
+        evalExpression = evalExpression.replace(regex, JSON.stringify(value));
+      });
+      // Evaluate the expression
+      const result = eval(evalExpression);
+      return result;
+    } catch (e) {
+      // If evaluation fails, return the original match
+      return match;
+    }
   });
   
   return {
@@ -163,22 +214,27 @@ exports.sendNewStudentEmail = onDocumentCreated(
 
       // Generate email content using Firestore templates
       const adminEmail = await renderEmailTemplate('admin-notification', {
-        firstName: student.firstName,
-        lastName: student.lastName,
-        email: student.email,
-        phone: student.phone || 'Not provided',
+        'student.firstName': student.firstName,
+        'student.lastName': student.lastName,
+        'student.email': student.email,
+        'student.phoneNumber': student.phoneNumber || student.phone || 'N/A',
+        'student.pronouns': student.pronouns || 'Not specified',
+        'student.emailConsent': student.emailConsent,
         studentId: studentId,
         registeredAt: registeredAt,
-        emergencyName: student.emergencyName || 'Not provided',
-        emergencyPhone: student.emergencyPhone || 'Not provided'
+        casualRate: casualRate,
+        studentRate: studentRate,
+        fiveClassPrice: fiveClassPrice,
+        tenClassPrice: tenClassPrice
       });
       
       const welcomeEmail = await renderEmailTemplate('welcome-student', {
+        'student.firstName': student.firstName,
         firstName: student.firstName,
-        casualRate: `$${casualRate}`,
-        studentRate: `$${studentRate}`,
-        fiveClassPrice: `$${fiveClassPrice}`,
-        tenClassPrice: `$${tenClassPrice}`,
+        casualRate: casualRate,
+        studentRate: studentRate,
+        fiveClassPrice: fiveClassPrice,
+        tenClassPrice: tenClassPrice,
         portalAccess: hasUserAccount ? 'Yes - you can log in at urbanswing.co.nz/student-portal' : 'Not yet - you\'ll receive login details after your first payment'
       });
 
@@ -225,6 +281,9 @@ exports.sendNewStudentEmail = onDocumentCreated(
         });
         
         const errorEmail = await renderEmailTemplate('error-notification', {
+          'student.firstName': student.firstName,
+          'student.lastName': student.lastName,
+          'student.email': student.email,
           firstName: student.firstName,
           lastName: student.lastName,
           email: student.email,
@@ -315,7 +374,11 @@ exports.sendAccountSetupEmail = onDocumentCreated(
       });
       
       const accountSetupEmail = await renderEmailTemplate('account-setup', {
+        'student.firstName': student.firstName,
+        'student.lastName': student.lastName,
+        'user.email': user.email,
         firstName: student.firstName,
+        lastName: student.lastName,
         email: user.email,
         setupDate: setupDate,
         portalUrl: 'https://urbanswing.co.nz/student-portal'
