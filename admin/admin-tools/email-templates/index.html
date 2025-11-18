@@ -48,9 +48,14 @@
                 <aside class="templates-sidebar">
                     <div class="sidebar-header">
                         <h2>Templates</h2>
-                        <button id="refresh-templates-btn" class="btn-icon" title="Refresh">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
+                        <div class="sidebar-actions">
+                            <button id="add-template-btn" class="btn-icon" title="Add New Template">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button id="refresh-templates-btn" class="btn-icon" title="Refresh">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="template-list" id="template-list">
@@ -278,6 +283,72 @@
                 <div id="version-list" class="version-list">
                     <!-- Version history will be loaded here -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Template Modal -->
+    <div id="add-template-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-envelope-open-text"></i>
+                    Create New Template
+                </h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-template-form">
+                    <div class="form-group">
+                        <label for="new-template-id">Template ID *</label>
+                        <input type="text" id="new-template-id" class="form-control" 
+                               placeholder="e.g., password-reset" required
+                               pattern="[a-z0-9-]+" 
+                               title="Lowercase letters, numbers, and hyphens only">
+                        <small class="form-hint">Use lowercase letters, numbers, and hyphens only</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-template-name">Template Name *</label>
+                        <input type="text" id="new-template-name" class="form-control" 
+                               placeholder="e.g., Password Reset Email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-template-category">Category *</label>
+                        <select id="new-template-category" class="form-control" required>
+                            <option value="">Select a category...</option>
+                            <option value="student">Student Emails</option>
+                            <option value="admin">Admin Emails</option>
+                            <option value="system">System Emails</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-template-type">Template Type *</label>
+                        <select id="new-template-type" class="form-control" required>
+                            <option value="">Select a type...</option>
+                            <option value="transactional">Transactional (receipts, confirmations)</option>
+                            <option value="notification">Notification (alerts, updates)</option>
+                            <option value="marketing">Marketing (promotions, newsletters)</option>
+                            <option value="administrative">Administrative (system notices)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-template-description">Description</label>
+                        <textarea id="new-template-description" class="form-control" rows="3" 
+                                  placeholder="Brief description of when this template is used"></textarea>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-template-btn">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Create Template
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
