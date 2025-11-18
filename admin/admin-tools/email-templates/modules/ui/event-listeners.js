@@ -11,6 +11,7 @@ import { showPreview } from './preview.js';
 import { sendTestEmail } from './test-send.js';
 import { showVersionHistory } from './version-history.js';
 import { updateSaveButton } from './save-button.js';
+import { showCreateTemplateModal, setupCreateTemplateForm } from './template-creator.js';
 
 /* global firebase */
 
@@ -25,6 +26,17 @@ export function setupEventListeners() {
     
     // Refresh templates
     document.getElementById('refresh-templates-btn').addEventListener('click', loadTemplates);
+    
+    // Add new template
+    document.getElementById('add-template-btn').addEventListener('click', showCreateTemplateModal);
+    
+    // Setup create template form
+    setupCreateTemplateForm();
+    
+    // Cancel button in add template modal
+    document.getElementById('cancel-template-btn').addEventListener('click', () => {
+        document.getElementById('add-template-modal').classList.remove('active');
+    });
     
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
