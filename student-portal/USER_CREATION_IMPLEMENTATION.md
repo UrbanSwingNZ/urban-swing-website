@@ -6,13 +6,13 @@ This implementation adds complete user authentication and registration functiona
 ## Key Features Implemented
 
 ### 1. Three Registration Modes
-- **New Student**: Complete registration with all fields + payment
-- **Existing-Incomplete**: Pre-filled data, only needs password (no payment)
+- **New Student**: Complete registration with all fields + payment via Stripe
+- **Existing-Incomplete**: Pre-filled data, only needs password (no payment required)
 - **Existing-Complete**: Already registered, redirect to login
 
 ### 2. Firebase Authentication Integration
 - Secure password storage using Firebase Auth
-- User accounts linked to student records via `authUid`
+- User accounts linked to student records via `studentId` field in users collection
 - Password reset functionality available (to be configured)
 
 ### 3. Password Management
@@ -35,21 +35,22 @@ This implementation adds complete user authentication and registration functiona
   over16Confirmed: boolean,
   termsAccepted: boolean,
   emailConsent: boolean,
-  registeredAt: string (ISO),
+  registeredAt: timestamp,
   createdAt: timestamp,
-  updatedAt: timestamp
+  updatedAt: timestamp,
+  stripeCustomerId: string (if payment made)
 }
 ```
 
 #### Users Collection
 ```javascript
 {
-  id: "firstname-lastname-abc123", // Same as student ID
+  id: "<firebase-auth-uid>", // Firebase Auth UID
   email: string,
   firstName: string,
   lastName: string,
-  studentId: string, // Reference to student document
-  authUid: string, // Firebase Auth UID
+  studentId: string, // Reference to student document ID
+  role: "student",
   createdAt: timestamp
 }
 ```
@@ -78,34 +79,42 @@ This implementation adds complete user authentication and registration functiona
 ## User Flow
 
 ### New Student Registration
-1. User enters email on index.html
-2. System checks both `students` and `users` collections
-3. If neither exists, redirect to registration form (blank)
-4. User fills out all fields including password
-5. System creates:
-   - Firebase Auth account
-   - Student document
-   - User document
-6. Success → Redirect to login
+1. User fills out registration form on register.html
+2. User selects payment option and enters payment details
+3. User optionally creates password (if they want portal access immediately)
+4. On submit, system processes payment via `createStudentWithPayment` Cloud Function:
+   - Creates Stripe customer
+   - Processes payment
+   - Creates student document in Firestore
+   - Creates transaction document
+5. If password provided:
+   - Creates Firebase Auth account
+   - Creates user document (linked via `studentId`)
+   - Auto-logs in user
+   - Success → Redirect to dashboard
+6. If no password:
+   - Success message shown
+   - Redirect to classes page
+   - User can create portal account later
 
-### Existing Student Registration
-1. User enters email on index.html
-2. System finds student document but no user document
-3. Redirect to registration form (pre-filled)
+### Existing-Incomplete Student Registration
+1. Student already exists in database (registered via admin or previous payment)
+2. User visits student portal and wants to create account
+3. User enters email and password on register.html (form pre-fills student data)
 4. Fields are disabled except password and terms
-5. Payment section is hidden
+5. Payment section is hidden (already paid previously)
 6. User creates password and accepts terms
 7. System creates:
    - Firebase Auth account
-   - User document
+   - User document (linked to existing student via `studentId`)
 8. Updates student document with `termsAccepted: true`
-9. Success → Redirect to login
+9. Success → Redirect to login or dashboard
 
-### Already Registered
-1. User enters email on index.html
-2. System finds both student and user documents
-3. Show modal: "Email already registered"
-4. User clicks "Go to Login" → Switches to existing student form
+### Already Registered (Existing-Complete)
+1. User tries to register with email that has both student AND user documents
+2. System detects account already exists
+3. Show modal or error: "Email already registered"
+4. User redirects to login page
 
 ## Security Features
 
@@ -145,44 +154,45 @@ This implementation adds complete user authentication and registration functiona
 ## Future Enhancements
 
 ### Immediate Next Steps
-1. **Login Implementation**: Use `signInUser()` for existing student login
-2. **Password Reset**: Configure custom email templates in Firebase
-3. **Payment Processing**: Integrate Stripe for new student payments
-4. **Email Verification**: Optional - can be enabled later
+1. **Password Reset**: Configure custom email templates in Firebase
+2. **Email Verification**: Optional - can be enabled later
+3. **Admin User Management**: Build admin interface for viewing/managing user accounts
 
 ### Longer Term
-1. **Session Management**: Keep users logged in across pages
-2. **Profile Updates**: Allow users to change passwords
-3. **Two-Factor Authentication**: Additional security layer
-4. **Social Login**: Google/Facebook authentication options
+1. **Profile Updates**: Allow users to change passwords via portal
+2. **Two-Factor Authentication**: Additional security layer
+3. **Social Login**: Google/Facebook authentication options
 
 ## Testing Checklist
 
 ### New Student Flow
-- [ ] Email validation works
 - [ ] All fields required and validated
-- [ ] Password generator creates valid passwords
+- [ ] Password generator creates valid passwords (optional field)
 - [ ] Password toggle shows/hides correctly
 - [ ] Terms must be accepted
-- [ ] Payment section visible
-- [ ] Student + User documents created
-- [ ] Firebase Auth account created
+- [ ] Payment section visible and functional
+- [ ] Stripe payment processes successfully
+- [ ] Student document created with payment info
+- [ ] Transaction document created
+- [ ] If password provided: Firebase Auth account + user document created, redirects to dashboard
+- [ ] If no password: Success message shown, redirects to classes page
 
 ### Existing-Incomplete Flow
-- [ ] Email check detects existing student
+- [ ] Form detects existing student (manual process - student visits portal)
 - [ ] Form pre-fills with student data
-- [ ] Fields properly disabled
+- [ ] Personal info fields properly disabled
 - [ ] Payment section hidden
-- [ ] Only password fields active
+- [ ] Only password fields and terms checkbox active
 - [ ] Terms checkbox active (unchecked)
-- [ ] User document created
-- [ ] Student document updated with termsAccepted
 - [ ] Firebase Auth account created
+- [ ] User document created with correct studentId link
+- [ ] Student document updated with termsAccepted
+- [ ] Redirects to login or dashboard
 
 ### Existing-Complete Flow
-- [ ] Email check detects both records
-- [ ] Modal shows "already registered"
-- [ ] Redirects to login form
+- [ ] System detects both student and user documents exist
+- [ ] Error message shows "already registered"
+- [ ] Redirects to login page
 
 ## Configuration Notes
 
@@ -209,10 +219,8 @@ This implementation adds complete user authentication and registration functiona
 
 ## Known Limitations
 
-1. **Payment Not Implemented**: New students see payment fields but payment not processed
-2. **Email Templates**: Using default Firebase email templates for password reset
-3. **Session Persistence**: Users not kept logged in after registration (redirect to login)
-4. **Admin Tools**: No admin interface yet for managing users collection
+1. **Email Templates**: Using default Firebase email templates for password reset
+2. **Admin Tools**: Limited admin interface for managing users collection (users can be managed via Firebase Console)
 
 ## Support Documentation
 
