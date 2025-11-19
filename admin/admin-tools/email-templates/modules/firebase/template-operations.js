@@ -183,3 +183,59 @@ export async function saveTemplate() {
         showLoading(false);
     }
 }
+
+/**
+ * Delete template
+ */
+export async function deleteTemplate() {
+    if (!state.currentTemplate) return;
+    
+    // Show delete confirmation modal
+    const modal = document.getElementById('delete-template-modal');
+    const infoDiv = document.getElementById('delete-template-info');
+    
+    // Populate modal with template info
+    infoDiv.innerHTML = `
+        <strong>${state.currentTemplate.name}</strong>
+        <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">
+            ID: ${state.currentTemplate.id}<br>
+            Category: ${state.currentTemplate.category || 'N/A'}
+        </div>
+    `;
+    
+    modal.classList.add('active');
+}
+
+/**
+ * Confirm and execute template deletion
+ */
+export async function confirmDeleteTemplate() {
+    if (!state.currentTemplate) return;
+    
+    try {
+        showLoading(true);
+        
+        await db.collection('emailTemplates').doc(state.currentTemplate.id).delete();
+        
+        showSuccess('Template deleted successfully!');
+        
+        // Clear current template
+        setCurrentTemplate(null);
+        
+        // Update UI
+        document.getElementById('editor-view').style.display = 'none';
+        document.getElementById('no-selection-state').style.display = 'flex';
+        
+        // Close modal
+        document.getElementById('delete-template-modal').classList.remove('active');
+        
+        // Reload templates list
+        await loadTemplates();
+        
+        showLoading(false);
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        showError('Failed to delete template: ' + error.message);
+        showLoading(false);
+    }
+}
