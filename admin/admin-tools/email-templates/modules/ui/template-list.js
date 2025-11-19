@@ -48,9 +48,12 @@ export function renderTemplateList() {
         
         categoryTemplates.forEach(template => {
             const isActive = state.currentTemplate && state.currentTemplate.id === template.id;
+            const isBaseTemplate = template.id === '_base-template';
+            const icon = isBaseTemplate ? 'fas fa-file-code' : 'fas fa-envelope';
+            
             html += `
-                <div class="template-item ${isActive ? 'active' : ''}" data-template-id="${template.id}">
-                    <i class="fas fa-envelope"></i>
+                <div class="template-item ${isActive ? 'active' : ''} ${isBaseTemplate ? 'base-template' : ''}" data-template-id="${template.id}">
+                    <i class="${icon}"></i>
                     <div class="template-item-content">
                         <div class="template-item-name">${template.name}</div>
                         <div class="template-item-id">${template.id}</div>

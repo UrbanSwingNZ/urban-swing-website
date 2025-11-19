@@ -99,15 +99,29 @@ export async function selectTemplate(templateId) {
 export async function saveTemplate() {
     if (!state.currentTemplate) return;
     
+    // Don't allow saving the base template through this function
+    if (state.currentTemplate.id === '_base-template') {
+        showError('Please use the "Update Template" button to save changes to the base template.');
+        return;
+    }
+    
     try {
+        // Get current values
+        const subject = document.getElementById('email-subject').value.trim();
+        
+        // Validate subject is not empty
+        if (!subject) {
+            showError('Please enter an email subject before saving.');
+            // Focus on the subject field
+            document.getElementById('email-subject').focus();
+            return;
+        }
+        
         // Clear unsaved changes flag immediately to prevent confirmation dialog
         setHasUnsavedChanges(false);
         updateSaveButton();
         
         showLoading(true);
-        
-        // Get current values
-        const subject = document.getElementById('email-subject').value.trim();
         
         // Get HTML content from the active editor
         let htmlTemplate;
@@ -127,10 +141,6 @@ export async function saveTemplate() {
         const active = document.getElementById('template-active').checked;
         
         // Validate
-        if (!subject) {
-            throw new Error('Subject line is required');
-        }
-        
         if (!htmlTemplate) {
             throw new Error('HTML template is required');
         }
@@ -239,3 +249,89 @@ export async function confirmDeleteTemplate() {
         showLoading(false);
     }
 }
+
+/**
+ * Show warning modal for updating base template
+ */
+export async function updateBaseTemplate() {
+    if (!state.currentTemplate || state.currentTemplate.id !== '_base-template') return;
+    
+    // Show warning modal
+    document.getElementById('update-base-modal').classList.add('active');
+}
+
+/**
+ * Confirm and execute base template update
+ */
+export async function confirmUpdateBaseTemplate() {
+    if (!state.currentTemplate || state.currentTemplate.id !== '_base-template') return;
+    
+    try {
+        // Clear unsaved changes flag immediately to prevent confirmation dialog
+        setHasUnsavedChanges(false);
+        updateSaveButton();
+        
+        showLoading(true);
+        
+        // Get current values
+        const subject = document.getElementById('email-subject').value.trim();
+        
+        // Get HTML content from the active editor
+        let htmlTemplate;
+        if (state.currentEditorMode === 'visual' && state.visualEditor) {
+            htmlTemplate = state.visualEditor.getContent();
+            state.htmlEditor.setValue(htmlTemplate);
+        } else {
+            htmlTemplate = state.htmlEditor.getValue();
+            if (state.visualEditor) {
+                state.visualEditor.setContent(htmlTemplate);
+            }
+        }
+        
+        const textTemplate = document.getElementById('text-template').value;
+        const active = document.getElementById('template-active').checked;
+        
+        // Create new version
+        const newVersion = {
+            version: (state.currentTemplate.currentVersion || 0) + 1,
+            createdAt: new Date(),
+            createdBy: state.currentUser.email,
+            subject,
+            htmlTemplate,
+            textTemplate,
+            changeNote: 'Base template updated'
+        };
+        
+        // Update document
+        const updateData = {
+            subject,
+            htmlTemplate,
+            textTemplate,
+            active,
+            currentVersion: newVersion.version,
+            versions: firebase.firestore.FieldValue.arrayUnion(newVersion),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: state.currentUser.email
+        };
+        
+        await db.collection('emailTemplates').doc('_base-template').update(updateData);
+        
+        // Reload template
+        await selectTemplate('_base-template');
+        await loadTemplates();
+        
+        setHasUnsavedChanges(false);
+        updateSaveButton();
+        
+        // Close modal
+        document.getElementById('update-base-modal').classList.remove('active');
+        
+        showSuccess('Base template updated successfully!');
+        showLoading(false);
+    } catch (error) {
+        console.error('Error updating base template:', error);
+        showError('Failed to update base template: ' + error.message);
+        showLoading(false);
+    }
+}
+

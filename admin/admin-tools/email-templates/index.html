@@ -84,7 +84,8 @@
                                 <h2 id="template-name"></h2>
                                 <span id="template-status" class="status-badge"></span>
                             </div>
-                            <div class="toolbar-right">
+                            <!-- Regular template toolbar -->
+                            <div class="toolbar-right" id="regular-toolbar">
                                 <div class="toolbar-button-row">
                                     <button id="preview-btn" class="btn-primary btn-primary-lg">
                                         <i class="fas fa-eye"></i> Preview
@@ -99,6 +100,17 @@
                                     </button>
                                     <button id="delete-btn" class="btn-danger btn-danger-lg">
                                         <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Base template toolbar -->
+                            <div class="toolbar-right" id="base-template-toolbar" style="display: none;">
+                                <div class="toolbar-button-row">
+                                    <button id="create-from-base-btn" class="btn-primary btn-primary-lg">
+                                        <i class="fas fa-plus"></i> Create New Email
+                                    </button>
+                                    <button id="update-base-btn" class="btn-primary btn-primary-lg">
+                                        <i class="fas fa-save"></i> Update Template
                                     </button>
                                 </div>
                             </div>
@@ -373,6 +385,32 @@
                 <button type="button" class="btn-secondary" id="cancel-delete-btn">Cancel</button>
                 <button type="button" class="btn-danger" id="confirm-delete-btn">
                     <i class="fas fa-trash"></i> Delete Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Base Template Warning Modal -->
+    <div id="update-base-modal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header error">
+                <h3><i class="fas fa-exclamation-triangle"></i> Update Base Template</h3>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> You are about to update the base email template.</p>
+                <div class="template-info-delete" style="border-left-color: #ff9800;">
+                    <p style="margin: 0; font-size: 0.95rem;">
+                        This template is used as the starting point for all new email templates. 
+                        Changes you make here will affect any emails created in the future.
+                    </p>
+                </div>
+                <p class="text-muted">Existing templates will not be affected by this change.</p>
+                <p style="margin-top: 15px; font-weight: 600;">Are you sure you want to continue?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancel-update-base-btn">Cancel</button>
+                <button type="button" class="btn-danger" id="confirm-update-base-btn">
+                    <i class="fas fa-save"></i> Update Base Template
                 </button>
             </div>
         </div>

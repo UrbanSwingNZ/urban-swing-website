@@ -22,15 +22,24 @@ export async function createTemplate(templateData) {
             throw new Error('A template with this ID already exists');
         }
         
-        // Create initial version
+        // Fetch the base template to copy structure from
+        const baseTemplateDoc = await db.collection('emailTemplates').doc('_base-template').get();
+        
+        if (!baseTemplateDoc.exists) {
+            throw new Error('Base template not found. Please ensure _base-template exists in Firestore.');
+        }
+        
+        const baseTemplate = baseTemplateDoc.data();
+        
+        // Create initial version using base template content
         const initialVersion = {
             version: 1,
             createdAt: new Date(),
             createdBy: state.currentUser.email,
-            subject: 'New Template - Add Subject',
-            htmlTemplate: '<p>Start editing your template here...</p>',
-            textTemplate: 'Start editing your plain text template here...',
-            changeNote: 'Initial template creation'
+            subject: '', // Empty subject - user must fill this in
+            htmlTemplate: baseTemplate.htmlTemplate,
+            textTemplate: baseTemplate.textTemplate,
+            changeNote: 'Initial template creation from base template'
         };
         
         // Create new template document
