@@ -5,7 +5,7 @@
 
 import { state, setHasUnsavedChanges } from '../core/state.js';
 import { switchEditorMode } from '../core/editor.js';
-import { loadTemplates, saveTemplate, deleteTemplate, confirmDeleteTemplate } from '../firebase/template-operations.js';
+import { loadTemplates, saveTemplate, deleteTemplate, confirmDeleteTemplate, updateBaseTemplate, confirmUpdateBaseTemplate } from '../firebase/template-operations.js';
 import { switchTab, switchPreviewTab } from './tabs.js';
 import { showPreview } from './preview.js';
 import { sendTestEmail } from './test-send.js';
@@ -74,6 +74,16 @@ export function setupEventListeners() {
     document.getElementById('confirm-delete-btn').addEventListener('click', confirmDeleteTemplate);
     document.getElementById('cancel-delete-btn').addEventListener('click', () => {
         document.getElementById('delete-template-modal').classList.remove('active');
+    });
+    
+    // Base template buttons
+    document.getElementById('create-from-base-btn').addEventListener('click', showCreateTemplateModal);
+    document.getElementById('update-base-btn').addEventListener('click', updateBaseTemplate);
+    
+    // Update base template modal buttons
+    document.getElementById('confirm-update-base-btn').addEventListener('click', confirmUpdateBaseTemplate);
+    document.getElementById('cancel-update-base-btn').addEventListener('click', () => {
+        document.getElementById('update-base-modal').classList.remove('active');
     });
     
     // Close modals on outside click

@@ -14,6 +14,12 @@ import { insertVariable } from '../core/editor.js';
 export function loadTemplateIntoEditor() {
     if (!state.currentTemplate) return;
     
+    const isBaseTemplate = state.currentTemplate.id === '_base-template';
+    
+    // Toggle toolbar visibility
+    document.getElementById('regular-toolbar').style.display = isBaseTemplate ? 'none' : 'flex';
+    document.getElementById('base-template-toolbar').style.display = isBaseTemplate ? 'flex' : 'none';
+    
     // Update toolbar
     document.getElementById('template-name').textContent = state.currentTemplate.name;
     const statusBadge = document.getElementById('template-status');

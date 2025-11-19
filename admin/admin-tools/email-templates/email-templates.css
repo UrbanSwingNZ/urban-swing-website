@@ -141,6 +141,14 @@
     background: #dc3545;
 }
 
+.template-item.base-template {
+    border-left: 3px solid #9a16f5;
+}
+
+.template-item.base-template i {
+    color: #3534Fa;
+}
+
 /* ===== Main Content Area ===== */
 .templates-main {
     flex: 1;
