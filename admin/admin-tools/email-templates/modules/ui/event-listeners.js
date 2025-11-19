@@ -5,7 +5,7 @@
 
 import { state, setHasUnsavedChanges } from '../core/state.js';
 import { switchEditorMode } from '../core/editor.js';
-import { loadTemplates, saveTemplate } from '../firebase/template-operations.js';
+import { loadTemplates, saveTemplate, deleteTemplate, confirmDeleteTemplate } from '../firebase/template-operations.js';
 import { switchTab, switchPreviewTab } from './tabs.js';
 import { showPreview } from './preview.js';
 import { sendTestEmail } from './test-send.js';
@@ -51,6 +51,9 @@ export function setupEventListeners() {
     // Save button
     document.getElementById('save-btn').addEventListener('click', saveTemplate);
     
+    // Delete button
+    document.getElementById('delete-btn').addEventListener('click', deleteTemplate);
+    
     // Preview button
     document.getElementById('preview-btn').addEventListener('click', showPreview);
     
@@ -65,6 +68,12 @@ export function setupEventListeners() {
         btn.addEventListener('click', () => {
             btn.closest('.modal').classList.remove('active');
         });
+    });
+    
+    // Delete modal buttons
+    document.getElementById('confirm-delete-btn').addEventListener('click', confirmDeleteTemplate);
+    document.getElementById('cancel-delete-btn').addEventListener('click', () => {
+        document.getElementById('delete-template-modal').classList.remove('active');
     });
     
     // Close modals on outside click
