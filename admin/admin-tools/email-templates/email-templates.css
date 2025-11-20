@@ -1402,3 +1402,177 @@
 .snackbar-message {
     flex: 1;
 }
+
+/* ===== Insert Variable Button ===== */
+.btn-insert-variable {
+    background: linear-gradient(135deg, #3534Fa, #9a16f5);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.3);
+}
+
+.btn-insert-variable:hover {
+    background: linear-gradient(135deg, #2a29c8, #7d12c5);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-insert-variable:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(154, 22, 245, 0.3);
+}
+
+.btn-insert-variable i {
+    font-size: 1rem;
+}
+
+/* ===== Insert Variable Modal ===== */
+.modal-insert-variable {
+    max-width: 700px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-insert-variable .modal-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.insert-variable-search {
+    position: relative;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.insert-variable-search .form-control {
+    padding-left: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.insert-variable-search .search-icon {
+    position: absolute;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+}
+
+.insert-variables-list {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: 500px;
+}
+
+.insert-variables-list .variable-group {
+    margin-bottom: 20px;
+}
+
+.insert-variables-list .variable-item {
+    background: white;
+    padding: 16px 18px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+}
+
+.insert-variables-list .variable-item:hover {
+    border-color: #9a16f5;
+    background: linear-gradient(135deg, rgba(154, 22, 245, 0.05), rgba(232, 0, 242, 0.05));
+    box-shadow: 0 3px 8px rgba(154, 22, 245, 0.15);
+    transform: translateY(-1px);
+}
+
+.insert-variables-list .variable-item:active {
+    transform: translateY(0);
+}
+
+.insert-variables-list .variable-object {
+    background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
+    border-left: 4px solid #9a16f5;
+    font-weight: 600;
+    padding-left: 18px;
+}
+
+.insert-variables-list .variable-properties {
+    margin-left: 24px;
+    padding-left: 16px;
+    border-left: 3px solid #e0e0e0;
+    margin-top: 8px;
+}
+
+.insert-variables-list .variable-property {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    padding: 14px 16px;
+    padding-left: 18px;
+}
+
+.insert-variables-list .variable-property:hover {
+    background: white;
+    border-color: #9a16f5;
+}
+
+.insert-variables-list .variable-name {
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    word-break: break-all;
+}
+
+.insert-variables-list .variable-description {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.insert-variables-list .variable-example {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+/* Empty state for insert variables modal */
+.insert-variables-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.insert-variables-empty i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.insert-variables-empty h4 {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.insert-variables-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+

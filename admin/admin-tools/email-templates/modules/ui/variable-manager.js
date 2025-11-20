@@ -480,10 +480,6 @@ export async function saveVariable(event) {
         // Re-render
         renderVariablesTable();
         
-        // Re-render variables list in HTML tab
-        const { renderVariablesList } = await import('./template-editor.js');
-        renderVariablesList();
-        
         closeVariableModal();
         showSuccess(editingVariableIndex !== null ? 'Variable updated' : 'Variable added');
         
@@ -522,10 +518,6 @@ export async function deleteVariable(index) {
         // Re-render
         renderVariablesTable();
         
-        // Re-render variables list in HTML tab
-        const { renderVariablesList } = await import('./template-editor.js');
-        renderVariablesList();
-        
         showSuccess('Variable deleted');
         
     } catch (error) {
@@ -537,3 +529,161 @@ export async function deleteVariable(index) {
 // Make functions available globally for onclick handlers
 window.editVariable = showEditVariableModal;
 window.deleteVariable = deleteVariable;
+
+/**
+ * Show the Insert Variable modal
+ */
+export function showInsertVariableModal() {
+    const modal = document.getElementById('insert-variable-modal');
+    const searchInput = document.getElementById('variable-search');
+    
+    // Clear search
+    searchInput.value = '';
+    
+    // Populate variables list
+    renderInsertVariablesList();
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Focus search input
+    setTimeout(() => searchInput.focus(), 100);
+}
+
+/**
+ * Render variables list in the Insert Variable modal
+ * @param {string} searchTerm - Optional search term to filter variables
+ */
+export function renderInsertVariablesList(searchTerm = '') {
+    const container = document.getElementById('insert-variables-list');
+    
+    // Check if variables exist and have items
+    if (!state.currentTemplate || !state.currentTemplate.variables || !Array.isArray(state.currentTemplate.variables) || state.currentTemplate.variables.length === 0) {
+        container.innerHTML = `
+            <div class="insert-variables-empty">
+                <i class="fas fa-code"></i>
+                <h4>No Variables Defined</h4>
+                <p>Add variables in the Settings tab to use them in your template.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Filter variables based on search term
+    const searchLower = searchTerm.toLowerCase();
+    let filteredVariables = state.currentTemplate.variables;
+    
+    if (searchTerm) {
+        filteredVariables = state.currentTemplate.variables.filter(variable => {
+            if (!variable || !variable.name) return false;
+            
+            // Search in variable name, description, and properties
+            const nameMatch = variable.name.toLowerCase().includes(searchLower);
+            const descMatch = (variable.description || '').toLowerCase().includes(searchLower);
+            
+            // Check properties if it's an object variable
+            let propsMatch = false;
+            if (variable.properties && Array.isArray(variable.properties)) {
+                propsMatch = variable.properties.some(prop => 
+                    prop.name.toLowerCase().includes(searchLower) ||
+                    (prop.description || '').toLowerCase().includes(searchLower)
+                );
+            }
+            
+            return nameMatch || descMatch || propsMatch;
+        });
+    }
+    
+    // Check if any results after filtering
+    if (filteredVariables.length === 0) {
+        container.innerHTML = `
+            <div class="insert-variables-empty">
+                <i class="fas fa-search"></i>
+                <h4>No Variables Found</h4>
+                <p>No variables match your search term "${searchTerm}".</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    filteredVariables.forEach(variable => {
+        // Skip invalid variables
+        if (!variable || !variable.name) {
+            return;
+        }
+        
+        // Check if variable has properties (is an object)
+        if (variable.properties && Array.isArray(variable.properties) && variable.properties.length > 0) {
+            // Render object with expandable properties
+            html += `
+                <div class="variable-group">
+                    <div class="variable-item variable-object" data-variable="${variable.name}">
+                        <div class="variable-name">\${${variable.name}}</div>
+                        <div class="variable-description">${variable.description || ''}</div>
+                        ${variable.example ? `<div class="variable-example">Example: ${variable.example}</div>` : ''}
+                    </div>
+                    <div class="variable-properties">
+            `;
+            
+            // Add each property as a clickable item
+            variable.properties.forEach(prop => {
+                const fullName = `${variable.name}.${prop.name}`;
+                html += `
+                    <div class="variable-item variable-property" data-variable="${fullName}">
+                        <div class="variable-name">\${${fullName}}</div>
+                        <div class="variable-description">${prop.description || ''}</div>
+                        ${prop.example ? `<div class="variable-example">Example: ${prop.example}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        } else {
+            // Render simple variable
+            html += `
+                <div class="variable-item" data-variable="${variable.name}">
+                    <div class="variable-name">\${${variable.name}}</div>
+                    <div class="variable-description">${variable.description || ''}</div>
+                    ${variable.example ? `<div class="variable-example">Example: ${variable.example}</div>` : ''}
+                </div>
+            `;
+        }
+    });
+    
+    container.innerHTML = html;
+    
+    // Add click handlers to insert variables
+    container.querySelectorAll('.variable-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const variableName = item.dataset.variable;
+            insertVariableFromModal(variableName);
+        });
+    });
+}
+
+/**
+ * Insert a variable from the modal into the active editor
+ * @param {string} variableName - Name of the variable to insert
+ */
+async function insertVariableFromModal(variableName) {
+    const { insertVariable } = await import('../core/editor.js');
+    insertVariable(variableName);
+    
+    // Close modal
+    document.getElementById('insert-variable-modal').style.display = 'none';
+    
+    // Show success message
+    showSuccess(`Inserted \${${variableName}}`);
+}
+
+/**
+ * Close the Insert Variable modal
+ */
+export function closeInsertVariableModal() {
+    document.getElementById('insert-variable-modal').style.display = 'none';
+}
+

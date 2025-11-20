@@ -49,81 +49,17 @@ export async function loadTemplateIntoEditor() {
     document.getElementById('template-updated').textContent = formatDate(state.currentTemplate.updatedAt);
     document.getElementById('template-updated-by').textContent = state.currentTemplate.updatedBy || 'N/A';
     
-    // Load variables
-    renderVariablesList();
-    
     // Load variables table in Settings tab
     const { renderVariablesTable } = await import('./variable-manager.js');
     renderVariablesTable();
 }
 
 /**
- * Render variables list
+ * Render variables list (DEPRECATED - now handled by Insert Variable modal)
+ * Kept for backward compatibility
  */
 export function renderVariablesList() {
-    const container = document.getElementById('variables-list');
-    
-    // Check if variables exist and have items
-    if (!state.currentTemplate || !state.currentTemplate.variables || !Array.isArray(state.currentTemplate.variables) || state.currentTemplate.variables.length === 0) {
-        container.innerHTML = '<p style="color: #999;">No variables defined</p>';
-        return;
-    }
-    
-    let html = '';
-    state.currentTemplate.variables.forEach(variable => {
-        // Skip invalid variables
-        if (!variable || !variable.name) {
-            return;
-        }
-        
-        // Check if variable has properties (is an object)
-        if (variable.properties && Array.isArray(variable.properties) && variable.properties.length > 0) {
-            // Render object with expandable properties
-            html += `
-                <div class="variable-group">
-                    <div class="variable-item variable-object" data-variable="${variable.name}">
-                        <div class="variable-name">\${${variable.name}}</div>
-                        <div class="variable-description">${variable.description || ''}</div>
-                        ${variable.example ? `<div class="variable-example">Example: ${variable.example}</div>` : ''}
-                    </div>
-                    <div class="variable-properties">
-            `;
-            
-            // Add each property as a clickable item
-            variable.properties.forEach(prop => {
-                const fullName = `${variable.name}.${prop.name}`;
-                html += `
-                    <div class="variable-item variable-property" data-variable="${fullName}">
-                        <div class="variable-name">\${${fullName}}</div>
-                        <div class="variable-description">${prop.description || ''}</div>
-                        ${prop.example ? `<div class="variable-example">Example: ${prop.example}</div>` : ''}
-                    </div>
-                `;
-            });
-            
-            html += `
-                    </div>
-                </div>
-            `;
-        } else {
-            // Render simple variable
-            html += `
-                <div class="variable-item" data-variable="${variable.name}">
-                    <div class="variable-name">\${${variable.name}}</div>
-                    <div class="variable-description">${variable.description || ''}</div>
-                    ${variable.example ? `<div class="variable-example">Example: ${variable.example}</div>` : ''}
-                </div>
-            `;
-        }
-    });
-    
-    container.innerHTML = html;
-    
-    // Add click to insert for all variable items
-    container.querySelectorAll('.variable-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const variableName = item.dataset.variable;
-            insertVariable(variableName);
-        });
-    });
+    // This function is now deprecated as variables are shown in the Insert Variable modal
+    // Keeping it to avoid breaking references, but it does nothing
+    return;
 }

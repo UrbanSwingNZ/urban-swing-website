@@ -12,7 +12,7 @@ import { sendTestEmail } from './test-send.js';
 import { showVersionHistory } from './version-history.js';
 import { updateSaveButton } from './save-button.js';
 import { showCreateTemplateModal, setupCreateTemplateForm } from './template-creator.js';
-import { showAddVariableModal, closeVariableModal, saveVariable, handleVariableSelection } from './variable-manager.js';
+import { showAddVariableModal, closeVariableModal, saveVariable, handleVariableSelection, showInsertVariableModal, closeInsertVariableModal } from './variable-manager.js';
 
 /* global firebase */
 
@@ -44,6 +44,23 @@ export function setupEventListeners() {
     document.getElementById('cancel-variable-btn').addEventListener('click', closeVariableModal);
     document.getElementById('variable-form').addEventListener('submit', saveVariable);
     document.getElementById('variable-select').addEventListener('change', handleVariableSelection);
+    
+    // Insert Variable modal
+    document.getElementById('insert-variable-btn').addEventListener('click', showInsertVariableModal);
+    document.getElementById('close-insert-variable-modal').addEventListener('click', closeInsertVariableModal);
+    
+    // Variable search in Insert Variable modal
+    let variableSearchTimeout;
+    document.getElementById('variable-search').addEventListener('input', async (e) => {
+        const searchTerm = e.target.value;
+        
+        // Debounce the search
+        clearTimeout(variableSearchTimeout);
+        variableSearchTimeout = setTimeout(async () => {
+            const { renderInsertVariablesList } = await import('./variable-manager.js');
+            renderInsertVariablesList(searchTerm);
+        }, 300);
+    });
     
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -81,6 +98,11 @@ export function setupEventListeners() {
             if (modal.id === 'variable-modal') {
                 closeVariableModal();
             }
+            
+            // If it's the insert variable modal, call the close function
+            if (modal.id === 'insert-variable-modal') {
+                closeInsertVariableModal();
+            }
         });
     });
     
@@ -110,6 +132,11 @@ export function setupEventListeners() {
                 // If it's the variable modal, call the close function
                 if (modal.id === 'variable-modal') {
                     closeVariableModal();
+                }
+                
+                // If it's the insert variable modal, call the close function
+                if (modal.id === 'insert-variable-modal') {
+                    closeInsertVariableModal();
                 }
             }
         });
