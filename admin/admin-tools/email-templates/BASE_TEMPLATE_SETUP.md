@@ -161,13 +161,13 @@ Once the base template is created:
 1. Refresh the Email Templates page
 2. You should see "Email Base Template" in the "Other" category with a special file-code icon
 3. Click on it to view the template
-4. You'll see "Create New Email" and "Update Template" buttons instead of the normal toolbar
-5. Click "Create New Email" to test creating a new template from the base
+4. You'll see "Copy to New Template" and "Update Template" buttons instead of the normal toolbar
+5. Click "Copy to New Template" to test creating a new template from the base
 6. Edit the base template anytime by clicking "Update Template" (with confirmation)
 
 ## How It Works
 
-- **Create New Email**: Opens the modal to create a new template. The HTML and text content will be copied from this base template.
+- **Copy to New Template**: Opens the modal to create a new template. The HTML and text content will be copied from this base template.
 - **Update Template**: Opens a warning modal, then saves your changes to the base template. This affects all future templates created from this base.
 - The base template cannot be deleted (no delete button shown).
 - Regular templates require a subject line before saving; the base template does not.
