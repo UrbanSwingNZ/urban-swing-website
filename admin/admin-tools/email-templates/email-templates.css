@@ -33,6 +33,11 @@
     color: #333;
 }
 
+.sidebar-actions {
+    display: flex;
+    gap: 8px;
+}
+
 .btn-icon {
     background: none;
     border: none;
@@ -134,6 +139,14 @@
 
 .template-item .status-indicator.inactive {
     background: #dc3545;
+}
+
+.template-item.base-template {
+    border-left: 3px solid #9a16f5;
+}
+
+.template-item.base-template i {
+    color: #3534Fa;
 }
 
 /* ===== Main Content Area ===== */
@@ -424,9 +437,38 @@
 }
 
 .variables-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+}
+
+.variable-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.variable-object {
+    background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
+    border-left: 3px solid #9a16f5;
+    font-weight: 600;
+}
+
+.variable-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 20px;
+    padding-left: 12px;
+    border-left: 2px solid #e0e0e0;
+}
+
+.variable-property {
+    background: #fafafa;
+}
+
+.variable-property .variable-name {
+    font-size: 0.8rem;
 }
 
 .variable-item {
@@ -480,6 +522,33 @@
     font-size: 1.1rem;
 }
 
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.settings-header h3 {
+    margin: 0;
+}
+
+.settings-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+
+.settings-description code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-size: 0.85rem;
+}
+
 .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -526,24 +595,124 @@
     cursor: pointer;
 }
 
-/* ===== Buttons ===== */
-.btn-primary,
-.btn-secondary {
-    padding: 10px 20px;
-    border: none;
+/* Variables Table */
+.variables-table-container {
+    margin-top: 15px;
+}
+
+.variables-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
+    overflow: hidden;
+}
+
+.variables-table thead {
+    background: linear-gradient(135deg, #3534Fa, #9a16f5);
+    color: white;
+}
+
+.variables-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.variables-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.2s;
+}
+
+.variables-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.variables-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.variables-table td {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+}
+
+.variables-table td:first-child {
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-weight: 600;
+}
+
+.variable-actions {
+    display: flex;
     gap: 8px;
 }
 
+.variable-actions .btn-icon {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+.required {
+    color: #dc3545;
+}
+
+.form-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* ===== Buttons ===== */
 .btn-primary {
-    background: #9a16f5;
+    background: linear-gradient(135deg, var(--admin-blue, #3534Fa), var(--admin-purple, #9a16f5));
     color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background: transparent;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+    line-height: 1;
 }
 
 .btn-primary-lg {
@@ -564,8 +733,9 @@
 }
 
 .btn-primary:hover {
-    background: #8612d6;
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+    background: linear-gradient(135deg, var(--admin-purple, #9a16f5), var(--admin-pink, #e800f2));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
 }
 
 .btn-primary-lg:hover {
@@ -578,8 +748,36 @@
     transform: translateY(0);
 }
 
+.btn-danger-lg {
+    background: var(--admin-error, #dc3545);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.btn-danger-lg:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+}
+
+.btn-danger-lg:active {
+    transform: translateY(0);
+}
+
 .btn-primary:disabled,
-.btn-primary-lg:disabled {
+.btn-primary-lg:disabled,
+.btn-danger-lg:disabled {
     background: #ccc;
     cursor: not-allowed;
     box-shadow: none;
@@ -593,8 +791,9 @@
 }
 
 .btn-secondary:hover {
-    background: #e9ecef;
+    background: #f0f0f0;
     border-color: #ccc;
+    transform: translateY(-2px);
 }
 
 /* ===== Modals ===== */
@@ -632,38 +831,49 @@
 }
 
 .modal-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: linear-gradient(135deg, var(--admin-blue, #3534Fa), var(--admin-purple, #9a16f5));
+    border-radius: 12px 12px 0 0;
 }
 
 .modal-header h2 {
     margin: 0;
     font-size: 1.3rem;
-    color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.modal-header h2 i {
+    font-size: 1.4rem;
 }
 
 .modal-close {
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
     font-size: 1.5rem;
-    color: #999;
+    color: white;
     cursor: pointer;
     padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.2s;
+    opacity: 0.9;
 }
 
 .modal-close:hover {
-    background: #f0f0f0;
-    color: #333;
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 1;
 }
 
 .modal-body {
@@ -674,8 +884,11 @@
 
 .modal-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin-top: 24px;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
 }
 
 /* ===== Preview Modal ===== */
@@ -917,11 +1130,175 @@
     font-size: 0.9rem;
 }
 
-.form-group input {
+.form-group input,
+.form-group select,
+.form-group textarea {
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 0.95rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #9a16f5;
+    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* ===== Delete Modal ===== */
+.template-info-delete {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    border-left: 3px solid var(--admin-error, #dc3545);
+}
+
+.template-info-delete strong {
+    display: block;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.text-muted {
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.modal-small {
+    max-width: 500px;
+}
+
+.modal-header.error {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.modal-header.error h3 {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.modal-header.error i {
+    font-size: 1.4rem;
+}
+
+.modal-header h3 {
+    color: white;
+}
+
+.btn-help {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-help:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Variable Properties Preview */
+.variable-properties-preview {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.variable-properties-preview h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.variable-properties-preview h4 i {
+    color: #9a16f5;
+}
+
+.properties-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.property-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+}
+
+.property-name {
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.property-description {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.property-example {
+    color: #999;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* ===== Visual Editor Variable Styling ===== */
+/* Style ${variableName} placeholders in TinyMCE visual editor */
+.mce-content-body .template-variable {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    color: #9a16f5;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.9em;
+    border: 1px solid #ce93d8;
+    display: inline-block;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mce-content-body .template-variable:hover {
+    background: linear-gradient(135deg, #bbdefb, #e1bee7);
+    border-color: #ab47bc;
+}
+
+/* Insert variable button in TinyMCE toolbar */
+.tox .tox-tbtn--select {
+    /* TinyMCE will handle this */
 }
 
 /* ===== Loading Spinner ===== */
@@ -1025,3 +1402,177 @@
 .snackbar-message {
     flex: 1;
 }
+
+/* ===== Insert Variable Button ===== */
+.btn-insert-variable {
+    background: linear-gradient(135deg, #3534Fa, #9a16f5);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.3);
+}
+
+.btn-insert-variable:hover {
+    background: linear-gradient(135deg, #2a29c8, #7d12c5);
+    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-insert-variable:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(154, 22, 245, 0.3);
+}
+
+.btn-insert-variable i {
+    font-size: 1rem;
+}
+
+/* ===== Insert Variable Modal ===== */
+.modal-insert-variable {
+    max-width: 700px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-insert-variable .modal-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.insert-variable-search {
+    position: relative;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.insert-variable-search .form-control {
+    padding-left: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.insert-variable-search .search-icon {
+    position: absolute;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+}
+
+.insert-variables-list {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: 500px;
+}
+
+.insert-variables-list .variable-group {
+    margin-bottom: 20px;
+}
+
+.insert-variables-list .variable-item {
+    background: white;
+    padding: 16px 18px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+}
+
+.insert-variables-list .variable-item:hover {
+    border-color: #9a16f5;
+    background: linear-gradient(135deg, rgba(154, 22, 245, 0.05), rgba(232, 0, 242, 0.05));
+    box-shadow: 0 3px 8px rgba(154, 22, 245, 0.15);
+    transform: translateY(-1px);
+}
+
+.insert-variables-list .variable-item:active {
+    transform: translateY(0);
+}
+
+.insert-variables-list .variable-object {
+    background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
+    border-left: 4px solid #9a16f5;
+    font-weight: 600;
+    padding-left: 18px;
+}
+
+.insert-variables-list .variable-properties {
+    margin-left: 24px;
+    padding-left: 16px;
+    border-left: 3px solid #e0e0e0;
+    margin-top: 8px;
+}
+
+.insert-variables-list .variable-property {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    padding: 14px 16px;
+    padding-left: 18px;
+}
+
+.insert-variables-list .variable-property:hover {
+    background: white;
+    border-color: #9a16f5;
+}
+
+.insert-variables-list .variable-name {
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    word-break: break-all;
+}
+
+.insert-variables-list .variable-description {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.insert-variables-list .variable-example {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+/* Empty state for insert variables modal */
+.insert-variables-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.insert-variables-empty i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.insert-variables-empty h4 {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.insert-variables-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
