@@ -11,8 +11,14 @@ import { insertVariable } from '../core/editor.js';
 /**
  * Load current template data into editor
  */
-export function loadTemplateIntoEditor() {
+export async function loadTemplateIntoEditor() {
     if (!state.currentTemplate) return;
+    
+    const isBaseTemplate = state.currentTemplate.id === '_base-template';
+    
+    // Toggle toolbar visibility
+    document.getElementById('regular-toolbar').style.display = isBaseTemplate ? 'none' : 'flex';
+    document.getElementById('base-template-toolbar').style.display = isBaseTemplate ? 'flex' : 'none';
     
     // Update toolbar
     document.getElementById('template-name').textContent = state.currentTemplate.name;
@@ -43,39 +49,17 @@ export function loadTemplateIntoEditor() {
     document.getElementById('template-updated').textContent = formatDate(state.currentTemplate.updatedAt);
     document.getElementById('template-updated-by').textContent = state.currentTemplate.updatedBy || 'N/A';
     
-    // Load variables
-    renderVariablesList();
+    // Load variables table in Settings tab
+    const { renderVariablesTable } = await import('./variable-manager.js');
+    renderVariablesTable();
 }
 
 /**
- * Render variables list
+ * Render variables list (DEPRECATED - now handled by Insert Variable modal)
+ * Kept for backward compatibility
  */
 export function renderVariablesList() {
-    const container = document.getElementById('variables-list');
-    
-    if (!state.currentTemplate.variables || state.currentTemplate.variables.length === 0) {
-        container.innerHTML = '<p style="color: #999;">No variables defined</p>';
-        return;
-    }
-    
-    let html = '';
-    state.currentTemplate.variables.forEach(variable => {
-        html += `
-            <div class="variable-item" data-variable="${variable.name}">
-                <div class="variable-name">\${${variable.name}}</div>
-                <div class="variable-description">${variable.description || ''}</div>
-                ${variable.example ? `<div class="variable-example">Example: ${variable.example}</div>` : ''}
-            </div>
-        `;
-    });
-    
-    container.innerHTML = html;
-    
-    // Add click to insert
-    container.querySelectorAll('.variable-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const variableName = item.dataset.variable;
-            insertVariable(variableName);
-        });
-    });
+    // This function is now deprecated as variables are shown in the Insert Variable modal
+    // Keeping it to avoid breaking references, but it does nothing
+    return;
 }

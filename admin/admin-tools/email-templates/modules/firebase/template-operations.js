@@ -8,6 +8,7 @@ import { showLoading, showSuccess, showError } from '../ui/notifications.js';
 import { updateSaveButton } from '../ui/save-button.js';
 import { renderTemplateList } from '../ui/template-list.js';
 import { loadTemplateIntoEditor } from '../ui/template-editor.js';
+import { checkUnsavedChanges } from '../ui/navigation.js';
 
 // db is globally available from firebase-config.js
 /* global db, firebase */
@@ -50,13 +51,20 @@ export async function loadTemplates() {
  * Select and load a template for editing
  */
 export async function selectTemplate(templateId) {
-    // Check for unsaved changes
-    if (state.hasUnsavedChanges) {
-        if (!confirm('You have unsaved changes. Do you want to discard them?')) {
-            return;
-        }
+    // Check for unsaved changes - use modal instead of browser confirm
+    const shouldProceed = checkUnsavedChanges(() => loadTemplate(templateId));
+    if (!shouldProceed) {
+        return; // User will see modal and can choose to proceed or cancel
     }
     
+    // If we get here, no unsaved changes - proceed with loading
+    loadTemplate(templateId);
+}
+
+/**
+ * Internal function to load a template (called after unsaved changes check)
+ */
+async function loadTemplate(templateId) {
     try {
         showLoading(true);
         
@@ -99,15 +107,29 @@ export async function selectTemplate(templateId) {
 export async function saveTemplate() {
     if (!state.currentTemplate) return;
     
+    // Don't allow saving the base template through this function
+    if (state.currentTemplate.id === '_base-template') {
+        showError('Please use the "Update Template" button to save changes to the base template.');
+        return;
+    }
+    
     try {
+        // Get current values
+        const subject = document.getElementById('email-subject').value.trim();
+        
+        // Validate subject is not empty
+        if (!subject) {
+            showError('Please enter an email subject before saving.');
+            // Focus on the subject field
+            document.getElementById('email-subject').focus();
+            return;
+        }
+        
         // Clear unsaved changes flag immediately to prevent confirmation dialog
         setHasUnsavedChanges(false);
         updateSaveButton();
         
         showLoading(true);
-        
-        // Get current values
-        const subject = document.getElementById('email-subject').value.trim();
         
         // Get HTML content from the active editor
         let htmlTemplate;
@@ -127,10 +149,6 @@ export async function saveTemplate() {
         const active = document.getElementById('template-active').checked;
         
         // Validate
-        if (!subject) {
-            throw new Error('Subject line is required');
-        }
-        
         if (!htmlTemplate) {
             throw new Error('HTML template is required');
         }
@@ -183,3 +201,145 @@ export async function saveTemplate() {
         showLoading(false);
     }
 }
+
+/**
+ * Delete template
+ */
+export async function deleteTemplate() {
+    if (!state.currentTemplate) return;
+    
+    // Show delete confirmation modal
+    const modal = document.getElementById('delete-template-modal');
+    const infoDiv = document.getElementById('delete-template-info');
+    
+    // Populate modal with template info
+    infoDiv.innerHTML = `
+        <strong>${state.currentTemplate.name}</strong>
+        <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">
+            ID: ${state.currentTemplate.id}<br>
+            Category: ${state.currentTemplate.category || 'N/A'}
+        </div>
+    `;
+    
+    modal.classList.add('active');
+}
+
+/**
+ * Confirm and execute template deletion
+ */
+export async function confirmDeleteTemplate() {
+    if (!state.currentTemplate) return;
+    
+    try {
+        showLoading(true);
+        
+        await db.collection('emailTemplates').doc(state.currentTemplate.id).delete();
+        
+        showSuccess('Template deleted successfully!');
+        
+        // Clear current template
+        setCurrentTemplate(null);
+        
+        // Update UI
+        document.getElementById('editor-view').style.display = 'none';
+        document.getElementById('no-selection-state').style.display = 'flex';
+        
+        // Close modal
+        document.getElementById('delete-template-modal').classList.remove('active');
+        
+        // Reload templates list
+        await loadTemplates();
+        
+        showLoading(false);
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        showError('Failed to delete template: ' + error.message);
+        showLoading(false);
+    }
+}
+
+/**
+ * Show warning modal for updating base template
+ */
+export async function updateBaseTemplate() {
+    if (!state.currentTemplate || state.currentTemplate.id !== '_base-template') return;
+    
+    // Show warning modal
+    document.getElementById('update-base-modal').classList.add('active');
+}
+
+/**
+ * Confirm and execute base template update
+ */
+export async function confirmUpdateBaseTemplate() {
+    if (!state.currentTemplate || state.currentTemplate.id !== '_base-template') return;
+    
+    try {
+        // Clear unsaved changes flag immediately to prevent confirmation dialog
+        setHasUnsavedChanges(false);
+        updateSaveButton();
+        
+        showLoading(true);
+        
+        // Get current values
+        const subject = document.getElementById('email-subject').value.trim();
+        
+        // Get HTML content from the active editor
+        let htmlTemplate;
+        if (state.currentEditorMode === 'visual' && state.visualEditor) {
+            htmlTemplate = state.visualEditor.getContent();
+            state.htmlEditor.setValue(htmlTemplate);
+        } else {
+            htmlTemplate = state.htmlEditor.getValue();
+            if (state.visualEditor) {
+                state.visualEditor.setContent(htmlTemplate);
+            }
+        }
+        
+        const textTemplate = document.getElementById('text-template').value;
+        const active = document.getElementById('template-active').checked;
+        
+        // Create new version
+        const newVersion = {
+            version: (state.currentTemplate.currentVersion || 0) + 1,
+            createdAt: new Date(),
+            createdBy: state.currentUser.email,
+            subject,
+            htmlTemplate,
+            textTemplate,
+            changeNote: 'Base template updated'
+        };
+        
+        // Update document
+        const updateData = {
+            subject,
+            htmlTemplate,
+            textTemplate,
+            active,
+            currentVersion: newVersion.version,
+            versions: firebase.firestore.FieldValue.arrayUnion(newVersion),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: state.currentUser.email
+        };
+        
+        await db.collection('emailTemplates').doc('_base-template').update(updateData);
+        
+        // Reload template
+        await selectTemplate('_base-template');
+        await loadTemplates();
+        
+        setHasUnsavedChanges(false);
+        updateSaveButton();
+        
+        // Close modal
+        document.getElementById('update-base-modal').classList.remove('active');
+        
+        showSuccess('Base template updated successfully!');
+        showLoading(false);
+    } catch (error) {
+        console.error('Error updating base template:', error);
+        showError('Failed to update base template: ' + error.message);
+        showLoading(false);
+    }
+}
+
