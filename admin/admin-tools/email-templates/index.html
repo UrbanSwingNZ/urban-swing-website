@@ -152,10 +152,9 @@
                                     <div class="editor-section">
                                         <div class="editor-header">
                                             <label>HTML Template</label>
-                                            <div class="variable-hint">
-                                                <i class="fas fa-info-circle"></i>
-                                                Use <code>${variableName}</code> for variables
-                                            </div>
+                                            <button id="insert-variable-btn" class="btn-insert-variable" title="Insert a variable into the template">
+                                                <i class="fas fa-code"></i> Insert Variable
+                                            </button>
                                         </div>
                                         
                                         <!-- Visual Editor (TinyMCE) -->
@@ -166,14 +165,6 @@
                                         <!-- Code Editor (CodeMirror) -->
                                         <div id="code-editor-container" class="editor-wrapper" style="display: none;">
                                             <textarea id="html-editor"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Variables Reference -->
-                                    <div class="variables-panel">
-                                        <h3>Available Variables</h3>
-                                        <div id="variables-list" class="variables-list">
-                                            <!-- Variables will be loaded here -->
                                         </div>
                                     </div>
                                 </div>
@@ -509,6 +500,27 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insert Variable Modal -->
+    <div id="insert-variable-modal" class="modal">
+        <div class="modal-content modal-insert-variable">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-code"></i> Insert Variable
+                </h3>
+                <button class="modal-close" id="close-insert-variable-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="insert-variable-search">
+                    <input type="text" id="variable-search" class="form-control" placeholder="Search variables...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div id="insert-variables-list" class="insert-variables-list">
+                    <!-- Variables will be populated here -->
+                </div>
             </div>
         </div>
     </div>
