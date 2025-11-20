@@ -43,8 +43,20 @@ export function initializeCodeMirror() {
         toolbar: 'undo redo | blocks | ' +
             'bold italic forecolor backcolor | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | link image | code | help',
-        content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
+            'removeformat | link image | insertvariable | code | help',
+        content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }' +
+            '.template-variable { ' +
+            'background: linear-gradient(135deg, #e3f2fd, #f3e5f5); ' +
+            'color: #9a16f5; ' +
+            'padding: 2px 8px; ' +
+            'border-radius: 12px; ' +
+            'font-family: "Courier New", monospace; ' +
+            'font-weight: 600; ' +
+            'font-size: 0.9em; ' +
+            'border: 1px solid #ce93d8; ' +
+            'display: inline-block; ' +
+            'margin: 0 2px; ' +
+            '}',
         // Custom content CSS for email preview
         content_css: false,
         // Allow all HTML tags and attributes for email templates
@@ -66,13 +78,51 @@ export function initializeCodeMirror() {
         ],
         // Setup callback
         setup: function(editor) {
+            // Add custom "Insert Variable" button
+            editor.ui.registry.addMenuButton('insertvariable', {
+                text: 'Variable',
+                icon: 'template',
+                fetch: function(callback) {
+                    // Get variables from current template
+                    const variables = state.currentTemplate?.variables || [];
+                    
+                    if (variables.length === 0) {
+                        callback([{
+                            type: 'menuitem',
+                            text: 'No variables defined',
+                            enabled: false
+                        }]);
+                        return;
+                    }
+                    
+                    const items = variables.map(variable => ({
+                        type: 'menuitem',
+                        text: `${variable.name} - ${variable.description}`,
+                        onAction: function() {
+                            insertVariableIntoTinyMCE(editor, variable.name);
+                        }
+                    }));
+                    
+                    callback(items);
+                }
+            });
+            
             editor.on('init', function() {
                 setVisualEditor(editor);
+                // Wrap existing variables on load
+                wrapExistingVariables(editor);
             });
+            
             editor.on('change keyup', function() {
                 setHasUnsavedChanges(true);
                 updateSaveButton();
             });
+            
+            // Wrap variables after paste
+            editor.on('paste', function() {
+                setTimeout(() => wrapExistingVariables(editor), 100);
+            });
+            
             // Prevent TinyMCE from encoding special characters in template variables
             editor.on('BeforeSetContent', function(e) {
                 // Don't let TinyMCE mess with our template syntax
@@ -129,8 +179,42 @@ export function switchEditorMode(mode) {
  * Insert variable into editor at cursor position
  */
 export function insertVariable(variableName) {
-    const doc = state.htmlEditor.getDoc();
-    const cursor = doc.getCursor();
-    doc.replaceRange(`\${${variableName}}`, cursor);
-    state.htmlEditor.focus();
+    if (state.currentEditorMode === 'visual' && state.visualEditor) {
+        insertVariableIntoTinyMCE(state.visualEditor, variableName);
+    } else {
+        // Insert into CodeMirror
+        const doc = state.htmlEditor.getDoc();
+        const cursor = doc.getCursor();
+        doc.replaceRange(`\${${variableName}}`, cursor);
+        state.htmlEditor.focus();
+    }
+}
+
+/**
+ * Insert variable into TinyMCE editor with styling
+ */
+function insertVariableIntoTinyMCE(editor, variableName) {
+    const variableHtml = `<span class="template-variable" contenteditable="false">\${${variableName}}</span>&nbsp;`;
+    editor.insertContent(variableHtml);
+}
+
+/**
+ * Wrap existing ${variableName} text in TinyMCE with styled spans
+ */
+function wrapExistingVariables(editor) {
+    let content = editor.getContent();
+    
+    // Find all ${variable} patterns that aren't already wrapped
+    const regex = /(?!<span class="template-variable"[^>]*>)\$\{([a-zA-Z_$][a-zA-Z0-9_$\.]*)\}(?!<\/span>)/g;
+    
+    content = content.replace(regex, function(match, varName) {
+        return `<span class="template-variable" contenteditable="false">\${${varName}}</span>`;
+    });
+    
+    // Only update if content changed (prevents infinite loops)
+    if (content !== editor.getContent()) {
+        const bookmark = editor.selection.getBookmark();
+        editor.setContent(content);
+        editor.selection.moveToBookmark(bookmark);
+    }
 }
