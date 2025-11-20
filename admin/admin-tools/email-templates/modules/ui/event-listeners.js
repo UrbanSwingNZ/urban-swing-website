@@ -13,6 +13,7 @@ import { showVersionHistory } from './version-history.js';
 import { updateSaveButton } from './save-button.js';
 import { showCreateTemplateModal, setupCreateTemplateForm } from './template-creator.js';
 import { showAddVariableModal, closeVariableModal, saveVariable, handleVariableSelection, showInsertVariableModal, closeInsertVariableModal } from './variable-manager.js';
+import { setupBeforeUnloadHandler, confirmDiscardChanges, cancelNavigation } from './navigation.js';
 
 /* global firebase */
 
@@ -169,11 +170,10 @@ export function setupEventListeners() {
     document.getElementById('cancel-variable-btn').addEventListener('click', closeVariableModal);
     document.getElementById('variable-form').addEventListener('submit', saveVariable);
     
-    // Warn before leaving with unsaved changes
-    window.addEventListener('beforeunload', (e) => {
-        if (state.hasUnsavedChanges) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
+    // Unsaved changes modal
+    document.getElementById('discard-changes-btn').addEventListener('click', confirmDiscardChanges);
+    document.getElementById('cancel-navigation-btn').addEventListener('click', cancelNavigation);
+    
+    // Setup beforeunload handler for browser navigation (keep this for browser back/close)
+    setupBeforeUnloadHandler();
 }
