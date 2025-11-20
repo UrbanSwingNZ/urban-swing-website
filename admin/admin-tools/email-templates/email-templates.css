@@ -437,9 +437,38 @@
 }
 
 .variables-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+}
+
+.variable-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.variable-object {
+    background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
+    border-left: 3px solid #9a16f5;
+    font-weight: 600;
+}
+
+.variable-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 20px;
+    padding-left: 12px;
+    border-left: 2px solid #e0e0e0;
+}
+
+.variable-property {
+    background: #fafafa;
+}
+
+.variable-property .variable-name {
+    font-size: 0.8rem;
 }
 
 .variable-item {
@@ -493,6 +522,33 @@
     font-size: 1.1rem;
 }
 
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.settings-header h3 {
+    margin: 0;
+}
+
+.settings-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+
+.settings-description code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-size: 0.85rem;
+}
+
 .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -537,6 +593,89 @@
     width: 18px;
     height: 18px;
     cursor: pointer;
+}
+
+/* Variables Table */
+.variables-table-container {
+    margin-top: 15px;
+}
+
+.variables-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.variables-table thead {
+    background: linear-gradient(135deg, #3534Fa, #9a16f5);
+    color: white;
+}
+
+.variables-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.variables-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.2s;
+}
+
+.variables-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.variables-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.variables-table td {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+}
+
+.variables-table td:first-child {
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-weight: 600;
+}
+
+.variable-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.variable-actions .btn-icon {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+.required {
+    color: #dc3545;
+}
+
+.form-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #666;
 }
 
 /* ===== Buttons ===== */
@@ -1055,6 +1194,111 @@
 
 .modal-header.error i {
     font-size: 1.4rem;
+}
+
+.modal-header h3 {
+    color: white;
+}
+
+.btn-help {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-help:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Variable Properties Preview */
+.variable-properties-preview {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.variable-properties-preview h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.variable-properties-preview h4 i {
+    color: #9a16f5;
+}
+
+.properties-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.property-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+}
+
+.property-name {
+    font-family: 'Courier New', monospace;
+    color: #9a16f5;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.property-description {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.property-example {
+    color: #999;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* ===== Visual Editor Variable Styling ===== */
+/* Style ${variableName} placeholders in TinyMCE visual editor */
+.mce-content-body .template-variable {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    color: #9a16f5;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.9em;
+    border: 1px solid #ce93d8;
+    display: inline-block;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mce-content-body .template-variable:hover {
+    background: linear-gradient(135deg, #bbdefb, #e1bee7);
+    border-color: #ab47bc;
+}
+
+/* Insert variable button in TinyMCE toolbar */
+.tox .tox-tbtn--select {
+    /* TinyMCE will handle this */
 }
 
 /* ===== Loading Spinner ===== */

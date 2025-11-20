@@ -12,6 +12,7 @@ import { sendTestEmail } from './test-send.js';
 import { showVersionHistory } from './version-history.js';
 import { updateSaveButton } from './save-button.js';
 import { showCreateTemplateModal, setupCreateTemplateForm } from './template-creator.js';
+import { showAddVariableModal, closeVariableModal, saveVariable, handleVariableSelection } from './variable-manager.js';
 
 /* global firebase */
 
@@ -37,6 +38,12 @@ export function setupEventListeners() {
     document.getElementById('cancel-template-btn').addEventListener('click', () => {
         document.getElementById('add-template-modal').classList.remove('active');
     });
+    
+    // Variable management
+    document.getElementById('add-variable-btn').addEventListener('click', showAddVariableModal);
+    document.getElementById('cancel-variable-btn').addEventListener('click', closeVariableModal);
+    document.getElementById('variable-form').addEventListener('submit', saveVariable);
+    document.getElementById('variable-select').addEventListener('change', handleVariableSelection);
     
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -66,7 +73,14 @@ export function setupEventListeners() {
     // Modal close buttons
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', () => {
-            btn.closest('.modal').classList.remove('active');
+            const modal = btn.closest('.modal');
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+            
+            // If it's the variable modal, call the close function
+            if (modal.id === 'variable-modal') {
+                closeVariableModal();
+            }
         });
     });
     
@@ -91,6 +105,12 @@ export function setupEventListeners() {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('active');
+                modal.style.display = 'none';
+                
+                // If it's the variable modal, call the close function
+                if (modal.id === 'variable-modal') {
+                    closeVariableModal();
+                }
             }
         });
     });
@@ -115,6 +135,11 @@ export function setupEventListeners() {
         setHasUnsavedChanges(true);
         updateSaveButton();
     });
+    
+    // Variable management
+    document.getElementById('add-variable-btn').addEventListener('click', showAddVariableModal);
+    document.getElementById('cancel-variable-btn').addEventListener('click', closeVariableModal);
+    document.getElementById('variable-form').addEventListener('submit', saveVariable);
     
     // Warn before leaving with unsaved changes
     window.addEventListener('beforeunload', (e) => {
