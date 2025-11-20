@@ -179,7 +179,30 @@ export function switchEditorMode(mode) {
  * Insert variable into editor at cursor position
  */
 export function insertVariable(variableName) {
-    if (state.currentEditorMode === 'visual' && state.visualEditor) {
+    // Check which tab is active
+    const htmlTab = document.querySelector('[data-tab="html"]');
+    const textTab = document.querySelector('[data-tab="text"]');
+    const isTextTabActive = textTab && textTab.classList.contains('active');
+    
+    if (isTextTabActive) {
+        // Insert into text template textarea
+        const textarea = document.getElementById('text-template');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const variableText = `\${${variableName}}`;
+        
+        // Insert at cursor position
+        textarea.value = text.substring(0, start) + variableText + text.substring(end);
+        
+        // Set cursor position after the inserted variable
+        const newCursorPos = start + variableText.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        textarea.focus();
+        
+        // Trigger input event to mark as changed
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    } else if (state.currentEditorMode === 'visual' && state.visualEditor) {
         insertVariableIntoTinyMCE(state.visualEditor, variableName);
     } else {
         // Insert into CodeMirror

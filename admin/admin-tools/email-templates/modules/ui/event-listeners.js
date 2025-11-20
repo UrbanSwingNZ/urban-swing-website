@@ -47,6 +47,7 @@ export function setupEventListeners() {
     
     // Insert Variable modal
     document.getElementById('insert-variable-btn').addEventListener('click', showInsertVariableModal);
+    document.getElementById('insert-variable-text-btn').addEventListener('click', showInsertVariableModal);
     document.getElementById('close-insert-variable-modal').addEventListener('click', closeInsertVariableModal);
     
     // Variable search in Insert Variable modal
