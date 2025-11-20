@@ -8,6 +8,7 @@ import { showLoading, showSuccess, showError } from '../ui/notifications.js';
 import { updateSaveButton } from '../ui/save-button.js';
 import { renderTemplateList } from '../ui/template-list.js';
 import { loadTemplateIntoEditor } from '../ui/template-editor.js';
+import { checkUnsavedChanges } from '../ui/navigation.js';
 
 // db is globally available from firebase-config.js
 /* global db, firebase */
@@ -50,13 +51,20 @@ export async function loadTemplates() {
  * Select and load a template for editing
  */
 export async function selectTemplate(templateId) {
-    // Check for unsaved changes
-    if (state.hasUnsavedChanges) {
-        if (!confirm('You have unsaved changes. Do you want to discard them?')) {
-            return;
-        }
+    // Check for unsaved changes - use modal instead of browser confirm
+    const shouldProceed = checkUnsavedChanges(() => loadTemplate(templateId));
+    if (!shouldProceed) {
+        return; // User will see modal and can choose to proceed or cancel
     }
     
+    // If we get here, no unsaved changes - proceed with loading
+    loadTemplate(templateId);
+}
+
+/**
+ * Internal function to load a template (called after unsaved changes check)
+ */
+async function loadTemplate(templateId) {
     try {
         showLoading(true);
         
