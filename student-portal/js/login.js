@@ -161,41 +161,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Reset Password button handler
+    // Reset Password button handler - using new modal utility
     const resetBtn = existingStudentForm.querySelector('.reset-btn');
-    resetBtn.addEventListener('click', async function(e) {
+    resetBtn.addEventListener('click', function(e) {
         e.preventDefault();
         
+        // Get email from the existing student email field
         const email = document.getElementById('existingStudentEmail').value.trim();
         
-        if (!email) {
-            alert('Please enter your email address');
-            return;
-        }
-        
-        // Disable button and show loading state
-        resetBtn.disabled = true;
-        resetBtn.textContent = 'Sending...';
-        
-        try {
-            await firebase.auth().sendPasswordResetEmail(email);
-            alert('Password reset email sent! Please check your inbox.');
-            resetBtn.disabled = false;
-            resetBtn.textContent = 'Reset Password';
-        } catch (error) {
-            console.error('Password reset error:', error);
-            
-            let errorMessage = 'Failed to send reset email. Please try again.';
-            
-            if (error.code === 'auth/user-not-found') {
-                errorMessage = 'No account found with this email address';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'Invalid email address';
-            }
-            
-            alert(errorMessage);
-            resetBtn.disabled = false;
-            resetBtn.textContent = 'Reset Password';
-        }
+        // Show password reset modal with pre-filled email
+        showPasswordResetModal(email, (sentEmail) => {
+            console.log('Password reset email sent to:', sentEmail);
+            // Clear the password field for security
+            document.getElementById('existingStudentPassword').value = '';
+        });
     });
 });
