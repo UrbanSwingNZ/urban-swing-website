@@ -156,6 +156,9 @@ function createStudentRow(student) {
         </td>
         <td>${registeredDate}</td>
         <td class="action-buttons">
+            ${!isDeleted ? `<button class="btn-icon" onclick="resetStudentPassword('${student.id}')" title="Reset Password">
+                <i class="fas fa-key"></i>
+            </button>` : ''}
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
                 <i class="fas fa-sticky-note"></i>
             </button>
@@ -263,4 +266,21 @@ async function loadStudentConcessions(studentId, cellId) {
             student._concessionsCount = -1;
         }
     }
+}
+
+/**
+ * Reset student password
+ * Sends password reset email to student's email address
+ */
+function resetStudentPassword(studentId) {
+    const student = findStudentById(studentId);
+    if (!student || !student.email) {
+        alert('Unable to find student email address.');
+        return;
+    }
+    
+    // Use the password reset modal with pre-filled email
+    showPasswordResetModal(student.email, () => {
+        console.log('Password reset email sent to:', student.email);
+    });
 }
