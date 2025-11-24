@@ -342,6 +342,19 @@
     color: white;
 }
 
+.btn-icon.btn-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-icon.btn-disabled:hover {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--border-color);
+    transform: none;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;

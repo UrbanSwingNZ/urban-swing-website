@@ -156,7 +156,7 @@ function createStudentRow(student) {
         </td>
         <td>${registeredDate}</td>
         <td class="action-buttons">
-            ${!isDeleted ? `<button class="btn-icon" onclick="resetStudentPassword('${student.id}')" title="Reset Password">
+            ${!isDeleted ? `<button class="btn-icon btn-disabled" id="reset-password-${student.id}" onclick="resetStudentPassword('${student.id}')" title="Checking auth status...">
                 <i class="fas fa-key"></i>
             </button>` : ''}
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
@@ -186,6 +186,13 @@ function createStudentRow(student) {
             viewStudent(student.id);
         }
     });
+    
+    // Check if student has auth user after row is in DOM
+    if (!isDeleted) {
+        setTimeout(() => {
+            checkStudentAuthStatus(student.id, student.email);
+        }, 0);
+    }
 
     return row;
 }
@@ -265,6 +272,36 @@ async function loadStudentConcessions(studentId, cellId) {
         if (student) {
             student._concessionsCount = -1;
         }
+    }
+}
+
+/**
+ * Check if student has an auth user document
+ * Updates the reset password button state accordingly
+ */
+async function checkStudentAuthStatus(studentId, email) {
+    const resetBtn = document.getElementById(`reset-password-${studentId}`);
+    if (!resetBtn || !email) return;
+    
+    try {
+        // Query users collection by email to check if auth user exists
+        const usersSnapshot = await db.collection('users')
+            .where('email', '==', email.toLowerCase())
+            .limit(1)
+            .get();
+        
+        if (!usersSnapshot.empty) {
+            // Student has auth user - enable button
+            resetBtn.classList.remove('btn-disabled');
+            resetBtn.title = 'Reset Password';
+        } else {
+            // No auth user - keep disabled
+            resetBtn.title = 'No password to reset (student has not completed registration)';
+        }
+    } catch (error) {
+        console.error('Error checking auth status for student:', studentId, error);
+        // On error, keep button disabled to be safe
+        resetBtn.title = 'Unable to verify auth status';
     }
 }
 
