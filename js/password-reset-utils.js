@@ -52,7 +52,7 @@ async function sendPasswordReset(email, options = {}) {
         
         console.log('Password reset email sent to:', normalizedEmail);
         
-        const message = 'Password reset email sent! Please check your inbox.';
+        const message = 'Password reset email sent! Please check your inbox and spam folder.';
         if (onSuccess) {
             onSuccess(message, normalizedEmail);
         }
