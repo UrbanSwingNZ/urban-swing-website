@@ -79,6 +79,13 @@ document.getElementById('change-password-btn').addEventListener('click', () => {
 });
 ```
 
+**OR** use the in-page change password modal (better UX):
+```javascript
+// Already implemented in student-portal/profile/change-password.js
+// Shows modal with current password verification and new password fields
+// User stays on the page - no email required!
+```
+
 ---
 
 ## 🎯 Where to Implement (Your Request)
