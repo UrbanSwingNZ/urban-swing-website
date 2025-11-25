@@ -31,30 +31,6 @@
     <!-- Main Container -->
     <div id="main-container" class="dashboard-container" style="display: none;">
         <!-- Header -->
-        <header class="admin-header">
-            <div class="admin-header-content">
-                <a href="../index.html" title="Back to Dashboard" class="back-button">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <img src="../../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
-                <h1 class="page-heading">Student Check-In</h1>
-                <div class="admin-user-info">
-                    <span id="user-email"></span>
-                    <button id="logout-btn" class="btn-logout" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </div>
-            <nav class="admin-nav">
-                <ul class="admin-menu">
-                    <li><a href="/admin/"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="/admin/playlist-manager/"><i class="fas fa-music"></i> Playlist Manager</a></li>
-                    <li><a href="/admin/student-database/"><i class="fas fa-users"></i> Student Database</a></li>
-                    <li><a href="/admin/check-in/" class="active"><i class="fas fa-user-check"></i> Check-In</a></li>
-                    <li><a href="/admin/admin-tools/" id="admin-tools-nav"><i class="fas fa-tools"></i> Admin Tools</a></li>
-                </ul>
-            </nav>
-        </header>
 
         <!-- Main Content -->
         <main class="checkin-main">
@@ -608,6 +584,7 @@
     <script src="js/checkin-transactions.js"></script>
     <script src="js/accordion.js"></script>
     <script src="js/main.js"></script>
+    <script src="../admin-header.js"></script>
     <script src="../admin-mobile.js?v=2"></script>
 </body>
 </html>
