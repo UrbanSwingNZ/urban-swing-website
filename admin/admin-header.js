@@ -6,14 +6,9 @@
 (function() {
     // Determine the correct path to the header based on current location
     const currentPath = window.location.pathname;
-    const pathParts = currentPath.split('/').filter(p => p);
     
-    // Calculate relative path to admin/components/
-    let headerPath = 'components/admin-header.html';
-    if (pathParts.length > 2) {
-        // We're in a subdirectory like /admin/student-database/
-        headerPath = '../components/admin-header.html';
-    }
+    // Use absolute path to avoid issues with subdirectories
+    const headerPath = '/admin/components/admin-header.html';
     
     // Page configuration mapping
     const pageConfig = {
