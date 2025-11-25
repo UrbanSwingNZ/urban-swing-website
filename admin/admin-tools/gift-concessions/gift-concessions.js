@@ -38,8 +38,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // Display user email
-            document.getElementById('user-email').textContent = user.email;
+            // Display user email (wait for header to load)
+            const userEmailElement = document.getElementById('user-email');
+            if (userEmailElement) {
+                userEmailElement.textContent = user.email;
+            }
 
             // Load students
             await loadStudents();
@@ -51,16 +54,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadRecentGifts();
         });
 
-        // Logout handler
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await firebase.auth().signOut();
-                window.location.href = '../index.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Error logging out. Please try again.');
-            }
-        });
+        // Logout handler (wait for header to load)
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await firebase.auth().signOut();
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    alert('Error logging out. Please try again.');
+                }
+            });
+        }
 
     } catch (error) {
         console.error('Initialization error:', error);
