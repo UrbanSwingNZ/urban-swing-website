@@ -3,8 +3,10 @@
    Mobile and Desktop Header Layout
    ======================================== */
 
+@import url('../../../styles/base/colors.css');
+
 .pm-header {
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
+  background: var(--gradient-header);
   color: white;
   padding: 15px 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
