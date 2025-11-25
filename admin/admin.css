@@ -6,6 +6,7 @@
 
 /* Import shared modal and button styles */
 @import url('admin-modals.css');
+@import url('../styles/base/colors.css');
 
 /* Remove white border around gradient */
 html, body {
@@ -74,7 +75,7 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(135deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+  background: var(--gradient-header);
 }
 
 .auth-card {
