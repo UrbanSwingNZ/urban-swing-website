@@ -18,22 +18,6 @@
 <body>
     <!-- Admin Tools Page -->
     <div id="admin-tools-container" class="dashboard-container">
-        <header class="admin-header">
-            <div class="admin-header-content">
-                <a href="../index.html" class="back-button" title="Back to Admin Dashboard">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <h1 class="page-heading">
-                    Admin Tools
-                </h1>
-                <div class="admin-user-info">
-                    <span id="user-email"></span>
-                    <button id="logout-btn" class="btn-logout" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </div>
-        </header>
 
         <main class="dashboard-main">
             <div class="tools-intro">
@@ -158,6 +142,7 @@
 
     <!-- Firebase Config & Admin Tools Logic -->
     <script src="../../config/firebase-config.js"></script>
+    <script src="../admin-header.js"></script>
     <script src="admin-tools.js"></script>
 </body>
 </html>
