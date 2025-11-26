@@ -18,7 +18,7 @@ window.addEventListener('load', async () => {
     if (typeof firebase !== 'undefined' && firebase.auth) {
       firebase.auth().onAuthStateChanged((user) => {
         if (user && user.email) {
-          const adminEmailElement = document.getElementById('admin-user-email');
+          const adminEmailElement = document.getElementById('user-email');
           if (adminEmailElement) {
             adminEmailElement.textContent = user.email;
           }
@@ -76,7 +76,7 @@ function setupEventListeners() {
   document.getElementById('spotify-disconnect-btn')?.addEventListener('click', Auth.handleSpotifyDisconnect);
   
   // Mobile sidebar toggle
-  document.getElementById('sidebar-toggle')?.addEventListener('click', UI.toggleSidebar);
+  document.getElementById('admin-sidebar-toggle')?.addEventListener('click', UI.toggleSidebar);
   document.getElementById('sidebar-overlay')?.addEventListener('click', UI.closeSidebar);
   
   // Playlist actions
