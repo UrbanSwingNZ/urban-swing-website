@@ -222,3 +222,62 @@
     transform: translateX(5px);
   }
 }
+
+/* ========================================
+   PLAYLIST MANAGER MOBILE OVERRIDES
+   Special layout for PM
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Playlist Manager specific mobile layout */
+  .admin-header.pm-mobile .admin-header-content,
+  body:has(.playlist-manager-container) .admin-header-content {
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+    gap: 0;
+  }
+  
+  body:has(.playlist-manager-container) .admin-header h1 {
+    font-size: 1.05rem;
+    text-align: center;
+    flex: 1;
+    justify-content: center;
+    padding: 0 100px 0 48px;
+    order: initial;
+  }
+  
+  /* Position back button on left for PM */
+  body:has(.playlist-manager-container) .back-button {
+    position: absolute;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    order: initial;
+  }
+  
+  /* Hide logo on mobile for PM */
+  body:has(.playlist-manager-container) .logo-small {
+    display: none;
+  }
+  
+  /* Position user info and buttons on right for PM */
+  body:has(.playlist-manager-container) .admin-user-info {
+    position: absolute;
+    right: 0;
+    gap: 8px;
+    margin: 0;
+    flex-direction: row;
+    order: initial;
+  }
+  
+  body:has(.playlist-manager-container) .admin-user-info span {
+    display: none;
+  }
+  
+  /* Hide navigation menu on PM mobile */
+  body:has(.playlist-manager-container) .admin-nav {
+    display: none;
+  }
+}
