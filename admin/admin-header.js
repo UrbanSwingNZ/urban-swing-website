@@ -17,6 +17,7 @@
             activePage: 'dashboard',
             navSection: 'main-admin',
             showBackButton: false,
+            showLogout: true,
             backUrl: '../index.html'
         },
         '/admin/playlist-manager/': {
@@ -24,6 +25,15 @@
             activePage: 'playlist-manager',
             navSection: 'main-admin',
             showBackButton: true,
+            showLogout: true,
+            backUrl: '../index.html'
+        },
+        '/admin/playlist-manager/index.html': {
+            title: 'Playlist Manager',
+            activePage: 'playlist-manager',
+            navSection: 'main-admin',
+            showBackButton: true,
+            showLogout: true,
             backUrl: '../index.html'
         },
         '/admin/student-database/': {
@@ -31,6 +41,7 @@
             activePage: 'student-database',
             navSection: 'main-admin',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../index.html'
         },
         '/admin/check-in/': {
@@ -38,6 +49,7 @@
             activePage: 'check-in',
             navSection: 'main-admin',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../index.html'
         },
         '/admin/admin-tools/': {
@@ -45,6 +57,7 @@
             activePage: 'admin-tools',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../index.html'
         },
         '/admin/admin-tools/backup-database.html': {
@@ -52,6 +65,7 @@
             activePage: 'backup',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: './'
         },
         '/admin/admin-tools/concession-types.html': {
@@ -59,6 +73,7 @@
             activePage: 'concession-types',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: './'
         },
         '/admin/admin-tools/closedown-nights/': {
@@ -66,6 +81,7 @@
             activePage: 'closedown',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../'
         },
         '/admin/admin-tools/email-templates/': {
@@ -73,6 +89,7 @@
             activePage: 'email-templates',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../'
         },
         '/admin/admin-tools/gift-concessions/': {
@@ -80,6 +97,7 @@
             activePage: 'gift-concessions',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../'
         },
         '/admin/admin-tools/transactions/': {
@@ -87,6 +105,7 @@
             activePage: 'transactions',
             navSection: 'admin-tools',
             showBackButton: true,
+            showLogout: true,
             backUrl: '../'
         }
     };
@@ -97,6 +116,7 @@
         activePage: '',
         navSection: 'main-admin',
         showBackButton: false,
+        showLogout: true,
         backUrl: '../index.html'
     };
     
@@ -161,6 +181,12 @@
         } else if (logoLink) {
             logoLink.removeAttribute('href');
             logoLink.style.cursor = 'default';
+        }
+        
+        // Show/hide logout button
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.style.display = config.showLogout ? 'inline-block' : 'none';
         }
         
         // Show correct navigation section
