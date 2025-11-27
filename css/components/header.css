@@ -3,8 +3,10 @@
    Modern header with gradient background
    ======================================== */
 
+@import url('../../styles/base/colors.css');
+
 header {
-  background: var(--bg-gradient);
+  background: var(--gradient-header);
   color: white;
   padding: var(--space-md) var(--space-lg);
   box-shadow: var(--shadow-md);

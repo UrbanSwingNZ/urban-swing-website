@@ -1,0 +1,313 @@
+/* ========================================
+   URBAN SWING COLOR SYSTEM
+   Centralized color definitions using CSS custom properties
+   
+   Usage: Use var(--color-name) in your stylesheets
+   Example: color: var(--purple-primary);
+   
+   DO NOT modify these values without updating all references
+   ======================================== */
+
+:root {
+  /* ========================================
+     BRAND COLORS - Primary Urban Swing palette
+     ======================================== */
+  --purple-primary: #9a16f5;     /* Main brand purple */
+  --purple-dark: #8512d6;        /* Darker purple for hovers/accents */
+  --purple-darker: #6a1b9a;      /* Even darker purple variant */
+  
+  --blue-primary: #3534fa;       /* Main brand blue */
+  --blue-medium: #2196f3;        /* Medium blue */
+  --blue-dark: #1976d2;          /* Darker blue */
+  --blue-darker: #1565c0;        /* Even darker blue */
+  --blue-accent: #17a2b8;        /* Cyan/teal accent */
+  --blue-heading: #2c5282;       /* Blue for headings */
+  
+  --pink-primary: #e800f2;       /* Main brand pink */
+  
+  
+  /* ========================================
+     SEMANTIC COLORS - Status & feedback
+     ======================================== */
+  --success: #28a745;            /* Success messages, positive actions */
+  --success-light: #4caf50;      /* Lighter success green */
+  --success-lighter: #45a049;    /* Even lighter success */
+  --success-dark: #2e7d32;       /* Darker success green */
+  --success-darker: #00796b;     /* Even darker success (teal) */
+  
+  --error: #dc3545;              /* Error messages, destructive actions */
+  --error-dark: #c82333;         /* Darker error red */
+  --error-darker: #c62828;       /* Even darker error */
+  --error-light: #f44336;        /* Lighter error red */
+  --error-medium: #e74c3c;       /* Medium error red */
+  --error-muted: #d32f2f;        /* Muted error red */
+  
+  --warning: #ffc107;            /* Warning messages */
+  --warning-light: #fff3cd;      /* Light warning background */
+  --warning-lighter: #fff3e0;    /* Even lighter warning */
+  --warning-lightest: #fff8e1;   /* Lightest warning */
+  --warning-dark: #f57c00;       /* Darker warning orange */
+  --warning-darker: #e65100;     /* Even darker warning */
+  --warning-darkest: #663c00;    /* Darkest warning brown */
+  
+  --info: #2196f3;               /* Info messages */
+  --info-light: #e3f2fd;         /* Light info background */
+  
+  
+  /* ========================================
+     NEUTRAL COLORS - Grays & backgrounds
+     ======================================== */
+  --white: #ffffff;
+  --black: #000000;
+  
+  /* ========================================
+     UI COMPONENT COLORS
+     ======================================== */
+  --hamburger-menu-color: var(--white);
+  
+  /* Header overlay colors */
+  --header-overlay-light: rgba(255, 255, 255, 0.1);
+  --header-overlay-medium: rgba(255, 255, 255, 0.15);
+  --header-overlay-semi: rgba(255, 255, 255, 0.2);
+  --header-overlay-bright: rgba(255, 255, 255, 0.25);
+  --header-overlay-strong: rgba(255, 255, 255, 0.3);
+  
+  /* Shadow colors */
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.2);
+  --shadow-strong: rgba(0, 0, 0, 0.4);
+  
+  /* Border overlay */
+  --border-overlay-light: rgba(255, 255, 255, 0.1);
+  --border-overlay-medium: rgba(255, 255, 255, 0.3);
+  
+  /* Background overlays */
+  --bg-overlay-dark: rgba(0, 0, 0, 0.5);
+  
+  /* Grays - Light to Dark */
+  --gray-50: #fafafa;
+  --gray-100: #f9f9f9;
+  --gray-200: #f8f9fa;
+  --gray-250: #f8f9ff;
+  --gray-300: #f5f5f5;
+  --gray-350: #f0f0f0;
+  --gray-400: #e8e8f0;
+  --gray-450: #e0e0e0;
+  --gray-500: #ddd;
+  --gray-550: #ccc;
+  --gray-600: #999;
+  --gray-650: #888;
+  --gray-700: #666;
+  --gray-750: #616161;
+  --gray-800: #555;
+  --gray-850: #333;
+  
+  
+  /* ========================================
+     BACKGROUND COLORS
+     ======================================== */
+  --bg-white: #ffffff;
+  --bg-light: #f8f9fa;
+  --bg-gray-light: #fafafa;
+  --bg-gray: #f5f5f5;
+  --bg-dark: #1a1a1a;
+  --bg-card-dark: #2d2d2d;
+  
+  /* Tinted backgrounds */
+  --bg-purple-light: rgba(154, 22, 245, 0.05);
+  --bg-purple-medium: rgba(154, 22, 245, 0.1);
+  --bg-purple-alt: rgba(139, 69, 255, 0.02);
+  --bg-purple-alt-medium: rgba(139, 69, 255, 0.05);
+  --bg-purple-alt-strong: rgba(139, 69, 255, 0.1);
+  --bg-purple-alt-stronger: rgba(139, 69, 255, 0.2);
+  --bg-purple-pale: #f3e5f5;
+  
+  --bg-blue-light: rgba(53, 52, 250, 0.1);
+  
+  --bg-teal-light: rgba(0, 150, 136, 0.1);
+  
+  --bg-success-light: rgba(40, 167, 69, 0.1);
+  --bg-success-pale: #efe;
+  
+  --bg-error-light: #ffebee;
+  --bg-error-pale: #fee;
+  
+  --bg-warning-light: #fff3cd;
+  --bg-warning-pale: #fff4e6;
+  
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  
+  
+  /* ========================================
+     TEXT COLORS
+     ======================================== */
+  --text-primary: #333;
+  --text-secondary: #555;
+  --text-muted: #999;
+  --text-muted-alt: #6c757d;
+  --text-light: #666;
+  --text-white: #ffffff;
+  --text-dark: #e0e0e0;
+  
+  /* Colored text */
+  --text-purple: var(--purple-primary);
+  --text-success: #2e7d32;
+  --text-success-light: #3c3;
+  --text-error: #c62828;
+  --text-error-light: #c33;
+  --text-warning: #f57c00;
+  --text-warning-dark: #663c00;
+  --text-orange: #ff9800;
+  --text-orange-alt: #ffa726;
+  --text-orange-dark: #e65100;
+  
+  
+  /* ========================================
+     BORDER COLORS
+     ======================================== */
+  --border-light: #e0e0e0;
+  --border-medium: #dee2e6;
+  --border-dark: #404040;
+  --border-gray: #f0f0f0;
+  --border-success: #27ae60;
+  --border-success-light: #cfc;
+  --border-error: #e74c3c;
+  --border-error-light: #fcc;
+  --border-warning: var(--warning);
+  --border-orange: #ffa726;
+  
+  
+  /* ========================================
+     THEME-AWARE VARIABLES
+     Automatically adjust based on system preferences
+     ======================================== */
+  /* Light mode defaults */
+  --color-text: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-background: var(--bg-white);
+  --color-border: var(--border-light);
+  --color-input-bg: var(--bg-white);
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  
+  
+  /* ========================================
+     GRADIENT STOPS
+     For use in linear-gradient() functions
+     ======================================== */
+  --gradient-header: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+  --gradient-blue-purple: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+  --gradient-purple-pink: linear-gradient(135deg, var(--purple-primary), var(--pink-primary));
+  --gradient-full: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+  --gradient-warning: linear-gradient(135deg, var(--warning-light), var(--warning-lightest));
+  
+  
+  /* ========================================
+     SPECIAL BACKGROUNDS
+     Pre-configured background patterns
+     ======================================== */
+  --bg-stripe-light: repeating-linear-gradient(
+    -45deg,
+    #ffffff,
+    #ffffff 10px,
+    #f8f9ff 10px,
+    #f8f9ff 20px
+  );
+  
+  --bg-stripe-purple: linear-gradient(135deg, rgba(139, 69, 255, 0.05), rgba(139, 69, 255, 0.1));
+}
+
+
+/* ========================================
+   DARK MODE OVERRIDES
+   Applied when system prefers dark color scheme
+   ======================================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: var(--text-dark);
+    --color-text-muted: var(--gray-650);
+    --color-background: var(--bg-card-dark);
+    --color-border: var(--border-dark);
+    --color-input-bg: var(--bg-dark);
+    --color-shadow: rgba(0, 0, 0, 0.4);
+  }
+}
+
+
+/* ========================================
+   BADGE/PILL COLORS
+   Pre-configured color combinations for badges
+   ======================================== */
+:root {
+  /* Transaction type badges */
+  --badge-package-bg: rgba(154, 22, 245, 0.1);
+  --badge-package-text: var(--purple-primary);
+  
+  --badge-casual-bg: rgba(53, 52, 250, 0.1);
+  --badge-casual-text: var(--blue-primary);
+  
+  --badge-info-bg: rgba(23, 162, 184, 0.1);
+  --badge-info-text: #17a2b8;
+  
+  --badge-success-bg: rgba(76, 175, 80, 0.1);
+  --badge-success-text: #2e7d32;
+  
+  --badge-teal-bg: rgba(0, 150, 136, 0.1);
+  --badge-teal-text: #00796b;
+  
+  --badge-error-bg: #ffebee;
+  --badge-error-text: #c62828;
+  
+  --badge-warning-bg: #fff3e0;
+  --badge-warning-text: #e65100;
+  
+  --badge-blue-bg: #e3f2fd;
+  --badge-blue-text: #1565c0;
+  
+  --badge-purple-bg: #f3e5f5;
+  --badge-purple-text: #6a1b9a;
+  
+  --badge-neutral-bg: #f5f5f5;
+  --badge-neutral-text: #616161;
+}
+
+
+/* ========================================
+   STATUS INDICATOR GRADIENTS
+   For use in status badges and buttons
+   ======================================== */
+:root {
+  --status-active-gradient: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  --status-inactive-gradient: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  --status-warning-gradient: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  --status-info-gradient: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+
+/* ========================================
+   USAGE NOTES
+   
+   1. Always use CSS variables instead of hardcoded colors
+   2. For brand colors, use --purple-primary, --blue-primary, --pink-primary
+   3. For semantic colors, use --success, --error, --warning
+   4. For text, use --text-* variants
+   5. For backgrounds, use --bg-* variants
+   6. For borders, use --border-* variants
+   7. Theme-aware colors (--color-*) automatically adjust for dark mode
+   
+   Example:
+     .my-element {
+       color: var(--text-primary);
+       background: var(--bg-white);
+       border: 1px solid var(--border-light);
+     }
+     
+     .my-button {
+       background: var(--purple-primary);
+       color: var(--text-white);
+     }
+     
+     .my-badge {
+       background: var(--badge-success-bg);
+       color: var(--badge-success-text);
+     }
+   ======================================== */

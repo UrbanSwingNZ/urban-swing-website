@@ -1,5 +1,7 @@
 /* registration-form.css - Registration Form Styles */
 
+@import url('../../styles/base/colors.css');
+
 /* Loading Spinner */
 .loading-spinner {
     position: fixed;
@@ -38,7 +40,7 @@
 /* Main Container */
 .register-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    background: var(--gradient-header);
     display: flex;
     align-items: center;
     justify-content: center;
