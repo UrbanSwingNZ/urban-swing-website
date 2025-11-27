@@ -18,6 +18,12 @@ function setupAdminMode() {
         backToLogin.style.display = 'none';
     }
     
+    // Hide return to home link
+    const returnToHome = document.getElementById('return-to-home');
+    if (returnToHome) {
+        returnToHome.style.display = 'none';
+    }
+    
     // Hide password section for admin (students can create portal accounts themselves)
     const passwordSection = document.querySelector('.password-section');
     if (passwordSection) {
