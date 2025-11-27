@@ -210,5 +210,117 @@
                 link.classList.remove('active');
             }
         });
+        
+        // Initialize mobile navigation
+        initializeMobileNav(config);
+    }
+    
+    function initializeMobileNav(config) {
+        // Check if already initialized to prevent duplicates
+        if (document.getElementById('mobile-nav-drawer')) {
+            return;
+        }
+        
+        const navToggle = document.getElementById('mobile-nav-toggle');
+        if (!navToggle) return;
+        
+        // Create mobile navigation drawer
+        const drawer = document.createElement('div');
+        drawer.id = 'mobile-nav-drawer';
+        drawer.className = 'mobile-nav-drawer';
+        
+        // Add logo to drawer
+        const logo = document.querySelector('.logo-small');
+        if (logo) {
+            const drawerLogo = logo.cloneNode(true);
+            drawerLogo.classList.add('drawer-logo');
+            drawer.appendChild(drawerLogo);
+        }
+        
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'mobile-nav-overlay';
+        overlay.className = 'mobile-nav-overlay';
+        
+        // Clone the appropriate navigation menu
+        let menuToClone;
+        if (config.navSection === 'admin-tools') {
+            menuToClone = document.querySelector('#admin-tools-nav .admin-menu');
+            
+            // For admin-tools section, also add Dashboard link at the top
+            if (menuToClone) {
+                const clonedMenu = menuToClone.cloneNode(true);
+                
+                // Create Dashboard link
+                const dashboardLi = document.createElement('li');
+                dashboardLi.style.borderBottom = '1px solid var(--border-overlay-light)';
+                
+                const dashboardLink = document.createElement('a');
+                dashboardLink.href = '/admin/';
+                dashboardLink.dataset.page = 'dashboard';
+                dashboardLink.innerHTML = '<i class="fas fa-home"></i> Dashboard';
+                
+                dashboardLi.appendChild(dashboardLink);
+                
+                // Insert Dashboard at the beginning of the menu
+                clonedMenu.insertBefore(dashboardLi, clonedMenu.firstChild);
+                
+                drawer.appendChild(clonedMenu);
+            }
+        } else {
+            menuToClone = document.querySelector('#main-admin-nav .admin-menu');
+            
+            if (menuToClone) {
+                const clonedMenu = menuToClone.cloneNode(true);
+                drawer.appendChild(clonedMenu);
+            }
+        }
+        
+        // Add logout button to the menu
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            const clonedMenu = drawer.querySelector('.admin-menu');
+            if (clonedMenu) {
+                // Create a list item for the logout button
+                const logoutListItem = document.createElement('li');
+                logoutListItem.style.borderBottom = '1px solid var(--border-overlay-light)';
+                
+                const clonedLogout = logoutBtn.cloneNode(true);
+                clonedLogout.id = 'mobile-logout-btn';
+                
+                logoutListItem.appendChild(clonedLogout);
+                clonedMenu.appendChild(logoutListItem);
+                
+                // Add click event to cloned logout button
+                clonedLogout.addEventListener('click', () => {
+                    // Trigger click on original logout button
+                    logoutBtn.click();
+                    toggleMenu();
+                });
+            }
+        }
+        
+        // Insert drawer and overlay into body
+        document.body.appendChild(overlay);
+        document.body.appendChild(drawer);
+        
+        // Toggle menu function
+        function toggleMenu() {
+            navToggle.classList.toggle('active');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+        
+        // Event listeners
+        navToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+        
+        // Close menu when clicking a link
+        const drawerLinks = drawer.querySelectorAll('a');
+        drawerLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                toggleMenu();
+            });
+        });
     }
 })();

@@ -4,25 +4,26 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('admin-header-mobile.css');
 
 /* Header Container */
 .admin-header {
   background: var(--gradient-header);
-  color: white;
-  padding: 20px 20px 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--text-white);
+  padding: 20px 20px 0;
+  box-shadow: 0 4px 12px var(--shadow-light);
 }
 
 @media (prefers-color-scheme: dark) {
   .admin-header {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 12px var(--shadow-strong);
   }
 }
 
 /* Header Content Layout */
 .admin-header-content {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 16px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -78,8 +79,8 @@
 
 /* Back Button */
 .back-button {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: var(--header-overlay-semi);
+  color: var(--text-white);
   border: none;
   width: 40px;
   height: 40px;
@@ -95,15 +96,15 @@
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--header-overlay-strong);
   transform: scale(1.1);
 }
 
 /* Logout Button */
 .btn-logout {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--header-overlay-semi);
+  color: var(--text-white);
+  border: 1px solid var(--border-overlay-medium);
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -113,7 +114,7 @@
 }
 
 .btn-logout:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--header-overlay-strong);
   transform: translateY(-2px);
 }
 
@@ -124,7 +125,7 @@
 .admin-nav {
   width: 100%;
   max-width: 1200px;
-  margin: 20px auto 0;
+  margin: 0 auto;
 }
 
 .admin-menu {
@@ -144,14 +145,14 @@
 
 .admin-menu a {
   text-decoration: none;
-  color: white;
+  color: var(--text-white);
   font-size: 1rem;
   font-weight: 500;
   padding: 12px 20px;
   display: inline-block;
   border-radius: 8px 8px 0 0;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--header-overlay-light);
   backdrop-filter: blur(10px);
   border-bottom: 3px solid transparent;
 }
@@ -161,123 +162,12 @@
 }
 
 .admin-menu a:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--header-overlay-bright);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .admin-menu a.active {
-  background: rgba(255, 255, 255, 0.3);
-  border-bottom-color: var(--admin-pink);
-}
-
-/* ========================================
-   MOBILE RESPONSIVE STYLES
-   ======================================== */
-
-@media (max-width: 768px) {
-  .admin-header-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-  }
-
-  .admin-header h1 {
-    font-size: 1.3rem;
-    order: 2;
-  }
-
-  .logo-small {
-    height: 50px;
-    order: 1;
-  }
-
-  .admin-user-info {
-    flex-direction: column;
-    gap: 10px;
-    order: 3;
-  }
-
-  /* Mobile Navigation */
-  .admin-menu {
-    flex-direction: column;
-    gap: 4px;
-    padding: 0 0 12px 0;
-  }
-  
-  .admin-menu li {
-    width: 100%;
-  }
-  
-  .admin-menu a {
-    display: block;
-    width: 100%;
-    text-align: left;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 0.95rem;
-  }
-  
-  .admin-menu a:hover {
-    transform: translateX(5px);
-  }
-}
-
-/* ========================================
-   PLAYLIST MANAGER MOBILE OVERRIDES
-   Special layout for PM
-   ======================================== */
-
-@media (max-width: 768px) {
-  /* Playlist Manager specific mobile layout */
-  .admin-header.pm-mobile .admin-header-content,
-  body:has(.playlist-manager-container) .admin-header-content {
-    flex-direction: row;
-    justify-content: center;
-    position: relative;
-    gap: 0;
-  }
-  
-  body:has(.playlist-manager-container) .admin-header h1 {
-    font-size: 1.05rem;
-    text-align: center;
-    flex: 1;
-    justify-content: center;
-    padding: 0 100px 0 48px;
-    order: initial;
-  }
-  
-  /* Position back button on left for PM */
-  body:has(.playlist-manager-container) .back-button {
-    position: absolute;
-    left: 0;
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
-    order: initial;
-  }
-  
-  /* Hide logo on mobile for PM */
-  body:has(.playlist-manager-container) .logo-small {
-    display: none;
-  }
-  
-  /* Position user info and buttons on right for PM */
-  body:has(.playlist-manager-container) .admin-user-info {
-    position: absolute;
-    right: 0;
-    gap: 8px;
-    margin: 0;
-    flex-direction: row;
-    order: initial;
-  }
-  
-  body:has(.playlist-manager-container) .admin-user-info span {
-    display: none;
-  }
-  
-  /* Hide navigation menu on PM mobile */
-  body:has(.playlist-manager-container) .admin-nav {
-    display: none;
-  }
+  background: var(--header-overlay-strong);
+  border-bottom-color: var(--pink-primary);
 }
