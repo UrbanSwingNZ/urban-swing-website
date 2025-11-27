@@ -60,6 +60,30 @@
   --white: #ffffff;
   --black: #000000;
   
+  /* ========================================
+     UI COMPONENT COLORS
+     ======================================== */
+  --hamburger-menu-color: var(--white);
+  
+  /* Header overlay colors */
+  --header-overlay-light: rgba(255, 255, 255, 0.1);
+  --header-overlay-medium: rgba(255, 255, 255, 0.15);
+  --header-overlay-semi: rgba(255, 255, 255, 0.2);
+  --header-overlay-bright: rgba(255, 255, 255, 0.25);
+  --header-overlay-strong: rgba(255, 255, 255, 0.3);
+  
+  /* Shadow colors */
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.2);
+  --shadow-strong: rgba(0, 0, 0, 0.4);
+  
+  /* Border overlay */
+  --border-overlay-light: rgba(255, 255, 255, 0.1);
+  --border-overlay-medium: rgba(255, 255, 255, 0.3);
+  
+  /* Background overlays */
+  --bg-overlay-dark: rgba(0, 0, 0, 0.5);
+  
   /* Grays - Light to Dark */
   --gray-50: #fafafa;
   --gray-100: #f9f9f9;
