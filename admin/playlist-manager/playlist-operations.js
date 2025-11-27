@@ -71,7 +71,7 @@ export function displayPlaylists(playlists) {
     
     const imageUrl = playlist.images && playlist.images.length > 0 
       ? playlist.images[playlist.images.length - 1].url 
-      : '../images/urban-swing-logo.png';
+      : '../../images/urban-swing-logo-glow-black-circle.png';
     
     li.innerHTML = `
       <div class="playlist-item">
@@ -300,7 +300,7 @@ export async function performPlaylistSelection(playlist) {
   // Update playlist header
   const imageUrl = playlist.images && playlist.images.length > 0 
     ? playlist.images[0].url 
-    : '../images/urban-swing-logo.png';
+    : '../../images/urban-swing-logo-glow-black-circle.png';
   
   document.getElementById('playlist-image').src = imageUrl;
   document.getElementById('playlist-name').textContent = playlist.name;

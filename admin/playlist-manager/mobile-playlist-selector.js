@@ -108,7 +108,7 @@ export function populateMobilePlaylistList(playlists, selectedPlaylistId) {
 
     const imageUrl = playlist.images && playlist.images.length > 0 
       ? playlist.images[0].url 
-      : '/images/icons/playlist-placeholder.png';
+      : '../../images/urban-swing-logo-glow-black-circle.png';
 
     li.innerHTML = `
       <a href="#" data-playlist-id="${playlist.id}">

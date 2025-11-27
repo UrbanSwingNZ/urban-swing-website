@@ -67,7 +67,7 @@ export async function initializePlayer(accessToken) {
     };
 
     // If SDK is already loaded, call the ready function
-    if (window.Spotify) {
+    if (window.Spotify && typeof window.onSpotifyWebPlaybackSDKReady === 'function') {
       window.onSpotifyWebPlaybackSDKReady();
     }
   });
