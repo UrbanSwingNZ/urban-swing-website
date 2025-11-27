@@ -16,6 +16,7 @@
 @import url('css/modals.css');
 @import url('css/search.css');
 @import url('css/utilities.css');
+@import url('../../styles/admin/mobile-playlist-selector.css');
 
 /* Remove white border and set base styles */
 html, body {
@@ -132,6 +133,12 @@ html, body {
   flex: 1;
   display: flex;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .pm-main-content {
+    flex-direction: column;
+  }
 }
 
 /* ========================================

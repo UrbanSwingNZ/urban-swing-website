@@ -6,6 +6,8 @@ import * as PlaylistOps from './playlist-operations.js';
 import * as TrackOps from './track-operations.js';
 import * as UI from './playlist-ui.js';
 import * as Player from './spotify-player.js';
+import * as State from './playlist-state.js';
+import { initMobilePlaylistSelector } from './mobile-playlist-selector.js';
 
 // ========================================
 // INITIALIZATION
@@ -34,6 +36,9 @@ window.addEventListener('load', async () => {
 
 async function initializeApp() {
   setupEventListeners();
+  
+  // Initialize mobile playlist selector
+  initMobilePlaylistSelector();
   
   // Initialize button states to prevent both from showing
   Auth.initializeButtonStates();
@@ -161,6 +166,16 @@ function setupEventListeners() {
       } else if (addTracksModal && addTracksModal.style.display === 'block') {
         TrackOps.closeAddTracksModal();
       }
+    }
+  });
+  
+  // Mobile playlist selection
+  document.addEventListener('mobile-playlist-selected', async (e) => {
+    const { playlistId } = e.detail;
+    const playlists = State.getAllPlaylists();
+    const playlist = playlists.find(p => p.id === playlistId);
+    if (playlist) {
+      await PlaylistOps.selectPlaylist(playlist);
     }
   });
 }
