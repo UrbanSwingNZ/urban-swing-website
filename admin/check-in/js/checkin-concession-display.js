@@ -13,33 +13,13 @@ function showSelectedStudent(student) {
     document.getElementById('selected-student-email').textContent = student.email || '';
     document.getElementById('selected-student-id').value = student.id;
     
-    // Show concession info
+    // Show concession info and handle defaults based on crew member status
     updateConcessionInfo(student);
     
     selectedInfo.style.display = 'block';
     
     // Setup entry type listeners
     setupEntryTypeListeners();
-    
-    // If student is a crew member, default to free entry with crew member reason
-    if (student.crewMember === true && !isEditMode()) {
-        setTimeout(() => {
-            const freeEntryRadio = document.getElementById('entry-free');
-            if (freeEntryRadio) {
-                freeEntryRadio.checked = true;
-                freeEntryRadio.dispatchEvent(new Event('change'));
-                
-                // Set crew member as the reason
-                const freeEntryReasonSelect = document.getElementById('free-entry-reason');
-                if (freeEntryReasonSelect) {
-                    freeEntryReasonSelect.value = 'crew-member';
-                }
-                
-                // Enable confirm button
-                document.getElementById('confirm-checkin-btn').disabled = false;
-            }
-        }, 100); // Small delay to ensure concession info is loaded first
-    }
 }
 
 /**
@@ -81,29 +61,39 @@ async function updateConcessionInfo(student) {
         // Enable/disable concession option based on balance
         const concessionRadio = document.getElementById('entry-concession');
         const casualRadio = document.getElementById('entry-casual');
+        const freeEntryRadio = document.getElementById('entry-free');
+        const freeEntryReasonSelect = document.getElementById('free-entry-reason');
         
         if (concessionData.totalBalance > 0) {
             concessionRadio.disabled = false;
             concessionRadio.parentElement.style.opacity = '1';
-            // Only default to concession if NOT in edit mode
-            if (!isEditMode()) {
-                concessionRadio.checked = true;
-                // Trigger change event to update form state
-                concessionRadio.dispatchEvent(new Event('change'));
-            }
         } else {
             concessionRadio.disabled = true;
             concessionRadio.parentElement.style.opacity = '0.5';
-            // Only default to casual if NOT in edit mode
-            if (!isEditMode()) {
-                casualRadio.checked = true;
-                // Trigger change event to show payment section
-                casualRadio.dispatchEvent(new Event('change'));
-            }
         }
         
-        // Enable confirm button since we have a default selection (or editing existing)
+        // Set defaults only if NOT in edit mode
         if (!isEditMode()) {
+            // If student is a crew member, default to free entry with crew member reason
+            if (student.crewMember === true) {
+                freeEntryRadio.checked = true;
+                freeEntryRadio.dispatchEvent(new Event('change'));
+                
+                // Set crew member as the reason
+                if (freeEntryReasonSelect) {
+                    freeEntryReasonSelect.value = 'crew-member';
+                }
+            } else if (concessionData.totalBalance > 0) {
+                // Has active concession - default to using it
+                concessionRadio.checked = true;
+                concessionRadio.dispatchEvent(new Event('change'));
+            } else {
+                // No concession - default to casual
+                casualRadio.checked = true;
+                casualRadio.dispatchEvent(new Event('change'));
+            }
+            
+            // Enable confirm button since we have a default selection
             document.getElementById('confirm-checkin-btn').disabled = false;
         }
     } catch (error) {
