@@ -1033,7 +1033,7 @@ async function searchAndDisplayTracks(query) {
           <button class="track-play-btn search-play-btn" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Play track">
             <i class="fas fa-play"></i>
           </button>
-          <img src="${track.album?.images?.[2]?.url || '../images/urban-swing-logo.png'}" 
+          <img src="${track.album?.images?.[2]?.url || '../../images/urban-swing-logo-glow-black-circle.png'}" 
                alt="${track.name}" class="search-result-image">
           <div class="search-result-info">
             <h4 class="search-result-title">${track.name}</h4>
