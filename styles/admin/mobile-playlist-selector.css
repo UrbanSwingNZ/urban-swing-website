@@ -1,0 +1,296 @@
+/* ========================================
+   MOBILE PLAYLIST SELECTOR
+   Persistent dropdown for selecting playlists on mobile
+   ======================================== */
+
+/* Hide on desktop by default */
+.mobile-playlist-selector,
+.mobile-playlist-overlay {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .mobile-playlist-selector,
+  .mobile-playlist-overlay {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Container for the selector button */
+  .mobile-playlist-selector {
+    display: block;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-light);
+    position: relative;
+    width: 100%;
+    z-index: 100;
+    order: -1; /* Ensure it appears first in flex layout */
+  }
+
+  /* The selector button */
+  .mobile-playlist-btn {
+    width: 100%;
+    height: 48px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .mobile-playlist-btn:active {
+    background-color: var(--bg-gray-light);
+  }
+
+  .mobile-playlist-btn i:first-child {
+    font-size: 18px;
+    margin-right: 12px;
+  }
+
+  .mobile-playlist-btn span {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-playlist-btn i:last-child {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-playlist-btn.active i:last-child {
+    transform: rotate(180deg);
+  }
+
+  /* Overlay background */
+  .mobile-playlist-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-overlay);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .mobile-playlist-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Dropdown panel */
+  .mobile-playlist-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    max-height: 80vh;
+    background: var(--pm-card-light);
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 4px 20px var(--shadow-strong);
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mobile-playlist-dropdown {
+      background: var(--pm-card-dark);
+    }
+  }
+
+  .mobile-playlist-overlay.active .mobile-playlist-dropdown {
+    transform: translateY(0);
+  }
+
+  /* Header */
+  .mobile-playlist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid var(--pm-border-light);
+    background: var(--gradient-header);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mobile-playlist-header {
+      border-bottom-color: var(--pm-border-dark);
+    }
+  }
+
+  .mobile-playlist-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .close-mobile-playlist {
+    background: transparent;
+    border: none;
+    color: var(--text-white);
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .close-mobile-playlist:active {
+    background-color: var(--header-overlay-semi);
+  }
+
+  /* Search box */
+  .mobile-playlist-search {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--pm-border-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--pm-bg-light);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mobile-playlist-search {
+      background: var(--pm-bg-dark);
+      border-bottom-color: var(--pm-border-dark);
+    }
+  }
+
+  .mobile-playlist-search i {
+    color: var(--text-color);
+    opacity: 0.5;
+    font-size: 16px;
+  }
+
+  .mobile-playlist-search input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .mobile-playlist-search input::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+  }
+
+  /* Playlists list */
+  .mobile-playlists-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .mobile-playlists-list li {
+    border-bottom: 1px solid var(--pm-border-light);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mobile-playlists-list li {
+      border-bottom-color: var(--pm-border-dark);
+    }
+  }
+
+  .mobile-playlists-list li:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-playlists-list li:active {
+    background-color: var(--pm-hover-light);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mobile-playlists-list li:active {
+      background-color: var(--pm-hover-dark);
+    }
+  }
+
+  .mobile-playlists-list li.active {
+    background-color: var(--bg-purple-medium);
+  }
+
+  .mobile-playlists-list a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--text-color);
+    gap: 12px;
+  }
+
+  .mobile-playlists-list img {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .mobile-playlists-list .playlist-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mobile-playlists-list .playlist-name {
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-playlists-list .playlist-tracks {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  /* Empty state */
+  .mobile-playlists-list .empty-message {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.6;
+  }
+
+  .mobile-playlists-list .empty-message i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.3;
+  }
+}

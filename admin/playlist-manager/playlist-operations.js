@@ -4,6 +4,7 @@
 import * as State from './playlist-state.js';
 import { showLoading, showError, showSnackbar, showConnectPrompt } from './playlist-ui.js';
 import { updateSaveOrderButton, loadTracks } from './track-operations.js';
+import { populateMobilePlaylistList, updateSelectedPlaylist } from './mobile-playlist-selector.js';
 
 // ========================================
 // PLAYLISTS - LOAD & DISPLAY
@@ -55,6 +56,10 @@ export function displayPlaylists(playlists) {
   }
   
   const currentPlaylist = State.getCurrentPlaylist();
+  const currentPlaylistId = currentPlaylist?.id;
+  
+  // Also populate mobile playlist list
+  populateMobilePlaylistList(playlists, currentPlaylistId);
   
   playlists.forEach(playlist => {
     const li = document.createElement('li');
@@ -276,6 +281,9 @@ export async function performPlaylistSelection(playlist) {
       li.classList.add('active');
     }
   });
+  
+  // Update mobile playlist selector button text
+  updateSelectedPlaylist(playlist.name);
   
   // Show playlist view
   document.getElementById('empty-state').style.display = 'none';
