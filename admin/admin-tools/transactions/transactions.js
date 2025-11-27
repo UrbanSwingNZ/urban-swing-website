@@ -37,15 +37,28 @@ function isSuperAdmin() {
     return auth.currentUser && auth.currentUser.email === 'dance@urbanswing.co.nz';
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready and user is authenticated
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initializePage, 500);
+    // Wait for authentication before initializing
+    if (typeof initializeAuth === 'function') {
+        initializeAuth().then(() => {
+            initializePage();
+        }).catch((error) => {
+            console.error('Authentication failed:', error);
+        });
+    } else {
+        // Fallback if initializeAuth not available
+        setTimeout(initializePage, 500);
+    }
 });
 
 /**
  * Initialize the page
  */
 function initializePage() {
+    // User email is already populated by initializeAuth() in auth.js
+    // No need to do it here
+    
     // Initialize modals
     if (typeof initializePurchaseConcessionsModal === 'function') {
         initializePurchaseConcessionsModal();

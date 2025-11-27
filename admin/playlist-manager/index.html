@@ -30,28 +30,7 @@
 
     <!-- Main Container -->
     <div class="playlist-manager-container">
-        <!-- Header -->
-        <header class="pm-header">
-            <div class="pm-header-content">
-                <a href="../index.html" class="back-button" title="Back to Admin Dashboard">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle Playlists">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <img src="../../images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
-                <h1 class="pm-main-heading">
-                    <span class="pm-heading-desktop">Playlist Manager</span>
-                    <span class="pm-heading-mobile">Playlist Manager</span>
-                </h1>
-                <div class="pm-header-actions">
-                    <span id="admin-user-email"></span>
-                    <button id="spotify-disconnect-btn" class="btn-spotify-disconnect" style="display: none;">
-                        <i class="fas fa-unlink"></i> Disconnect
-                    </button>
-                </div>
-            </div>
-        </header>
+        <!-- Header will be loaded by admin-header.js -->
 
         <!-- Connect Spotify Prompt (shown when not connected) -->
         <div id="connect-prompt" class="connect-prompt">
@@ -70,6 +49,34 @@
 
         <!-- Main Content (shown when connected) -->
         <div id="main-content" class="pm-main-content" style="display: none;">
+            <!-- Mobile Playlist Selector (shown only on mobile) -->
+            <div id="mobile-playlist-selector" class="mobile-playlist-selector">
+                <button id="mobile-playlist-btn" class="mobile-playlist-btn">
+                    <i class="fas fa-list"></i>
+                    <span id="mobile-playlist-name">Select Playlist</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Playlist Dropdown Overlay -->
+            <div id="mobile-playlist-overlay" class="mobile-playlist-overlay">
+                <div class="mobile-playlist-dropdown">
+                    <div class="mobile-playlist-header">
+                        <h3><i class="fas fa-list"></i> Your Playlists</h3>
+                        <button id="close-mobile-playlist" class="close-mobile-playlist">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-playlist-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="mobile-playlist-search" placeholder="Search playlists...">
+                    </div>
+                    <ul id="mobile-playlists-list" class="mobile-playlists-list">
+                        <!-- Playlists will be loaded here -->
+                    </ul>
+                </div>
+            </div>
+
             <!-- Sidebar Overlay (mobile) -->
             <div id="sidebar-overlay" class="sidebar-overlay"></div>
             
@@ -339,5 +346,6 @@
     <script type="module" src="playlist-operations.js?v=2"></script>
     <script type="module" src="track-operations.js?v=2"></script>
     <script type="module" src="playlist-manager-new.js?v=2"></script>
+    <script src="../admin-header.js"></script>
 </body>
 </html>

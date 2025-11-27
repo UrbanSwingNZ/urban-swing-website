@@ -4,6 +4,7 @@
 import * as State from './playlist-state.js';
 import { showLoading, showError, showSnackbar, showConnectPrompt } from './playlist-ui.js';
 import { updateSaveOrderButton, loadTracks } from './track-operations.js';
+import { populateMobilePlaylistList, updateSelectedPlaylist } from './mobile-playlist-selector.js';
 
 // ========================================
 // PLAYLISTS - LOAD & DISPLAY
@@ -55,6 +56,10 @@ export function displayPlaylists(playlists) {
   }
   
   const currentPlaylist = State.getCurrentPlaylist();
+  const currentPlaylistId = currentPlaylist?.id;
+  
+  // Also populate mobile playlist list
+  populateMobilePlaylistList(playlists, currentPlaylistId);
   
   playlists.forEach(playlist => {
     const li = document.createElement('li');
@@ -66,7 +71,7 @@ export function displayPlaylists(playlists) {
     
     const imageUrl = playlist.images && playlist.images.length > 0 
       ? playlist.images[playlist.images.length - 1].url 
-      : '../images/urban-swing-logo.png';
+      : '../../images/urban-swing-logo-glow-black-circle.png';
     
     li.innerHTML = `
       <div class="playlist-item">
@@ -277,6 +282,9 @@ export async function performPlaylistSelection(playlist) {
     }
   });
   
+  // Update mobile playlist selector button text
+  updateSelectedPlaylist(playlist.name);
+  
   // Show playlist view
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('playlist-view').style.display = 'flex';
@@ -292,7 +300,7 @@ export async function performPlaylistSelection(playlist) {
   // Update playlist header
   const imageUrl = playlist.images && playlist.images.length > 0 
     ? playlist.images[0].url 
-    : '../images/urban-swing-logo.png';
+    : '../../images/urban-swing-logo-glow-black-circle.png';
   
   document.getElementById('playlist-image').src = imageUrl;
   document.getElementById('playlist-name').textContent = playlist.name;

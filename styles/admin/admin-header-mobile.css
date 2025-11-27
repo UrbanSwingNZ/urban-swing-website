@@ -1,0 +1,289 @@
+/* ========================================
+   ADMIN HEADER MOBILE STYLES
+   Mobile responsive styles for shared header component
+   ======================================== */
+
+/* Hide mobile hamburger menu on desktop */
+@media (min-width: 769px) {
+  .mobile-nav-toggle {
+    display: none !important;
+  }
+  
+  /* Ensure no remnants of the button show on desktop */
+  .mobile-nav-toggle,
+  .mobile-nav-toggle::before,
+  .mobile-nav-toggle::after {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* ========================================
+   MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Mobile Hamburger Menu Button */
+  .mobile-nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 1001;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-nav-toggle::before,
+  .mobile-nav-toggle::after {
+    display: none !important;
+  }
+
+  /* Add bottom padding to header on mobile since navigation is hidden */
+  .admin-header {
+    padding-bottom: 1px !important;
+  }
+
+  .mobile-nav-toggle span {
+    width: 30px;
+    height: 3px;
+    background-color: var(--hamburger-menu-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  /* Hamburger animation when active */
+  .mobile-nav-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+  }
+
+  .mobile-nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-nav-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+  }
+
+  /* Mobile Navigation Drawer */
+  .mobile-nav-drawer {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    background: var(--gradient-header);
+    box-shadow: 2px 0 10px var(--shadow-light);
+    z-index: 1000;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    padding: 80px 0 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .mobile-nav-drawer.open {
+    left: 0;
+  }
+
+  /* Logo in drawer - top right */
+  .mobile-nav-drawer .drawer-logo {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    height: 50px;
+    width: auto;
+  }
+
+  /* Mobile overlay when drawer is open */
+  .mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-overlay-dark);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .mobile-nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Drawer menu items */
+  .mobile-nav-drawer .admin-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-direction: column;
+  }
+
+  .mobile-nav-drawer .admin-menu li {
+    border-bottom: 1px solid var(--border-overlay-light);
+    width: 100%;
+  }
+
+  .mobile-nav-drawer .admin-menu li:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-nav-drawer .admin-menu a {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: var(--text-white);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    border-radius: 0;
+  }
+
+  .mobile-nav-drawer .admin-menu a:hover {
+    background-color: var(--header-overlay-medium);
+    transform: none;
+  }
+
+  .mobile-nav-drawer .admin-menu a.active {
+    background-color: var(--header-overlay-bright);
+    font-weight: 600;
+  }
+
+  .mobile-nav-drawer .admin-menu a i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Logout button in mobile drawer - style as menu item */
+  .mobile-nav-drawer .btn-logout {
+    display: flex !important;
+    align-items: center;
+    align-items: center;
+    padding: 15px 20px !important;
+    margin: 0;
+    width: 100%;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    color: var(--text-white) !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    text-align: left;
+    transition: background-color 0.2s ease !important;
+    cursor: pointer;
+    box-shadow: none !important;
+  }
+
+  .mobile-nav-drawer .btn-logout:hover {
+    background-color: var(--header-overlay-medium) !important;
+    transform: none !important;
+  }
+
+  .mobile-nav-drawer .btn-logout i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Grid Layout */
+  .admin-header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 12px 10px;
+    text-align: left;
+  }
+
+  /* Logo positioning - hidden on mobile header, shown in drawer */
+  #admin-logo-link {
+    display: none !important;
+  }
+
+  /* Logo in drawer - top right */
+  .mobile-nav-drawer .drawer-logo {
+    display: block !important;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    height: 50px;
+    width: auto;
+  }
+
+  /* Row 1, Right: Logout button */
+  .admin-user-info {
+    grid-column: 3;
+    grid-row: 1;
+    margin-left: 0;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  /* Hide logout button on mobile - it will be in hamburger menu */
+  .admin-header .btn-logout,
+  .admin-user-info .btn-logout,
+  #logout-btn {
+    display: none !important;
+  }
+
+  /* Hide user email on mobile */
+  .admin-user-info span {
+    display: none;
+  }
+
+  /* Row 2, Left: Page title */
+  .admin-header h1 {
+    font-size: 1.3rem;
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  /* Hide back button on mobile (hamburger menu will replace it) */
+  .back-button {
+    display: none !important;
+  }
+
+  /* Hide desktop navigation on mobile */
+  .admin-nav {
+    display: none !important;
+  }
+
+  /* Mobile Navigation - hidden by default */
+  .admin-menu {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 0 12px 0;
+  }
+  
+  .admin-menu li {
+    width: 100%;
+  }
+  
+  .admin-menu a {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+  
+  .admin-menu a:hover {
+    transform: translateX(5px);
+  }
+}
