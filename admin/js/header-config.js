@@ -174,12 +174,20 @@ const AdminHeaderConfig = {
  * Get configuration for a given path
  */
 function getPageConfig(path) {
-    // Normalize path - remove index.html and ensure trailing slash
+    // First, try exact match
+    if (AdminHeaderConfig[path]) {
+        console.log('Exact match found for path:', path);
+        return AdminHeaderConfig[path];
+    }
+    
+    // Normalize path - remove index.html and ensure trailing slash for directories
     let normalizedPath = path;
     if (normalizedPath.endsWith('index.html')) {
         normalizedPath = normalizedPath.replace(/index\.html$/, '');
     }
-    if (!normalizedPath.endsWith('/')) {
+    
+    // Only add trailing slash if it doesn't end with .html (i.e., it's a directory)
+    if (!normalizedPath.endsWith('/') && !normalizedPath.endsWith('.html')) {
         normalizedPath += '/';
     }
     
