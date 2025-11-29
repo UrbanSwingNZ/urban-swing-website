@@ -412,3 +412,46 @@
         font-size: 1rem;
     }
 }
+
+/* ========================================
+   LOADING SPINNER - Shared Across All Pages
+   ======================================== */
+
+.loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    z-index: 9999;
+    font-size: 1.2em;
+    color: var(--text-white);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.loading-spinner .spinner,
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 6px solid var(--border-light);
+    border-top: 6px solid var(--pink-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 18px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--text-white);
+}
