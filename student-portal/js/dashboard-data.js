@@ -8,8 +8,6 @@
  */
 async function loadDashboardData(student) {
     try {
-        console.log('Loading dashboard data for:', student.firstName, student.lastName);
-        
         // Dashboard data loading removed - stats tiles were removed from UI
         // Future: Will load data for My Concessions, Check-In History, and Transaction pages
         

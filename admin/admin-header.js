@@ -13,12 +13,8 @@
     const headerPath = '/admin/components/admin-header.html';
     const isStudentPortalPage = currentPath.includes('/student-portal/');
     
-    console.log('Admin header loading - currentPath:', currentPath);
-    
     // Get configuration for current page
     const config = getPageConfig(currentPath);
-    
-    console.log('Config retrieved:', config);
     
     // For student portal pages, check if user is admin before loading header
     if (isStudentPortalPage) {
