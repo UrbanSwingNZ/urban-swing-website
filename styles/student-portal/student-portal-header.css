@@ -114,8 +114,8 @@
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 0;
-  justify-content: flex-start;
+  gap: 8px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -124,31 +124,32 @@
 }
 
 .student-portal-menu a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
-  color: var(--text-white);
   text-decoration: none;
+  color: var(--text-white);
+  font-size: 1rem;
   font-weight: 500;
-  transition: all 0.2s ease;
+  padding: 12px 20px;
+  display: inline-block;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s ease;
+  background: var(--header-overlay-light);
+  backdrop-filter: blur(10px);
   border-bottom: 3px solid transparent;
-  white-space: nowrap;
+}
+
+.student-portal-menu a i {
+  margin-right: 6px;
 }
 
 .student-portal-menu a:hover {
-  background: var(--header-overlay-semi);
-  border-bottom-color: var(--accent-pink);
+  background: var(--header-overlay-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .student-portal-menu a.active {
   background: var(--header-overlay-strong);
-  border-bottom-color: var(--accent-pink);
-  font-weight: 700;
-}
-
-.student-portal-menu a i {
-  font-size: 1rem;
+  border-bottom-color: var(--pink-primary);
 }
 
 /* Mobile Nav Toggle (hidden on desktop) */
