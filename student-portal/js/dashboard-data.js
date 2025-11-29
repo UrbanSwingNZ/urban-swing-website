@@ -79,6 +79,57 @@ function setupNavigationCards() {
     });
 }
 
+// Listen for student selection (from admin dropdown)
+window.addEventListener('studentSelected', (event) => {
+    if (event.detail && event.detail.student) {
+        const student = event.detail.student;
+        
+        // Hide empty state
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.style.display = 'none';
+        
+        // Show dashboard
+        const studentDashboard = document.getElementById('student-dashboard');
+        if (studentDashboard) studentDashboard.style.display = 'block';
+        
+        // Update student name
+        const studentNameEl = document.getElementById('dashboard-student-name');
+        if (studentNameEl) studentNameEl.textContent = student.firstName;
+        
+        // Load dashboard data
+        loadDashboardData(student);
+    } else {
+        // No student selected - show empty state
+        const studentDashboard = document.getElementById('student-dashboard');
+        if (studentDashboard) studentDashboard.style.display = 'none';
+        
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.style.display = 'block';
+    }
+});
+
+// Listen for student loaded event (when regular student logs in)
+window.addEventListener('studentLoaded', (event) => {
+    if (event.detail) {
+        const student = event.detail;
+        
+        // Hide empty state
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.style.display = 'none';
+        
+        // Show dashboard
+        const studentDashboard = document.getElementById('student-dashboard');
+        if (studentDashboard) studentDashboard.style.display = 'block';
+        
+        // Update student name
+        const studentNameEl = document.getElementById('dashboard-student-name');
+        if (studentNameEl) studentNameEl.textContent = student.firstName;
+        
+        // Load dashboard data
+        loadDashboardData(student);
+    }
+});
+
 // Setup navigation when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupNavigationCards);

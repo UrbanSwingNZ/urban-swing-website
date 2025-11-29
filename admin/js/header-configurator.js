@@ -1,0 +1,143 @@
+/**
+ * Admin Header Configurator
+ * Handles configuration of the admin header based on page settings
+ */
+
+const AdminHeaderConfigurator = {
+    /**
+     * Configure the header with the given config
+     */
+    configure(config) {
+        this.setPageTitle(config.title);
+        this.configureBackButton(config.showBackButton, config.backUrl);
+        this.configureLogoLink(config.showBackButton, config.backUrl);
+        this.configureLogoutButton(config.showLogout);
+        this.configureNavigation(config);
+        this.setActiveNavItem(config.activePage);
+    },
+
+    /**
+     * Set the page title
+     */
+    setPageTitle(title) {
+        const titleElement = document.getElementById('admin-page-title');
+        if (titleElement) {
+            titleElement.textContent = title;
+        }
+    },
+
+    /**
+     * Configure the back button
+     */
+    configureBackButton(show, backUrl) {
+        const backButton = document.getElementById('admin-back-button');
+        if (backButton) {
+            if (show) {
+                backButton.style.display = 'flex';
+                backButton.href = backUrl;
+            } else {
+                backButton.style.display = 'none';
+            }
+        }
+    },
+
+    /**
+     * Configure the logo link
+     */
+    configureLogoLink(hideLink, backUrl) {
+        const logoLink = document.getElementById('admin-logo-link');
+        if (logoLink && !hideLink) {
+            logoLink.href = backUrl;
+        } else if (logoLink) {
+            logoLink.removeAttribute('href');
+            logoLink.style.cursor = 'default';
+        }
+    },
+
+    /**
+     * Configure the logout button
+     */
+    configureLogoutButton(show) {
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.style.display = show ? 'inline-block' : 'none';
+        }
+    },
+
+    /**
+     * Configure navigation sections
+     */
+    configureNavigation(config) {
+        const mainNav = document.getElementById('main-admin-nav');
+        const toolsNav = document.getElementById('admin-tools-nav');
+        const studentSelector = document.getElementById('student-selector-row');
+        
+        if (config.navSection === 'admin-tools') {
+            if (mainNav) mainNav.style.display = 'none';
+            if (toolsNav) toolsNav.style.display = 'block';
+            if (studentSelector) studentSelector.style.display = 'none';
+        } else if (config.navSection === 'none') {
+            // Student portal pages - hide nav, show student selector
+            if (mainNav) mainNav.style.display = 'none';
+            if (toolsNav) toolsNav.style.display = 'none';
+            if (studentSelector) studentSelector.style.display = 'block';
+            
+            // Initialize student selector
+            if (config.showStudentSelector) {
+                this.initializeStudentSelector();
+            }
+        } else {
+            if (mainNav) mainNav.style.display = 'block';
+            if (toolsNav) toolsNav.style.display = 'none';
+            if (studentSelector) studentSelector.style.display = 'none';
+        }
+    },
+
+    /**
+     * Set the active navigation item
+     */
+    setActiveNavItem(activePage) {
+        const allNavLinks = document.querySelectorAll('.admin-menu a');
+        allNavLinks.forEach(link => {
+            if (link.dataset.page === activePage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    },
+
+    /**
+     * Initialize the student selector dropdown
+     */
+    initializeStudentSelector() {
+        // Check if StudentLoader utility is available
+        if (typeof StudentLoader === 'undefined') {
+            console.error('StudentLoader utility not loaded. Please include student-loader.js');
+            return;
+        }
+        
+        // Check if already initialized
+        const dropdown = document.getElementById('admin-student-dropdown');
+        if (!dropdown || dropdown.dataset.initialized === 'true') {
+            return;
+        }
+        
+        // Mark as initialized
+        dropdown.dataset.initialized = 'true';
+        
+        // Check if user is an admin and load students
+        StudentLoader.checkAdminAuthorization().then(isAdmin => {
+            if (isAdmin) {
+                StudentLoader.loadStudents('admin-student-dropdown');
+                StudentLoader.handleStudentSelection('admin-student-dropdown');
+            } else {
+                // Not an admin - hide the admin header entirely
+                const adminHeader = document.querySelector('.admin-header');
+                if (adminHeader) {
+                    adminHeader.style.display = 'none';
+                }
+            }
+        });
+    }
+};
