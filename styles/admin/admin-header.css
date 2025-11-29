@@ -14,6 +14,11 @@
   box-shadow: 0 4px 12px var(--shadow-light);
 }
 
+/* Remove bottom padding when nav is hidden (student portal view) */
+.admin-header.no-nav {
+  padding-bottom: 20px;
+}
+
 @media (prefers-color-scheme: dark) {
   .admin-header {
     box-shadow: 0 4px 12px var(--shadow-strong);
@@ -75,6 +80,51 @@
   font-size: 0.9rem;
   opacity: 0.95;
   white-space: nowrap;
+}
+
+/* Student Selector Inline (in header row for student portal) */
+.student-selector-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.student-selector-inline label {
+  display: none;
+}
+
+.student-selector-inline .student-dropdown {
+  padding: 8px 12px;
+  border: 2px solid var(--border-overlay-medium);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+  max-width: 300px;
+  font-weight: 500;
+}
+
+.student-selector-inline .student-dropdown:hover {
+  border-color: var(--pink-primary);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.student-selector-inline .student-dropdown:focus {
+  outline: none;
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 0 3px var(--bg-purple-medium);
+}
+
+.student-selector-inline .student-dropdown:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--bg-light-gray);
 }
 
 /* Back Button */

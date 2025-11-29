@@ -24,18 +24,46 @@ function waitForAuth() {
 }
 
 /**
+ * Get the current Firebase Auth user, waiting if necessary for auth to restore from persistence
+ * @returns {Promise<firebase.User|null>} - Current user or null if not logged in
+ */
+async function getCurrentUser() {
+    return new Promise((resolve) => {
+        // First check if user is already available
+        const currentUser = firebase.auth().currentUser;
+        if (currentUser) {
+            resolve(currentUser);
+            return;
+        }
+        
+        // User not immediately available, wait for auth state to restore
+        let attempts = 0;
+        const maxAttempts = 20; // 2 seconds max
+        
+        const checkUser = () => {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                resolve(user);
+            } else if (attempts >= maxAttempts) {
+                resolve(null);
+            } else {
+                attempts++;
+                setTimeout(checkUser, 100);
+            }
+        };
+        
+        checkUser();
+    });
+}
+
+/**
  * Get the current logged-in student's ID
  * @returns {Promise<string|null>} - Student ID or null if not found
  */
 async function getCurrentStudentId() {
     try {
-        // Wait for Firebase Auth to be ready
-        const user = await new Promise((resolve) => {
-            const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-                unsubscribe();
-                resolve(user);
-            });
-        });
+        // Use the centralized getCurrentUser function
+        const user = await getCurrentUser();
         
         if (!user) {
             console.error('No user logged in');
@@ -94,7 +122,7 @@ async function getStudentById(studentId) {
  */
 async function getCurrentStudent() {
     try {
-        const user = firebase.auth().currentUser;
+        const user = await getCurrentUser();
         if (!user) {
             console.error('No user logged in');
             return null;

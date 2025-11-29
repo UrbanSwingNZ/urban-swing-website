@@ -24,12 +24,14 @@ function initializeAuth() {
                 adminToolsNavItem.parentElement.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
             }
             
-            // Load students
-            loadStudents().catch(error => {
+            // Load students (this sets up a snapshot listener, doesn't return a promise)
+            try {
+                loadStudents();
+            } catch (error) {
                 console.error('Failed to load students:', error);
                 showError('Failed to load students: ' + error.message);
                 showLoading(false);
-            });
+            }
         } else {
             // User not authenticated, redirect to admin login
             window.location.href = '../index.html';

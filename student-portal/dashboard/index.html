@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="../css/base/reset.css">
     <link rel="stylesheet" href="../css/base/typography.css">
     <link rel="stylesheet" href="../css/portal.css">
+    
+    <!-- Student Portal Header Styles -->
+    <link rel="stylesheet" href="/styles/student-portal/student-portal-header.css">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -17,39 +21,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- Admin Banner (only visible for admin users) -->
-    <div id="admin-banner" class="admin-banner" style="display: none;">
-        <div class="banner-content">
-            <div class="banner-left">
-                <i class="fas fa-user-shield"></i>
-                <span class="banner-title">ADMIN VIEW</span>
-                <select id="student-dropdown" class="student-dropdown">
-                    <option value="">Loading students...</option>
-                </select>
-            </div>
-            <div class="banner-right">
-                <a href="../../admin/index.html" class="btn-back-admin">
-                    <i class="fas fa-arrow-left"></i> Back to Admin
-                </a>
-            </div>
-        </div>
-    </div>
-
     <!-- Main Container (visible to all users) -->
     <div id="main-container" class="portal-container" style="display: none;">
-        <!-- Header -->
-        <header class="portal-header">
-            <div class="header-content">
-                <a href="../../index.html">
-                    <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
-                </a>
-                <h1>Student Portal</h1>
-                <button id="logout-btn" class="logout-btn" style="display: none;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </header>
-
         <!-- Student Dashboard -->
         <div id="student-dashboard" class="dashboard-content" style="display: none;">
             <div class="welcome-section">
@@ -122,8 +95,24 @@
     
     <!-- Application Scripts -->
     <script src="../js/firebase-init.js"></script>
+    
+    <!-- Student Loader Utility - Load before admin header -->
+    <script src="../js/utils/student-loader.js"></script>
+    
+    <!-- Admin Header Component (for admin users) - Load first -->
+    <script src="../../admin/js/header-config.js?v=4"></script>
+    <script src="../../admin/js/header-configurator.js?v=4"></script>
+    <script src="../../admin/js/mobile-nav.js?v=4"></script>
+    <script src="../../admin/admin-header.js?v=4"></script>
+    
+    <!-- Student Portal Header Component - Load after admin header -->
+    <script src="../student-portal-header.js?v=4"></script>
+    
+    <!-- Auth Utilities -->
+    <script src="../js/auth-utils.js"></script>
+    
+    <!-- Auth Check & Dashboard Logic -->
     <script src="../js/auth-check.js"></script>
-    <script src="../js/student-loader.js"></script>
     <script src="../js/dashboard-data.js"></script>
 </body>
 </html>
