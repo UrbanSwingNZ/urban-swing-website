@@ -22,61 +22,41 @@ async function loadDashboardData(student) {
  * Setup navigation card click handlers
  */
 function setupNavigationCards() {
-    // Transaction History
-    document.getElementById('nav-transactions').addEventListener('click', (e) => {
-        e.preventDefault();
-        // Persist selected student for admin view so the target page doesn't flash empty state
-        if (window.selectedStudent && window.selectedStudent.id) {
-            sessionStorage.setItem('currentStudentId', window.selectedStudent.id);
-        }
-        window.location.href = '../transactions/index.html';
-    });
+    // Get all navigation cards
+    const navCards = {
+        'nav-transactions': '../transactions/index.html',
+        'nav-concessions': '../concessions/index.html',
+        'nav-checkins': '../check-ins/index.html',
+        'nav-profile': '../profile/index.html',
+        'nav-purchase': '../purchase/index.html',
+        'nav-prepay': '../prepay/index.html'
+    };
     
-    // My Concessions
-    document.getElementById('nav-concessions').addEventListener('click', (e) => {
-        e.preventDefault();
-        // Persist selected student for admin view so the target page doesn't flash empty state
-        if (window.selectedStudent && window.selectedStudent.id) {
-            sessionStorage.setItem('currentStudentId', window.selectedStudent.id);
+    // Setup click handlers for each card
+    for (const [cardId, url] of Object.entries(navCards)) {
+        const card = document.getElementById(cardId);
+        if (card) {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Student ID should already be in sessionStorage from either:
+                // 1. Admin selecting a student (window.selectedStudent)
+                // 2. Regular student logging in (loadCurrentStudentData in auth-check.js)
+                
+                // Double-check and set from global variables if needed
+                if (!sessionStorage.getItem('currentStudentId')) {
+                    const student = window.selectedStudent || window.currentStudent;
+                    if (student && student.id) {
+                        sessionStorage.setItem('currentStudentId', student.id);
+                    }
+                }
+                
+                // Navigate to the page
+                window.location.href = url;
+            });
         }
-        window.location.href = '../concessions/index.html';
-    });
-    
-    // Check-In History
-    document.getElementById('nav-checkins').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.selectedStudent && window.selectedStudent.id) {
-            sessionStorage.setItem('currentStudentId', window.selectedStudent.id);
-        }
-        window.location.href = '../check-ins/index.html';
-    });
-    
-    // Profile
-    document.getElementById('nav-profile').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.selectedStudent && window.selectedStudent.id) {
-            sessionStorage.setItem('currentStudentId', window.selectedStudent.id);
-        }
-        window.location.href = '../profile/index.html';
-    });
-    
-    // Purchase Concessions
-    document.getElementById('nav-purchase').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.selectedStudent && window.selectedStudent.id) {
-            sessionStorage.setItem('currentStudentId', window.selectedStudent.id);
-        }
-        window.location.href = '../purchase/index.html';
-    });
-    
-    // Pre-Pay for Class
-    document.getElementById('nav-prepay').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.selectedStudent && window.selectedStudent.id) {
-            sessionStorage.setItem('currentStudentId', window.selectedStudent.id);
-        }
-        window.location.href = '../prepay/index.html';
-    });
+    }
 }
 
 // Listen for student selection (from admin dropdown)

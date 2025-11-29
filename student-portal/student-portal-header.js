@@ -58,38 +58,46 @@
                 return response.text();
             })
             .then(html => {
-                // Wait for admin header if it's loading
-                let retryCount = 0;
-                const maxRetries = 20; // Wait up to 2 seconds
+                const headerContainer = document.createElement('div');
+                headerContainer.innerHTML = html;
+                const headerElement = headerContainer.firstElementChild;
                 
-                const checkAndInsertHeader = () => {
-                    const adminHeader = document.querySelector('.admin-header');
-                    const adminHeaderScript = document.querySelector('script[src*="admin-header.js"]');
-                    
-                    // If admin header script exists but header not yet loaded, wait for it
-                    if (adminHeaderScript && !adminHeader && retryCount < maxRetries) {
-                        retryCount++;
-                        setTimeout(checkAndInsertHeader, 100);
-                        return;
-                    }
-                    
-                    const headerContainer = document.createElement('div');
-                    headerContainer.innerHTML = html;
-                    const headerElement = headerContainer.firstElementChild;
-                    
-                    if (adminHeader) {
-                        // Both headers should be in body now, insert student portal header right after admin header
-                        adminHeader.insertAdjacentElement('afterend', headerElement);
-                    } else {
-                        // Insert at beginning of body (regular student view)
-                        document.body.insertBefore(headerElement, document.body.firstChild);
-                    }
-                    
-                    // Configure header after it's loaded
-                    configureHeader();
-                };
+                // Insert header immediately at the top of body
+                document.body.insertBefore(headerElement, document.body.firstChild);
                 
-                checkAndInsertHeader();
+                // Configure the header
+                configureHeader();
+                
+                // Check if admin header loads later and adjust position if needed
+                const adminHeader = document.querySelector('.admin-header');
+                if (!adminHeader) {
+                    // Watch for admin header being added
+                    const observer = new MutationObserver((mutations) => {
+                        const newAdminHeader = document.querySelector('.admin-header');
+                        if (newAdminHeader) {
+                            // Move student header after admin header
+                            const studentHeader = document.querySelector('.student-portal-header');
+                            if (studentHeader && newAdminHeader.nextSibling !== studentHeader) {
+                                newAdminHeader.parentNode.insertBefore(studentHeader, newAdminHeader.nextSibling);
+                            }
+                            observer.disconnect();
+                        }
+                    });
+                    
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: false
+                    });
+                    
+                    // Stop watching after 3 seconds
+                    setTimeout(() => observer.disconnect(), 3000);
+                } else {
+                    // Admin header already exists, move after it
+                    const studentHeader = document.querySelector('.student-portal-header');
+                    if (studentHeader) {
+                        adminHeader.parentNode.insertBefore(studentHeader, adminHeader.nextSibling);
+                    }
+                }
             })
             .catch(error => {
                 console.error('Error loading student portal header:', error);
@@ -201,12 +209,16 @@
                 return;
             }
 
-            // Check if this is an admin viewing a student
-            const selectedStudentId = sessionStorage.getItem('currentStudentId');
+            // Check if user is an admin
+            const AUTHORIZED_ADMINS = [
+                'dance@urbanswing.co.nz',
+                'urbanswingfrontdesk@gmail.com'
+            ];
+            const isAdmin = AUTHORIZED_ADMINS.includes(user.email.toLowerCase());
             const userInfoContainer = document.querySelector('.student-user-info');
             
-            if (selectedStudentId) {
-                // Admin is viewing a student - hide user info (admin info shown in admin header)
+            if (isAdmin) {
+                // Admin viewing student portal - hide user info (admin info shown in admin header)
                 if (userInfoContainer) {
                     userInfoContainer.style.display = 'none';
                 }

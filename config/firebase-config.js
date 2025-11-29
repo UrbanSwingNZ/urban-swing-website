@@ -18,6 +18,13 @@ let app, auth, db, functions;
 try {
   app = firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
+  
+  // Set persistence to LOCAL (persists even when browser is closed) - MUST complete before any auth operations
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .catch((error) => {
+      console.error('Error setting auth persistence:', error);
+    });
+  
   db = firebase.firestore();
   
   // Only initialize functions if the SDK is loaded

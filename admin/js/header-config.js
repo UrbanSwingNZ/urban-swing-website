@@ -174,7 +174,18 @@ const AdminHeaderConfig = {
  * Get configuration for a given path
  */
 function getPageConfig(path) {
-    return AdminHeaderConfig[path] || {
+    // Normalize path - remove index.html and ensure trailing slash
+    let normalizedPath = path;
+    if (normalizedPath.endsWith('index.html')) {
+        normalizedPath = normalizedPath.replace(/index\.html$/, '');
+    }
+    if (!normalizedPath.endsWith('/')) {
+        normalizedPath += '/';
+    }
+    
+    console.log('Looking up config for normalized path:', normalizedPath);
+    
+    return AdminHeaderConfig[normalizedPath] || {
         title: 'Admin',
         activePage: '',
         navSection: 'main-admin',

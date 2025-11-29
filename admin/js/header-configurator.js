@@ -72,15 +72,28 @@ const AdminHeaderConfigurator = {
         const toolsNav = document.getElementById('admin-tools-nav');
         const studentSelector = document.getElementById('student-selector-row');
         
+        console.log('Configuring navigation with:', config);
+        console.log('Elements found:', { mainNav: !!mainNav, toolsNav: !!toolsNav, studentSelector: !!studentSelector });
+        
         if (config.navSection === 'admin-tools') {
             if (mainNav) mainNav.style.display = 'none';
             if (toolsNav) toolsNav.style.display = 'block';
             if (studentSelector) studentSelector.style.display = 'none';
         } else if (config.navSection === 'none') {
             // Student portal pages - hide nav, show student selector
-            if (mainNav) mainNav.style.display = 'none';
-            if (toolsNav) toolsNav.style.display = 'none';
-            if (studentSelector) studentSelector.style.display = 'block';
+            console.log('Student portal page detected - hiding nav, showing student selector');
+            if (mainNav) {
+                mainNav.style.display = 'none';
+                console.log('Main nav hidden');
+            }
+            if (toolsNav) {
+                toolsNav.style.display = 'none';
+                console.log('Tools nav hidden');
+            }
+            if (studentSelector) {
+                studentSelector.style.display = 'block';
+                console.log('Student selector shown');
+            }
             
             // Initialize student selector
             if (config.showStudentSelector) {
@@ -154,6 +167,45 @@ const AdminHeaderConfigurator = {
             const userEmailElement = document.getElementById('user-email');
             if (userEmailElement && user) {
                 userEmailElement.textContent = user.email;
+            }
+        });
+        
+        // Setup logout button handler
+        this.setupLogoutButton();
+    },
+
+    /**
+     * Setup logout button event handler
+     */
+    setupLogoutButton() {
+        const logoutBtn = document.getElementById('logout-btn');
+        if (!logoutBtn) {
+            return;
+        }
+
+        // Remove any existing listeners by cloning and replacing
+        const newLogoutBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+
+        // Add the logout handler
+        newLogoutBtn.addEventListener('click', async () => {
+            try {
+                if (!window.firebase || !window.firebase.auth) {
+                    console.error('Firebase not initialized');
+                    return;
+                }
+
+                await window.firebase.auth().signOut();
+                console.log('Logout successful');
+                
+                // Clear any session storage
+                sessionStorage.clear();
+                
+                // Redirect to login page or homepage
+                window.location.href = '/admin/';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Failed to logout. Please try again.');
             }
         });
     }
