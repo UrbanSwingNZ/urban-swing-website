@@ -176,7 +176,6 @@ const AdminHeaderConfig = {
 function getPageConfig(path) {
     // First, try exact match
     if (AdminHeaderConfig[path]) {
-        console.log('Exact match found for path:', path);
         return AdminHeaderConfig[path];
     }
     
@@ -190,8 +189,6 @@ function getPageConfig(path) {
     if (!normalizedPath.endsWith('/') && !normalizedPath.endsWith('.html')) {
         normalizedPath += '/';
     }
-    
-    console.log('Looking up config for normalized path:', normalizedPath);
     
     return AdminHeaderConfig[normalizedPath] || {
         title: 'Admin',
