@@ -139,5 +139,22 @@ const AdminHeaderConfigurator = {
                 }
             }
         });
+    },
+
+    /**
+     * Load and display the current user's email
+     */
+    loadUserInfo() {
+        if (!window.firebase || !window.firebase.auth) {
+            console.error('Firebase not initialized');
+            return;
+        }
+
+        window.firebase.auth().onAuthStateChanged((user) => {
+            const userEmailElement = document.getElementById('user-email');
+            if (userEmailElement && user) {
+                userEmailElement.textContent = user.email;
+            }
+        });
     }
 };

@@ -203,12 +203,18 @@
 
             // Check if this is an admin viewing a student
             const selectedStudentId = sessionStorage.getItem('currentStudentId');
+            const userInfoContainer = document.querySelector('.student-user-info');
             
             if (selectedStudentId) {
-                // Admin is viewing a student - show selected student's name
-                await loadStudentName(selectedStudentId, userNameElement);
+                // Admin is viewing a student - hide user info (admin info shown in admin header)
+                if (userInfoContainer) {
+                    userInfoContainer.style.display = 'none';
+                }
             } else {
-                // Regular student or admin without selection - show logged in user
+                // Regular student logged in - show user info
+                if (userInfoContainer) {
+                    userInfoContainer.style.display = 'flex';
+                }
                 await loadCurrentUserName(user, userNameElement);
             }
 

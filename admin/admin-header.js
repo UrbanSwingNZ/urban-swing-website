@@ -41,6 +41,9 @@
             // Configure the header immediately
             AdminHeaderConfigurator.configure(config);
             
+            // Load user info (email)
+            AdminHeaderConfigurator.loadUserInfo();
+            
             // Initialize mobile navigation
             AdminMobileNav.initialize(config);
             
