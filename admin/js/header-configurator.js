@@ -70,18 +70,19 @@ const AdminHeaderConfigurator = {
     configureNavigation(config) {
         const mainNav = document.getElementById('main-admin-nav');
         const toolsNav = document.getElementById('admin-tools-nav');
-        const studentSelector = document.getElementById('student-selector-row');
+        const studentSelectorInline = document.getElementById('student-selector-inline');
+        const adminHeader = document.querySelector('.admin-header');
         
         console.log('Configuring navigation with:', config);
-        console.log('Elements found:', { mainNav: !!mainNav, toolsNav: !!toolsNav, studentSelector: !!studentSelector });
+        console.log('Elements found:', { mainNav: !!mainNav, toolsNav: !!toolsNav, studentSelectorInline: !!studentSelectorInline });
         
         if (config.navSection === 'admin-tools') {
             if (mainNav) mainNav.style.display = 'none';
             if (toolsNav) toolsNav.style.display = 'block';
-            if (studentSelector) studentSelector.style.display = 'none';
+            if (studentSelectorInline) studentSelectorInline.style.display = 'none';
+            if (adminHeader) adminHeader.classList.remove('no-nav');
         } else if (config.navSection === 'none') {
-            // Student portal pages - hide nav, show student selector
-            console.log('Student portal page detected - hiding nav, showing student selector');
+            // Student portal pages - hide nav, show student selector inline
             if (mainNav) {
                 mainNav.style.display = 'none';
                 console.log('Main nav hidden');
@@ -90,9 +91,13 @@ const AdminHeaderConfigurator = {
                 toolsNav.style.display = 'none';
                 console.log('Tools nav hidden');
             }
-            if (studentSelector) {
-                studentSelector.style.display = 'block';
-                console.log('Student selector shown');
+            if (studentSelectorInline) {
+                studentSelectorInline.style.display = 'flex';
+                console.log('Student selector inline shown');
+            }
+            if (adminHeader) {
+                adminHeader.classList.add('no-nav');
+                console.log('Admin header no-nav class added');
             }
             
             // Initialize student selector
@@ -102,7 +107,8 @@ const AdminHeaderConfigurator = {
         } else {
             if (mainNav) mainNav.style.display = 'block';
             if (toolsNav) toolsNav.style.display = 'none';
-            if (studentSelector) studentSelector.style.display = 'none';
+            if (studentSelectorInline) studentSelectorInline.style.display = 'none';
+            if (adminHeader) adminHeader.classList.remove('no-nav');
         }
     },
 

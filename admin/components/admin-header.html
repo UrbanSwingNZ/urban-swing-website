@@ -14,6 +14,17 @@
             <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo-small">
         </a>
         <h1 id="admin-page-title">Admin Dashboard</h1>
+        
+        <!-- Student Selector (only shown when viewing student portal as admin) -->
+        <div class="student-selector-inline" id="student-selector-inline" style="display: none;">
+            <label for="admin-student-dropdown">
+                <i class="fas fa-user-graduate"></i> Select Student:
+            </label>
+            <select id="admin-student-dropdown" class="student-dropdown">
+                <option value="">Loading students...</option>
+            </select>
+        </div>
+        
         <div class="admin-user-info">
             <span id="user-email"></span>
             <button id="logout-btn" class="btn-logout" title="Logout">
@@ -46,16 +57,4 @@
             <li><a href="/admin/admin-tools/transactions/" data-page="transactions"><i class="fas fa-money-bill-wave"></i> Transactions</a></li>
         </ul>
     </nav>
-    
-    <!-- Student Selector Row (only shown when viewing student portal as admin) -->
-    <div class="student-selector-row" id="student-selector-row" style="display: none;">
-        <div class="student-selector-content">
-            <label for="admin-student-dropdown">
-                <i class="fas fa-user-graduate"></i> Select Student:
-            </label>
-            <select id="admin-student-dropdown" class="student-dropdown">
-                <option value="">Loading students...</option>
-            </select>
-        </div>
-    </div>
 </header>
