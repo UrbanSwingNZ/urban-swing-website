@@ -33,6 +33,9 @@ const AdminMobileNav = {
         drawer.id = 'mobile-nav-drawer';
         drawer.className = 'mobile-nav-drawer';
         
+        // Add close button to drawer
+        this.addCloseButtonToDrawer(drawer);
+        
         // Add logo to drawer
         this.addLogoToDrawer(drawer);
         
@@ -44,6 +47,21 @@ const AdminMobileNav = {
         
         // Insert drawer into body
         document.body.appendChild(drawer);
+    },
+
+    /**
+     * Add close button to drawer
+     */
+    addCloseButtonToDrawer(drawer) {
+        const closeBtn = document.createElement('button');
+        closeBtn.id = 'mobile-nav-close';
+        closeBtn.className = 'mobile-nav-close';
+        closeBtn.setAttribute('aria-label', 'Close navigation menu');
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        drawer.appendChild(closeBtn);
+        
+        // Add click event to close button
+        closeBtn.addEventListener('click', () => this.toggleMenu());
     },
 
     /**
