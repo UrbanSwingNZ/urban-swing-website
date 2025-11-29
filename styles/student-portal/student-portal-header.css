@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('../components/mobile-drawer.css');
 @import url('student-portal-header-mobile.css');
 
 /* Header Container */
@@ -102,8 +103,8 @@
   font-size: 1rem;
 }
 
-/* Navigation Menu */
-.student-portal-nav {
+/* Navigation Menu (Desktop) */
+#student-portal-nav-desktop {
   max-width: 1200px;
   margin: 0 auto;
   padding-bottom: 0;
