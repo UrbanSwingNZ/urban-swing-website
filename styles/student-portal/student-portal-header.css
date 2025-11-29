@@ -153,7 +153,7 @@
 }
 
 /* Mobile Nav Toggle (hidden on desktop) */
-.mobile-nav-toggle {
+.student-mobile-nav-toggle {
   display: none;
   background: none;
   border: none;
@@ -167,7 +167,7 @@
   align-items: center;
 }
 
-.mobile-nav-toggle span {
+.student-mobile-nav-toggle span {
   display: block;
   width: 25px;
   height: 3px;
@@ -176,14 +176,14 @@
   border-radius: 3px;
 }
 
-.mobile-nav-toggle.active span:nth-child(1) {
+.student-mobile-nav-toggle.active span:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
 }
 
-.mobile-nav-toggle.active span:nth-child(2) {
+.student-mobile-nav-toggle.active span:nth-child(2) {
   opacity: 0;
 }
 
-.mobile-nav-toggle.active span:nth-child(3) {
+.student-mobile-nav-toggle.active span:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
 }

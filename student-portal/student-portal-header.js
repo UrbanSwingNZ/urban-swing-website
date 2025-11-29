@@ -136,13 +136,33 @@
      * Setup mobile menu toggle functionality
      */
     function setupMobileMenu() {
-        const toggleBtn = document.getElementById('mobile-nav-toggle');
+        const toggleBtn = document.getElementById('student-mobile-nav-toggle');
+        const closeBtn = document.getElementById('student-mobile-nav-close');
         const nav = document.getElementById('student-portal-nav');
+        const overlay = document.getElementById('student-mobile-nav-overlay');
         
-        if (toggleBtn && nav) {
+        if (toggleBtn && nav && overlay) {
+            // Open drawer
             toggleBtn.addEventListener('click', () => {
-                toggleBtn.classList.toggle('active');
-                nav.classList.toggle('mobile-active');
+                toggleBtn.classList.add('active');
+                nav.classList.add('mobile-active');
+                overlay.classList.add('active');
+            });
+
+            // Close drawer with close button
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    toggleBtn.classList.remove('active');
+                    nav.classList.remove('mobile-active');
+                    overlay.classList.remove('active');
+                });
+            }
+
+            // Close drawer when clicking overlay
+            overlay.addEventListener('click', () => {
+                toggleBtn.classList.remove('active');
+                nav.classList.remove('mobile-active');
+                overlay.classList.remove('active');
             });
 
             // Close menu when clicking a link
@@ -151,6 +171,7 @@
                 link.addEventListener('click', () => {
                     toggleBtn.classList.remove('active');
                     nav.classList.remove('mobile-active');
+                    overlay.classList.remove('active');
                 });
             });
         }
@@ -161,24 +182,32 @@
      */
     function setupLogout() {
         const logoutBtn = document.getElementById('student-logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async () => {
-                try {
-                    // Sign out from Firebase
-                    if (typeof firebase !== 'undefined' && firebase.auth) {
-                        await firebase.auth().signOut();
-                    }
-                    
-                    // Clear session storage
-                    sessionStorage.clear();
-                    
-                    // Redirect to login page
-                    window.location.href = '/student-portal/index.html';
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    alert('Error logging out. Please try again.');
+        const drawerLogoutBtn = document.getElementById('student-drawer-logout-btn');
+        
+        const handleLogout = async () => {
+            try {
+                // Sign out from Firebase
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    await firebase.auth().signOut();
                 }
-            });
+                
+                // Clear session storage
+                sessionStorage.clear();
+                
+                // Redirect to login page
+                window.location.href = '/student-portal/index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Error logging out. Please try again.');
+            }
+        };
+        
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+        }
+        
+        if (drawerLogoutBtn) {
+            drawerLogoutBtn.addEventListener('click', handleLogout);
         }
     }
 
