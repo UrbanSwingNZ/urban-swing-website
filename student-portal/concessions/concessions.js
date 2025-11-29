@@ -31,9 +31,22 @@ window.addEventListener('studentLoaded', async (event) => {
     await loadStudentConcessions(event.detail.id);
 });
 
+// Check if a student is already selected on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const currentStudentId = sessionStorage.getItem('currentStudentId');
+    if (currentStudentId) {
+        loadStudentConcessions(currentStudentId);
+    }
+});
+
 // Load concessions for a specific student
 async function loadStudentConcessions(studentId) {
     try {
+        if (!studentId) {
+            console.log('No student selected yet');
+            return;
+        }
+        
         showLoading(true);
         
         // First, get student info for header

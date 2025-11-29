@@ -37,7 +37,9 @@ async function initializeCheckIns() {
  */
 async function loadCurrentStudentCheckIns() {
     try {
-        const user = firebase.auth().currentUser;
+        // Use the centralized getCurrentUser function from auth-utils
+        const user = await getCurrentUser();
+        
         if (!user) {
             console.error('No user logged in');
             window.location.href = '../index.html';
@@ -331,9 +333,17 @@ function loadStudentDashboard(student) {
 }
 
 // Initialize when DOM is ready
+// Wait for auth check to complete before initializing
+window.addEventListener('authCheckComplete', () => {
+    initializeCheckIns();
+});
+
+// Fallback for if auth check has already completed
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait a bit for auth check to complete
     setTimeout(() => {
-        initializeCheckIns();
-    }, 1000);
+        // Only init if not already initialized by authCheckComplete
+        if (!currentStudent && !currentStudentId) {
+            initializeCheckIns();
+        }
+    }, 2000);
 });

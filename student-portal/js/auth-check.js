@@ -14,6 +14,9 @@ let currentUser = null;
 let currentUserEmail = null;
 let isAuthorized = false;
 
+// Make isAuthorized globally accessible
+window.isAuthorized = false;
+
 /**
  * Check if the current user is an admin or regular student
  */
@@ -26,16 +29,30 @@ async function checkUserAccess() {
         }
         
         // Wait for Firebase Auth to initialize and check auth state
-        currentUser = await new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-                reject(new Error('Firebase auth timeout'));
-            }, 10000); // 10 second timeout
+        // Don't unsubscribe immediately - wait for a definitive answer
+        currentUser = await new Promise((resolve) => {
+            let resolved = false;
             
             const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-                clearTimeout(timeout);
-                unsubscribe();
-                resolve(user);
+                if (user) {
+                    // User is authenticated - resolve immediately
+                    if (!resolved) {
+                        resolved = true;
+                        unsubscribe();
+                        resolve(user);
+                    }
+                }
+                // If user is null, don't resolve yet - wait a bit in case session is being restored
             });
+            
+            // If we still don't have a user after 5 seconds, give up
+            setTimeout(() => {
+                if (!resolved) {
+                    resolved = true;
+                    unsubscribe();
+                    resolve(null);
+                }
+            }, 5000);
         });
         
         if (!currentUser) {
@@ -58,14 +75,10 @@ async function checkUserAccess() {
 
         // Check if user email is in authorized admin list
         isAuthorized = AUTHORIZED_ADMINS.includes(currentUserEmail);
+        window.isAuthorized = isAuthorized;
 
         if (isAuthorized) {
             showAdminView();
-            
-            // Trigger student loading if the function exists
-            if (typeof loadStudents === 'function') {
-                loadStudents();
-            }
             
             // Dispatch event for other pages to know auth check is complete
             window.dispatchEvent(new CustomEvent('authCheckComplete', { detail: { isAuthorized: true } }));
@@ -92,14 +105,14 @@ async function checkUserAccess() {
  */
 function showAdminView() {
     document.getElementById('main-container').style.display = 'block';
-    document.getElementById('admin-banner').style.display = 'block';
     
     // Check if we have a selected student in sessionStorage
     const currentStudentId = sessionStorage.getItem('currentStudentId');
     
     // Only show empty state if no student is selected
-    if (!currentStudentId) {
-        document.getElementById('empty-state').style.display = 'block';
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState && !currentStudentId) {
+        emptyState.style.display = 'block';
     }
 }
 
@@ -108,30 +121,9 @@ function showAdminView() {
  */
 function showStudentView() {
     document.getElementById('main-container').style.display = 'block';
-    document.getElementById('admin-banner').style.display = 'none';
-    
-    // Show logout button for students
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.style.display = 'block';
-        logoutBtn.addEventListener('click', handleLogout);
-    }
     
     // Show dashboard with current user's data
     loadCurrentStudentData();
-}
-
-/**
- * Handle logout
- */
-async function handleLogout() {
-    try {
-        await firebase.auth().signOut();
-        window.location.href = '../index.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        alert('Error logging out. Please try again.');
-    }
 }
 
 /**
@@ -159,6 +151,9 @@ async function loadCurrentStudentData() {
         
         // Store student data globally for other pages to use
         window.currentStudent = student;
+        
+        // Store student ID in sessionStorage for navigation
+        sessionStorage.setItem('currentStudentId', student.id);
         
         // Show dashboard with student's data (only if these elements exist on this page)
         const emptyState = document.getElementById('empty-state');

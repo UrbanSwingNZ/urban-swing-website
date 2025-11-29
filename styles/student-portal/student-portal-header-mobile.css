@@ -1,0 +1,222 @@
+/* ========================================
+   STUDENT PORTAL HEADER MOBILE STYLES
+   Responsive mobile styles for student portal header
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Show mobile nav toggle */
+  .student-portal-header .student-mobile-nav-toggle {
+    display: flex !important;
+  }
+
+  /* Header Content Adjustments */
+  .student-portal-header {
+    padding: 12px 16px 0;
+  }
+
+  .student-portal-header-content {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Hide logo on very small screens */
+  @media (max-width: 480px) {
+    .student-portal-header-content #student-portal-logo-link {
+      display: none;
+    }
+  }
+
+  /* Page Title */
+  .student-portal-header h1 {
+    font-size: 1.2rem;
+    flex: 1;
+  }
+
+  /* User Info */
+  .student-user-info {
+    width: 100%;
+    order: 3;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .student-user-info span {
+    display: none;
+  }
+
+  /* Logout Button - Hide on Mobile (shown in drawer instead) */
+  .student-user-info .btn-logout {
+    display: none;
+  }
+
+  /* Navigation Menu - Mobile Drawer (like admin header) */
+  .student-portal-nav {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    background: var(--gradient-header);
+    box-shadow: 2px 0 10px var(--shadow-light);
+    z-index: 1100;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    padding: 80px 0 20px 0;
+  }
+
+  .student-portal-nav.mobile-active {
+    left: 0;
+  }
+
+  /* Close button in drawer - top left */
+  .mobile-nav-close {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    color: var(--text-white);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 1101;
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-nav-close:hover {
+    transform: scale(1.1);
+  }
+
+  /* Logo in drawer - top right */
+  .student-portal-nav .drawer-logo {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    height: 50px;
+    width: auto;
+  }
+
+  .student-portal-nav .drawer-logo img {
+    height: 100%;
+    width: auto;
+  }
+
+  /* Mobile overlay when drawer is open */
+  .student-mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-overlay-dark);
+    z-index: 1099;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .student-mobile-nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .student-portal-menu {
+    flex-direction: column;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .student-portal-menu li {
+    border-bottom: 1px solid var(--border-overlay-light);
+    width: 100%;
+  }
+
+  .student-portal-menu li:last-child {
+    border-bottom: none;
+  }
+
+  .student-portal-menu a {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: var(--text-white);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    background: transparent;
+    border-radius: 0;
+    border-bottom: none;
+    border-left: none;
+    transition: background-color 0.2s ease;
+    transform: none;
+    box-shadow: none;
+    width: 100%;
+  }
+
+  .student-portal-menu a i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .student-portal-menu a:hover {
+    background-color: var(--header-overlay-medium);
+    transform: none;
+    border-left: none;
+    padding-left: 20px;
+  }
+
+  .student-portal-menu a.active {
+    background-color: var(--header-overlay-bright);
+    font-weight: 600;
+    border-bottom-color: transparent;
+  }
+
+  /* Logout button in drawer */
+  .drawer-logout-btn {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    margin: 0;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: var(--text-white);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .drawer-logout-btn i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .drawer-logout-btn:hover {
+    background-color: var(--header-overlay-medium);
+  }
+}
+
+/* Tablet Adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .student-portal-header-content {
+    gap: 15px;
+  }
+
+  .student-portal-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .student-portal-menu a {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+}
