@@ -8,6 +8,9 @@
   --common-max-width: 1100px;
 }
 
+/* Import shared mobile drawer styles */
+@import url('/styles/components/mobile-drawer.css');
+
 /* Reset margin and padding for all elements */
 * {
   margin: 0;
@@ -143,6 +146,7 @@ header {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  position: relative;
 }
 
 .header-text {
@@ -294,10 +298,6 @@ nav {
   color: white;
 }
 
-#hamburger-menu {
-  display: none;
-}
-
 .video {
   display: flex;
   justify-content: center;
@@ -347,6 +347,32 @@ nav {
 
 /* Mobile Styles for Sliding Menu */
 @media (max-width: 768px) {
+  /* Mobile Hamburger Menu Button */
+  .mobile-nav-toggle,
+  #public-mobile-nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 24px;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    padding: 0 !important;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+  }
+
+  #public-mobile-nav-toggle span {
+    width: 100%;
+    height: 3px;
+    background-color: var(--text-color) !important;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
   nav {
     position: relative;
     width: 100%;
@@ -359,83 +385,9 @@ nav {
     margin: 20px auto;
   }
 
-  #menu {
-    position: fixed;
-    top: 0;
-    left: -220px;
-    width: 220px;
-    height: 100%;
-    background-color: var(--background-color);
-    color: var(--text-color);
+  /* Hide desktop navigation on mobile */
+  #desktop-nav {
     display: none;
-    flex-direction: column;
-    padding: 20px;
-    padding-bottom: 40px;
-    transition: left 0.3s ease;
-    z-index: 1000;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-    overflow-y: auto;
-  }
-
-  body.menu-open #menu {
-    left: 0;
-    padding-top: 100px;
-    display: block;
-  }
-
-  #menu li {
-    padding: 10px 0;
-    margin: 15px 0;
-    list-style: none;
-  }
-
-  #menu a {
-    display: block;
-    padding: 10px 15px;
-    color: var(--text-color);
-    text-decoration: none;
-    text-align: left;
-    font-size: 1.5em;
-    transition: color 0.3s ease;
-  }
-
-  #menu a:hover {
-    background-color: var(--urban-swing-pink);
-    color: var(--text-color);
-  }
-
-  #hamburger-menu {
-    display: block;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: none;
-    border: none;
-    font-size: 2em;
-    color: var(--text-color);
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  #close-menu {
-    display: block;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-color);
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  #close-menu:hover {
-    color: var(--urban-swing-pink);
-  }
-
-  body.menu-open #close-menu {
-    display: block;
   }
 
   /* Mobile device spacing for social media logos */

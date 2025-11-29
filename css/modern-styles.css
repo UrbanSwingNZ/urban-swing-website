@@ -22,6 +22,7 @@
 @import url('components/tables.css');
 @import url('components/faq.css');
 @import url('components/enhanced-features.css');
+@import url('/styles/components/mobile-drawer.css');
 
 /* Utilities */
 @import url('utilities/utilities.css');
@@ -214,6 +215,33 @@ table {
 
 /* Mobile Responsive Adjustments for Legacy Components */
 @media (max-width: 768px) {
+  /* Show mobile hamburger menu button */
+  .mobile-nav-toggle,
+  #public-mobile-nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 15px;
+    z-index: 1001;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  #public-mobile-nav-toggle span {
+    width: 30px;
+    height: 3px;
+    background-color: var(--white) !important;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
   .crew-table td {
     display: block;
     width: 100%;

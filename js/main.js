@@ -15,54 +15,15 @@ fetch(headerPath)
         // Insert the header HTML into the document
         document.body.insertAdjacentHTML('afterbegin', html);
 
-        // Re-add menu functionality after header loads
-        const hamburgerMenu = document.getElementById('hamburger-menu');
-        const closeMenu = document.getElementById('close-menu');
-        const menu = document.getElementById('menu');
-        const body = document.body;
-        
-        // Verify required elements exist
-        if (!hamburgerMenu || !closeMenu || !menu) {
-            console.error('Header elements not found after loading');
-            return;
-        }
-
         // Set active menu item based on current page
         setActiveMenuItem();
 
-        // Toggle the menu visibility and body shift
-        hamburgerMenu.addEventListener('click', () => {
-            menu.classList.toggle('active'); // Show/hide sliding menu
-            body.classList.toggle('menu-open'); // Shift page content
-        });
-
-        // Close menu with "X" icon
-        closeMenu.addEventListener('click', () => {
-            menu.classList.remove('active'); // Hide the menu
-            body.classList.remove('menu-open'); // Reset content position
-            closeMenu.style.display = 'none'; // Hide the X button
-        });
-
-        // Close the menu when a menu link is clicked
-        menu.addEventListener('click', (event) => {
-            if (event.target.tagName === 'A') {
-                menu.classList.remove('active');
-                body.classList.remove('menu-open');
-            }
-        });
-
-        // Close menu when clicking the overlay/background
-        document.addEventListener('click', (event) => {
-            if (body.classList.contains('menu-open')) {
-                // Check if click is outside menu and not on hamburger button
-                if (!menu.contains(event.target) && 
-                    !hamburgerMenu.contains(event.target) && 
-                    !closeMenu.contains(event.target)) {
-                    menu.classList.remove('active');
-                    body.classList.remove('menu-open');
-                }
-            }
-        });
+        // Initialize mobile navigation using MobileDrawer component
+        if (typeof PublicMobileNav !== 'undefined') {
+            PublicMobileNav.initialize();
+        } else {
+            console.error('PublicMobileNav not found. Make sure public-mobile-nav.js is loaded.');
+        }
     })
     .catch(error => {
         console.error('Error loading header:', error);
