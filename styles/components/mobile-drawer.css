@@ -11,20 +11,23 @@
   flex-direction: column;
   justify-content: space-around;
   width: 30px;
-  height: 24px;
+  height: 25px;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
+  margin: 0;
   z-index: 1001;
   position: relative;
+  outline: none;
+  box-shadow: none;
 }
 
 .mobile-nav-toggle span,
 .student-mobile-nav-toggle span {
-  width: 100%;
+  width: 30px;
   height: 3px;
-  background-color: var(--text-white);
+  background-color: var(--white);
   border-radius: 2px;
   transition: all 0.3s ease;
   transform-origin: center;

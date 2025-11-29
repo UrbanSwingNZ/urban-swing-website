@@ -23,24 +23,12 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  /* Mobile Hamburger Menu Button */
+  /* Mobile Hamburger Menu Button - positioned in grid */
   .mobile-nav-toggle {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 30px;
-    height: 25px;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer;
-    padding: 0 !important;
-    margin: 0 !important;
-    z-index: 1001;
+    display: flex !important;
     grid-column: 1;
     grid-row: 1;
     align-self: center;
-    outline: none !important;
-    box-shadow: none !important;
   }
 
   .mobile-nav-toggle::before,
@@ -51,15 +39,6 @@
   /* Add bottom padding to header on mobile since navigation is hidden */
   .admin-header {
     padding-bottom: 1px !important;
-  }
-
-  .mobile-nav-toggle span {
-    width: 30px;
-    height: 3px;
-    background-color: var(--hamburger-menu-color);
-    border-radius: 2px;
-    transition: all 0.3s ease;
-    transform-origin: center;
   }
 
   /* Grid Layout */
