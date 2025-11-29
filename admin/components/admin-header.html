@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/styles/admin/admin-header.css">
+
 <header class="admin-header">
     <div class="admin-header-content">
         <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu">
@@ -45,4 +46,16 @@
             <li><a href="/admin/admin-tools/transactions/" data-page="transactions"><i class="fas fa-money-bill-wave"></i> Transactions</a></li>
         </ul>
     </nav>
+    
+    <!-- Student Selector Row (only shown when viewing student portal as admin) -->
+    <div class="student-selector-row" id="student-selector-row" style="display: none;">
+        <div class="student-selector-content">
+            <label for="admin-student-dropdown">
+                <i class="fas fa-user-graduate"></i> Select Student:
+            </label>
+            <select id="admin-student-dropdown" class="student-dropdown">
+                <option value="">Loading students...</option>
+            </select>
+        </div>
+    </div>
 </header>

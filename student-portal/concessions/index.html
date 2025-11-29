@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="../css/base/typography.css">
     <link rel="stylesheet" href="../css/portal.css">
     <link rel="stylesheet" href="concessions.css">
+    
+    <!-- Student Portal Header Styles -->
+    <link rel="stylesheet" href="/styles/student-portal/student-portal-header.css">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -18,40 +22,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- Admin Banner (only visible for admin users) -->
-    <div id="admin-banner" class="admin-banner" style="display: none;">
-        <div class="banner-content">
-            <div class="banner-left">
-                <i class="fas fa-user-shield"></i>
-                <span class="banner-title">ADMIN VIEW</span>
-                <select id="student-dropdown" class="student-dropdown">
-                    <option value="">Loading students...</option>
-                </select>
-            </div>
-            <div class="banner-right">
-                <a href="../../admin/index.html" class="btn-back-admin">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to Admin
-                </a>
-            </div>
-        </div>
-    </div>
-
     <!-- Main Container -->
     <div id="main-container" class="portal-container" style="display: none;">
-        <!-- Header -->
-        <header class="portal-header">
-            <div class="header-content">
-                <a href="../dashboard/index.html">
-                    <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
-                </a>
-                <h1>My Concessions</h1>
-                <button id="logout-btn" class="logout-btn" style="display: none;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </header>
-
         <!-- Concessions Content -->
         <div id="concessions-content" class="concessions-content" style="display: none;">
             <div class="concessions-container">
@@ -101,8 +73,21 @@
     
     <!-- Application Scripts -->
     <script src="../js/firebase-init.js?v=2"></script>
+    
+    <!-- Admin Header Component (for admin users) - Load first -->
+    <script src="../../admin/js/header-config.js"></script>
+    <script src="../../admin/js/header-configurator.js"></script>
+    <script src="../../admin/js/mobile-nav.js"></script>
+    <script src="../../admin/admin-header.js"></script>
+    
+    <!-- Student Portal Header Component - Load after admin header -->
+    <script src="../student-portal-header.js"></script>
+    
+    <!-- Student Loader Utility -->
+    <script src="../js/utils/student-loader.js"></script>
+    
+    <!-- Auth & Concessions Scripts -->
     <script src="../js/auth-check.js?v=2"></script>
-    <script src="../js/student-loader.js?v=2"></script>
     <script src="concessions.js?v=2"></script>
 </body>
 </html>

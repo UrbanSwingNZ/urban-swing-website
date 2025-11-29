@@ -171,3 +171,86 @@
   background: var(--header-overlay-strong);
   border-bottom-color: var(--pink-primary);
 }
+
+/* ========================================
+   STUDENT SELECTOR ROW (for Student Portal Admin View)
+   ======================================== */
+
+.student-selector-row {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 0;
+  border-top: 1px solid var(--header-overlay-semi);
+}
+
+.student-selector-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.student-selector-content label {
+  font-weight: 600;
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.student-selector-content label i {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.student-dropdown {
+  flex: 1;
+  max-width: 500px;
+  min-width: 250px;
+  padding: 10px 14px;
+  border: 2px solid var(--border-overlay-medium);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.student-dropdown:hover {
+  border-color: var(--pink-primary);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.student-dropdown:focus {
+  outline: none;
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 0 3px var(--bg-purple-medium);
+}
+
+.student-dropdown:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--bg-light-gray);
+}
+
+@media (max-width: 768px) {
+  .student-selector-row {
+    padding: 12px 0;
+  }
+  
+  .student-selector-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .student-dropdown {
+    max-width: 100%;
+    width: 100%;
+  }
+}

@@ -62,11 +62,6 @@ async function checkUserAccess() {
         if (isAuthorized) {
             showAdminView();
             
-            // Trigger student loading if the function exists
-            if (typeof loadStudents === 'function') {
-                loadStudents();
-            }
-            
             // Dispatch event for other pages to know auth check is complete
             window.dispatchEvent(new CustomEvent('authCheckComplete', { detail: { isAuthorized: true } }));
             
@@ -92,14 +87,14 @@ async function checkUserAccess() {
  */
 function showAdminView() {
     document.getElementById('main-container').style.display = 'block';
-    document.getElementById('admin-banner').style.display = 'block';
     
     // Check if we have a selected student in sessionStorage
     const currentStudentId = sessionStorage.getItem('currentStudentId');
     
     // Only show empty state if no student is selected
-    if (!currentStudentId) {
-        document.getElementById('empty-state').style.display = 'block';
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState && !currentStudentId) {
+        emptyState.style.display = 'block';
     }
 }
 
@@ -108,30 +103,9 @@ function showAdminView() {
  */
 function showStudentView() {
     document.getElementById('main-container').style.display = 'block';
-    document.getElementById('admin-banner').style.display = 'none';
-    
-    // Show logout button for students
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.style.display = 'block';
-        logoutBtn.addEventListener('click', handleLogout);
-    }
     
     // Show dashboard with current user's data
     loadCurrentStudentData();
-}
-
-/**
- * Handle logout
- */
-async function handleLogout() {
-    try {
-        await firebase.auth().signOut();
-        window.location.href = '../index.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        alert('Error logging out. Please try again.');
-    }
 }
 
 /**
