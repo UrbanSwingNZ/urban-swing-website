@@ -15,6 +15,12 @@ const AdminMobileNav = {
             return;
         }
 
+        // Check if MobileDrawer is available
+        if (typeof MobileDrawer === 'undefined') {
+            console.error('AdminMobileNav: MobileDrawer class not found. Make sure mobile-drawer.js is loaded first.');
+            return;
+        }
+
         // Get menu items from the visible nav menu
         const menuItems = this.getMenuItems(config);
         
