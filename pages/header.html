@@ -1,5 +1,9 @@
 <header>
-    <button id="hamburger-menu" aria-label="Toggle menu">☰</button>
+    <button id="public-mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
     
     <div class="header-top">
         <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing - West Coast Swing Dance School" class="logo">
@@ -24,11 +28,9 @@
         </div>
     </div>
 
-    <nav>
+    <!-- Desktop Navigation -->
+    <nav id="desktop-nav">
         <ul id="menu">
-            <li class="menu-logo">
-                <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing" class="mobile-menu-logo">
-            </li>
             <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="/pages/classes.html"><i class="fas fa-calendar-alt"></i> Classes</a></li>
             <li><a href="/pages/policies.html"><i class="fas fa-file-alt"></i> Policies</a></li>
@@ -38,6 +40,4 @@
             <li><a href="/admin/"><i class="fas fa-lock"></i> Admin</a></li>
         </ul>
     </nav>
-    
-    <button id="close-menu" style="display: none;" aria-label="Close menu">✕</button>
 </header>

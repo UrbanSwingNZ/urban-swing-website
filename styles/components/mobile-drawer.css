@@ -1,0 +1,243 @@
+/* ========================================
+   MOBILE DRAWER COMPONENT STYLES
+   Shared styles for mobile navigation drawer
+   Used by admin, student portal, and public site
+   ======================================== */
+
+/* Mobile Navigation Toggle Button (Hamburger) */
+.mobile-nav-toggle,
+.student-mobile-nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  z-index: 1001;
+  position: relative;
+  outline: none;
+  box-shadow: none;
+}
+
+.mobile-nav-toggle span,
+.student-mobile-nav-toggle span {
+  width: 30px;
+  height: 3px;
+  background-color: var(--white);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+/* Mobile Navigation Drawer */
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background: var(--gradient-header);
+  box-shadow: 2px 0 10px var(--shadow-light);
+  z-index: 1100;
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  padding: 80px 0 20px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.mobile-nav-drawer.mobile-active {
+  left: 0;
+}
+
+/* Close Button in Drawer (top-left) */
+.mobile-nav-close {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  color: var(--text-white);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1101;
+  transition: transform 0.2s ease;
+}
+
+.mobile-nav-close:hover {
+  transform: scale(1.1);
+}
+
+/* Logo in Drawer (top-right) */
+.drawer-logo {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.drawer-logo img {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+/* Mobile Overlay (background dimming when drawer is open) */
+.mobile-nav-overlay,
+.student-mobile-nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-overlay-dark);
+  z-index: 1099;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mobile-nav-overlay.mobile-active,
+.student-mobile-nav-overlay.mobile-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Drawer Menu */
+.mobile-drawer-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer-menu li {
+  border-bottom: 1px solid var(--border-overlay-light);
+  width: 100%;
+}
+
+.mobile-drawer-menu li:last-child {
+  border-bottom: none;
+}
+
+.mobile-drawer-menu a,
+.mobile-drawer-menu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  color: var(--text-white);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.mobile-drawer-menu a:hover,
+.mobile-drawer-menu button:hover {
+  background: var(--bg-overlay-light);
+  padding-left: 24px;
+}
+
+.mobile-drawer-menu a.active {
+  background: var(--bg-overlay-medium);
+  font-weight: 600;
+  border-left: 4px solid var(--pink-primary);
+  padding-left: 20px;
+}
+
+.mobile-drawer-menu a.active:hover {
+  padding-left: 24px;
+}
+
+.mobile-drawer-menu i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Logout Button in Drawer */
+.drawer-logout-btn {
+  width: 100%;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  color: var(--text-white);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.drawer-logout-btn:hover {
+  background: var(--bg-overlay-light);
+  padding-left: 24px;
+}
+
+.drawer-logout-btn i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .mobile-nav-toggle,
+  .student-mobile-nav-toggle {
+    display: flex;
+  }
+}
+
+/* Prevent body scroll when drawer is open */
+body.drawer-open {
+  overflow: hidden;
+}
+
+/* Accessibility: Focus styles */
+.mobile-nav-drawer a:focus,
+.mobile-nav-drawer button:focus,
+.mobile-nav-close:focus,
+.mobile-nav-toggle:focus,
+.student-mobile-nav-toggle:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling within drawer */
+.mobile-nav-drawer {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-overlay-light) transparent;
+}
+
+.mobile-nav-drawer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-nav-drawer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mobile-nav-drawer::-webkit-scrollbar-thumb {
+  background: var(--border-overlay-light);
+  border-radius: 3px;
+}
+
+.mobile-nav-drawer::-webkit-scrollbar-thumb:hover {
+  background: var(--border-overlay-medium);
+}

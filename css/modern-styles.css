@@ -22,6 +22,7 @@
 @import url('components/tables.css');
 @import url('components/faq.css');
 @import url('components/enhanced-features.css');
+@import url('/styles/components/mobile-drawer.css');
 
 /* Utilities */
 @import url('utilities/utilities.css');
@@ -214,6 +215,16 @@ table {
 
 /* Mobile Responsive Adjustments for Legacy Components */
 @media (max-width: 768px) {
+  /* Show and position mobile hamburger menu button */
+  .mobile-nav-toggle,
+  #public-mobile-nav-toggle {
+    display: flex !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 15px;
+  }
+
   .crew-table td {
     display: block;
     width: 100%;

@@ -23,24 +23,12 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  /* Mobile Hamburger Menu Button */
+  /* Mobile Hamburger Menu Button - positioned in grid */
   .mobile-nav-toggle {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 30px;
-    height: 25px;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer;
-    padding: 0 !important;
-    margin: 0 !important;
-    z-index: 1001;
+    display: flex !important;
     grid-column: 1;
     grid-row: 1;
     align-self: center;
-    outline: none !important;
-    box-shadow: none !important;
   }
 
   .mobile-nav-toggle::before,
@@ -51,160 +39,6 @@
   /* Add bottom padding to header on mobile since navigation is hidden */
   .admin-header {
     padding-bottom: 1px !important;
-  }
-
-  .mobile-nav-toggle span {
-    width: 30px;
-    height: 3px;
-    background-color: var(--hamburger-menu-color);
-    border-radius: 2px;
-    transition: all 0.3s ease;
-    transform-origin: center;
-  }
-
-  /* Mobile Navigation Drawer */
-  .mobile-nav-drawer {
-    position: fixed;
-    top: 0;
-    left: -280px;
-    width: 280px;
-    height: 100vh;
-    background: var(--gradient-header);
-    box-shadow: 2px 0 10px var(--shadow-light);
-    z-index: 1100;
-    transition: left 0.3s ease;
-    overflow-y: auto;
-    padding: 80px 0 20px 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-
-  .mobile-nav-drawer.open {
-    left: 0;
-  }
-
-  /* Close button in drawer - top left */
-  .mobile-nav-close {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: none;
-    border: none;
-    color: var(--text-white);
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px;
-    z-index: 1101;
-    transition: transform 0.2s ease;
-  }
-
-  .mobile-nav-close:hover {
-    transform: scale(1.1);
-  }
-
-  /* Logo in drawer - top right */
-  .mobile-nav-drawer .drawer-logo {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    height: 50px;
-    width: auto;
-  }
-
-  /* Mobile overlay when drawer is open */
-  .mobile-nav-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-overlay-dark);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-  }
-
-  .mobile-nav-overlay.active {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Drawer menu items */
-  .mobile-nav-drawer .admin-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-direction: column;
-  }
-
-  .mobile-nav-drawer .admin-menu li {
-    border-bottom: 1px solid var(--border-overlay-light);
-    width: 100%;
-  }
-
-  .mobile-nav-drawer .admin-menu li:last-child {
-    border-bottom: none;
-  }
-
-  .mobile-nav-drawer .admin-menu a {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    color: var(--text-white);
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-    border-radius: 0;
-  }
-
-  .mobile-nav-drawer .admin-menu a:hover {
-    background-color: var(--header-overlay-medium);
-    transform: none;
-  }
-
-  .mobile-nav-drawer .admin-menu a.active {
-    background-color: var(--header-overlay-bright);
-    font-weight: 600;
-  }
-
-  .mobile-nav-drawer .admin-menu a i {
-    margin-right: 12px;
-    font-size: 18px;
-    width: 20px;
-    text-align: center;
-  }
-
-  /* Logout button in mobile drawer - style as menu item */
-  .mobile-nav-drawer .btn-logout {
-    display: flex !important;
-    align-items: center;
-    align-items: center;
-    padding: 15px 20px !important;
-    margin: 0;
-    width: 100%;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    color: var(--text-white) !important;
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    text-align: left;
-    transition: background-color 0.2s ease !important;
-    cursor: pointer;
-    box-shadow: none !important;
-  }
-
-  .mobile-nav-drawer .btn-logout:hover {
-    background-color: var(--header-overlay-medium) !important;
-    transform: none !important;
-  }
-
-  .mobile-nav-drawer .btn-logout i {
-    margin-right: 12px;
-    font-size: 18px;
-    width: 20px;
-    text-align: center;
   }
 
   /* Grid Layout */
@@ -219,16 +53,6 @@
   /* Logo positioning - hidden on mobile header, shown in drawer */
   #admin-logo-link {
     display: none !important;
-  }
-
-  /* Logo in drawer - top right */
-  .mobile-nav-drawer .drawer-logo {
-    display: block !important;
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    height: 50px;
-    width: auto;
   }
 
   /* Row 1, Right: Logout button */
