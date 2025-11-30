@@ -10,6 +10,8 @@
 @import url('base/variables.css');
 @import url('base/reset.css');
 @import url('base/typography.css');
+@import url('/styles/base/colors.css');
+@import url('/styles/base/buttons.css');
 
 /* Layout */
 @import url('layout/layout.css');
