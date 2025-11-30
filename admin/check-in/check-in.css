@@ -32,17 +32,6 @@
     flex-wrap: wrap;
 }
 
-/* Inverted gradient for Register button to create blue > purple > blue flow */
-.btn-primary-inverted {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-blue));
-}
-
-.btn-primary-inverted:hover {
-    background: linear-gradient(135deg, var(--admin-pink), var(--admin-purple));
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(154, 22, 245, 0.4);
-}
-
 /* Date Picker */
 .date-picker-container {
     display: flex;
@@ -1502,15 +1491,6 @@ textarea.form-control {
 
     .btn-primary-lg {
         width: 100%;
-    }
-
-    /* On mobile, make both buttons use the same blue-to-purple gradient */
-    .btn-primary-inverted {
-        background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    }
-
-    .btn-primary-inverted:hover {
-        background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
     }
 
     .date-picker-container {

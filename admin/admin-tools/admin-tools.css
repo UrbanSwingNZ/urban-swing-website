@@ -106,31 +106,13 @@
 
 .tool-button {
     padding: 12px 24px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
     border-radius: 10px;
     font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     margin-top: auto;
 }
 
 .tool-button:hover:not(:disabled) {
     transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-}
-
-.tool-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: linear-gradient(135deg, var(--text-muted), var(--text-muted));
 }
 
 /* Responsive Design */

@@ -680,72 +680,16 @@
 
 /* ===== Buttons ===== */
 .btn-primary {
-    background: linear-gradient(135deg, var(--admin-blue, #3534Fa), var(--admin-purple, #9a16f5));
-    color: white;
-    border: none;
     padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-sizing: border-box;
-    line-height: 1;
 }
 
-.btn-secondary {
-    padding: 10px 20px;
-    background: transparent;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: #333;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-sizing: border-box;
-    line-height: 1;
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
 }
 
 .btn-primary-lg {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
     padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, var(--admin-purple, #9a16f5), var(--admin-pink, #e800f2));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-primary-lg:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-primary-lg:active {
-    transform: translateY(0);
 }
 
 .btn-danger-lg {
@@ -773,27 +717,6 @@
 
 .btn-danger-lg:active {
     transform: translateY(0);
-}
-
-.btn-primary:disabled,
-.btn-primary-lg:disabled,
-.btn-danger-lg:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-}
-
-.btn-secondary {
-    background: #f8f9fa;
-    color: #333;
-    border: 1px solid #ddd;
-}
-
-.btn-secondary:hover {
-    background: #f0f0f0;
-    border-color: #ccc;
-    transform: translateY(-2px);
 }
 
 /* ===== Modals ===== */
@@ -1401,38 +1324,6 @@
 
 .snackbar-message {
     flex: 1;
-}
-
-/* ===== Insert Variable Button ===== */
-.btn-insert-variable {
-    background: linear-gradient(135deg, #3534Fa, #9a16f5);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.3);
-}
-
-.btn-insert-variable:hover {
-    background: linear-gradient(135deg, #2a29c8, #7d12c5);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
-    transform: translateY(-1px);
-}
-
-.btn-insert-variable:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(154, 22, 245, 0.3);
-}
-
-.btn-insert-variable i {
-    font-size: 1rem;
 }
 
 /* ===== Insert Variable Modal ===== */
