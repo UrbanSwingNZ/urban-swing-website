@@ -154,6 +154,12 @@
 .mobile-drawer-menu a.active {
   background: var(--bg-overlay-medium);
   font-weight: 600;
+  border-left: 4px solid var(--pink-primary);
+  padding-left: 20px;
+}
+
+.mobile-drawer-menu a.active:hover {
+  padding-left: 24px;
 }
 
 .mobile-drawer-menu i {
