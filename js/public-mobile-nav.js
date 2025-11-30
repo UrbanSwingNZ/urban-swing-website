@@ -56,9 +56,13 @@ const PublicMobileNav = {
             
             // Extract text (remove icon)
             const text = link.textContent.trim();
+            
+            // Get the pathname from the href (convert absolute URL to path)
+            const url = new URL(link.href, window.location.origin);
+            const pathname = url.pathname;
 
             items.push({
-                href: link.href,
+                href: pathname,
                 icon: iconClass,
                 label: text,
                 dataPage: '' // Not used for public site

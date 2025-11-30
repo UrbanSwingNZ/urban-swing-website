@@ -134,6 +134,8 @@ class MobileDrawer {
     addMenu() {
         const menu = document.createElement('ul');
         menu.className = 'mobile-drawer-menu';
+        
+        const currentPath = window.location.pathname;
 
         this.config.menuItems.forEach(item => {
             const li = document.createElement('li');
@@ -143,6 +145,29 @@ class MobileDrawer {
             
             if (item.dataPage) {
                 link.dataset.page = item.dataPage;
+            }
+            
+            // Check if this is the current page
+            // Handle both exact matches and directory matches
+            const normalizedItemHref = item.href.replace(/\/$/, ''); // Remove trailing slash
+            const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+            
+            let isCurrentPage = false;
+            
+            // Special case for home page - only match if both are home
+            if (normalizedItemHref === '' || normalizedItemHref === '/') {
+                isCurrentPage = normalizedCurrentPath === '' || normalizedCurrentPath === '/' || normalizedCurrentPath === '/index.html';
+            } else {
+                // For other pages
+                isCurrentPage = normalizedCurrentPath === normalizedItemHref || 
+                                normalizedCurrentPath === normalizedItemHref + '/index.html' ||
+                                normalizedItemHref === normalizedCurrentPath + '/index.html' ||
+                                normalizedCurrentPath.startsWith(normalizedItemHref + '/') ||
+                                (item.dataPage && currentPath.includes(item.dataPage));
+            }
+            
+            if (isCurrentPage) {
+                link.classList.add('active');
             }
             
             if (item.icon) {
