@@ -116,6 +116,7 @@
   /* Tinted backgrounds */
   --bg-purple-light: rgba(154, 22, 245, 0.05);
   --bg-purple-medium: rgba(154, 22, 245, 0.1);
+  --bg-purple-strong: rgba(154, 22, 245, 0.4);
   --bg-purple-alt: rgba(139, 69, 255, 0.02);
   --bg-purple-alt-medium: rgba(139, 69, 255, 0.05);
   --bg-purple-alt-strong: rgba(139, 69, 255, 0.1);

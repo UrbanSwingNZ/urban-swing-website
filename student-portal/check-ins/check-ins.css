@@ -16,34 +16,6 @@
     margin-bottom: 24px;
 }
 
-.btn-back {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    box-sizing: border-box;
-    line-height: 1;
-}
-
-.btn-back:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-back:active {
-    transform: translateY(0);
-}
-
 /* Header */
 .checkins-header {
     background: white;
@@ -265,30 +237,7 @@
 }
 
 .pagination-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     padding: 10px 20px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
-}
-
-.pagination-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background: #ccc;
-    transform: none;
 }
 
 .pagination-info {

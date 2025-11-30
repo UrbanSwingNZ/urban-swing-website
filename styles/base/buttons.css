@@ -4,7 +4,7 @@
    
    Sections:
    - Navigation Buttons (Desktop)
-   - Action Buttons (TODO)
+   - Action Buttons
    - Modal Buttons (TODO)
    - Form Buttons (TODO)
    ======================================== */
@@ -58,4 +58,51 @@
 .nav-menu a.active {
   background: var(--header-overlay-strong);
   border-bottom-color: var(--pink-primary);
+}
+
+/* ========================================
+   ACTION BUTTONS
+   Primary call-to-action buttons used throughout the app
+   (e.g., Register Student, Add Item, Create, etc.)
+   ======================================== */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+  color: var(--text-white);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--purple-primary), var(--pink-primary));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px var(--bg-purple-strong);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary)) !important;
+}
+
+/* Mobile-specific styles for action buttons */
+@media (max-width: 768px) {
+  /* On mobile, action buttons can be full-width within their container */
+  .btn-primary.full-width-mobile {
+    width: 100%;
+    justify-content: center;
+  }
 }

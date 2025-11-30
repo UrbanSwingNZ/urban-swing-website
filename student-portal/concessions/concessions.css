@@ -13,35 +13,6 @@
     margin-bottom: 2rem;
 }
 
-.btn-back {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    box-sizing: border-box;
-    line-height: 1;
-    text-decoration: none;
-}
-
-.btn-back:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-back:active {
-    transform: translateY(0);
-}
-
 /* Concessions Header */
 .concessions-header {
     background: white;
