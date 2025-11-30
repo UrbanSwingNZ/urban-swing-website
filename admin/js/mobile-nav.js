@@ -63,10 +63,10 @@ const AdminMobileNav = {
             });
 
             // Get admin tools menu
-            navMenu = document.querySelector('#admin-tools-nav .admin-menu');
+            navMenu = document.querySelector('#admin-tools-nav .nav-menu');
         } else {
             // Main admin nav
-            navMenu = document.querySelector('#main-admin-nav .admin-menu');
+            navMenu = document.querySelector('#main-admin-nav .nav-menu');
         }
 
         // Extract menu items from the nav
