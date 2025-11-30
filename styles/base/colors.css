@@ -130,8 +130,11 @@
   --bg-success-light: rgba(40, 167, 69, 0.1);
   --bg-success-pale: #efe;
   
-  --bg-error-light: #ffebee;
-  --bg-error-pale: #fee;
+  --bg-error-light: rgba(220, 53, 69, 0.1);
+  --bg-error-medium: rgba(220, 53, 69, 0.3);
+  --bg-error-strong: rgba(220, 53, 69, 0.4);
+  --bg-error-pale: #ffebee;
+  --bg-error-pale-alt: #fee;
   
   --bg-warning-light: #fff3cd;
   --bg-warning-pale: #fff4e6;
