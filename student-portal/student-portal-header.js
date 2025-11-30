@@ -136,45 +136,50 @@
      * Setup mobile menu toggle functionality
      */
     function setupMobileMenu() {
-        const toggleBtn = document.getElementById('student-mobile-nav-toggle');
-        const closeBtn = document.getElementById('student-mobile-nav-close');
-        const nav = document.getElementById('student-portal-nav');
-        const overlay = document.getElementById('student-mobile-nav-overlay');
+        // Get menu items from desktop navigation
+        const menuItems = [];
+        const navLinks = document.querySelectorAll('.student-portal-menu a');
         
-        if (toggleBtn && nav && overlay) {
-            // Open drawer
-            toggleBtn.addEventListener('click', () => {
-                toggleBtn.classList.add('active');
-                nav.classList.add('mobile-active');
-                overlay.classList.add('active');
+        navLinks.forEach(link => {
+            const icon = link.querySelector('i');
+            const iconClass = icon ? icon.className : '';
+            const text = link.textContent.trim();
+            
+            menuItems.push({
+                href: link.href,
+                icon: iconClass,
+                label: text,
+                dataPage: link.dataset.page || ''
             });
+        });
 
-            // Close drawer with close button
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    toggleBtn.classList.remove('active');
-                    nav.classList.remove('mobile-active');
-                    overlay.classList.remove('active');
-                });
+        // Create and initialize mobile drawer
+        const mobileDrawer = new MobileDrawer({
+            toggleButtonId: 'student-mobile-nav-toggle',
+            drawerId: 'student-mobile-nav-drawer',
+            overlayId: 'student-mobile-nav-overlay',
+            drawerClass: 'mobile-nav-drawer',
+            overlayClass: 'student-mobile-nav-overlay',
+            activeClass: 'mobile-active',
+            menuItems: menuItems,
+            logoSrc: '/images/urban-swing-logo-glow-black-circle.png',
+            logoHref: '/student-portal/dashboard/',
+            logoAlt: 'Urban Swing Logo',
+            onLogout: async () => {
+                try {
+                    if (typeof firebase !== 'undefined' && firebase.auth) {
+                        await firebase.auth().signOut();
+                    }
+                    sessionStorage.clear();
+                    window.location.href = '/student-portal/index.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    alert('Error logging out. Please try again.');
+                }
             }
+        });
 
-            // Close drawer when clicking overlay
-            overlay.addEventListener('click', () => {
-                toggleBtn.classList.remove('active');
-                nav.classList.remove('mobile-active');
-                overlay.classList.remove('active');
-            });
-
-            // Close menu when clicking a link
-            const navLinks = nav.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    toggleBtn.classList.remove('active');
-                    nav.classList.remove('mobile-active');
-                    overlay.classList.remove('active');
-                });
-            });
-        }
+        mobileDrawer.initialize();
     }
 
     /**
@@ -182,7 +187,6 @@
      */
     function setupLogout() {
         const logoutBtn = document.getElementById('student-logout-btn');
-        const drawerLogoutBtn = document.getElementById('student-drawer-logout-btn');
         
         const handleLogout = async () => {
             try {
@@ -204,10 +208,6 @@
         
         if (logoutBtn) {
             logoutBtn.addEventListener('click', handleLogout);
-        }
-        
-        if (drawerLogoutBtn) {
-            drawerLogoutBtn.addEventListener('click', handleLogout);
         }
     }
 

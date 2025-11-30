@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('../components/mobile-drawer.css');
 @import url('student-portal-header-mobile.css');
 
 /* Header Container */
@@ -102,8 +103,8 @@
   font-size: 1rem;
 }
 
-/* Navigation Menu */
-.student-portal-nav {
+/* Navigation Menu (Desktop) */
+#student-portal-nav-desktop {
   max-width: 1200px;
   margin: 0 auto;
   padding-bottom: 0;
@@ -152,38 +153,9 @@
   border-bottom-color: var(--pink-primary);
 }
 
-/* Mobile Nav Toggle (hidden on desktop) */
-.student-mobile-nav-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  flex-direction: column;
-  gap: 5px;
-  width: 40px;
-  height: 40px;
-  justify-content: center;
-  align-items: center;
-}
-
-.student-mobile-nav-toggle span {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background: var(--text-white);
-  transition: all 0.3s ease;
-  border-radius: 3px;
-}
-
-.student-mobile-nav-toggle.active span:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
-}
-
-.student-mobile-nav-toggle.active span:nth-child(2) {
-  opacity: 0;
-}
-
-.student-mobile-nav-toggle.active span:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
+/* Mobile Nav Toggle - show on mobile */
+@media (max-width: 768px) {
+  .student-mobile-nav-toggle {
+    display: flex !important;
+  }
 }
