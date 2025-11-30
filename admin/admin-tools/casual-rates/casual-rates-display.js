@@ -108,7 +108,7 @@ function createRateCard(id, rate) {
             <button class="btn-primary btn-edit-rate" onclick="editCasualRate('${id}')">
                 <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="btn-delete-rate" onclick="confirmDeleteRate('${id}', '${escapeHtml(rate.name)}')">
+            <button class="btn-delete" onclick="confirmDeleteRate('${id}', '${escapeHtml(rate.name)}')">
                 <i class="fas fa-trash"></i> Delete
             </button>
         </div>
