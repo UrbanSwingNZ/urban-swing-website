@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('../base/buttons.css');
 @import url('../components/mobile-drawer.css');
 @import url('student-portal-header-mobile.css');
 
@@ -103,54 +104,12 @@
   font-size: 1rem;
 }
 
-/* Navigation Menu (Desktop) */
+/* Navigation Menu Container (Desktop)
+   Navigation button styles imported from buttons.css */
 #student-portal-nav-desktop {
   max-width: 1200px;
   margin: 0 auto;
   padding-bottom: 0;
-}
-
-.student-portal-menu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.student-portal-menu li {
-  margin: 0;
-}
-
-.student-portal-menu a {
-  text-decoration: none;
-  color: var(--text-white);
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 12px 20px;
-  display: inline-block;
-  border-radius: 8px 8px 0 0;
-  transition: all 0.3s ease;
-  background: var(--header-overlay-light);
-  backdrop-filter: blur(10px);
-  border-bottom: 3px solid transparent;
-}
-
-.student-portal-menu a i {
-  margin-right: 6px;
-}
-
-.student-portal-menu a:hover {
-  background: var(--header-overlay-bright);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--shadow-medium);
-}
-
-.student-portal-menu a.active {
-  background: var(--header-overlay-strong);
-  border-bottom-color: var(--pink-primary);
 }
 
 /* Mobile Nav Toggle - show on mobile */

@@ -114,9 +114,9 @@
             titleElement.textContent = config.title;
         }
 
-        // Set active navigation item
+        // Set active navigation item (scope to student portal header)
         if (config.activePage) {
-            const navLink = document.querySelector(`.student-portal-menu a[data-page="${config.activePage}"]`);
+            const navLink = document.querySelector(`.student-portal-header .nav-menu a[data-page="${config.activePage}"]`);
             if (navLink) {
                 navLink.classList.add('active');
             }
@@ -136,9 +136,9 @@
      * Setup mobile menu toggle functionality
      */
     function setupMobileMenu() {
-        // Get menu items from desktop navigation
+        // Get menu items from desktop navigation (scope to student portal header)
         const menuItems = [];
-        const navLinks = document.querySelectorAll('.student-portal-menu a');
+        const navLinks = document.querySelectorAll('.student-portal-header .nav-menu a');
         
         navLinks.forEach(link => {
             const icon = link.querySelector('i');

@@ -1,0 +1,61 @@
+/* ========================================
+   URBAN SWING BUTTON STYLES
+   Shared button styles for all pages (admin, student portal, public site)
+   
+   Sections:
+   - Navigation Buttons (Desktop)
+   - Action Buttons (TODO)
+   - Modal Buttons (TODO)
+   - Form Buttons (TODO)
+   ======================================== */
+
+/* Note: colors.css should be imported before this file */
+
+/* ========================================
+   NAVIGATION BUTTONS (DESKTOP)
+   Horizontal navigation menu styles
+   ======================================== */
+
+.nav-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.nav-menu li {
+  margin: 0;
+}
+
+.nav-menu a {
+  text-decoration: none;
+  color: var(--text-white);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 12px 20px;
+  display: inline-block;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s ease;
+  background: var(--header-overlay-light);
+  backdrop-filter: blur(10px);
+  border-bottom: 3px solid transparent;
+}
+
+.nav-menu a i {
+  margin-right: 6px;
+}
+
+.nav-menu a:hover {
+  background: var(--header-overlay-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.nav-menu a.active {
+  background: var(--header-overlay-strong);
+  border-bottom-color: var(--pink-primary);
+}

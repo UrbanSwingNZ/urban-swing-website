@@ -174,7 +174,7 @@ function showDashboard(user) {
   
   // Hide/show Admin Tools based on user
   const adminToolsTile = document.querySelector('.tile-tools');
-  const adminToolsNavItem = document.querySelector('.admin-menu a[href="/admin/admin-tools/"]');
+  const adminToolsNavItem = document.querySelector('.nav-menu a[href="/admin/admin-tools/"]');
   
   if (adminToolsTile) {
     adminToolsTile.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
