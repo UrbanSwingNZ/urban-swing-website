@@ -569,30 +569,7 @@ select.filter-input:focus {
 
 /* Buttons - using admin.css btn-primary-lg style */
 .btn-primary {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
     padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
 }
 
 .btn-danger {
@@ -614,26 +591,6 @@ select.filter-input:focus {
     background: #c0392b;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
-}
-
-.btn-secondary {
-    background: var(--background-color);
-    color: var(--text-color);
-    border: 1px solid rgba(154, 22, 245, 0.3);
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-secondary:hover {
-    background: rgba(154, 22, 245, 0.1);
-    border-color: var(--admin-purple);
 }
 
 /* Empty State */

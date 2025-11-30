@@ -118,7 +118,7 @@ function createPackageCard(id, pkg) {
     ${pkg.description ? `<div class="package-description">${escapeHtml(pkg.description)}</div>` : ''}
     
     <div class="package-actions">
-      <button class="btn-edit" onclick="editPackage('${id}')">
+      <button class="btn-primary btn-edit" onclick="editPackage('${id}')">
         <i class="fas fa-edit"></i> Edit
       </button>
       <button class="btn-delete" onclick="confirmDelete('${id}', '${escapeHtml(pkg.name)}')">

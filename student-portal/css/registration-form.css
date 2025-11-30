@@ -430,38 +430,10 @@ h1 {
 }
 
 /* Submit Button */
-.btn-submit {
+.btn-submit-custom {
     width: 100%;
-    padding: 14px 24px;
-    background: var(--admin-purple);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    height: 48px;
     margin-top: 30px;
-}
-
-.btn-submit:hover {
-    background: #8512d6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
-}
-
-.btn-submit:active {
-    transform: translateY(0);
-}
-
-.btn-submit:disabled {
-    background: var(--text-muted);
-    cursor: not-allowed;
-    transform: none;
 }
 
 /* Messages */

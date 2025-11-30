@@ -7,6 +7,7 @@
 /* Import shared modal and button styles */
 @import url('admin-modals.css');
 @import url('../styles/base/colors.css');
+@import url('../styles/base/buttons.css');
 
 /* Remove white border around gradient */
 html, body {
@@ -171,30 +172,9 @@ html, body {
 .auth-container .btn-primary {
   width: 100%;
   padding: 14px 20px;
-  background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-  color: white;
-  border: none;
   border-radius: 10px;
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
   margin-top: 10px;
-}
-
-.auth-container .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(154, 22, 245, 0.3);
-}
-
-.auth-container .btn-primary:active {
-  transform: translateY(0);
-}
-
-.auth-container .btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
 }
 
 /* Error Message */
@@ -228,46 +208,6 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-/* ========================================
-   PAGE ACTION BUTTONS
-   Large buttons for primary page actions
-   ======================================== */
-
-.btn-primary-lg {
-  background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  white-space: nowrap;
-  box-sizing: border-box;
-  line-height: 1;
-}
-
-.btn-primary-lg:hover {
-  background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-primary-lg:active {
-  transform: translateY(0);
-}
-
-.btn-primary-lg:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
 }
 
 /* ========================================
@@ -403,26 +343,13 @@ html, body {
 /* Tile button - consistent across all tiles */
 .tile-button {
   padding: 12px 30px;
-  background: linear-gradient(135deg, var(--tile-color-1), var(--tile-color-2));
-  color: white;
-  border: none;
-  border-radius: 10px;
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
   position: relative;
   z-index: 2;
 }
 
 .tile-button:hover:not(:disabled) {
   transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.tile-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* Dashboard Info */
