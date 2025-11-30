@@ -155,27 +155,6 @@
 .rate-actions button {
     flex: 1;
     padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-}
-
-.btn-edit-rate {
-    background: linear-gradient(135deg, #2196F3, #9a16f5);
-    color: white;
-    border: none;
-}
-
-.btn-edit-rate:hover {
-    background: linear-gradient(135deg, #9a16f5, #e800f2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
 }
 
 .btn-delete-rate {
