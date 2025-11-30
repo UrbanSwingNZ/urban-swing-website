@@ -542,33 +542,6 @@ input[type="text"]::placeholder {
     border-top: 2px solid #f0f0f0;
 }
 
-.btn-secondary {
-    background: white;
-    color: var(--text-color);
-    border: 2px solid var(--border-color);
-    padding: 12px 32px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-secondary:hover:not(:disabled) {
-    border-color: var(--admin-purple);
-    color: var(--admin-purple);
-}
-
-.btn-secondary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    border-color: var(--border-color);
-    color: var(--text-muted);
-}
-
 /* Loading State */
 .btn-primary.loading {
     position: relative;

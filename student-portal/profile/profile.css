@@ -216,28 +216,6 @@ label:has(+ textarea[required])::after {
     padding-top: 24px;
 }
 
-.form-actions .btn-secondary {
-    background: white;
-    color: var(--text-color);
-    border: 2px solid var(--border-color);
-    padding: 12px 32px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.form-actions .btn-secondary:hover:not(:disabled) {
-    border-color: var(--admin-purple);
-    color: var(--admin-purple);
-}
-
-.form-actions .btn-secondary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    border-color: var(--border-color);
-    color: var(--text-muted);
-}
-
 /* Loading Spinner */
 .loading-spinner {
     position: fixed;
