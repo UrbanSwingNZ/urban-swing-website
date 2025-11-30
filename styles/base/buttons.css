@@ -130,6 +130,14 @@
   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
+.btn-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: var(--admin-error) !important;
+}
+
 .btn-cancel-lg {
   padding: 12px 32px;
   font-size: 1rem;
