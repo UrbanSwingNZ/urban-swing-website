@@ -98,6 +98,43 @@
   background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary)) !important;
 }
 
+.btn-primary-lg {
+  padding: 12px 24px;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.btn-cancel {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--admin-error);
+  border: 1px solid var(--admin-error);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+.btn-cancel:hover {
+  background: var(--admin-error);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-cancel-lg {
+  padding: 12px 32px;
+  font-size: 1rem;
+}
+
 /* Mobile-specific styles for action buttons */
 @media (max-width: 768px) {
   /* On mobile, action buttons can be full-width within their container */
