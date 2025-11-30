@@ -105,7 +105,7 @@ function createRateCard(id, rate) {
         ${rate.description ? `<div class="rate-description">${escapeHtml(rate.description)}</div>` : ''}
         
         <div class="rate-actions">
-            <button class="btn-edit-rate" onclick="editCasualRate('${id}')">
+            <button class="btn-primary btn-edit-rate" onclick="editCasualRate('${id}')">
                 <i class="fas fa-edit"></i> Edit
             </button>
             <button class="btn-delete-rate" onclick="confirmDeleteRate('${id}', '${escapeHtml(rate.name)}')">

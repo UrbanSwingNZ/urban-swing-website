@@ -569,30 +569,7 @@ select.filter-input:focus {
 
 /* Buttons - using admin.css btn-primary-lg style */
 .btn-primary {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-    border: none;
     padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(154, 22, 245, 0.4);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
 }
 
 .btn-danger {

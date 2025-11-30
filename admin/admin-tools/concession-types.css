@@ -247,6 +247,9 @@
 .btn-delete {
     flex: 1;
     padding: 10px 16px;
+}
+
+.btn-delete {
     border: none;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -257,20 +260,6 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-}
-
-.btn-edit {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
-    color: white;
-}
-
-.btn-edit:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
-}
-
-.btn-delete {
     background: rgba(220, 53, 69, 0.1);
     color: var(--admin-error);
     border: 1px solid var(--admin-error);
