@@ -1,61 +1,15 @@
 /* ========================================
    NAVIGATION COMPONENT
    Modern navigation with mobile menu
+   Desktop button styles imported from /styles/base/buttons.css
    ======================================== */
 
 /* Navigation Container */
 nav {
   width: 100%;
   max-width: var(--max-width-xl);
-  margin: var(--space-sm) auto var(--space-md);
+  margin: var(--space-sm) auto 0;
   position: relative;
-}
-
-/* Desktop Menu */
-#menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  list-style: none;
-  gap: var(--space-xs);
-  padding: 0;
-  margin: 0;
-  flex-wrap: wrap;
-}
-
-/* Remove flex-wrap in mobile to ensure vertical stacking */
-@media (max-width: 768px) {
-  #menu {
-    flex-wrap: nowrap;
-  }
-}
-
-#menu li {
-  margin: 0;
-}
-
-#menu a {
-  text-decoration: none;
-  color: white;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  padding: var(--space-sm) var(--space-md);
-  display: inline-block;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-#menu a:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  text-decoration: none;
-}
-
-#menu a:active {
-  transform: translateY(0);
 }
 
 /* Hide mobile menu logo on desktop */
