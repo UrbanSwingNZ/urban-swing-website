@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('../base/buttons.css');
 @import url('admin-header-mobile.css');
 
 /* Header Container */
@@ -169,55 +170,12 @@
 }
 
 /* ========================================
-   NAVIGATION STYLES
+   NAVIGATION LAYOUT
+   Navigation button styles imported from buttons.css
    ======================================== */
 
 .admin-nav {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.admin-menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  list-style: none;
-  gap: 8px;
-  padding: 0;
-  margin: 0;
-  flex-wrap: wrap;
-}
-
-.admin-menu li {
-  margin: 0;
-}
-
-.admin-menu a {
-  text-decoration: none;
-  color: var(--text-white);
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 12px 20px;
-  display: inline-block;
-  border-radius: 8px 8px 0 0;
-  transition: all 0.3s ease;
-  background: var(--header-overlay-light);
-  backdrop-filter: blur(10px);
-  border-bottom: 3px solid transparent;
-}
-
-.admin-menu a i {
-  margin-right: 6px;
-}
-
-.admin-menu a:hover {
-  background: var(--header-overlay-bright);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--shadow-medium);
-}
-
-.admin-menu a.active {
-  background: var(--header-overlay-strong);
-  border-bottom-color: var(--pink-primary);
 }

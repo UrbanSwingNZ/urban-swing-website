@@ -101,7 +101,7 @@ const AdminHeaderConfigurator = {
      * Set the active navigation item
      */
     setActiveNavItem(activePage) {
-        const allNavLinks = document.querySelectorAll('.admin-menu a');
+        const allNavLinks = document.querySelectorAll('.admin-header .nav-menu a');
         allNavLinks.forEach(link => {
             if (link.dataset.page === activePage) {
                 link.classList.add('active');
