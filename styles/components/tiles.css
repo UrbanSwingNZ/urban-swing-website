@@ -75,7 +75,13 @@
 }
 
 .tile-icon-centered .tile-icon-image {
-  margin: 0 auto 20px;
+  margin: 0 auto 12px;
+}
+
+/* Tile heading styles */
+.tile-icon-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
 }
 
 /* ========================================
