@@ -27,7 +27,8 @@ This folder contains the base modal system that provides consistent modal functi
 
 - **`modal-base.css`** - Base modal styles
 - **`confirmation-modal.css`** - Confirmation modal specific styles
-- **`modal-buttons.css`** - Standardized button styles
+
+Button styles are provided by `/styles/base/buttons.css`
 
 ## Usage
 
@@ -36,8 +37,8 @@ This folder contains the base modal system that provides consistent modal functi
 ```html
 <!-- In your HTML -->
 <link rel="stylesheet" href="/styles/base/colors.css">
+<link rel="stylesheet" href="/styles/base/buttons.css">
 <link rel="stylesheet" href="/styles/modals/modal-base.css">
-<link rel="stylesheet" href="/styles/modals/modal-buttons.css">
 
 <script src="/components/modals/modal-base.js"></script>
 <script src="/components/modals/confirmation-modal.js"></script>
@@ -106,7 +107,8 @@ const deleteModal = new ConfirmationModal({
     icon: 'fas fa-trash',
     variant: 'danger',
     confirmText: 'Delete',
-    confirmClass: 'btn-danger',
+    confirmClass: 'btn-delete',
+    cancelClass: 'btn-cancel',
     onConfirm: async () => {
         await deleteStudent(studentId);
         showSnackbar('Student deleted successfully', 'success');
@@ -160,20 +162,20 @@ Inherits all BaseModal options, plus:
 | `confirmText` | string | 'Confirm' | Confirm button text |
 | `confirmClass` | string | 'btn-primary' | Confirm button class |
 | `cancelText` | string | 'Cancel' | Cancel button text |
-| `cancelClass` | string | 'btn-secondary' | Cancel button class |
+| `cancelClass` | string | 'btn-cancel' | Cancel button class |
 | `variant` | string | null | Modal variant: 'warning', 'danger', 'info' |
 | `onConfirm` | Function | null | Callback when confirmed |
 | `onCancel` | Function | null | Callback when cancelled |
 
 ## Button Classes
 
-Available button classes (from `modal-buttons.css`):
+Available button classes (from `/styles/base/buttons.css`):
 
 - `btn-primary` - Primary action (gradient purple/blue)
-- `btn-secondary` - Secondary action (outlined)
-- `btn-danger` - Destructive action (red)
-- `btn-success` - Success action (green)
-- `btn-cancel` - Cancel action (alias for secondary)
+- `btn-cancel` - Cancel/soft warning action (light red background, red text)
+- `btn-delete` - Destructive action (solid bold red)
+
+Use these classes in the `confirmClass` and `cancelClass` options.
 
 ## Variants
 
