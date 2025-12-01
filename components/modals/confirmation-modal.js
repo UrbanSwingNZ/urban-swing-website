@@ -13,6 +13,8 @@
  * modal.show();
  */
 
+import { BaseModal } from './modal-base.js';
+
 class ConfirmationModal extends BaseModal {
     /**
      * Create a confirmation modal
@@ -116,3 +118,5 @@ class ConfirmationModal extends BaseModal {
         }
     }
 }
+
+export { ConfirmationModal };

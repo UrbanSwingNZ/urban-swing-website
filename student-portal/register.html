@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../styles/base/buttons.css">
     <link rel="stylesheet" href="css/registration-form.css">
     <link rel="stylesheet" href="../styles/date-picker/date-picker.css">
+    <link rel="stylesheet" href="../styles/modals/modal-base.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -376,51 +377,6 @@
         </div>
     </div>
 
-    <!-- Terms and Conditions Modal -->
-    <div id="terms-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-file-contract"></i> Terms and Conditions</h3>
-                <button class="modal-close" id="terms-close-btn">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body terms-content">
-                <h4>Urban Swing Terms and Conditions</h4>
-                <p><strong>Last Updated: November 16, 2025</strong></p>
-                
-                <p><strong>Recent Changes:</strong></p>
-                <p>November 16, 2025: Added Concession Payments and Single Class Booking Policy terms<br>
-                January 10, 2025: Initial terms published</p>
-                
-                <h5>Liability Waiver & Acknowledgment of Risk</h5>
-                <p>I understand that participating in dance classes, events, or activities at Urban Swing involves inherent risks, including but not limited to physical injury. While Urban Swing will take all reasonable precautions to ensure a safe environment and minimize these risks, I acknowledge that the ultimate responsibility for my safety lies with me as the participant.</p>
-                
-                <p>By participating in Urban Swing's classes or events, I agree to assume full responsibility for any injuries, accidents, or other incidents that may occur during my participation. I understand that Urban Swing cannot be held liable for any injuries or damages sustained while attending or engaging in its activities.</p>
-                
-                <p>I hereby release Urban Swing, its instructors, crew, and affiliates from any and all claims, demands, or causes of action related to injury, loss, or damage that may arise during my participation in classes or events.</p>
-                
-                <h5>Concession Payments</h5>
-                <p>Concession purchases are non-refundable and non-transferable. Unused classes or credits will not be reimbursed or credited to another person.</p>
-                
-                <h5>Single Class Booking Policy</h5>
-                <p>Payments for individual classes are non-refundable. However, you may request to reschedule your booked class to another date, provided the request is made before 7:00pm on the day of the class. Class changes after this time cannot be processed and your payment will be forfeited.</p>
-                
-                <h5>Media</h5>
-                <p>By submitting this form, I give permission to Urban Swing Limited to capture photos, videos, and other media of my participation in dance classes, events, or performances. These images and videos may be used for advertising, educational, training, or other promotional purposes across various platforms, including social media, websites, and other digital media.</p>
-                
-                <p>I understand that my participation in media captured by Urban Swing may be shared publicly. However, if I have any concerns or would prefer not to be included in such media, I will inform an owner of Urban Swing upon my arrival at a class or event. Urban Swing respects my right to privacy and will make every effort to exclude me from media coverage if requested.</p>
-                
-                <p><strong>By submitting this form, I acknowledge that I fully understand and agree to these terms.</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" id="terms-accept-btn">
-                    <i class="fas fa-check"></i> Accept and Close
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase Config -->
     <script src="../config/firebase-config.js"></script>
     
@@ -437,7 +393,7 @@
     <script src="js/services/student-service.js"></script>
     <script src="js/services/casual-rates-loader.js"></script>
     <script src="js/stripe/payment-handler.js"></script>
-    <script src="js/ui/terms-modal.js"></script>
+    <script type="module" src="js/ui/terms-modal.js"></script>
     <script src="js/ui/password-ui.js"></script>
     
     <!-- Registration Module Scripts -->
