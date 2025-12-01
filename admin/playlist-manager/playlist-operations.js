@@ -408,24 +408,36 @@ export async function handleDeletePlaylist() {
   }
   
   const playlistName = currentPlaylist.name;
-  document.getElementById('delete-playlist-message').textContent = 
-    `Are you sure you want to delete "${playlistName}"?`;
   
-  document.getElementById('delete-playlist-modal').style.display = 'block';
+  // Create and show delete confirmation modal
+  const deleteModal = new ConfirmationModal({
+    title: 'Delete Playlist',
+    message: `
+      <p>Are you sure you want to delete this playlist?</p>
+      <div class="student-info-delete">
+        <strong>${playlistName}</strong>
+      </div>
+      <p class="text-muted" style="margin-top: 15px;">This action cannot be undone.</p>
+    `,
+    icon: 'fas fa-trash',
+    variant: 'danger',
+    confirmText: 'Delete Playlist',
+    confirmClass: 'btn-delete',
+    cancelText: 'Cancel',
+    cancelClass: 'btn-cancel',
+    onConfirm: async () => {
+      await confirmDeletePlaylist();
+    }
+  });
+  
+  deleteModal.show();
 }
 
-export function closeDeletePlaylistModal() {
-  document.getElementById('delete-playlist-modal').style.display = 'none';
-}
-
-export async function confirmDeletePlaylist() {
+async function confirmDeletePlaylist() {
   const currentPlaylist = State.getCurrentPlaylist();
   if (!currentPlaylist) return;
   
   const playlistName = currentPlaylist.name;
-  
-  // Close modal first
-  closeDeletePlaylistModal();
   
   const deleteBtn = document.getElementById('delete-playlist-btn');
   const originalText = deleteBtn.innerHTML;
