@@ -20,7 +20,7 @@
   right: 0;
   height: 4px;
   background: var(--gradient-full);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-radius: 20px 20px 0 0;
 }
 
 /* ========================================
@@ -31,7 +31,7 @@
 .tile-icon {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-md);
+  gap: 16px;
 }
 
 .tile-icon-image {
@@ -42,9 +42,9 @@
   align-items: center;
   justify-content: center;
   background: var(--gradient-full);
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   color: white;
-  font-size: var(--font-size-2xl);
+  font-size: 1.75rem;
 }
 
 .tile-icon-content {
