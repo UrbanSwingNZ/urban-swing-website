@@ -339,29 +339,35 @@ function editCheckinTransaction(transaction) {
  * Confirm transaction deletion
  */
 function confirmDeleteCheckinTransaction(transaction) {
-    const modal = document.getElementById('delete-modal');
-    const titleEl = document.getElementById('delete-modal-title');
-    const messageEl = document.getElementById('delete-modal-message');
-    const infoEl = document.getElementById('delete-modal-info');
-    const btnTextEl = document.getElementById('delete-modal-btn-text');
-    const confirmBtn = document.getElementById('confirm-delete-btn');
+    // Format date as d/mm/yyyy
+    const day = transaction.date.getDate();
+    const month = transaction.date.getMonth() + 1;
+    const year = transaction.date.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
     
-    // Customize modal for transaction deletion
-    titleEl.textContent = 'Delete Transaction';
-    messageEl.textContent = 'Are you sure you want to delete this transaction?';
-    infoEl.innerHTML = `<strong>${transaction.studentName}</strong> - $${transaction.amount.toFixed(2)} - ${formatDate(transaction.date)}`;
-    btnTextEl.textContent = 'Delete Transaction';
-    
-    // Remove any existing event listeners by replacing the button
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    // Add click handler for confirm button
-    newConfirmBtn.addEventListener('click', () => {
-        deleteCheckinTransaction(transaction);
+    // Create and show delete confirmation modal
+    const deleteModal = new ConfirmationModal({
+        title: 'Delete Transaction',
+        message: `
+            <p>Are you sure you want to delete this transaction?</p>
+            <div class="student-info-delete">
+                <strong>${transaction.studentName}</strong><br>
+                ${formattedDate} · ${formatCurrency(transaction.amount)}
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">This action cannot be undone.</p>
+        `,
+        icon: 'fas fa-trash',
+        variant: 'danger',
+        confirmText: 'Delete Transaction',
+        confirmClass: 'btn-delete',
+        cancelText: 'Cancel',
+        cancelClass: 'btn-cancel',
+        onConfirm: async () => {
+            await deleteCheckinTransaction(transaction);
+        }
     });
     
-    modal.style.display = 'flex';
+    deleteModal.show();
 }
 
 /**
@@ -377,8 +383,6 @@ async function deleteCheckinTransaction(transaction) {
                 reversedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         
-        closeDeleteModal();
-        
         // Reload transactions
         await loadCheckinTransactions();
         
@@ -387,16 +391,5 @@ async function deleteCheckinTransaction(transaction) {
     } catch (error) {
         console.error('Error reversing transaction:', error);
         showSnackbar('Error reversing transaction: ' + error.message, 'error');
-        closeDeleteModal();
-    }
-}
-
-/**
- * Close delete modal
- */
-function closeDeleteModal() {
-    const modal = document.getElementById('delete-modal');
-    if (modal) {
-        modal.style.display = 'none';
     }
 }
