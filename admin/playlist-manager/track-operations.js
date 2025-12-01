@@ -478,10 +478,8 @@ function addSwipeToDelete(element, track) {
     
     // If swiped left more than 100px and vertical movement is minimal
     if (isSwiping && swipeDistance > 100 && verticalDistance < 30) {
-      // Confirm and delete - pass correct parameters
-      if (confirm(`Delete "${track.name}" from this playlist?`)) {
-        handleDeleteTrack(track.uri, track.name);
-      }
+      // Delete without confirmation
+      handleDeleteTrack(track.uri, track.name);
     }
   }, { passive: true });
 }
