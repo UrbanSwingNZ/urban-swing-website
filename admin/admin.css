@@ -8,6 +8,7 @@
 @import url('admin-modals.css');
 @import url('../styles/base/colors.css');
 @import url('../styles/base/buttons.css');
+@import url('../styles/components/tiles.css');
 
 /* Remove white border around gradient */
 html, body {
@@ -267,65 +268,9 @@ html, body {
   }
 }
 
-/* Top border gradient - consistent across all tiles */
-.dashboard-tile::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(to right, var(--tile-color-1), var(--tile-color-2));
-  border-radius: 20px 20px 0 0;
-  z-index: 1;
-}
-
 .dashboard-tile:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px var(--admin-shadow);
-}
-
-/* Tile Colors - All tiles use the same gradient: purple → pink → blue */
-.tile-playlist {
-  --tile-color-1: var(--admin-purple);
-  --tile-color-2: var(--admin-pink);
-}
-
-.tile-students {
-  --tile-color-1: var(--admin-purple);
-  --tile-color-2: var(--admin-pink);
-}
-
-.tile-checkin {
-  --tile-color-1: var(--admin-purple);
-  --tile-color-2: var(--admin-pink);
-}
-
-.tile-portal {
-  --tile-color-1: var(--admin-purple);
-  --tile-color-2: var(--admin-pink);
-}
-
-.tile-tools {
-  --tile-color-1: var(--admin-purple);
-  --tile-color-2: var(--admin-pink);
-}
-
-/* Tile icon - consistent across all tiles */
-.tile-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  background: linear-gradient(135deg, var(--tile-color-1), var(--tile-color-2));
-  color: white;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  position: relative;
-  z-index: 2;
 }
 
 .dashboard-tile h3 {
@@ -522,12 +467,6 @@ html, body {
   }
 
   .dashboard-welcome h2 {
-    font-size: 1.5rem;
-  }
-
-  .tile-icon {
-    width: 60px;
-    height: 60px;
     font-size: 1.5rem;
   }
 
