@@ -184,45 +184,22 @@ function showDashboard(user) {
     adminToolsNavItem.parentElement.style.display = isAuthorizedForAdminTools ? 'block' : 'none';
   }
   
-  // Setup tile buttons
-  setupTileButtons();
+  // Setup check-in tile click handler to clear localStorage
+  setupCheckInTile();
   
   console.log('Dashboard loaded for user:', user.email);
 }
 
-function setupTileButtons() {
-  const playlistBtn = document.getElementById('playlist-manager-btn');
-  const studentDatabaseBtn = document.getElementById('student-database-btn');
-  const checkinBtn = document.getElementById('checkin-btn');
-  const studentPortalBtn = document.getElementById('student-portal-btn');
-  const adminToolsBtn = document.getElementById('admin-tools-btn');
+function setupCheckInTile() {
+  const checkinTile = document.getElementById('checkin-tile');
   
-  // Playlist Manager - Now available!
-  playlistBtn.addEventListener('click', () => {
-    window.location.href = 'playlist-manager/index.html';
-  });
-  
-  // Student Database - Now available!
-  studentDatabaseBtn.addEventListener('click', () => {
-    window.location.href = 'student-database/index.html';
-  });
-  
-  // Check-in system - Now available!
-  checkinBtn.addEventListener('click', () => {
-    // Clear the saved check-in date so it defaults to today
-    localStorage.removeItem('checkin-selected-date');
-    window.location.href = 'check-in/index.html';
-  });
-  
-  // Student Portal - Now available!
-  studentPortalBtn.addEventListener('click', () => {
-    window.location.href = '../student-portal/dashboard/index.html';
-  });
-  
-  // Admin Tools - Now available!
-  adminToolsBtn.addEventListener('click', () => {
-    window.location.href = 'admin-tools/index.html';
-  });
+  if (checkinTile) {
+    checkinTile.addEventListener('click', (e) => {
+      // Clear the saved check-in date so it defaults to today
+      localStorage.removeItem('checkin-selected-date');
+      // Link will handle navigation
+    });
+  }
 }
 
 async function handleLogout() {
