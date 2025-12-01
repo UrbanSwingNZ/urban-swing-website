@@ -25,6 +25,7 @@
 @import url('components/faq.css');
 @import url('components/enhanced-features.css');
 @import url('/styles/components/mobile-drawer.css');
+@import url('/styles/components/tiles.css');
 
 /* Utilities */
 @import url('utilities/utilities.css');

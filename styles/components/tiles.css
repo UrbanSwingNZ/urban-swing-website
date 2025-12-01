@@ -1,0 +1,95 @@
+/* ========================================
+   TILE COMPONENT SYSTEM
+   Shared tile styling for card-like components
+   with gradient top borders and icon backgrounds
+   ======================================== */
+
+/* Import colors for gradient variables */
+@import url('../base/colors.css');
+
+/* ========================================
+   BASE TILE STYLES
+   ======================================== */
+
+/* Tile with gradient top border */
+.tile-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-full);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* ========================================
+   TILE ICON LAYOUTS
+   ======================================== */
+
+/* Horizontal layout: icon on left, content on right */
+.tile-icon {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.tile-icon-image {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-full);
+  border-radius: var(--radius-lg);
+  color: white;
+  font-size: var(--font-size-2xl);
+}
+
+.tile-icon-content {
+  flex: 1;
+}
+
+/* ========================================
+   TILE ICON VARIANTS
+   ======================================== */
+
+/* Circular icon variant */
+.tile-icon-circle .tile-icon-image {
+  border-radius: 50%;
+}
+
+/* Large icon variant */
+.tile-icon-large .tile-icon-image {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+}
+
+/* Centered vertical layout: icon on top, content below */
+.tile-icon-centered {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.tile-icon-centered .tile-icon-image {
+  margin: 0 auto 20px;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Convert horizontal tiles to vertical on mobile */
+  .tile-icon {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .tile-icon-image {
+    margin: 0 auto;
+  }
+}

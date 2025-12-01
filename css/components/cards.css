@@ -20,18 +20,6 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* Card with gradient top border */
-.card-gradient::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--urban-blue), var(--urban-purple), var(--urban-pink));
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-}
-
 /* Card Header */
 .card-header {
   margin-bottom: var(--space-md);
@@ -43,30 +31,6 @@
 .card-header h3 {
   margin: 0;
   padding: 0;
-}
-
-/* Card with icon */
-.card-icon {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-md);
-}
-
-.card-icon-image {
-  flex-shrink: 0;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-gradient);
-  border-radius: var(--radius-lg);
-  color: white;
-  font-size: var(--font-size-2xl);
-}
-
-.card-icon-content {
-  flex: 1;
 }
 
 /* Card Body */
@@ -186,14 +150,5 @@ a.card:hover {
   .card-grid {
     grid-template-columns: 1fr;
     gap: var(--space-md);
-  }
-  
-  .card-icon {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .card-icon-image {
-    margin: 0 auto;
   }
 }
