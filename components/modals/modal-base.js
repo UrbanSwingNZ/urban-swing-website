@@ -131,6 +131,16 @@ class BaseModal {
      * @private
      */
     _createFooter() {
+        // If custom footer HTML is provided, use it
+        if (this.options.footer) {
+            return `
+                <div class="modal-footer">
+                    ${this.options.footer}
+                </div>
+            `;
+        }
+
+        // Otherwise, use buttons array if provided
         if (!this.options.buttons || this.options.buttons.length === 0) return '';
 
         const buttonsHtml = this.options.buttons.map((btn, index) => {
@@ -353,3 +363,5 @@ class BaseModal {
         this.boundHandlers = {};
     }
 }
+
+export { BaseModal };
