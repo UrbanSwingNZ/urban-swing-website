@@ -265,42 +265,32 @@ function purchaseConcessions(studentId) {
  * Show delete confirmation modal for check-in
  */
 function confirmDeleteCheckin(checkinId) {
-    const modal = document.getElementById('delete-modal');
-    const titleEl = document.getElementById('delete-modal-title');
-    const messageEl = document.getElementById('delete-modal-message');
-    const infoEl = document.getElementById('delete-modal-info');
-    const btnTextEl = document.getElementById('delete-modal-btn-text');
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-    
     // Find the check-in to get student name
     const checkin = todaysCheckins.find(c => c.id === checkinId);
     const studentName = checkin ? checkin.studentName : 'Unknown Student';
     
-    // Customize modal for check-in deletion
-    titleEl.textContent = 'Delete Check-In';
-    messageEl.textContent = 'Are you sure you want to delete this check-in?';
-    infoEl.innerHTML = `<strong>${escapeHtml(studentName)}</strong>`;
-    btnTextEl.textContent = 'Delete Check-In';
-    
-    // Remove any existing event listeners by replacing the button
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    // Add click handler for confirm button
-    newConfirmBtn.addEventListener('click', () => {
-        deleteCheckin(checkinId);
-        closeDeleteModal();
+    // Create and show delete confirmation modal
+    const deleteModal = new ConfirmationModal({
+        title: 'Delete Check-In',
+        message: `
+            <p>Are you sure you want to delete this check-in?</p>
+            <div class="student-info-delete">
+                <strong>${escapeHtml(studentName)}</strong>
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">This action cannot be undone.</p>
+        `,
+        icon: 'fas fa-trash',
+        variant: 'danger',
+        confirmText: 'Delete Check-In',
+        confirmClass: 'btn-delete',
+        cancelText: 'Cancel',
+        cancelClass: 'btn-cancel',
+        onConfirm: async () => {
+            await deleteCheckin(checkinId);
+        }
     });
     
-    modal.style.display = 'flex';
-}
-
-/**
- * Close delete modal
- */
-function closeDeleteModal() {
-    const modal = document.getElementById('delete-modal');
-    modal.style.display = 'none';
+    deleteModal.show();
 }
 
 /**
