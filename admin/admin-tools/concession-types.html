@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../concessions/concessions.css">
     <link rel="stylesheet" href="concession-types.css">
     <link rel="stylesheet" href="casual-rates/casual-rates.css">
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -76,38 +78,8 @@
         <p>Loading...</p>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="modal">
-        <div class="modal-content modal-small">
-            <div class="modal-header">
-                <h2>
-                    <i class="fas fa-exclamation-triangle"></i> Confirm Delete
-                </h2>
-            </div>
-            
-            <div class="modal-body">
-                <p>Are you sure you want to delete this concession package?</p>
-                <p class="delete-warning">
-                    <strong id="delete-package-name"></strong>
-                </p>
-                <p class="delete-note">
-                    <i class="fas fa-info-circle"></i> This will not affect existing concession blocks that were already purchased.
-                </p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" id="cancel-delete-btn">
-                    Cancel
-                </button>
-                <button type="button" class="btn-delete" id="confirm-delete-btn">
-                    <i class="fas fa-trash"></i> Delete Package
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Casual Rate Add/Edit Modal -->
-    <div id="rate-modal" class="modal">
+    <div id="rate-modal" class="admin-modal">
         <div class="modal-content rate-modal">
             <div class="modal-header">
                 <h2 id="rate-modal-title">
@@ -172,35 +144,7 @@
         </div>
     </div>
 
-    <!-- Delete Rate Confirmation Modal -->
-    <div id="delete-rate-modal" class="modal">
-        <div class="modal-content modal-small">
-            <div class="modal-header">
-                <h2>
-                    <i class="fas fa-exclamation-triangle"></i> Confirm Delete
-                </h2>
-            </div>
-            
-            <div class="modal-body">
-                <p>Are you sure you want to delete this casual rate?</p>
-                <p class="delete-warning">
-                    <strong id="delete-rate-name"></strong>
-                </p>
-                <p class="delete-note">
-                    <i class="fas fa-info-circle"></i> This will affect check-ins and pricing across the system.
-                </p>
-            </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeDeleteRateModal()">
-                    Cancel
-                </button>
-                <button type="button" class="btn-delete" id="confirm-delete-rate-btn">
-                    <i class="fas fa-trash"></i> Delete Rate
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Firebase Config & Logic -->
     <script src="../../config/firebase-config.js"></script>
@@ -231,6 +175,10 @@
             }
         });
     </script>
+    
+    <!-- Modal System -->
+    <script src="/components/modals/modal-base.js"></script>
+    <script src="/components/modals/confirmation-modal.js"></script>
     
     <!-- Admin Header Dependencies -->
     <script src="/components/mobile-drawer.js"></script>
