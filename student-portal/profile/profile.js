@@ -9,10 +9,30 @@ let currentStudentId = null;
 let isViewingAsAdmin = false;
 let originalData = {};
 
+// Cancel modal instance
+let cancelModal = null;
+
 /**
  * Initialize profile page
  */
 async function initializeProfile() {
+    // Initialize cancel confirmation modal
+    cancelModal = new ConfirmationModal({
+        title: 'Unsaved Changes',
+        message: `
+            <p>You have unsaved changes. Are you sure you want to cancel?</p>
+            <p class="text-muted">Your changes will be lost if you leave this page.</p>
+        `,
+        icon: 'fas fa-exclamation-triangle',
+        confirmText: 'Leave Page',
+        confirmClass: 'btn-delete',
+        cancelText: 'Stay on Page',
+        cancelClass: 'btn-cancel',
+        onConfirm: () => {
+            navigateTo('../dashboard/index.html');
+        }
+    });
+    
     // Check if viewing as admin or as student
     isViewingAsAdmin = isAdminView();
     
@@ -306,33 +326,11 @@ function handleCancel() {
     
     if (hasChanges) {
         // Show confirmation modal
-        showCancelModal();
+        cancelModal.show();
     } else {
         // Navigate back to dashboard
         navigateTo('../dashboard/index.html');
     }
-}
-
-/**
- * Show cancel confirmation modal
- */
-function showCancelModal() {
-    const modal = document.getElementById('cancel-modal');
-    modal.style.display = 'flex';
-    
-    // Add event listeners
-    document.getElementById('cancel-modal-stay').onclick = closeCancelModal;
-    document.getElementById('cancel-modal-leave').onclick = () => {
-        navigateTo('../dashboard/index.html');
-    };
-}
-
-/**
- * Close cancel confirmation modal
- */
-function closeCancelModal() {
-    const modal = document.getElementById('cancel-modal');
-    modal.style.display = 'none';
 }
 
 /**

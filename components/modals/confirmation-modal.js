@@ -44,9 +44,12 @@ class ConfirmationModal extends BaseModal {
         };
 
         // Build content with icon and message
-        const content = confirmationOptions.message ? 
-            ConfirmationModal._buildContent(confirmationOptions.message, confirmationOptions.icon) : 
-            '';
+        const content = confirmationOptions.message || '';
+
+        // Build title with icon
+        const titleWithIcon = confirmationOptions.icon && confirmationOptions.title ?
+            `<i class="${confirmationOptions.icon}"></i> ${confirmationOptions.title}` :
+            confirmationOptions.title;
 
         // Build buttons
         const buttons = [
@@ -65,6 +68,7 @@ class ConfirmationModal extends BaseModal {
         // Initialize base modal
         super({
             ...confirmationOptions,
+            title: titleWithIcon,
             content,
             buttons,
             showCloseButton: true
@@ -77,20 +81,6 @@ class ConfirmationModal extends BaseModal {
         if (confirmationOptions.variant) {
             this.element.classList.add(`modal-${confirmationOptions.variant}`);
         }
-    }
-
-    /**
-     * Build content HTML with optional icon
-     * @private
-     */
-    static _buildContent(message, icon) {
-        const iconHtml = icon ? `<i class="${icon} confirmation-icon"></i>` : '';
-        return `
-            ${iconHtml}
-            <div class="confirmation-message">
-                ${message}
-            </div>
-        `;
     }
 
     /**
@@ -120,9 +110,9 @@ class ConfirmationModal extends BaseModal {
      * @param {string} message - New message (HTML allowed)
      */
     setMessage(message) {
-        const messageEl = this.element.querySelector('.confirmation-message');
-        if (messageEl) {
-            messageEl.innerHTML = message;
+        const body = this.element.querySelector('.modal-body');
+        if (body) {
+            body.innerHTML = message;
         }
     }
 }

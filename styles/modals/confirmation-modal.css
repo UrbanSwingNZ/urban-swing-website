@@ -8,15 +8,7 @@
    CONFIRMATION CONTENT LAYOUT
    ======================================== */
 
-.confirmation-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    display: block;
-    text-align: center;
-}
-
 .confirmation-message {
-    text-align: center;
     color: var(--text-secondary);
     line-height: 1.6;
 }
@@ -38,10 +30,6 @@
 /* Overrides the default gradient header with red */
 .modal-danger .modal-header {
     background: var(--error);
-}
-
-.modal-danger .confirmation-icon {
-    color: var(--error);
 }
 
 /* ========================================
