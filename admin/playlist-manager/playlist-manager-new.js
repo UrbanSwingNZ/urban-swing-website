@@ -104,14 +104,6 @@ function setupEventListeners() {
   // Delete functionality
   document.getElementById('delete-playlist-btn')?.addEventListener('click', PlaylistOps.handleDeletePlaylist);
   
-  // Unsaved changes modal
-  document.getElementById('save-and-continue-btn')?.addEventListener('click', TrackOps.handleSaveAndContinue);
-  document.getElementById('discard-changes-btn')?.addEventListener('click', TrackOps.handleDiscardChanges);
-  
-  // Delete playlist modal
-  document.getElementById('cancel-delete-playlist-btn')?.addEventListener('click', PlaylistOps.closeDeletePlaylistModal);
-  document.getElementById('confirm-delete-playlist-btn')?.addEventListener('click', PlaylistOps.confirmDeletePlaylist);
-  
   // Rename playlist modal
   document.getElementById('close-rename-modal')?.addEventListener('click', PlaylistOps.closeRenamePlaylistModal);
   document.getElementById('cancel-rename-btn')?.addEventListener('click', PlaylistOps.closeRenamePlaylistModal);
