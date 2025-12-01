@@ -109,6 +109,30 @@ const AdminHeaderConfigurator = {
                 link.classList.remove('active');
             }
         });
+        
+        // Add click handler for check-in link to clear localStorage
+        this.setupCheckInNavHandler();
+    },
+
+    /**
+     * Setup click handler for check-in navigation
+     * Clears the saved check-in date so it defaults to today
+     */
+    setupCheckInNavHandler() {
+        const checkInLinks = document.querySelectorAll('.admin-header .nav-menu a[data-page="check-in"]');
+        checkInLinks.forEach(link => {
+            // Remove any existing handler to avoid duplicates
+            link.removeEventListener('click', this.handleCheckInClick);
+            // Add the handler
+            link.addEventListener('click', this.handleCheckInClick);
+        });
+    },
+
+    /**
+     * Handle check-in link click - clear localStorage before navigation
+     */
+    handleCheckInClick(e) {
+        localStorage.removeItem('checkin-selected-date');
     },
 
     /**
