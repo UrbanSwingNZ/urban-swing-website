@@ -213,9 +213,7 @@
     <!-- Date Picker Component -->
     <script src="../../functions/date-picker/date-picker.js"></script>
     
-    <!-- Modal System -->
-    <script src="/components/modals/modal-base.js"></script>
-    <script src="/components/modals/confirmation-modal.js"></script>
+    <!-- Modal System (loaded as modules) -->
     
     <!-- Shared Utilities -->
     <script src="../js/utils.js"></script>
@@ -226,7 +224,6 @@
     <script src="rate-service.js"></script>
     <script src="validation-service.js"></script>
     <script src="prepaid-classes-service.js"></script>
-    <script src="ui-controller.js"></script>
     <script src="modal-service.js"></script>
     
     <!-- Application Scripts -->
@@ -247,6 +244,6 @@
     
     <!-- Auth & Prepay Scripts -->
     <script src="../js/auth-check.js"></script>
-    <script src="prepay.js"></script>
+    <script type="module" src="prepay.js"></script>
 </body>
 </html>

@@ -3,6 +3,8 @@
  * Handles concession package selection and payment processing
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 console.log('Purchase page loaded');
 
 // Services

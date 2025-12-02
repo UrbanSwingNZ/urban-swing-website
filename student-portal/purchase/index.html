@@ -135,9 +135,7 @@
     <!-- Stripe Config -->
     <script src="../../config/stripe-config.js"></script>
     
-    <!-- Modal System -->
-    <script src="/components/modals/modal-base.js"></script>
-    <script src="/components/modals/confirmation-modal.js"></script>
+    <!-- Modal System (loaded as modules) -->
     
     <!-- Shared Utilities -->
     <script src="../js/utils.js"></script>
@@ -165,6 +163,6 @@
     
     <!-- Auth & Purchase Scripts -->
     <script src="../js/auth-check.js"></script>
-    <script src="purchase.js"></script>
+    <script type="module" src="purchase.js"></script>
 </body>
 </html>
