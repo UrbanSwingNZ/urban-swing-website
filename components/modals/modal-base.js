@@ -146,7 +146,10 @@ class BaseModal {
         const buttonsHtml = this.options.buttons.map((btn, index) => {
             const btnClass = btn.class || 'btn-primary';
             const btnText = btn.text || 'OK';
-            return `<button type="button" class="${btnClass}" data-button-index="${index}">${btnText}</button>`;
+            const btnId = btn.id ? `id="${btn.id}"` : '';
+            const btnDisabled = btn.disabled ? 'disabled' : '';
+            const attributes = [btnId, btnDisabled].filter(a => a).join(' ');
+            return `<button type="button" ${attributes} class="${btnClass}" data-button-index="${index}">${btnText}</button>`;
         }).join('');
 
         return `

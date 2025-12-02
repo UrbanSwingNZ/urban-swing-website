@@ -5,6 +5,7 @@
 
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 import { UIController } from './ui-controller.js';
+import { ModalService } from './modal-service.js';
 
 // Services
 let paymentService = null;
