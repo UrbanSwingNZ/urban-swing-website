@@ -150,75 +150,78 @@ function createPasswordResetModal(options = {}) {
         }
     };
 
-    // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        const email = emailInput.value.trim();
-        
-        // Disable submit button
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-        messageEl.style.display = 'none';
-
-        const result = await sendPasswordReset(email, {
-            onSuccess: (message) => {
-                showMessage(message, 'success');
-                emailInput.value = '';
-                
-                // Close modal after 3 seconds
-                setTimeout(() => {
-                    modal.hide();
-                    if (onComplete) {
-                        onComplete(email);
-                    }
-                }, 3000);
-            },
-            onError: (message) => {
-                showMessage(message, 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Reset Email';
-            },
-            onValidationError: (message) => {
-                showMessage(message, 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Reset Email';
-            }
-        });
-
-        // Re-enable button if not successful
-        if (!result.success) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Send Reset Email';
-        }
-    };
-
     // Create modal
     const modal = new BaseModal({
         title: `<i class="fas fa-key"></i> ${title}`,
         content: formHtml,
-        footer: `
-            <button type="button" class="btn-cancel" id="password-reset-cancel">Cancel</button>
-            <button type="button" class="btn-primary" id="password-reset-submit">Send Reset Email</button>
-        `,
         size: 'medium',
+        buttons: [
+            {
+                text: 'Cancel',
+                class: 'btn-cancel',
+                onClick: () => modal.hide()
+            },
+            {
+                text: 'Send Reset Email',
+                class: 'btn-primary',
+                id: 'password-reset-submit',
+                onClick: async () => {
+                    const email = emailInput.value.trim();
+                    
+                    // Disable submit button
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    messageEl.style.display = 'none';
+
+                    const result = await sendPasswordReset(email, {
+                        onSuccess: (message) => {
+                            showMessage(message, 'success');
+                            emailInput.value = '';
+                            
+                            // Close modal after 3 seconds
+                            setTimeout(() => {
+                                modal.hide();
+                                if (onComplete) {
+                                    onComplete(email);
+                                }
+                            }, 3000);
+                        },
+                        onError: (message) => {
+                            showMessage(message, 'error');
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Send Reset Email';
+                        },
+                        onValidationError: (message) => {
+                            showMessage(message, 'error');
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Send Reset Email';
+                        }
+                    });
+
+                    // Re-enable button if not successful
+                    if (!result.success) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Send Reset Email';
+                    }
+                }
+            }
+        ],
         onOpen: () => {
             // Get elements after modal is created
             emailInput = document.getElementById('password-reset-email');
             messageEl = document.getElementById('password-reset-message');
             submitBtn = document.getElementById('password-reset-submit');
-            const cancelBtn = document.getElementById('password-reset-cancel');
             const form = document.getElementById('password-reset-form');
 
-            // Setup event listeners
-            if (submitBtn) {
-                submitBtn.addEventListener('click', handleSubmit);
-            }
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => modal.hide());
-            }
+            // Setup form submit handler for Enter key
             if (form) {
-                form.addEventListener('submit', handleSubmit);
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // Trigger the button click
+                    if (submitBtn) {
+                        submitBtn.click();
+                    }
+                });
             }
 
             // Focus email input
