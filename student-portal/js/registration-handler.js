@@ -58,7 +58,6 @@ async function handleRegistrationSubmit() {
         // Check if email exists in students and/or users collections
         const result = await checkEmailExists(email);
         
-        console.log('Email check result:', result);
         console.log('Status:', result.status);
         console.log('Has student:', result.hasStudent);
         console.log('Has user:', result.hasUser);

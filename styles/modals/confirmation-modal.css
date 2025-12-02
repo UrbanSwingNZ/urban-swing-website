@@ -1,0 +1,86 @@
+/**
+ * Confirmation Modal Styles
+ * Specialized styles for confirmation dialogs
+ * Extends modal-base.css
+ */
+
+/* ========================================
+   CONFIRMATION CONTENT LAYOUT
+   ======================================== */
+
+.confirmation-message {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.confirmation-message p {
+    margin: 0 0 12px 0;
+}
+
+.confirmation-message strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ========================================
+   VARIANT STYLES
+   ======================================== */
+
+/* Danger variant - for destructive actions (delete, etc.) */
+/* Overrides the default gradient header with red */
+.modal-danger .modal-header {
+    background: var(--error);
+}
+
+/* ========================================
+   ADDITIONAL CONTENT ELEMENTS
+   ======================================== */
+
+/* Text muted for secondary information */
+.modal-body .text-muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 12px;
+}
+
+/* Student/item info display in confirmations */
+.student-info-delete {
+    background: var(--bg-gray);
+    border-left: 3px solid var(--error);
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+}
+
+.student-info-delete strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.student-info-delete span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    .modal-danger .modal-header {
+        background: var(--error-dark);
+    }
+
+    .student-info-delete {
+        background: var(--gray-800);
+    }
+
+    .confirmation-message {
+        color: var(--gray-300);
+    }
+
+    .confirmation-message strong {
+        color: var(--white);
+    }
+}

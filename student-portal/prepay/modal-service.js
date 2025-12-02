@@ -3,6 +3,8 @@
  * Handles change date modal functionality
  */
 
+import { BaseModal } from '/components/modals/modal-base.js';
+
 class ModalService {
     constructor(prepaidClassesService, validationService) {
         this.prepaidClassesService = prepaidClassesService;
@@ -12,6 +14,7 @@ class ModalService {
         this.currentStudentId = null;
         this.onDateChangedCallback = null;
         this.isInitialized = false;
+        this.modal = null;
     }
     
     /**
@@ -33,8 +36,7 @@ class ModalService {
      */
     setupDatePickerCallbacks() {
         // Get modal content for resizing
-        const modal = document.getElementById('change-date-modal');
-        const modalContent = modal?.querySelector('.modal-content');
+        const modalContent = this.modal?.element?.querySelector('.modal-content');
         
         if (!modalContent) {
             console.error('Modal content not found for resize callbacks');
@@ -78,29 +80,79 @@ class ModalService {
      */
     show(transactionId) {
         this.currentTransactionId = transactionId;
-        const modal = document.getElementById('change-date-modal');
-        modal.style.display = 'flex';
         
-        // Initialize date picker on first show
-        if (!this.isInitialized) {
-            this.setupDatePickerCallbacks();
-            this.isInitialized = true;
+        // Create modal HTML content
+        const formHtml = `
+            <p style="margin: 0 0 20px 0; color: var(--text-color);">Change the class date for your prepaid entry.</p>
+            <div class="form-group" style="display: flex; flex-direction: column;">
+                <label for="new-class-date" style="font-weight: 600; color: var(--text-color); margin-bottom: 8px; font-size: 0.95rem;">
+                    <i class="fas fa-calendar-alt"></i> New Class Date
+                    <span class="required" style="color: var(--error);">*</span>
+                </label>
+                <div class="date-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="new-class-date" 
+                        required
+                        readonly
+                        placeholder="Click to select a Thursday"
+                        style="padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; width: 100%; cursor: pointer; background: white; font-family: inherit; transition: all 0.2s ease;"
+                    >
+                </div>
+                <div id="new-custom-calendar" class="custom-calendar" style="display: none;"></div>
+                <p class="field-help" style="margin: 8px 0 0 0; color: var(--text-muted); font-size: 0.85rem;">Select a Thursday - classes are only held on Thursdays</p>
+                <div id="new-date-validation-message" class="validation-message" style="display: none;"></div>
+            </div>
+        `;
+        
+        // Destroy existing modal if present
+        if (this.modal) {
+            this.modal.destroy();
         }
         
-        // Reset modal state
-        this.resetModal();
+        // Create new modal with BaseModal
+        this.modal = new BaseModal({
+            title: '<i class="fas fa-calendar-alt"></i> Change Class Date',
+            content: formHtml,
+            size: 'medium',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    class: 'btn-cancel',
+                    onClick: () => this.close()
+                },
+                {
+                    text: '<i class="fas fa-check"></i> Confirm Change',
+                    class: 'btn-primary',
+                    id: 'change-date-confirm',
+                    disabled: true,
+                    onClick: () => this.confirmChange()
+                }
+            ],
+            onOpen: () => {
+                // Initialize date picker on first show
+                if (!this.isInitialized) {
+                    this.setupDatePickerCallbacks();
+                    this.isInitialized = true;
+                }
+                // Reset modal state
+                this.resetModal();
+            },
+            onClose: () => {
+                this.currentTransactionId = null;
+            }
+        });
         
-        // Setup event listeners
-        document.getElementById('change-date-cancel').onclick = () => this.close();
-        document.getElementById('change-date-confirm').onclick = () => this.confirmChange();
+        this.modal.show();
     }
     
     /**
      * Close change date modal
      */
     close() {
-        const modal = document.getElementById('change-date-modal');
-        modal.style.display = 'none';
+        if (this.modal) {
+            this.modal.hide();
+        }
         this.currentTransactionId = null;
     }
     
@@ -218,3 +270,5 @@ class ModalService {
         });
     }
 }
+
+export { ModalService };

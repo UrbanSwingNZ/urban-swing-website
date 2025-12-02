@@ -3,6 +3,8 @@
  * Handles concession package selection and payment processing
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 console.log('Purchase page loaded');
 
 // Services
@@ -11,6 +13,9 @@ let packageService = null;
 
 // Current state
 let currentStudentId = null;
+
+// Modal instances
+let cancelModal = null;
 
 /**
  * Page Initialization
@@ -87,6 +92,23 @@ function initializeServices() {
     
     // Initialize Stripe payment
     paymentService.initialize('card-element', 'card-errors');
+    
+    // Initialize cancel confirmation modal
+    cancelModal = new ConfirmationModal({
+        title: 'Unsaved Changes',
+        message: `
+            <p>You have unsaved changes. Are you sure you want to cancel?</p>
+            <p class="text-muted">Your changes will be lost if you leave this page.</p>
+        `,
+        icon: 'fas fa-exclamation-triangle',
+        confirmText: 'Leave Page',
+        confirmClass: 'btn-delete',
+        cancelText: 'Stay on Page',
+        cancelClass: 'btn-cancel',
+        onConfirm: () => {
+            navigateTo('../dashboard/index.html');
+        }
+    });
     
     // Setup form handlers
     setupFormHandlers();
@@ -291,7 +313,7 @@ async function processPurchase(pkg) {
  */
 function handleCancel() {
     if (checkForChanges()) {
-        showCancelModal();
+        cancelModal.show();
     } else {
         navigateTo('../dashboard/index.html');
     }
@@ -303,25 +325,4 @@ function handleCancel() {
 function checkForChanges() {
     const packageSelect = document.getElementById('package-select');
     return packageSelect.value !== '';
-}
-
-/**
- * Show cancel confirmation modal
- */
-function showCancelModal() {
-    const modal = document.getElementById('cancel-modal');
-    modal.style.display = 'flex';
-    
-    document.getElementById('cancel-modal-stay').onclick = closeCancelModal;
-    document.getElementById('cancel-modal-leave').onclick = () => {
-        navigateTo('../dashboard/index.html');
-    };
-}
-
-/**
- * Close cancel confirmation modal
- */
-function closeCancelModal() {
-    const modal = document.getElementById('cancel-modal');
-    modal.style.display = 'none';
 }
