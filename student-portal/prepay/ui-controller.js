@@ -3,6 +3,8 @@
  * Handles UI updates and form interactions
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 class UIController {
     constructor(rateService, validationService, paymentService) {
         this.rateService = rateService;
@@ -248,3 +250,5 @@ class UIController {
         this.cancelModal.show();
     }
 }
+
+export { UIController };

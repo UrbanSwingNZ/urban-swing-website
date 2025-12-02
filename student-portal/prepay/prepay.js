@@ -3,6 +3,9 @@
  * Handles casual entry payment processing
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+import { UIController } from './ui-controller.js';
+
 // Services
 let paymentService = null;
 let rateService = null;
