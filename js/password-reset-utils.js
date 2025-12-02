@@ -198,8 +198,8 @@ function createPasswordResetModal(options = {}) {
         title: `<i class="fas fa-key"></i> ${title}`,
         content: formHtml,
         footer: `
-            <button class="btn-cancel" id="password-reset-cancel">Cancel</button>
-            <button class="btn-primary" id="password-reset-submit">Send Reset Email</button>
+            <button type="button" class="btn-cancel" id="password-reset-cancel">Cancel</button>
+            <button type="button" class="btn-primary" id="password-reset-submit">Send Reset Email</button>
         `,
         size: 'medium',
         onOpen: () => {

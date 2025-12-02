@@ -169,41 +169,6 @@
     </div>
 
     <!-- Change Class Date Modal -->
-    <div id="change-date-modal" class="modal" style="display: none;">
-        <div class="modal-content modal-medium">
-            <div class="modal-header">
-                <h3><i class="fas fa-calendar-alt"></i> Change Class Date</h3>
-            </div>
-            <div class="modal-body">
-                <p>Change the class date for your prepaid entry.</p>
-                <div class="form-group">
-                    <label for="new-class-date">
-                        <i class="fas fa-calendar-alt"></i> New Class Date
-                        <span class="required">*</span>
-                    </label>
-                    <div class="date-input-wrapper">
-                        <input 
-                            type="text" 
-                            id="new-class-date" 
-                            required
-                            readonly
-                            placeholder="Click to select a Thursday"
-                        >
-                    </div>
-                    <div id="new-custom-calendar" class="custom-calendar" style="display: none;"></div>
-                    <p class="field-help">Select a Thursday - classes are only held on Thursdays</p>
-                    <div id="new-date-validation-message" class="validation-message" style="display: none;"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" id="change-date-cancel">Cancel</button>
-                <button type="button" class="btn-primary" id="change-date-confirm" disabled>
-                    <i class="fas fa-check"></i> Confirm Change
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase Config -->
     <script src="../../config/firebase-config.js"></script>
     
@@ -224,7 +189,6 @@
     <script src="rate-service.js"></script>
     <script src="validation-service.js"></script>
     <script src="prepaid-classes-service.js"></script>
-    <script src="modal-service.js"></script>
     
     <!-- Application Scripts -->
     <script src="../js/firebase-init.js"></script>
