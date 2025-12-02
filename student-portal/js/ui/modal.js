@@ -1,50 +1,55 @@
 /**
  * modal.js - Modal Management
- * Handles showing and hiding modals
+ * Handles showing and hiding modals using BaseModal system
  */
+
+import { BaseModal } from '../../../components/modals/modal-base.js';
+
+let emailExistsModal = null;
 
 /**
  * Show the email exists warning modal
  * @param {Array} students - Array of students with matching email
  */
 function showEmailExistsModal(students) {
-    const modal = document.getElementById('email-exists-modal');
-    if (!modal) {
-        console.error('Email exists modal not found');
-        return;
-    }
-    
-    // Populate student list - only show email for privacy
-    const listContainer = document.getElementById('existing-students-list');
-    listContainer.innerHTML = students.map(student => `
+    // Build student list HTML
+    const studentListHtml = students.map(student => `
         <div class="existing-student-item">
             <span>${escapeHtml(student.email)}</span>
         </div>
     `).join('');
     
-    // Set up button handler
-    const closeBtn = document.getElementById('close-modal-btn');
+    const content = `
+        <p>This email address is already registered in our system:</p>
+        <div class="existing-students-list">
+            ${studentListHtml}
+        </div>
+        <p>If you have already registered, please use the "Existing Student" login.</p>
+    `;
     
-    // Remove any existing event listeners by cloning button
-    const newCloseBtn = closeBtn.cloneNode(true);
-    closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
-    
-    // Add new event listener
-    newCloseBtn.addEventListener('click', () => {
-        hideEmailExistsModal();
+    // Create and show modal
+    emailExistsModal = new BaseModal({
+        title: '<i class="fas fa-exclamation-triangle"></i> Email Already Registered',
+        content: content,
+        size: 'medium',
+        buttons: [
+            {
+                text: '<i class="fas fa-times"></i> Close',
+                class: 'btn-primary',
+                onClick: () => emailExistsModal.hide()
+            }
+        ]
     });
     
-    // Show modal
-    modal.style.display = 'flex';
+    emailExistsModal.show();
 }
 
 /**
  * Hide the email exists warning modal
  */
 function hideEmailExistsModal() {
-    const modal = document.getElementById('email-exists-modal');
-    if (modal) {
-        modal.style.display = 'none';
+    if (emailExistsModal) {
+        emailExistsModal.hide();
     }
 }
 
@@ -59,10 +64,8 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Close modal when clicking outside
-document.addEventListener('click', (e) => {
-    const modal = document.getElementById('email-exists-modal');
-    if (e.target === modal) {
-        hideEmailExistsModal();
-    }
-});
+// Expose functions globally for non-module scripts immediately
+if (typeof window !== 'undefined') {
+    window.showEmailExistsModal = showEmailExistsModal;
+    window.hideEmailExistsModal = hideEmailExistsModal;
+}

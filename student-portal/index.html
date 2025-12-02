@@ -6,7 +6,9 @@
     <title>Student Portal - Urban Swing</title>
     <link rel="stylesheet" href="css/student-portal.css">
     <link rel="stylesheet" href="css/modal.css">
-    <link rel="stylesheet" href="/css/components/password-reset-modal.css">
+    <link rel="stylesheet" href="../styles/base/colors.css">
+    <link rel="stylesheet" href="../styles/base/buttons.css">
+    <link rel="stylesheet" href="../styles/modals/modal-base.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -50,38 +52,17 @@
         </div>
     </div>
 
-    <!-- Email Exists Warning Modal -->
-    <div id="email-exists-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle"></i> Email Already Registered</h3>
-            </div>
-            <div class="modal-body">
-                <p>This email address is already registered in our system:</p>
-                <div id="existing-students-list" class="existing-students-list">
-                    <!-- Existing student info will be inserted here -->
-                </div>
-                <p>If you have already registered, please use the "Existing Student" login.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" id="close-modal-btn">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase Config -->
     <script src="../config/firebase-config.js"></script>
     
     <!-- Password Reset Utilities -->
-    <script src="/js/password-reset-utils.js"></script>
+    <script type="module" src="/js/password-reset-utils.js"></script>
     
     <!-- Application Scripts -->
     <script src="js/firebase-init.js"></script>
     <script src="js/services/email-validator.js"></script>
-    <script src="js/ui/modal.js"></script>
-    <script src="js/registration-handler.js"></script>
-    <script src="js/login.js"></script>
+    <script type="module" src="js/ui/modal.js"></script>
+    <script defer src="js/registration-handler.js"></script>
+    <script defer src="js/login.js"></script>
 </body>
 </html>

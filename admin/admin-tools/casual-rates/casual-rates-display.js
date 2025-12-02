@@ -393,18 +393,30 @@ async function saveCasualRate(e) {
  * Confirm delete rate
  */
 function confirmDeleteRate(rateId, rateName) {
-    const modal = document.getElementById('delete-rate-modal');
-    document.getElementById('delete-rate-name').textContent = rateName;
+    // Create and show delete confirmation modal
+    const deleteModal = new ConfirmationModal({
+        title: 'Delete Casual Rate',
+        message: `
+            <p>Are you sure you want to delete this casual rate?</p>
+            <div class="student-info-delete">
+                <strong>${rateName}</strong>
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">
+                <i class="fas fa-info-circle"></i> This will affect check-ins and pricing across the system.
+            </p>
+        `,
+        icon: 'fas fa-trash',
+        variant: 'danger',
+        confirmText: 'Delete Rate',
+        confirmClass: 'btn-delete',
+        cancelText: 'Cancel',
+        cancelClass: 'btn-cancel',
+        onConfirm: async () => {
+            await deleteCasualRate(rateId);
+        }
+    });
     
-    const confirmBtn = document.getElementById('confirm-delete-rate-btn');
-    confirmBtn.onclick = () => deleteCasualRate(rateId);
-    
-    modal.style.display = 'flex';
-}
-
-function closeDeleteRateModal() {
-    const modal = document.getElementById('delete-rate-modal');
-    modal.style.display = 'none';
+    deleteModal.show();
 }
 
 /**
@@ -417,8 +429,6 @@ async function deleteCasualRate(rateId) {
         }
         
         await db.collection('casualRates').doc(rateId).delete();
-        
-        closeDeleteRateModal();
         
         if (typeof showSnackbar === 'function') {
             showSnackbar('Casual rate deleted successfully', 'success');

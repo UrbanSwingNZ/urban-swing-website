@@ -183,6 +183,29 @@ label:has(+ textarea[required])::after {
     font-size: 0.95rem;
 }
 
+/* Security Info Banner */
+.security-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #e3f2fd;
+    border-left: 4px solid #1976d2;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.security-info i {
+    color: #1976d2;
+    font-size: 1.2rem;
+}
+
+.security-info p {
+    color: #0d47a1;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
 /* Admin Notes */
 .admin-note {
     display: flex;

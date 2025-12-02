@@ -3,6 +3,9 @@
  * Handles student detail/edit modal
  */
 
+// Delete modal instance
+let deleteStudentModal = null;
+
 /**
  * View student details (read-only)
  */
@@ -196,7 +199,6 @@ function initializeModalListeners() {
     document.addEventListener('click', (e) => {
         const studentModal = document.getElementById('student-modal');
         const notesModal = document.getElementById('notes-modal');
-        const deleteModal = document.getElementById('delete-modal');
         
         if (studentModal && e.target === studentModal) {
             closeStudentModal();
@@ -205,10 +207,6 @@ function initializeModalListeners() {
         if (notesModal && e.target === notesModal) {
             closeNotesModal();
         }
-        
-        if (deleteModal && e.target === deleteModal) {
-            closeDeleteModal();
-        }
     });
 
     // Close modals on Escape key
@@ -216,7 +214,6 @@ function initializeModalListeners() {
         if (e.key === 'Escape') {
             const studentModal = document.getElementById('student-modal');
             const notesModal = document.getElementById('notes-modal');
-            const deleteModal = document.getElementById('delete-modal');
             
             if (studentModal && studentModal.style.display === 'flex') {
                 closeStudentModal();
@@ -224,10 +221,6 @@ function initializeModalListeners() {
             
             if (notesModal && notesModal.style.display === 'flex') {
                 closeNotesModal();
-            }
-            
-            if (deleteModal && deleteModal.style.display === 'flex') {
-                closeDeleteModal();
             }
         }
     });
@@ -288,43 +281,16 @@ async function confirmDeleteStudent(studentId) {
     
     studentToDelete = student;
     
-    // Show loading state in modal
-    const modal = document.getElementById('delete-modal');
-    if (!modal) {
-        console.error('Delete modal not found in DOM');
-        showError('Modal not found. Please refresh the page.');
-        return;
-    }
-    modal.style.display = 'flex';
-    
-    const titleEl = document.getElementById('delete-modal-title');
-    const messageEl = document.getElementById('delete-modal-message');
-    const infoDiv = document.getElementById('delete-modal-info');
-    const btnTextEl = document.getElementById('delete-modal-btn-text');
-    const warningEl = document.getElementById('delete-modal-warning');
-    
-    if (!titleEl || !messageEl || !infoDiv || !btnTextEl || !warningEl) {
-        console.error('Modal elements not found - modal may need reset');
-        showError('Modal elements not found. Please refresh the page.');
-        modal.style.display = 'none';
-        return;
-    }
-    
-    titleEl.textContent = 'Checking student data...';
-    messageEl.textContent = 'Please wait...';
-    infoDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-    warningEl.textContent = '';
-    
     try {
         // Query for transactions
         const transactionsSnapshot = await db.collection('transactions')
             .where('studentId', '==', studentId)
             .get();
         
-        studentTransactions = [];
-        transactionsSnapshot.forEach(doc => {
-            studentTransactions.push({ id: doc.id, ...doc.data() });
-        });
+        const studentTransactions = transactionsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
         
         // Query for free check-ins
         const checkInsSnapshot = await db.collection('checkins')
@@ -332,10 +298,10 @@ async function confirmDeleteStudent(studentId) {
             .where('entryType', '==', 'free')
             .get();
         
-        studentFreeCheckIns = [];
-        checkInsSnapshot.forEach(doc => {
-            studentFreeCheckIns.push({ id: doc.id, ...doc.data() });
-        });
+        studentFreeCheckIns = checkInsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
         
         // Determine delete mode
         const hasActivity = studentTransactions.length > 0 || studentFreeCheckIns.length > 0;
@@ -346,30 +312,32 @@ async function confirmDeleteStudent(studentId) {
         const lastName = toTitleCase(student.lastName || '');
         const fullName = `${firstName} ${lastName}`.trim();
         
-        // Update modal based on delete mode
+        // Build modal content based on delete mode
+        let title, message, confirmText, confirmClass;
+        
         if (deleteMode === 'hard') {
             // Hard delete - no activity
-            titleEl.textContent = 'Permanently Delete Student';
-            messageEl.textContent = `Are you sure you want to permanently delete ${fullName}?`;
-            btnTextEl.textContent = 'Permanently Delete';
-            warningEl.textContent = 'This action cannot be undone.';
-            warningEl.style.color = ''; // Reset color to default
+            title = 'Permanently Delete Student';
+            confirmText = 'Permanently Delete';
+            confirmClass = 'btn-delete';
             
-            infoDiv.innerHTML = `
-                <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
-                <p><strong>Phone:</strong> ${escapeHtml(student.phoneNumber || 'N/A')}</p>
+            message = `
+                <p>Are you sure you want to permanently delete <strong>${escapeHtml(fullName)}</strong>?</p>
+                <div class="student-info-delete">
+                    <p><strong>Email:</strong> ${escapeHtml(student.email || 'N/A')}</p>
+                    <p><strong>Phone:</strong> ${escapeHtml(student.phoneNumber || 'N/A')}</p>
+                </div>
                 <p class="warning-text" style="margin-top: 15px; color: #ff8800;">
                     <i class="fas fa-exclamation-triangle"></i> 
                     This student has no transaction or free class history and will be permanently deleted from the database.
                 </p>
+                <p class="text-muted" style="margin-top: 15px;">This action cannot be undone.</p>
             `;
         } else {
             // Soft delete - has activity
-            titleEl.textContent = 'Soft Delete Student';
-            messageEl.textContent = `${fullName} has activity history. They will be soft-deleted.`;
-            btnTextEl.textContent = 'Soft Delete';
-            warningEl.innerHTML = '<i class="fas fa-info-circle"></i> This student can be restored later from the "Show deleted students" filter.';
-            warningEl.style.color = '#0066cc';
+            title = 'Soft Delete Student';
+            confirmText = 'Soft Delete';
+            confirmClass = 'btn-delete';
             
             // Build activity list HTML
             let activityHTML = '<div class="activity-list">';
@@ -411,7 +379,7 @@ async function confirmDeleteStudent(studentId) {
             
             // Build table
             activityHTML += '<table class="activity-table">';
-            activityHTML += '<thead><tr><th>Date</th><th>Type</th><th>Payment Method</th><th>Amount</th></tr></thead>';
+            activityHTML += '<thead style="background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));"><tr><th style="color: white;">Date</th><th style="color: white;">Type</th><th style="color: white;">Payment Method</th><th style="color: white;">Amount</th></tr></thead>';
             activityHTML += '<tbody>';
             
             allActivity.forEach(activity => {
@@ -438,17 +406,35 @@ async function confirmDeleteStudent(studentId) {
             activityHTML += '</tbody></table>';
             activityHTML += '</div>';
             
-            infoDiv.innerHTML = activityHTML;
+            message = `
+                <p><strong>${escapeHtml(fullName)}</strong> has activity history. They will be soft-deleted.</p>
+                ${activityHTML}
+                <p style="margin-top: 15px; color: var(--purple-primary);">
+                    <i class="fas fa-info-circle"></i> This student can be restored later from the "Show deleted students" filter.
+                </p>
+            `;
         }
         
-        // Set up delete button click handler
-        const deleteBtn = document.getElementById('confirm-delete-btn');
-        deleteBtn.onclick = () => deleteStudent(student.id);
+        // Create and show the modal
+        deleteStudentModal = new ConfirmationModal({
+            title: title,
+            message: message,
+            icon: 'fas fa-trash',
+            variant: 'danger',
+            confirmText: confirmText,
+            confirmClass: confirmClass,
+            cancelText: 'Cancel',
+            cancelClass: 'btn-cancel',
+            onConfirm: async () => {
+                await deleteStudent(student.id);
+            }
+        });
+        
+        deleteStudentModal.show();
         
     } catch (error) {
         console.error('Error checking student data:', error);
         console.error('Error details:', error.message, error.stack);
-        closeDeleteModal();
         showError('Failed to check student data: ' + (error.message || 'Please try again.'));
     }
 }
@@ -459,7 +445,9 @@ async function confirmDeleteStudent(studentId) {
 function getTransactionTypeLabel(type) {
     const labels = {
         'casual': 'Casual Entry',
+        'casual-entry': 'Casual Entry',
         'concession': 'Concession Purchase',
+        'concession-purchase': 'Concession Purchase',
         'package': 'Class Package',
         'refund': 'Refund'
     };
@@ -482,33 +470,10 @@ function formatPaymentMethod(method) {
 }
 
 /**
- * Close delete confirmation modal
- */
-function closeDeleteModal() {
-    const modal = document.getElementById('delete-modal');
-    modal.style.display = 'none';
-    studentToDelete = null;
-    
-    // Reset button state and restore original HTML structure
-    const deleteBtn = document.getElementById('confirm-delete-btn');
-    if (deleteBtn) {
-        deleteBtn.disabled = false;
-        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span id="delete-modal-btn-text">Delete Student</span>';
-    }
-}
-
-/**
  * Delete student from Firestore (hard or soft delete based on mode)
  */
 async function deleteStudent(studentId) {
-    const deleteBtn = document.getElementById('confirm-delete-btn');
-    const originalText = deleteBtn.innerHTML;
-    
     try {
-        // Disable button and show loading state
-        deleteBtn.disabled = true;
-        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-        
         if (deleteMode === 'hard') {
             // Hard delete - remove everything
             console.log('Performing hard delete for student:', studentId);
@@ -578,18 +543,17 @@ async function deleteStudent(studentId) {
             console.log('Soft delete completed');
         }
         
-        // Close modal
-        closeDeleteModal();
+        // Close modal and reset state
+        if (deleteStudentModal) {
+            deleteStudentModal.hide();
+        }
+        studentToDelete = null;
         
         // Data will update automatically via onSnapshot listener
         
     } catch (error) {
         console.error('Error deleting student:', error);
         showError('Failed to delete student: ' + error.message);
-        
-        // Reset button
-        deleteBtn.disabled = false;
-        deleteBtn.innerHTML = originalText;
     }
 }
 

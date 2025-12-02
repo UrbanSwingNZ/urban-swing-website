@@ -26,21 +26,11 @@ function overrideHandleSaveConcession() {
   };
 }
 
-function setupModalHandlers() {
-  const deleteModal = document.getElementById('delete-modal');
-  
+function setupModalHandlers() {  
   // Add package button - use existing modal
   document.getElementById('add-package-btn').addEventListener('click', () => {
     editingPackageId = null; // Ensure we're in add mode
     openAddConcessionModal();
-  });
-  
-  // Delete modal handlers
-  document.getElementById('cancel-delete-btn').addEventListener('click', closeDeleteModal);
-  document.getElementById('confirm-delete-btn').addEventListener('click', deletePackage);
-  
-  deleteModal.addEventListener('click', (e) => {
-    if (e.target === deleteModal) closeDeleteModal();
   });
   
   // Override the close handler to reset edit mode
@@ -179,36 +169,49 @@ async function handleUpdatePackage(packageId) {
 
 // Delete Package Functions
 function confirmDelete(id, name) {
-  packageToDelete = id;
-  document.getElementById('delete-package-name').textContent = name;
-  document.getElementById('delete-modal').classList.add('show');
+  // Create and show delete confirmation modal
+  const deleteModal = new ConfirmationModal({
+    title: 'Delete Concession Package',
+    message: `
+      <p>Are you sure you want to delete this concession package?</p>
+      <div class="student-info-delete">
+        <strong>${name}</strong>
+      </div>
+      <p class="text-muted" style="margin-top: 15px;">
+        <i class="fas fa-info-circle"></i> This will not affect existing concession blocks that were already purchased.
+      </p>
+    `,
+    icon: 'fas fa-trash',
+    variant: 'danger',
+    confirmText: 'Delete Package',
+    confirmClass: 'btn-delete',
+    cancelText: 'Cancel',
+    cancelClass: 'btn-cancel',
+    onConfirm: async () => {
+      await deletePackage(id);
+    }
+  });
+  
+  deleteModal.show();
 }
 
-function closeDeleteModal() {
-  document.getElementById('delete-modal').classList.remove('show');
-  packageToDelete = null;
-}
-
-async function deletePackage() {
-  if (!packageToDelete) return;
-  
-  const confirmBtn = document.getElementById('confirm-delete-btn');
-  const originalText = confirmBtn.innerHTML;
-  
+async function deletePackage(packageId) {
   try {
-    confirmBtn.disabled = true;
-    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+    await db.collection('concessionPackages').doc(packageId).delete();
+    console.log('Package deleted:', packageId);
     
-    await db.collection('concessionPackages').doc(packageToDelete).delete();
-    console.log('Package deleted:', packageToDelete);
-    
-    closeDeleteModal();
     loadPackages();
+    
+    if (typeof showStatusMessage === 'function') {
+      showStatusMessage('Package deleted successfully', 'success');
+    }
     
   } catch (error) {
     console.error('Error deleting package:', error);
-    alert('Failed to delete package: ' + error.message);
-    confirmBtn.disabled = false;
-    confirmBtn.innerHTML = originalText;
+    if (typeof showStatusMessage === 'function') {
+      showStatusMessage('Failed to delete package: ' + error.message, 'error');
+    } else {
+      alert('Failed to delete package: ' + error.message);
+    }
   }
 }
