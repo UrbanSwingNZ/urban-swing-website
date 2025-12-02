@@ -31,20 +31,14 @@ function showEmailExistsModal(students) {
     emailExistsModal = new BaseModal({
         title: '<i class="fas fa-exclamation-triangle"></i> Email Already Registered',
         content: content,
-        footer: `
-            <button class="btn-primary" id="close-modal-btn">
-                <i class="fas fa-times"></i> Close
-            </button>
-        `,
         size: 'medium',
-        onOpen: () => {
-            const closeBtn = document.getElementById('close-modal-btn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    emailExistsModal.hide();
-                });
+        buttons: [
+            {
+                text: '<i class="fas fa-times"></i> Close',
+                class: 'btn-primary',
+                onClick: () => emailExistsModal.hide()
             }
-        }
+        ]
     });
     
     emailExistsModal.show();

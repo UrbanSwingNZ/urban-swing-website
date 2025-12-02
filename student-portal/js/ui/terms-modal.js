@@ -46,33 +46,24 @@ document.addEventListener('DOMContentLoaded', () => {
     termsModal = new BaseModal({
         title: '<i class="fas fa-file-contract"></i> Terms and Conditions',
         content: termsContent,
-        footer: `
-            <button class="btn-cancel" id="terms-cancel-btn">Cancel</button>
-            <button class="btn-primary" id="terms-accept-btn">
-                <i class="fas fa-check"></i> Accept & Close
-            </button>
-        `,
         size: 'medium',
-        onOpen: () => {
-            // Attach button handlers after modal is shown
-            const acceptBtn = document.getElementById('terms-accept-btn');
-            const cancelBtn = document.getElementById('terms-cancel-btn');
-            
-            if (acceptBtn) {
-                acceptBtn.addEventListener('click', () => {
+        buttons: [
+            {
+                text: 'Cancel',
+                class: 'btn-cancel',
+                onClick: () => termsModal.hide()
+            },
+            {
+                text: '<i class="fas fa-check"></i> Accept & Close',
+                class: 'btn-primary',
+                onClick: () => {
                     if (termsCheckbox) {
                         termsCheckbox.checked = true;
                     }
                     termsModal.hide();
-                });
+                }
             }
-            
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    termsModal.hide();
-                });
-            }
-        }
+        ]
     });
 
     // Open modal when clicking the "Read the full T&C" link

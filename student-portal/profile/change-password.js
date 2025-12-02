@@ -67,7 +67,10 @@ import { BaseModal } from '../../components/modals/modal-base.js';
                 </div>
             </div>
             
-            <div class="password-reset-message" id="change-password-message" style="display: none; padding: 12px; border-radius: 8px; margin-top: 10px;"></div>
+            <div class="password-reset-message" id="change-password-message" style="display: none; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;"></div>
+            
+            <!-- Hidden submit button to enable Enter key submission -->
+            <button type="submit" style="display: none;" aria-hidden="true"></button>
             
             <div style="text-align: center; margin-top: 10px;">
                 <a href="#" id="forgot-current-password" style="color: var(--accent-blue); text-decoration: none; font-size: 0.9rem;">Forgot your current password?</a>
@@ -81,30 +84,23 @@ import { BaseModal } from '../../components/modals/modal-base.js';
         
         messageEl.textContent = message;
         messageEl.style.display = 'block';
+        messageEl.style.textAlign = 'center';
+        messageEl.style.fontWeight = '600';
         
         // Apply styling based on type
         if (type === 'error') {
-            messageEl.style.backgroundColor = 'var(--error-bg)';
-            messageEl.style.color = 'var(--error-text)';
-            messageEl.style.border = '1px solid var(--error-border)';
+            messageEl.style.backgroundColor = 'var(--bg-error-light)';
+            messageEl.style.color = 'var(--error)';
+            messageEl.style.border = '1px solid var(--error)';
         } else if (type === 'success') {
-            messageEl.style.backgroundColor = 'var(--success-bg)';
-            messageEl.style.color = 'var(--success-text)';
-            messageEl.style.border = '1px solid var(--success-border)';
+            messageEl.style.backgroundColor = 'var(--bg-success-light)';
+            messageEl.style.color = 'var(--success)';
+            messageEl.style.border = '1px solid var(--success)';
         } else {
-            messageEl.style.backgroundColor = 'var(--info-bg)';
-            messageEl.style.color = 'var(--info-text)';
-            messageEl.style.border = '1px solid var(--info-border)';
+            messageEl.style.backgroundColor = 'var(--bg-info-light)';
+            messageEl.style.color = 'var(--info)';
+            messageEl.style.border = '1px solid var(--info)';
         }
-    }
-
-    // Hide message function
-    function showMessage(message, type = 'info') {
-        if (!messageEl) return;
-        
-        messageEl.textContent = message;
-        messageEl.className = `password-reset-message ${type}`;
-        messageEl.style.display = 'block';
     }
 
     // Hide message function
@@ -308,14 +304,56 @@ import { BaseModal } from '../../components/modals/modal-base.js';
             changePasswordModal = null;
         }
 
+        // Submit handler function (shared by button click and form submit)
+        const handlePasswordSubmit = async () => {
+            // Validate inputs
+            if (!validatePasswords()) {
+                return;
+            }
+
+            const currentPassword = currentPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing Password...';
+            hideMessage();
+
+            try {
+                await changePassword(currentPassword, newPassword);
+                
+                // Close modal immediately
+                changePasswordModal.hide();
+                
+                // Show snackbar notification
+                if (typeof showSnackbar === 'function') {
+                    showSnackbar('Password changed successfully!', 'success');
+                }
+                
+            } catch (error) {
+                showMessage(error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Change Password';
+            }
+        };
+
         changePasswordModal = new BaseModal({
             title: '<i class="fas fa-key"></i> Change Password',
             content: formHtml,
-            footer: `
-                <button class="btn-cancel" id="cancel-change-password">Cancel</button>
-                <button class="btn-primary" id="submit-change-password">Change Password</button>
-            `,
             size: 'medium',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    class: 'btn-cancel',
+                    onClick: () => changePasswordModal.hide()
+                },
+                {
+                    text: 'Change Password',
+                    class: 'btn-primary',
+                    id: 'submit-change-password',
+                    onClick: handlePasswordSubmit
+                }
+            ],
             onOpen: () => {
                 // Get elements after modal is created
                 currentPasswordInput = document.getElementById('current-password');
@@ -323,20 +361,17 @@ import { BaseModal } from '../../components/modals/modal-base.js';
                 confirmPasswordInput = document.getElementById('confirm-password');
                 messageEl = document.getElementById('change-password-message');
                 submitBtn = document.getElementById('submit-change-password');
-                const cancelBtn = document.getElementById('cancel-change-password');
                 const form = document.getElementById('change-password-form');
                 const forgotLink = document.getElementById('forgot-current-password');
 
-                // Setup event listeners
-                if (submitBtn) {
-                    submitBtn.addEventListener('click', handleSubmit);
-                }
-                if (cancelBtn) {
-                    cancelBtn.addEventListener('click', () => changePasswordModal.hide());
-                }
+                // Setup form submit handler for Enter key
                 if (form) {
-                    form.addEventListener('submit', handleSubmit);
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        handlePasswordSubmit();
+                    });
                 }
+                
                 if (forgotLink) {
                     forgotLink.addEventListener('click', handleForgotPassword);
                 }
