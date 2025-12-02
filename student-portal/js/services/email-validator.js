@@ -43,8 +43,6 @@ async function checkEmailExists(email) {
         console.log(`Email check for ${normalizedEmail}:`);
         console.log(`  - Student docs found: ${studentSnapshot.size}`);
         console.log(`  - User docs found: ${userSnapshot.size}`);
-        console.log(`  - hasStudent: ${hasStudent}`);
-        console.log(`  - hasUser: ${hasUser}`);
         
         // Extract student data if exists
         let studentData = null;
@@ -54,7 +52,6 @@ async function checkEmailExists(email) {
                 id: doc.id,
                 ...doc.data()
             };
-            console.log(`  - Student ID: ${doc.id}`);
         }
         
         // Determine status
