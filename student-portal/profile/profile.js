@@ -3,6 +3,8 @@
  * Handles loading and updating student profile information
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 // Current state
 let currentStudent = null;
 let currentStudentId = null;

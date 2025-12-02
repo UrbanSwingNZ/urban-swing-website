@@ -1,8 +1,10 @@
 /**
  * Password Reset Utilities
- * Provides reusable password reset functionality with UI feedback
+ * Provides reusable password reset functionality with UI feedback using BaseModal
  * Can be used across student portal, admin portal, and other areas
  */
+
+import { BaseModal } from '../components/modals/modal-base.js';
 
 /**
  * Send password reset email with comprehensive error handling and user feedback
@@ -84,14 +86,14 @@ async function sendPasswordReset(email, options = {}) {
 }
 
 /**
- * Create a password reset modal dialog
+ * Create a password reset modal dialog using BaseModal
  * @param {Object} options - Configuration options
  * @param {string} options.title - Modal title (default: "Reset Password")
  * @param {string} options.description - Modal description
  * @param {string} options.emailPlaceholder - Email input placeholder
  * @param {string} options.prefillEmail - Pre-fill email field with this value
  * @param {Function} options.onComplete - Callback when modal is closed after successful reset
- * @returns {HTMLElement} Modal element
+ * @returns {BaseModal} Modal instance
  */
 function createPasswordResetModal(options = {}) {
     const {
@@ -102,73 +104,61 @@ function createPasswordResetModal(options = {}) {
         onComplete = null
     } = options;
 
-    // Create modal container
-    const modal = document.createElement('div');
-    modal.className = 'password-reset-modal';
-    modal.innerHTML = `
-        <div class="password-reset-overlay"></div>
-        <div class="password-reset-content">
-            <button class="password-reset-close" aria-label="Close">&times;</button>
-            <h2>${title}</h2>
-            <p class="password-reset-description">${description}</p>
+    let emailInput, messageEl, submitBtn;
+
+    const formHtml = `
+        <p style="margin-bottom: 20px; color: var(--text-secondary);">${description}</p>
+        
+        <form id="password-reset-form" style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="form-group">
+                <label for="password-reset-email" style="display: block; margin-bottom: 8px; font-weight: 600;">Email Address</label>
+                <input 
+                    type="email" 
+                    id="password-reset-email" 
+                    placeholder="${emailPlaceholder}"
+                    value="${prefillEmail}"
+                    required
+                    autocomplete="email"
+                    style="width: 100%; padding: 12px; border: 1px solid var(--gray-450); border-radius: 8px; font-size: 1rem;"
+                >
+            </div>
             
-            <form class="password-reset-form">
-                <div class="form-group">
-                    <label for="password-reset-email">Email Address</label>
-                    <input 
-                        type="email" 
-                        id="password-reset-email" 
-                        class="password-reset-input"
-                        placeholder="${emailPlaceholder}"
-                        value="${prefillEmail}"
-                        required
-                        autocomplete="email"
-                    >
-                </div>
-                
-                <div class="password-reset-message" style="display: none;"></div>
-                
-                <div class="password-reset-buttons">
-                    <button type="button" class="btn-cancel">Cancel</button>
-                    <button type="submit" class="btn-submit">Send Reset Email</button>
-                </div>
-            </form>
-        </div>
+            <div class="password-reset-message" id="password-reset-message" style="display: none; padding: 12px; border-radius: 8px;"></div>
+        </form>
     `;
-
-    // Add modal to DOM
-    document.body.appendChild(modal);
-
-    // Get elements
-    const overlay = modal.querySelector('.password-reset-overlay');
-    const closeBtn = modal.querySelector('.password-reset-close');
-    const cancelBtn = modal.querySelector('.btn-cancel');
-    const form = modal.querySelector('.password-reset-form');
-    const emailInput = modal.querySelector('#password-reset-email');
-    const submitBtn = modal.querySelector('.btn-submit');
-    const messageEl = modal.querySelector('.password-reset-message');
-
-    // Close modal function
-    const closeModal = () => {
-        modal.remove();
-    };
 
     // Show message function
     const showMessage = (message, type = 'info') => {
+        if (!messageEl) return;
+        
         messageEl.textContent = message;
-        messageEl.className = `password-reset-message ${type}`;
         messageEl.style.display = 'block';
+        
+        // Apply styling based on type
+        if (type === 'error') {
+            messageEl.style.backgroundColor = 'var(--error-bg)';
+            messageEl.style.color = 'var(--error-text)';
+            messageEl.style.border = '1px solid var(--error-border)';
+        } else if (type === 'success') {
+            messageEl.style.backgroundColor = 'var(--success-bg)';
+            messageEl.style.color = 'var(--success-text)';
+            messageEl.style.border = '1px solid var(--success-border)';
+        } else {
+            messageEl.style.backgroundColor = 'var(--info-bg)';
+            messageEl.style.color = 'var(--info-text)';
+            messageEl.style.border = '1px solid var(--info-border)';
+        }
     };
 
     // Handle form submission
-    form.addEventListener('submit', async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         const email = emailInput.value.trim();
         
         // Disable submit button
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         messageEl.style.display = 'none';
 
         const result = await sendPasswordReset(email, {
@@ -178,7 +168,7 @@ function createPasswordResetModal(options = {}) {
                 
                 // Close modal after 3 seconds
                 setTimeout(() => {
-                    closeModal();
+                    modal.hide();
                     if (onComplete) {
                         onComplete(email);
                     }
@@ -201,16 +191,52 @@ function createPasswordResetModal(options = {}) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Send Reset Email';
         }
+    };
+
+    // Create modal
+    const modal = new BaseModal({
+        title: `<i class="fas fa-key"></i> ${title}`,
+        content: formHtml,
+        footer: `
+            <button class="btn-cancel" id="password-reset-cancel">Cancel</button>
+            <button class="btn-primary" id="password-reset-submit">Send Reset Email</button>
+        `,
+        size: 'medium',
+        onOpen: () => {
+            // Get elements after modal is created
+            emailInput = document.getElementById('password-reset-email');
+            messageEl = document.getElementById('password-reset-message');
+            submitBtn = document.getElementById('password-reset-submit');
+            const cancelBtn = document.getElementById('password-reset-cancel');
+            const form = document.getElementById('password-reset-form');
+
+            // Setup event listeners
+            if (submitBtn) {
+                submitBtn.addEventListener('click', handleSubmit);
+            }
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => modal.hide());
+            }
+            if (form) {
+                form.addEventListener('submit', handleSubmit);
+            }
+
+            // Focus email input
+            setTimeout(() => emailInput?.focus(), 100);
+        },
+        onClose: () => {
+            // Reset form when closed
+            const form = document.getElementById('password-reset-form');
+            if (form) form.reset();
+            if (messageEl) messageEl.style.display = 'none';
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Reset Email';
+            }
+        }
     });
 
-    // Close button handlers
-    closeBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', closeModal);
-
-    // Focus email input
-    setTimeout(() => emailInput.focus(), 100);
-
+    modal.show();
     return modal;
 }
 
@@ -316,4 +342,12 @@ function showPasswordResetModal(prefillEmail = '', onComplete = null) {
         prefillEmail,
         onComplete
     });
+}
+
+// Expose functions globally for non-module scripts
+if (typeof window !== 'undefined') {
+    window.sendPasswordReset = sendPasswordReset;
+    window.createPasswordResetModal = createPasswordResetModal;
+    window.attachPasswordResetHandler = attachPasswordResetHandler;
+    window.showPasswordResetModal = showPasswordResetModal;
 }
