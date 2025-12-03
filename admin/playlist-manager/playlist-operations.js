@@ -1,6 +1,7 @@
 // Playlist Manager - Playlist Operations Module
 // Handles playlist CRUD operations, display, and menu actions
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 import * as State from './playlist-state.js';
 import { showLoading, showError, showSnackbar, showConnectPrompt } from './playlist-ui.js';
 import { updateSaveOrderButton, loadTracks } from './track-operations.js';
