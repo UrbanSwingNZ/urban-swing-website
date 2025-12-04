@@ -1,5 +1,7 @@
 // Casual Rates Display and Management
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 let casualRatesData = [];
 
 /**
@@ -456,3 +458,9 @@ if (typeof escapeHtml !== 'function') {
         return div.innerHTML;
     }
 }
+
+// Expose functions globally for use in other scripts
+window.loadCasualRates = loadCasualRates;
+window.editCasualRate = editCasualRate;
+window.closeRateModal = closeRateModal;
+window.confirmDeleteRate = confirmDeleteRate;

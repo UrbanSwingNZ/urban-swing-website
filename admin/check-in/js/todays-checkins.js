@@ -2,6 +2,8 @@
  * todays-checkins.js - Manages today's check-ins list display
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 let todaysCheckins = [];
 let showReversedCheckins = false;
 
@@ -409,3 +411,7 @@ function toggleShowReversedCheckins(event) {
         refreshCheckinTransactionsDisplay();
     }
 }
+
+// Expose functions globally for use in other modules
+window.loadTodaysCheckins = loadTodaysCheckins;
+window.toggleShowReversedCheckins = toggleShowReversedCheckins;

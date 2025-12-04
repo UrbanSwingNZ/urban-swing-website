@@ -3,6 +3,8 @@
  * Handles loading and displaying financial transactions for the selected check-in date
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 let checkinTransactions = [];
 
 /**
@@ -393,3 +395,7 @@ async function deleteCheckinTransaction(transaction) {
         showSnackbar('Error reversing transaction: ' + error.message, 'error');
     }
 }
+
+// Expose functions globally for use in other modules
+window.loadCheckinTransactions = loadCheckinTransactions;
+

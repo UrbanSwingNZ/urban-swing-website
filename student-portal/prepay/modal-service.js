@@ -130,16 +130,25 @@ class ModalService {
                 }
             ],
             onOpen: () => {
-                // Initialize date picker on first show
-                if (!this.isInitialized) {
-                    this.setupDatePickerCallbacks();
-                    this.isInitialized = true;
-                }
-                // Reset modal state
-                this.resetModal();
+                // Initialize date picker on first show (use setTimeout to ensure DOM is ready)
+                setTimeout(() => {
+                    if (!this.isInitialized) {
+                        this.setupDatePickerCallbacks();
+                        this.isInitialized = true;
+                    }
+                    // Reset modal state
+                    this.resetModal();
+                }, 0);
             },
             onClose: () => {
                 this.currentTransactionId = null;
+                // Reset initialization flag so DatePicker is recreated next time
+                this.isInitialized = false;
+                // Destroy DatePicker instance if it exists
+                if (this.changeDatePicker && typeof this.changeDatePicker.destroy === 'function') {
+                    this.changeDatePicker.destroy();
+                    this.changeDatePicker = null;
+                }
             }
         });
         
