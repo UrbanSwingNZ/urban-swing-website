@@ -72,6 +72,15 @@ class DatePicker {
     setupEventListeners() {
         // Show calendar when input is clicked
         this.dateInput.addEventListener('click', () => {
+            // If there's a selected date, open to that month; otherwise open to current month
+            if (this.selectedDate) {
+                this.currentMonth = this.selectedDate.getMonth();
+                this.currentYear = this.selectedDate.getFullYear();
+            } else {
+                this.currentMonth = new Date().getMonth();
+                this.currentYear = new Date().getFullYear();
+            }
+            
             this.calendar.style.display = 'block';
             this.renderCalendar();
             
