@@ -48,10 +48,17 @@ class ModalService {
         const changeDateCalendar = document.getElementById('new-custom-calendar');
         
         if (changeDateInput && changeDateCalendar) {
+            // Calculate min and max months (current month and next month only)
+            const today = new Date();
+            const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const maxMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+            
             // Create new DatePicker instance with callbacks
             this.changeDatePicker = new DatePicker('new-class-date', 'new-custom-calendar', {
                 allowedDays: [4], // Thursday only
                 disablePastDates: true,
+                minMonth: minMonth,
+                maxMonth: maxMonth,
                 onDateSelected: async (date) => {
                     await this.handleDateSelection(date);
                 },

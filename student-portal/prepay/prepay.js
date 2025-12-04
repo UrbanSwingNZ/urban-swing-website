@@ -28,10 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Pre-pay page DOM loaded');
     initializePage();
     
+    // Calculate min and max months (current month and next month only)
+    const today = new Date();
+    const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const maxMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    
     // Setup custom calendar using the reusable DatePicker component
     datePicker = new DatePicker('class-date', 'custom-calendar', {
         allowedDays: [4], // Thursday only
         disablePastDates: true,
+        minMonth: minMonth,
+        maxMonth: maxMonth,
         onDateSelected: async (date, formattedDate) => {
             console.log('Date selected:', date);
             await handleDateSelection(date);

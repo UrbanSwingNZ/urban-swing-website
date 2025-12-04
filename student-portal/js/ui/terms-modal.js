@@ -8,14 +8,14 @@ import { BaseModal } from '../../../components/modals/modal-base.js';
 const termsContent = `
     <div style="line-height: 1.6;">
         <h4 style="margin-top: 0;">Urban Swing Terms and Conditions</h4>
-        <p><strong>Last Updated: November 16, 2025</strong></p>
+        <p><strong>Last Updated: 16 November 2025</strong></p>
         
         <p><strong>Recent Changes:</strong></p>
-        <p>November 16, 2025: Added Concession Payments and Single Class Booking Policy terms<br>
-        January 10, 2025: Initial terms published</p>
+        <p>16 November 2025: Added Concession Payments and Single Class Booking Policy terms<br>
+        10 January 2025: Initial terms published</p>
         
         <h5>Liability Waiver & Acknowledgment of Risk</h5>
-        <p>I understand that participating in dance classes, events, or activities at Urban Swing involves inherent risks, including but not limited to physical injury. While Urban Swing will take all reasonable precautions to ensure a safe environment and minimize these risks, I acknowledge that the ultimate responsibility for my safety lies with me as the participant.</p>
+        <p>I understand that participating in dance classes, events, or activities at Urban Swing involves inherent risks, including but not limited to physical injury. While Urban Swing will take all reasonable precautions to ensure a safe environment and minimise these risks, I acknowledge that the ultimate responsibility for my safety lies with me as the participant.</p>
         
         <p>By participating in Urban Swing's classes or events, I agree to assume full responsibility for any injuries, accidents, or other incidents that may occur during my participation. I understand that Urban Swing cannot be held liable for any injuries or damages sustained while attending or engaging in its activities.</p>
         
