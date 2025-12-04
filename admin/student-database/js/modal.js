@@ -3,6 +3,8 @@
  * Handles student detail/edit modal
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 // Delete modal instance
 let deleteStudentModal = null;
 
@@ -645,4 +647,14 @@ async function restoreStudent(studentId) {
         showLoading(false);
     }
 }
+
+// Expose functions globally for onclick handlers
+window.viewStudent = viewStudent;
+window.editStudent = editStudent;
+window.editNotes = editNotes;
+window.confirmDeleteStudent = confirmDeleteStudent;
+window.confirmRestoreStudent = confirmRestoreStudent;
+window.restoreStudent = restoreStudent;
+window.viewTransactionHistory = viewTransactionHistory;
+
 

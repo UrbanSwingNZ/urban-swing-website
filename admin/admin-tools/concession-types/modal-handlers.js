@@ -1,5 +1,7 @@
 // Modal Handlers for Concession Types Manager
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 let currentEditId = null;
 let packageToDelete = null;
 let editingPackageId = null; // Track which package is being edited
@@ -215,3 +217,8 @@ async function deletePackage(packageId) {
     }
   }
 }
+
+// Expose functions globally for use in other scripts
+window.setupModalHandlers = setupModalHandlers;
+window.overrideHandleSaveConcession = overrideHandleSaveConcession;
+window.confirmDelete = confirmDelete;

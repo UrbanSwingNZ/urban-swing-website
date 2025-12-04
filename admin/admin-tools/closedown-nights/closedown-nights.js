@@ -1,6 +1,8 @@
 // Closedown Nights Admin Tool
 // Firebase auth and db are already initialized in firebase-config.js
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 // State
 let currentUser = null;
 let closedownPeriods = [];
@@ -84,8 +86,6 @@ async function initializePage(user) {
     // Setup modal handlers
     document.getElementById('edit-modal-close').addEventListener('click', closeEditModal);
     document.getElementById('edit-modal-cancel').addEventListener('click', closeEditModal);
-    document.getElementById('delete-modal-cancel').addEventListener('click', closeDeleteModal);
-    document.getElementById('delete-modal-confirm').addEventListener('click', confirmDelete);
     
     // Load data
     await loadSettings();
@@ -338,29 +338,32 @@ function openDeleteModal(id) {
     const period = closedownPeriods.find(p => p.id === id);
     if (!period) return;
     
-    deletingId = id;
-    
     const startStr = formatDate(period.startDate.toDate());
     const endStr = formatDate(period.endDate.toDate());
     const dateRangeStr = startStr === endStr ? startStr : `${startStr} - ${endStr}`;
     
-    document.getElementById('delete-date-range').textContent = dateRangeStr;
-    document.getElementById('delete-modal').style.display = 'flex';
-}
-
-function closeDeleteModal() {
-    document.getElementById('delete-modal').style.display = 'none';
-    deletingId = null;
-}
-
-async function confirmDelete() {
-    if (!deletingId) return;
+    const deleteModal = new ConfirmationModal({
+        title: 'Confirm Delete',
+        message: `<p>Are you sure you want to delete this closedown period?</p>
+                  <p class="text-muted">${dateRangeStr}</p>`,
+        icon: 'fas fa-exclamation-triangle',
+        variant: 'danger',
+        confirmText: 'Delete',
+        confirmClass: 'btn-delete',
+        cancelClass: 'btn-cancel',
+        onConfirm: async () => {
+            await deleteClosedownPeriod(id);
+        }
+    });
     
+    deleteModal.show();
+}
+
+async function deleteClosedownPeriod(id) {
     try {
-        await db.collection('closedownNights').doc(deletingId).delete();
+        await db.collection('closedownNights').doc(id).delete();
         
         showSuccess('Closedown period deleted successfully');
-        closeDeleteModal();
         await loadClosedownPeriods();
     } catch (error) {
         console.error('Error deleting closedown period:', error);
@@ -411,3 +414,8 @@ function showError(message) {
         errorEl.style.display = 'none';
     }, 5000);
 }
+
+// Expose functions globally for onclick handlers
+window.openEditModal = openEditModal;
+window.openDeleteModal = openDeleteModal;
+
