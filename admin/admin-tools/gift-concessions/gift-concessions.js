@@ -80,19 +80,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadStudents() {
     try {
         showLoading(true);
-        const snapshot = await db.collection('students')
-            .where('deleted', '!=', true)
-            .get();
+        
+        // Get all students first, then filter out deleted ones in JavaScript
+        // This avoids needing a composite index for the where clause
+        const snapshot = await db.collection('students').get();
         
         allStudents = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-        })).sort((a, b) => {
+        }))
+        .filter(student => student.deleted !== true) // Filter out deleted students
+        .sort((a, b) => {
             const nameA = `${a.firstName || ''} ${a.lastName || ''}`.toLowerCase();
             const nameB = `${b.firstName || ''} ${b.lastName || ''}`.toLowerCase();
             return nameA.localeCompare(nameB);
         });
 
+        console.log('Loaded students:', allStudents.length);
         showLoading(false);
     } catch (error) {
         showLoading(false);
@@ -659,3 +663,10 @@ document.addEventListener('click', (e) => {
         closeSuccessModal();
     }
 });
+
+// Expose functions globally for onclick handlers
+window.clearSelectedStudent = clearSelectedStudent;
+window.selectStudent = selectStudent;
+window.closeConfirmModal = closeConfirmModal;
+window.closeSuccessModal = closeSuccessModal;
+window.closeSuccessModalAndReset = closeSuccessModalAndReset;
