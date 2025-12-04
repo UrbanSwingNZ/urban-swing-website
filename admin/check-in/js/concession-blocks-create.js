@@ -16,21 +16,6 @@
  */
 async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null, transactionId = null) {
     try {
-        // Check if findStudentById is available
-        if (typeof findStudentById !== 'function') {
-            throw new Error('findStudentById function is not available');
-        }
-        
-        const student = findStudentById(studentId);
-        if (!student) {
-            throw new Error('Student not found with ID: ' + studentId);
-        }
-        
-        // Check if getStudentFullName is available
-        if (typeof getStudentFullName !== 'function') {
-            throw new Error('getStudentFullName function is not available');
-        }
-        
         // Ensure purchaseDate is a proper Date object
         let actualPurchaseDate;
         if (purchaseDate) {
@@ -45,23 +30,40 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
             actualExpiryDate = expiryDate instanceof Date ? expiryDate : new Date(expiryDate);
         }
         
+        // Fetch student data directly from Firestore to get accurate name
+        let studentName = 'Unknown Student';
+        let firstName = 'unknown';
+        let lastName = 'unknown';
+        
+        try {
+            const studentDoc = await firebase.firestore().collection('students').doc(studentId).get();
+            if (studentDoc.exists) {
+                const studentData = studentDoc.data();
+                firstName = (studentData.firstName || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+                lastName = (studentData.lastName || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+                studentName = `${studentData.firstName || 'Unknown'} ${studentData.lastName || 'Student'}`;
+            } else {
+                console.warn('Student document not found:', studentId);
+            }
+        } catch (e) {
+            console.error('Error fetching student data:', e);
+        }
+        
+        // Determine status based on expiry date
+        const now = new Date();
+        const isExpired = actualExpiryDate && actualExpiryDate < now;
+        
         // Format purchase date for document ID (YYYY-MM-DD)
         const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
         
         // Create document ID: firstName-lastName-purchased-YYYY-MM-DD-timestamp (lowercase)
         // Added timestamp to ensure uniqueness when multiple blocks purchased on same day
         const timestamp = Date.now();
-        const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
-        const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const docId = `${firstName}-${lastName}-purchased-${dateStr}-${timestamp}`;
-        
-        // Determine status based on expiry date
-        const now = new Date();
-        const isExpired = actualExpiryDate && actualExpiryDate < now;
         
         const blockData = {
             studentId: studentId,
-            studentName: getStudentFullName(student),
+            studentName: studentName,
             packageId: packageData.id,
             packageName: packageData.name,
             originalQuantity: quantity,
