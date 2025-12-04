@@ -656,5 +656,7 @@ window.confirmDeleteStudent = confirmDeleteStudent;
 window.confirmRestoreStudent = confirmRestoreStudent;
 window.restoreStudent = restoreStudent;
 window.viewTransactionHistory = viewTransactionHistory;
+window.closeStudentModal = closeStudentModal;
+window.initializeModalListeners = initializeModalListeners;
 
 
