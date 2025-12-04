@@ -93,8 +93,6 @@ function getDefaultPackages() {
  * @returns {Promise<string>} - Document ID of created block
  */
 async function createConcessionBlock(studentId, packageData, quantity, price, paymentMethod, expiryDate, notes = '', purchaseDate = null, transactionId = null) {
-    console.log('createConcessionBlock called with:', { studentId, packageData, quantity, price, paymentMethod, expiryDate, notes, purchaseDate, transactionId });
-    
     // Ensure purchaseDate is a proper Date object
     let actualPurchaseDate;
     if (purchaseDate) {
@@ -109,17 +107,23 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
         actualExpiryDate = expiryDate instanceof Date ? expiryDate : new Date(expiryDate);
     }
     
-    // Try to get student name, fallback to 'Unknown' if not available
+    // Fetch student data directly from Firestore to get accurate name
     let studentName = 'Unknown Student';
+    let firstName = 'unknown';
+    let lastName = 'unknown';
+    
     try {
-        if (typeof findStudentById === 'function') {
-            const student = findStudentById(studentId);
-            if (student && typeof getStudentFullName === 'function') {
-                studentName = getStudentFullName(student);
-            }
+        const studentDoc = await db.collection('students').doc(studentId).get();
+        if (studentDoc.exists) {
+            const studentData = studentDoc.data();
+            firstName = (studentData.firstName || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            lastName = (studentData.lastName || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            studentName = `${studentData.firstName || 'Unknown'} ${studentData.lastName || 'Student'}`;
+        } else {
+            console.warn('Student document not found:', studentId);
         }
     } catch (e) {
-        console.warn('Could not get student name:', e);
+        console.error('Error fetching student data:', e);
     }
     
     // Determine status based on expiry date
@@ -132,19 +136,7 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
     // Create document ID: firstName-lastName-purchased-YYYY-MM-DD-timestamp (lowercase)
     // Added timestamp to ensure uniqueness when multiple blocks purchased on same day
     const timestamp = Date.now();
-    let docId = `unknown-unknown-purchased-${dateStr}-${timestamp}`;
-    try {
-        if (typeof findStudentById === 'function') {
-            const student = findStudentById(studentId);
-            if (student) {
-                const firstName = (student.firstName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
-                const lastName = (student.lastName || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, '-');
-                docId = `${firstName}-${lastName}-purchased-${dateStr}-${timestamp}`;
-            }
-        }
-    } catch (e) {
-        console.warn('Could not create custom document ID:', e);
-    }
+    const docId = `${firstName}-${lastName}-purchased-${dateStr}-${timestamp}`;
     
     const blockData = {
         studentId: studentId,
@@ -164,8 +156,6 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
         createdBy: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'unknown',
         notes: notes
     };
-    
-    console.log('Block data to save:', blockData);
     
     // Use set() with custom document ID instead of add()
     const docRef = db.collection('concessionBlocks').doc(docId);
