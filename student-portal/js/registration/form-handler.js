@@ -123,10 +123,17 @@ function getFormData() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeRegistrationForm();
     
+    // Calculate min and max months (current month and up to 2 months into the future)
+    const today = new Date();
+    const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const maxMonth = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+    
     // Initialize date picker for first class date
     const datePicker = new DatePicker('first-class-date', 'first-class-calendar', {
         allowedDays: [4], // Thursday only
         disablePastDates: true,
+        minMonth: minMonth,
+        maxMonth: maxMonth,
         onDateSelected: (date, formattedDate) => {
             console.log('First class date selected:', date);
         }
