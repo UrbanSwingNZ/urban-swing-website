@@ -33,7 +33,9 @@ class DatePicker {
             disablePastDates: options.disablePastDates !== undefined ? options.disablePastDates : true,
             dateFormat: options.dateFormat || { year: 'numeric', month: 'short', day: 'numeric' },
             highlightToday: options.highlightToday !== undefined ? options.highlightToday : true,
-            excludeDateRanges: options.excludeDateRanges || [] // Array of {start: Date, end: Date}
+            excludeDateRanges: options.excludeDateRanges || [], // Array of {start: Date, end: Date}
+            minMonth: options.minMonth || null, // Minimum allowed month (Date object)
+            maxMonth: options.maxMonth || null  // Maximum allowed month (Date object)
         };
         
         // State
@@ -218,14 +220,40 @@ class DatePicker {
         const prevBtn = this.calendar.querySelector('[data-action="prev-month"]');
         const nextBtn = this.calendar.querySelector('[data-action="next-month"]');
         
+        // Check if we're at the minimum month boundary
+        if (this.options.minMonth) {
+            const minDate = new Date(this.options.minMonth);
+            const currentDate = new Date(this.currentYear, this.currentMonth, 1);
+            if (currentDate.getFullYear() === minDate.getFullYear() && currentDate.getMonth() === minDate.getMonth()) {
+                prevBtn.disabled = true;
+                prevBtn.style.opacity = '0.3';
+                prevBtn.style.cursor = 'not-allowed';
+            }
+        }
+        
+        // Check if we're at the maximum month boundary
+        if (this.options.maxMonth) {
+            const maxDate = new Date(this.options.maxMonth);
+            const currentDate = new Date(this.currentYear, this.currentMonth, 1);
+            if (currentDate.getFullYear() === maxDate.getFullYear() && currentDate.getMonth() === maxDate.getMonth()) {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = '0.3';
+                nextBtn.style.cursor = 'not-allowed';
+            }
+        }
+        
         prevBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.navigateToPreviousMonth();
+            if (!prevBtn.disabled) {
+                this.navigateToPreviousMonth();
+            }
         });
         
         nextBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.navigateToNextMonth();
+            if (!nextBtn.disabled) {
+                this.navigateToNextMonth();
+            }
         });
         
         // Add click listeners to allowed dates (excluding past and closedown dates via not-allowed class)
