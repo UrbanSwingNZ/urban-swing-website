@@ -70,7 +70,7 @@ function initializePurchaseConcessionsModal() {
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closePurchaseConcessionsModal()">Cancel</button>
+                <button type="button" class="btn-cancel" onclick="closePurchaseConcessionsModal()">Cancel</button>
                 <button type="button" class="btn-primary" id="confirm-purchase-concessions-btn" disabled>
                     <i class="fas fa-check"></i> Complete Purchase
                 </button>
