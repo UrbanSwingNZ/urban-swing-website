@@ -461,6 +461,8 @@ if (typeof escapeHtml !== 'function') {
 
 // Expose functions globally for use in other scripts
 window.loadCasualRates = loadCasualRates;
+window.openRateModal = openRateModal;
 window.editCasualRate = editCasualRate;
 window.closeRateModal = closeRateModal;
+window.saveCasualRate = saveCasualRate;
 window.confirmDeleteRate = confirmDeleteRate;

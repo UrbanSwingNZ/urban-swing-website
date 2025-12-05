@@ -220,5 +220,6 @@ async function deletePackage(packageId) {
 
 // Expose functions globally for use in other scripts
 window.setupModalHandlers = setupModalHandlers;
+window.editPackage = editPackage;
 window.overrideHandleSaveConcession = overrideHandleSaveConcession;
 window.confirmDelete = confirmDelete;
