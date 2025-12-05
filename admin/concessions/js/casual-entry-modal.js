@@ -47,6 +47,7 @@ function initializeCasualEntryModal() {
                         <option value="cash">Cash</option>
                         <option value="eftpos">EFTPOS</option>
                         <option value="bank-transfer">Bank Transfer</option>
+                        <option value="online">Online</option>
                     </select>
                 </div>
 
