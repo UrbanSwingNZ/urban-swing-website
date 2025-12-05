@@ -31,7 +31,7 @@ function initializePurchaseConcessionsModal() {
                     </div>
                     <div id="purchase-date-calendar" class="custom-calendar" style="display: none;"></div>
                 </div>
-                <button class="modal-close" onclick="closePurchaseConcessionsModal()">&times;</button>
+                <button class="modal-close" onclick="closePurchaseConcessionsModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div id="purchase-student-info" class="student-info-card" style="display: none; margin-bottom: 20px;">
