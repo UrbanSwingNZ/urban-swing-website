@@ -29,7 +29,7 @@
 /* Danger variant - for destructive actions (delete, etc.) */
 /* Overrides the default gradient header with red */
 .modal-danger .modal-header {
-    background: var(--error);
+    background: var(--error) !important;
 }
 
 /* ========================================

@@ -256,8 +256,7 @@ window.onTransactionDeleted = function(transactionId) {
 };
 
 // Expose functions needed by other modules
-window.toggleInvoiced = toggleInvoiced;
-window.confirmDelete = confirmDelete;
+// Note: toggleInvoiced and confirmDelete are exposed in actions.js (module)
 window.editTransaction = editTransaction;
 
 /**
