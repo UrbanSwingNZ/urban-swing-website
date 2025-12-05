@@ -79,8 +79,8 @@
     </div>
 
     <!-- Casual Rate Add/Edit Modal -->
-    <div id="rate-modal" class="admin-modal">
-        <div class="modal-content rate-modal">
+    <div id="rate-modal" class="modal" style="display: none;">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2 id="rate-modal-title">
                     <i class="fas fa-plus"></i> Add Casual Rate
@@ -131,16 +131,16 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" onclick="closeRateModal()">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i> Save Rate
-                    </button>
-                </div>
             </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeRateModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn-primary" form="rate-form">
+                    <i class="fas fa-save"></i> Save Rate
+                </button>
+            </div>
         </div>
     </div>
 
