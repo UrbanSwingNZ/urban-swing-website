@@ -657,6 +657,9 @@ window.confirmRestoreStudent = confirmRestoreStudent;
 window.restoreStudent = restoreStudent;
 window.viewTransactionHistory = viewTransactionHistory;
 window.closeStudentModal = closeStudentModal;
+window.closeNotesModal = closeNotesModal;
+window.saveNotes = saveNotes;
+window.saveStudentChanges = saveStudentChanges;
 window.initializeModalListeners = initializeModalListeners;
 
 

@@ -436,29 +436,28 @@
                             <span id="modal-updatedAt">—</span>
                         </div>
                     </div>
-
-                    <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="modal-actions-left">
-                            <button type="button" class="btn-icon" id="edit-student-modal-btn" title="Edit Student">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
-                                <i class="fas fa-history"></i>
-                            </button>
-                            <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                        <div class="modal-actions-right">
-                            <button type="button" class="btn-cancel" onclick="closeStudentModal()">
-                                <i class="fas fa-times"></i> Close
-                            </button>
-                            <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
-                                <i class="fas fa-save"></i> Save Changes
-                            </button>
-                        </div>
-                    </div>
                 </form>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="modal-actions-left">
+                    <button type="button" class="btn-icon" id="edit-student-modal-btn" title="Edit Student">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </div>
+                <div class="modal-actions-right">
+                    <button type="button" class="btn-cancel" onclick="closeStudentModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;" form="student-form">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
             </div>
         </div>
     </div>
