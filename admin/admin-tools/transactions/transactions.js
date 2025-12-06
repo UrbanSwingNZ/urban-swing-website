@@ -297,16 +297,14 @@ async function editTransaction(transaction) {
  * Edit a casual entry transaction
  */
 async function editCasualEntryTransaction(transaction, transactionData) {
-    if (!transactionData.checkinId) {
-        showSnackbar('Unable to edit: Check-in reference missing', 'error');
-        return;
-    }
+    // checkinId is optional - online prepaid entries won't have one
+    const checkinId = transactionData.checkinId || null;
     
     // Open the casual entry edit modal
     if (typeof openCasualEntryModal === 'function') {
         await openCasualEntryModal(
             transaction.id,                    // transactionId
-            transactionData.checkinId,         // checkinId
+            checkinId,                         // checkinId (can be null for online prepaid)
             transaction.studentId,             // studentId
             transaction.studentName,           // studentName
             transaction.date,                  // entryDate
