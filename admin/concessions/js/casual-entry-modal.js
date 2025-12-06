@@ -129,7 +129,11 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
     const paymentSelect = document.getElementById('casual-entry-payment-select');
     if (paymentMethod) {
         // Convert payment method to match the select options
-        const methodValue = paymentMethod.toLowerCase().replace(/\s+/g, '-');
+        let methodValue = paymentMethod.toLowerCase().replace(/\s+/g, '-');
+        // Handle 'stripe' payment method (stored in DB) -> 'online' (in dropdown)
+        if (methodValue === 'stripe') {
+            methodValue = 'online';
+        }
         paymentSelect.value = methodValue;
     }
     
