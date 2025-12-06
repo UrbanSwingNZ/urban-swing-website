@@ -31,7 +31,7 @@ function initializePurchaseConcessionsModal() {
                     </div>
                     <div id="purchase-date-calendar" class="custom-calendar" style="display: none;"></div>
                 </div>
-                <button class="modal-close" onclick="closePurchaseConcessionsModal()">&times;</button>
+                <button class="modal-close" onclick="closePurchaseConcessionsModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div id="purchase-student-info" class="student-info-card" style="display: none; margin-bottom: 20px;">
@@ -59,6 +59,7 @@ function initializePurchaseConcessionsModal() {
                         <option value="cash">Cash</option>
                         <option value="eftpos">EFTPOS</option>
                         <option value="bank-transfer">Bank Transfer</option>
+                        <option value="online">Online</option>
                     </select>
                 </div>
 
@@ -70,7 +71,7 @@ function initializePurchaseConcessionsModal() {
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closePurchaseConcessionsModal()">Cancel</button>
+                <button type="button" class="btn-cancel" onclick="closePurchaseConcessionsModal()">Cancel</button>
                 <button type="button" class="btn-primary" id="confirm-purchase-concessions-btn" disabled>
                     <i class="fas fa-check"></i> Complete Purchase
                 </button>

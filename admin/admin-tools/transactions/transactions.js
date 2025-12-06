@@ -256,8 +256,7 @@ window.onTransactionDeleted = function(transactionId) {
 };
 
 // Expose functions needed by other modules
-window.toggleInvoiced = toggleInvoiced;
-window.confirmDelete = confirmDelete;
+// Note: toggleInvoiced and confirmDelete are exposed in actions.js (module)
 window.editTransaction = editTransaction;
 
 /**
@@ -282,7 +281,7 @@ async function editTransaction(transaction) {
         if (transaction.type === 'concession-gift') {
             showSnackbar('Gifted concessions cannot be edited. Please reverse and create a new gift if needed.', 'info');
             return;
-        } else if (transaction.type === 'casual-entry') {
+        } else if (transaction.type === 'casual' || transaction.type === 'casual-student') {
             await editCasualEntryTransaction(transaction, transactionData);
         } else if (transaction.type === 'concession-purchase') {
             await editConcessionPurchaseTransaction(transaction, transactionData);

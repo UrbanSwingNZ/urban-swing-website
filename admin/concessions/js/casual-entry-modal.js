@@ -27,7 +27,7 @@ function initializeCasualEntryModal() {
         <div class="modal-content modal-small">
             <div class="modal-header">
                 <h3><i class="fas fa-edit"></i> Edit Casual Entry</h3>
-                <button class="modal-close" onclick="closeCasualEntryModal()">&times;</button>
+                <button class="modal-close" onclick="closeCasualEntryModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div id="casual-entry-student-info" class="student-info-card" style="margin-bottom: 20px;">
@@ -47,6 +47,7 @@ function initializeCasualEntryModal() {
                         <option value="cash">Cash</option>
                         <option value="eftpos">EFTPOS</option>
                         <option value="bank-transfer">Bank Transfer</option>
+                        <option value="online">Online</option>
                     </select>
                 </div>
 
@@ -58,7 +59,7 @@ function initializeCasualEntryModal() {
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeCasualEntryModal()">Cancel</button>
+                <button type="button" class="btn-cancel" onclick="closeCasualEntryModal()">Cancel</button>
                 <button type="button" class="btn-primary" id="confirm-casual-entry-btn" disabled>
                     <i class="fas fa-save"></i> Update Entry
                 </button>

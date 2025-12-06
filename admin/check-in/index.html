@@ -6,7 +6,6 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Student Check-In - Urban Swing Admin</title>
     <link rel="stylesheet" href="../admin.css?v=2">
-    <link rel="stylesheet" href="../admin-modals.css?v=2">
     <link rel="stylesheet" href="../student-database/student-database.css?v=2">
     <link rel="stylesheet" href="../student-database/js/transaction-history/transaction-history.css?v=2">
     <link rel="stylesheet" href="../concessions/concessions.css?v=2">
@@ -19,7 +18,7 @@
     <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
     
     <link rel="stylesheet" href="check-in.css?v=8">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
     <!-- Firebase SDKs -->
@@ -81,7 +80,7 @@
                                 <i class="fas fa-undo"></i> Show Reversed
                             </label>
                         </div>
-                        <button class="btn-secondary" id="view-history-btn">
+                        <button class="btn-primary" id="view-history-btn">
                             <i class="fas fa-history"></i> View History
                         </button>
                     </div>
@@ -214,7 +213,7 @@
 
                     <!-- Purchase Concessions -->
                     <div class="purchase-section">
-                        <button type="button" class="btn-secondary btn-purchase" id="purchase-concessions-btn">
+                        <button type="button" class="btn-primary btn-purchase" id="purchase-concessions-btn">
                             <i class="fas fa-shopping-cart"></i> Purchase Concessions
                         </button>
                     </div>
@@ -281,7 +280,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeCheckinModal()">Cancel</button>
+                <button type="button" class="btn-cancel" onclick="closeCheckinModal()">Cancel</button>
                 <button type="button" class="btn-primary" id="confirm-checkin-btn" disabled>
                     <i class="fas fa-check"></i> Complete Check-In
                 </button>
@@ -347,7 +346,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeHistoryModal()">Close</button>
+                <button type="button" class="btn-primary" onclick="closeHistoryModal()">Close</button>
             </div>
         </div>
     </div>
@@ -437,29 +436,28 @@
                             <span id="modal-updatedAt">—</span>
                         </div>
                     </div>
-
-                    <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="modal-actions-left">
-                            <button type="button" class="btn-icon" id="edit-student-modal-btn" title="Edit Student">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
-                                <i class="fas fa-history"></i>
-                            </button>
-                            <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                        <div class="modal-actions-right">
-                            <button type="button" class="btn-secondary" onclick="closeStudentModal()">
-                                <i class="fas fa-times"></i> Close
-                            </button>
-                            <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;">
-                                <i class="fas fa-save"></i> Save Changes
-                            </button>
-                        </div>
-                    </div>
                 </form>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="modal-actions-left">
+                    <button type="button" class="btn-icon" id="edit-student-modal-btn" title="Edit Student">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="purchase-concessions-modal-btn" title="Purchase Concessions">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </div>
+                <div class="modal-actions-right">
+                    <button type="button" class="btn-cancel" onclick="closeStudentModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button type="submit" class="btn-primary" id="save-student-btn" style="display: none;" form="student-form">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -534,6 +532,7 @@
     <!-- Reusable Concessions Module (after students.js for dependencies) -->
     <script src="../concessions/js/concessions-data.js"></script>
     <script src="../concessions/js/concessions-modal.js"></script>
+    <script src="../concessions/js/casual-entry-modal.js"></script>
     <script src="../concessions/js/concessions-admin.js"></script>
     
     <!-- Continue Check-In Modules -->

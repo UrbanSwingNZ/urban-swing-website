@@ -4,7 +4,7 @@
 
 const stripeConfig = {
   // Publishable key - safe to expose in frontend code
-  publishableKey: 'pk_test_51SPfiuRuiBO9iHXpZD7jXFIGOQDrnaMF9M8lyd7q78F3Ah3ixEHfKpii3iU3bBQ0FVGx9KD88jnliuLKwGFzcW7b00vynuctMH'
+  publishableKey: 'pk_live_51SPfib2MQLVEscGZySZULigFX7ivWq7XyjKjZRtecr3z0ROjbTUEODddTb31g03RFbVAJXAmUZhuG24awLvFOvHz00fyeKyjYi'
 };
 
 // Note: The secret key (sk_test_...) should NEVER be in frontend code
