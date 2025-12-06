@@ -60,19 +60,3 @@
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
     color: var(--admin-purple, #9a16f5);
 }
-
-/* Amount Display */
-.casual-entry-amount-display {
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    background: var(--bg-secondary, #f8f9fa);
-    border: 1px solid var(--border-color, #dee2e6);
-    border-radius: 6px;
-}
-
-.casual-entry-amount-display span:first-child {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--admin-success, #28a745);
-}
