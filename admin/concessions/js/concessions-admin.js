@@ -110,7 +110,7 @@ function initializeAddConcessionModal() {
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeAddConcessionModal()">
+                <button type="button" class="btn-cancel" onclick="closeAddConcessionModal()">
                     <i class="fas fa-times"></i> Cancel
                 </button>
                 <button type="button" class="btn-primary" id="save-concession-btn">

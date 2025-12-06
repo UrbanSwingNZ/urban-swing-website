@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="playlist-manager.css">
     <link rel="stylesheet" href="/styles/modals/modal-base.css">
     <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
     <!-- Firebase SDKs -->
@@ -210,7 +210,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancel-create-playlist-btn" class="btn-secondary">Cancel</button>
+                <button id="cancel-create-playlist-btn" class="btn-cancel">Cancel</button>
                 <button id="confirm-create-playlist-btn" class="btn-primary">
                     <i class="fas fa-plus"></i> Create Playlist
                 </button>
@@ -223,7 +223,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fas fa-plus"></i> Add Tracks to Playlist</h3>
-                <span id="close-add-tracks-modal" class="close">&times;</span>
+                <button class="modal-close" id="close-add-tracks-modal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="search-box" style="margin-bottom: 15px;">
@@ -235,7 +237,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancel-add-tracks-btn" class="btn-secondary">Cancel</button>
+                <button id="cancel-add-tracks-btn" class="btn-cancel">Cancel</button>
                 <button id="add-selected-tracks-btn" class="btn-primary" disabled>
                     <i class="fas fa-plus"></i> Add Selected Tracks
                 </button>
@@ -295,7 +297,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fas fa-edit"></i> Rename Playlist</h3>
-                <span class="close" id="close-rename-modal">&times;</span>
+                <button class="modal-close" id="close-rename-modal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -304,7 +308,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancel-rename-btn" class="btn-secondary">Cancel</button>
+                <button id="cancel-rename-btn" class="btn-cancel">Cancel</button>
                 <button id="confirm-rename-btn" class="btn-primary">
                     <i class="fas fa-save"></i> Save Changes
                 </button>

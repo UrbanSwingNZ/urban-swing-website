@@ -107,7 +107,7 @@ class BaseModal {
         return `
             <div class="modal-header">
                 ${this.options.title ? `<h3>${this.options.title}</h3>` : ''}
-                ${this.options.showCloseButton ? '<button class="modal-close" aria-label="Close">&times;</button>' : ''}
+                ${this.options.showCloseButton ? '<button class="modal-close" aria-label="Close"><i class="fas fa-times"></i></button>' : ''}
             </div>
         `;
     }

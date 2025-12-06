@@ -6,13 +6,12 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Concession Types Manager - Urban Swing Admin Tools</title>
     <link rel="stylesheet" href="../admin.css">
-    <link rel="stylesheet" href="../admin-modals.css">
     <link rel="stylesheet" href="../concessions/concessions.css">
     <link rel="stylesheet" href="concession-types.css">
     <link rel="stylesheet" href="casual-rates/casual-rates.css">
     <link rel="stylesheet" href="/styles/modals/modal-base.css">
     <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
     <!-- Firebase SDKs -->
@@ -79,8 +78,8 @@
     </div>
 
     <!-- Casual Rate Add/Edit Modal -->
-    <div id="rate-modal" class="admin-modal">
-        <div class="modal-content rate-modal">
+    <div id="rate-modal" class="modal" style="display: none;">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2 id="rate-modal-title">
                     <i class="fas fa-plus"></i> Add Casual Rate
@@ -131,16 +130,16 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" onclick="closeRateModal()">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i> Save Rate
-                    </button>
-                </div>
             </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeRateModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn-primary" form="rate-form">
+                    <i class="fas fa-save"></i> Save Rate
+                </button>
+            </div>
         </div>
     </div>
 

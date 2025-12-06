@@ -3,6 +3,8 @@
  * Allows admin to gift concession packages to students
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 // Global state
 let allStudents = [];
 let selectedStudent = null;
@@ -335,28 +337,38 @@ async function handleFormSubmit(e) {
  * Show confirmation modal
  */
 function showConfirmModal(studentName, quantity, expiryDate, notes) {
-    const modal = document.getElementById('confirm-modal');
-    document.getElementById('confirm-student-name').textContent = studentName;
-    document.getElementById('confirm-quantity').textContent = `${quantity} class${quantity !== 1 ? 'es' : ''}`;
-    document.getElementById('confirm-expiry').textContent = formatDate(expiryDate);
-    document.getElementById('confirm-notes').textContent = notes;
-    
-    modal.style.display = 'flex';
-    
-    // Set up confirm button
-    const confirmBtn = document.getElementById('confirm-gift-btn');
-    confirmBtn.onclick = async () => {
-        closeConfirmModal();
-        await processGift();
-    };
-}
+    const details = `
+        <div class="confirm-details">
+            <div class="confirm-row">
+                <span>Student:</span>
+                <strong>${studentName}</strong>
+            </div>
+            <div class="confirm-row">
+                <span>Classes:</span>
+                <strong>${quantity} class${quantity !== 1 ? 'es' : ''}</strong>
+            </div>
+            <div class="confirm-row">
+                <span>Expiry Date:</span>
+                <strong>${formatDate(expiryDate)}</strong>
+            </div>
+            <div class="confirm-row">
+                <span>Reason:</span>
+                <strong>${notes}</strong>
+            </div>
+        </div>
+    `;
 
-/**
- * Close confirmation modal
- */
-function closeConfirmModal() {
-    const modal = document.getElementById('confirm-modal');
-    modal.style.display = 'none';
+    const modal = new ConfirmationModal({
+        title: 'Confirm Gift',
+        message: 'Are you sure you want to gift these concessions?' + details,
+        confirmText: 'Yes, Gift Concessions',
+        cancelText: 'Cancel',
+        onConfirm: async () => {
+            await processGift();
+        }
+    });
+    
+    modal.show();
 }
 
 /**
@@ -667,6 +679,6 @@ document.addEventListener('click', (e) => {
 // Expose functions globally for onclick handlers
 window.clearSelectedStudent = clearSelectedStudent;
 window.selectStudent = selectStudent;
-window.closeConfirmModal = closeConfirmModal;
+window.resetForm = resetForm;
 window.closeSuccessModal = closeSuccessModal;
 window.closeSuccessModalAndReset = closeSuccessModalAndReset;

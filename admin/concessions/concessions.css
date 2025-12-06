@@ -1,9 +1,10 @@
 /**
  * concessions.css - Purchase Concessions Modal Styles
- * Reusable modal styling for purchasing concessions
+ * Unique styles for purchasing concessions modal
+ * Base modal styles inherited from /styles/modals/modal-base.css
  */
 
-/* Adjust modal header layout */
+/* Header Layout - date picker in header */
 #purchase-concessions-modal .modal-header {
     display: flex;
     align-items: center;

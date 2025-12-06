@@ -3,6 +3,8 @@
  * Handles transaction actions (invoice toggle, delete)
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 /**
  * Toggle invoiced status
  */
@@ -44,29 +46,27 @@ async function toggleInvoiced(transaction) {
  * Confirm transaction deletion
  */
 function confirmDelete(transaction) {
-    const modal = document.getElementById('delete-modal');
-    const titleEl = document.getElementById('delete-modal-title');
-    const messageEl = document.getElementById('delete-modal-message');
-    const infoEl = document.getElementById('delete-modal-info');
-    const btnTextEl = document.getElementById('delete-modal-btn-text');
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-    
-    // Customize modal for transaction deletion
-    titleEl.textContent = 'Delete Transaction';
-    messageEl.textContent = 'Are you sure you want to delete this transaction?';
-    infoEl.innerHTML = `<strong>${transaction.studentName}</strong> - $${transaction.amount.toFixed(2)} - ${formatDate(transaction.date)}`;
-    btnTextEl.textContent = 'Delete Transaction';
-    
-    // Remove any existing event listeners by replacing the button
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    // Add click handler for confirm button
-    newConfirmBtn.addEventListener('click', () => {
-        deleteTransaction(transaction);
+    const modal = new ConfirmationModal({
+        title: 'Delete Transaction',
+        icon: 'fas fa-trash',
+        message: `
+            <p>Are you sure you want to delete this transaction?</p>
+            <div class="student-info-delete">
+                <strong>${transaction.studentName}</strong> - $${transaction.amount.toFixed(2)} - ${formatDate(transaction.date)}
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">This action cannot be undone.</p>
+        `,
+        variant: 'danger',
+        confirmText: 'Delete Transaction',
+        confirmClass: 'btn-delete',
+        cancelText: 'Cancel',
+        cancelClass: 'btn-cancel',
+        onConfirm: async () => {
+            await deleteTransaction(transaction);
+        }
     });
     
-    modal.style.display = 'flex';
+    modal.show();
 }
 
 /**
@@ -82,8 +82,6 @@ async function deleteTransaction(transaction) {
                 reversedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         
-        closeDeleteModal();
-        
         // Trigger page refresh
         if (window.onTransactionDeleted) {
             window.onTransactionDeleted(transaction.id);
@@ -94,13 +92,9 @@ async function deleteTransaction(transaction) {
     } catch (error) {
         console.error('Error reversing transaction:', error);
         showSnackbar('Error reversing transaction: ' + error.message, 'error');
-        closeDeleteModal();
     }
 }
 
-/**
- * Close delete modal
- */
-function closeDeleteModal() {
-    document.getElementById('delete-modal').style.display = 'none';
-}
+// Expose functions globally
+window.toggleInvoiced = toggleInvoiced;
+window.confirmDelete = confirmDelete;

@@ -36,6 +36,11 @@ async function initializeApp() {
         initializePurchaseConcessionsModal();
         initializeAddConcessionModal();
         
+        // Initialize reusable casual entry modal
+        if (typeof initializeCasualEntryModal === 'function') {
+            initializeCasualEntryModal();
+        }
+        
         // Initialize modal event listeners
         initializeModalListeners();
         initializeCheckinModalListeners();
