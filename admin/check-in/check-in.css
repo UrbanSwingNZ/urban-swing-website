@@ -214,8 +214,8 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Summary Row */
-.summary-row {
+/* Summary Row in Transactions Section */
+.transactions-section .summary-row {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
