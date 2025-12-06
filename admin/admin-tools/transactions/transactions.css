@@ -282,8 +282,8 @@ select.filter-input:focus {
     color: var(--admin-purple);
 }
 
-/* Summary Row */
-.summary-row {
+/* Summary Row in Main Content */
+.main-content .summary-row {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;

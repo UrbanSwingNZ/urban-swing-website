@@ -249,13 +249,6 @@ export async function updatePlaylistTrackCount(playlistId, delta) {
 // ========================================
 
 export async function selectPlaylist(playlist) {
-  // Check for unsaved changes
-  if (State.getHasUnsavedChanges()) {
-    State.setPendingPlaylistSelection(playlist);
-    document.getElementById('unsaved-changes-modal').style.display = 'block';
-    return;
-  }
-  
   await performPlaylistSelection(playlist);
 }
 

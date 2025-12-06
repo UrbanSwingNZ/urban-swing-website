@@ -51,10 +51,10 @@ function initializeCasualEntryModal() {
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label><i class="fas fa-dollar-sign"></i> Amount</label>
-                    <div class="casual-entry-amount-display">
-                        <span id="casual-entry-amount">$15.00</span>
+                <div class="purchase-summary">
+                    <div class="summary-row">
+                        <span>Total Amount:</span>
+                        <strong id="casual-entry-amount">$15.00</strong>
                     </div>
                 </div>
             </div>
@@ -103,18 +103,36 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
     document.getElementById('casual-entry-student-name').textContent = studentName;
     
     // Try to get student email if available
+    const emailElement = document.getElementById('casual-entry-student-email');
     try {
+        let student = null;
+        
+        // First try to find student in cached data
         if (typeof findStudentById === 'function') {
-            const student = findStudentById(studentId);
-            if (student && student.email) {
-                document.getElementById('casual-entry-student-email').textContent = student.email;
-                document.getElementById('casual-entry-student-email').style.display = 'block';
-            } else {
-                document.getElementById('casual-entry-student-email').style.display = 'none';
+            student = findStudentById(studentId);
+        }
+        
+        // If not found or no email, try fetching from Firestore
+        if (!student || !student.email) {
+            const studentDoc = await firebase.firestore()
+                .collection('students')
+                .doc(studentId)
+                .get();
+            
+            if (studentDoc.exists) {
+                student = studentDoc.data();
             }
         }
+        
+        if (student && student.email) {
+            emailElement.textContent = student.email;
+            emailElement.style.display = 'block';
+        } else {
+            emailElement.style.display = 'none';
+        }
     } catch (error) {
-        document.getElementById('casual-entry-student-email').style.display = 'none';
+        console.error('Error fetching student email:', error);
+        emailElement.style.display = 'none';
     }
     
     // Set date
@@ -129,7 +147,11 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
     const paymentSelect = document.getElementById('casual-entry-payment-select');
     if (paymentMethod) {
         // Convert payment method to match the select options
-        const methodValue = paymentMethod.toLowerCase().replace(/\s+/g, '-');
+        let methodValue = paymentMethod.toLowerCase().replace(/\s+/g, '-');
+        // Handle 'stripe' payment method (stored in DB) -> 'online' (in dropdown)
+        if (methodValue === 'stripe') {
+            methodValue = 'online';
+        }
         paymentSelect.value = methodValue;
     }
     

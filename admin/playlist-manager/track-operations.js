@@ -656,12 +656,11 @@ function handleDragEnd(evt) {
   filteredTracks.splice(newIndex, 0, movedTrack);
   State.setFilteredTracks(filteredTracks);
   
-  // Mark as having unsaved changes
-  State.setHasUnsavedChanges(true);
-  updateSaveOrderButton();
-  
   // Update track numbers
   updateTrackNumbers();
+  
+  // Auto-save the new order to Spotify
+  handleSaveOrder();
 }
 
 function updateTrackNumbers() {
@@ -729,8 +728,6 @@ export async function handleSaveOrder() {
     
     // Update the current tracks array to reflect the new order
     State.setCurrentTracks([...filteredTracks]);
-    
-    showSnackbar('Track order saved successfully!', 'success');
     
     // Clear unsaved changes flag
     State.setHasUnsavedChanges(false);
@@ -1156,46 +1153,6 @@ export async function handleAddSelectedTracks() {
   } finally {
     button.innerHTML = originalText;
     button.disabled = false;
-  }
-}
-
-// ========================================
-// UNSAVED CHANGES HANDLING
-// ========================================
-
-export async function handleSaveAndContinue() {
-  // Save current changes
-  await handleSaveOrder();
-  
-  // Close modal
-  document.getElementById('unsaved-changes-modal').style.display = 'none';
-  
-  // Continue to selected playlist
-  const pendingPlaylistSelection = State.getPendingPlaylistSelection();
-  if (pendingPlaylistSelection) {
-    // Import performPlaylistSelection from playlist-operations
-    const { performPlaylistSelection } = await import('./playlist-operations.js');
-    await performPlaylistSelection(pendingPlaylistSelection);
-    State.setPendingPlaylistSelection(null);
-  }
-}
-
-export function handleDiscardChanges() {
-  // Reset changes flag
-  State.setHasUnsavedChanges(false);
-  updateSaveOrderButton();
-  
-  // Close modal
-  document.getElementById('unsaved-changes-modal').style.display = 'none';
-  
-  // Continue to selected playlist
-  const pendingPlaylistSelection = State.getPendingPlaylistSelection();
-  if (pendingPlaylistSelection) {
-    // Import performPlaylistSelection from playlist-operations
-    import('./playlist-operations.js').then(({ performPlaylistSelection }) => {
-      performPlaylistSelection(pendingPlaylistSelection);
-      State.setPendingPlaylistSelection(null);
-    });
   }
 }
 
