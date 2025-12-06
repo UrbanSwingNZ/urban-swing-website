@@ -335,8 +335,26 @@ async function toggleCheckinTransactionInvoiced(transaction) {
  */
 async function editCheckinTransaction(transaction) {
     if (transaction.type === 'concession-purchase') {
-        // Open purchase concessions modal for editing
-        openPurchaseConcessionsModalForEdit(transaction);
+        // Fetch the full transaction data from Firestore to get packageId
+        try {
+            const transactionDoc = await firebase.firestore()
+                .collection('transactions')
+                .doc(transaction.id)
+                .get();
+            
+            if (!transactionDoc.exists) {
+                showSnackbar('Transaction not found', 'error');
+                return;
+            }
+            
+            const transactionData = transactionDoc.data();
+            
+            // Open purchase concessions modal for editing
+            await editConcessionPurchaseTransaction(transaction, transactionData);
+        } catch (error) {
+            console.error('Error fetching transaction data:', error);
+            showSnackbar('Error opening edit modal', 'error');
+        }
     } else if (transaction.type === 'casual' || transaction.type === 'casual-student') {
         // Get checkinId - we need to fetch it from the checkins collection
         let checkinId = null;
@@ -430,6 +448,152 @@ async function deleteCheckinTransaction(transaction) {
     } catch (error) {
         console.error('Error reversing transaction:', error);
         showSnackbar('Error reversing transaction: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Edit a concession purchase transaction
+ */
+async function editConcessionPurchaseTransaction(transaction, transactionData) {
+    // Open the purchase modal in edit mode
+    if (typeof openPurchaseConcessionsModal === 'function') {
+        // Open modal without student lookup
+        await openPurchaseConcessionsModal(null, null, null, null);
+    }
+    
+    // Wait for modal to render
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Manually populate student info
+    document.getElementById('purchase-student-name').textContent = transaction.studentName;
+    const emailElement = document.getElementById('purchase-student-email');
+    if (emailElement) {
+        emailElement.style.display = 'none';
+    }
+    document.getElementById('purchase-student-info').style.display = 'block';
+    
+    // Pre-populate the form fields
+    const datePicker = document.getElementById('purchase-date-picker');
+    const packageSelect = document.getElementById('purchase-package-select');
+    const paymentSelect = document.getElementById('purchase-payment-select');
+    
+    if (datePicker && transaction.date) {
+        // Format date as YYYY-MM-DD for the date input
+        const year = transaction.date.getFullYear();
+        const month = String(transaction.date.getMonth() + 1).padStart(2, '0');
+        const day = String(transaction.date.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+        datePicker.value = dateStr;
+        datePicker.max = new Date().toISOString().split('T')[0];
+    }
+    
+    if (packageSelect && transactionData.packageId) {
+        packageSelect.value = transactionData.packageId;
+        // Trigger change event to update total
+        packageSelect.dispatchEvent(new Event('change'));
+    }
+    
+    if (paymentSelect && transaction.paymentMethod) {
+        let paymentValue = transaction.paymentMethod.toLowerCase();
+        // Handle 'stripe' payment method -> 'online'
+        if (paymentValue === 'stripe') {
+            paymentValue = 'online';
+        }
+        paymentSelect.value = paymentValue;
+    }
+    
+    // Change the modal title to "Edit Transaction"
+    const modalTitle = document.querySelector('#purchase-concessions-modal .modal-header h3');
+    if (modalTitle) {
+        modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Transaction';
+    }
+    
+    // Change the button text to "Update Transaction"
+    const confirmBtn = document.getElementById('confirm-purchase-concessions-btn');
+    if (confirmBtn) {
+        confirmBtn.innerHTML = '<i class="fas fa-save"></i> Update Transaction';
+    }
+    
+    // Store transaction details for update
+    window.editingTransactionId = transaction.id;
+    window.editingStudentId = transaction.studentId;
+    
+    // Override the confirm button to update instead of create
+    if (confirmBtn) {
+        // Remove existing listeners and add new one
+        const newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        
+        newBtn.addEventListener('click', async () => {
+            await updateConcessionPurchase();
+        });
+    }
+}
+
+/**
+ * Update an existing concession purchase transaction
+ */
+async function updateConcessionPurchase() {
+    const transactionId = window.editingTransactionId;
+    const studentId = window.editingStudentId;
+    const packageId = document.getElementById('purchase-package-select').value;
+    const paymentMethod = document.getElementById('purchase-payment-select').value;
+    const purchaseDate = document.getElementById('purchase-date-picker').value;
+    
+    if (!packageId || !paymentMethod || !purchaseDate) {
+        showSnackbar('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    try {
+        // Convert payment method for storage (online -> stripe)
+        let dbPaymentMethod = paymentMethod;
+        if (paymentMethod === 'online') {
+            dbPaymentMethod = 'stripe';
+        }
+        
+        // Get package details to update amount
+        const packageDoc = await firebase.firestore()
+            .collection('concessionPackages')
+            .doc(packageId)
+            .get();
+        
+        if (!packageDoc.exists) {
+            showSnackbar('Package not found', 'error');
+            return;
+        }
+        
+        const packageData = packageDoc.data();
+        
+        // Update transaction
+        await firebase.firestore()
+            .collection('transactions')
+            .doc(transactionId)
+            .update({
+                packageId: packageId,
+                paymentMethod: dbPaymentMethod,
+                transactionDate: firebase.firestore.Timestamp.fromDate(new Date(purchaseDate)),
+                amountPaid: packageData.price,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        // Close modal
+        if (typeof closePurchaseConcessionsModal === 'function') {
+            closePurchaseConcessionsModal();
+        }
+        
+        // Clean up
+        delete window.editingTransactionId;
+        delete window.editingStudentId;
+        
+        // Reload transactions
+        await loadCheckinTransactions();
+        
+        showSnackbar('Transaction updated successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        showSnackbar('Error updating transaction: ' + error.message, 'error');
     }
 }
 
