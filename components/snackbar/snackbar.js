@@ -20,7 +20,7 @@ let isShowingSnackbar = false;
  * @param {string} type - Type of notification: 'success', 'error', 'warning', 'info'
  * @param {number} duration - Duration in milliseconds (default: 3000)
  */
-export function showSnackbar(message, type = 'info', duration = 3000) {
+function showSnackbar(message, type = 'info', duration = 3000) {
     // Add to queue
     snackbarQueue.push({ message, type, duration });
     
