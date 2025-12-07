@@ -209,21 +209,23 @@ export async function saveTemplate() {
 export async function deleteTemplate() {
     if (!state.currentTemplate) return;
     
-    // Build template info HTML
-    const templateInfo = `
-        <strong>${state.currentTemplate.name}</strong>
-        <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">
-            ID: ${state.currentTemplate.id}<br>
-            Category: ${state.currentTemplate.category || 'N/A'}
+    // Build complete message with all content
+    const message = `
+        <p>Are you sure you want to delete this template?</p>
+        <div style="border-left: 4px solid var(--error); padding-left: 12px; margin: 16px 0;">
+            <strong>${state.currentTemplate.name}</strong>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+                ID: ${state.currentTemplate.id}<br>
+                Category: ${state.currentTemplate.category || 'N/A'}
+            </div>
         </div>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">This action cannot be undone.</p>
     `;
     
     // Use ConfirmationModal
     const modal = new ConfirmationModal({
         title: 'Delete Template',
-        message: 'Are you sure you want to delete this template?',
-        details: templateInfo,
-        warning: 'This action cannot be undone.',
+        message: message,
         icon: 'fas fa-trash',
         confirmText: 'Delete Template',
         confirmClass: 'btn-delete',
@@ -272,8 +274,32 @@ export async function confirmDeleteTemplate() {
 export async function updateBaseTemplate() {
     if (!state.currentTemplate || state.currentTemplate.id !== '_base-template') return;
     
-    // Show warning modal
-    document.getElementById('update-base-modal').classList.add('active');
+    // Build complete message with all content
+    const message = `
+        <p><strong>Warning:</strong> You are about to update the base email template.</p>
+        <div style="border-left: 4px solid var(--warning); padding-left: 12px; margin: 16px 0;">
+            <p style="margin: 0; font-size: 0.95rem;">
+                This template is used as the starting point for all new email templates. 
+                Changes you make here will affect any emails created in the future.
+            </p>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin: 8px 0;">Existing templates will not be affected by this change.</p>
+        <p style="margin-top: 15px; font-weight: 600;">Are you sure you want to continue?</p>
+    `;
+    
+    // Use ConfirmationModal
+    const modal = new ConfirmationModal({
+        title: 'Update Base Template',
+        message: message,
+        icon: 'fas fa-exclamation-triangle',
+        confirmText: 'Update Base Template',
+        confirmClass: 'btn-delete',
+        cancelClass: 'btn-cancel',
+        variant: 'danger',
+        onConfirm: confirmUpdateBaseTemplate
+    });
+    
+    modal.show();
 }
 
 /**
@@ -338,9 +364,6 @@ export async function confirmUpdateBaseTemplate() {
         
         setHasUnsavedChanges(false);
         updateSaveButton();
-        
-        // Close modal
-        document.getElementById('update-base-modal').classList.remove('active');
         
         showSuccess('Base template updated successfully!');
         showLoading(false);

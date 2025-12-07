@@ -4,6 +4,7 @@
  */
 
 import { state } from '../core/state.js';
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 
 let pendingNavigationCallback = null;
 
@@ -17,10 +18,22 @@ export function checkUnsavedChanges(callback) {
         // Store the callback to execute if user confirms
         pendingNavigationCallback = callback;
         
-        // Show the modal
-        const modal = document.getElementById('unsaved-changes-modal');
-        modal.classList.add('active');
-        modal.style.display = 'flex';
+        // Show ConfirmationModal
+        const modal = new ConfirmationModal({
+            title: 'Unsaved Changes',
+            message: 'You have unsaved changes to this template.',
+            warning: 'If you continue, your changes will be lost.',
+            icon: 'fas fa-exclamation-triangle',
+            confirmText: 'Discard Changes',
+            confirmClass: 'btn-delete',
+            cancelText: 'Cancel',
+            cancelClass: 'btn-cancel',
+            variant: 'danger',
+            onConfirm: confirmDiscardChanges,
+            onCancel: cancelNavigation
+        });
+        
+        modal.show();
         
         return false; // Block navigation for now
     }
@@ -34,11 +47,6 @@ export function checkUnsavedChanges(callback) {
  * User confirmed they want to discard changes
  */
 export function confirmDiscardChanges() {
-    // Close modal
-    const modal = document.getElementById('unsaved-changes-modal');
-    modal.classList.remove('active');
-    modal.style.display = 'none';
-    
     // Execute the pending navigation
     if (pendingNavigationCallback) {
         pendingNavigationCallback();
@@ -50,11 +58,6 @@ export function confirmDiscardChanges() {
  * User cancelled navigation
  */
 export function cancelNavigation() {
-    // Close modal
-    const modal = document.getElementById('unsaved-changes-modal');
-    modal.classList.remove('active');
-    modal.style.display = 'none';
-    
     // Clear pending callback
     pendingNavigationCallback = null;
 }

@@ -115,12 +115,6 @@ export function setupEventListeners() {
     document.getElementById('create-from-base-btn').addEventListener('click', showCreateTemplateModal);
     document.getElementById('update-base-btn').addEventListener('click', updateBaseTemplate);
     
-    // Update base template modal buttons
-    document.getElementById('confirm-update-base-btn').addEventListener('click', confirmUpdateBaseTemplate);
-    document.getElementById('cancel-update-base-btn').addEventListener('click', () => {
-        document.getElementById('update-base-modal').classList.remove('active');
-    });
-    
     // Close modals on outside click
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
@@ -166,10 +160,6 @@ export function setupEventListeners() {
     document.getElementById('add-variable-btn').addEventListener('click', showAddVariableModal);
     document.getElementById('cancel-variable-btn').addEventListener('click', closeVariableModal);
     document.getElementById('variable-form').addEventListener('submit', saveVariable);
-    
-    // Unsaved changes modal
-    document.getElementById('discard-changes-btn').addEventListener('click', confirmDiscardChanges);
-    document.getElementById('cancel-navigation-btn').addEventListener('click', cancelNavigation);
     
     // Setup beforeunload handler for browser navigation (keep this for browser back/close)
     setupBeforeUnloadHandler();
