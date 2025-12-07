@@ -108,11 +108,8 @@ export function setupEventListeners() {
         });
     });
     
-    // Delete modal buttons
-    document.getElementById('confirm-delete-btn').addEventListener('click', confirmDeleteTemplate);
-    document.getElementById('cancel-delete-btn').addEventListener('click', () => {
-        document.getElementById('delete-template-modal').classList.remove('active');
-    });
+    // Delete button (ConfirmationModal handles its own cancel button)
+    document.getElementById('confirm-delete-btn')?.addEventListener('click', confirmDeleteTemplate);
     
     // Base template buttons
     document.getElementById('create-from-base-btn').addEventListener('click', showCreateTemplateModal);
