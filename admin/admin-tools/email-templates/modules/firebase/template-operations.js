@@ -9,6 +9,7 @@ import { updateSaveButton } from '../ui/save-button.js';
 import { renderTemplateList } from '../ui/template-list.js';
 import { loadTemplateIntoEditor } from '../ui/template-editor.js';
 import { checkUnsavedChanges } from '../ui/navigation.js';
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 
 // db is globally available from firebase-config.js
 /* global db, firebase */
@@ -208,12 +209,8 @@ export async function saveTemplate() {
 export async function deleteTemplate() {
     if (!state.currentTemplate) return;
     
-    // Show delete confirmation modal
-    const modal = document.getElementById('delete-template-modal');
-    const infoDiv = document.getElementById('delete-template-info');
-    
-    // Populate modal with template info
-    infoDiv.innerHTML = `
+    // Build template info HTML
+    const templateInfo = `
         <strong>${state.currentTemplate.name}</strong>
         <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">
             ID: ${state.currentTemplate.id}<br>
@@ -221,7 +218,21 @@ export async function deleteTemplate() {
         </div>
     `;
     
-    modal.classList.add('active');
+    // Use ConfirmationModal
+    const modal = new ConfirmationModal({
+        title: 'Delete Template',
+        message: 'Are you sure you want to delete this template?',
+        details: templateInfo,
+        warning: 'This action cannot be undone.',
+        icon: 'fas fa-trash',
+        confirmText: 'Delete Template',
+        confirmClass: 'btn-delete',
+        cancelClass: 'btn-cancel',
+        variant: 'danger',
+        onConfirm: confirmDeleteTemplate
+    });
+    
+    modal.show();
 }
 
 /**
@@ -243,9 +254,6 @@ export async function confirmDeleteTemplate() {
         // Update UI
         document.getElementById('editor-view').style.display = 'none';
         document.getElementById('no-selection-state').style.display = 'flex';
-        
-        // Close modal
-        document.getElementById('delete-template-modal').classList.remove('active');
         
         // Reload templates list
         await loadTemplates();
