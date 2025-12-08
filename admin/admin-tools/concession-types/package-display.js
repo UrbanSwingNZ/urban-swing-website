@@ -78,12 +78,18 @@ function createPackageCard(id, pkg) {
   const price = pkg.price || 0;
   const pricePerClass = numberOfClasses > 0 ? (price / numberOfClasses).toFixed(2) : '0.00';
   
+  // Check if this is a promo package
+  const isPromo = pkg.isPromo === true;
+  
   // Format package name - if it contains "PROMO", put it on separate line
   let formattedName = pkg.name;
   if (formattedName.match(/promo/i)) {
     // Replace "PROMO - " or "promo - " with "PROMO<br>"
     formattedName = formattedName.replace(/promo\s*-\s*/i, 'PROMO<br>');
   }
+  
+  // Create promo badge if isPromo is true
+  const promoBadge = isPromo ? '<span class="promo-badge"><i class="fas fa-star"></i> PROMO <i class="fas fa-star"></i></span>' : '';
   
   card.innerHTML = `
     <div class="drag-handle" title="Drag to reorder">
@@ -98,7 +104,7 @@ function createPackageCard(id, pkg) {
       <span class="status-label ${isActive ? 'active' : 'inactive'}">${isActive ? 'Active' : 'Inactive'}</span>
     </div>
     
-    <h3 class="package-name">${formattedName}</h3>
+    <h3 class="package-name">${formattedName}${promoBadge}</h3>
     
     <div class="package-details">
       <div class="package-detail">
