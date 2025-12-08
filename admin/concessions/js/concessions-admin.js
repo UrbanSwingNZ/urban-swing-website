@@ -107,6 +107,14 @@ function initializeAddConcessionModal() {
                         </label>
                         <small class="form-hint">Promotional packages can be highlighted or shown separately</small>
                     </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="concession-show-registration" />
+                            <span>Offer on registration form</span>
+                        </label>
+                        <small class="form-hint">Display this package as an option when new students register</small>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -227,6 +235,7 @@ async function handleSaveConcession() {
         const price = parseFloat(document.getElementById('concession-price').value);
         const expiryMonths = parseInt(document.getElementById('concession-expiry').value);
         const isPromo = document.getElementById('concession-promo').checked;
+        const showOnRegistration = document.getElementById('concession-show-registration').checked;
         
         // Validate
         if (!name || !numberOfClasses || !price || !expiryMonths) {
@@ -284,6 +293,7 @@ async function handleSaveConcession() {
             displayOrder: maxDisplayOrder + 1,
             isActive: true,
             isPromo: isPromo,
+            showOnRegistration: showOnRegistration,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };

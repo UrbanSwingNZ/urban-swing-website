@@ -49,6 +49,36 @@ async function sendPasswordReset(email, options = {}) {
             throw new Error('Firebase Auth not initialized');
         }
 
+        // Check if email exists in students collection (student portal specific check)
+        if (firebase.firestore) {
+            const studentsQuery = await firebase.firestore().collection('students')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get();
+            
+            if (studentsQuery.empty) {
+                const message = 'No account found with this email address.';
+                if (onError) {
+                    onError(message);
+                }
+                return { success: false, message };
+            }
+            
+            // Check if student has a user account
+            const usersQuery = await firebase.firestore().collection('users')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get();
+            
+            if (usersQuery.empty) {
+                const message = 'This email is not registered for the student portal. Please set up your portal access first.';
+                if (onError) {
+                    onError(message);
+                }
+                return { success: false, message };
+            }
+        }
+
         // Send password reset email
         await firebase.auth().sendPasswordResetEmail(normalizedEmail);
         
@@ -166,6 +196,16 @@ function createPasswordResetModal(options = {}) {
                 class: 'btn-primary',
                 id: 'password-reset-submit',
                 onClick: async () => {
+                    // Get elements directly in case they weren't set yet
+                    const emailInput = document.getElementById('password-reset-email');
+                    const submitBtn = document.getElementById('password-reset-submit');
+                    const messageEl = document.getElementById('password-reset-message');
+                    
+                    if (!emailInput || !submitBtn || !messageEl) {
+                        console.error('Password reset form elements not found');
+                        return;
+                    }
+                    
                     const email = emailInput.value.trim();
                     
                     // Disable submit button

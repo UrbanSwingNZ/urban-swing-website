@@ -10,6 +10,26 @@ let selectedPackageId = null;
 let availablePackages = {};
 
 /**
+ * Toggle first class date field visibility based on package type
+ * @param {string} packageType - 'casual' or 'concession'
+ */
+function toggleFirstClassDateField(packageType) {
+    const dateFieldGroup = document.querySelector('#first-class-date').closest('.form-group');
+    const dateInput = document.getElementById('first-class-date');
+    
+    if (packageType === 'concession') {
+        // Hide for concession packages
+        dateFieldGroup.style.display = 'none';
+        dateInput.removeAttribute('required');
+        dateInput.value = ''; // Clear any selected date
+    } else {
+        // Show for casual rates
+        dateFieldGroup.style.display = 'block';
+        dateInput.setAttribute('required', 'required');
+    }
+}
+
+/**
  * Initialize Stripe and card element
  */
 function initializeStripe() {
@@ -68,12 +88,33 @@ async function loadCasualRates() {
     
     try {
         // Query casualRates collection for active, non-promo rates
-        const snapshot = await db.collection('casualRates')
+        const casualRatesSnapshot = await db.collection('casualRates')
             .where('isActive', '==', true)
             .where('isPromo', '==', false)
             .get();
         
-        if (snapshot.empty) {
+        // Try to fetch concession packages marked for registration
+        // Fetch all packages and filter in JavaScript to avoid needing a compound index
+        let registrationPackagesSnapshot = null;
+        try {
+            const allPackagesSnapshot = await db.collection('concessionPackages')
+                .where('showOnRegistration', '==', true)
+                .get();
+            
+            // Filter out inactive packages in JavaScript
+            registrationPackagesSnapshot = {
+                empty: allPackagesSnapshot.empty,
+                docs: allPackagesSnapshot.docs.filter(doc => {
+                    const data = doc.data();
+                    return data.isActive !== false; // Include if isActive is true or undefined
+                })
+            };
+        } catch (error) {
+            // Field likely doesn't exist yet - this is fine, just continue without registration packages
+            console.log('No registration packages found (field may not exist yet):', error.message);
+        }
+        
+        if (casualRatesSnapshot.empty) {
             rateOptionsContainer.innerHTML = `
                 <div class="error-message" style="display: block;">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -85,19 +126,45 @@ async function loadCasualRates() {
         
         // Build packages object and sort by price
         const packages = [];
-        snapshot.forEach(doc => {
+        
+        // Add casual rates
+        casualRatesSnapshot.forEach(doc => {
             const data = doc.data();
             availablePackages[doc.id] = {
                 id: doc.id,
                 name: data.name,
                 price: data.price,
-                description: data.description || null
+                description: data.description || null,
+                type: 'casual'
             };
             packages.push(availablePackages[doc.id]);
         });
         
-        // Sort by price (descending) so regular casual entry appears first
-        packages.sort((a, b) => b.price - a.price);
+        // Add registration concession packages (if any were found)
+        if (registrationPackagesSnapshot && registrationPackagesSnapshot.docs && registrationPackagesSnapshot.docs.length > 0) {
+            registrationPackagesSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                availablePackages[doc.id] = {
+                    id: doc.id,
+                    name: data.name,
+                    price: data.price,
+                    description: data.description || null,
+                    classCount: data.numberOfClasses || data.classCount || 0,
+                    type: 'concession'
+                };
+                packages.push(availablePackages[doc.id]);
+            });
+        }
+        
+        // Sort: casual entry (non-student) first, then student, then packages
+        packages.sort((a, b) => {
+            if (a.type === 'casual' && b.type === 'casual') {
+                return b.price - a.price; // Descending price for casual rates
+            }
+            if (a.type === 'casual') return -1;
+            if (b.type === 'casual') return 1;
+            return 0;
+        });
         
         // Render rate options
         rateOptionsContainer.innerHTML = '';
@@ -119,7 +186,7 @@ async function loadCasualRates() {
             `;
             
             // Add student ID notice for student rates
-            if (pkg.name.toLowerCase().includes('student')) {
+            if (pkg.type === 'casual' && pkg.name.toLowerCase().includes('student')) {
                 const notice = document.createElement('div');
                 notice.className = 'radio-notice';
                 notice.style.display = 'none';
@@ -130,13 +197,29 @@ async function loadCasualRates() {
                 rateOption.appendChild(notice);
             }
             
+            // Add package info notice for concession packages
+            if (pkg.type === 'concession') {
+                const notice = document.createElement('div');
+                notice.className = 'radio-notice package-notice';
+                notice.style.display = 'none';
+                notice.innerHTML = `
+                    <i class="fas fa-ticket-alt"></i>
+                    <p><strong>Expiry:</strong> These concessions are valid for 3 months from the date of purchase.</p>
+                `;
+                rateOption.appendChild(notice);
+            }
+            
             // Add change event listener
             const radioInput = rateOption.querySelector('input[type="radio"]');
             radioInput.addEventListener('change', function() {
                 selectedPackageId = this.value;
-                console.log('Selected package:', selectedPackageId, availablePackages[selectedPackageId]);
+                const selectedPkg = availablePackages[selectedPackageId];
+                console.log('Selected package:', selectedPackageId, selectedPkg);
                 
-                // Show/hide student ID notices based on selection
+                // Toggle first class date visibility based on package type
+                toggleFirstClassDateField(selectedPkg.type);
+                
+                // Show/hide notices based on selection
                 document.querySelectorAll('.radio-notice').forEach(notice => {
                     const parentOption = notice.closest('.rate-option');
                     const parentRadio = parentOption.querySelector('input[type="radio"]');
@@ -159,6 +242,9 @@ async function loadCasualRates() {
         if (packages.length > 0) {
             selectedPackageId = packages[0].id;
             console.log('Default package selected:', selectedPackageId);
+            
+            // Set initial first class date field visibility
+            toggleFirstClassDateField(packages[0].type);
             
             // Show notice for initially selected student rate
             setTimeout(() => {
