@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../styles/base/colors.css">
     <link rel="stylesheet" href="../styles/base/buttons.css">
     <link rel="stylesheet" href="../styles/modals/modal-base.css">
+    <link rel="stylesheet" href="../styles/student-portal/login-options.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -22,33 +23,67 @@
         <img src="/images/urban-swing-logo-glow-black-circle.png" alt="Urban Swing Logo" class="logo">
         <h1>Student Portal</h1>
         
-        <div class="button-group">
-            <button id="newStudentBtn" class="toggle-btn active">New Student</button>
-            <button id="existingStudentBtn" class="toggle-btn">Existing Student</button>
-        </div>
+        <div class="login-options-container">
+            <!-- Option 1: Brand New Student -->
+            <div class="option-card new-student" data-option="new-student">
+                <div class="option-card-header">
+                    <div class="option-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="option-text">
+                        <h2 class="option-title">I'm brand new to Urban Swing</h2>
+                        <p class="option-subtitle">Register and prepay for your first class</p>
+                    </div>
+                </div>
+                <!-- No form needed - direct navigation to register.html -->
+            </div>
 
-        <!-- New Student Form -->
-        <div id="newStudentForm" class="auth-form active">
-            <div class="form-group">
-                <label for="newStudentEmail">Email Address</label>
-                <input type="email" id="newStudentEmail" placeholder="your.email@example.com" required>
+            <!-- Option 2: Existing Student (No Portal Account) -->
+            <div class="option-card existing-student" data-option="existing-student">
+                <div class="option-card-header">
+                    <div class="option-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="option-text">
+                        <h2 class="option-title">I'm an existing student</h2>
+                        <p class="option-subtitle">Set up student portal access</p>
+                    </div>
+                </div>
+                <div class="option-form">
+                    <div class="form-group">
+                        <label for="existingStudentEmail">Email Address</label>
+                        <input type="email" id="existingStudentEmail" placeholder="your.email@example.com" required>
+                        <div id="existing-student-error" class="error-message"></div>
+                    </div>
+                    <button class="btn-primary" id="existingStudentSubmit">Continue</button>
+                </div>
             </div>
-            <button class="action-btn">Register</button>
-        </div>
 
-        <!-- Existing Student Form -->
-        <div id="existingStudentForm" class="auth-form">
-            <div class="form-group">
-                <label for="existingStudentEmail">Email Address</label>
-                <input type="email" id="existingStudentEmail" placeholder="your.email@example.com" required>
+            <!-- Option 3: Login (Has Portal Account) -->
+            <div class="option-card login" data-option="login">
+                <div class="option-card-header">
+                    <div class="option-icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <div class="option-text">
+                        <h2 class="option-title">I have a portal account</h2>
+                        <p class="option-subtitle">Sign in to your student portal</p>
+                    </div>
+                </div>
+                <div class="option-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="your.email@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        <div id="login-error" class="error-message"></div>
+                    </div>
+                    <button class="btn-primary" id="loginSubmit">Login</button>
+                    <button class="reset-btn" id="resetPasswordBtn">Reset Password</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="existingStudentPassword">Password</label>
-                <input type="password" id="existingStudentPassword" placeholder="••••••••" required>
-                <div id="login-error" class="error-message"></div>
-            </div>
-            <button class="action-btn">Login</button>
-            <button class="reset-btn">Reset Password</button>
         </div>
     </div>
 

@@ -1,6 +1,6 @@
 /**
- * registration-handler.js - New Student Registration Handler
- * Manages the registration process for new students
+ * registration-handler.js - Student Registration Handler
+ * Manages the registration process for new and existing students
  */
 
 let registrationState = {
@@ -9,51 +9,52 @@ let registrationState = {
 };
 
 /**
- * Initialize registration form
+ * Initialize registration handlers
  */
 function initializeRegistrationForm() {
-    const registerBtn = document.querySelector('#newStudentForm .action-btn');
-    const emailInput = document.getElementById('newStudentEmail');
+    // Handle existing student (setup portal) flow
+    const existingStudentSubmit = document.getElementById('existingStudentSubmit');
+    const existingStudentEmail = document.getElementById('existingStudentEmail');
     
-    if (!registerBtn || !emailInput) {
-        console.error('Registration form elements not found');
-        return;
-    }
-    
-    registerBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        await handleRegistrationSubmit();
-    });
-    
-    // Allow enter key to submit
-    emailInput.addEventListener('keypress', async (e) => {
-        if (e.key === 'Enter') {
+    if (existingStudentSubmit && existingStudentEmail) {
+        existingStudentSubmit.addEventListener('click', async (e) => {
             e.preventDefault();
-            await handleRegistrationSubmit();
-        }
-    });
+            await handleExistingStudentSubmit();
+        });
+        
+        existingStudentEmail.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                await handleExistingStudentSubmit();
+            }
+        });
+    }
 }
 
 /**
- * Handle registration form submission
+ * Handle existing student portal setup submission
  */
-async function handleRegistrationSubmit() {
-    const emailInput = document.getElementById('newStudentEmail');
+async function handleExistingStudentSubmit() {
+    const emailInput = document.getElementById('existingStudentEmail');
+    const errorEl = document.getElementById('existing-student-error');
     const email = emailInput.value.trim();
+    
+    // Clear previous errors
+    if (errorEl) errorEl.textContent = '';
     
     // Validate email
     if (!email) {
-        showError('Please enter your email address');
+        showErrorInElement('existing-student-error', 'Please enter your email address');
         return;
     }
     
     if (!isValidEmail(email)) {
-        showError('Please enter a valid email address');
+        showErrorInElement('existing-student-error', 'Please enter a valid email address');
         return;
     }
     
     try {
-        showLoading(true);
+        showLoadingButton('existingStudentSubmit', true);
         
         // Check if email exists in students and/or users collections
         const result = await checkEmailExists(email);
@@ -62,27 +63,27 @@ async function handleRegistrationSubmit() {
         console.log('Has student:', result.hasStudent);
         console.log('Has user:', result.hasUser);
         
-        showLoading(false);
+        showLoadingButton('existingStudentSubmit', false);
         
         // Route based on status
         if (result.status === 'existing-complete') {
-            // Both student and user exist - show modal, redirect to login
-            console.log('Showing email exists modal - user already has portal account');
-            showEmailExistsModal([result.studentData]);
+            // Both student and user exist - they should use login option
+            showErrorInElement('existing-student-error', 
+                'You already have a portal account. Please use "I have a portal account" to login.');
         } else if (result.status === 'existing-incomplete') {
             // Student exists but no user - proceed to registration with pre-filled data
             console.log('Redirecting to registration form - existing student without portal account');
             redirectToRegistrationForm(email, 'existing-incomplete', result.studentData);
         } else {
-            // New student - proceed to blank registration form
-            console.log('Redirecting to registration form - brand new student');
-            redirectToRegistrationForm(email, 'new', null);
+            // New student - they should use the new student option
+            showErrorInElement('existing-student-error', 
+                'We can\'t find you in our system. Please use "I\'m brand new to Urban Swing" to register.');
         }
         
     } catch (error) {
-        showLoading(false);
+        showLoadingButton('existingStudentSubmit', false);
         console.error('Registration error:', error);
-        showError('An error occurred. Please try again.');
+        showErrorInElement('existing-student-error', 'An error occurred. Please try again.');
     }
 }
 
@@ -116,45 +117,33 @@ function redirectToRegistrationForm(email, mode, studentData) {
 }
 
 /**
- * Return to login page
- */
-function returnToLoginPage() {
-    // Clear the email input
-    const emailInput = document.getElementById('newStudentEmail');
-    if (emailInput) {
-        emailInput.value = '';
-    }
-    
-    // Switch to existing student form (login)
-    const existingStudentBtn = document.getElementById('existingStudentBtn');
-    if (existingStudentBtn) {
-        existingStudentBtn.click();
-    }
-}
-
-/**
- * Show error message
+ * Show error message in specific element
+ * @param {string} elementId - ID of error element
  * @param {string} message - Error message to display
  */
-function showError(message) {
-    // Simple alert for now - can be enhanced with better UI
-    alert('Error: ' + message);
+function showErrorInElement(elementId, message) {
+    const errorEl = document.getElementById(elementId);
+    if (errorEl) {
+        errorEl.textContent = message;
+    }
 }
 
 /**
- * Show/hide loading spinner
- * @param {boolean} show - Whether to show the spinner
+ * Show/hide loading state on button
+ * @param {string} buttonId - ID of button element
+ * @param {boolean} show - Whether to show loading state
  */
-function showLoading(show) {
-    const registerBtn = document.querySelector('#newStudentForm .action-btn');
-    if (!registerBtn) return;
+function showLoadingButton(buttonId, show) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
     
     if (show) {
-        registerBtn.disabled = true;
-        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
     } else {
-        registerBtn.disabled = false;
-        registerBtn.innerHTML = 'Register';
+        button.disabled = false;
+        button.textContent = button.dataset.originalText || 'Continue';
     }
 }
 
@@ -171,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     initializeRegistrationForm();
                 } else {
                     console.error('Failed to initialize Firebase');
-                    showError('System not ready. Please refresh the page.');
                 }
             }, 1000);
         }
