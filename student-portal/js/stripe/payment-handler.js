@@ -93,10 +93,26 @@ async function loadCasualRates() {
             .where('isPromo', '==', false)
             .get();
         
-        // Also fetch the promo-8-class package for new students
-        const promoPackageDoc = await db.collection('concessionPackages')
-            .doc('promo-8-class')
-            .get();
+        // Try to fetch concession packages marked for registration
+        // Fetch all packages and filter in JavaScript to avoid needing a compound index
+        let registrationPackagesSnapshot = null;
+        try {
+            const allPackagesSnapshot = await db.collection('concessionPackages')
+                .where('showOnRegistration', '==', true)
+                .get();
+            
+            // Filter out inactive packages in JavaScript
+            registrationPackagesSnapshot = {
+                empty: allPackagesSnapshot.empty,
+                docs: allPackagesSnapshot.docs.filter(doc => {
+                    const data = doc.data();
+                    return data.isActive !== false; // Include if isActive is true or undefined
+                })
+            };
+        } catch (error) {
+            // Field likely doesn't exist yet - this is fine, just continue without registration packages
+            console.log('No registration packages found (field may not exist yet):', error.message);
+        }
         
         if (casualRatesSnapshot.empty) {
             rateOptionsContainer.innerHTML = `
@@ -124,20 +140,20 @@ async function loadCasualRates() {
             packages.push(availablePackages[doc.id]);
         });
         
-        // Add promo package if it exists and is active
-        if (promoPackageDoc.exists) {
-            const promoData = promoPackageDoc.data();
-            if (promoData.isActive !== false) { // Include if isActive is true or undefined
-                availablePackages[promoPackageDoc.id] = {
-                    id: promoPackageDoc.id,
-                    name: promoData.name,
-                    price: promoData.price,
-                    description: promoData.description || null,
-                    classCount: promoData.classCount || 8,
+        // Add registration concession packages (if any were found)
+        if (registrationPackagesSnapshot && registrationPackagesSnapshot.docs && registrationPackagesSnapshot.docs.length > 0) {
+            registrationPackagesSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                availablePackages[doc.id] = {
+                    id: doc.id,
+                    name: data.name,
+                    price: data.price,
+                    description: data.description || null,
+                    classCount: data.numberOfClasses || data.classCount || 0,
                     type: 'concession'
                 };
-                packages.push(availablePackages[promoPackageDoc.id]);
-            }
+                packages.push(availablePackages[doc.id]);
+            });
         }
         
         // Sort: casual entry (non-student) first, then student, then packages

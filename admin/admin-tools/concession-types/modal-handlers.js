@@ -80,6 +80,7 @@ async function editPackage(id) {
       document.getElementById('concession-price').value = pkg.price || '';
       document.getElementById('concession-expiry').value = pkg.expiryMonths || '';
       document.getElementById('concession-promo').checked = pkg.isPromo || false;
+      document.getElementById('concession-show-registration').checked = pkg.showOnRegistration || false;
       
       // Change modal appearance for edit mode
       const modalTitle = document.querySelector('#add-concession-modal .modal-header h3');
@@ -111,6 +112,7 @@ async function handleUpdatePackage(packageId) {
     const price = parseFloat(document.getElementById('concession-price').value);
     const expiryMonths = parseInt(document.getElementById('concession-expiry').value);
     const isPromo = document.getElementById('concession-promo').checked;
+    const showOnRegistration = document.getElementById('concession-show-registration').checked;
     
     // Validate (same validation as the original modal)
     if (!name || !numberOfClasses || !price || !expiryMonths) {
@@ -144,6 +146,7 @@ async function handleUpdatePackage(packageId) {
       price: price,
       expiryMonths: expiryMonths,
       isPromo: isPromo,
+      showOnRegistration: showOnRegistration,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
