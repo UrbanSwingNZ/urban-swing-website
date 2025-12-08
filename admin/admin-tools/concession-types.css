@@ -212,6 +212,31 @@
     margin: 0 2px;
 }
 
+.package-registration-indicator {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+}
+
+.registration-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--admin-purple);
+    background-color: rgba(138, 97, 199, 0.1);
+    padding: 6px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.registration-badge i {
+    font-size: 0.85rem;
+}
+
 .package-details {
     display: flex;
     flex-direction: column;

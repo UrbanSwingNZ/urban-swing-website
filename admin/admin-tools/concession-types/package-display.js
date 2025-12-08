@@ -81,6 +81,9 @@ function createPackageCard(id, pkg) {
   // Check if this is a promo package
   const isPromo = pkg.isPromo === true;
   
+  // Check if this is shown on registration
+  const showOnRegistration = pkg.showOnRegistration === true;
+  
   // Format package name - if it contains "PROMO", put it on separate line
   let formattedName = pkg.name;
   if (formattedName.match(/promo/i)) {
@@ -90,6 +93,9 @@ function createPackageCard(id, pkg) {
   
   // Create promo badge if isPromo is true
   const promoBadge = isPromo ? '<span class="promo-badge"><i class="fas fa-star"></i> PROMO <i class="fas fa-star"></i></span>' : '';
+  
+  // Create registration badge if showOnRegistration is true
+  const registrationBadge = showOnRegistration ? '<span class="registration-badge"><i class="fas fa-user-plus"></i> AVAILABLE ON REGISTRATION FORM</span>' : '';
   
   card.innerHTML = `
     <div class="drag-handle" title="Drag to reorder">
@@ -122,6 +128,8 @@ function createPackageCard(id, pkg) {
     </div>
     
     ${pkg.description ? `<div class="package-description">${escapeHtml(pkg.description)}</div>` : ''}
+    
+    ${registrationBadge ? `<div class="package-registration-indicator">${registrationBadge}</div>` : ''}
     
     <div class="package-actions">
       <button class="btn-primary btn-edit" onclick="editPackage('${id}')">
