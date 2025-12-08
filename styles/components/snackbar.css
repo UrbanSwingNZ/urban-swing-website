@@ -1,6 +1,7 @@
 /* ========================================
    SNACKBAR NOTIFICATION COMPONENT
    Centralized snackbar styles for Urban Swing
+   Updated: 2025-12-07
    ======================================== */
 
 .snackbar {
@@ -57,23 +58,23 @@
    ======================================== */
 
 /* Success - Green gradient */
-.snackbar-success {
-    background: var(--status-active-gradient);
+.snackbar.snackbar-success {
+    background: var(--status-active-gradient) !important;
 }
 
 /* Error - Red gradient */
-.snackbar-error {
-    background: var(--status-inactive-gradient);
+.snackbar.snackbar-error {
+    background: var(--status-inactive-gradient) !important;
 }
 
 /* Warning - Orange gradient */
-.snackbar-warning {
-    background: var(--status-warning-gradient);
+.snackbar.snackbar-warning {
+    background: var(--status-warning-gradient) !important;
 }
 
 /* Info - Blue gradient */
-.snackbar-info {
-    background: var(--status-info-gradient);
+.snackbar.snackbar-info {
+    background: var(--status-info-gradient) !important;
 }
 
 /* ========================================

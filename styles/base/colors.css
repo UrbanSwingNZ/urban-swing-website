@@ -204,6 +204,12 @@
   --gradient-full: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
   --gradient-warning: linear-gradient(135deg, var(--warning-light), var(--warning-lightest));
   
+  /* Status indicator gradients */
+  --status-active-gradient: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  --status-inactive-gradient: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  --status-warning-gradient: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  --status-info-gradient: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  
   
   /* ========================================
      SPECIAL BACKGROUNDS
@@ -272,18 +278,6 @@
   
   --badge-neutral-bg: #f5f5f5;
   --badge-neutral-text: #616161;
-}
-
-
-/* ========================================
-   STATUS INDICATOR GRADIENTS
-   For use in status badges and buttons
-   ======================================== */
-:root {
-  --status-active-gradient: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  --status-inactive-gradient: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-  --status-warning-gradient: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  --status-info-gradient: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
 }
 
 

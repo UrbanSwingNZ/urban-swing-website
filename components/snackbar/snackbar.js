@@ -1,6 +1,7 @@
 /**
  * Snackbar Component
  * Centralized notification system for Urban Swing
+ * Updated: 2025-12-07
  * 
  * Usage:
  *   showSnackbar('Operation successful!', 'success');
