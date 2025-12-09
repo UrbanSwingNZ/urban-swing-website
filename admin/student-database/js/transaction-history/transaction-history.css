@@ -185,6 +185,19 @@
     color: var(--text-primary, #212529);
 }
 
+.payment-class-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--admin-purple, #9a16f5);
+    margin-top: 4px;
+}
+
+.payment-class-date i {
+    font-size: 0.85rem;
+}
+
 .payment-amount-method {
     display: flex;
     flex-direction: column;
