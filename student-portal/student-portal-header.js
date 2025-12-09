@@ -245,16 +245,24 @@
             ];
             const isAdmin = AUTHORIZED_ADMINS.includes(user.email.toLowerCase());
             const userInfoContainer = document.querySelector('.student-user-info');
+            const logoutBtn = document.getElementById('student-logout-btn');
+            
+            // Always show the user info container
+            if (userInfoContainer) {
+                userInfoContainer.style.display = 'flex';
+            }
             
             if (isAdmin) {
-                // Admin viewing student portal - hide user info (admin info shown in admin header)
-                if (userInfoContainer) {
-                    userInfoContainer.style.display = 'none';
+                // Admin viewing student portal - hide logout button (admin uses logout in admin header)
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'none';
                 }
+                // Student name will be set when admin selects a student
+                userNameElement.textContent = 'Select a student';
             } else {
-                // Regular student logged in - show user info
-                if (userInfoContainer) {
-                    userInfoContainer.style.display = 'flex';
+                // Regular student logged in - show logout button and load their name
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'inline-flex';
                 }
                 await loadCurrentUserName(user, userNameElement);
             }
