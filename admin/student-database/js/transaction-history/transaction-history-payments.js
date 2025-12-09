@@ -54,7 +54,8 @@ async function loadTransactionHistoryPayments(studentId) {
                     packageName: packageName,
                     numberOfClasses: numberOfClasses,
                     amountPaid: data.amountPaid,
-                    paymentMethod: data.paymentMethod
+                    paymentMethod: data.paymentMethod,
+                    classDate: data.classDate?.toDate ? data.classDate.toDate() : null
                 };
             })
             .sort((a, b) => b.date - a.date);
@@ -90,6 +91,13 @@ function displayPaymentHistory(transactions) {
     transactions.forEach(transaction => {
         const date = formatDate(transaction.date);
         
+        // Format class date if it exists
+        const classDateHtml = transaction.classDate 
+            ? `<div class="payment-class-date">
+                   <i class="fas fa-calendar"></i> Class paid for: ${formatDate(transaction.classDate)}
+               </div>`
+            : '';
+        
         // Add edit and delete buttons - delete only for super admin
         const editButton = `<button class="btn-icon btn-edit-transaction" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
                <i class="fas fa-edit"></i>
@@ -111,6 +119,7 @@ function displayPaymentHistory(transactions) {
                         <strong>${escapeHtml(transaction.packageName || 'Unknown Package')}</strong>
                         <span class="text-muted">${transaction.numberOfClasses || 0} classes</span>
                     </div>
+                    ${classDateHtml}
                 </div>
                 <div class="payment-amount-method">
                     <div class="payment-amount">$${(transaction.amountPaid || 0).toFixed(2)}</div>
