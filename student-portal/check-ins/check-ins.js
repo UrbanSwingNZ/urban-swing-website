@@ -332,6 +332,17 @@ function loadStudentDashboard(student) {
     loadStudentCheckIns(student);
 }
 
+/**
+ * Listen for student selection changes (from admin dropdown)
+ */
+window.addEventListener('studentSelected', async (event) => {
+    const student = event.detail.student;
+    
+    if (student) {
+        loadStudentCheckIns(student);
+    }
+});
+
 // Initialize when DOM is ready
 // Wait for auth check to complete before initializing
 window.addEventListener('authCheckComplete', () => {
