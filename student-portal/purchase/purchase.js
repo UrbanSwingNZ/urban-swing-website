@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * Listen for student selection changes (from admin dropdown)
  */
 window.addEventListener('studentSelected', async (event) => {
-    const student = event.detail;
+    const student = event.detail.student;
     
     if (student) {
         await loadPurchasePage(student.id);
