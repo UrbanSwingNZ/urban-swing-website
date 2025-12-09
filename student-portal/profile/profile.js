@@ -366,11 +366,22 @@ function checkForChanges() {
 }
 
 /**
- * Override loadStudentDashboard from student-loader.js to load profile instead
+ * Load student dashboard - legacy function for student-loader.js
  */
 function loadStudentDashboard(student) {
     loadStudentProfile(student);
 }
+
+/**
+ * Listen for student selection changes (from admin dropdown)
+ */
+window.addEventListener('studentSelected', async (event) => {
+    const student = event.detail.student;
+    
+    if (student) {
+        loadStudentProfile(student);
+    }
+});
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

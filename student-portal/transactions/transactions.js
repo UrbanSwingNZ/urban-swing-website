@@ -25,7 +25,10 @@ window.addEventListener('authCheckComplete', async (event) => {
 
 // Listen for student selection (admin) or student loaded (regular student)
 window.addEventListener('studentSelected', async (event) => {
-    await loadStudentTransactions(event.detail.id);
+    const student = event.detail.student;
+    if (student) {
+        await loadStudentTransactions(student.id);
+    }
 });
 
 window.addEventListener('studentLoaded', async (event) => {
