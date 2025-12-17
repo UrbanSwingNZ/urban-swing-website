@@ -202,6 +202,7 @@
   --gradient-blue-purple: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
   --gradient-purple-pink: linear-gradient(135deg, var(--purple-primary), var(--pink-primary));
   --gradient-full: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+  --gradient-header: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
   --gradient-warning: linear-gradient(135deg, var(--warning-light), var(--warning-lightest));
   
   
