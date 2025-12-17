@@ -74,10 +74,7 @@ function handleFormSubmit(event) {
         }
     };
     
-    console.log('Form submitted:', formData);
-    
     // TODO: Add form submission logic (e.g., send to backend, Firebase, etc.)
-    alert('Thank you for your order! We will be in touch soon.');
     
     // Optionally reset the form
     // merchandiseForm.reset();
