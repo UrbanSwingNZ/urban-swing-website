@@ -40,6 +40,8 @@ function handleFormSubmit(event) {
         shipping: document.querySelector('input[name="shipping"]:checked').value,
         eventName: document.getElementById('eventName').value || null,
         chosenName: document.getElementById('chosenName').value || null,
+        additionalNotes: document.getElementById('additionalNotes').value || null,
+        acceptTerms: document.getElementById('acceptTerms').checked,
         items: {
             maliTee: {
                 size: document.querySelector('input[name="maliTeeSize"]:checked')?.value || null,
