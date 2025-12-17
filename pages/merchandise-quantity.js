@@ -82,7 +82,11 @@ function getRadioNameFromQuantityInputId(qtyInputId) {
     const mapping = {
         'maliTeeQty': 'maliTeeSize',
         'cropTeeQty': 'cropTeeSize',
-        'stapleTeeQty': 'stapleTeeSize'
+        'stapleTeeQty': 'stapleTeeSize',
+        'womensZipHoodQty': 'womensZipHoodSize',
+        'mensZipHoodQty': 'mensZipHoodSize',
+        'womensCrewQty': 'womensCrewSize',
+        'mensCrewQty': 'mensCrewSize'
     };
     
     return mapping[qtyInputId] || null;
@@ -95,7 +99,11 @@ function getQuantityInputIdFromRadioName(radioName) {
     const mapping = {
         'maliTeeSize': 'maliTeeQty',
         'cropTeeSize': 'cropTeeQty',
-        'stapleTeeSize': 'stapleTeeQty'
+        'stapleTeeSize': 'stapleTeeQty',
+        'womensZipHoodSize': 'womensZipHoodQty',
+        'mensZipHoodSize': 'mensZipHoodQty',
+        'womensCrewSize': 'womensCrewQty',
+        'mensCrewSize': 'mensCrewQty'
     };
     
     return mapping[radioName] || null;

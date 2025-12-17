@@ -39,6 +39,7 @@ function handleFormSubmit(event) {
         phoneNumber: document.getElementById('phoneNumber').value,
         shipping: document.querySelector('input[name="shipping"]:checked').value,
         eventName: document.getElementById('eventName').value || null,
+        chosenName: document.getElementById('chosenName').value || null,
         items: {
             maliTee: {
                 size: document.querySelector('input[name="maliTeeSize"]:checked')?.value || null,
@@ -51,6 +52,22 @@ function handleFormSubmit(event) {
             stapleTee: {
                 size: document.querySelector('input[name="stapleTeeSize"]:checked')?.value || null,
                 quantity: parseInt(document.getElementById('stapleTeeQty').value) || 0
+            },
+            womensZipHood: {
+                size: document.querySelector('input[name="womensZipHoodSize"]:checked')?.value || null,
+                quantity: parseInt(document.getElementById('womensZipHoodQty').value) || 0
+            },
+            mensZipHood: {
+                size: document.querySelector('input[name="mensZipHoodSize"]:checked')?.value || null,
+                quantity: parseInt(document.getElementById('mensZipHoodQty').value) || 0
+            },
+            womensCrew: {
+                size: document.querySelector('input[name="womensCrewSize"]:checked')?.value || null,
+                quantity: parseInt(document.getElementById('womensCrewQty').value) || 0
+            },
+            mensCrew: {
+                size: document.querySelector('input[name="mensCrewSize"]:checked')?.value || null,
+                quantity: parseInt(document.getElementById('mensCrewQty').value) || 0
             }
         }
     };
