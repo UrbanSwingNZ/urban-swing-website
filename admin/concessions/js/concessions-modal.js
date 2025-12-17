@@ -85,7 +85,11 @@ function initializePurchaseConcessionsModal() {
     // Initialize custom date picker (allow any day, allow any date)
     purchaseDatePicker = new DatePicker('purchase-date-picker', 'purchase-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
-        disablePastDates: false // Allow backdating and future dating
+        disablePastDates: false, // Allow backdating and future dating
+        onDateSelected: () => {
+            // Update button state when date changes (important for edit mode)
+            updatePurchaseButton();
+        }
     });
     
     // Initialize event listeners
@@ -117,7 +121,9 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
         if (defaultDate instanceof Date) {
             dateToSet = defaultDate;
         } else if (typeof defaultDate === 'string') {
-            dateToSet = new Date(defaultDate);
+            // Parse YYYY-MM-DD as local date to avoid timezone shift
+            const [year, month, day] = defaultDate.split('-').map(Number);
+            dateToSet = new Date(year, month - 1, day);
         }
         
         if (dateToSet && !isNaN(dateToSet.getTime())) {
