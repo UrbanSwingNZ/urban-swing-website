@@ -484,6 +484,10 @@ async function editConcessionPurchaseTransaction(transaction, transactionData) {
         const year = transaction.date.getFullYear();
         const dateStr = `${day}/${month}/${year}`;
         datePicker.value = dateStr;
+        // Trigger button update since we're manually setting the value
+        if (typeof updatePurchaseButton === 'function') {
+            updatePurchaseButton();
+        }
     }
     
     if (packageSelect && transactionData.packageId) {
@@ -564,6 +568,10 @@ async function updateConcessionPurchase() {
         
         const packageData = packageDoc.data();
         
+        // Parse date from d/mm/yyyy format
+        const [day, month, year] = purchaseDate.split('/').map(Number);
+        const parsedDate = new Date(year, month - 1, day);
+        
         // Update transaction
         await firebase.firestore()
             .collection('transactions')
@@ -571,7 +579,7 @@ async function updateConcessionPurchase() {
             .update({
                 packageId: packageId,
                 paymentMethod: dbPaymentMethod,
-                transactionDate: firebase.firestore.Timestamp.fromDate(new Date(purchaseDate)),
+                transactionDate: firebase.firestore.Timestamp.fromDate(parsedDate),
                 amountPaid: packageData.price,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
