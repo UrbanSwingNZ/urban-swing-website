@@ -578,11 +578,61 @@ async function updateConcessionPurchase() {
             .doc(transactionId)
             .update({
                 packageId: packageId,
+                packageName: packageData.name,
+                numberOfClasses: packageData.numberOfClasses,
                 paymentMethod: dbPaymentMethod,
                 transactionDate: firebase.firestore.Timestamp.fromDate(parsedDate),
                 amountPaid: packageData.price,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+        
+        // Find and update the associated concession block
+        const blocksSnapshot = await firebase.firestore()
+            .collection('concessionBlocks')
+            .where('transactionId', '==', transactionId)
+            .get();
+        
+        if (!blocksSnapshot.empty) {
+            const blockDoc = blocksSnapshot.docs[0];
+            const blockData = blockDoc.data();
+            
+            // Calculate new expiry date
+            const newExpiryDate = new Date(parsedDate.getTime());
+            newExpiryDate.setMonth(newExpiryDate.getMonth() + packageData.expiryMonths);
+            
+            // Calculate the difference in classes to update student balance
+            const oldQuantity = blockData.originalQuantity;
+            const usedClasses = oldQuantity - blockData.remainingQuantity;
+            const newQuantity = packageData.numberOfClasses;
+            const balanceDiff = newQuantity - oldQuantity;
+            
+            // Update the concession block
+            await firebase.firestore()
+                .collection('concessionBlocks')
+                .doc(blockDoc.id)
+                .update({
+                    packageId: packageId,
+                    packageName: packageData.name,
+                    originalQuantity: newQuantity,
+                    remainingQuantity: newQuantity - usedClasses,
+                    purchaseDate: firebase.firestore.Timestamp.fromDate(parsedDate),
+                    expiryDate: firebase.firestore.Timestamp.fromDate(newExpiryDate),
+                    price: packageData.price,
+                    paymentMethod: dbPaymentMethod,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            
+            // Update student's concession balance if the number of classes changed
+            if (balanceDiff !== 0) {
+                await firebase.firestore()
+                    .collection('students')
+                    .doc(studentId)
+                    .update({
+                        concessionBalance: firebase.firestore.FieldValue.increment(balanceDiff),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+            }
+        }
         
         // Close modal
         if (typeof closePurchaseConcessionsModal === 'function') {
