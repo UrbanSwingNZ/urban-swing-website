@@ -271,6 +271,21 @@ h1 {
     margin-bottom: 0;
 }
 
+.category-info ul {
+    margin: 12px 0 12px 20px;
+    padding: 0;
+}
+
+.category-info li {
+    margin-bottom: 6px;
+    color: var(--gray-850);
+}
+
+.note-text {
+    font-size: 0.9rem;
+    color: var(--gray-700);
+}
+
 .as-colour-links {
     margin-top: 12px;
     padding-top: 12px;
