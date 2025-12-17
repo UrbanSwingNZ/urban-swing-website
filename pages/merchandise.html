@@ -13,6 +13,12 @@
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
 </head>
 <body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Submitting your order...</p>
+    </div>
+
     <!-- Main Container -->
     <div class="merchandise-container">
         <div class="merchandise-card">
@@ -520,6 +526,14 @@
         </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="../config/firebase-config.js"></script>
+    
+    <script src="merchandise/merchandise-firestore.js"></script>
     <script src="merchandise/merchandise-quantity.js"></script>
     <script src="merchandise/merchandise.js"></script>
 </body>

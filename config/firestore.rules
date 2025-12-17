@@ -168,6 +168,12 @@ service cloud.firestore {
                             request.auth.token.email == 'dance@urbanswing.co.nz';
     }
     
+    // Merchandise Orders - public can create, admins can manage
+    match /merchOrders/{orderId} {
+      allow create: if true;  // Public access for submitting orders
+      allow read, update, delete: if isAdminOrFrontDesk();
+    }
+    
     // Deny all other access by default
     match /{document=**} {
       allow read, write: if false;
