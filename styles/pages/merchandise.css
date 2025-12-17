@@ -73,6 +73,17 @@ h1 {
     font-style: italic;
 }
 
+/* Merchandise Image */
+.merch-image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 0 30px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
 /* Form Styles */
 .merchandise-form {
     margin-top: 30px;
@@ -517,28 +528,13 @@ h1 {
     color: var(--gray-850);
 }
 
-/* Submit Button */
-.submit-btn {
+/* Submit Button Override */
+.btn-primary {
     width: 100%;
+    height: auto;
     padding: 14px 28px;
-    background: linear-gradient(135deg, var(--purple-primary), var(--blue-primary));
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
     font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
     margin-top: 20px;
-}
-
-.submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(154, 22, 245, 0.3);
-}
-
-.submit-btn:active {
-    transform: translateY(0);
 }
 
 /* Responsive Design */
