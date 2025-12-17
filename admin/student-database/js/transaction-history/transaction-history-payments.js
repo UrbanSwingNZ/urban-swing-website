@@ -513,18 +513,6 @@ function confirmDeleteTransaction(transactionId) {
         return;
     }
     
-    const modal = document.getElementById('delete-modal');
-    const titleEl = document.getElementById('delete-modal-title');
-    const messageEl = document.getElementById('delete-modal-message');
-    const infoEl = document.getElementById('delete-modal-info');
-    const btnTextEl = document.getElementById('delete-modal-btn-text');
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-    
-    if (!modal || !titleEl || !messageEl || !infoEl || !btnTextEl || !confirmBtn) {
-        console.error('Delete modal elements not found');
-        return;
-    }
-    
     // Get student name
     let studentName = 'Unknown Student';
     try {
@@ -538,25 +526,28 @@ function confirmDeleteTransaction(transactionId) {
         console.warn('Could not get student name:', error);
     }
     
-    // Customize modal for transaction deletion
-    titleEl.textContent = 'Delete Transaction';
-    messageEl.textContent = 'Are you sure you want to delete this transaction?';
-    
     const date = formatDate(transaction.date);
-    infoEl.innerHTML = `<strong>${escapeHtml(studentName)}</strong> - $${(transaction.amountPaid || 0).toFixed(2)} - ${date}`;
+    const message = `
+        <p>Are you sure you want to delete this transaction?</p>
+        <div class="student-info-delete">
+            <strong>${escapeHtml(studentName)}</strong> - $${(transaction.amountPaid || 0).toFixed(2)} - ${date}
+        </div>
+    `;
     
-    btnTextEl.textContent = 'Delete Transaction';
-    
-    // Remove any existing event listeners by replacing the button
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    // Add click handler for confirm button
-    newConfirmBtn.addEventListener('click', () => {
-        deleteTransaction(transaction);
+    // Create and show confirmation modal
+    const modal = new ConfirmationModal({
+        title: 'Delete Transaction',
+        message: message,
+        icon: 'fas fa-trash-alt',
+        variant: 'danger',
+        confirmText: 'Delete Transaction',
+        confirmClass: 'btn-danger',
+        onConfirm: () => {
+            deleteTransaction(transaction);
+        }
     });
     
-    modal.style.display = 'flex';
+    modal.show();
 }
 
 /**
@@ -566,11 +557,6 @@ async function deleteTransaction(transaction) {
     try {
         if (typeof showLoading === 'function') {
             showLoading();
-        }
-        
-        // Close delete modal
-        if (typeof closeDeleteModal === 'function') {
-            closeDeleteModal();
         }
         
         // Mark the transaction as reversed in Firestore
