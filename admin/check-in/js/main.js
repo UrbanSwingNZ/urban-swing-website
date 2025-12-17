@@ -46,6 +46,11 @@ async function initializeApp() {
         initializeCheckinModalListeners();
         initializeHistoryModalListeners();
         
+        // Initialize transaction history modal (for student details)
+        if (typeof initializeTransactionHistoryModalListeners === 'function') {
+            initializeTransactionHistoryModalListeners();
+        }
+        
         // Initialize nav button event listeners
         initializeNavListeners();
         
