@@ -661,5 +661,6 @@ window.closeNotesModal = closeNotesModal;
 window.saveNotes = saveNotes;
 window.saveStudentChanges = saveStudentChanges;
 window.initializeModalListeners = initializeModalListeners;
+window.openStudentModal = openStudentModal;
 
 
