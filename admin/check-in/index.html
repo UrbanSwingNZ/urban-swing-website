@@ -524,20 +524,15 @@
     <!-- Student Database Module (for student details modal) -->
     <script type="module" src="../student-database/js/modal.js"></script>
     
-    <!-- Transaction History Module -->
-    <script src="../student-database/js/transaction-history/transaction-history-modal.js"></script>
-    <script src="../student-database/js/transaction-history/transaction-history-attendance.js"></script>
-    <script src="../student-database/js/transaction-history/transaction-history-payments.js"></script>
-    <script src="../student-database/js/transaction-history/transaction-history-concessions.js"></script>
-    
-    <!-- Reusable Concessions Module (after students.js for dependencies) -->
+    <!-- Reusable Concessions Module (must load before transaction history) -->
+    <script src="../student-database/js/concessions/concessions-data.js"></script>
     <script src="../concessions/js/concessions-data.js"></script>
     <script src="../concessions/js/concessions-modal.js"></script>
     <script src="../concessions/js/casual-entry-modal.js"></script>
     <script src="../concessions/js/concessions-admin.js"></script>
     
     <!-- Continue Check-In Modules -->
-    <!-- Concession blocks management (before check-in modules that use it) -->
+    <!-- Concession blocks management (must load before transaction history) -->
     <!-- Load in order: balance (used by all), then others -->
     <script src="js/concession-blocks-balance.js"></script>
     <script src="js/concession-blocks-create.js"></script>
@@ -546,6 +541,12 @@
     <script src="js/concession-blocks-lock.js?v=4"></script>
     <script src="js/concession-blocks-delete.js"></script>
     <script src="js/concession-blocks-maintenance.js"></script>
+    
+    <!-- Transaction History Module (depends on concessions-data.js and concession-blocks) -->
+    <script src="../student-database/js/transaction-history/transaction-history-modal.js"></script>
+    <script src="../student-database/js/transaction-history/transaction-history-attendance.js"></script>
+    <script src="../student-database/js/transaction-history/transaction-history-payments.js"></script>
+    <script src="../student-database/js/transaction-history/transaction-history-concessions.js"></script>
     
     <!-- Check-in modal modules (load in dependency order) -->
     <script src="js/checkin-state.js"></script>

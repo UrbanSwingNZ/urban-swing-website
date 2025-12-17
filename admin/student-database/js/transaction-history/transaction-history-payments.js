@@ -60,8 +60,6 @@ async function loadTransactionHistoryPayments(studentId) {
             })
             .sort((a, b) => b.date - a.date);
         
-        console.log(`Found ${allPayments.length} payment(s) for student ${studentId}`);
-        
         // Store transactions for editing
         currentPaymentTransactions = allPayments;
         

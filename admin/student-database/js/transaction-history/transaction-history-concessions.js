@@ -15,6 +15,13 @@ async function loadTransactionHistoryConcessions(studentId) {
     contentEl.innerHTML = '<p class="text-muted"><i class="fas fa-spinner fa-spin"></i> Loading concession information...</p>';
     
     try {
+        // Check if required functions are available
+        if (typeof getStudentConcessionBlocks !== 'function') {
+            console.error('getStudentConcessionBlocks is not defined. Make sure concessions-data.js is loaded.');
+            contentEl.innerHTML = '<p class="text-error">Error loading concession information. Please refresh the page.</p>';
+            return;
+        }
+        
         // Reuse existing function from concessions.js
         const blocks = await getStudentConcessionBlocks(studentId);
         const stats = calculateConcessionStats(blocks);
