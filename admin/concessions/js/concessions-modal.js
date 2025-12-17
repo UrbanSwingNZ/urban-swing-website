@@ -85,7 +85,11 @@ function initializePurchaseConcessionsModal() {
     // Initialize custom date picker (allow any day, allow any date)
     purchaseDatePicker = new DatePicker('purchase-date-picker', 'purchase-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
-        disablePastDates: false // Allow backdating and future dating
+        disablePastDates: false, // Allow backdating and future dating
+        onDateSelected: () => {
+            // Update button state when date changes (important for edit mode)
+            updatePurchaseButton();
+        }
     });
     
     // Initialize event listeners

@@ -376,6 +376,10 @@ async function openPurchaseConcessionsModalForEdit(studentId, transactionId, pac
         const year = transactionDate.getFullYear();
         const dateStr = `${day}/${month}/${year}`;
         datePicker.value = dateStr;
+        // Trigger button update since we're manually setting the value
+        if (typeof updatePurchaseButton === 'function') {
+            updatePurchaseButton();
+        }
     }
     
     if (packageSelect && packageId) {
@@ -427,8 +431,8 @@ async function handleTransactionUpdate(transactionId, studentId) {
     try {
         showLoading(true);
         
-        // Parse date
-        const [year, month, day] = purchaseDate.split('-').map(Number);
+        // Parse date from d/mm/yyyy format
+        const [day, month, year] = purchaseDate.split('/').map(Number);
         const parsedDate = new Date(year, month - 1, day, 12, 0, 0);
         
         // Get package data
