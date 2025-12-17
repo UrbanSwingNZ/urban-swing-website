@@ -370,12 +370,11 @@ async function openPurchaseConcessionsModalForEdit(studentId, transactionId, pac
     const confirmBtn = document.getElementById('confirm-purchase-concessions-btn');
     
     if (datePicker && transactionDate) {
-        // Format date as YYYY-MM-DD for the date input
-        // Use local date components to avoid timezone issues
-        const year = transactionDate.getFullYear();
+        // Format date as d/mm/yyyy for display (matching DatePicker format)
+        const day = transactionDate.getDate();
         const month = String(transactionDate.getMonth() + 1).padStart(2, '0');
-        const day = String(transactionDate.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
+        const year = transactionDate.getFullYear();
+        const dateStr = `${day}/${month}/${year}`;
         datePicker.value = dateStr;
     }
     
