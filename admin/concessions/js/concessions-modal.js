@@ -117,7 +117,9 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
         if (defaultDate instanceof Date) {
             dateToSet = defaultDate;
         } else if (typeof defaultDate === 'string') {
-            dateToSet = new Date(defaultDate);
+            // Parse YYYY-MM-DD as local date to avoid timezone shift
+            const [year, month, day] = defaultDate.split('-').map(Number);
+            dateToSet = new Date(year, month - 1, day);
         }
         
         if (dateToSet && !isNaN(dateToSet.getTime())) {

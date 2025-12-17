@@ -478,13 +478,12 @@ async function editConcessionPurchaseTransaction(transaction, transactionData) {
     const paymentSelect = document.getElementById('purchase-payment-select');
     
     if (datePicker && transaction.date) {
-        // Format date as YYYY-MM-DD for the date input
-        const year = transaction.date.getFullYear();
+        // Format date as d/mm/yyyy for display (matching DatePicker format)
+        const day = transaction.date.getDate();
         const month = String(transaction.date.getMonth() + 1).padStart(2, '0');
-        const day = String(transaction.date.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
+        const year = transaction.date.getFullYear();
+        const dateStr = `${day}/${month}/${year}`;
         datePicker.value = dateStr;
-        datePicker.max = new Date().toISOString().split('T')[0];
     }
     
     if (packageSelect && transactionData.packageId) {
