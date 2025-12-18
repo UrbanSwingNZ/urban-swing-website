@@ -214,7 +214,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
                     <div class="concession-details">
                         <span><i class="fas ${expiryIcon}"></i> ${expiryLabel}: ${formatDate(expiryDate)}</span>
                         <span><i class="fas fa-shopping-cart"></i> ${isGifted ? 'Gifted' : 'Purchased'}: ${formatDate(purchaseDate)}</span>
-                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.amountPaid || 0).toFixed(2)}</span>
+                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
                     </div>
                 </div>
     `;
