@@ -855,3 +855,49 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
         border: 1px solid #ddd;
     }
 }
+
+/* Snackbar Notifications */
+.snackbar {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--success);
+    color: var(--text-white);
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 0.95rem;
+    z-index: 10000;
+    transition: bottom 0.3s ease;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.snackbar.show {
+    bottom: 30px;
+}
+
+.snackbar i {
+    font-size: 1.2rem;
+}
+
+.snackbar-success {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+}
+
+.snackbar-error {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+.snackbar-warning {
+    background: var(--warning);
+}
+
+.snackbar-info {
+    background: var(--info);
+}
