@@ -11,6 +11,45 @@ let selectedStudent = null;
 let currentUser = null;
 
 /**
+ * Show snackbar notification
+ */
+function showSnackbar(message, type = 'success', duration = 3000) {
+    // Remove any existing snackbar
+    const existingSnackbar = document.getElementById('snackbar');
+    if (existingSnackbar) {
+        existingSnackbar.remove();
+    }
+    
+    // Create snackbar element
+    const snackbar = document.createElement('div');
+    snackbar.id = 'snackbar';
+    snackbar.className = `snackbar snackbar-${type}`;
+    
+    // Add icon based on type
+    let icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    if (type === 'info') icon = 'fa-info-circle';
+    
+    snackbar.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${escapeHtml(message)}</span>
+    `;
+    
+    // Add to body
+    document.body.appendChild(snackbar);
+    
+    // Trigger animation
+    setTimeout(() => snackbar.classList.add('show'), 10);
+    
+    // Auto-hide after duration
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+        setTimeout(() => snackbar.remove(), 300);
+    }, duration);
+}
+
+/**
  * Convert date from d/mm/yyyy format to Date object
  */
 function parseDateFromInput(dateString) {
@@ -396,27 +435,8 @@ async function processGift() {
         
         showLoading(false);
         
-        // Show success message with structured format
-        const successMessageHTML = `
-            <p style="font-size: 1.1rem; margin-bottom: 20px;">Successfully gifted <strong>${quantity} class${quantity !== 1 ? 'es' : ''}</strong> to <strong>${fullName}</strong>!</p>
-            <div class="success-summary">
-                <div class="success-row highlight">
-                    <span class="label">New Balance:</span>
-                    <span class="value">${result.newBalance} classes</span>
-                </div>
-                <div class="success-row">
-                    <span class="label">Expires:</span>
-                    <span class="value">${formatDate(expiryDate)}</span>
-                </div>
-                <div class="success-reason">
-                    <span class="label">Reason:</span>
-                    <span class="value">${escapeHtml(notes)}</span>
-                </div>
-            </div>
-        `;
-        
-        document.getElementById('success-message-text').innerHTML = successMessageHTML;
-        document.getElementById('success-modal').style.display = 'flex';
+        // Show success snackbar
+        showSnackbar(`Successfully gifted ${quantity} class${quantity !== 1 ? 'es' : ''} to ${fullName}`, 'success');
         
         // Reset the form after successful gift
         resetForm();
