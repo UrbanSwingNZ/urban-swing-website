@@ -758,7 +758,25 @@ function showLoading(show = true) {
  * Show error message
  */
 function showError(message) {
-    alert('Error: ' + message);
+    // Create modal using BaseModal directly to only have one button
+    import('/components/modals/modal-base.js').then(({ BaseModal }) => {
+        const modal = new BaseModal({
+            title: '<i class="fas fa-exclamation-circle"></i> Error',
+            content: message,
+            size: 'small',
+            buttons: [
+                {
+                    text: 'OK',
+                    class: 'btn-cancel',
+                    onClick: (m) => m.hide()
+                }
+            ]
+        });
+        
+        // Add danger variant styling
+        modal.element.classList.add('modal-danger');
+        modal.show();
+    });
 }
 
 /**
