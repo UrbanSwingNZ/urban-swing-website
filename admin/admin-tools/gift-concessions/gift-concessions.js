@@ -11,6 +11,45 @@ let selectedStudent = null;
 let currentUser = null;
 
 /**
+ * Show snackbar notification
+ */
+function showSnackbar(message, type = 'success', duration = 3000) {
+    // Remove any existing snackbar
+    const existingSnackbar = document.getElementById('snackbar');
+    if (existingSnackbar) {
+        existingSnackbar.remove();
+    }
+    
+    // Create snackbar element
+    const snackbar = document.createElement('div');
+    snackbar.id = 'snackbar';
+    snackbar.className = `snackbar snackbar-${type}`;
+    
+    // Add icon based on type
+    let icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    if (type === 'info') icon = 'fa-info-circle';
+    
+    snackbar.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${escapeHtml(message)}</span>
+    `;
+    
+    // Add to body
+    document.body.appendChild(snackbar);
+    
+    // Trigger animation
+    setTimeout(() => snackbar.classList.add('show'), 10);
+    
+    // Auto-hide after duration
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+        setTimeout(() => snackbar.remove(), 300);
+    }, duration);
+}
+
+/**
  * Convert date from d/mm/yyyy format to Date object
  */
 function parseDateFromInput(dateString) {
@@ -285,7 +324,7 @@ function updateSummary() {
     document.getElementById('summary-new-balance').textContent = newBalance;
     
     document.getElementById('summary-expiry').textContent = expiryDate 
-        ? formatDate(new Date(expiryDate)) 
+        ? formatDate(parseDateFromInput(expiryDate)) 
         : '-';
     
     document.getElementById('summary-notes').textContent = notes || '-';
@@ -363,6 +402,7 @@ function showConfirmModal(studentName, quantity, expiryDate, notes) {
         message: 'Are you sure you want to gift these concessions?' + details,
         confirmText: 'Yes, Gift Concessions',
         cancelText: 'Cancel',
+        cancelClass: 'btn-cancel',
         onConfirm: async () => {
             await processGift();
         }
@@ -395,27 +435,11 @@ async function processGift() {
         
         showLoading(false);
         
-        // Show success message with structured format
-        const successMessageHTML = `
-            <p style="font-size: 1.1rem; margin-bottom: 20px;">Successfully gifted <strong>${quantity} class${quantity !== 1 ? 'es' : ''}</strong> to <strong>${fullName}</strong>!</p>
-            <div class="success-summary">
-                <div class="success-row highlight">
-                    <span class="label">New Balance:</span>
-                    <span class="value">${result.newBalance} classes</span>
-                </div>
-                <div class="success-row">
-                    <span class="label">Expires:</span>
-                    <span class="value">${formatDate(expiryDate)}</span>
-                </div>
-                <div class="success-reason">
-                    <span class="label">Reason:</span>
-                    <span class="value">${escapeHtml(notes)}</span>
-                </div>
-            </div>
-        `;
+        // Show success snackbar
+        showSnackbar(`Successfully gifted ${quantity} class${quantity !== 1 ? 'es' : ''} to ${fullName}`, 'success');
         
-        document.getElementById('success-message-text').innerHTML = successMessageHTML;
-        document.getElementById('success-modal').style.display = 'flex';
+        // Reset the form after successful gift
+        resetForm();
         
         // Reload recent gifts
         await loadRecentGifts();
@@ -572,7 +596,16 @@ async function loadRecentGifts() {
                             <i class="fas fa-gift"></i> ${escapeHtml(studentName)}
                             ${gift.isReversed ? '<span class="reversed-badge">Reversed</span>' : ''}
                         </h4>
-                        <span class="gift-item-date">${formatDate(date)}</span>
+                        <div class="gift-item-actions">
+                            <span class="gift-item-date">${formatDate(date)}</span>
+                            ${!gift.isReversed ? `
+                                <button class="btn-icon btn-delete" 
+                                    onclick="deleteGift('${gift.id}', '${escapeHtml(studentName)}')" 
+                                    title="Delete this gift">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                     <p class="gift-item-details">
                         <strong>${gift.numberOfClasses}</strong> class${gift.numberOfClasses !== 1 ? 'es' : ''} gifted
@@ -587,6 +620,100 @@ async function loadRecentGifts() {
         console.error('Error loading recent gifts:', error);
         document.getElementById('recent-gifts-list').innerHTML = 
             '<p class="error-message"><i class="fas fa-exclamation-triangle"></i> Failed to load recent gifts. Please refresh the page.</p>';
+    }
+}
+
+/**
+ * Delete a gift and its associated concession block
+ */
+async function deleteGift(transactionId, studentName) {
+    try {
+        // Get the transaction to find the student
+        const transactionDoc = await db.collection('transactions').doc(transactionId).get();
+        if (!transactionDoc.exists) {
+            showError('Transaction not found');
+            return;
+        }
+        const transactionData = transactionDoc.data();
+        const studentId = transactionData.studentId;
+        
+        // Find associated concessionBlock
+        const blocksSnapshot = await db.collection('concessionBlocks')
+            .where('studentId', '==', studentId)
+            .where('transactionId', '==', transactionId)
+            .where('packageId', '==', 'gifted-concessions')
+            .get();
+        
+        if (blocksSnapshot.empty) {
+            showError('Associated concession block not found');
+            return;
+        }
+        
+        // Check if any block is locked or has been used
+        let canDelete = true;
+        let errorMessage = '';
+        
+        blocksSnapshot.forEach(doc => {
+            const blockData = doc.data();
+            if (blockData.isLocked === true) {
+                canDelete = false;
+                errorMessage = 'Cannot delete this gift - the concession block is locked. Unlock it first.';
+            } else if (blockData.remainingQuantity < blockData.originalQuantity) {
+                canDelete = false;
+                const used = blockData.originalQuantity - blockData.remainingQuantity;
+                errorMessage = `Cannot delete this gift - ${used} class${used !== 1 ? 'es have' : ' has'} already been used from this block.`;
+            }
+        });
+        
+        if (!canDelete) {
+            showError(errorMessage);
+            return;
+        }
+        
+        // Show confirmation modal
+        const modal = new ConfirmationModal({
+            title: 'Delete Gift',
+            message: `Are you sure you want to delete this gift to <strong>${studentName}</strong>?<br><br>This will permanently remove both the gift transaction and the associated concession block.`,
+            confirmText: 'Yes, Delete',
+            confirmClass: 'btn-danger',
+            cancelText: 'Cancel',
+            cancelClass: 'btn-cancel',
+            variant: 'danger',
+            onConfirm: async () => {
+                try {
+                    showLoading(true);
+                    
+                    // Delete the concession blocks
+                    const batch = db.batch();
+                    blocksSnapshot.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+                    
+                    // Delete the transaction
+                    await db.collection('transactions').doc(transactionId).delete();
+                    
+                    // Update student's balance
+                    await updateStudentBalance(studentId);
+                    
+                    showLoading(false);
+                    
+                    // Reload the gifts list
+                    await loadRecentGifts();
+                    
+                } catch (error) {
+                    showLoading(false);
+                    console.error('Delete error:', error);
+                    showError('Failed to delete gift: ' + error.message);
+                }
+            }
+        });
+        
+        modal.show();
+        
+    } catch (error) {
+        console.error('Error preparing to delete gift:', error);
+        showError('Error: ' + error.message);
     }
 }
 
@@ -631,7 +758,25 @@ function showLoading(show = true) {
  * Show error message
  */
 function showError(message) {
-    alert('Error: ' + message);
+    // Create modal using BaseModal directly to only have one button
+    import('/components/modals/modal-base.js').then(({ BaseModal }) => {
+        const modal = new BaseModal({
+            title: '<i class="fas fa-exclamation-circle"></i> Error',
+            content: message,
+            size: 'small',
+            buttons: [
+                {
+                    text: 'OK',
+                    class: 'btn-cancel',
+                    onClick: (m) => m.hide()
+                }
+            ]
+        });
+        
+        // Add danger variant styling
+        modal.element.classList.add('modal-danger');
+        modal.show();
+    });
 }
 
 /**
@@ -682,3 +827,4 @@ window.selectStudent = selectStudent;
 window.resetForm = resetForm;
 window.closeSuccessModal = closeSuccessModal;
 window.closeSuccessModalAndReset = closeSuccessModalAndReset;
+window.deleteGift = deleteGift;

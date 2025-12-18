@@ -4,6 +4,8 @@
  * Reuses logic and display from concessions.js
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 /**
  * Load concession information for a student
  * Reuses getStudentConcessionBlocks and calculateConcessionStats from concessions.js
@@ -212,7 +214,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
                     <div class="concession-details">
                         <span><i class="fas ${expiryIcon}"></i> ${expiryLabel}: ${formatDate(expiryDate)}</span>
                         <span><i class="fas fa-shopping-cart"></i> ${isGifted ? 'Gifted' : 'Purchased'}: ${formatDate(purchaseDate)}</span>
-                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.amountPaid || 0).toFixed(2)}</span>
+                        <span><i class="fas fa-dollar-sign"></i> Paid: $${(block.price || 0).toFixed(2)}</span>
                     </div>
                 </div>
     `;
@@ -305,47 +307,36 @@ function attachTransactionConcessionEventListeners(contentEl, studentId) {
             const blockId = btn.dataset.blockId;
             const deleteStudentId = btn.dataset.studentId;
             
-            // Show the delete modal
-            const modal = document.getElementById('delete-modal');
-            const titleEl = document.getElementById('delete-modal-title');
-            const messageEl = document.getElementById('delete-modal-message');
-            const infoEl = document.getElementById('delete-modal-info');
-            const btnTextEl = document.getElementById('delete-modal-btn-text');
-            const confirmBtn = document.getElementById('confirm-delete-btn');
-            
-            // Customize modal for concession block deletion
-            titleEl.textContent = 'Delete Concession';
-            messageEl.textContent = 'Are you sure you want to delete this concession block?';
-            infoEl.innerHTML = ''; // Clear any student info
-            infoEl.style.display = 'none'; // Hide the empty info box
-            btnTextEl.textContent = 'Delete Block';
-            
-            // Remove any existing event listeners by replacing the button
-            const newConfirmBtn = confirmBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-            
-            // Add click handler for confirm button
-            newConfirmBtn.addEventListener('click', async () => {
-                try {
-                    await deleteConcessionBlock(blockId);
-                    closeDeleteModal();
-                    if (typeof showSnackbar === 'function') {
-                        showSnackbar('Concession block deleted successfully', 'success');
-                    }
-                    // Small delay to ensure Firestore propagates the delete
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    // Reload the concessions tab
-                    await loadTransactionHistoryConcessions(deleteStudentId);
-                } catch (error) {
-                    console.error('Error deleting block:', error);
-                    closeDeleteModal();
-                    if (typeof showSnackbar === 'function') {
-                        showSnackbar('Error deleting block: ' + error.message, 'error');
+            // Show the delete confirmation modal
+            const modal = new ConfirmationModal({
+                title: 'Delete Concession',
+                message: 'Are you sure you want to delete this concession block?',
+                icon: 'fas fa-trash-alt',
+                confirmText: 'Delete Block',
+                confirmClass: 'btn-delete',
+                cancelText: 'Cancel',
+                cancelClass: 'btn-cancel',
+                variant: 'danger',
+                onConfirm: async () => {
+                    try {
+                        await deleteConcessionBlock(blockId);
+                        if (typeof showSnackbar === 'function') {
+                            showSnackbar('Concession block deleted successfully', 'success');
+                        }
+                        // Small delay to ensure Firestore propagates the delete
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        // Reload the concessions tab
+                        await loadTransactionHistoryConcessions(deleteStudentId);
+                    } catch (error) {
+                        console.error('Error deleting block:', error);
+                        if (typeof showSnackbar === 'function') {
+                            showSnackbar('Error deleting block: ' + error.message, 'error');
+                        }
                     }
                 }
             });
             
-            modal.style.display = 'flex';
+            modal.show();
         });
     });
     
@@ -392,3 +383,6 @@ function attachTransactionConcessionEventListeners(contentEl, studentId) {
         });
     });
 }
+
+// Expose function globally for non-module scripts
+window.loadTransactionHistoryConcessions = loadTransactionHistoryConcessions;

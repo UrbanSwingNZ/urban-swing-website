@@ -26,6 +26,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    
+    <!-- Modal System -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
 </head>
 <body>
     <!-- Loading Spinner -->
@@ -386,7 +390,7 @@
     <!-- Concessions Modules -->
     <script src="js/concessions/concessions-data.js?v=2"></script>
     <script src="js/concessions/concessions-display.js?v=2"></script>
-    <script src="js/concessions/concessions-actions.js?v=1"></script>
+    <script type="module" src="js/concessions/concessions-actions.js?v=2"></script>
     <script src="js/concessions/concessions-detail-modal.js?v=3"></script>
     
     <script src="js/search.js?v=10"></script>
@@ -400,7 +404,7 @@
     <script src="js/transaction-history/transaction-history-modal.js?v=1"></script>
     <script src="js/transaction-history/transaction-history-attendance.js?v=1"></script>
     <script src="js/transaction-history/transaction-history-payments.js?v=1"></script>
-    <script src="js/transaction-history/transaction-history-concessions.js?v=6"></script></script>
+    <script type="module" src="js/transaction-history/transaction-history-concessions.js?v=7"></script></script>
     
     <!-- Reusable Concessions Module -->
     <script src="../check-in/js/concession-blocks-balance.js?v=3"></script>
