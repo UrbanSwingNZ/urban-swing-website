@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Merchandise Orders - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="merch-orders.css">
+    <link rel="stylesheet" href="../../../styles/base/colors.css">
+    <link rel="stylesheet" href="../../../styles/base/buttons.css">
+    
+    <!-- Modal System -->
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading merchandise orders...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" class="dashboard-container" style="display: none;">
+        <!-- Header will be injected here by admin-header.js -->
+
+        <!-- Main Content -->
+        <main class="database-main">
+            <div class="database-header">
+                <div class="database-title">
+                    <h2>Merchandise Orders</h2>
+                    <p class="order-count">Total: <span id="order-count">0</span> orders</p>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="database-search">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search orders by name, email..." class="search-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <button id="clear-search" class="clear-search" style="display: none;" title="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="search-results-info" id="search-results-info" style="display: none;"></p>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-container">
+                <table class="orders-table" id="orders-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="createdAt">
+                                Order Date <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="fullName">
+                                Customer Name <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="email">
+                                Email <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="phoneNumber">
+                                Phone <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-sort="shipping">
+                                Shipping <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th>Items</th>
+                            <th class="sortable" data-sort="status">
+                                Status <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody">
+                        <!-- Orders will be dynamically inserted here -->
+                    </tbody>
+                </table>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <i class="fas fa-shopping-bag fa-3x"></i>
+                    <h3>No Orders Yet</h3>
+                    <p>Merchandise orders will appear here when customers place them.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Admin Portal v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="order-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="modal-title">Order Details</h2>
+                <button class="modal-close" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="order-details-content">
+                    <!-- Order details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeOrderModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="/config/firebase-config.js"></script>
+    
+    <!-- Shared Modal Components -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    
+    <!-- Admin Header Component -->
+    <script src="/admin/components/js/header-config.js"></script>
+    <script src="/admin/components/js/header-configurator.js"></script>
+    <script src="/admin/components/js/mobile-nav.js"></script>
+    <script src="/admin/admin-header.js"></script>
+    
+    <!-- Page Script -->
+    <script type="module" src="merch-orders.js"></script>
+    <script type="module" src="merch-orders-data.js"></script>
+    <script type="module" src="merch-orders-ui.js"></script>
+    <script type="module" src="merch-orders-utils.js"></script>
+</body>
+</html>
