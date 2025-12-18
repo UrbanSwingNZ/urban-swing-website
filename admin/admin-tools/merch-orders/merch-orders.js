@@ -6,6 +6,7 @@ import {
     renderOrders,
     viewOrderDetails,
     closeOrderModal,
+    toggleInvoiced,
     markOrderComplete,
     deleteOrder,
     handleSearch,
@@ -79,6 +80,7 @@ function setupEventListeners() {
 // Expose functions to global scope for inline onclick handlers
 window.viewOrderDetails = viewOrderDetails;
 window.closeOrderModal = closeOrderModal;
-window.deleteOrder = deleteOrder;
+window.toggleInvoiced = toggleInvoiced;
 window.markOrderComplete = markOrderComplete;
+window.deleteOrder = deleteOrder;
 

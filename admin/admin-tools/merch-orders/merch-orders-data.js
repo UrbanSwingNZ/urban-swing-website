@@ -1,7 +1,5 @@
 // merch-orders-data.js - Firestore data operations
 
-import { showNotification } from './merch-orders-utils.js';
-
 /**
  * Load all orders from Firestore
  */
@@ -30,12 +28,26 @@ export async function markOrderComplete(orderId) {
         await db.collection('merchOrders').doc(orderId).update({
             status: 'completed'
         });
-        showNotification('Order marked as complete', 'success');
         return true;
     } catch (error) {
         console.error('Error marking order as complete:', error);
-        showNotification('Error updating order status. Please try again.', 'error');
         return false;
+    }
+}
+
+/**
+ * Toggle invoiced status
+ */
+export async function toggleInvoicedStatus(orderId, currentStatus) {
+    try {
+        const newStatus = !currentStatus;
+        await db.collection('merchOrders').doc(orderId).update({
+            invoiced: newStatus
+        });
+        return newStatus;
+    } catch (error) {
+        console.error('Error toggling invoiced status:', error);
+        return null;
     }
 }
 
@@ -45,11 +57,9 @@ export async function markOrderComplete(orderId) {
 export async function deleteOrderFromDb(orderId) {
     try {
         await db.collection('merchOrders').doc(orderId).delete();
-        showNotification('Order deleted successfully', 'success');
         return true;
     } catch (error) {
         console.error('Error deleting order:', error);
-        showNotification('Error deleting order. Please try again.', 'error');
         return false;
     }
 }

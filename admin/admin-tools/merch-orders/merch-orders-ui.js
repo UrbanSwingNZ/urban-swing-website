@@ -2,7 +2,7 @@
 
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 import { formatDate, getShippingLabel, formatItemName, escapeHtml } from './merch-orders-utils.js';
-import { markOrderComplete as markCompleteInDb, deleteOrderFromDb } from './merch-orders-data.js';
+import { markOrderComplete as markCompleteInDb, toggleInvoicedStatus, deleteOrderFromDb } from './merch-orders-data.js';
 
 // UI state
 let allOrders = [];
@@ -63,6 +63,11 @@ export function renderOrders() {
                     <div class="action-buttons">
                         <button class="btn-icon" onclick="viewOrderDetails('${order.id}')" title="View Details">
                             <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon btn-invoice ${order.invoiced ? 'invoiced' : ''}" 
+                                onclick="toggleInvoiced('${order.id}')" 
+                                title="${order.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}">
+                            <i class="fas fa-file-invoice"></i>
                         </button>
                         <button class="btn-icon ${order.status === 'completed' ? 'btn-disabled' : ''}" 
                                 onclick="markOrderComplete('${order.id}')" 
@@ -195,6 +200,30 @@ export function viewOrderDetails(orderId) {
  */
 export function closeOrderModal() {
     document.getElementById('order-modal').style.display = 'none';
+}
+
+/**
+ * Toggle invoiced status
+ */
+export async function toggleInvoiced(orderId) {
+    const order = allOrders.find(o => o.id === orderId);
+    if (!order) return;
+
+    const newStatus = await toggleInvoicedStatus(orderId, order.invoiced || false);
+    if (newStatus !== null) {
+        // Update local data
+        const orderIndex = allOrders.findIndex(o => o.id === orderId);
+        if (orderIndex !== -1) {
+            allOrders[orderIndex].invoiced = newStatus;
+        }
+        
+        const displayedIndex = displayedOrders.findIndex(o => o.id === orderId);
+        if (displayedIndex !== -1) {
+            displayedOrders[displayedIndex].invoiced = newStatus;
+        }
+        
+        renderOrders();
+    }
 }
 
 /**
