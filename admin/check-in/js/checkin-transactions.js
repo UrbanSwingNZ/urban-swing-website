@@ -268,6 +268,8 @@ function getCheckinPaymentBadgeHTML(transaction) {
         return '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
     } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
         return '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+    } else if (paymentMethod === 'none') {
+        return '<span class="payment-badge na">N/A</span>';
     } else {
         return '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
     }
