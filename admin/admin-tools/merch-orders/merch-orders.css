@@ -234,6 +234,18 @@
     color: white;
 }
 
+.btn-icon.btn-invoice.invoiced {
+    color: var(--admin-purple);
+    border-color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+}
+
+.btn-icon.btn-invoice:hover {
+    border-color: var(--admin-purple);
+    color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;
