@@ -59,6 +59,30 @@ export function escapeHtml(text) {
 }
 
 /**
+ * Get badge status based on order state
+ * Priority: deleted > completed > invoiced > pending
+ */
+export function getBadgeStatus(order) {
+    if (order.deleted) return 'deleted';
+    if (order.status === 'completed') return 'complete';
+    if (order.invoiced) return 'invoiced';
+    return 'pending';
+}
+
+/**
+ * Get badge label for display
+ */
+export function getBadgeLabel(status) {
+    const labels = {
+        'deleted': 'Deleted',
+        'complete': 'Complete',
+        'invoiced': 'Invoiced',
+        'pending': 'Pending'
+    };
+    return labels[status] || 'Pending';
+}
+
+/**
  * Show notification toast
  */
 export function showNotification(message, type = 'info') {

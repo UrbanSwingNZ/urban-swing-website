@@ -170,22 +170,17 @@
     color: var(--badge-warning-text);
 }
 
-.badge-paid {
-    background: var(--badge-success-bg);
-    color: var(--badge-success-text);
-}
-
-.badge-shipped {
+.badge-invoiced {
     background: var(--badge-casual-bg);
     color: var(--badge-casual-text);
 }
 
-.badge-completed {
-    background: var(--badge-teal-bg);
-    color: var(--badge-teal-text);
+.badge-complete {
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
 }
 
-.badge-cancelled {
+.badge-deleted {
     background: var(--badge-error-bg);
     color: var(--badge-error-text);
 }
@@ -235,15 +230,58 @@
 }
 
 .btn-icon.btn-invoice.invoiced {
-    color: var(--admin-purple);
-    border-color: var(--admin-purple);
-    background: var(--bg-purple-medium);
+    color: var(--admin-purple) !important;
+    border-color: var(--admin-purple) !important;
+    background: var(--bg-purple-medium) !important;
 }
 
-.btn-icon.btn-invoice:hover {
+.btn-icon.btn-invoice:hover:not([disabled]) {
     border-color: var(--admin-purple);
     color: var(--admin-purple);
-    background: var(--bg-purple-medium);
+}
+
+.btn-icon.btn-complete.completed {
+    color: var(--badge-success-text) !important;
+    border-color: var(--badge-success-text) !important;
+    background: var(--badge-success-bg) !important;
+}
+
+.btn-icon.btn-complete:hover:not([disabled]) {
+    border-color: var(--badge-success-text);
+    color: var(--badge-success-text);
+}
+
+/* Deleted Order Row Styling */
+.deleted-order {
+    color: var(--error-color);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.deleted-order td {
+    color: var(--error-color);
+}
+
+.deleted-order strong {
+    color: var(--error-color);
+}
+
+/* Filter Controls */
+.filter-controls {
+    margin-top: 12px;
+}
+
+.filter-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.filter-checkbox input[type="checkbox"] {
+    cursor: pointer;
 }
 
 /* Empty State */
