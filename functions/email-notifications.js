@@ -9,6 +9,7 @@ const {defineSecret} = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const nodemailer = require("nodemailer");
+const {generateMerchOrderEmail} = require("./emails/merch-order-notification");
 
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
@@ -454,6 +455,60 @@ exports.sendTestEmail = onCall(
     } catch (error) {
       logger.error('Error sending test email:', error);
       throw new Error(`Failed to send test email: ${error.message}`);
+    }
+  }
+);
+
+/**
+ * Cloud Function: Send Merchandise Order Notification Email
+ * Triggers when a new merchandise order is created in the merchOrders collection
+ * Sends email to dance@urbanswing.co.nz (admin notification)
+ */
+exports.sendMerchOrderEmail = onDocumentCreated(
+  {
+    document: "merchOrders/{orderId}",
+    secrets: [emailPassword],
+  },
+  async (event) => {
+    const order = event.data.data();
+    const orderId = event.params.orderId;
+
+    logger.info("New merchandise order received:", orderId);
+
+    try {
+      // Generate email content using hardcoded template
+      const emailContent = generateMerchOrderEmail(order, orderId);
+      
+      // Send email to admin
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'dance@urbanswing.co.nz',
+          pass: emailPassword.value()
+        }
+      });
+      
+      await transporter.sendMail({
+        from: 'Urban Swing <dance@urbanswing.co.nz>',
+        to: 'dance@urbanswing.co.nz',
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html
+      });
+      
+      logger.info(`Merchandise order notification email sent for order ${orderId}`);
+      
+      return {
+        success: true,
+        emailSent: 'dance@urbanswing.co.nz'
+      };
+    } catch (error) {
+      logger.error('Error sending merchandise order email:', error);
+      // Don't throw - we don't want to fail the order creation if email fails
+      return {
+        success: false,
+        error: error.message
+      };
     }
   }
 );
