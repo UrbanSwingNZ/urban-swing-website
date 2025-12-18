@@ -59,6 +59,14 @@ export function escapeHtml(text) {
 }
 
 /**
+ * Convert string to title case
+ */
+export function toTitleCase(str) {
+    if (!str) return '';
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+}
+
+/**
  * Get badge status based on order state
  * Priority: deleted > completed > invoiced > pending
  */

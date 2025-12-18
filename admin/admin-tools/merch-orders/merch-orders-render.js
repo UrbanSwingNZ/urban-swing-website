@@ -1,6 +1,6 @@
 // merch-orders-render.js - Rendering functions
 
-import { formatDate, getShippingLabel, formatItemName, escapeHtml, getBadgeStatus, getBadgeLabel } from './merch-orders-utils.js';
+import { formatDate, getShippingLabel, formatItemName, escapeHtml, getBadgeStatus, getBadgeLabel, toTitleCase } from './merch-orders-utils.js';
 import { getDisplayedOrders, getAllOrders } from './merch-orders-state.js';
 
 /**
@@ -38,7 +38,7 @@ export function renderOrders() {
         return `
             <tr class="${isDeleted ? 'deleted-order' : ''}" onclick="viewOrderDetails('${order.id}')">
                 <td>${formatDate(order.createdAt)}</td>
-                <td><strong>${escapeHtml(order.fullName)}</strong></td>
+                <td><strong>${escapeHtml(toTitleCase(order.fullName))}</strong></td>
                 <td>${escapeHtml(order.email)}</td>
                 <td>${escapeHtml(order.phoneNumber)}</td>
                 <td>${shippingLabel}</td>
@@ -86,7 +86,7 @@ export function viewOrderDetails(orderId) {
             <div class="detail-grid">
                 <div class="detail-item">
                     <span class="detail-label">Full Name</span>
-                    <span class="detail-value">${escapeHtml(order.fullName)}</span>
+                    <span class="detail-value">${escapeHtml(toTitleCase(order.fullName))}</span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Email</span>
