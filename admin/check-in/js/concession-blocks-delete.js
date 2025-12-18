@@ -27,9 +27,22 @@ async function deleteConcessionBlock(blockId) {
         // Get student ID and transaction ID before deleting
         const studentId = blockData.studentId;
         const transactionId = blockData.transactionId;
+        const packageId = blockData.packageId;
         
-        // Mark the associated transaction as reversed if it exists
-        if (transactionId) {
+        // If this is a gifted concession, delete the transaction instead of reversing it
+        if (transactionId && packageId === 'gifted-concessions') {
+            try {
+                await firebase.firestore()
+                    .collection('transactions')
+                    .doc(transactionId)
+                    .delete();
+                console.log(`Deleted associated gift transaction: ${transactionId}`);
+            } catch (transactionError) {
+                console.warn('Could not delete associated transaction:', transactionError);
+                // Continue with block deletion even if transaction deletion fails
+            }
+        } else if (transactionId) {
+            // For non-gifted blocks, mark transaction as reversed
             try {
                 await firebase.firestore()
                     .collection('transactions')
