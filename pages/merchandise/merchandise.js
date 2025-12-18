@@ -5,10 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const shippingRadios = document.querySelectorAll('input[name="shipping"]');
     const eventNameGroup = document.getElementById('eventNameGroup');
     const eventNameInput = document.getElementById('eventName');
+    const addressGroup = document.getElementById('addressGroup');
+    const addressInput = document.getElementById('address');
     
     // Handle shipping option changes
     shippingRadios.forEach(radio => {
         radio.addEventListener('change', function() {
+            // Handle event name field
             if (this.value === 'collect-event') {
                 eventNameGroup.style.display = 'block';
                 eventNameInput.required = true;
@@ -16,6 +19,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 eventNameGroup.style.display = 'none';
                 eventNameInput.required = false;
                 eventNameInput.value = '';
+            }
+            
+            // Handle address field
+            if (this.value === 'courier') {
+                addressGroup.style.display = 'block';
+                addressInput.required = true;
+            } else {
+                addressGroup.style.display = 'none';
+                addressInput.required = false;
+                addressInput.value = '';
             }
         });
     });
