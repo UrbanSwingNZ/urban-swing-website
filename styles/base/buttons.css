@@ -83,12 +83,15 @@
   height: 36px;
   box-sizing: border-box;
   line-height: 1;
+  text-decoration: none;
 }
 
 .btn-primary:hover {
   background: linear-gradient(135deg, var(--purple-primary), var(--pink-primary));
   transform: translateY(-2px);
   box-shadow: 0 5px 15px var(--bg-purple-strong);
+  color: var(--text-white) !important;
+  text-decoration: none;
 }
 
 .btn-primary:disabled {
