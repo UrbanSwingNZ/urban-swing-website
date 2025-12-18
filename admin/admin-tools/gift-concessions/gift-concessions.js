@@ -363,6 +363,7 @@ function showConfirmModal(studentName, quantity, expiryDate, notes) {
         message: 'Are you sure you want to gift these concessions?' + details,
         confirmText: 'Yes, Gift Concessions',
         cancelText: 'Cancel',
+        cancelClass: 'btn-cancel',
         onConfirm: async () => {
             await processGift();
         }
@@ -572,7 +573,16 @@ async function loadRecentGifts() {
                             <i class="fas fa-gift"></i> ${escapeHtml(studentName)}
                             ${gift.isReversed ? '<span class="reversed-badge">Reversed</span>' : ''}
                         </h4>
-                        <span class="gift-item-date">${formatDate(date)}</span>
+                        <div class="gift-item-actions">
+                            <span class="gift-item-date">${formatDate(date)}</span>
+                            ${!gift.isReversed ? `
+                                <button class="btn-icon btn-delete" 
+                                    onclick="deleteGift('${gift.id}', '${escapeHtml(studentName)}')" 
+                                    title="Delete this gift">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                     <p class="gift-item-details">
                         <strong>${gift.numberOfClasses}</strong> class${gift.numberOfClasses !== 1 ? 'es' : ''} gifted
@@ -587,6 +597,100 @@ async function loadRecentGifts() {
         console.error('Error loading recent gifts:', error);
         document.getElementById('recent-gifts-list').innerHTML = 
             '<p class="error-message"><i class="fas fa-exclamation-triangle"></i> Failed to load recent gifts. Please refresh the page.</p>';
+    }
+}
+
+/**
+ * Delete a gift and its associated concession block
+ */
+async function deleteGift(transactionId, studentName) {
+    try {
+        // Get the transaction to find the student
+        const transactionDoc = await db.collection('transactions').doc(transactionId).get();
+        if (!transactionDoc.exists) {
+            showError('Transaction not found');
+            return;
+        }
+        const transactionData = transactionDoc.data();
+        const studentId = transactionData.studentId;
+        
+        // Find associated concessionBlock
+        const blocksSnapshot = await db.collection('concessionBlocks')
+            .where('studentId', '==', studentId)
+            .where('transactionId', '==', transactionId)
+            .where('packageId', '==', 'gifted-concessions')
+            .get();
+        
+        if (blocksSnapshot.empty) {
+            showError('Associated concession block not found');
+            return;
+        }
+        
+        // Check if any block is locked or has been used
+        let canDelete = true;
+        let errorMessage = '';
+        
+        blocksSnapshot.forEach(doc => {
+            const blockData = doc.data();
+            if (blockData.isLocked === true) {
+                canDelete = false;
+                errorMessage = 'Cannot delete this gift - the concession block is locked. Unlock it first.';
+            } else if (blockData.remainingQuantity < blockData.originalQuantity) {
+                canDelete = false;
+                const used = blockData.originalQuantity - blockData.remainingQuantity;
+                errorMessage = `Cannot delete this gift - ${used} class${used !== 1 ? 'es have' : ' has'} already been used from this block.`;
+            }
+        });
+        
+        if (!canDelete) {
+            showError(errorMessage);
+            return;
+        }
+        
+        // Show confirmation modal
+        const modal = new ConfirmationModal({
+            title: 'Delete Gift',
+            message: `Are you sure you want to delete this gift to <strong>${studentName}</strong>?<br><br>This will permanently remove both the gift transaction and the associated concession block.`,
+            confirmText: 'Yes, Delete',
+            confirmClass: 'btn-danger',
+            cancelText: 'Cancel',
+            cancelClass: 'btn-cancel',
+            variant: 'danger',
+            onConfirm: async () => {
+                try {
+                    showLoading(true);
+                    
+                    // Delete the concession blocks
+                    const batch = db.batch();
+                    blocksSnapshot.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+                    
+                    // Delete the transaction
+                    await db.collection('transactions').doc(transactionId).delete();
+                    
+                    // Update student's balance
+                    await updateStudentBalance(studentId);
+                    
+                    showLoading(false);
+                    
+                    // Reload the gifts list
+                    await loadRecentGifts();
+                    
+                } catch (error) {
+                    showLoading(false);
+                    console.error('Delete error:', error);
+                    showError('Failed to delete gift: ' + error.message);
+                }
+            }
+        });
+        
+        modal.show();
+        
+    } catch (error) {
+        console.error('Error preparing to delete gift:', error);
+        showError('Error: ' + error.message);
     }
 }
 
@@ -682,3 +786,4 @@ window.selectStudent = selectStudent;
 window.resetForm = resetForm;
 window.closeSuccessModal = closeSuccessModal;
 window.closeSuccessModalAndReset = closeSuccessModalAndReset;
+window.deleteGift = deleteGift;
