@@ -103,6 +103,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../'
     },
+    '/admin/admin-tools/merch-orders/': {
+        title: 'Merchandise Orders',
+        activePage: 'merch-orders',
+        navSection: 'admin-tools',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../'
+    },
     
     // Student Portal Pages (admin view)
     '/student-portal/dashboard/': {
