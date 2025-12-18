@@ -285,7 +285,7 @@ function updateSummary() {
     document.getElementById('summary-new-balance').textContent = newBalance;
     
     document.getElementById('summary-expiry').textContent = expiryDate 
-        ? formatDate(new Date(expiryDate)) 
+        ? formatDate(parseDateFromInput(expiryDate)) 
         : '-';
     
     document.getElementById('summary-notes').textContent = notes || '-';
@@ -417,6 +417,9 @@ async function processGift() {
         
         document.getElementById('success-message-text').innerHTML = successMessageHTML;
         document.getElementById('success-modal').style.display = 'flex';
+        
+        // Reset the form after successful gift
+        resetForm();
         
         // Reload recent gifts
         await loadRecentGifts();
