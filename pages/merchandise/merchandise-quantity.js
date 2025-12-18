@@ -10,6 +10,7 @@ function initializeQuantityHandlers() {
         button.addEventListener('click', function() {
             const targetId = this.getAttribute('data-target');
             const input = document.getElementById(targetId);
+            const qtySelector = input?.closest('.quantity-selector');
             let currentValue = parseInt(input.value) || 0;
             
             if (this.classList.contains('plus')) {
@@ -20,29 +21,37 @@ function initializeQuantityHandlers() {
             
             input.value = currentValue;
             
-            // Deselect size if quantity is 0
+            // Deselect size and hide controls if quantity is 0
             if (currentValue === 0) {
                 deselectSizeForItem(targetId);
+                if (qtySelector) {
+                    qtySelector.classList.remove('visible');
+                }
             }
         });
     });
     
-    // Auto-set quantity to 1 when size is selected
+    // Auto-set quantity to 1 when size is selected and show qty controls
     const sizeRadios = document.querySelectorAll('.size-radio input[type="radio"]');
     sizeRadios.forEach(radio => {
         // Allow deselection by clicking the same radio button
         radio.addEventListener('click', function() {
             const radioName = this.name;
+            const qtyInputId = getQuantityInputIdFromRadioName(radioName);
+            const qtyInput = qtyInputId ? document.getElementById(qtyInputId) : null;
+            const qtySelector = qtyInput?.closest('.quantity-selector');
             
             // If this radio was already checked, deselect it
             if (this.dataset.checked === 'true') {
                 this.checked = false;
                 this.dataset.checked = 'false';
                 
-                // Reset quantity to 0
-                const qtyInputId = getQuantityInputIdFromRadioName(radioName);
-                if (qtyInputId) {
-                    document.getElementById(qtyInputId).value = 0;
+                // Reset quantity to 0 and hide controls
+                if (qtyInput) {
+                    qtyInput.value = 0;
+                }
+                if (qtySelector) {
+                    qtySelector.classList.remove('visible');
                 }
             } else {
                 // Mark this radio as checked and unmark others in the same group
@@ -50,12 +59,13 @@ function initializeQuantityHandlers() {
                 radiosInGroup.forEach(r => r.dataset.checked = 'false');
                 this.dataset.checked = 'true';
                 
-                // Set quantity to 1 if currently 0
-                const qtyInputId = getQuantityInputIdFromRadioName(radioName);
-                if (qtyInputId) {
-                    const qtyInput = document.getElementById(qtyInputId);
+                // Set quantity to 1 if currently 0 and show controls
+                if (qtyInput) {
                     if (parseInt(qtyInput.value) === 0) {
                         qtyInput.value = 1;
+                    }
+                    if (qtySelector && !qtySelector.classList.contains('visible')) {
+                        qtySelector.classList.add('visible');
                     }
                 }
             }
@@ -71,7 +81,10 @@ function deselectSizeForItem(qtyInputId) {
     
     if (radioName) {
         const sizeRadios = document.querySelectorAll(`input[name="${radioName}"]`);
-        sizeRadios.forEach(radio => radio.checked = false);
+        sizeRadios.forEach(radio => {
+            radio.checked = false;
+            radio.dataset.checked = 'false';
+        });
     }
 }
 
