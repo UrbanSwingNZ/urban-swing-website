@@ -9,9 +9,11 @@ import {
     toggleInvoiced,
     markOrderComplete,
     deleteOrder,
+    restoreOrder,
     handleSearch,
     clearSearch,
     handleSort,
+    handleDeletedFilter,
     updateOrderCount
 } from './merch-orders-ui.js';
 
@@ -71,6 +73,10 @@ function setupEventListeners() {
     searchInput.addEventListener('input', handleSearch);
     clearSearchBtn.addEventListener('click', clearSearch);
 
+    // Deleted filter
+    const showDeletedCheckbox = document.getElementById('show-deleted-checkbox');
+    showDeletedCheckbox.addEventListener('change', handleDeletedFilter);
+
     // Table sorting
     document.querySelectorAll('.sortable').forEach(header => {
         header.addEventListener('click', () => handleSort(header.dataset.sort));
@@ -83,4 +89,5 @@ window.closeOrderModal = closeOrderModal;
 window.toggleInvoiced = toggleInvoiced;
 window.markOrderComplete = markOrderComplete;
 window.deleteOrder = deleteOrder;
+window.restoreOrder = restoreOrder;
 

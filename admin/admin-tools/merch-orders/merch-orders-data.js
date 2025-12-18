@@ -21,16 +21,16 @@ export async function loadOrders() {
 }
 
 /**
- * Mark order as complete
+ * Toggle order completion status
  */
-export async function markOrderComplete(orderId) {
+export async function markOrderComplete(orderId, newStatus) {
     try {
         await db.collection('merchOrders').doc(orderId).update({
-            status: 'completed'
+            status: newStatus
         });
         return true;
     } catch (error) {
-        console.error('Error marking order as complete:', error);
+        console.error('Error toggling order completion:', error);
         return false;
     }
 }
@@ -52,14 +52,32 @@ export async function toggleInvoicedStatus(orderId, currentStatus) {
 }
 
 /**
- * Delete order from Firestore
+ * Delete order from Firestore (soft delete)
  */
 export async function deleteOrderFromDb(orderId) {
     try {
-        await db.collection('merchOrders').doc(orderId).delete();
+        await db.collection('merchOrders').doc(orderId).update({
+            deleted: true,
+            deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
         return true;
     } catch (error) {
         console.error('Error deleting order:', error);
+        return false;
+    }
+}
+
+/**
+ * Restore deleted order
+ */
+export async function restoreOrderInDb(orderId) {
+    try {
+        await db.collection('merchOrders').doc(orderId).update({
+            deleted: false
+        });
+        return true;
+    } catch (error) {
+        console.error('Error restoring order:', error);
         return false;
     }
 }
