@@ -1,12 +1,13 @@
 # Testing Plan: Centralized Utilities Library (Item #11)
 
 **Created:** December 19, 2025  
+**Updated:** December 20, 2025 (Phase 6 cleanup complete)  
 **Purpose:** Ensure the centralized utilities library refactoring doesn't break existing functionality  
-**Estimated Testing Time:** 2-3 hours (full test), 30 minutes (minimum viable test)
+**Estimated Testing Time:** 90-120 minutes (comprehensive test)
 
 ---
 
-## 🎯 Overview
+## 🎯 What Was Changed
 
 The centralized utilities library consolidates **10+ duplicate functions** across **40+ instances**:
 - `escapeHtml()` - XSS protection (10+ duplicates eliminated)
@@ -18,54 +19,766 @@ The centralized utilities library consolidates **10+ duplicate functions** acros
 - `toTitleCase()` - Text capitalization (2+ duplicates eliminated)
 - Date utilities (isToday, getStartOfToday, etc.)
 
-**Risk Level:** MEDIUM - Migration maintains backward compatibility via re-exports, but testing critical paths is essential
+**What Happened:**
+- ✅ Created `/js/utils/` directory with 6 specialized utility modules
+- ✅ Migrated 13 files to import from centralized utilities
+- ✅ Deleted 5 old utils.js wrapper files
+- ✅ Updated 7 HTML files to import from `/js/utils/index.js`
+- ✅ All code now uses centralized utilities
 
-**Migration Approach:**
-- Migrated 13 files (5 primary utils.js + 8 additional files)
-- Backward compatibility via re-exports in migrated utils.js files
-- No breaking changes to existing APIs
-
----
-
-## 📋 Pre-Testing Checklist
-
-### ✅ Code Verification
-
-1. **Check centralized utilities exist:**
-   - [x] `/js/utils/index.js` created (main export)
-   - [x] `/js/utils/dom-utils.js` created
-   - [x] `/js/utils/format-utils.js` created
-   - [x] `/js/utils/validation-utils.js` created
-   - [x] `/js/utils/date-utils.js` created
-   - [x] `/js/utils/ui-utils.js` created
-
-2. **Verify migrated files import centralized utilities:**
-   - [x] `student-portal/js/utils.js` imports from `/js/utils/`
-   - [x] `admin/student-database/js/utils.js` imports from `/js/utils/`
-   - [x] `admin/check-in/js/utils.js` imports from `/js/utils/`
-   - [x] `admin/admin-tools/transactions/js/utils.js` imports from `/js/utils/`
-   - [x] `admin/admin-tools/concession-types/utils.js` imports from `/js/utils/`
-
-3. **Check for console errors:**
-   - [ ] Open browser DevTools before testing
-   - [ ] Watch for import errors or "undefined function" errors
+**Risk Level:** LOW-MEDIUM - Most changes are internal, but testing critical paths is essential.
 
 ---
 
-## Testing Strategy
+## 📋 Pre-Testing Setup
 
-Focus testing on:
+### Before You Start Testing
 
-1. **Import verification** - Ensure centralized utils load correctly
-2. **Function behavior** - Verify migrated functions work identically
-3. **Edge cases** - Test null/undefined handling, special cases
-4. **Critical user flows** - End-to-end testing of key features
+1. **Open Browser Developer Tools (F12)**
+   - Keep the Console tab open throughout testing
+   - Watch for any red error messages
+   - Note any warnings about imports or undefined functions
 
-**Note:** Since migration maintains backward compatibility, most functionality should work unchanged. Testing focuses on verifying no regressions.
+2. **Have This Checklist Ready**
+   - Mark off each test as you complete it
+   - Note any issues you find with page name and description
+
+3. **Test Environment**
+   - Use your development/testing environment
+   - If using LiveServer, ensure it's serving from the root directory
+   - Test in your primary browser (Chrome/Firefox/Safari recommended)
+
+4. **What to Look For**
+   - ✅ Pages load without console errors
+   - ✅ Dates display in consistent format (e.g., "19 Dec 2025")
+   - ✅ Currency displays with $ sign and 2 decimals (e.g., "$25.50")
+   - ✅ Loading spinners appear and disappear correctly
+   - ✅ Success/error messages (snackbars) appear when expected
+   - ✅ Special characters display safely (no script execution)
+   - ✅ Form validation works (email validation, required fields)
 
 ---
 
-## 2. Quick Function Tests (Browser Console)
+---
+
+# 🧪 START TESTING HERE
+
+Test each section in order. Mark items as complete as you go through them.
+
+---
+
+## Part 1: Student Portal Testing (45-60 minutes)
+
+### Test 1.1: Student Registration Page
+
+**Navigate to:** `/student-portal/register.html`
+
+**What to test:**
+
+1. **Page loads without errors**
+   - [ ] Check browser console - no red errors
+   - [ ] Page displays correctly
+
+2. **Email validation (uses `isValidEmail()`)**
+   - [ ] Enter invalid email: `badformat` → Should show validation error
+   - [ ] Enter invalid email: `test@` → Should show validation error
+   - [ ] Enter valid email: `test@example.com` → Should accept it
+
+3. **XSS protection (uses `escapeHtml()`)**
+   - [ ] In the "First Name" field, enter: `<script>alert('xss')</script>`
+   - [ ] In the "Last Name" field, enter: `Test & <User>`
+   - [ ] Fill out remaining fields with valid data
+   - [ ] Click "Register"
+   - [ ] After registration, check that special characters display as text (not executed as code)
+   - [ ] Verify no alert popup appeared
+
+4. **Loading spinner (uses `showLoading()`)**
+   - [ ] Click "Register" with valid data
+   - [ ] Verify loading spinner appears while processing
+   - [ ] Verify spinner disappears when complete
+
+5. **Success message (uses snackbar)**
+   - [ ] After successful registration, verify green success message appears
+   - [ ] Message should say something like "Registration successful"
+
+**Expected Results:**
+- ✅ Email validation blocks invalid emails
+- ✅ Special characters display safely (not executed)
+- ✅ Loading spinner appears and disappears
+- ✅ Success message displays
+
+---
+
+### Test 1.2: Student Portal Dashboard
+
+**Navigate to:** `/student-portal/dashboard/`
+
+**Login with:** The student account you just created (or existing test account)
+
+**What to test:**
+
+1. **Page loads correctly**
+   - [ ] Check browser console - no red errors
+   - [ ] Dashboard displays with your student data
+
+2. **Date formatting (uses `formatDate()`)**
+   - [ ] Look at "Next Class" date → Should display as "DD MMM YYYY" (e.g., "25 Dec 2025")
+   - [ ] If you have prepaid classes listed, check those dates are also formatted consistently
+   - [ ] Verify NO dates show as "Invalid Date" or blank
+
+3. **Currency formatting (uses `formatCurrency()`)**
+   - [ ] Look at "Account Balance" → Should display as "$XX.XX" (e.g., "$50.00")
+   - [ ] If you have credit/debit amounts, check they have $ sign and 2 decimal places
+   - [ ] Verify NO amounts show as "NaN" or missing the $ sign
+
+4. **Loading spinner**
+   - [ ] Refresh the page
+   - [ ] Verify loading spinner appears while fetching data
+   - [ ] Verify spinner disappears when data loads
+
+**Expected Results:**
+- ✅ All dates formatted as "DD MMM YYYY"
+- ✅ All currency amounts show "$XX.XX" format
+- ✅ No "Invalid Date" or "NaN" errors
+
+---
+
+### Test 1.3: Student Portal Profile Page
+
+**Navigate to:** `/student-portal/profile/`
+
+**What to test:**
+
+1. **Page loads and displays data**
+   - [ ] Check browser console - no red errors
+   - [ ] Your profile information displays correctly
+
+2. **Edit profile with special characters (uses `escapeHtml()`)**
+   - [ ] Click "Edit Profile" or similar
+   - [ ] Change first name to: `Test & Student`
+   - [ ] Change last name to: `<Name>`
+   - [ ] Click "Save Changes"
+   - [ ] Verify loading spinner appears while saving
+
+3. **Verify data saves safely**
+   - [ ] After save completes, verify success message appears
+   - [ ] Refresh the page
+   - [ ] Check that special characters (&, <, >) display as text (not HTML)
+   - [ ] Verify NO script execution or weird rendering
+
+4. **Email validation (uses `isValidEmail()`)**
+   - [ ] Click "Edit" again
+   - [ ] Try changing email to invalid format: `bademail`
+   - [ ] Try to save → Should show validation error
+   - [ ] Change back to valid email and save successfully
+
+**Expected Results:**
+- ✅ Special characters save and display safely
+- ✅ Email validation blocks invalid emails
+- ✅ Loading spinner and success message work correctly
+
+---
+
+### Test 1.4: Student Portal Concessions Page
+
+**Navigate to:** `/student-portal/concessions/`
+
+**What to test:**
+
+1. **Page loads concessions**
+   - [ ] Check browser console - no red errors
+   - [ ] Concession cards/list displays
+
+2. **Date formatting (uses `formatDateDDMMYYYY()`)**
+   - [ ] Look at concession expiry dates
+   - [ ] Verify dates display as "DD/MM/YYYY" (e.g., "31/12/2025")
+   - [ ] Check multiple concessions if you have them
+   - [ ] Verify NO dates show as "Invalid Date"
+
+3. **Currency formatting (uses `formatCurrency()`)**
+   - [ ] Look at concession balance or price
+   - [ ] Verify displays as "$XX.XX" (e.g., "$15.00")
+
+4. **Loading spinner (uses `showLoading()`)**
+   - [ ] Refresh the page
+   - [ ] Verify spinner appears while loading
+   - [ ] Verify spinner disappears when data loads
+
+5. **Purchase concession (if available)**
+   - [ ] Click "Purchase" or "Buy Concession" if option exists
+   - [ ] Fill out the form
+   - [ ] Click submit
+   - [ ] Verify loading spinner appears during purchase
+   - [ ] Verify success message appears after purchase
+   - [ ] Check updated balance still formatted correctly
+
+**Expected Results:**
+- ✅ Expiry dates formatted as "DD/MM/YYYY"
+- ✅ Currency formatted as "$XX.XX"
+- ✅ Loading and success states work
+
+---
+
+### Test 1.5: Student Portal Transactions Page
+
+**Navigate to:** `/student-portal/transactions/`
+
+**What to test:**
+
+1. **Transaction list loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Transaction history displays
+
+2. **Date formatting in transaction list (uses `formatDate()`)**
+   - [ ] Scroll through your transaction history
+   - [ ] Check that ALL transaction dates display as "DD MMM YYYY"
+   - [ ] Verify dates are consistent across the entire list
+   - [ ] Verify NO dates show as "Invalid Date", blank, or weird formats
+
+3. **Currency formatting in amounts (uses `formatCurrency()`)**
+   - [ ] Check the Amount column for each transaction
+   - [ ] Verify ALL amounts display as "$XX.XX" (e.g., "$25.00", "$10.50")
+   - [ ] Check for transactions with different amounts:
+     - Small amounts (e.g., $5.00)
+     - Large amounts (e.g., $150.00)
+     - Zero amounts if any (should show "$0.00")
+   - [ ] Verify NO amounts show as "NaN", missing $ sign, or wrong decimal places
+
+4. **Transaction descriptions (uses `escapeHtml()`)**
+   - [ ] Look at transaction descriptions/notes
+   - [ ] Verify text displays normally (no weird HTML rendering)
+
+5. **Date filtering (if available)**
+   - [ ] If there's a date filter, try selecting a date range
+   - [ ] Apply filter
+   - [ ] Verify filtered results still show dates formatted correctly
+
+**Expected Results:**
+- ✅ All transaction dates consistently formatted
+- ✅ All amounts show proper currency format
+- ✅ No "Invalid Date" or "NaN" errors anywhere
+- ✅ Descriptions display safely
+
+---
+
+## Part 2: Admin Portal Testing (45-60 minutes)
+
+### Test 2.1: Admin Check-In Page
+
+**Navigate to:** `/admin/check-in/`
+
+**Login with:** Your admin account
+
+**What to test:**
+
+1. **Page loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Check-in interface displays
+
+2. **Search for student**
+   - [ ] Use the search box to find a student
+   - [ ] Type student name
+   - [ ] Verify loading spinner appears during search
+   - [ ] Verify search results display
+
+3. **Check-in a student (uses special `showLoading()`)**
+   - [ ] Click "Check In" button for a student
+   - [ ] **IMPORTANT:** Verify loading spinner appears AND the main content area dims/hides
+   - [ ] This is the special check-in loading behavior - both spinner AND container hide
+   - [ ] Verify success message appears after check-in
+   - [ ] Verify main content area becomes visible again
+
+4. **View check-in transaction (uses `formatDate()` and `formatCurrency()`)**
+   - [ ] After checking in, find the transaction in the list
+   - [ ] Check the date displays as "DD MMM YYYY"
+   - [ ] Check the amount displays as "$XX.XX"
+
+5. **Try checking in same student again**
+   - [ ] Try to check in the same student twice
+   - [ ] Verify error message appears (should prevent duplicate check-ins)
+
+6. **Date filtering (uses date utilities)**
+   - [ ] Look at the date filter/selector
+   - [ ] Verify today's date is selected by default
+   - [ ] Change to a different date
+   - [ ] Change back to today
+   - [ ] Verify check-ins filter by date correctly
+
+**Expected Results:**
+- ✅ Loading spinner + main container hiding works correctly (special behavior)
+- ✅ Success/error messages appear appropriately
+- ✅ Dates and currency formatted correctly
+- ✅ Date filtering works
+
+---
+
+### Test 2.2: Admin Student Database
+
+**Navigate to:** `/admin/student-database/`
+
+**What to test:**
+
+1. **Student list loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Student list displays
+   - [ ] Verify loading spinner appeared during load
+
+2. **Search and select a student**
+   - [ ] Use search to find a student
+   - [ ] Click on student to view details
+   - [ ] Student details panel opens
+
+3. **View student data (uses `formatTimestamp()` and `escapeHtml()`)**
+   - [ ] Look at "Created Date" or "Last Updated" timestamps
+   - [ ] Verify timestamps display as readable dates (e.g., "19 Dec 2025")
+   - [ ] Check student name displays correctly
+   - [ ] Check any notes/comments display correctly
+
+4. **Edit student with special characters (uses `escapeHtml()`)**
+   - [ ] Click "Edit" on student record
+   - [ ] Change student name to: `Test & Student <Name> "Quotes"`
+   - [ ] Click "Save"
+   - [ ] Verify loading spinner appears while saving
+   - [ ] Verify success message appears
+   - [ ] Refresh the page and select the same student
+   - [ ] Verify special characters (&, <, >, ") display as text (safely)
+   - [ ] Verify NO script execution or weird HTML rendering
+
+5. **View concession history (uses `formatDate()` and `formatCurrency()`)**
+   - [ ] Look at the student's concession history
+   - [ ] Check all dates are formatted as "DD MMM YYYY"
+   - [ ] Check all amounts are formatted as "$XX.XX"
+
+6. **View transaction history**
+   - [ ] Look at student's transaction history
+   - [ ] Verify dates formatted consistently
+   - [ ] Verify currency amounts formatted correctly
+
+**Expected Results:**
+- ✅ Timestamps display as readable dates
+- ✅ Special characters display safely (no code execution)
+- ✅ All dates and currency formatted consistently
+- ✅ Loading and success states work
+
+---
+
+### Test 2.3: Admin Tools - Transactions
+
+**Navigate to:** `/admin/admin-tools/transactions/`
+
+**What to test:**
+
+1. **Transaction list loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Transaction list displays
+
+2. **Check date formatting (uses `formatDate()`)**
+   - [ ] Scroll through the transaction list
+   - [ ] Verify ALL dates display as "DD MMM YYYY"
+   - [ ] Check transactions from different days/months
+   - [ ] Verify NO dates show as "Invalid Date"
+
+3. **Check currency formatting (uses `formatCurrency()`)**
+   - [ ] Look at the Amount column
+   - [ ] Verify ALL amounts display as "$XX.XX"
+   - [ ] Check various transaction amounts
+   - [ ] Verify NO amounts show as "NaN" or missing $ sign
+
+4. **Student name display (uses `escapeHtml()`)**
+   - [ ] Check student names in the list
+   - [ ] Verify names display correctly
+   - [ ] If any student has special characters in name, verify they display safely
+
+5. **Filter transactions (if available)**
+   - [ ] Try date range filtering
+   - [ ] Try student filtering
+   - [ ] Apply filters
+   - [ ] Verify filtered results still show proper formatting
+
+6. **Logout function**
+   - [ ] Click logout button (if present)
+   - [ ] Verify it logs you out correctly
+   - [ ] Log back in to continue testing
+
+**Expected Results:**
+- ✅ All dates formatted consistently
+- ✅ All currency formatted correctly
+- ✅ Student names display safely
+- ✅ Filtering works without breaking formatting
+
+---
+
+### Test 2.4: Admin Tools - Gift Concessions
+
+**Navigate to:** `/admin/admin-tools/gift-concessions/`
+
+**What to test:**
+
+1. **Page loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Gift concessions interface displays
+
+2. **Search for student (uses `getStudentFullName()` and `escapeHtml()`)**
+   - [ ] Search for a student by name
+   - [ ] Verify search results display
+   - [ ] Check student names display correctly (First Last format, title cased)
+   - [ ] If student has special characters in name, verify they display safely
+
+3. **Select student and gift concession**
+   - [ ] Select a student from search results
+   - [ ] Choose a concession type to gift
+   - [ ] Fill in any required fields
+   - [ ] Click "Gift Concession" or similar button
+
+4. **Verify dates (uses `formatDate()`)**
+   - [ ] Look at expiry date or grant date fields
+   - [ ] Verify dates display as "DD MMM YYYY"
+
+5. **Confirm gifting**
+   - [ ] Complete the gift concession process
+   - [ ] Verify loading spinner appears
+   - [ ] Verify success message displays
+   - [ ] Check the concession was added (check student's account if possible)
+
+**Expected Results:**
+- ✅ Student names formatted properly (title case)
+- ✅ Dates formatted correctly
+- ✅ Special characters display safely
+- ✅ Gifting process works correctly
+
+---
+
+### Test 2.5: Admin Tools - Closedown Nights
+
+**Navigate to:** `/admin/admin-tools/closedown-nights/`
+
+**What to test:**
+
+1. **Scheduled closedowns load**
+   - [ ] Check browser console - no red errors
+   - [ ] List of closedown periods displays
+
+2. **View existing closedowns (uses `formatDate()` and `formatTimestamp()`)**
+   - [ ] Look at listed closedown periods
+   - [ ] Check Start Date displays as "DD MMM YYYY"
+   - [ ] Check End Date displays as "DD MMM YYYY"
+   - [ ] If there's a "Created" or "Updated" timestamp, verify it's readable
+
+3. **Add new closedown period (if permitted)**
+   - [ ] Click "Add Closedown" or similar
+   - [ ] Select start and end dates
+   - [ ] Add description/reason
+   - [ ] Click "Save" or "Add"
+   - [ ] Verify loading state appears
+   - [ ] Verify success message displays
+
+4. **Verify new closedown displays correctly**
+   - [ ] After adding, verify it appears in the list
+   - [ ] Check dates are formatted correctly
+
+**Expected Results:**
+- ✅ All dates formatted as "DD MMM YYYY"
+- ✅ Timestamps readable
+- ✅ Adding closedowns works correctly
+
+---
+
+### Test 2.6: Admin Tools - Concession Types
+
+**Navigate to:** `/admin/admin-tools/concession-types.html`
+
+**What to test:**
+
+1. **Page loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Concession types list displays
+   - [ ] Verify loading spinner appeared during initial load
+
+2. **View concession types**
+   - [ ] Scroll through the list of concession types
+   - [ ] Verify all data displays correctly
+
+3. **Edit concession type (if permitted)**
+   - [ ] Click "Edit" on a concession type
+   - [ ] Make a small change (e.g., description)
+   - [ ] Save changes
+   - [ ] Verify status message appears (this page uses special `showStatusMessage()` in drag-hint element)
+   - [ ] Verify success confirmation
+
+4. **Drag and drop (if available)**
+   - [ ] If concession types can be reordered by dragging
+   - [ ] Try dragging one to a new position
+   - [ ] Verify status message appears during drag
+   - [ ] Verify order saves correctly
+
+5. **Toggle status (if available)**
+   - [ ] If concessions can be enabled/disabled
+   - [ ] Try toggling one on/off
+   - [ ] Verify status updates
+   - [ ] Verify status message appears
+
+**Expected Results:**
+- ✅ Loading spinner works
+- ✅ Status messages display in drag-hint area
+- ✅ Edit/drag/toggle operations work correctly
+
+---
+
+## Part 3: Edge Case & Security Testing (15-20 minutes)
+
+### Test 3.1: XSS Attack Prevention
+
+**Purpose:** Verify malicious scripts don't execute
+
+**What to test:**
+
+1. **In Student Registration**
+   - [ ] Try registering with name: `<img src=x onerror=alert('XSS')>`
+   - [ ] Verify NO alert appears
+   - [ ] Verify text displays as-is (not executed)
+
+2. **In Profile Edit**
+   - [ ] Try changing name to: `"><script>alert(document.cookie)</script>`
+   - [ ] Save and refresh
+   - [ ] Verify NO alert appears
+   - [ ] Verify text displays safely
+
+3. **In Admin Student Database**
+   - [ ] Edit student with name: `<svg onload=alert('hacked')>`
+   - [ ] Save and view student
+   - [ ] Verify NO alert appears
+   - [ ] Verify SVG doesn't render, displays as text
+
+**Expected Results:**
+- ✅ NO script execution anywhere
+- ✅ All special characters display as plain text
+- ✅ No alerts, no code execution, no weird rendering
+
+---
+
+### Test 3.2: Null/Undefined Handling
+
+**Purpose:** Verify app doesn't crash with missing data
+
+**What to test:**
+
+1. **Check browser console tests**
+   - [ ] Open browser console on any page
+   - [ ] Run: `formatDate(null)`
+   - [ ] Expected: Should return "-" (not crash)
+   - [ ] Run: `formatCurrency(undefined)`
+   - [ ] Expected: Should return "$0.00" or handle gracefully (not crash)
+   - [ ] Run: `escapeHtml(null)`
+   - [ ] Expected: Should return "" (empty string, not crash)
+
+2. **Look for any blank/null data in lists**
+   - [ ] Go to transaction lists (student or admin)
+   - [ ] Look for any transactions with missing data
+   - [ ] Verify missing dates show "-" or similar (not "Invalid Date")
+   - [ ] Verify missing amounts show "$0.00" or similar (not "NaN")
+
+**Expected Results:**
+- ✅ Functions handle null/undefined gracefully
+- ✅ No crashes or "undefined" errors
+- ✅ Missing data displays sensibly ("-", "$0.00", etc.)
+
+---
+
+### Test 3.3: Large Numbers & Edge Values
+
+**Purpose:** Verify formatting works with unusual values
+
+**What to test:**
+
+1. **Large currency amounts**
+   - [ ] If possible, find a transaction with large amount (or test in console)
+   - [ ] Run in console: `formatCurrency(999999)`
+   - [ ] Expected: "$999,999.00" (with commas)
+
+2. **Small currency amounts**
+   - [ ] Run in console: `formatCurrency(0.01)`
+   - [ ] Expected: "$0.01" (correct decimal handling)
+
+3. **Zero amounts**
+   - [ ] Look for any $0.00 transactions
+   - [ ] Verify displays as "$0.00" (not "$0", not blank)
+
+4. **Negative amounts (refunds)**
+   - [ ] If there are refund transactions
+   - [ ] Verify displays as "-$XX.XX" (negative sign before dollar)
+
+**Expected Results:**
+- ✅ Large numbers formatted with commas
+- ✅ Small decimals handled correctly
+- ✅ Zero and negative values display properly
+
+---
+
+### Test 3.4: Console Error Check
+
+**Purpose:** Final verification of no errors
+
+**What to test:**
+
+1. **Navigate through entire app**
+   - [ ] Open browser Developer Tools Console
+   - [ ] Clear any existing console messages
+   - [ ] Navigate to each major section:
+     - [ ] Student Portal home
+     - [ ] Student Portal dashboard
+     - [ ] Student Portal profile
+     - [ ] Student Portal concessions
+     - [ ] Student Portal transactions
+     - [ ] Admin check-in
+     - [ ] Admin student database
+     - [ ] Admin tools - transactions
+     - [ ] Admin tools - gift concessions
+   - [ ] After visiting each page, check console
+
+2. **Look for specific errors**
+   - [ ] No "module not found" errors
+   - [ ] No "undefined function" errors
+   - [ ] No "cannot read property" errors
+   - [ ] No import errors
+   - [ ] No red error messages at all
+
+**Expected Results:**
+- ✅ NO red errors in console anywhere
+- ✅ Warnings (if any) are minor and pre-existing
+- ✅ All pages load successfully
+
+---
+
+# 📊 After Testing: Recording Results
+
+## Test Results Summary
+
+**Date Tested:** _______________  
+**Tested By:** _______________  
+**Browser Used:** _______________  
+**Total Test Time:** _______________
+
+### Results by Section
+
+**Part 1: Student Portal**
+- [ ] Test 1.1: Registration - PASS / FAIL
+- [ ] Test 1.2: Dashboard - PASS / FAIL
+- [ ] Test 1.3: Profile - PASS / FAIL
+- [ ] Test 1.4: Concessions - PASS / FAIL
+- [ ] Test 1.5: Transactions - PASS / FAIL
+
+**Part 2: Admin Portal**
+- [ ] Test 2.1: Check-In - PASS / FAIL
+- [ ] Test 2.2: Student Database - PASS / FAIL
+- [ ] Test 2.3: Transactions - PASS / FAIL
+- [ ] Test 2.4: Gift Concessions - PASS / FAIL
+- [ ] Test 2.5: Closedown Nights - PASS / FAIL
+- [ ] Test 2.6: Concession Types - PASS / FAIL
+
+**Part 3: Edge Cases**
+- [ ] Test 3.1: XSS Prevention - PASS / FAIL
+- [ ] Test 3.2: Null Handling - PASS / FAIL
+- [ ] Test 3.3: Large Numbers - PASS / FAIL
+- [ ] Test 3.4: Console Errors - PASS / FAIL
+
+### Issues Found
+
+**Critical Issues (Breaks functionality):**
+1. _____________________________________
+2. _____________________________________
+
+**Medium Issues (Affects some areas):**
+1. _____________________________________
+2. _____________________________________
+
+**Minor Issues (Cosmetic/non-blocking):**
+1. _____________________________________
+2. _____________________________________
+
+### Overall Assessment
+
+- [ ] ✅ **PASS** - All tests passed, ready for production
+- [ ] ⚠️ **PASS WITH NOTES** - Minor issues found but not blocking
+- [ ] ❌ **FAIL** - Critical issues found, needs fixes before proceeding
+
+### Notes
+
+_____________________________________________
+_____________________________________________
+_____________________________________________
+
+---
+
+## Next Steps
+
+### If All Tests Pass ✅
+
+1. **Commit the changes:**
+   ```bash
+   git add .
+   git commit -m "feat: Complete centralized utilities library (Item #11)
+   
+   - Created /js/utils/ with 6 utility modules
+   - Migrated 13 files to use centralized utilities
+   - Deleted 5 legacy utils.js wrapper files
+   - Updated 7 HTML files to import from centralized location
+   - Eliminated ~150 lines of duplicated code
+   - Comprehensive testing: All critical paths passing"
+   ```
+
+2. **Push to repository:**
+   ```bash
+   git push origin refactor-centralised-utilities
+   ```
+
+3. **Mark Item #11 complete** in your refactoring tracking
+
+4. **Celebrate!** You've successfully consolidated the utilities library! 🎉
+
+### If Tests Fail ❌
+
+1. **Document each issue:**
+   - Page where issue occurred
+   - Expected behavior
+   - Actual behavior
+   - Console error messages (take screenshots)
+   - Steps to reproduce
+
+2. **Report issues** for fixing:
+   - List all issues found above
+   - Mark severity (Critical/Medium/Minor)
+   - Provide screenshots of console errors
+
+3. **Wait for fixes**, then re-test failed areas
+
+4. **Once fixed, re-run full test** to confirm
+
+---
+
+## Important Notes
+
+**Console Warning vs Error:**
+- **Red errors** = Bad, must be fixed
+- **Yellow warnings** = Usually okay, note them but may be pre-existing
+- **Blue info messages** = Fine, informational only
+
+**What "PASS" means:**
+- Page loads without console errors
+- Data displays correctly formatted
+- User actions work as expected
+- No regressions from before refactoring
+
+**Testing Tips:**
+- Test methodically - don't skip steps
+- Mark checkboxes as you go
+- If something seems wrong, check console first
+- Take screenshots of any errors
+- Don't assume - actually test each item
+
+---
+
+**Document Version:** 2.0 (Page-by-page testing flow)  
+**Last Updated:** December 20, 2025
 
 Before testing full user flows, verify core functions work in browser console:
 
