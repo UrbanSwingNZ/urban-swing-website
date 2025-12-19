@@ -779,6 +779,12 @@ function showError(message) {
     });
 }
 
+// Import centralized utilities
+import {
+    formatDate,
+    escapeHtml
+} from '/js/utils/index.js';
+
 /**
  * Get student full name
  */
@@ -787,28 +793,6 @@ function getStudentFullName(student) {
     const firstName = student.firstName || '';
     const lastName = student.lastName || '';
     return `${firstName} ${lastName}`.trim() || 'Unknown';
-}
-
-/**
- * Format date for display
- */
-function formatDate(date) {
-    if (!date) return '-';
-    const d = date instanceof Date ? date : new Date(date);
-    return d.toLocaleDateString('en-NZ', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-    });
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 /**

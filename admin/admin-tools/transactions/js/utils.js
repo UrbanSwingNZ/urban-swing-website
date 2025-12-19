@@ -1,39 +1,36 @@
 /**
- * utils.js
- * Utility functions for transactions page
+ * Transactions Tool Utility Functions
+ * 
+ * This file now imports from the centralized utilities library (/js/utils/)
+ * and provides transactions-specific utilities.
+ * 
+ * NOTE: showSnackbar() will be migrated to a shared component in refactoring item #5
  */
 
-/**
- * Format date for display
- */
-function formatDate(date) {
-    return date.toLocaleDateString('en-NZ', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
+// Import centralized utilities
+import {
+    formatDate,
+    formatCurrency,
+    escapeHtml,
+    showLoading
+} from '/js/utils/index.js';
 
-/**
- * Format currency with commas for thousands
- */
-function formatCurrency(amount) {
-    return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+// Re-export for backward compatibility during migration
+export {
+    formatDate,
+    formatCurrency,
+    escapeHtml,
+    showLoading
+};
 
 /**
  * Show snackbar notification
+ * @param {string} message - Message to display
+ * @param {string} type - Type of notification: 'success', 'error'
+ * 
+ * TODO: Replace with shared snackbar component (refactoring item #5)
  */
-function showSnackbar(message, type = 'success') {
+export function showSnackbar(message, type = 'success') {
     const snackbar = document.getElementById('snackbar');
     snackbar.textContent = message;
     snackbar.className = `snackbar ${type} show`;
@@ -44,17 +41,10 @@ function showSnackbar(message, type = 'success') {
 }
 
 /**
- * Show/hide loading spinner
- */
-function showLoading(show) {
-    const spinner = document.getElementById('loading-spinner');
-    spinner.style.display = show ? 'flex' : 'none';
-}
-
-/**
  * Handle logout
+ * Transactions-specific logout handler
  */
-async function handleLogout() {
+export async function handleLogout() {
     try {
         await firebase.auth().signOut();
         window.location.href = '/admin/';

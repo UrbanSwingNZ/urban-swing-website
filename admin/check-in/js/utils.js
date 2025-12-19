@@ -1,12 +1,43 @@
 /**
- * utils.js - Utility functions
- * Common helper functions used across check-in modules
+ * Check-in Utility Functions
+ * 
+ * This file now imports from the centralized utilities library (/js/utils/)
+ * and provides check-in-specific utilities.
+ * 
+ * NOTE: showSnackbar() will be migrated to a shared component in refactoring item #5
  */
+
+// Import centralized utilities
+import {
+    escapeHtml,
+    formatTime,
+    formatDate,
+    formatTimestamp,
+    toTitleCase,
+    isToday,
+    getStartOfToday,
+    getEndOfToday,
+    showError
+} from '/js/utils/index.js';
+
+// Re-export for backward compatibility during migration
+export {
+    escapeHtml,
+    formatTime,
+    formatDate,
+    formatTimestamp,
+    toTitleCase,
+    isToday,
+    getStartOfToday,
+    getEndOfToday,
+    showError
+};
 
 /**
  * Show/hide loading spinner
+ * Check-in specific implementation that also hides/shows main container
  */
-function showLoading(show) {
+export function showLoading(show) {
     const spinner = document.getElementById('loading-spinner');
     const container = document.getElementById('main-container');
     
@@ -17,150 +48,14 @@ function showLoading(show) {
 }
 
 /**
- * Show error message
- */
-function showError(message) {
-    alert('Error: ' + message);
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-/**
- * Format timestamp to time string
- */
-function formatTime(timestamp) {
-    if (!timestamp) return '';
-    
-    let date;
-    if (timestamp.toDate) {
-        date = timestamp.toDate();
-    } else if (timestamp instanceof Date) {
-        date = timestamp;
-    } else {
-        date = new Date(timestamp);
-    }
-    
-    return date.toLocaleTimeString('en-NZ', { 
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true 
-    });
-}
-
-/**
- * Format timestamp to date string
- */
-function formatDate(timestamp) {
-    if (!timestamp) return '';
-    
-    let date;
-    if (timestamp.toDate) {
-        date = timestamp.toDate();
-    } else if (timestamp instanceof Date) {
-        date = timestamp;
-    } else {
-        date = new Date(timestamp);
-    }
-    
-    return date.toLocaleDateString('en-NZ', { 
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-    });
-}
-
-/**
- * Format timestamp to full date and time
- */
-function formatTimestamp(timestamp) {
-    if (!timestamp) return '—';
-    
-    let date;
-    if (timestamp.toDate) {
-        date = timestamp.toDate();
-    } else if (timestamp instanceof Date) {
-        date = timestamp;
-    } else {
-        date = new Date(timestamp);
-    }
-    
-    return date.toLocaleDateString('en-NZ', { 
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-    });
-}
-
-/**
- * Convert text to title case
- */
-function toTitleCase(text) {
-    if (!text) return '';
-    
-    return text
-        .toLowerCase()
-        .split(' ')
-        .map(word => {
-            if (word.length === 0) return word;
-            return word.charAt(0).toUpperCase() + word.slice(1);
-        })
-        .join(' ');
-}
-
-/**
- * Check if date is today
- */
-function isToday(timestamp) {
-    if (!timestamp) return false;
-    
-    let date;
-    if (timestamp.toDate) {
-        date = timestamp.toDate();
-    } else if (timestamp instanceof Date) {
-        date = timestamp;
-    } else {
-        date = new Date(timestamp);
-    }
-    
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
-}
-
-/**
- * Get start of today (midnight)
- */
-function getStartOfToday() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
-}
-
-/**
- * Get end of today (23:59:59)
- */
-function getEndOfToday() {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    return today;
-}
-
-/**
  * Show snackbar notification
+ * @param {string} message - Message to display
+ * @param {string} type - Type of notification: 'success', 'error', 'warning', 'info'
+ * @param {number} duration - Duration in milliseconds (default: 3000)
+ * 
+ * TODO: Replace with shared snackbar component (refactoring item #5)
  */
-function showSnackbar(message, type = 'success', duration = 3000) {
+export function showSnackbar(message, type = 'success', duration = 3000) {
     // Remove any existing snackbar
     const existingSnackbar = document.getElementById('snackbar');
     if (existingSnackbar) {

@@ -3,6 +3,9 @@
  * Manages the registration process for new and existing students
  */
 
+// Import centralized utilities
+import { isValidEmail } from '/js/utils/index.js';
+
 let registrationState = {
     emailCheckPassed: false,
     formData: null
@@ -85,16 +88,6 @@ async function handleExistingStudentSubmit() {
         console.error('Registration error:', error);
         showErrorInElement('existing-student-error', 'An error occurred. Please try again.');
     }
-}
-
-/**
- * Validate email format
- * @param {string} email - Email to validate
- * @returns {boolean} True if valid
- */
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
 }
 
 /**

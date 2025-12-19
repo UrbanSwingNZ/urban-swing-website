@@ -275,12 +275,8 @@ function getCheckinPaymentBadgeHTML(transaction) {
     }
 }
 
-/**
- * Format currency for display
- */
-function formatCurrency(amount) {
-    return '$' + amount.toFixed(2);
-}
+// Import centralized utilities
+import { formatCurrency } from '/js/utils/index.js';
 
 /**
  * Refresh transactions display (called when toggle changes)

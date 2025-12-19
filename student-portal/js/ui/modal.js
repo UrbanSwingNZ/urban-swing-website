@@ -4,6 +4,7 @@
  */
 
 import { BaseModal } from '../../../components/modals/modal-base.js';
+import { escapeHtml } from '/js/utils/index.js';
 
 let emailExistsModal = null;
 
@@ -53,19 +54,9 @@ function hideEmailExistsModal() {
     }
 }
 
-/**
- * Escape HTML to prevent XSS
- * @param {string} text - Text to escape
- * @returns {string} Escaped text
- */
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
 // Expose functions globally for non-module scripts immediately
 if (typeof window !== 'undefined') {
     window.showEmailExistsModal = showEmailExistsModal;
     window.hideEmailExistsModal = hideEmailExistsModal;
 }
+
