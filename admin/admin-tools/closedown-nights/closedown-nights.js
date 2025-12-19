@@ -371,22 +371,18 @@ async function deleteClosedownPeriod(id) {
     }
 }
 
+// Import centralized utilities
+import {
+    formatDate as formatDateUtil,
+    formatTimestamp,
+    escapeHtml
+} from '/js/utils/index.js';
+
 // Utility Functions
 function formatDate(date) {
-    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    return date.toLocaleDateString('en-NZ', options);
-}
-
-function formatTimestamp(timestamp) {
-    if (!timestamp) return 'Unknown';
-    const date = timestamp.toDate();
-    return date.toLocaleDateString('en-NZ', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    // Note: This function signature differs from centralized formatDate (Date vs timestamp)
+    // Using formatDateUtil for consistency but keeping wrapper for local compatibility
+    return formatDateUtil(date);
 }
 
 function showSuccess(message) {

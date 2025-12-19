@@ -3,6 +3,9 @@
  * Handles UI updates, messages, and user feedback
  */
 
+// Import centralized utilities
+import { escapeHtml } from '/js/utils/index.js';
+
 /**
  * Show loading spinner
  */
@@ -74,6 +77,7 @@ function initializeAccordions() {
 
 /**
  * Show snackbar notification
+ * TODO: Migrate to shared snackbar component (Item #5)
  */
 function showSnackbar(message, type = 'success', duration = 3000) {
     // Remove any existing snackbar
@@ -113,14 +117,4 @@ function showSnackbar(message, type = 'success', duration = 3000) {
             snackbar.remove();
         }, 300);
     }, duration);
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
