@@ -56,11 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadRecentGifts();
         });
 
-        // Logout handler (uses centralized handleLogout from utilities)
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-        }
+        // Logout button handler is set up by header-configurator.js
 
     } catch (error) {
         console.error('Initialization error:', error);

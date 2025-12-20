@@ -107,8 +107,7 @@ function initializeDatePickers() {
  * Setup all event listeners
  */
 function setupEventListeners() {
-    // Logout
-    document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+    // Logout button handler is set up by header-configurator.js
     
     // Filters
     document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);

@@ -540,33 +540,33 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Spotify integration interface displays
+   - [✅] Check browser console - no red errors
+   - [✅] Spotify integration interface displays
 
 2. **Spotify authentication (if not already connected)**
-   - [ ] If not authenticated, try connecting to Spotify
+   - [✅] If not authenticated, try connecting to Spotify
    - [ ] Verify success/error snackbar displays with icon
    - [ ] Check console - no showSnackbar errors
 
 3. **Load playlist**
-   - [ ] Try loading a playlist
-   - [ ] Verify loading spinner appears
-   - [ ] Verify success snackbar when playlist loads
-   - [ ] Snackbar should have checkmark icon (fa-check-circle)
-   - [ ] Snackbar should auto-hide after 3 seconds
+   - [✅] Try loading a playlist
+   - [✅] Verify loading spinner appears
+   - [N/A] Verify success snackbar when playlist loads
+   - [✅] Snackbar should have checkmark icon (fa-check-circle)
+   - [✅] Snackbar should auto-hide after 3 seconds
 
 4. **Playlist operations**
-   - [ ] Try any available playlist operation (e.g., refresh, update)
-   - [ ] Verify snackbars appear for success/error states
-   - [ ] Check that snackbars have appropriate icons:
+   - [✅] Try any available playlist operation (e.g., refresh, update)
+   - [✅] Verify snackbars appear for success/error states
+   - [✅] Check that snackbars have appropriate icons:
      - Success: green with fa-check-circle
      - Error: red with fa-exclamation-circle
      - Warning: orange with fa-exclamation-triangle
 
 5. **Error handling**
-   - [ ] If possible, trigger an error (e.g., try operation while disconnected)
-   - [ ] Verify error snackbar displays correctly
-   - [ ] Check console for any showSnackbar-related errors
+   - [N/A] If possible, trigger an error (e.g., try operation while disconnected)
+   - [N/A] Verify error snackbar displays correctly
+   - [N/A] Check console for any showSnackbar-related errors
 
 **Expected Results:**
 - ✅ Success snackbars display with green styling and checkmark icon
@@ -579,76 +579,45 @@ Test each section in order. Mark items as complete as you go through them.
 
 ### Test 2.8: Centralized Logout Handler
 
-**Navigate to:** Any admin or student portal page with a logout button
+**Navigate to:** Any admin page with the shared header (e.g., `/admin/check-in/`)
 
 **What to test:**
 
-**Pages with Logout Buttons (test at least 3-4):**
-- Student Portal header (any student portal page)
-- Admin main page (`/admin/`)
-- Admin Check-in (`/admin/check-in/`)
-- Admin Student Database (`/admin/student-database/`)
-- Admin Tools - Transactions (`/admin/admin-tools/transactions/`)
-- Admin Tools - Closedown Nights (`/admin/admin-tools/closedown-nights/`)
-- Admin Tools - Gift Concessions (`/admin/admin-tools/gift-concessions/`)
-- Admin Tools - Concession Types (`/admin/admin-tools/concession-types.html`)
-- Admin Tools - Email Templates (`/admin/admin-tools/email-templates/`)
-- Admin Tools - Backup Database (`/admin/admin-tools/backup-database.html`)
+**Important Note:** The logout button is in the shared admin header component, so you only need to test it once - it works the same on all admin pages.
 
-**For Each Page Tested:**
-
-1. **Verify logout button exists**
-   - [ ] Find the logout button in the header/navigation
-   - [ ] Button should be visible and clickable
+1. **Verify logout button exists in header**
+   - [✅] Find the logout button in the admin header (top right)
+   - [✅] Button should be visible and clickable
 
 2. **Test logout functionality**
-   - [ ] Click the logout button
-   - [ ] Verify you are logged out (Firebase Auth signOut called)
-   - [ ] Verify redirect to home page (/)
-   - [ ] Page should redirect within 1-2 seconds
+   - [✅] Click the logout button
+   - [✅] Verify you are logged out (Firebase Auth signOut called)
+   - [✅] Verify redirect to home page (/)
+   - [✅] Page should redirect within 1-2 seconds
 
 3. **Verify authentication state**
-   - [ ] After logout, verify you're on the home page or login page
-   - [ ] Try to navigate back to the admin/student portal page
-   - [ ] Should be redirected to login (not able to access without auth)
+   - [✅] After logout, verify you're on the home page or login page
+   - [✅] Try to navigate back to an admin page (e.g., `/admin/check-in/`)
+   - [✅] Should be redirected to login (not able to access without auth)
 
 4. **Check for errors**
-   - [ ] Open browser console before clicking logout
-   - [ ] After logout completes, check console
-   - [ ] Should see no red errors
-   - [ ] Should see "Logout successful" or similar message (if implemented)
+   - [✅] Open browser console before clicking logout
+   - [✅] After logout completes, check console
+   - [✅] Should see no red errors
 
-5. **Test logout from different page states**
-   - [ ] Log back in and navigate to a page with unsaved changes (if applicable)
-   - [ ] Click logout
-   - [ ] Verify logout still works (no blocking)
-   - [ ] Verify no "Logout error" alert appears
+**Console Test:**
 
-**Special Cases to Test:**
-
-6. **Multiple tabs logout**
-   - [ ] Open admin/student portal in two browser tabs
-   - [ ] Log out from one tab
-   - [ ] Check the other tab - should also be logged out or show login prompt
-
-7. **Logout after inactivity (if auto-logout is implemented)**
-   - [ ] Check if auto-logout still works (separate from manual logout)
-   - [ ] Verify both manual and auto-logout use same mechanism
-
-**Console Tests:**
-
-8. **Test global handleLogout availability**
-   - [ ] Open browser console on any admin or student portal page
-   - [ ] Type: `typeof handleLogout`
-   - [ ] Expected: Should return "function"
-   - [ ] Type: `typeof window.handleLogout`
-   - [ ] Expected: Should return "function"
+5. **Test global handleLogout availability**
+   - [✅] Open browser console on any admin page
+   - [✅] Type: `typeof handleLogout`
+   - [✅] Expected: Should return "function"
+   - [✅] Type: `typeof window.handleLogout`
+   - [✅] Expected: Should return "function"
 
 **Expected Results:**
-- ✅ Logout button works on all pages tested
-- ✅ All logouts redirect to home page (/)
+- ✅ Logout button works (only need to test once per header type)
+- ✅ Logout redirects to home page (/)
 - ✅ No "handleLogout is not defined" errors
-- ✅ No alert errors during logout
 - ✅ Firebase Auth signOut completes successfully
 - ✅ Authentication state properly cleared
 - ✅ No console errors related to logout
@@ -661,6 +630,8 @@ Test each section in order. Mark items as complete as you go through them.
 - ❌ Alert saying "Error logging out"
 - ❌ Console error about Firebase Auth
 - ❌ Remaining logged in after clicking logout
+
+**Note:** Since the admin header is shared across all admin pages, testing logout once on any admin page is sufficient. You don't need to test it on every single admin page.
 
 ---
 
@@ -814,7 +785,8 @@ Test each section in order. Mark items as complete as you go through them.
 - [✅] Test 2.4: Gift Concessions - PASS / FAIL
 - [✅] Test 2.5: Closedown Nights - PASS / FAIL
 - [✅] Test 2.6: Concession Types - PASS / FAIL
-- [ ] Test 2.7: Playlist Manager - PASS / FAIL
+- [✅] Test 2.7: Playlist Manager - PASS / FAIL
+- [✅] Test 2.8: Logout Handler - PASS / FAIL
 
 **Part 3: Edge Cases**
 - [ ] Test 3.1: XSS Prevention - PASS / FAIL

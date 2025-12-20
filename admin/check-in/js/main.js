@@ -113,11 +113,7 @@ function initializeNavListeners() {
         showReversedToggle.addEventListener('change', toggleShowReversedCheckins);
     }
     
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
+    // Logout button handler is set up by header-configurator.js
 }
 
 /**

@@ -91,7 +91,10 @@ export async function handleSpotifyDisconnect() {
 export async function loadUserInfo() {
   try {
     const user = await spotifyAPI.getCurrentUser();
-    document.getElementById('spotify-user-name').textContent = user.display_name || user.id;
+    const userNameElement = document.getElementById('spotify-user-name');
+    if (userNameElement) {
+      userNameElement.textContent = user.display_name || user.id;
+    }
   } catch (error) {
     console.error('Error loading user info:', error);
   }

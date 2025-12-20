@@ -284,7 +284,7 @@
 
 ---
 
-#### `handleLogout()` ✅ FULLY CENTRALIZED
+#### `handleLogout()` ✅ FULLY CENTRALIZED + CLEANUP COMPLETE
 **Instances:** 12+ (ALL ELIMINATED)  
 **Centralized In:** `/js/utils/ui-utils.js`  
 **Migrated From:**
@@ -300,6 +300,24 @@
 - `admin/student-database/js/auth.js`
 - `admin/check-in/js/auth.js`
 - `admin/admin-tools/backup-database.html` (inline script)
+
+**Additional Cleanup (December 21, 2025):**
+- ✅ Removed 2 redundant `logout()` wrapper functions from auth.js files
+  - `admin/student-database/js/auth.js` - removed `async function logout()` wrapper
+  - `admin/check-in/js/auth.js` - removed `function logout()` wrapper
+- ✅ Removed 7 redundant logout button event listeners:
+  - `admin/student-database/js/navigation.js`
+  - `admin/check-in/js/main.js`
+  - `admin/admin-tools/transactions/transactions.js`
+  - `admin/admin-tools/closedown-nights/closedown-nights.js`
+  - `admin/admin-tools/gift-concessions/gift-concessions.js`
+  - `admin/admin-tools/email-templates/modules/ui/event-listeners.js`
+  - `admin/admin-tools/concession-types/auth.js`
+- ✅ Added explanatory comments in each file: "Logout button handler is set up by header-configurator.js"
+- ✅ Fixed logout button spacing in admin-header.html (added `&nbsp;` between icon and text)
+
+**Architectural Insight:**
+All admin pages load `header-configurator.js` which already sets up the logout button click handler. Individual pages don't need their own logout setup - they were redundant legacy code.
 
 **Implementation:**
 ```javascript
@@ -321,8 +339,9 @@ export async function handleLogout() {
 - Some inline in HTML, some in JS files
 - Some had minor differences in error handling
 - All now use centralized version
+- Additional redundant wrappers and event listeners eliminated
 
-**Lines Eliminated:** ~120-150 lines total
+**Lines Eliminated:** ~150-180 lines total (including redundant wrappers and event listeners)
 
 ---
 

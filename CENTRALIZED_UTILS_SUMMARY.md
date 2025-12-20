@@ -90,20 +90,26 @@ Created `/js/utils/` directory with 6 modules:
 10. `admin/admin-tools/email-templates/modules/ui/event-listeners.js` - showSnackbar
 
 **Files with handleLogout Centralized (12 files):**
-11. `admin/admin-tools/transactions/transactions.js` - handleLogout
-12. `admin/admin-tools/closedown-nights/closedown-nights.js` - handleLogout
+11. `admin/admin-tools/transactions/transactions.js` - handleLogout (removed redundant event listener)
+12. `admin/admin-tools/closedown-nights/closedown-nights.js` - handleLogout (removed redundant event listener)
 13. `admin/admin-tools/admin-tools.js` - handleLogout
-14. `admin/admin-tools/concession-types/auth.js` - handleLogout
-15. `admin/admin-tools/gift-concessions/gift-concessions.js` - handleLogout
-16. `admin/admin-tools/email-templates/modules/ui/event-listeners.js` - handleLogout
+14. `admin/admin-tools/concession-types/auth.js` - handleLogout (removed redundant event listener)
+15. `admin/admin-tools/gift-concessions/gift-concessions.js` - handleLogout (removed redundant event listener)
+16. `admin/admin-tools/email-templates/modules/ui/event-listeners.js` - handleLogout (removed redundant event listener)
 17. `admin/admin.js` - handleLogout
 18. `student-portal/student-portal-header.js` - handleLogout (2 instances)
 19. `admin/js/header-configurator.js` - handleLogout
-20. `admin/student-database/js/auth.js` - handleLogout
-21. `admin/check-in/js/auth.js` - handleLogout
+20. `admin/student-database/js/auth.js` - handleLogout (removed redundant wrapper function)
+21. `admin/check-in/js/auth.js` - handleLogout (removed redundant wrapper function)
 22. `admin/admin-tools/backup-database.html` - handleLogout (inline script)
 
-**Total Files Updated:** 29 files (17 utility migrations + 12 logout centralizations)
+**Additional Cleanup (9 redundant implementations removed):**
+- Removed 2 redundant `logout()` wrapper functions from auth.js files (student-database, check-in)
+- Removed 7 redundant logout button event listeners (transactions, closedown-nights, concession-types, gift-concessions, email-templates, student-database navigation, check-in main)
+- Added explanatory comments: "Logout button handler is set up by header-configurator.js"
+- Reason: header-configurator.js already sets up logout handler for all admin pages that include it
+
+**Total Files Updated:** 29 files (17 utility migrations + 12 logout centralizations + 9 redundant handler removals)
 
 ### ✅ Phase 5: Testing Documentation (COMPLETE)
 - Created comprehensive test plan in `CENTRALIZED_UTILS_TESTING.md`
@@ -137,7 +143,7 @@ Created `/js/utils/` directory with 6 modules:
 - `showSnackbar()` migrated to centralized utilities (ui-utils.js)
 - `API_CONFIG` kept in portal-specific utils
 - `getStudentFullName()` kept where it has domain logic
-- `handleLogout()` kept in transaction-specific context
+- `handleLogout()` centralized in ui-utils.js, redundant wrappers and event listeners removed
 
 ### 4. Special Cases Preserved
 - Check-in's enhanced `showLoading()` (also hides main-container)
@@ -156,6 +162,7 @@ Created `/js/utils/` directory with 6 modules:
 - Difficult to maintain (changes needed in multiple places)
 - Prone to bugs (fixes not applied everywhere)
 - Logout handlers duplicated in 12+ files
+- 9+ redundant logout wrapper functions and event listeners
 
 ### After
 - Single source of truth for all common utilities
@@ -166,6 +173,7 @@ Created `/js/utils/` directory with 6 modules:
 - Type safety via JSDoc type hints
 - Better IDE autocomplete support
 - Centralized authentication logout flow
+- All redundant logout wrappers and event listeners eliminated (header-configurator.js handles all admin pages)
 
 ---
 
@@ -222,12 +230,13 @@ Created `/js/utils/` directory with 6 modules:
 ## Impact Analysis
 
 ### Immediate Benefits
-1. **Code Reduction:** ~200 lines eliminated from migrated files
+1. **Code Reduction:** ~200 lines eliminated from migrated files, plus 9 redundant logout handlers removed
 2. **Consistency:** All utilities now use same implementation (including notifications and logout)
 3. **Documentation:** JSDoc comments on all functions
 4. **Security:** Consistent XSS protection via `escapeHtml()` in all notifications
 5. **Maintainability:** Single place to fix bugs or add features
-6. **Authentication:** Centralized logout flow across all admin and student portal pages
+6. **Authentication:** Centralized logout flow across all admin and student portal pages, with redundant implementations eliminated
+7. **Architecture:** Clear separation - header-configurator.js handles logout for all admin pages, eliminating need for individual page logout setup
 
 ### Long-term Benefits
 1. **Faster Development:** Import existing utils vs rewriting
