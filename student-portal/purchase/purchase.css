@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* Purchase Concessions Styles */
 
 .purchase-content {
@@ -31,7 +33,7 @@
 
 .form-section h3 {
     font-size: 1.4rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
@@ -58,7 +60,7 @@
 }
 
 .form-group label i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1rem;
 }
 
@@ -82,7 +84,7 @@ select {
 
 select:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
 }
 
@@ -97,7 +99,7 @@ select:disabled {
     margin-top: 0.75rem;
     padding: 1rem;
     background: linear-gradient(135deg, rgba(139, 69, 255, 0.05), rgba(139, 69, 255, 0.1));
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     border-radius: 6px;
 }
 
@@ -112,7 +114,7 @@ select:disabled {
 }
 
 .package-info i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-top: 0.15rem;
     font-size: 1.1rem;
 }
@@ -130,7 +132,7 @@ select:disabled {
 }
 
 .stripe-element:focus-within {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
 }
 
@@ -146,16 +148,16 @@ select:disabled {
 }
 
 .stripe-card-element:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .stripe-card-element:focus-within {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     outline: none;
 }
 
 .stripe-card-element.StripeElement--focus {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .stripe-card-element.StripeElement--invalid {
@@ -180,7 +182,7 @@ input[type="text"] {
 
 input[type="text"]:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
 }
 
@@ -234,7 +236,7 @@ input[type="text"]::placeholder {
     margin-top: 20px;
     padding: 16px;
     background: rgba(154, 22, 245, 0.05);
-    border-left: 3px solid var(--admin-purple);
+    border-left: 3px solid var(--purple-primary);
     border-radius: 6px;
 }
 

@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /**
  * concessions.css - Purchase Concessions Modal Styles
  * Unique styles for purchasing concessions modal
@@ -32,14 +34,14 @@
 }
 
 .summary-row strong {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.3rem;
 }
 
 /* Student Info Card in Purchase Modal */
 #purchase-concessions-modal .student-info-card {
     background: var(--background-color);
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     padding: 16px;
     border-radius: 8px;
 }
@@ -59,8 +61,8 @@
 /* Add Package Button */
 .btn-add-package {
     background: transparent;
-    border: 1px solid var(--admin-purple);
-    color: var(--admin-purple);
+    border: 1px solid var(--purple-primary);
+    color: var(--purple-primary);
     padding: 4px 10px;
     border-radius: 4px;
     font-size: 0.85rem;
@@ -72,7 +74,7 @@
 }
 
 .btn-add-package:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     transform: translateY(-1px);
 }

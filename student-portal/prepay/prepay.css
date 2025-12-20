@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* Pre-Pay for Class Styles */
 
 .prepay-content {
@@ -42,7 +44,7 @@
 
 .prepaid-header h3 {
     font-size: 1.4rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -62,7 +64,7 @@
 .accordion-toggle {
     background: none;
     border: none;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -73,7 +75,7 @@
 }
 
 .accordion-toggle:hover {
-    color: var(--admin-pink);
+    color: var(--pink-primary);
 }
 
 .accordion-toggle.collapsed {
@@ -107,7 +109,7 @@
 }
 
 .prepaid-class-item:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     background: rgba(139, 69, 255, 0.02);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -125,7 +127,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     padding: 0.75rem 1rem;
     border-radius: 8px;
@@ -199,7 +201,7 @@
 
 .form-section h3 {
     font-size: 1.4rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
@@ -227,7 +229,7 @@
 }
 
 .form-group label i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1rem;
 }
 
@@ -296,12 +298,12 @@
 }
 
 .radio-option:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     background: rgba(139, 69, 255, 0.02);
 }
 
 .radio-option.selected {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     background: rgba(139, 69, 255, 0.05);
 }
 
@@ -333,7 +335,7 @@
 
 .radio-price {
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.1rem;
 }
 
@@ -401,7 +403,7 @@
 }
 
 .stripe-element:focus-within {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
 }
 
@@ -417,16 +419,16 @@
 }
 
 .stripe-card-element:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .stripe-card-element:focus-within {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     outline: none;
 }
 
 .stripe-card-element.StripeElement--focus {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .stripe-card-element.StripeElement--invalid {
@@ -451,7 +453,7 @@ input[type="text"] {
 
 input[type="text"]:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
 }
 
@@ -505,7 +507,7 @@ input[type="text"]::placeholder {
     margin-top: 20px;
     padding: 16px;
     background: rgba(154, 22, 245, 0.05);
-    border-left: 3px solid var(--admin-purple);
+    border-left: 3px solid var(--purple-primary);
     border-radius: 6px;
 }
 
@@ -704,7 +706,7 @@ input[type="text"]::placeholder {
 }
 
 .modal-header i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.5rem;
 }
 
@@ -929,7 +931,7 @@ input[type="text"]::placeholder {
     bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     padding: 16px 24px;
     border-radius: 8px;

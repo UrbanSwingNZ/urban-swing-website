@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* Import color variables from admin.css */
 :root {
     --admin-pink: #e800f2;
@@ -17,7 +19,7 @@
     margin-bottom: 2rem;
     padding: 1rem;
     background: #f8f9fa;
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     border-radius: 4px;
 }
 
@@ -43,7 +45,7 @@
 
 .settings-section h3 i {
     margin-right: 0.5rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .setting-item {
@@ -97,7 +99,7 @@
 
 .add-section h3 i {
     margin-right: 0.5rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 /* Form Styles */
@@ -184,7 +186,7 @@
 
 .list-section h3 i {
     margin-right: 0.5rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .closedown-list {
@@ -253,7 +255,7 @@
 
 .closedown-dates i {
     margin-right: 0.5rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .closedown-reason {
@@ -303,9 +305,9 @@
 }
 
 .btn-icon:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     transform: translateY(-2px);
 }
 
@@ -425,7 +427,7 @@
 
 .modal-header h3 i {
     margin-right: 0.5rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .modal-close {

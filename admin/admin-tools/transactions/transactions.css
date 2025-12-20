@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /**
  * Transactions Page Styles
  */
@@ -89,7 +91,7 @@ body {
 
 .filter-group label i {
     margin-right: 0.25rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 /* Date inputs and Select dropdown - matching check-in page style */
@@ -115,13 +117,13 @@ select.filter-input {
 
 .filter-input[type="date"]:hover,
 select.filter-input:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .filter-input[type="date"]:focus,
 select.filter-input:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
@@ -143,12 +145,12 @@ select.filter-input:focus {
 }
 
 #student-filter:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 #student-filter:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
@@ -258,7 +260,7 @@ select.filter-input:focus {
 }
 
 .toggle-switch input:checked + .toggle-slider {
-    background-color: var(--admin-purple);
+    background-color: var(--purple-primary);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -279,7 +281,7 @@ select.filter-input:focus {
 
 .toggle-label i {
     margin-right: 0.25rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 /* Summary Row in Main Content */
@@ -327,7 +329,7 @@ select.filter-input:focus {
 }
 
 #transactions-table thead {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     position: sticky;
     top: 0;
@@ -396,13 +398,13 @@ select.filter-input:focus {
 
 .type-badge.concession {
     background: rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
     background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
+    color: var(--blue-primary);
 }
 
 .type-badge.casual-student {
@@ -550,8 +552,8 @@ select.filter-input:focus {
 }
 
 .btn-icon:hover {
-    border-color: var(--admin-purple);
-    color: var(--admin-purple);
+    border-color: var(--purple-primary);
+    color: var(--purple-primary);
     background: rgba(154, 22, 245, 0.1);
 }
 
@@ -561,14 +563,14 @@ select.filter-input:focus {
 }
 
 .btn-icon.btn-invoice.invoiced {
-    color: var(--admin-purple);
-    border-color: var(--admin-purple);
+    color: var(--purple-primary);
+    border-color: var(--purple-primary);
     background: rgba(154, 22, 245, 0.1);
 }
 
 .btn-icon.btn-invoice:hover {
-    border-color: var(--admin-purple);
-    color: var(--admin-purple);
+    border-color: var(--purple-primary);
+    color: var(--purple-primary);
     background: rgba(154, 22, 245, 0.1);
 }
 
@@ -680,7 +682,7 @@ select.filter-input:focus {
 
 .spinner {
     border: 4px solid rgba(154, 22, 245, 0.1);
-    border-top: 4px solid var(--admin-purple);
+    border-top: 4px solid var(--purple-primary);
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -725,9 +727,9 @@ select.filter-input:focus {
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .pagination-btn:disabled {
@@ -755,13 +757,13 @@ select.filter-input:focus {
 }
 
 .pagination-number:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .pagination-number.active {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     border-color: transparent;
 }
@@ -961,7 +963,7 @@ select.filter-input:focus {
     .summary-value {
         font-size: 1.3rem;
         font-weight: 700;
-        color: var(--admin-purple);
+        color: var(--purple-primary);
         margin: 0;
         text-align: left;
         width: 100%;
@@ -1089,7 +1091,7 @@ select.filter-input:focus {
             padding: 1rem;
             background: var(--background-color);
             position: relative;
-            border-left: 4px solid var(--admin-purple);
+            border-left: 4px solid var(--purple-primary);
         }
 
         #transactions-table tbody tr:hover {
@@ -1300,7 +1302,7 @@ select.filter-input:focus {
 /* 4. Style student info card to match */
 #purchase-concessions-modal .student-info-card {
     background: var(--bg-secondary, #f8f9fa);
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     padding: 16px;
     border-radius: 6px;
     margin-bottom: 20px;

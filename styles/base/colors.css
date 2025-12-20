@@ -75,11 +75,13 @@
   /* Shadow colors */
   --shadow-light: rgba(0, 0, 0, 0.1);
   --shadow-medium: rgba(0, 0, 0, 0.2);
+  --shadow-text: rgba(0, 0, 0, 0.3);     /* For text-shadow effects */
   --shadow-strong: rgba(0, 0, 0, 0.4);
   
   /* Border overlay */
   --border-overlay-light: rgba(255, 255, 255, 0.1);
   --border-overlay-medium: rgba(255, 255, 255, 0.3);
+  --border-overlay-strong: rgba(255, 255, 255, 0.5);
   
   /* Background overlays */
   --bg-overlay-dark: rgba(0, 0, 0, 0.5);

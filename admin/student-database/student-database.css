@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* ========================================
    STUDENT DATABASE STYLES
    Extends admin.css with student-specific layouts
@@ -38,7 +40,7 @@
 
 .student-count span {
     font-weight: 600;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 /* Button styles inherited from admin-modals.css */
@@ -80,7 +82,7 @@
 }
 
 .filter-checkbox:hover span {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 /* ========================================
@@ -103,7 +105,7 @@
 }
 
 .students-table thead {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     position: sticky;
     top: 0;
@@ -225,12 +227,12 @@
 
 .badge-yes {
     background: rgba(40, 167, 69, 0.15);
-    color: var(--admin-success);
+    color: var(--success);
 }
 
 .badge-no {
     background: rgba(220, 53, 69, 0.15);
-    color: var(--admin-error);
+    color: var(--error);
 }
 
 .badge-warning {
@@ -269,8 +271,8 @@
 /* Mini Purchase Button */
 .btn-purchase-mini {
     background: transparent;
-    border: 1.5px solid var(--admin-purple);
-    color: var(--admin-purple);
+    border: 1.5px solid var(--purple-primary);
+    color: var(--purple-primary);
     padding: 4px 10px;
     border-radius: 4px;
     font-size: 0.75rem;
@@ -281,7 +283,7 @@
 }
 
 .btn-purchase-mini:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(154, 22, 245, 0.2);
@@ -304,9 +306,9 @@
 }
 
 .btn-icon:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     transform: translateY(-2px);
 }
 
@@ -315,9 +317,9 @@
 }
 
 .btn-icon.has-notes {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .btn-icon.has-notes:hover {
@@ -332,13 +334,13 @@
 }
 
 .btn-icon.btn-restore {
-    color: var(--admin-success);
-    border-color: var(--admin-success);
+    color: var(--success);
+    border-color: var(--success);
 }
 
 .btn-icon.btn-restore:hover {
-    background: var(--admin-success);
-    border-color: var(--admin-success);
+    background: var(--success);
+    border-color: var(--success);
     color: white;
 }
 
@@ -363,7 +365,7 @@
 }
 
 .empty-state i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     opacity: 0.3;
     margin-bottom: 20px;
 }
@@ -388,7 +390,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: linear-gradient(135deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    background: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
 }
 
 .register-card {
@@ -417,7 +419,7 @@
     font-size: 2rem;
     margin-bottom: 10px;
     text-align: center;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -436,7 +438,7 @@
 }
 
 .required {
-    color: var(--admin-error);
+    color: var(--error);
 }
 
 .form-help {
@@ -464,7 +466,7 @@
     width: auto;
     margin-top: 3px;
     cursor: pointer;
-    accent-color: var(--admin-purple);
+    accent-color: var(--purple-primary);
 }
 
 .checkbox-label span {
@@ -472,17 +474,17 @@
 }
 
 .checkbox-label .required {
-    color: var(--admin-error);
+    color: var(--error);
 }
 
 .checkbox-label i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-right: 5px;
 }
 
 /* Terms and Conditions Link */
 .terms-link {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     text-decoration: underline;
     cursor: pointer;
     font-weight: 600;
@@ -490,7 +492,7 @@
 }
 
 .terms-link:hover {
-    color: var(--admin-pink);
+    color: var(--pink-primary);
 }
 
 /* Textarea */
@@ -515,7 +517,7 @@ textarea::placeholder {
 
 textarea:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
@@ -531,9 +533,9 @@ textarea:focus {
     margin-top: 20px;
     padding: 15px;
     background: rgba(40, 167, 69, 0.1);
-    border: 1px solid var(--admin-success);
+    border: 1px solid var(--success);
     border-radius: 8px;
-    color: var(--admin-success);
+    color: var(--success);
     font-size: 0.95rem;
     display: flex;
     align-items: center;
@@ -562,7 +564,7 @@ textarea:focus {
     gap: 6px;
     margin-top: 20px;
     padding: 8px 14px;
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     text-decoration: none;
     border-radius: 6px;
@@ -674,7 +676,7 @@ textarea:focus {
 
     .students-table tbody tr:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: var(--admin-purple);
+        border-color: var(--purple-primary);
     }
 
     /* Accordion header - always visible */
@@ -699,7 +701,7 @@ textarea:focus {
     .students-table tbody tr td:nth-child(1) .note-indicator {
         display: inline;
         font-size: 0.85rem;
-        color: var(--admin-purple);
+        color: var(--purple-primary);
         margin-left: 0.5rem;
         opacity: 0.8;
     }
@@ -923,9 +925,9 @@ textarea:focus {
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .pagination-btn:disabled {
@@ -953,13 +955,13 @@ textarea:focus {
 }
 
 .pagination-number:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .pagination-number.active {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     border-color: transparent;
 }
@@ -1050,7 +1052,7 @@ textarea:focus {
     padding: 15px;
     background: var(--background-color);
     border-radius: 8px;
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -1091,7 +1093,7 @@ textarea:focus {
     padding: 15px;
     background: var(--background-color);
     border-radius: 8px;
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     font-family: inherit;
 }
 
@@ -1129,7 +1131,7 @@ textarea:focus {
 }
 
 .activity-table thead {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
 }
 
@@ -1174,9 +1176,9 @@ textarea:focus {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    border: 2px solid var(--admin-purple);
+    border: 2px solid var(--purple-primary);
     background: transparent;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -1185,7 +1187,7 @@ textarea:focus {
 }
 
 .modal-actions-left .btn-icon:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     transform: translateY(-2px);
 }
@@ -1232,20 +1234,20 @@ textarea:focus {
 
 .concession-accordion-header:hover {
     background: rgba(154, 22, 245, 0.05);
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 /* Colored borders for different accordion states */
 .concession-accordion-header[data-target*="active"] {
-    border-left-color: var(--admin-success);
+    border-left-color: var(--success);
 }
 
 .concession-accordion-header[data-target*="expired"] {
-    border-left-color: var(--admin-error);
+    border-left-color: var(--error);
 }
 
 .concession-accordion-header[data-target*="depleted"] {
-    border-left-color: var(--admin-warning);
+    border-left-color: var(--warning);
 }
 
 .concession-accordion-header .accordion-icon {
@@ -1280,26 +1282,26 @@ textarea:focus {
     padding: 12px;
     background: var(--background-color);
     border: 1px solid var(--border-color);
-    border-left: 4px solid var(--admin-success);
+    border-left: 4px solid var(--success);
     border-radius: 8px;
     transition: all 0.2s ease;
 }
 
 .concession-item:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
 }
 
 .concession-item.expired {
     opacity: 0.7;
     background: rgba(220, 53, 69, 0.05);
-    border-left: 4px solid var(--admin-error);
+    border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted {
     opacity: 0.7;
     background: rgba(255, 193, 7, 0.05);
-    border-left: 4px solid var(--admin-warning);
+    border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked {
@@ -1309,11 +1311,11 @@ textarea:focus {
 
 /* Keep colored borders for locked items based on their state */
 .concession-item.expired.locked {
-    border-left: 4px solid var(--admin-error);
+    border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted.locked {
-    border-left: 4px solid var(--admin-warning);
+    border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked:not(.expired):not(.depleted) {
@@ -1378,9 +1380,9 @@ textarea:focus {
 }
 
 .btn-lock-toggle:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
 }
 
 .btn-lock-toggle i {
@@ -1390,16 +1392,16 @@ textarea:focus {
 .btn-delete-block {
     padding: 4px 12px;
     font-size: 0.8rem;
-    border: 1px solid var(--admin-error);
+    border: 1px solid var(--error);
     background: transparent;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--admin-error);
+    color: var(--error);
 }
 
 .btn-delete-block:hover:not(:disabled) {
-    background: var(--admin-error);
+    background: var(--error);
     color: white;
 }
 
@@ -1438,7 +1440,7 @@ textarea:focus {
     bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     padding: 16px 24px;
     border-radius: 8px;
@@ -1490,7 +1492,7 @@ textarea:focus {
 
 /* Purple Header */
 #terms-modal .modal-header h3 {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .terms-content {
@@ -1499,7 +1501,7 @@ textarea:focus {
 }
 
 .terms-content h4 {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-top: 24px;
     font-weight: normal;
 }
@@ -1522,7 +1524,7 @@ textarea:focus {
     margin-top: 30px;
     padding: 15px;
     background: rgba(154, 22, 245, 0.05);
-    border-left: 3px solid var(--admin-purple);
+    border-left: 3px solid var(--purple-primary);
     border-radius: 4px;
 }
 
@@ -1539,7 +1541,7 @@ textarea:focus {
 }
 
 .modal-close:hover {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     transform: scale(1.1);
 }
 
