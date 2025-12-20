@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* Transaction History Styles */
 
 .transactions-content {
@@ -45,7 +47,7 @@
 .total-count span,
 .total-amount span {
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.1rem;
 }
 
@@ -63,7 +65,7 @@
 }
 
 #transactions-table thead {
-    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    background: linear-gradient(90deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
     color: white;
 }
 
@@ -140,13 +142,13 @@
 
 .type-badge.concession {
     background: rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
     background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
+    color: var(--blue-primary);
 }
 
 .type-badge.casual-student {

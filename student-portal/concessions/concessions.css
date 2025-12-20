@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* My Concessions Page Styles */
 
 .concessions-content {
@@ -90,27 +92,27 @@
     padding: 1.5rem;
     background: white;
     border: 1px solid var(--border-color);
-    border-left: 4px solid var(--admin-success);
+    border-left: 4px solid var(--success);
     border-radius: 8px;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .concession-item:hover {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
 }
 
 .concession-item.expired {
     opacity: 0.7;
     background: rgba(220, 53, 69, 0.05);
-    border-left: 4px solid var(--admin-error);
+    border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted {
     opacity: 0.7;
     background: rgba(255, 193, 7, 0.05);
-    border-left: 4px solid var(--admin-warning);
+    border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked {
@@ -119,11 +121,11 @@
 }
 
 .concession-item.expired.locked {
-    border-left: 4px solid var(--admin-error);
+    border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted.locked {
-    border-left: 4px solid var(--admin-warning);
+    border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked:not(.expired):not(.depleted) {
@@ -171,7 +173,7 @@
 .concession-details i {
     width: 18px;
     text-align: center;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     opacity: 0.7;
 }
 

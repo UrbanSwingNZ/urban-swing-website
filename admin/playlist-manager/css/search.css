@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    SEARCH RESULTS STYLES
    Track search results in modal
@@ -19,7 +21,7 @@
 }
 
 .modal-body .search-box:focus-within {
-  border-color: var(--admin-purple);
+  border-color: var(--purple-primary);
   box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 

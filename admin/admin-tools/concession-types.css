@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* ========================================
    CONCESSION TYPES MANAGER STYLES
    ======================================== */
@@ -76,7 +78,7 @@
 }
 
 .package-card.drag-over {
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     background: rgba(154, 22, 245, 0.05);
 }
 
@@ -93,7 +95,7 @@
 }
 
 .drag-handle:hover {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     transform: scale(1.1);
 }
 
@@ -123,7 +125,7 @@
 }
 
 .status-label.active {
-    color: var(--admin-success);
+    color: var(--success);
 }
 
 .status-label.inactive {
@@ -170,7 +172,7 @@
 }
 
 .toggle-switch input:checked + .toggle-slider {
-    background: linear-gradient(135deg, var(--admin-success), #20c997);
+    background: linear-gradient(135deg, var(--success), #20c997);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -201,7 +203,7 @@
     margin-left: 8px;
     font-size: 0.65rem;
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     vertical-align: super;
     letter-spacing: 0.5px;
 }
@@ -226,7 +228,7 @@
     gap: 6px;
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     background-color: rgba(138, 97, 199, 0.1);
     padding: 6px 12px;
     border-radius: 6px;
@@ -253,7 +255,7 @@
 }
 
 .package-detail i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     width: 20px;
     text-align: center;
 }
@@ -265,7 +267,7 @@
 .package-price {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .package-description {
@@ -302,19 +304,19 @@
     justify-content: center;
     gap: 6px;
     background: rgba(220, 53, 69, 0.1);
-    color: var(--admin-error);
-    border: 1px solid var(--admin-error);
+    color: var(--error);
+    border: 1px solid var(--error);
 }
 
 .btn-delete:hover {
-    background: var(--admin-error);
+    background: var(--error);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
 .btn-danger {
-    background: var(--admin-error);
+    background: var(--error);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -358,7 +360,7 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     border: none;
     padding: 12px 24px;
@@ -374,7 +376,7 @@
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--admin-purple), var(--admin-pink));
+    background: linear-gradient(135deg, var(--purple-primary), var(--pink-primary));
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
 }

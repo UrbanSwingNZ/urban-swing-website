@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* ========================================
    ADMIN TOOLS PAGE STYLES
    ======================================== */
@@ -78,7 +80,7 @@
 }
 
 .tool-features i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 0.85rem;
 }
 

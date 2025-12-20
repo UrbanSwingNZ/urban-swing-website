@@ -19,41 +19,10 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Color Variables (matching main site) */
-:root {
-  --admin-pink: #e800f2;
-  --admin-blue: #3534Fa;
-  --admin-purple: #9a16f5;
-  --admin-bg-light: #f8f9fa;
-  --admin-bg-dark: #1a1a1a;
-  --admin-card-light: #ffffff;
-  --admin-card-dark: #2d2d2d;
-  --admin-text-light: #333333;
-  --admin-text-dark: #e0e0e0;
-  --admin-border-light: #e0e0e0;
-  --admin-border-dark: #404040;
-  --admin-success: #28a745;
-  --admin-error: #dc3545;
-  --admin-warning: #ffc107;
-  --admin-shadow: rgba(0, 0, 0, 0.1);
-  
-  /* Theme-aware variables - Light mode defaults */
-  --text-color: var(--admin-text-light);
-  --background-color: var(--admin-card-light);
-  --border-color: var(--admin-border-light);
-  --input-bg: #ffffff;
-  --text-muted: #999999;
-}
-
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   :root {
-    --admin-shadow: rgba(0, 0, 0, 0.4);
-    --text-color: var(--admin-text-dark);
-    --background-color: var(--admin-card-dark);
-    --border-color: var(--admin-border-dark);
-    --input-bg: #1a1a1a;
-    --text-muted: #888888;
+    /* Dark mode color overrides can be added here if needed */
   }
 }
 
@@ -115,7 +84,7 @@ html, body {
 .auth-card h1 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
+  background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -144,7 +113,7 @@ html, body {
 
 .form-group label i {
   margin-right: 5px;
-  color: var(--admin-purple);
+  color: var(--purple-primary);
 }
 
 .form-group input {
@@ -165,7 +134,7 @@ html, body {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--admin-purple);
+  border-color: var(--purple-primary);
   box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
@@ -183,9 +152,9 @@ html, body {
   margin-top: 15px;
   padding: 12px;
   background: rgba(220, 53, 69, 0.1);
-  border: 1px solid var(--admin-error);
+  border: 1px solid var(--error);
   border-radius: 8px;
-  color: var(--admin-error);
+  color: var(--error);
   font-size: 0.9rem;
   display: none;
 }
@@ -232,7 +201,7 @@ html, body {
 .dashboard-welcome h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
+  background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -290,7 +259,7 @@ html, body {
 /* Dashboard Info */
 .dashboard-info {
   background: rgba(53, 52, 250, 0.1);
-  border-left: 4px solid var(--admin-blue);
+  border-left: 4px solid var(--blue-primary);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -298,7 +267,7 @@ html, body {
 
 .dashboard-info i {
   margin-right: 8px;
-  color: var(--admin-blue);
+  color: var(--blue-primary);
 }
 
 /* Footer */
@@ -345,7 +314,7 @@ html, body {
   width: 48px;
   height: 48px;
   border: 6px solid #eee;
-  border-top: 6px solid var(--admin-pink);
+  border-top: 6px solid var(--pink-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 18px;
@@ -377,7 +346,7 @@ html, body {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--admin-purple);
+  color: var(--purple-primary);
   font-size: 1rem;
   pointer-events: none;
 }
@@ -397,7 +366,7 @@ html, body {
 
 .search-input:focus {
   outline: none;
-  border-color: var(--admin-purple);
+  border-color: var(--purple-primary);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
@@ -423,7 +392,7 @@ html, body {
 }
 
 .clear-search:hover {
-  color: var(--admin-purple);
+  color: var(--purple-primary);
   background: rgba(139, 92, 246, 0.1);
 }
 
@@ -434,7 +403,7 @@ html, body {
 }
 
 .search-results-info strong {
-  color: var(--admin-purple);
+  color: var(--purple-primary);
   font-weight: 600;
 }
 
@@ -505,7 +474,7 @@ html, body {
 }
 
 .form-group label i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-right: 5px;
 }
 
@@ -551,7 +520,7 @@ html, body {
 .form-group textarea:not([readonly]):focus,
 .form-group select:not([disabled]):focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
