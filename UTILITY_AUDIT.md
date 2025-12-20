@@ -21,11 +21,11 @@
 ## Summary Statistics
 
 - **Total utility files audited:** 5 primary files + 10+ additional files with utilities
-- **Total unique utility functions:** 25+
-- **Functions with duplicates:** 11 (all now centralized)
-- **Total duplicate instances:** 48+ (all eliminated)
-- **Estimated lines of duplicated code:** 450-550 lines (eliminated)
-- **Migration Status:** ✅ COMPLETE - All duplicate utilities centralized
+- **Total unique utility functions:** 26+
+- **Functions with duplicates:** 12 (all now centralized)
+- **Total duplicate instances:** 60+ (all eliminated)
+- **Estimated lines of duplicated code:** 550-650 lines (eliminated)
+- **Migration Status:** ✅ COMPLETE - All duplicate utilities centralized including handleLogout
 
 ---
 
@@ -281,6 +281,48 @@
 - Creates element dynamically with proper cleanup
 
 **Lines Eliminated:** ~150-200 lines total
+
+---
+
+#### `handleLogout()` ✅ FULLY CENTRALIZED
+**Instances:** 12+ (ALL ELIMINATED)  
+**Centralized In:** `/js/utils/ui-utils.js`  
+**Migrated From:**
+- `admin/admin-tools/transactions/transactions.js`
+- `admin/admin-tools/closedown-nights/closedown-nights.js`
+- `admin/admin-tools/admin-tools.js`
+- `admin/admin-tools/concession-types/auth.js`
+- `admin/admin-tools/gift-concessions/gift-concessions.js`
+- `admin/admin-tools/email-templates/modules/ui/event-listeners.js`
+- `admin/admin.js`
+- `student-portal/student-portal-header.js` (2 instances)
+- `admin/js/header-configurator.js`
+- `admin/student-database/js/auth.js`
+- `admin/check-in/js/auth.js`
+- `admin/admin-tools/backup-database.html` (inline script)
+
+**Implementation:**
+```javascript
+export async function handleLogout() {
+    try {
+        await firebase.auth().signOut();
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out. Please try again.');
+    }
+}
+```
+
+**Exposed Globally:** `window.handleLogout` for backward compatibility
+
+**Variations Before Centralization:**
+- All implementations were essentially identical
+- Some inline in HTML, some in JS files
+- Some had minor differences in error handling
+- All now use centralized version
+
+**Lines Eliminated:** ~120-150 lines total
 
 ---
 

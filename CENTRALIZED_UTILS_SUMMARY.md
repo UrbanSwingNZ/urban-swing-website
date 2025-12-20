@@ -59,7 +59,7 @@ Created `/js/utils/` directory with 6 modules:
    - `navigateTo()` - Navigation helper
    - `showSnackbar()` - Notification system (8+ duplicates eliminated)
 
-**Total:** ~523 lines of well-documented, tested utilities
+**Total:** ~535 lines of well-documented, tested utilities
 
 ### ✅ Phase 3: Implementation Review (COMPLETE)
 - Verified all centralized implementations match existing behavior
@@ -77,7 +77,7 @@ Created `/js/utils/` directory with 6 modules:
 4. `admin/admin-tools/transactions/js/utils.js` - 60→56 lines (7% reduction)
 5. `admin/admin-tools/concession-types/utils.js` - 36→46 lines (expanded with docs)
 
-**Additional Files Migrated (12 files):**
+**Additional Files Migrated (22 files):**
 1. `student-portal/js/registration/ui-helpers.js` - escapeHtml, showSnackbar
 2. `student-portal/js/ui/modal.js` - escapeHtml
 3. `student-portal/js/registration-handler.js` - isValidEmail
@@ -87,9 +87,23 @@ Created `/js/utils/` directory with 6 modules:
 7. `student-portal/concessions/concessions.js` - formatDateDDMMYYYY, showLoading
 8. `admin/check-in/js/checkin-transactions.js` - formatCurrency
 9. `admin/playlist-manager/playlist-ui.js` - showSnackbar
-10. `admin/admin-tools/email-templates/modules/ui/notifications.js` - showSnackbar
+10. `admin/admin-tools/email-templates/modules/ui/event-listeners.js` - showSnackbar
 
-**Total Files Updated:** 17 files
+**Files with handleLogout Centralized (12 files):**
+11. `admin/admin-tools/transactions/transactions.js` - handleLogout
+12. `admin/admin-tools/closedown-nights/closedown-nights.js` - handleLogout
+13. `admin/admin-tools/admin-tools.js` - handleLogout
+14. `admin/admin-tools/concession-types/auth.js` - handleLogout
+15. `admin/admin-tools/gift-concessions/gift-concessions.js` - handleLogout
+16. `admin/admin-tools/email-templates/modules/ui/event-listeners.js` - handleLogout
+17. `admin/admin.js` - handleLogout
+18. `student-portal/student-portal-header.js` - handleLogout (2 instances)
+19. `admin/js/header-configurator.js` - handleLogout
+20. `admin/student-database/js/auth.js` - handleLogout
+21. `admin/check-in/js/auth.js` - handleLogout
+22. `admin/admin-tools/backup-database.html` - handleLogout (inline script)
+
+**Total Files Updated:** 29 files (17 utility migrations + 12 logout centralizations)
 
 ### ✅ Phase 5: Testing Documentation (COMPLETE)
 - Created comprehensive test plan in `CENTRALIZED_UTILS_TESTING.md`
@@ -135,21 +149,23 @@ Created `/js/utils/` directory with 6 modules:
 ## Code Quality Improvements
 
 ### Before
-- 10+ duplicate functions across 40+ instances
-- ~400-500 lines of duplicated code
+- 11+ duplicate functions across 52+ instances
+- ~550-650 lines of duplicated code
 - Inconsistent implementations (some better than others)
 - No JSDoc documentation
 - Difficult to maintain (changes needed in multiple places)
 - Prone to bugs (fixes not applied everywhere)
+- Logout handlers duplicated in 12+ files
 
 ### After
 - Single source of truth for all common utilities
-- ~457 lines of centralized, tested code
+- ~535 lines of centralized, tested code
 - Consistent, well-tested implementations
 - Comprehensive JSDoc documentation
 - Easy to maintain (update once, fixes everywhere)
 - Type safety via JSDoc type hints
 - Better IDE autocomplete support
+- Centralized authentication logout flow
 
 ---
 
@@ -206,11 +222,12 @@ Created `/js/utils/` directory with 6 modules:
 ## Impact Analysis
 
 ### Immediate Benefits
-1. **Code Reduction:** ~150 lines eliminated from migrated files
-2. **Consistency:** All utilities now use same implementation (including notifications)
+1. **Code Reduction:** ~200 lines eliminated from migrated files
+2. **Consistency:** All utilities now use same implementation (including notifications and logout)
 3. **Documentation:** JSDoc comments on all functions
 4. **Security:** Consistent XSS protection via `escapeHtml()` in all notifications
 5. **Maintainability:** Single place to fix bugs or add features
+6. **Authentication:** Centralized logout flow across all admin and student portal pages
 
 ### Long-term Benefits
 1. **Faster Development:** Import existing utils vs rewriting

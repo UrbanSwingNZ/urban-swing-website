@@ -54,4 +54,5 @@ window.parseDateString = dateUtils.parseDateString;
 window.showLoading = uiUtils.showLoading;
 window.showError = uiUtils.showError;
 window.navigateTo = uiUtils.navigateTo;
+window.handleLogout = uiUtils.handleLogout;
 window.showSnackbar = uiUtils.showSnackbar;
