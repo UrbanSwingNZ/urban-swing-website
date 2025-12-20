@@ -202,20 +202,7 @@ function setupCheckInTile() {
   }
 }
 
-async function handleLogout() {
-  showLoading(true);
-  
-  try {
-    await auth.signOut();
-    console.log('Logout successful');
-    // Auth state listener will handle showing login screen
-    
-  } catch (error) {
-    console.error('Logout error:', error);
-    showError('Failed to logout. Please try again.');
-    showLoading(false);
-  }
-}
+// handleLogout now provided by centralized utilities (window.handleLogout)
 
 // ========================================
 // UI Helper Functions

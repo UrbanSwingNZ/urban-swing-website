@@ -27,16 +27,20 @@
   animation: snackbarFadeIn 0.3s ease;
 }
 
-.snackbar.success {
+.snackbar-success {
   background: linear-gradient(135deg, #4CAF50, #45a049);
 }
 
-.snackbar.error {
+.snackbar-error {
   background: linear-gradient(135deg, #f44336, #da190b);
 }
 
-.snackbar.warning {
+.snackbar-warning {
   background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.snackbar-info {
+  background: linear-gradient(135deg, #2196F3, #0b7dda);
 }
 
 @media (prefers-color-scheme: dark) {

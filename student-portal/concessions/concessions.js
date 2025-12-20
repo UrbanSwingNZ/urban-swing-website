@@ -299,20 +299,16 @@ function attachAccordionListeners() {
     });
 }
 
+// Import centralized utilities
+import {
+    formatDateDDMMYYYY,
+    showLoading
+} from '/js/utils/index.js';
+
 // Format date as DD/MM/YYYY
 function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-}
-
-// Show/hide loading spinner
-function showLoading(show) {
-    const spinner = document.getElementById('loading-spinner');
-    if (spinner) {
-        spinner.style.display = show ? 'flex' : 'none';
-    }
+    // Wrapper for backward compatibility
+    return formatDateDDMMYYYY(date);
 }
 
 // Listen for student selection changes (from student-loader.js)

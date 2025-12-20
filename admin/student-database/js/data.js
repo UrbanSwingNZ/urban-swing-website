@@ -140,3 +140,21 @@ window.addEventListener('beforeunload', () => {
         studentsUnsubscribe();
     }
 });
+
+/**
+ * Get full name of student in title case
+ * Domain-specific utility for student database
+ */
+function getStudentFullName(student) {
+    if (!student) return '';
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    return `${firstName} ${lastName}`.trim();
+}
+
+/**
+ * Find student by ID in the loaded students data
+ */
+function findStudentById(studentId) {
+    return allStudentsData.find(s => s.id === studentId);
+}

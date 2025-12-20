@@ -69,6 +69,8 @@ function searchStudents(query) {
 
 /**
  * Get student's full name
+ * Note: This uses its own toTitleCase implementation (not from centralized utils)
+ * since toTitleCase is also defined in this file
  */
 function getStudentFullName(student) {
     if (!student) return '';

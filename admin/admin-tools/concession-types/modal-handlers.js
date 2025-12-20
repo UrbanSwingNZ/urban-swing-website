@@ -1,6 +1,7 @@
 // Modal Handlers for Concession Types Manager
 
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+import { showSnackbar } from '/js/utils/index.js';
 
 let currentEditId = null;
 let packageToDelete = null;
@@ -116,22 +117,22 @@ async function handleUpdatePackage(packageId) {
     
     // Validate (same validation as the original modal)
     if (!name || !numberOfClasses || !price || !expiryMonths) {
-      showStatusMessage('Please fill in all required fields', 'error');
+      showSnackbar('Please fill in all required fields', 'error');
       return;
     }
     
     if (numberOfClasses < 1) {
-      showStatusMessage('Number of classes must be at least 1', 'error');
+      showSnackbar('Number of classes must be at least 1', 'error');
       return;
     }
     
     if (price < 0) {
-      showStatusMessage('Price cannot be negative', 'error');
+      showSnackbar('Price cannot be negative', 'error');
       return;
     }
     
     if (expiryMonths < 1) {
-      showStatusMessage('Expiry must be at least 1 month', 'error');
+      showSnackbar('Expiry must be at least 1 month', 'error');
       return;
     }
     
@@ -161,11 +162,11 @@ async function handleUpdatePackage(packageId) {
     loadPackages();
     
     // Show success message
-    showStatusMessage(`Package "${name}" updated successfully!`, 'success');
+    showSnackbar(`Package "${name}" updated successfully!`, 'success');
     
   } catch (error) {
     console.error('Error updating package:', error);
-    showStatusMessage('Failed to update package: ' + error.message, 'error');
+    showSnackbar('Failed to update package: ' + error.message, 'error');
   } finally {
     saveBtn.disabled = false;
     saveBtn.innerHTML = originalText;
@@ -207,14 +208,14 @@ async function deletePackage(packageId) {
     
     loadPackages();
     
-    if (typeof showStatusMessage === 'function') {
-      showStatusMessage('Package deleted successfully', 'success');
+    if (typeof showSnackbar === 'function') {
+      showSnackbar('Package deleted successfully', 'success');
     }
     
   } catch (error) {
     console.error('Error deleting package:', error);
-    if (typeof showStatusMessage === 'function') {
-      showStatusMessage('Failed to delete package: ' + error.message, 'error');
+    if (typeof showSnackbar === 'function') {
+      showSnackbar('Failed to delete package: ' + error.message, 'error');
     } else {
       alert('Failed to delete package: ' + error.message);
     }

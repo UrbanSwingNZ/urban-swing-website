@@ -26,9 +26,5 @@ function initializeNavigation() {
         registerBtnEmpty.addEventListener('click', navigateToRegister);
     }
 
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
+    // Logout button handler is set up by header-configurator.js
 }

@@ -57,7 +57,7 @@ function initializeDatePicker() {
         onDateSelected: (date, formattedDate) => {
             // Convert d/mm/yyyy to YYYY-MM-DD for consistency
             const [day, month, year] = formattedDate.split('/');
-            const dateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
             // Save to localStorage
             localStorage.setItem(CHECKIN_DATE_KEY, dateString);

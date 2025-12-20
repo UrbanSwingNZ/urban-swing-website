@@ -21,10 +21,7 @@ import { setupBeforeUnloadHandler, confirmDiscardChanges, cancelNavigation } fro
  * Setup event listeners
  */
 export function setupEventListeners() {
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        firebase.auth().signOut();
-    });
+    // Logout button handler is set up by header-configurator.js
     
     // Refresh templates
     document.getElementById('refresh-templates-btn').addEventListener('click', loadTemplates);

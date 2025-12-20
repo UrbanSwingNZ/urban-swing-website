@@ -34,17 +34,6 @@ function initializeAuth() {
 }
 
 /**
- * Logout user
- */
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = '../index.html';
-    }).catch((error) => {
-        showError('Logout failed: ' + error.message);
-    });
-}
-
-/**
  * Get current user
  */
 function getCurrentUser() {
