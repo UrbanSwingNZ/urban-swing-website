@@ -82,29 +82,29 @@ Test each section in order. Mark items as complete as you go through them.
    - [✅] Page displays correctly
 
 2. **Email validation (uses `isValidEmail()`)**
-   - [ ] Enter invalid email: `badformat` → Should show validation error
-   - [ ] Enter invalid email: `test@` → Should show validation error
-   - [ ] Enter valid email: `test@example.com` → Should accept it
+   - [✅] Enter invalid email: `badformat` → Should show validation error
+   - [✅] Enter invalid email: `test@` → Should show validation error
+   - [✅] Enter valid email: `test@example.com` → Should accept it
 
 3. **XSS protection (uses `escapeHtml()`)**
-   - [ ] In the "First Name" field, enter: `<script>alert('xss')</script>`
-   - [ ] In the "Last Name" field, enter: `Test & <User>`
-   - [ ] Fill out remaining fields with valid data
-   - [ ] Click "Register"
-   - [ ] After registration, check that special characters display as text (not executed as code)
-   - [ ] Verify no alert popup appeared
+   - [✅] In the "First Name" field, enter: `<script>alert('xss')</script>`
+   - [✅] In the "Last Name" field, enter: `Test & <User>`
+   - [✅] Fill out remaining fields with valid data
+   - [✅] Click "Register"
+   - [✅] After registration, check that special characters display as text (not executed as code)
+   - [✅] Verify no alert popup appeared
 
 4. **Loading spinner (uses `showLoading()`)**
-   - [ ] Click "Register" with valid data
-   - [ ] Verify loading spinner appears while processing
-   - [ ] Verify spinner disappears when complete
+   - [✅] Click "Register" with valid data
+   - [✅] Verify loading spinner appears while processing
+   - [✅] Verify spinner disappears when complete
 
 5. **Success message (uses `showSnackbar()` from centralized utils)**
-   - [ ] After successful registration, verify green success message appears
-   - [ ] Message should say something like "Registration successful"
-   - [ ] Snackbar should have checkmark icon (fa-check-circle)
-   - [ ] Snackbar should auto-hide after 3 seconds
-   - [ ] Check console - no errors about showSnackbar being undefined
+   - [✅] After successful registration, verify green success message appears
+   - [✅] Message should say something like "Registration successful"
+   - [✅] Snackbar should have checkmark icon (fa-check-circle)
+   - [✅] Snackbar should auto-hide after 3 seconds
+   - [✅] Check console - no errors about showSnackbar being undefined
 
 **Expected Results:**
 - ✅ Email validation blocks invalid emails
@@ -127,19 +127,19 @@ Test each section in order. Mark items as complete as you go through them.
    - [✅] Dashboard displays with your student data
 
 2. **Date formatting (uses `formatDate()`)**
-   - [ ] Look at "Next Class" date → Should display as "DD MMM YYYY" (e.g., "25 Dec 2025")
-   - [ ] If you have prepaid classes listed, check those dates are also formatted consistently
-   - [ ] Verify NO dates show as "Invalid Date" or blank
+   - [N/A] Look at "Next Class" date → Should display as "DD MMM YYYY" (e.g., "25 Dec 2025")
+   - [N/A] If you have prepaid classes listed, check those dates are also formatted consistently
+   - [N/A] Verify NO dates show as "Invalid Date" or blank
 
 3. **Currency formatting (uses `formatCurrency()`)**
-   - [ ] Look at "Account Balance" → Should display as "$XX.XX" (e.g., "$50.00")
-   - [ ] If you have credit/debit amounts, check they have $ sign and 2 decimal places
-   - [ ] Verify NO amounts show as "NaN" or missing the $ sign
+   - [N/A] Look at "Account Balance" → Should display as "$XX.XX" (e.g., "$50.00")
+   - [N/A] If you have credit/debit amounts, check they have $ sign and 2 decimal places
+   - [N/A] Verify NO amounts show as "NaN" or missing the $ sign
 
 4. **Loading spinner**
-   - [ ] Refresh the page
-   - [ ] Verify loading spinner appears while fetching data
-   - [ ] Verify spinner disappears when data loads
+   - [✅] Refresh the page
+   - [✅] Verify loading spinner appears while fetching data
+   - [✅] Verify spinner disappears when data loads
 
 **Expected Results:**
 - ✅ All dates formatted as "DD MMM YYYY"
@@ -263,6 +263,43 @@ Test each section in order. Mark items as complete as you go through them.
 - ✅ All amounts show proper currency format
 - ✅ No "Invalid Date" or "NaN" errors anywhere
 - ✅ Descriptions display safely
+
+---
+
+### Test 1.6: Student Portal Check-Ins Page
+
+**Navigate to:** `/student-portal/check-ins/`
+
+**What to test:**
+
+1. **Page loads check-in history**
+   - [✅] Check browser console - no red errors
+   - [✅] Check-in history displays
+
+2. **Date formatting in check-in list (uses `formatDate()`)**
+   - [✅] Look at check-in dates in the list
+   - [✅] Verify ALL dates display as "DD MMM YYYY" (e.g., "19 Dec 2025")
+   - [✅] Check multiple check-ins if you have them
+   - [✅] Verify NO dates show as "Invalid Date" or blank
+
+3. **Time formatting (if shown, uses `formatTime()`)**
+   - [✅] If check-in times are displayed, verify readable format (e.g., "7:30 PM")
+   - [✅] Check multiple check-ins for consistency
+
+4. **Loading spinner (uses `showLoading()`)**
+   - [✅] Refresh the page
+   - [✅] Verify loading spinner appears while fetching data
+   - [✅] Verify spinner disappears when data loads
+
+5. **Check-in details display (uses `escapeHtml()`)**
+   - [✅] Look at class names or descriptions
+   - [✅] Verify text displays normally (no weird HTML rendering)
+
+**Expected Results:**
+- ✅ All check-in dates consistently formatted
+- ✅ Times displayed in readable format (if applicable)
+- ✅ No "Invalid Date" errors
+- ✅ Loading states work correctly
 
 ---
 
@@ -644,21 +681,21 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **In Student Registration**
-   - [ ] Try registering with name: `<img src=x onerror=alert('XSS')>`
-   - [ ] Verify NO alert appears
-   - [ ] Verify text displays as-is (not executed)
+   - [✅] Try registering with name: `<img src=x onerror=alert('XSS')>`
+   - [✅] Verify NO alert appears
+   - [✅] Verify text displays as-is (not executed)
 
 2. **In Profile Edit**
-   - [ ] Try changing name to: `"><script>alert(document.cookie)</script>`
-   - [ ] Save and refresh
-   - [ ] Verify NO alert appears
-   - [ ] Verify text displays safely
+   - [✅] Try changing name to: `"><script>alert(document.cookie)</script>`
+   - [✅] Save and refresh
+   - [✅] Verify NO alert appears
+   - [✅] Verify text displays safely
 
 3. **In Admin Student Database**
-   - [ ] Edit student with name: `<svg onload=alert('hacked')>`
-   - [ ] Save and view student
-   - [ ] Verify NO alert appears
-   - [ ] Verify SVG doesn't render, displays as text
+   - [✅] Edit student with name: `<svg onload=alert('hacked')>`
+   - [✅] Save and view student
+   - [✅] Verify NO alert appears
+   - [✅] Verify SVG doesn't render, displays as text
 
 **Expected Results:**
 - ✅ NO script execution anywhere
@@ -674,19 +711,19 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Check browser console tests**
-   - [ ] Open browser console on any page
-   - [ ] Run: `formatDate(null)`
-   - [ ] Expected: Should return "-" (not crash)
-   - [ ] Run: `formatCurrency(undefined)`
-   - [ ] Expected: Should return "$0.00" or handle gracefully (not crash)
-   - [ ] Run: `escapeHtml(null)`
-   - [ ] Expected: Should return "" (empty string, not crash)
+   - [✅] Open browser console on any page
+   - [✅] Run: `formatDate(null)`
+   - [✅] Expected: Should return "-" (not crash)
+   - [✅] Run: `formatCurrency(undefined)`
+   - [✅] Expected: Should return "$0.00" or handle gracefully (not crash)
+   - [✅] Run: `escapeHtml(null)`
+   - [✅] Expected: Should return "" (empty string, not crash)
 
 2. **Look for any blank/null data in lists**
-   - [ ] Go to transaction lists (student or admin)
-   - [ ] Look for any transactions with missing data
-   - [ ] Verify missing dates show "-" or similar (not "Invalid Date")
-   - [ ] Verify missing amounts show "$0.00" or similar (not "NaN")
+   - [✅] Go to transaction lists (student or admin)
+   - [✅] Look for any transactions with missing data
+   - [✅] Verify missing dates show "-" or similar (not "Invalid Date")
+   - [✅] Verify missing amounts show "$0.00" or similar (not "NaN")
 
 **Expected Results:**
 - ✅ Functions handle null/undefined gracefully
@@ -702,21 +739,21 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Large currency amounts**
-   - [ ] If possible, find a transaction with large amount (or test in console)
-   - [ ] Run in console: `formatCurrency(999999)`
-   - [ ] Expected: "$999,999.00" (with commas)
+   - [✅] If possible, find a transaction with large amount (or test in console)
+   - [✅] Run in console: `formatCurrency(999999)`
+   - [✅] Expected: "$999,999.00" (with commas)
 
 2. **Small currency amounts**
-   - [ ] Run in console: `formatCurrency(0.01)`
-   - [ ] Expected: "$0.01" (correct decimal handling)
+   - [✅] Run in console: `formatCurrency(0.01)`
+   - [✅] Expected: "$0.01" (correct decimal handling)
 
 3. **Zero amounts**
-   - [ ] Look for any $0.00 transactions
-   - [ ] Verify displays as "$0.00" (not "$0", not blank)
+   - [✅] Look for any $0.00 transactions
+   - [✅] Verify displays as "$0.00" (not "$0", not blank)
 
 4. **Negative amounts (refunds)**
-   - [ ] If there are refund transactions
-   - [ ] Verify displays as "-$XX.XX" (negative sign before dollar)
+   - [N/A] If there are refund transactions
+   - [N/A] Verify displays as "-$XX.XX" (negative sign before dollar)
 
 **Expected Results:**
 - ✅ Large numbers formatted with commas
@@ -732,26 +769,26 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Navigate through entire app**
-   - [ ] Open browser Developer Tools Console
-   - [ ] Clear any existing console messages
-   - [ ] Navigate to each major section:
-   - [ ] Student Portal home
-   - [ ] Student Portal dashboard
-   - [ ] Student Portal profile
-   - [ ] Student Portal concessions
-   - [ ] Student Portal transactions
-   - [ ] Admin check-in
-   - [ ] Admin student database
-   - [ ] Admin tools - transactions
-   - [ ] Admin tools - gift concessions
-   - [ ] After visiting each page, check console
+   - [✅] Open browser Developer Tools Console
+   - [✅] Clear any existing console messages
+   - [✅] Navigate to each major section:
+   - [✅] Student Portal home
+   - [✅] Student Portal dashboard
+   - [✅] Student Portal profile
+   - [✅] Student Portal concessions
+   - [✅] Student Portal transactions
+   - [✅] Admin check-in
+   - [✅] Admin student database
+   - [✅] Admin tools - transactions
+   - [✅] Admin tools - gift concessions
+   - [✅] After visiting each page, check console
 
 2. **Look for specific errors**
-   - [ ] No "module not found" errors
-   - [ ] No "undefined function" errors
-   - [ ] No "cannot read property" errors
-   - [ ] No import errors
-   - [ ] No red error messages at all
+   - [✅] No "module not found" errors
+   - [✅] No "undefined function" errors
+   - [✅] No "cannot read property" errors
+   - [✅] No import errors
+   - [✅] No red error messages at all
 
 **Expected Results:**
 - ✅ NO red errors in console anywhere
@@ -772,11 +809,11 @@ Test each section in order. Mark items as complete as you go through them.
 ### Results by Section
 
 **Part 1: Student Portal**
-- [ ] Test 1.1: Registration - PASS / FAIL
-- [ ] Test 1.2: Dashboard - PASS / FAIL
-- [ ] Test 1.3: Profile - PASS / FAIL
-- [ ] Test 1.4: Concessions - PASS / FAIL
-- [ ] Test 1.5: Transactions - PASS / FAIL
+- [✅] Test 1.1: Registration - PASS / FAIL
+- [✅] Test 1.2: Dashboard - PASS / FAIL
+- [✅] Test 1.3: Profile - PASS / FAIL
+- [✅] Test 1.4: Concessions - PASS / FAIL
+- [✅] Test 1.5: Transactions - PASS / FAIL
 
 **Part 2: Admin Portal**
 - [✅] Test 2.1: Check-In - PASS / FAIL
@@ -789,10 +826,10 @@ Test each section in order. Mark items as complete as you go through them.
 - [✅] Test 2.8: Logout Handler - PASS / FAIL
 
 **Part 3: Edge Cases**
-- [ ] Test 3.1: XSS Prevention - PASS / FAIL
-- [ ] Test 3.2: Null Handling - PASS / FAIL
-- [ ] Test 3.3: Large Numbers - PASS / FAIL
-- [ ] Test 3.4: Console Errors - PASS / FAIL
+- [✅] Test 3.1: XSS Prevention - PASS / FAIL
+- [✅] Test 3.2: Null Handling - PASS / FAIL
+- [✅] Test 3.3: Large Numbers - PASS / FAIL
+- [✅] Test 3.4: Console Errors - PASS / FAIL
 
 ### Issues Found
 
