@@ -78,8 +78,8 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads without errors**
-   - [ ] Check browser console - no red errors
-   - [ ] Page displays correctly
+   - [✅] Check browser console - no red errors
+   - [✅] Page displays correctly
 
 2. **Email validation (uses `isValidEmail()`)**
    - [ ] Enter invalid email: `badformat` → Should show validation error
@@ -123,8 +123,8 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads correctly**
-   - [ ] Check browser console - no red errors
-   - [ ] Dashboard displays with your student data
+   - [✅] Check browser console - no red errors
+   - [✅] Dashboard displays with your student data
 
 2. **Date formatting (uses `formatDate()`)**
    - [ ] Look at "Next Class" date → Should display as "DD MMM YYYY" (e.g., "25 Dec 2025")
@@ -155,27 +155,27 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads and displays data**
-   - [ ] Check browser console - no red errors
-   - [ ] Your profile information displays correctly
+   - [✅] Check browser console - no red errors
+   - [✅] Your profile information displays correctly
 
 2. **Edit profile with special characters (uses `escapeHtml()`)**
-   - [ ] Click "Edit Profile" or similar
-   - [ ] Change first name to: `Test & Student`
-   - [ ] Change last name to: `<Name>`
-   - [ ] Click "Save Changes"
-   - [ ] Verify loading spinner appears while saving
+   - [✅] Click "Edit Profile" or similar
+   - [✅] Change first name to: `Test & Student`
+   - [✅] Change last name to: `<Name>`
+   - [✅] Click "Save Changes"
+   - [✅] Verify loading spinner appears while saving
 
 3. **Verify data saves safely**
-   - [ ] After save completes, verify success message appears
-   - [ ] Refresh the page
-   - [ ] Check that special characters (&, <, >) display as text (not HTML)
-   - [ ] Verify NO script execution or weird rendering
+   - [✅] After save completes, verify success message appears
+   - [✅] Refresh the page
+   - [✅] Check that special characters (&, <, >) display as text (not HTML)
+   - [✅] Verify NO script execution or weird rendering
 
 4. **Email validation (uses `isValidEmail()`)**
-   - [ ] Click "Edit" again
-   - [ ] Try changing email to invalid format: `bademail`
-   - [ ] Try to save → Should show validation error
-   - [ ] Change back to valid email and save successfully
+   - [✅] Click "Edit" again
+   - [✅] Try changing email to invalid format: `bademail`
+   - [✅] Try to save → Should show validation error
+   - [✅] Change back to valid email and save successfully
 
 **Expected Results:**
 - ✅ Special characters save and display safely
@@ -191,23 +191,23 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads concessions**
-   - [ ] Check browser console - no red errors
-   - [ ] Concession cards/list displays
+   - [✅] Check browser console - no red errors
+   - [✅] Concession cards/list displays
 
 2. **Date formatting (uses `formatDateDDMMYYYY()`)**
-   - [ ] Look at concession expiry dates
-   - [ ] Verify dates display as "DD/MM/YYYY" (e.g., "31/12/2025")
-   - [ ] Check multiple concessions if you have them
-   - [ ] Verify NO dates show as "Invalid Date"
+   - [✅] Look at concession expiry dates
+   - [✅] Verify dates display as "DD/MM/YYYY" (e.g., "31/12/2025")
+   - [✅] Check multiple concessions if you have them
+   - [✅] Verify NO dates show as "Invalid Date"
 
 3. **Currency formatting (uses `formatCurrency()`)**
-   - [ ] Look at concession balance or price
-   - [ ] Verify displays as "$XX.XX" (e.g., "$15.00")
+   - [✅] Look at concession balance or price
+   - [✅] Verify displays as "$XX.XX" (e.g., "$15.00")
 
 4. **Loading spinner (uses `showLoading()`)**
-   - [ ] Refresh the page
-   - [ ] Verify spinner appears while loading
-   - [ ] Verify spinner disappears when data loads
+   - [✅] Refresh the page
+   - [✅] Verify spinner appears while loading
+   - [✅] Verify spinner disappears when data loads
 
 5. **Purchase concession (if available)**
    - [ ] Click "Purchase" or "Buy Concession" if option exists
@@ -231,32 +231,32 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Transaction list loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Transaction history displays
+   - [✅] Check browser console - no red errors
+   - [✅] Transaction history displays
 
 2. **Date formatting in transaction list (uses `formatDate()`)**
-   - [ ] Scroll through your transaction history
-   - [ ] Check that ALL transaction dates display as "DD MMM YYYY"
-   - [ ] Verify dates are consistent across the entire list
-   - [ ] Verify NO dates show as "Invalid Date", blank, or weird formats
+   - [✅] Scroll through your transaction history
+   - [✅] Check that ALL transaction dates display as "DD MMM YYYY"
+   - [✅] Verify dates are consistent across the entire list
+   - [✅] Verify NO dates show as "Invalid Date", blank, or weird formats
 
 3. **Currency formatting in amounts (uses `formatCurrency()`)**
-   - [ ] Check the Amount column for each transaction
-   - [ ] Verify ALL amounts display as "$XX.XX" (e.g., "$25.00", "$10.50")
-   - [ ] Check for transactions with different amounts:
+   - [✅] Check the Amount column for each transaction
+   - [✅] Verify ALL amounts display as "$XX.XX" (e.g., "$25.00", "$10.50")
+   - [✅] Check for transactions with different amounts:
      - Small amounts (e.g., $5.00)
      - Large amounts (e.g., $150.00)
      - Zero amounts if any (should show "$0.00")
-   - [ ] Verify NO amounts show as "NaN", missing $ sign, or wrong decimal places
+   - [✅] Verify NO amounts show as "NaN", missing $ sign, or wrong decimal places
 
 4. **Transaction descriptions (uses `escapeHtml()`)**
-   - [ ] Look at transaction descriptions/notes
-   - [ ] Verify text displays normally (no weird HTML rendering)
+   - [N/A] Look at transaction descriptions/notes
+   - [N/A] Verify text displays normally (no weird HTML rendering)
 
 5. **Date filtering (if available)**
-   - [ ] If there's a date filter, try selecting a date range
-   - [ ] Apply filter
-   - [ ] Verify filtered results still show dates formatted correctly
+   - [N/A] If there's a date filter, try selecting a date range
+   - [N/A] Apply filter
+   - [N/A] Verify filtered results still show dates formatted correctly
 
 **Expected Results:**
 - ✅ All transaction dates consistently formatted
