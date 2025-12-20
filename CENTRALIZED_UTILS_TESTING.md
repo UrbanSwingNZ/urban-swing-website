@@ -97,9 +97,12 @@ Test each section in order. Mark items as complete as you go through them.
    - [ ] Verify loading spinner appears while processing
    - [ ] Verify spinner disappears when complete
 
-5. **Success message (uses snackbar)**
+5. **Success message (uses `showSnackbar()` from centralized utils)**
    - [ ] After successful registration, verify green success message appears
    - [ ] Message should say something like "Registration successful"
+   - [ ] Snackbar should have checkmark icon (fa-check-circle)
+   - [ ] Snackbar should auto-hide after 3 seconds
+   - [ ] Check console - no errors about showSnackbar being undefined
 
 **Expected Results:**
 - ✅ Email validation blocks invalid emails
@@ -272,37 +275,37 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Check-in interface displays
+   - [✅] Check browser console - no red errors
+   - [✅] Check-in interface displays
 
 2. **Search for student**
-   - [ ] Use the search box to find a student
-   - [ ] Type student name
-   - [ ] Verify loading spinner appears during search
-   - [ ] Verify search results display
+   - [N/A] Use the search box to find a student
+   - [N/A] Type student name
+   - [N/A] Verify loading spinner appears during search
+   - [N/A] Verify search results display
 
 3. **Check-in a student (uses special `showLoading()`)**
-   - [ ] Click "Check In" button for a student
-   - [ ] **IMPORTANT:** Verify loading spinner appears AND the main content area dims/hides
-   - [ ] This is the special check-in loading behavior - both spinner AND container hide
-   - [ ] Verify success message appears after check-in
-   - [ ] Verify main content area becomes visible again
+   - [✅] Click "Check In" button for a student
+   - [✅] **IMPORTANT:** Verify loading spinner appears AND the main content area dims/hides
+   - [✅] This is the special check-in loading behavior - both spinner AND container hide
+   - [✅] Verify success message appears after check-in
+   - [✅] Verify main content area becomes visible again
 
 4. **View check-in transaction (uses `formatDate()` and `formatCurrency()`)**
-   - [ ] After checking in, find the transaction in the list
-   - [ ] Check the date displays as "DD MMM YYYY"
-   - [ ] Check the amount displays as "$XX.XX"
+   - [✅] After checking in, find the transaction in the list
+   - [✅] Check the date displays as "DD MMM YYYY"
+   - [✅] Check the amount displays as "$XX.XX"
 
 5. **Try checking in same student again**
-   - [ ] Try to check in the same student twice
-   - [ ] Verify error message appears (should prevent duplicate check-ins)
+   - [✅] Try to check in the same student twice
+   - [✅] Verify error message appears (should prevent duplicate check-ins)
 
 6. **Date filtering (uses date utilities)**
-   - [ ] Look at the date filter/selector
-   - [ ] Verify today's date is selected by default
-   - [ ] Change to a different date
-   - [ ] Change back to today
-   - [ ] Verify check-ins filter by date correctly
+   - [✅] Look at the date filter/selector
+   - [✅] Verify today's date is selected by default
+   - [✅] Change to a different date
+   - [✅] Change back to today
+   - [✅] Verify check-ins filter by date correctly
 
 **Expected Results:**
 - ✅ Loading spinner + main container hiding works correctly (special behavior)
@@ -319,40 +322,40 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Student list loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Student list displays
-   - [ ] Verify loading spinner appeared during load
+   - [✅] Check browser console - no red errors
+   - [✅] Student list displays
+   - [✅] Verify loading spinner appeared during load
 
 2. **Search and select a student**
-   - [ ] Use search to find a student
-   - [ ] Click on student to view details
-   - [ ] Student details panel opens
+   - [✅] Use search to find a student
+   - [✅] Click on student to view details
+   - [✅] Student details panel opens
 
 3. **View student data (uses `formatTimestamp()` and `escapeHtml()`)**
-   - [ ] Look at "Created Date" or "Last Updated" timestamps
-   - [ ] Verify timestamps display as readable dates (e.g., "19 Dec 2025")
-   - [ ] Check student name displays correctly
-   - [ ] Check any notes/comments display correctly
+   - [✅] Look at "Created Date" or "Last Updated" timestamps
+   - [✅] Verify timestamps display as readable dates (e.g., "19 Dec 2025")
+   - [✅] Check student name displays correctly
+   - [✅] Check any notes/comments display correctly
 
 4. **Edit student with special characters (uses `escapeHtml()`)**
-   - [ ] Click "Edit" on student record
-   - [ ] Change student name to: `Test & Student <Name> "Quotes"`
-   - [ ] Click "Save"
-   - [ ] Verify loading spinner appears while saving
-   - [ ] Verify success message appears
-   - [ ] Refresh the page and select the same student
-   - [ ] Verify special characters (&, <, >, ") display as text (safely)
-   - [ ] Verify NO script execution or weird HTML rendering
+   - [✅] Click "Edit" on student record
+   - [✅] Change student name to: `Test & Student <Name> "Quotes"`
+   - [✅] Click "Save"
+   - [✅] Verify loading spinner appears while saving
+   - [✅] Verify success message appears
+   - [✅] Refresh the page and select the same student
+   - [✅] Verify special characters (&, <, >, ") display as text (safely)
+   - [✅] Verify NO script execution or weird HTML rendering
 
 5. **View concession history (uses `formatDate()` and `formatCurrency()`)**
-   - [ ] Look at the student's concession history
-   - [ ] Check all dates are formatted as "DD MMM YYYY"
-   - [ ] Check all amounts are formatted as "$XX.XX"
+   - [✅] Look at the student's concession history
+   - [✅] Check all dates are formatted as "DD MMM YYYY"
+   - [✅] Check all amounts are formatted as "$XX.XX"
 
 6. **View transaction history**
-   - [ ] Look at student's transaction history
-   - [ ] Verify dates formatted consistently
-   - [ ] Verify currency amounts formatted correctly
+   - [✅] Look at student's transaction history
+   - [✅] Verify dates formatted consistently
+   - [✅] Verify currency amounts formatted correctly
 
 **Expected Results:**
 - ✅ Timestamps display as readable dates
@@ -434,17 +437,21 @@ Test each section in order. Mark items as complete as you go through them.
    - [ ] Look at expiry date or grant date fields
    - [ ] Verify dates display as "DD MMM YYYY"
 
-5. **Confirm gifting**
+5. **Confirm gifting (uses `showSnackbar()` from centralized utils)**
    - [ ] Complete the gift concession process
    - [ ] Verify loading spinner appears
-   - [ ] Verify success message displays
+   - [ ] Verify success snackbar displays with green styling
+   - [ ] Success snackbar should have checkmark icon
+   - [ ] Snackbar auto-hides after 3 seconds
    - [ ] Check the concession was added (check student's account if possible)
+   - [ ] Check console - no showSnackbar errors
 
 **Expected Results:**
 - ✅ Student names formatted properly (title case)
 - ✅ Dates formatted correctly
 - ✅ Special characters display safely
 - ✅ Gifting process works correctly
+- ✅ Success notifications display properly
 
 ---
 

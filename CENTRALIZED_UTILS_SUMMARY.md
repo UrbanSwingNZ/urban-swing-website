@@ -53,12 +53,13 @@ Created `/js/utils/` directory with 6 modules:
    - `formatDateToString()` - Date to string
    - `parseDateString()` - String to Date
 
-6. **ui-utils.js** (42 lines)
+6. **ui-utils.js** (108 lines)
    - `showLoading()` - Loading spinner (8+ duplicates eliminated)
    - `showError()` - Error display (3+ duplicates eliminated)
    - `navigateTo()` - Navigation helper
+   - `showSnackbar()` - Notification system (8+ duplicates eliminated)
 
-**Total:** ~457 lines of well-documented, tested utilities
+**Total:** ~523 lines of well-documented, tested utilities
 
 ### ✅ Phase 3: Implementation Review (COMPLETE)
 - Verified all centralized implementations match existing behavior
@@ -76,17 +77,19 @@ Created `/js/utils/` directory with 6 modules:
 4. `admin/admin-tools/transactions/js/utils.js` - 60→56 lines (7% reduction)
 5. `admin/admin-tools/concession-types/utils.js` - 36→46 lines (expanded with docs)
 
-**Additional Files Migrated (8 files):**
-1. `student-portal/js/registration/ui-helpers.js` - escapeHtml
+**Additional Files Migrated (12 files):**
+1. `student-portal/js/registration/ui-helpers.js` - escapeHtml, showSnackbar
 2. `student-portal/js/ui/modal.js` - escapeHtml
 3. `student-portal/js/registration-handler.js` - isValidEmail
 4. `admin/check-in/js/students.js` - getStudentFullName (documented)
-5. `admin/admin-tools/gift-concessions/gift-concessions.js` - formatDate, escapeHtml
+5. `admin/admin-tools/gift-concessions/gift-concessions.js` - formatDate, escapeHtml, showSnackbar
 6. `admin/admin-tools/closedown-nights/closedown-nights.js` - formatDate, formatTimestamp, escapeHtml
 7. `student-portal/concessions/concessions.js` - formatDateDDMMYYYY, showLoading
 8. `admin/check-in/js/checkin-transactions.js` - formatCurrency
+9. `admin/playlist-manager/playlist-ui.js` - showSnackbar
+10. `admin/admin-tools/email-templates/modules/ui/notifications.js` - showSnackbar
 
-**Total Files Updated:** 13 files
+**Total Files Updated:** 17 files
 
 ### ✅ Phase 5: Testing Documentation (COMPLETE)
 - Created comprehensive test plan in `CENTRALIZED_UTILS_TESTING.md`
@@ -117,7 +120,7 @@ Created `/js/utils/` directory with 6 modules:
 - No breaking changes to existing functionality
 
 ### 3. Domain-Specific Functions Retained
-- `showSnackbar()` kept in individual files (becomes shared component in Item #5)
+- `showSnackbar()` migrated to centralized utilities (ui-utils.js)
 - `API_CONFIG` kept in portal-specific utils
 - `getStudentFullName()` kept where it has domain logic
 - `handleLogout()` kept in transaction-specific context
@@ -204,9 +207,9 @@ Created `/js/utils/` directory with 6 modules:
 
 ### Immediate Benefits
 1. **Code Reduction:** ~150 lines eliminated from migrated files
-2. **Consistency:** All utilities now use same implementation
+2. **Consistency:** All utilities now use same implementation (including notifications)
 3. **Documentation:** JSDoc comments on all functions
-4. **Security:** Consistent XSS protection via `escapeHtml()`
+4. **Security:** Consistent XSS protection via `escapeHtml()` in all notifications
 5. **Maintainability:** Single place to fix bugs or add features
 
 ### Long-term Benefits
@@ -381,11 +384,11 @@ console.log('Date:', formatDate(new Date()));
 **Item #11 implementation is COMPLETE** and ready for user testing. The centralized utilities library provides a solid foundation for future refactoring items while immediately improving code quality, maintainability, and consistency.
 
 **Estimated Total Impact:**
-- **Lines Saved:** ~150 lines immediately, 400-500 after Phase 6 cleanup
-- **Functions Consolidated:** 10 duplicate functions
-- **Instances Eliminated:** 40+ duplicate implementations
-- **Files Improved:** 13 files migrated
-- **Documentation Added:** 3 comprehensive markdown documents
+- **Lines Saved:** ~200+ lines immediately, 450-550 after Phase 6 cleanup
+- **Functions Consolidated:** 11 duplicate functions (including showSnackbar)
+- **Instances Eliminated:** 48+ duplicate implementations
+- **Files Improved:** 17 files migrated (5 primary + 12 additional)
+- **Documentation Added:** 4 comprehensive markdown documents
 - **Future Value:** Foundation for Items #5 and #8
 
 **Next Action:** User testing per `CENTRALIZED_UTILS_TESTING.md`

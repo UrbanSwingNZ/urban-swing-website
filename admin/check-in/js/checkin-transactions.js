@@ -6,29 +6,44 @@
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 
 let checkinTransactions = [];
+let transactionsUnsubscribe = null; // Store unsubscribe function
 
 /**
- * Load transactions for the selected check-in date
+ * Set up real-time listener for transactions on the selected check-in date
  */
-async function loadCheckinTransactions() {
+function setupTransactionsListener() {
+    // Unsubscribe from any existing listener
+    if (transactionsUnsubscribe) {
+        transactionsUnsubscribe();
+    }
+    
+    // Get the selected check-in date
+    const selectedDate = getSelectedCheckinDate();
+    
+    // Start and end of selected day
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    // Set up real-time listener
+    transactionsUnsubscribe = firebase.firestore()
+        .collection('transactions')
+        .where('transactionDate', '>=', firebase.firestore.Timestamp.fromDate(startOfDay))
+        .where('transactionDate', '<=', firebase.firestore.Timestamp.fromDate(endOfDay))
+        .onSnapshot(async (snapshot) => {
+            await processTransactionsSnapshot(snapshot);
+        }, (error) => {
+            console.error('Error in transactions listener:', error);
+        });
+}
+
+/**
+ * Process transactions snapshot (used by both initial load and real-time updates)
+ */
+async function processTransactionsSnapshot(snapshot) {
     try {
-        // Get the selected check-in date
-        const selectedDate = getSelectedCheckinDate();
-        
-        // Start and end of selected day
-        const startOfDay = new Date(selectedDate);
-        startOfDay.setHours(0, 0, 0, 0);
-        
-        const endOfDay = new Date(selectedDate);
-        endOfDay.setHours(23, 59, 59, 999);
-        
-        // Query Firestore for transactions on selected date
-        const snapshot = await firebase.firestore()
-            .collection('transactions')
-            .where('transactionDate', '>=', firebase.firestore.Timestamp.fromDate(startOfDay))
-            .where('transactionDate', '<=', firebase.firestore.Timestamp.fromDate(endOfDay))
-            .get();
-        
         // Convert to array and normalize data
         const transactionPromises = snapshot.docs.map(async doc => {
             const data = doc.data();
@@ -115,6 +130,13 @@ async function loadCheckinTransactions() {
         checkinTransactions = [];
         displayCheckinTransactions([]);
     }
+}
+
+/**
+ * Public function to load transactions - sets up real-time listener
+ */
+async function loadCheckinTransactions() {
+    setupTransactionsListener();
 }
 
 /**
@@ -476,13 +498,19 @@ async function editConcessionPurchaseTransaction(transaction, transactionData) {
     const paymentSelect = document.getElementById('purchase-payment-select');
     
     if (datePicker && transaction.date) {
-        // Format date as d/mm/yyyy for display (matching DatePicker format)
-        const day = transaction.date.getDate();
-        const month = String(transaction.date.getMonth() + 1).padStart(2, '0');
-        const year = transaction.date.getFullYear();
-        const dateStr = `${day}/${month}/${year}`;
-        datePicker.value = dateStr;
-        // Trigger button update since we're manually setting the value
+        // Use the DatePicker's setDate method to properly set the date
+        // This ensures the internal state is updated correctly
+        if (window.purchaseDatePicker) {
+            window.purchaseDatePicker.setDate(transaction.date);
+        } else {
+            // Fallback: manually set the value if DatePicker instance not available
+            const day = transaction.date.getDate();
+            const month = String(transaction.date.getMonth() + 1).padStart(2, '0');
+            const year = transaction.date.getFullYear();
+            const dateStr = `${day}/${month}/${year}`;
+            datePicker.value = dateStr;
+        }
+        // Trigger button update since we're setting the value
         if (typeof updatePurchaseButton === 'function') {
             updatePurchaseButton();
         }
@@ -569,6 +597,8 @@ async function updateConcessionPurchase() {
         // Parse date from d/mm/yyyy format
         const [day, month, year] = purchaseDate.split('/').map(Number);
         const parsedDate = new Date(year, month - 1, day);
+        // Set to noon to avoid timezone boundary issues
+        parsedDate.setHours(12, 0, 0, 0);
         
         // Update transaction
         await firebase.firestore()
@@ -640,9 +670,6 @@ async function updateConcessionPurchase() {
         // Clean up
         delete window.editingTransactionId;
         delete window.editingStudentId;
-        
-        // Reload transactions
-        await loadCheckinTransactions();
         
         showSnackbar('Transaction updated successfully', 'success');
         

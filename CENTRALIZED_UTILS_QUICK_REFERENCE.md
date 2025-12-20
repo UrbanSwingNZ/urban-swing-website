@@ -235,6 +235,34 @@ navigateTo('/student-portal/dashboard/')
 // Changes window location
 ```
 
+### showSnackbar(message, type, duration)
+**Purpose:** Show notification snackbar with icons
+
+```javascript
+showSnackbar('Check-in successful!', 'success', 3000)
+// Shows green snackbar with checkmark icon
+
+showSnackbar('Error occurred', 'error')
+// Shows red snackbar with error icon
+
+showSnackbar('Warning message', 'warning', 5000)
+// Shows yellow snackbar with warning icon
+
+showSnackbar('Info message', 'info')
+// Shows blue snackbar with info icon
+```
+
+**Parameters:**
+- `message` (string): Message to display
+- `type` (string): 'success', 'error', 'warning', or 'info' (default: 'success')
+- `duration` (number): Display time in milliseconds (default: 3000)
+
+**Icons:**
+- Success: `fa-check-circle`
+- Error: `fa-exclamation-circle`
+- Warning: `fa-exclamation-triangle`
+- Info: `fa-info-circle`
+
 ---
 
 ## Common Patterns

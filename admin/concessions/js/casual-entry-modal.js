@@ -138,9 +138,19 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
     // Set date
     const datePicker = document.getElementById('casual-entry-date-picker');
     if (entryDate) {
-        const dateStr = entryDate.toISOString().split('T')[0];
+        // Format date as YYYY-MM-DD in local timezone (no UTC conversion)
+        const year = entryDate.getFullYear();
+        const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+        const day = String(entryDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
         datePicker.value = dateStr;
-        datePicker.max = new Date().toISOString().split('T')[0]; // Prevent future dates
+        
+        // Set max date to today in local timezone
+        const today = new Date();
+        const maxYear = today.getFullYear();
+        const maxMonth = String(today.getMonth() + 1).padStart(2, '0');
+        const maxDay = String(today.getDate()).padStart(2, '0');
+        datePicker.max = `${maxYear}-${maxMonth}-${maxDay}`;
     }
     
     // Set payment method

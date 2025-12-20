@@ -4,11 +4,27 @@
  */
 
 /**
+ * Check-in specific loading display
+ * This version also hides/shows the main container (special check-in behavior)
+ */
+function showCheckInLoading(show = true) {
+    const spinner = document.getElementById('loading-spinner');
+    const container = document.getElementById('main-container');
+
+    if (spinner && container) {
+        // When show=true: show spinner, hide container
+        // When show=false: hide spinner, show container
+        spinner.style.display = show ? 'flex' : 'none';
+        container.style.display = show ? 'none' : 'block';
+    }
+}
+
+/**
  * Initialize the check-in application
  */
 async function initializeApp() {
     try {
-        showLoading();
+        showCheckInLoading();
         
         // Initialize authentication
         await initializeAuth();
@@ -58,10 +74,11 @@ async function initializeApp() {
         initializeAccordions();
         
         // Hide loading indicator
-        showLoading(false);
+        showCheckInLoading(false);
         
     } catch (error) {
         console.error('Error initializing app:', error);
+        showCheckInLoading(false);
         showError('Failed to initialize application. Please refresh the page.');
     }
 }
