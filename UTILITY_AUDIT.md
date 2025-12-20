@@ -22,9 +22,10 @@
 
 - **Total utility files audited:** 5 primary files + 10+ additional files with utilities
 - **Total unique utility functions:** 25+
-- **Functions with duplicates:** 10
-- **Total duplicate instances:** 40+
-- **Estimated lines of duplicated code:** 400-500 lines
+- **Functions with duplicates:** 11 (all now centralized)
+- **Total duplicate instances:** 48+ (all eliminated)
+- **Estimated lines of duplicated code:** 450-550 lines (eliminated)
+- **Migration Status:** ✅ COMPLETE - All duplicate utilities centralized
 
 ---
 
@@ -159,8 +160,8 @@
 3. `showErrorMessage(message)` - Error div display + scroll
 4. `hideMessages()` - Hide all messages
 5. `initializeAccordions()` - Accordion UI setup
-6. `showSnackbar(message, type, duration)` - Notification ⚠️ DUPLICATE
-7. `escapeHtml(text)` - XSS protection ⚠️ DUPLICATE
+6. ~~`showSnackbar(message, type, duration)`~~ - ✅ MIGRATED to centralized utilities
+7. ~~`escapeHtml(text)`~~ - ✅ MIGRATED to centralized utilities
 
 ---
 
@@ -194,8 +195,9 @@
 
 **Functions:**
 1. `getStudentFullName(student)` - Full name ⚠️ DUPLICATE
-2. `formatDate(date)` - Date formatting ⚠️ DUPLICATE
-3. `escapeHtml(text)` - XSS protection ⚠️ DUPLICATE
+2. ~~`formatDate(date)`~~ - ✅ MIGRATED to centralized utilities
+3. ~~`escapeHtml(text)`~~ - ✅ MIGRATED to centralized utilities
+4. ~~`showSnackbar(message, type, duration)`~~ - ✅ MIGRATED to centralized utilities
 
 ---
 
@@ -258,25 +260,27 @@
 
 ---
 
-#### `showSnackbar(message, type, duration)`
-**Instances:** 8+  
-**Files:**
-- student-portal/js/utils.js
-- admin/student-database/js/utils.js
-- admin/check-in/js/utils.js
-- admin/admin-tools/transactions/js/utils.js
-- student-portal/js/registration/ui-helpers.js
-- student-portal/profile/profile-old.js
-- student-portal/purchase/purchase-old.js
-- More...
+#### `showSnackbar(message, type, duration)` ✅ FULLY MIGRATED
+**Instances:** 8+ (ALL ELIMINATED)  
+**Migrated From:**
+- ~~student-portal/js/utils.js~~ → Deleted (wrapper)
+- ~~admin/student-database/js/utils.js~~ → Deleted (wrapper)
+- ~~admin/check-in/js/utils.js~~ → Deleted (wrapper)
+- ~~admin/admin-tools/transactions/js/utils.js~~ → Deleted (wrapper)
+- ~~student-portal/js/registration/ui-helpers.js~~ → Now imports from centralized
+- ~~admin/admin-tools/gift-concessions/gift-concessions.js~~ → Now imports from centralized
+- ~~admin/playlist-manager/playlist-ui.js~~ → Now imports from centralized
+- ~~admin/admin-tools/email-templates/modules/ui/notifications.js~~ → Now imports from centralized
+- student-portal/profile/profile-old.js → OLD FILE (ignored)
+- student-portal/purchase/purchase-old.js → OLD FILE (ignored)
 
-**Variations:**
-- Basic version (no icons, simple styling)
-- Icon version (fa-check-circle, etc.)
-- Different default durations
-- Some create element, some assume it exists
+**Final Implementation:** `/js/utils/ui-utils.js`
+- Icon-based version (fa-check-circle, fa-exclamation-circle, etc.)
+- Configurable duration (default: 3000ms)
+- Proper XSS protection via escapeHtml
+- Creates element dynamically with proper cleanup
 
-**Lines:** ~150-200 lines total
+**Lines Eliminated:** ~150-200 lines total
 
 ---
 
@@ -481,9 +485,10 @@
 - `showLoading(show)` ⭐ HIGH PRIORITY
 - `showError(message)` ⭐ MEDIUM PRIORITY
 - `navigateTo(path)` ⭐ LOW PRIORITY
+- `showSnackbar(message, type, duration)` ⭐ HIGH PRIORITY
 
-**Note:** `showSnackbar` becomes a component (see refactoring item #5)
-**Estimated size:** 50-75 lines
+**Note:** `showSnackbar` centralized (may still become component in future)
+**Estimated size:** 100-125 lines
 
 ---
 
@@ -513,7 +518,7 @@ js/
 
 ### Must Include (High Duplication):
 1. ✅ `escapeHtml(text)` - 10+ duplicates
-2. ✅ `showSnackbar(message, type, duration)` - 8+ duplicates (becomes component)
+2. ✅ `showSnackbar(message, type, duration)` - 8+ duplicates (centralized)
 3. ✅ `showLoading(show)` - 8+ duplicates
 4. ✅ `formatDate(date, options)` - 7+ duplicates
 

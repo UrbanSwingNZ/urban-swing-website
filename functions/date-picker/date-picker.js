@@ -219,7 +219,13 @@ class DatePicker {
                 classes.push('not-allowed');
             }
             
-            html += `<div class="${classes.join(' ')}" data-date="${date.toISOString()}">${day}</div>`;
+            // Store date in local format YYYY-MM-DD to avoid timezone issues
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const dayStr = String(day).padStart(2, '0');
+            const localDateStr = `${year}-${month}-${dayStr}`;
+            
+            html += `<div class="${classes.join(' ')}" data-date="${localDateStr}">${day}</div>`;
         }
         
         html += '</div>';
@@ -295,13 +301,16 @@ class DatePicker {
     }
     
     selectDate(dateStr) {
-        this.selectedDate = new Date(dateStr);
+        // Parse local date string (YYYY-MM-DD) without timezone conversion
+        const [year, month, day] = dateStr.split('-').map(Number);
+        // Create date at noon local time to avoid timezone boundary issues
+        this.selectedDate = new Date(year, month - 1, day, 12, 0, 0, 0);
         
         // Format date for display (d/mm/yyyy)
-        const day = this.selectedDate.getDate();
-        const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
-        const year = this.selectedDate.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
+        const displayDay = this.selectedDate.getDate();
+        const displayMonth = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+        const displayYear = this.selectedDate.getFullYear();
+        const formattedDate = `${displayDay}/${displayMonth}/${displayYear}`;
         
         this.dateInput.value = formattedDate;
         this.calendar.style.display = 'none';
@@ -332,7 +341,12 @@ class DatePicker {
         }
         
         if (date instanceof Date && !isNaN(date)) {
-            this.selectDate(date.toISOString());
+            // Convert to local date string (YYYY-MM-DD)
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const localDateStr = `${year}-${month}-${day}`;
+            this.selectDate(localDateStr);
         }
     }
     
