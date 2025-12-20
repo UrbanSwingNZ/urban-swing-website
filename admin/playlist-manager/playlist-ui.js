@@ -3,6 +3,7 @@
 
 import { loadUserInfo } from './playlist-auth.js';
 import { loadPlaylists } from './playlist-operations.js';
+import { showSnackbar as centralizedSnackbar } from '/js/utils/index.js';
 
 // ========================================
 // UI HELPERS
@@ -21,26 +22,8 @@ export function showSuccess(message) {
 }
 
 export function showSnackbar(message, type = 'success') {
-  const snackbar = document.getElementById('snackbar');
-  
-  // Clear any existing classes
-  snackbar.className = 'snackbar';
-  
-  // Add type class
-  if (type) {
-    snackbar.classList.add(type);
-  }
-  
-  // Set message
-  snackbar.textContent = message;
-  
-  // Show snackbar
-  snackbar.classList.add('show');
-  
-  // Auto-hide after 3 seconds
-  setTimeout(() => {
-    snackbar.classList.remove('show');
-  }, 3000);
+  // Use centralized snackbar implementation
+  centralizedSnackbar(message, type);
 }
 
 // ========================================

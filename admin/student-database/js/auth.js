@@ -40,19 +40,6 @@ function initializeAuth() {
 }
 
 /**
- * Logout user
- */
-async function logout() {
-    try {
-        await auth.signOut();
-        window.location.href = '../index.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        alert('Failed to logout. Please try again.');
-    }
-}
-
-/**
  * Get current user
  */
 function getCurrentUser() {

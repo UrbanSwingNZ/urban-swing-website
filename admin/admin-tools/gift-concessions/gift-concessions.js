@@ -11,45 +11,6 @@ let selectedStudent = null;
 let currentUser = null;
 
 /**
- * Show snackbar notification
- */
-function showSnackbar(message, type = 'success', duration = 3000) {
-    // Remove any existing snackbar
-    const existingSnackbar = document.getElementById('snackbar');
-    if (existingSnackbar) {
-        existingSnackbar.remove();
-    }
-    
-    // Create snackbar element
-    const snackbar = document.createElement('div');
-    snackbar.id = 'snackbar';
-    snackbar.className = `snackbar snackbar-${type}`;
-    
-    // Add icon based on type
-    let icon = 'fa-check-circle';
-    if (type === 'error') icon = 'fa-exclamation-circle';
-    if (type === 'warning') icon = 'fa-exclamation-triangle';
-    if (type === 'info') icon = 'fa-info-circle';
-    
-    snackbar.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span>${escapeHtml(message)}</span>
-    `;
-    
-    // Add to body
-    document.body.appendChild(snackbar);
-    
-    // Trigger animation
-    setTimeout(() => snackbar.classList.add('show'), 10);
-    
-    // Auto-hide after duration
-    setTimeout(() => {
-        snackbar.classList.remove('show');
-        setTimeout(() => snackbar.remove(), 300);
-    }, duration);
-}
-
-/**
  * Convert date from d/mm/yyyy format to Date object
  */
 function parseDateFromInput(dateString) {
@@ -95,19 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadRecentGifts();
         });
 
-        // Logout handler (wait for header to load)
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async () => {
-                try {
-                    await firebase.auth().signOut();
-                    window.location.href = '../index.html';
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    alert('Error logging out. Please try again.');
-                }
-            });
-        }
+        // Logout button handler is set up by header-configurator.js
 
     } catch (error) {
         console.error('Initialization error:', error);
@@ -779,6 +728,12 @@ function showError(message) {
     });
 }
 
+// Import centralized utilities
+import {
+    formatDate,
+    escapeHtml
+} from '/js/utils/index.js';
+
 /**
  * Get student full name
  */
@@ -787,28 +742,6 @@ function getStudentFullName(student) {
     const firstName = student.firstName || '';
     const lastName = student.lastName || '';
     return `${firstName} ${lastName}`.trim() || 'Unknown';
-}
-
-/**
- * Format date for display
- */
-function formatDate(date) {
-    if (!date) return '-';
-    const d = date instanceof Date ? date : new Date(date);
-    return d.toLocaleDateString('en-NZ', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-    });
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 /**

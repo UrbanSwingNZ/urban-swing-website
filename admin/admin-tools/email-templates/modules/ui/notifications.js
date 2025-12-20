@@ -3,39 +3,15 @@
  * Snackbar notification system
  */
 
+// Import centralized utilities
+import { showSnackbar as centralizedSnackbar } from '/js/utils/index.js';
+
 /**
  * Show snackbar notification
+ * Now uses centralized implementation
  */
 export function showSnackbar(message, type = 'success') {
-    // Remove any existing snackbar
-    const existing = document.querySelector('.snackbar');
-    if (existing) {
-        existing.remove();
-    }
-    
-    // Create snackbar
-    const snackbar = document.createElement('div');
-    snackbar.className = `snackbar ${type}`;
-    
-    const icon = type === 'success' ? 'fa-check-circle' : 
-                 type === 'error' ? 'fa-exclamation-circle' : 
-                 'fa-info-circle';
-    
-    snackbar.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span class="snackbar-message">${message}</span>
-    `;
-    
-    document.body.appendChild(snackbar);
-    
-    // Trigger animation
-    setTimeout(() => snackbar.classList.add('show'), 10);
-    
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
-        snackbar.classList.remove('show');
-        setTimeout(() => snackbar.remove(), 300);
-    }, 3000);
+    centralizedSnackbar(message, type);
 }
 
 /**

@@ -217,6 +217,7 @@
     border-radius: 6px;
     font-size: 1rem;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
 .rate-form-group input:focus,
@@ -251,6 +252,7 @@
 
 .price-input-group {
     position: relative;
+    width: 100%;
 }
 
 .price-input-group::before {
@@ -262,10 +264,13 @@
     color: #666;
     font-size: 1.1rem;
     font-weight: bold;
+    pointer-events: none;
 }
 
 .price-input-group input {
     padding-left: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Empty State */

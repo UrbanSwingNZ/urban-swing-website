@@ -6,29 +6,45 @@ import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 
 let todaysCheckins = [];
 let showReversedCheckins = false;
+let checkinsUnsubscribe = null;
 
 /**
- * Load today's check-ins from Firestore
+ * Set up real-time listener for check-ins
  */
-async function loadTodaysCheckins() {
+function setupCheckinsListener() {
+    // Unsubscribe from any existing listener
+    if (checkinsUnsubscribe) {
+        checkinsUnsubscribe();
+    }
+    
+    // Get the selected check-in date (not today's actual date)
+    const selectedDate = getSelectedCheckinDate();
+    
+    // Start and end of selected day
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    // Set up real-time listener for check-ins on selected date
+    checkinsUnsubscribe = firebase.firestore()
+        .collection('checkins')
+        .where('checkinDate', '>=', firebase.firestore.Timestamp.fromDate(startOfDay))
+        .where('checkinDate', '<=', firebase.firestore.Timestamp.fromDate(endOfDay))
+        .orderBy('checkinDate', 'desc')
+        .onSnapshot(async (snapshot) => {
+            await processCheckinsSnapshot(snapshot);
+        }, (error) => {
+            console.error('Error in checkins listener:', error);
+        });
+}
+
+/**
+ * Process check-ins snapshot (from real-time listener)
+ */
+async function processCheckinsSnapshot(snapshot) {
     try {
-        // Get the selected check-in date (not today's actual date)
-        const selectedDate = getSelectedCheckinDate();
-        
-        // Start and end of selected day
-        const startOfDay = new Date(selectedDate);
-        startOfDay.setHours(0, 0, 0, 0);
-        
-        const endOfDay = new Date(selectedDate);
-        endOfDay.setHours(23, 59, 59, 999);
-        
-        // Query Firestore for check-ins on selected date
-        const snapshot = await firebase.firestore()
-            .collection('checkins')
-            .where('checkinDate', '>=', firebase.firestore.Timestamp.fromDate(startOfDay))
-            .where('checkinDate', '<=', firebase.firestore.Timestamp.fromDate(endOfDay))
-            .orderBy('checkinDate', 'desc')
-            .get();
         
         // Convert to array and check for reversed transactions
         const checkinPromises = snapshot.docs.map(async doc => {
@@ -79,23 +95,26 @@ async function loadTodaysCheckins() {
         displayTodaysCheckins();
         
     } catch (error) {
-        console.error('Error loading check-ins:', error);
+        console.error('Error processing check-ins:', error);
         todaysCheckins = [];
         displayTodaysCheckins();
     }
 }
 
 /**
+ * Public function to load check-ins - sets up real-time listener
+ */
+async function loadTodaysCheckins() {
+    setupCheckinsListener();
+}
+
+/**
  * Add a check-in to today's list
+ * Note: With real-time listeners, this is rarely needed as Firestore updates automatically
  */
 function addCheckinToDisplay(checkin) {
     todaysCheckins.unshift(checkin); // Add to beginning of array
     displayTodaysCheckins(); // This will update the counts
-    
-    // Reload transactions to include the new one
-    if (typeof loadCheckinTransactions === 'function') {
-        loadCheckinTransactions();
-    }
 }
 
 /**
