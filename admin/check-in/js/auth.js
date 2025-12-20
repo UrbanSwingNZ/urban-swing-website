@@ -34,13 +34,6 @@ function initializeAuth() {
 }
 
 /**
- * Logout user (uses centralized handleLogout)
- */
-function logout() {
-    handleLogout();
-}
-
-/**
  * Get current user
  */
 function getCurrentUser() {

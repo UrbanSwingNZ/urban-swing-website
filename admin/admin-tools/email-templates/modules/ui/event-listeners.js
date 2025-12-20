@@ -21,8 +21,7 @@ import { setupBeforeUnloadHandler, confirmDiscardChanges, cancelNavigation } fro
  * Setup event listeners
  */
 export function setupEventListeners() {
-    // Logout (uses centralized handleLogout)
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    // Logout button handler is set up by header-configurator.js
     
     // Refresh templates
     document.getElementById('refresh-templates-btn').addEventListener('click', loadTemplates);

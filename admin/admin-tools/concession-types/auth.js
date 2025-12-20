@@ -40,8 +40,7 @@ function showPage(user) {
   // Display user email
   document.getElementById('user-email').textContent = user.email;
   
-  // Setup logout button
-  document.getElementById('logout-btn').addEventListener('click', handleLogout);
+  // Logout button handler is set up by header-configurator.js
   
   // IMPORTANT: Override handleSaveConcession BEFORE initializing the modal
   // so the event listeners attach to our overridden version

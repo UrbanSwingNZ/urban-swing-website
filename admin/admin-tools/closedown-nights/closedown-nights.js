@@ -42,8 +42,7 @@ async function initializePage(user) {
     // Display user email
     document.getElementById('user-email').textContent = user.email;
     
-    // Setup logout button
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    // Logout button handler is set up by header-configurator.js
     
     // Initialize date pickers (allow any day, not just Thursdays)
     startDatePicker = new DatePicker('start-date', 'start-calendar', {

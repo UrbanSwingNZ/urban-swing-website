@@ -704,26 +704,20 @@ export async function handleSaveOrder() {
       .filter(item => item.track && item.track.uri)
       .map(item => item.track.uri);
     
-    console.log('New track order URIs:', newOrderUris);
-    
     if (newOrderUris.length === 0) {
       showError('No tracks to reorder');
       return;
     }
     
     // Step 1: Remove all tracks from the playlist
-    console.log('Removing all tracks from playlist...');
     await spotifyAPI.removeTracksFromPlaylist(currentPlaylist.id, newOrderUris);
     
     // Step 2: Add tracks back in the new order
     // Spotify has a limit of 100 tracks per request, so we need to chunk
-    console.log('Adding tracks back in new order...');
-    
     const chunkSize = 100;
     for (let i = 0; i < newOrderUris.length; i += chunkSize) {
       const chunk = newOrderUris.slice(i, i + chunkSize);
       await spotifyAPI.addTracksToPlaylist(currentPlaylist.id, chunk, i);
-      console.log(`Added chunk ${Math.floor(i/chunkSize) + 1}/${Math.ceil(newOrderUris.length/chunkSize)}`);
     }
     
     // Update the current tracks array to reflect the new order
