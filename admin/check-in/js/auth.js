@@ -34,14 +34,10 @@ function initializeAuth() {
 }
 
 /**
- * Logout user
+ * Logout user (uses centralized handleLogout)
  */
 function logout() {
-    auth.signOut().then(() => {
-        window.location.href = '../index.html';
-    }).catch((error) => {
-        showError('Logout failed: ' + error.message);
-    });
+    handleLogout();
 }
 
 /**

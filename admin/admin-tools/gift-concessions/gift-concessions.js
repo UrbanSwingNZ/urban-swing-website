@@ -56,18 +56,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadRecentGifts();
         });
 
-        // Logout handler (wait for header to load)
+        // Logout handler (uses centralized handleLogout from utilities)
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
-            logoutBtn.addEventListener('click', async () => {
-                try {
-                    await firebase.auth().signOut();
-                    window.location.href = '../index.html';
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    alert('Error logging out. Please try again.');
-                }
-            });
+            logoutBtn.addEventListener('click', handleLogout);
         }
 
     } catch (error) {

@@ -167,14 +167,10 @@
             logoAlt: 'Urban Swing Logo',
             onLogout: async () => {
                 try {
-                    if (typeof firebase !== 'undefined' && firebase.auth) {
-                        await firebase.auth().signOut();
-                    }
                     sessionStorage.clear();
-                    window.location.href = '/student-portal/index.html';
+                    await handleLogout(); // Uses centralized logout
                 } catch (error) {
                     console.error('Logout error:', error);
-                    alert('Error logging out. Please try again.');
                 }
             }
         });
@@ -188,15 +184,14 @@
     function setupLogout() {
         const logoutBtn = document.getElementById('student-logout-btn');
         
-        const handleLogout = async () => {
+        // Uses centralized handleLogout from utilities
+        const customLogout = async () => {
             try {
-                // Sign out from Firebase
-                if (typeof firebase !== 'undefined' && firebase.auth) {
-                    await firebase.auth().signOut();
-                }
-                
                 // Clear session storage
                 sessionStorage.clear();
+                
+                // Call centralized logout
+                await handleLogout();
                 
                 // Redirect to login page
                 window.location.href = '/student-portal/index.html';

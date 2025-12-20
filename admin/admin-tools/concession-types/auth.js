@@ -56,18 +56,7 @@ function showPage(user) {
   console.log('Concession Types Manager loaded for user:', user.email);
 }
 
-async function handleLogout() {
-  showLoading(true);
-  
-  try {
-    await auth.signOut();
-    console.log('Logout successful');
-  } catch (error) {
-    console.error('Logout error:', error);
-    alert('Failed to logout. Please try again.');
-    showLoading(false);
-  }
-}
+// handleLogout now provided by centralized utilities (window.handleLogout)
 
 // Auto-logout on Inactivity (30 minutes)
 let inactivityTimer;

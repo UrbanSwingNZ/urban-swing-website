@@ -92,16 +92,6 @@ async function initializePage(user) {
     await loadClosedownPeriods();
 }
 
-async function handleLogout() {
-    try {
-        await auth.signOut();
-        console.log('Logout successful');
-    } catch (error) {
-        console.error('Logout error:', error);
-        showError('Failed to logout. Please try again.');
-    }
-}
-
 async function loadSettings() {
     try {
         const settingsDoc = await db.collection('settings').doc('closedownNights').get();

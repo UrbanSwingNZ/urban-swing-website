@@ -1,15 +1,15 @@
 # Testing Plan: Centralized Utilities Library (Item #11)
 
 **Created:** December 19, 2025  
-**Updated:** December 20, 2025 (Phase 6 cleanup complete)  
+**Updated:** December 20, 2025 (Added Test 2.8: Centralized Logout Handler)  
 **Purpose:** Ensure the centralized utilities library refactoring doesn't break existing functionality  
-**Estimated Testing Time:** 90-120 minutes (comprehensive test)
+**Estimated Testing Time:** 100-135 minutes (comprehensive test)
 
 ---
 
 ## 🎯 What Was Changed
 
-The centralized utilities library consolidates **10+ duplicate functions** across **40+ instances**:
+The centralized utilities library consolidates **11+ duplicate functions** across **60+ instances**:
 - `escapeHtml()` - XSS protection (10+ duplicates eliminated)
 - `formatDate()` - Date formatting (7+ duplicates eliminated)
 - `formatCurrency()` - Money display (3+ duplicates eliminated)
@@ -17,11 +17,13 @@ The centralized utilities library consolidates **10+ duplicate functions** acros
 - `isValidEmail()` - Email validation (2+ duplicates eliminated)
 - `showLoading()` - Loading states (8+ duplicates eliminated)
 - `toTitleCase()` - Text capitalization (2+ duplicates eliminated)
+- `handleLogout()` - Logout handler (12+ duplicates eliminated)
 - Date utilities (isToday, getStartOfToday, etc.)
 
 **What Happened:**
 - ✅ Created `/js/utils/` directory with 6 specialized utility modules
-- ✅ Migrated 13 files to import from centralized utilities
+- ✅ Migrated 17 files to import from centralized utilities
+- ✅ Centralized handleLogout function across 12 additional files
 - ✅ Deleted 5 old utils.js wrapper files
 - ✅ Updated 7 HTML files to import from `/js/utils/index.js`
 - ✅ All code now uses centralized utilities
@@ -372,36 +374,36 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Transaction list loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Transaction list displays
+   - [✅] Check browser console (no red errors)
+   - [✅] Transaction list displays
 
 2. **Check date formatting (uses `formatDate()`)**
-   - [ ] Scroll through the transaction list
-   - [ ] Verify ALL dates display as "DD MMM YYYY"
-   - [ ] Check transactions from different days/months
-   - [ ] Verify NO dates show as "Invalid Date"
+   - [✅] Scroll through the transaction list
+   - [✅] Verify ALL dates display as "DD MMM YYYY"
+   - [✅] Check transactions from different days/months
+   - [✅] Verify NO dates show as "Invalid Date"
 
 3. **Check currency formatting (uses `formatCurrency()`)**
-   - [ ] Look at the Amount column
-   - [ ] Verify ALL amounts display as "$XX.XX"
-   - [ ] Check various transaction amounts
-   - [ ] Verify NO amounts show as "NaN" or missing $ sign
+   - [✅] Look at the Amount column
+   - [✅] Verify ALL amounts display as "$XX.XX"
+   - [✅] Check various transaction amounts
+   - [✅] Verify NO amounts show as "NaN" or missing $ sign
 
 4. **Student name display (uses `escapeHtml()`)**
-   - [ ] Check student names in the list
-   - [ ] Verify names display correctly
-   - [ ] If any student has special characters in name, verify they display safely
+   - [✅] Check student names in the list
+   - [✅] Verify names display correctly
+   - [✅] If any student has special characters in name, verify they display safely
 
 5. **Filter transactions (if available)**
-   - [ ] Try date range filtering
-   - [ ] Try student filtering
-   - [ ] Apply filters
-   - [ ] Verify filtered results still show proper formatting
+   - [✅] Try date range filtering
+   - [✅] Try student filtering
+   - [✅] Apply filters
+   - [✅] Verify filtered results still show proper formatting
 
 6. **Logout function**
-   - [ ] Click logout button (if present)
-   - [ ] Verify it logs you out correctly
-   - [ ] Log back in to continue testing
+   - [N/A] Click logout button (if present)
+   - [N/A] Verify it logs you out correctly
+   - [N/A] Log back in to continue testing
 
 **Expected Results:**
 - ✅ All dates formatted consistently
@@ -418,33 +420,33 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Gift concessions interface displays
+   - [✅] Check browser console - no red errors
+   - [✅] Gift concessions interface displays
 
 2. **Search for student (uses `getStudentFullName()` and `escapeHtml()`)**
-   - [ ] Search for a student by name
-   - [ ] Verify search results display
-   - [ ] Check student names display correctly (First Last format, title cased)
-   - [ ] If student has special characters in name, verify they display safely
+   - [✅] Search for a student by name
+   - [✅] Verify search results display
+   - [✅] Check student names display correctly (First Last format, title cased)
+   - [✅] If student has special characters in name, verify they display safely
 
 3. **Select student and gift concession**
-   - [ ] Select a student from search results
-   - [ ] Choose a concession type to gift
-   - [ ] Fill in any required fields
-   - [ ] Click "Gift Concession" or similar button
+   - [✅] Select a student from search results
+   - [✅] Choose a concession type to gift
+   - [✅] Fill in any required fields
+   - [✅] Click "Gift Concession" or similar button
 
 4. **Verify dates (uses `formatDate()`)**
-   - [ ] Look at expiry date or grant date fields
-   - [ ] Verify dates display as "DD MMM YYYY"
+   - [✅] Look at expiry date or grant date fields
+   - [✅] Verify dates display as "DD MMM YYYY"
 
 5. **Confirm gifting (uses `showSnackbar()` from centralized utils)**
-   - [ ] Complete the gift concession process
-   - [ ] Verify loading spinner appears
-   - [ ] Verify success snackbar displays with green styling
-   - [ ] Success snackbar should have checkmark icon
-   - [ ] Snackbar auto-hides after 3 seconds
-   - [ ] Check the concession was added (check student's account if possible)
-   - [ ] Check console - no showSnackbar errors
+   - [✅] Complete the gift concession process
+   - [✅] Verify loading spinner appears
+   - [✅] Verify success snackbar displays with green styling
+   - [✅] Success snackbar should have checkmark icon
+   - [✅] Snackbar auto-hides after 3 seconds
+   - [✅] Check the concession was added (check student's account if possible)
+   - [✅] Check console - no showSnackbar errors
 
 **Expected Results:**
 - ✅ Student names formatted properly (title case)
@@ -462,26 +464,26 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Scheduled closedowns load**
-   - [ ] Check browser console - no red errors
-   - [ ] List of closedown periods displays
+   - [✅] Check browser console - no red errors
+   - [✅] List of closedown periods displays
 
 2. **View existing closedowns (uses `formatDate()` and `formatTimestamp()`)**
-   - [ ] Look at listed closedown periods
-   - [ ] Check Start Date displays as "DD MMM YYYY"
-   - [ ] Check End Date displays as "DD MMM YYYY"
-   - [ ] If there's a "Created" or "Updated" timestamp, verify it's readable
+   - [✅] Look at listed closedown periods
+   - [✅] Check Start Date displays as "DD MMM YYYY"
+   - [✅] Check End Date displays as "DD MMM YYYY"
+   - [✅] If there's a "Created" or "Updated" timestamp, verify it's readable
 
 3. **Add new closedown period (if permitted)**
-   - [ ] Click "Add Closedown" or similar
-   - [ ] Select start and end dates
-   - [ ] Add description/reason
-   - [ ] Click "Save" or "Add"
-   - [ ] Verify loading state appears
-   - [ ] Verify success message displays
+   - [✅] Click "Add Closedown" or similar
+   - [✅] Select start and end dates
+   - [✅] Add description/reason
+   - [✅] Click "Save" or "Add"
+   - [✅] Verify loading state appears
+   - [✅] Verify success message displays
 
 4. **Verify new closedown displays correctly**
-   - [ ] After adding, verify it appears in the list
-   - [ ] Check dates are formatted correctly
+   - [✅] After adding, verify it appears in the list
+   - [✅] Check dates are formatted correctly
 
 **Expected Results:**
 - ✅ All dates formatted as "DD MMM YYYY"
@@ -497,37 +499,168 @@ Test each section in order. Mark items as complete as you go through them.
 **What to test:**
 
 1. **Page loads**
-   - [ ] Check browser console - no red errors
-   - [ ] Concession types list displays
-   - [ ] Verify loading spinner appeared during initial load
+   - [✅] Check browser console - no red errors
+   - [✅] Concession types list displays
+   - [✅] Verify loading spinner appeared during initial load
 
 2. **View concession types**
-   - [ ] Scroll through the list of concession types
-   - [ ] Verify all data displays correctly
+   - [✅] Scroll through the list of concession types
+   - [✅] Verify all data displays correctly
 
 3. **Edit concession type (if permitted)**
-   - [ ] Click "Edit" on a concession type
-   - [ ] Make a small change (e.g., description)
-   - [ ] Save changes
-   - [ ] Verify status message appears (this page uses special `showStatusMessage()` in drag-hint element)
-   - [ ] Verify success confirmation
+   - [✅] Click "Edit" on a concession type
+   - [✅] Make a small change (e.g., description)
+   - [✅] Save changes
+   - [✅] Verify snackbar appears
+   - [✅] Verify success confirmation
 
 4. **Drag and drop (if available)**
-   - [ ] If concession types can be reordered by dragging
-   - [ ] Try dragging one to a new position
-   - [ ] Verify status message appears during drag
-   - [ ] Verify order saves correctly
+   - [✅] If concession types can be reordered by dragging
+   - [✅] Try dragging one to a new position
+   - [✅] Verify status message appears during drag
+   - [✅] Verify order saves correctly
 
 5. **Toggle status (if available)**
-   - [ ] If concessions can be enabled/disabled
-   - [ ] Try toggling one on/off
-   - [ ] Verify status updates
-   - [ ] Verify status message appears
+   - [✅] If concessions can be enabled/disabled
+   - [✅] Try toggling one on/off
+   - [✅] Verify status updates
+   - [✅] Verify status message appears
 
 **Expected Results:**
 - ✅ Loading spinner works
 - ✅ Status messages display in drag-hint area
 - ✅ Edit/drag/toggle operations work correctly
+
+---
+
+### Test 2.7: Admin Playlist Manager
+
+**Navigate to:** `/admin/playlist-manager/`
+
+**What to test:**
+
+1. **Page loads**
+   - [ ] Check browser console - no red errors
+   - [ ] Spotify integration interface displays
+
+2. **Spotify authentication (if not already connected)**
+   - [ ] If not authenticated, try connecting to Spotify
+   - [ ] Verify success/error snackbar displays with icon
+   - [ ] Check console - no showSnackbar errors
+
+3. **Load playlist**
+   - [ ] Try loading a playlist
+   - [ ] Verify loading spinner appears
+   - [ ] Verify success snackbar when playlist loads
+   - [ ] Snackbar should have checkmark icon (fa-check-circle)
+   - [ ] Snackbar should auto-hide after 3 seconds
+
+4. **Playlist operations**
+   - [ ] Try any available playlist operation (e.g., refresh, update)
+   - [ ] Verify snackbars appear for success/error states
+   - [ ] Check that snackbars have appropriate icons:
+     - Success: green with fa-check-circle
+     - Error: red with fa-exclamation-circle
+     - Warning: orange with fa-exclamation-triangle
+
+5. **Error handling**
+   - [ ] If possible, trigger an error (e.g., try operation while disconnected)
+   - [ ] Verify error snackbar displays correctly
+   - [ ] Check console for any showSnackbar-related errors
+
+**Expected Results:**
+- ✅ Success snackbars display with green styling and checkmark icon
+- ✅ Error snackbars display with red styling and error icon
+- ✅ Snackbars auto-hide after 3 seconds
+- ✅ No console errors about showSnackbar being undefined
+- ✅ Loading states work correctly
+
+---
+
+### Test 2.8: Centralized Logout Handler
+
+**Navigate to:** Any admin or student portal page with a logout button
+
+**What to test:**
+
+**Pages with Logout Buttons (test at least 3-4):**
+- Student Portal header (any student portal page)
+- Admin main page (`/admin/`)
+- Admin Check-in (`/admin/check-in/`)
+- Admin Student Database (`/admin/student-database/`)
+- Admin Tools - Transactions (`/admin/admin-tools/transactions/`)
+- Admin Tools - Closedown Nights (`/admin/admin-tools/closedown-nights/`)
+- Admin Tools - Gift Concessions (`/admin/admin-tools/gift-concessions/`)
+- Admin Tools - Concession Types (`/admin/admin-tools/concession-types.html`)
+- Admin Tools - Email Templates (`/admin/admin-tools/email-templates/`)
+- Admin Tools - Backup Database (`/admin/admin-tools/backup-database.html`)
+
+**For Each Page Tested:**
+
+1. **Verify logout button exists**
+   - [ ] Find the logout button in the header/navigation
+   - [ ] Button should be visible and clickable
+
+2. **Test logout functionality**
+   - [ ] Click the logout button
+   - [ ] Verify you are logged out (Firebase Auth signOut called)
+   - [ ] Verify redirect to home page (/)
+   - [ ] Page should redirect within 1-2 seconds
+
+3. **Verify authentication state**
+   - [ ] After logout, verify you're on the home page or login page
+   - [ ] Try to navigate back to the admin/student portal page
+   - [ ] Should be redirected to login (not able to access without auth)
+
+4. **Check for errors**
+   - [ ] Open browser console before clicking logout
+   - [ ] After logout completes, check console
+   - [ ] Should see no red errors
+   - [ ] Should see "Logout successful" or similar message (if implemented)
+
+5. **Test logout from different page states**
+   - [ ] Log back in and navigate to a page with unsaved changes (if applicable)
+   - [ ] Click logout
+   - [ ] Verify logout still works (no blocking)
+   - [ ] Verify no "Logout error" alert appears
+
+**Special Cases to Test:**
+
+6. **Multiple tabs logout**
+   - [ ] Open admin/student portal in two browser tabs
+   - [ ] Log out from one tab
+   - [ ] Check the other tab - should also be logged out or show login prompt
+
+7. **Logout after inactivity (if auto-logout is implemented)**
+   - [ ] Check if auto-logout still works (separate from manual logout)
+   - [ ] Verify both manual and auto-logout use same mechanism
+
+**Console Tests:**
+
+8. **Test global handleLogout availability**
+   - [ ] Open browser console on any admin or student portal page
+   - [ ] Type: `typeof handleLogout`
+   - [ ] Expected: Should return "function"
+   - [ ] Type: `typeof window.handleLogout`
+   - [ ] Expected: Should return "function"
+
+**Expected Results:**
+- ✅ Logout button works on all pages tested
+- ✅ All logouts redirect to home page (/)
+- ✅ No "handleLogout is not defined" errors
+- ✅ No alert errors during logout
+- ✅ Firebase Auth signOut completes successfully
+- ✅ Authentication state properly cleared
+- ✅ No console errors related to logout
+- ✅ handleLogout available globally as window.handleLogout
+
+**Common Issues to Watch For:**
+- ❌ "handleLogout is not defined" error
+- ❌ Logout button does nothing when clicked
+- ❌ Multiple redirects or infinite redirect loops
+- ❌ Alert saying "Error logging out"
+- ❌ Console error about Firebase Auth
+- ❌ Remaining logged in after clicking logout
 
 ---
 
@@ -631,15 +764,15 @@ Test each section in order. Mark items as complete as you go through them.
    - [ ] Open browser Developer Tools Console
    - [ ] Clear any existing console messages
    - [ ] Navigate to each major section:
-     - [ ] Student Portal home
-     - [ ] Student Portal dashboard
-     - [ ] Student Portal profile
-     - [ ] Student Portal concessions
-     - [ ] Student Portal transactions
-     - [ ] Admin check-in
-     - [ ] Admin student database
-     - [ ] Admin tools - transactions
-     - [ ] Admin tools - gift concessions
+   - [ ] Student Portal home
+   - [ ] Student Portal dashboard
+   - [ ] Student Portal profile
+   - [ ] Student Portal concessions
+   - [ ] Student Portal transactions
+   - [ ] Admin check-in
+   - [ ] Admin student database
+   - [ ] Admin tools - transactions
+   - [ ] Admin tools - gift concessions
    - [ ] After visiting each page, check console
 
 2. **Look for specific errors**
@@ -675,12 +808,13 @@ Test each section in order. Mark items as complete as you go through them.
 - [ ] Test 1.5: Transactions - PASS / FAIL
 
 **Part 2: Admin Portal**
-- [ ] Test 2.1: Check-In - PASS / FAIL
-- [ ] Test 2.2: Student Database - PASS / FAIL
-- [ ] Test 2.3: Transactions - PASS / FAIL
-- [ ] Test 2.4: Gift Concessions - PASS / FAIL
-- [ ] Test 2.5: Closedown Nights - PASS / FAIL
-- [ ] Test 2.6: Concession Types - PASS / FAIL
+- [✅] Test 2.1: Check-In - PASS / FAIL
+- [✅] Test 2.2: Student Database - PASS / FAIL
+- [✅] Test 2.3: Transactions - PASS / FAIL
+- [✅] Test 2.4: Gift Concessions - PASS / FAIL
+- [✅] Test 2.5: Closedown Nights - PASS / FAIL
+- [✅] Test 2.6: Concession Types - PASS / FAIL
+- [ ] Test 2.7: Playlist Manager - PASS / FAIL
 
 **Part 3: Edge Cases**
 - [ ] Test 3.1: XSS Prevention - PASS / FAIL
@@ -1537,19 +1671,6 @@ Use this template to track your testing:
 **Branch:** refactor-centralised-utilities  
 **Commit:** [Git commit hash]
 
-### Pre-Testing Checks
-- [ ] Centralized utilities exist
-- [ ] Imports updated
-- [ ] No console errors on page load
-
-### Minimum Viable Test (30 min)
-- [ ] Browser console tests - PASS/FAIL - Notes:
-- [ ] Student registration - PASS/FAIL - Notes:
-- [ ] Transaction history - PASS/FAIL - Notes:
-- [ ] Admin check-in - PASS/FAIL - Notes:
-- [ ] XSS protection - PASS/FAIL - Notes:
-- [ ] Console errors - PASS/FAIL - Notes:
-
 ### Student Portal (if doing full test)
 - [ ] Registration - PASS/FAIL - Notes:
 - [ ] Dashboard - PASS/FAIL - Notes:
@@ -1564,6 +1685,8 @@ Use this template to track your testing:
 - [ ] Gift Concessions - PASS/FAIL - Notes:
 - [ ] Closedown Nights - PASS/FAIL - Notes:
 - [ ] Concession Types - PASS/FAIL - Notes:
+- [ ] Playlist Manager - PASS/FAIL - Notes:
+- [ ] Logout Functionality - PASS/FAIL - Notes:
 
 ### Edge Cases
 - [ ] Null/undefined handling - PASS/FAIL - Notes:

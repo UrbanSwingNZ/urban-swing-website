@@ -263,6 +263,28 @@ showSnackbar('Info message', 'info')
 - Warning: `fa-exclamation-triangle`
 - Info: `fa-info-circle`
 
+### handleLogout()
+**Purpose:** Centralized logout handler for Firebase authentication
+
+```javascript
+// Direct call
+await handleLogout();
+
+// In event listener
+logoutButton.addEventListener('click', handleLogout);
+
+// In HTML onclick (global exposure)
+<button onclick="handleLogout()">Logout</button>
+```
+
+**Behavior:**
+1. Signs out from Firebase Authentication
+2. Redirects to home page (/)
+3. Shows alert on error
+4. Console logs any errors
+
+**Note:** Available globally as `window.handleLogout` for backward compatibility with existing HTML onclick handlers.
+
 ---
 
 ## Common Patterns
@@ -380,7 +402,7 @@ import * as utils from '/js/utils/index.js';
 console.log(utils);
 
 // Test individual functions
-import { escapeHtml, formatCurrency, formatDate } from '/js/utils/index.js';
+import { escapeHtml, formatCurrency, formatDate, handleLogout } from '/js/utils/index.js';
 
 console.log(escapeHtml('<script>alert("xss")</script>'));
 // Expected: &lt;script&gt;alert("xss")&lt;/script&gt;
@@ -390,6 +412,13 @@ console.log(formatCurrency(1234.56));
 
 console.log(formatDate(new Date()));
 // Expected: 19 Dec 2025 (current date)
+
+// Test handleLogout availability (don't actually call it in console)
+console.log(typeof handleLogout);
+// Expected: "function"
+
+console.log(typeof window.handleLogout);
+// Expected: "function"
 ```
 
 ---

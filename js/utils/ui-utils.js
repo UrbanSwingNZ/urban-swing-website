@@ -42,6 +42,23 @@ export function navigateTo(path) {
 }
 
 /**
+ * Handle user logout
+ * Signs out from Firebase and redirects to home page
+ * @returns {Promise<void>}
+ * @example
+ * await handleLogout() // Signs out and redirects to /
+ */
+export async function handleLogout() {
+    try {
+        await firebase.auth().signOut();
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out. Please try again.');
+    }
+}
+
+/**
  * Show snackbar notification
  * @param {string} message - Message to display
  * @param {string} type - Type of notification: 'success', 'error', 'warning', 'info'  

@@ -202,21 +202,16 @@ const AdminHeaderConfigurator = {
         const newLogoutBtn = logoutBtn.cloneNode(true);
         logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
 
-        // Add the logout handler
+        // Add the logout handler (uses centralized handleLogout)
         newLogoutBtn.addEventListener('click', async () => {
             try {
-                if (!window.firebase || !window.firebase.auth) {
-                    console.error('Firebase not initialized');
-                    return;
-                }
-
-                await window.firebase.auth().signOut();
-                console.log('Logout successful');
-                
                 // Clear any session storage
                 sessionStorage.clear();
                 
-                // Redirect to login page or homepage
+                // Use centralized logout
+                await handleLogout();
+                
+                // Custom redirect for admin
                 window.location.href = '/admin/';
             } catch (error) {
                 console.error('Logout error:', error);

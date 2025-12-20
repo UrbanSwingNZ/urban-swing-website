@@ -292,21 +292,6 @@
             
             // Setup logout button
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
-            
-            console.log('Database Backup page loaded for user:', user.email);
-        }
-
-        async function handleLogout() {
-            showLoading(true);
-            
-            try {
-                await auth.signOut();
-                console.log('Logout successful');
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Failed to logout. Please try again.');
-                showLoading(false);
-            }
         }
 
         function showLoading(show) {
