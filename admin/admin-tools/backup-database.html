@@ -206,6 +206,8 @@
         }
 
         function updateSelectAllCheckbox() {
+            if (isSelectingAll) return; // Don't interfere during select-all operation
+            
             const selectAllCheckbox = document.getElementById('select-all-checkbox');
             const allCheckboxes = document.querySelectorAll('.collection-checkbox');
             const checkedCount = Array.from(allCheckboxes).filter(cb => cb.checked).length;
@@ -248,6 +250,7 @@
         let collectionCounts = {};
         let selectedCollections = new Set();
         let currentUser = null;
+        let isSelectingAll = false; // Flag to prevent interference during select-all
 
         /**
          * Expand collection names that include multiple collections
@@ -274,6 +277,9 @@
 
         function initializeAuth() {
             showLoading(true);
+            
+            // Setup select-all checkbox once
+            setupSelectAllCheckbox();
 
             auth.onAuthStateChanged((user) => {
                 showLoading(false);
@@ -379,6 +385,7 @@
 
                 console.log('Collection cards rendered');
                 updateStats();
+                
             } catch (error) {
                 console.error('Error loading collections:', error);
                 showStatus('error', 'Error loading collections: ' + error.message);
@@ -386,13 +393,18 @@
             }
         }
 
-        document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
-            const checkboxes = document.querySelectorAll('.collection-checkbox');
-            checkboxes.forEach(cb => {
-                cb.checked = e.target.checked;
-                cb.dispatchEvent(new Event('change'));
+        // Setup select all checkbox (runs once on page load)
+        function setupSelectAllCheckbox() {
+            document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
+                isSelectingAll = true;
+                const checkboxes = document.querySelectorAll('.collection-checkbox');
+                checkboxes.forEach(cb => {
+                    cb.checked = e.target.checked;
+                    cb.dispatchEvent(new Event('change'));
+                });
+                isSelectingAll = false;
             });
-        });
+        }
 
         document.getElementById('backup-selected-btn').addEventListener('click', async () => {
             if (selectedCollections.size === 0) {
