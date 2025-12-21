@@ -61,55 +61,8 @@ export async function handleLogout() {
 }
 
 /**
- * Show snackbar notification
- * @param {string} message - Message to display
- * @param {string} type - Type of notification: 'success', 'error', 'warning', 'info'  
- * @param {number} duration - Duration in milliseconds (default: 3000)
- * @example
- * showSnackbar('Check-in successful!', 'success', 3000)
- * showSnackbar('Error occurred', 'error')
+ * showSnackbar() has been moved to /components/snackbar/snackbar.js
+ * Import from there or use the global window.showSnackbar
+ * 
+ * This function is now exported from index.js which imports it from the new location.
  */
-export function showSnackbar(message, type = 'success', duration = 3000) {
-    // Import escapeHtml dynamically to avoid circular dependency
-    // Since this module is imported by index.js which also imports dom-utils
-    const escapeHtml = window.escapeHtml || ((text) => {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    });
-
-    // Remove any existing snackbar
-    const existingSnackbar = document.getElementById('snackbar');
-    if (existingSnackbar) {
-        existingSnackbar.remove();
-    }
-
-    // Create snackbar element
-    const snackbar = document.createElement('div');
-    snackbar.id = 'snackbar';
-    snackbar.className = `snackbar snackbar-${type}`;
-
-    // Add icon based on type
-    const icon = getMessageIcon(type);
-
-    snackbar.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span>${escapeHtml(message)}</span>
-    `;
-
-    // Add to body
-    document.body.appendChild(snackbar);
-
-    // Trigger animation
-    setTimeout(() => {
-        snackbar.classList.add('show');
-    }, 10);
-
-    // Auto-hide after duration
-    setTimeout(() => {
-        snackbar.classList.remove('show');
-        setTimeout(() => {
-            snackbar.remove();
-        }, 300);
-    }, duration);
-}

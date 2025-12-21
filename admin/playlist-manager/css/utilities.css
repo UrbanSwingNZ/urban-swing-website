@@ -3,51 +3,8 @@
    Snackbar, animations, and helpers
    ======================================== */
 
-/* Snackbar Notifications */
-.snackbar {
-  visibility: hidden;
-  min-width: 250px;
-  background-color: var(--text-primary);
-  color: var(--white);
-  text-align: center;
-  border-radius: 8px;
-  padding: 16px 24px;
-  position: fixed;
-  z-index: 10000;
-  left: 50%;
-  bottom: 30px;
-  transform: translateX(-50%);
-  font-size: 0.9rem;
-  box-shadow: 0 4px 12px var(--shadow-text);
-  transition: all 0.3s ease;
-}
-
-.snackbar.show {
-  visibility: visible;
-  animation: snackbarFadeIn 0.3s ease;
-}
-
-.snackbar-success {
-  background: linear-gradient(135deg, var(--success-light), #45a049);
-}
-
-.snackbar-error {
-  background: linear-gradient(135deg, #f44336, #da190b);
-}
-
-.snackbar-warning {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-}
-
-.snackbar-info {
-  background: linear-gradient(135deg, #2196F3, #0b7dda);
-}
-
-@media (prefers-color-scheme: dark) {
-  .snackbar {
-    background-color: #444;
-  }
-}
+@import url('../../../styles/base/colors.css');
+@import url('../../../styles/components/snackbar.css');
 
 /* Animations */
 @keyframes fadeIn {

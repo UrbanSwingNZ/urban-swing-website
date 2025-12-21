@@ -436,28 +436,5 @@ function closeCancelModal() {
     modal.style.display = 'none';
 }
 
-// Show snackbar notification
-function showSnackbar(message, type = 'info', duration = 3000) {
-    // Check if snackbar already exists
-    let snackbar = document.getElementById('snackbar');
-    
-    if (!snackbar) {
-        // Create snackbar element
-        snackbar = document.createElement('div');
-        snackbar.id = 'snackbar';
-        snackbar.className = 'snackbar';
-        document.body.appendChild(snackbar);
-    }
-    
-    // Set message and type
-    snackbar.textContent = message;
-    snackbar.className = `snackbar ${type}`;
-    
-    // Show snackbar
-    setTimeout(() => snackbar.classList.add('show'), 10);
-    
-    // Hide after duration
-    setTimeout(() => {
-        snackbar.classList.remove('show');
-    }, duration);
-}
+// Uses global window.showSnackbar from /components/snackbar/snackbar.js
+// (Loaded via /js/utils/index.js)
