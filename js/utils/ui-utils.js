@@ -7,19 +7,75 @@ import { getMessageIcon } from './icon-constants.js';
 
 /**
  * Show or hide loading spinner
- * @param {boolean} show - Whether to show or hide the spinner
- * @example
- * showLoading(true) // Shows loading spinner
- * showLoading(false) // Hides loading spinner
+ * Now delegates to centralized LoadingSpinner component
  * 
- * Note: Basic implementation shows/hides spinner only.
- * Check-in module has enhanced version that also hides main-container.
- * That behavior should be handled in check-in specific code.
+ * @param {boolean} show - Whether to show or hide the spinner
+ * @param {string} message - Optional loading message
+ * @example
+ * showLoading(true) // Shows loading spinner with default message
+ * showLoading(true, 'Processing payment...') // Shows with custom message
+ * showLoading(false) // Hides loading spinner
  */
-export function showLoading(show) {
-    const spinner = document.getElementById('loading-spinner');
-    if (spinner) {
-        spinner.style.display = show ? 'flex' : 'none';
+export function showLoading(show, message = 'Loading...') {
+    // Delegate to LoadingSpinner component if available
+    if (show) {
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.showGlobal(message);
+        } else {
+            // Fallback for pages that haven't loaded the component yet
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                spinner.style.display = 'flex';
+            }
+        }
+    } else {
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.hideGlobal();
+        } else {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) {
+                spinner.style.display = 'none';
+            }
+        }
+    }
+}
+
+/**
+ * Show loading state on a button
+ * Disables button and shows spinner icon
+ * 
+ * @param {string} buttonId - ID of button element
+ * @param {boolean} show - Whether to show loading state
+ * @param {string} loadingText - Text to show when loading (default: 'Loading...')
+ * @example
+ * showLoadingButton('submit-btn', true, 'Processing...')
+ * showLoadingButton('submit-btn', false)
+ */
+export function showLoadingButton(buttonId, show, loadingText = 'Loading...') {
+    if (window.LoadingSpinner) {
+        if (show) {
+            window.LoadingSpinner.showButton(buttonId, loadingText);
+        } else {
+            window.LoadingSpinner.hideButton(buttonId);
+        }
+    } else {
+        // Fallback for pages that haven't loaded the component yet
+        const button = document.getElementById(buttonId);
+        if (!button) return;
+        
+        if (show) {
+            button.disabled = true;
+            if (!button.dataset.originalText) {
+                button.dataset.originalText = button.textContent;
+            }
+            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingText}`;
+        } else {
+            button.disabled = false;
+            button.textContent = button.dataset.originalText || 'Submit';
+            if (button.dataset.originalText) {
+                delete button.dataset.originalText;
+            }
+        }
     }
 }
 

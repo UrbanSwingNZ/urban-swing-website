@@ -39,10 +39,14 @@ document.addEventListener('DOMContentLoaded', function() {
  * Initialize the page
  */
 async function initializePage() {
-    const loadingSpinner = document.getElementById('loading-spinner');
     const mainContainer = document.getElementById('main-container');
     
     try {
+        // Show loading spinner
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.showGlobal('Loading...');
+        }
+        
         // Load orders from Firestore
         const orders = await loadOrders();
         setOrders(orders);
@@ -54,8 +58,12 @@ async function initializePage() {
         setupEventListeners();
 
         // Hide spinner and show content
-        loadingSpinner.style.display = 'none';
-        mainContainer.style.display = 'block';
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.hideGlobal();
+        }
+        if (mainContainer) {
+            mainContainer.style.display = 'block';
+        }
 
     } catch (error) {
         console.error('Error loading orders:', error);

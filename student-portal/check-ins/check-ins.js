@@ -118,7 +118,9 @@ async function loadStudentCheckIns(student) {
 async function loadCheckIns(studentId, student) {
     try {
         // Show loading spinner
-        document.getElementById('loading-spinner').style.display = 'flex';
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.showGlobal('Loading check-ins...');
+        }
         
         // Show content
         document.getElementById('empty-state').style.display = 'none';
@@ -167,11 +169,15 @@ async function loadCheckIns(studentId, student) {
         }
         
         // Hide loading spinner
-        document.getElementById('loading-spinner').style.display = 'none';
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.hideGlobal();
+        }
         
     } catch (error) {
         console.error('Error loading check-ins:', error);
-        document.getElementById('loading-spinner').style.display = 'none';
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.hideGlobal();
+        }
         alert('Error loading check-in history. Please try again.');
     }
 }

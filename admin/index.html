@@ -13,10 +13,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="login-container" class="auth-container">
+    <div id="login-container" class="auth-container" style="display: none;">
         <div class="auth-card">
             <a href="../index.html" title="Back to Urban Swing Homepage">
                 <img src="../images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
@@ -143,12 +146,6 @@
         <footer class="admin-footer">
             <p>&copy; 2025 Urban Swing. Admin Portal v1.0</p>
         </footer>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="loading-spinner" style="display: none;">
-        <div class="spinner"></div>
-        <p>Loading...</p>
     </div>
 
     <!-- Firebase Config & Admin Logic -->

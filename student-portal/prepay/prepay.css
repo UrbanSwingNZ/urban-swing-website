@@ -1,5 +1,6 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/components/snackbar.css');
+@import url('../../styles/components/loading-spinner.css');
 
 /* Pre-Pay for Class Styles */
 
@@ -563,11 +564,6 @@ input[type="text"]::placeholder {
     border: 3px solid var(--header-overlay-strong);
     border-radius: 50%;
     border-top-color: white;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
 }
 
 /* Coming Soon Notice */
