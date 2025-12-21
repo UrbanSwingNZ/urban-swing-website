@@ -29,13 +29,13 @@
 .database-title h2 {
     font-size: 1.8rem;
     margin-bottom: 5px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .student-count {
     font-size: 0.95rem;
     opacity: 0.7;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .student-count span {
@@ -71,7 +71,7 @@
     gap: 8px;
     cursor: pointer;
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     user-select: none;
 }
 
@@ -90,7 +90,7 @@
    ======================================== */
 
 .table-container {
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 12px;
     box-shadow: 0 2px 8px var(--shadow-medium);
     overflow: hidden;
@@ -168,7 +168,7 @@
 }
 
 .students-table tbody tr {
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     transition: background-color 0.2s ease;
     cursor: pointer;
 }
@@ -184,7 +184,7 @@
 .students-table td {
     padding: 16px;
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 /* Column-specific alignment */
@@ -236,7 +236,7 @@
 }
 
 .badge-warning {
-    background: rgba(255, 165, 0, 0.15);
+    background: var(--bg-orange-light);
     color: #ff8800;
 }
 
@@ -298,11 +298,11 @@
 .btn-icon {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .btn-icon:hover {
@@ -352,8 +352,8 @@
 
 .btn-icon.btn-disabled:hover {
     background: transparent;
-    color: var(--text-color);
-    border-color: var(--border-color);
+    color: var(--text-primary);
+    border-color: var(--border-light);
     transform: none;
 }
 
@@ -361,7 +361,7 @@
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .empty-state i {
@@ -427,7 +427,7 @@
 
 .register-card .subtitle {
     text-align: center;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.7;
     margin-bottom: 30px;
     font-size: 0.95rem;
@@ -446,7 +446,7 @@
     margin-top: 5px;
     font-size: 0.85rem;
     opacity: 0.7;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 /* Checkbox Groups */
@@ -499,19 +499,19 @@
 textarea {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 10px;
     font-size: 1rem;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     transition: all 0.3s ease;
     background: var(--input-bg);
-    color: var(--text-color);
+    color: var(--text-primary);
     resize: vertical;
     min-height: 80px;
 }
 
 textarea::placeholder {
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.5;
 }
 
@@ -523,7 +523,7 @@ textarea:focus {
 
 /* Admin-only elements */
 .admin-only {
-    border-top: 2px dashed var(--border-color);
+    border-top: 2px dashed var(--border-light);
     padding-top: 20px;
     margin-top: 20px;
 }
@@ -667,7 +667,7 @@ textarea:focus {
         margin-bottom: 1rem;
         border: 1px solid var(--bg-purple-alt-stronger);
         border-radius: 8px;
-        background: var(--background-color);
+        background: var(--bg-white);
         box-shadow: 0 2px 8px var(--shadow-light);
         overflow: hidden;
         cursor: pointer;
@@ -692,7 +692,7 @@ textarea:focus {
     .students-table tbody tr td:nth-child(1) {
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--text-color);
+        color: var(--text-primary);
         border-bottom: 1px solid var(--bg-purple-medium);
         padding-bottom: 0.5rem;
     }
@@ -747,7 +747,7 @@ textarea:focus {
     .students-table tbody tr.expanded td:nth-child(7)::before {
         content: '📅 Registered: ';
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-primary);
         opacity: 0.8;
     }
 
@@ -912,9 +912,9 @@ textarea:focus {
 .pagination-btn {
     padding: 8px 16px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
@@ -944,9 +944,9 @@ textarea:focus {
 .pagination-number {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
@@ -968,7 +968,7 @@ textarea:focus {
 
 .pagination-ellipsis {
     padding: 0 8px;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.5;
 }
 
@@ -979,7 +979,7 @@ textarea:focus {
 
 .pagination-info {
     font-size: 0.9rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.7;
 }
 
@@ -1050,7 +1050,7 @@ textarea:focus {
 .student-info {
     margin-bottom: 20px;
     padding: 15px;
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
     border-left: 4px solid var(--purple-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -1058,7 +1058,7 @@ textarea:focus {
 
 .student-info h3 {
     margin: 0 0 5px 0;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 1.1rem;
     font-weight: 600;
     font-family: inherit;
@@ -1068,7 +1068,7 @@ textarea:focus {
     margin: 0;
     font-size: 0.9rem;
     opacity: 0.8;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-family: inherit;
 }
 
@@ -1091,7 +1091,7 @@ textarea:focus {
 .student-info-delete {
     margin: 20px 0;
     padding: 15px;
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
     border-left: 4px solid var(--purple-primary);
     font-family: inherit;
@@ -1100,14 +1100,14 @@ textarea:focus {
 .student-info-delete p {
     margin: 8px 0;
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-family: inherit;
 }
 
 .student-info-delete strong {
     display: inline-block;
     min-width: 70px;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.7;
     font-family: inherit;
 }
@@ -1119,7 +1119,7 @@ textarea:focus {
 
 .activity-list h4 {
     margin-bottom: 10px;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 1rem;
 }
 
@@ -1151,7 +1151,7 @@ textarea:focus {
     align-items: center;
     gap: 8px;
     padding: 10px;
-    background: rgba(255, 165, 0, 0.1);
+    background: var(--bg-orange-light);
     border-radius: 6px;
     border-left: 3px solid #ff8800;
 }
@@ -1221,9 +1221,9 @@ textarea:focus {
     cursor: pointer;
     user-select: none;
     padding: 12px;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
-    border-left: 4px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--border-light);
     border-radius: 8px;
     margin: 0 0 0 0;
     transition: all 0.2s ease;
@@ -1280,8 +1280,8 @@ textarea:focus {
 
 .concession-item {
     padding: 12px;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-left: 4px solid var(--success);
     border-radius: 8px;
     transition: all 0.2s ease;
@@ -1300,7 +1300,7 @@ textarea:focus {
 
 .concession-item.depleted {
     opacity: 0.7;
-    background: rgba(255, 193, 7, 0.05);
+    background: var(--bg-yellow-light);
     border-left: 4px solid var(--warning);
 }
 
@@ -1331,7 +1331,7 @@ textarea:focus {
 
 .concession-info strong {
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .concession-info .text-muted {
@@ -1343,7 +1343,7 @@ textarea:focus {
     flex-direction: column;
     gap: 4px;
     font-size: 0.85rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.8;
 }
 
@@ -1362,7 +1362,7 @@ textarea:focus {
 .concession-actions {
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     display: flex;
     gap: 8px;
     justify-content: flex-end;
@@ -1371,12 +1371,12 @@ textarea:focus {
 .btn-lock-toggle {
     padding: 4px 12px;
     font-size: 0.8rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     background: transparent;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .btn-lock-toggle:hover {
@@ -1408,7 +1408,7 @@ textarea:focus {
 .btn-delete-block:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    border-color: var(--border-color);
+    border-color: var(--border-light);
     color: var(--text-muted);
 }
 
@@ -1417,14 +1417,14 @@ textarea:focus {
 }
 
 .badge-locked {
-    background: rgba(108, 117, 125, 0.15);
+    background: var(--bg-gray-light);
     color: var(--text-muted-alt);
 }
 
 .bulk-actions {
     margin-bottom: 16px;
     padding-bottom: 16px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .btn-lock-all-expired {
@@ -1507,7 +1507,7 @@ textarea:focus {
 }
 
 .terms-content h5 {
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-top: 20px;
     font-weight: normal;
 }
@@ -1515,7 +1515,7 @@ textarea:focus {
 .terms-content p {
     margin-bottom: 12px;
     line-height: 1.6;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .terms-placeholder {
@@ -1531,7 +1531,7 @@ textarea:focus {
 .modal-close {
     background: none;
     border: none;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 5px;
@@ -1549,3 +1549,4 @@ textarea:focus {
    LOADING SPINNER
    Inherited from admin.css - no need to redefine
    ======================================== */
+

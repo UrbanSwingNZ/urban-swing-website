@@ -233,6 +233,16 @@ function resetPurchaseForm() {
     document.getElementById('purchase-payment-select').value = '';
     document.getElementById('purchase-total-amount').textContent = '$0.00';
     document.getElementById('confirm-purchase-concessions-btn').disabled = true;
+    
+    // Reset modal title and button text to default (in case they were changed for edit mode)
+    const modalTitle = document.querySelector('#purchase-concessions-modal .modal-header h3');
+    const confirmBtn = document.getElementById('confirm-purchase-concessions-btn');
+    if (modalTitle) {
+        modalTitle.innerHTML = '<i class="fas fa-shopping-cart"></i> Purchase Concessions';
+    }
+    if (confirmBtn) {
+        confirmBtn.innerHTML = '<i class="fas fa-check"></i> Complete Purchase';
+    }
 }
 
 /**
