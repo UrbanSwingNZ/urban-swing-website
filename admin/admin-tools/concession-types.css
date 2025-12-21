@@ -190,7 +190,7 @@
 .package-name {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 15px;
     padding-right: 70px;
     padding-left: 5px;
@@ -217,7 +217,7 @@
 .package-registration-indicator {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: center;
 }
@@ -250,7 +250,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -273,7 +273,7 @@
 .package-description {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
@@ -405,7 +405,7 @@
 .empty-state h3 {
     font-size: 1.5rem;
     margin-bottom: 10px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .empty-state p {
@@ -590,3 +590,4 @@
         top: 10px;
     }
 }
+

@@ -25,7 +25,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: var(--background-color);
+    background-color: var(--bg-white);
 }
 
 #main-container {
@@ -44,7 +44,7 @@ body {
 
 /* Filters Section */
 .filters-container {
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -86,7 +86,7 @@ body {
 .filter-group label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .filter-group label i {
@@ -101,7 +101,7 @@ select.filter-input {
     border: 1px solid rgba(154, 22, 245, 0.3);
     border-radius: 6px;
     background: var(--input-bg);
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
     transition: all 0.2s ease;
@@ -137,7 +137,7 @@ select.filter-input:focus {
     border: 1px solid rgba(154, 22, 245, 0.3);
     border-radius: 6px;
     background: var(--input-bg);
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
     transition: all 0.2s ease;
@@ -170,7 +170,7 @@ select.filter-input:focus {
 }
 
 .clear-student-btn:hover {
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .student-filter-dropdown {
@@ -179,7 +179,7 @@ select.filter-input:focus {
     left: 0;
     right: 0;
     margin-top: 4px;
-    background: var(--background-color);
+    background: var(--bg-white);
     border: 1px solid rgba(154, 22, 245, 0.3);
     border-radius: 6px;
     max-height: 300px;
@@ -192,7 +192,7 @@ select.filter-input:focus {
     padding: 12px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .student-filter-item:last-child {
@@ -205,7 +205,7 @@ select.filter-input:focus {
 
 .student-filter-item strong {
     display: block;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 2px;
 }
 
@@ -274,7 +274,7 @@ select.filter-input:focus {
 .toggle-label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     user-select: none;
 }
@@ -308,12 +308,12 @@ select.filter-input:focus {
 .summary-value {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 /* Table Styles - matching student database table */
 .table-container {
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
     border: 1px solid rgba(154, 22, 245, 0.2);
     overflow: hidden;
@@ -383,7 +383,7 @@ select.filter-input:focus {
 #transactions-table td {
     padding: 1rem;
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 /* Type Badge */
@@ -523,7 +523,7 @@ select.filter-input:focus {
 
 .payment-amount {
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
     text-align: right;
 }
 
@@ -541,14 +541,14 @@ select.filter-input:focus {
 }
 
 .btn-icon {
-    background: var(--background-color);
+    background: var(--bg-white);
     border: 1px solid rgba(154, 22, 245, 0.2);
     padding: 0.5rem;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .btn-icon:hover {
@@ -617,7 +617,7 @@ select.filter-input:focus {
 #empty-state p {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 #empty-state p.text-muted {
@@ -714,9 +714,9 @@ select.filter-input:focus {
 .pagination-btn {
     padding: 8px 16px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
@@ -746,9 +746,9 @@ select.filter-input:focus {
 .pagination-number {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.9rem;
@@ -770,7 +770,7 @@ select.filter-input:focus {
 
 .pagination-ellipsis {
     padding: 0 8px;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.5;
 }
 
@@ -781,7 +781,7 @@ select.filter-input:focus {
 
 .pagination-info {
     font-size: 0.9rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     opacity: 0.7;
 }
 
@@ -922,7 +922,7 @@ select.filter-input:focus {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
         padding: 1rem;
-        background: var(--background-color);
+        background: var(--bg-white);
         border-radius: 8px;
     }
 
@@ -953,7 +953,7 @@ select.filter-input:focus {
 
     .summary-label {
         font-size: 0.85rem;
-        color: var(--text-color);
+        color: var(--text-primary);
         font-weight: 600;
         margin: 0;
         text-align: left;
@@ -1089,13 +1089,13 @@ select.filter-input:focus {
             border: 1px solid rgba(154, 22, 245, 0.2);
             border-radius: 8px;
             padding: 1rem;
-            background: var(--background-color);
+            background: var(--bg-white);
             position: relative;
             border-left: 4px solid var(--purple-primary);
         }
 
         #transactions-table tbody tr:hover {
-            background: var(--background-color);
+            background: var(--bg-white);
             box-shadow: 0 2px 8px var(--shadow-light);
         }
 
@@ -1127,7 +1127,7 @@ select.filter-input:focus {
             grid-row: 1;
             font-weight: 600;
             font-size: 0.95rem;
-            color: var(--text-color);
+            color: var(--text-primary);
         }
 
         /* Type Badge - Row 2 Left (under date) */
@@ -1143,7 +1143,7 @@ select.filter-input:focus {
             grid-column: 2;
             grid-row: 1;
             font-size: 0.95rem;
-            color: var(--text-color);
+            color: var(--text-primary);
             text-align: right;
             justify-self: end;
         }
@@ -1333,8 +1333,8 @@ select.filter-input:focus {
     justify-content: space-between;
     align-items: center;
     font-size: 1.1rem;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 16px;
 }
@@ -1354,4 +1354,5 @@ select.filter-input:focus {
     justify-content: flex-end;
     gap: 12px;
 }
+
 

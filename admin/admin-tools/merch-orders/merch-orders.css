@@ -29,13 +29,13 @@
 .database-title h2 {
     font-size: 1.8rem;
     margin-bottom: 5px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .order-count {
     font-size: 0.95rem;
     opacity: 0.7;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .order-count span {
@@ -56,7 +56,7 @@
    ======================================== */
 
 .table-container {
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 12px;
     box-shadow: 0 2px 8px var(--shadow-medium);
     overflow: hidden;
@@ -68,7 +68,7 @@
 .orders-table {
     width: 100%;
     border-collapse: collapse;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .orders-table thead {
@@ -122,7 +122,7 @@
 }
 
 .orders-table tbody tr {
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     transition: background-color 0.15s ease;
 }
 
@@ -194,7 +194,7 @@
 }
 
 .items-summary strong {
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -207,11 +207,11 @@
 .btn-icon {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .btn-icon:hover {
@@ -302,7 +302,7 @@
 .empty-state h3 {
     font-size: 1.4rem;
     margin-bottom: 10px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .empty-state p {
@@ -328,7 +328,7 @@
     color: var(--purple-primary);
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-light);
 }
 
 .detail-grid {
@@ -353,7 +353,7 @@
 
 .detail-value {
     font-size: 1rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .items-list {
@@ -374,7 +374,7 @@
 
 .item-name {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .item-details {
@@ -412,3 +412,4 @@
         gap: 4px;
     }
 }
+
