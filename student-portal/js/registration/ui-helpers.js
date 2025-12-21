@@ -4,19 +4,16 @@
  */
 
 // Import centralized utilities
-import { escapeHtml, showSnackbar } from '/js/utils/index.js';
+import { escapeHtml, showSnackbar, showLoading, showLoadingButton } from '/js/utils/index.js';
 
 /**
  * Show loading spinner
+ * Now delegates to centralized utilities
  */
 function showLoadingSpinner(show) {
-    const spinner = document.getElementById('loading-spinner');
+    showLoading(show);
+    // Also disable/enable submit button
     const submitBtn = document.getElementById('submit-btn');
-    
-    if (spinner) {
-        spinner.style.display = show ? 'flex' : 'none';
-    }
-    
     if (submitBtn) {
         submitBtn.disabled = show;
     }

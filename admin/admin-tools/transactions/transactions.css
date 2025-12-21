@@ -1,5 +1,6 @@
 @import url('../../../styles/base/colors.css');
 @import url('../../../styles/components/snackbar.css');
+@import url('../../../styles/components/loading-spinner.css');
 
 /**
  * Transactions Page Styles
@@ -10,13 +11,6 @@
  * Inherits theme-aware variables from parent admin.css
  * --text-color, --background-color, --border-color automatically adjust for dark/light mode
  */
-
-:root {
-    --success-color: #27ae60;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #9b59b6;
-}
 
 * {
     margin: 0;
@@ -49,7 +43,7 @@ body {
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(154, 22, 245, 0.2);
+    border: 1px solid var(--bg-purple-medium);
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
@@ -99,7 +93,7 @@ body {
 .filter-input[type="date"],
 select.filter-input {
     padding: 8px 12px;
-    border: 1px solid rgba(154, 22, 245, 0.3);
+    border: 1px solid var(--bg-purple-medium);
     border-radius: 6px;
     background: var(--input-bg);
     color: var(--text-primary);
@@ -125,7 +119,7 @@ select.filter-input:hover {
 select.filter-input:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 /* Student Filter Styles */
@@ -135,7 +129,7 @@ select.filter-input:focus {
 
 #student-filter {
     padding: 8px 32px 8px 12px;
-    border: 1px solid rgba(154, 22, 245, 0.3);
+    border: 1px solid var(--bg-purple-medium);
     border-radius: 6px;
     background: var(--input-bg);
     color: var(--text-primary);
@@ -152,7 +146,7 @@ select.filter-input:focus {
 #student-filter:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .clear-student-btn {
@@ -181,7 +175,7 @@ select.filter-input:focus {
     right: 0;
     margin-top: 4px;
     background: var(--bg-white);
-    border: 1px solid rgba(154, 22, 245, 0.3);
+    border: 1px solid var(--bg-purple-medium);
     border-radius: 6px;
     max-height: 300px;
     overflow-y: auto;
@@ -201,7 +195,7 @@ select.filter-input:focus {
 }
 
 .student-filter-item:hover {
-    background-color: rgba(154, 22, 245, 0.1);
+    background-color: var(--bg-purple-medium);
 }
 
 .student-filter-item strong {
@@ -269,7 +263,7 @@ select.filter-input:focus {
 }
 
 .toggle-switch input:focus + .toggle-slider {
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.2);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .toggle-label {
@@ -291,7 +285,7 @@ select.filter-input:focus {
     flex-wrap: wrap;
     gap: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(154, 22, 245, 0.2);
+    border-top: 1px solid var(--bg-purple-medium);
 }
 
 .summary-item {
@@ -316,7 +310,7 @@ select.filter-input:focus {
 .table-container {
     background: var(--bg-white);
     border-radius: 8px;
-    border: 1px solid rgba(154, 22, 245, 0.2);
+    border: 1px solid var(--bg-purple-medium);
     overflow: hidden;
     box-shadow: 0 2px 8px var(--shadow-light);
     max-height: 70vh;
@@ -373,12 +367,12 @@ select.filter-input:focus {
 }
 
 #transactions-table tbody tr {
-    border-bottom: 1px solid rgba(154, 22, 245, 0.1);
+    border-bottom: 1px solid var(--bg-purple-medium);
     transition: background-color 0.2s;
 }
 
 #transactions-table tbody tr:hover {
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-light);
 }
 
 #transactions-table td {
@@ -398,23 +392,23 @@ select.filter-input:focus {
 }
 
 .type-badge.concession {
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
     color: var(--purple-primary);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
-    background: rgba(53, 52, 250, 0.1);
+    background: var(--bg-blue-light);
     color: var(--blue-primary);
 }
 
 .type-badge.casual-student {
-    background: rgba(23, 162, 184, 0.1);
+    background: var(--bg-teal-light);
     color: var(--blue-accent);
 }
 
 .type-badge.gift {
-    background: rgba(76, 175, 80, 0.1);
+    background: var(--bg-success-light);
     color: var(--success-dark);
 }
 
@@ -451,8 +445,8 @@ select.filter-input:focus {
         45deg,
         transparent,
         transparent 10px,
-        rgba(198, 40, 40, 0.05) 10px,
-        rgba(198, 40, 40, 0.05) 20px
+        var(--bg-error-light) 10px,
+        var(--bg-error-light) 20px
     );
 }
 
@@ -467,7 +461,7 @@ select.filter-input:focus {
 /* Amount Styling */
 .amount-cell {
     font-weight: 600;
-    color: var(--success-color);
+    color: var(--success);
     text-align: right;
 }
 
@@ -498,7 +492,7 @@ select.filter-input:focus {
 }
 
 .payment-badge.online {
-    background: rgba(0, 150, 136, 0.1);
+    background: var(--bg-teal-light);
     color: var(--success-darker);
 }
 
@@ -509,7 +503,7 @@ select.filter-input:focus {
 
 .payment-badge.na {
     background: var(--gray-300);
-    color: #757575;
+    color: var(--gray-750);
 }
 
 .payment-badge.unknown {
@@ -543,7 +537,7 @@ select.filter-input:focus {
 
 .btn-icon {
     background: var(--bg-white);
-    border: 1px solid rgba(154, 22, 245, 0.2);
+    border: 1px solid var(--bg-purple-medium);
     padding: 0.5rem;
     border-radius: 4px;
     cursor: pointer;
@@ -555,24 +549,24 @@ select.filter-input:focus {
 .btn-icon:hover {
     border-color: var(--purple-primary);
     color: var(--purple-primary);
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
 }
 
 .btn-icon.btn-delete:hover {
-    border-color: var(--danger-color);
-    color: var(--danger-color);
+    border-color: var(--error);
+    color: var(--error);
 }
 
 .btn-icon.btn-invoice.invoiced {
     color: var(--purple-primary);
     border-color: var(--purple-primary);
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
 }
 
 .btn-icon.btn-invoice:hover {
     border-color: var(--purple-primary);
     color: var(--purple-primary);
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
 }
 
 /* Buttons - using admin.css btn-primary-lg style */
@@ -591,14 +585,14 @@ select.filter-input:focus {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--danger-color);
+    background: var(--error);
     color: white;
 }
 
 .btn-danger:hover {
-    background: #c0392b;
+    background: var(--error-dark);
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    box-shadow: 0 4px 8px var(--bg-error-medium);
 }
 
 /* Empty State */
@@ -628,30 +622,6 @@ select.filter-input:focus {
 .text-muted {
     color: var(--text-muted);
     font-size: 0.9rem;
-}
-
-/* Loading Spinner */
-.loading-spinner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    gap: 1rem;
-}
-
-.spinner {
-    border: 4px solid rgba(154, 22, 245, 0.1);
-    border-top: 4px solid var(--purple-primary);
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 /* ========================================
@@ -748,7 +718,7 @@ select.filter-input:focus {
 @media (prefers-color-scheme: dark) {
     .pagination-btn:not(:disabled):hover,
     .pagination-number:hover {
-        box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+        box-shadow: 0 4px 12px var(--bg-purple-medium);
     }
 }
 
@@ -1046,7 +1016,7 @@ select.filter-input:focus {
         #transactions-table tbody tr {
             display: block;
             margin-bottom: 1rem;
-            border: 1px solid rgba(154, 22, 245, 0.2);
+            border: 1px solid var(--bg-purple-medium);
             border-radius: 8px;
             padding: 1rem;
             background: var(--bg-white);
@@ -1061,7 +1031,7 @@ select.filter-input:focus {
 
         /* Reversed transaction styling */
         .reversed-transaction {
-            border-left-color: var(--danger-color);
+            border-left-color: var(--error);
             opacity: 0.7;
         }
 

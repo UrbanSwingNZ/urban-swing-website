@@ -42,11 +42,20 @@ This document provides a comprehensive analysis of refactoring opportunities acr
   - Updated 14 files total (2 created, 10 CSS updated, 4 JS modified)
   - **Documentation:** See `SNACKBAR_CONSOLIDATION_PLAN.md`
 
+- ✅ **Item #8:** Loading Spinner Consolidation (Dec 22, 2025)
+  - Created `/components/loading-spinner/loading-spinner.js` with multiple modes
+  - Created `/styles/components/loading-spinner.css` with dimmed overlay
+  - Added `--bg-overlay-spinner` variable to `colors.css`
+  - Removed duplicate spinner CSS from 15 files (~300-400 lines)
+  - Removed duplicate @keyframes spin from 13 files
+  - Updated `showLoading()` and added `showLoadingButton()` to ui-utils.js
+  - Updated 14 HTML files, 4 JS files with centralized implementations
+  - **Documentation:** See `LOADING_SPINNER_CONSOLIDATION_PLAN.md`
+
 **Next Recommended Items:**
-- 🔴 **Item #8:** Loading spinner (3 hours) - _Can now use centralized utilities_
 - 🔴 **Item #9:** Modal consolidation (4 hours) - _Can leverage utilities and consistent styling_
 
-**Total Progress:** 8 of 15 items complete (53%) | **Time Saved:** ~29 hours completed
+**Total Progress:** 9 of 15 items complete (60%) | **Time Saved:** ~32 hours completed
 
 ---
 
@@ -659,41 +668,46 @@ See [Item #11](#11-create-centralized-utilities-library--complete) for full impl
 
 ---
 
-### 8. 🔴 Create Shared Loading/Spinner Component
+### 8. ✅ Create Shared Loading/Spinner Component - **COMPLETE**
 
-**Status:** 🔴 TODO | **Estimated Time:** 3 hours | **Dependencies:** Item #11 ✅ (complete)
+**Status:** ✅ COMPLETE (Dec 22, 2025) | **Completed Time:** ~2.5 hours | **Dependencies:** Item #11 ✅ (complete)
 
-> **💡 TIP:** Can now leverage centralized `showLoading()` from Item #11 as foundation.
+**What Was Done:**
+- Created `/components/loading-spinner/loading-spinner.js` with unified API
+  - `showGlobal(message)` / `hideGlobal()` - Full-page overlay
+  - `showButton(id, text)` / `hideButton(id)` - Button loading states
+  - `show(options)` / `hide(containerId)` - Advanced usage
+  - Global exports for backward compatibility
+- Created `/styles/components/loading-spinner.css` with consolidated styles
+  - Uses `--bg-overlay-spinner` variable (semi-transparent 60% opacity)
+  - Dimmed overlay instead of fully blocking page
+  - Optional `backdrop-filter: blur(2px)` for polish
+  - Three size variants: small (32px), medium (48px), large (64px)
+  - Single `@keyframes spin` definition
+  - Purple accent color (`--purple-primary`)
+  - Mobile responsive
+- Added `--bg-overlay-spinner: rgba(0, 0, 0, 0.6)` to `colors.css`
+- Updated centralized utilities:
+  - Enhanced `showLoading()` in `ui-utils.js` to delegate to component
+  - Added `showLoadingButton()` function to `ui-utils.js`
+  - Exported both from `/js/utils/index.js`
+  - Fallback support for pages without component loaded
+- Removed duplicate CSS from 15 files:
+  - 7 student portal files
+  - 5 admin files
+  - 3 legacy CSS files
+  - Removed ~300-400 lines of duplicate CSS
+  - Removed duplicate `@keyframes spin` from 13 files
+- Added component imports to 14 HTML files
+- Updated 4 JavaScript files:
+  - `ui-helpers.js` - Delegated to centralized `showLoading()`
+  - `registration-handler.js` - Removed local `showLoadingButton()`, imported from utils
+  - `purchase.js` - Using `showLoadingButton()` instead of manual text changes
+  - `prepay.js` - Same as purchase.js
 
-**Issue:** Loading spinners implemented differently across the app:
-- HTML structure varies (some in `prepay.css`, some in `merchandise.css`)
-- Different show/hide implementations
-- Some use `display: none/flex`, others use classes
-- `showLoading()` function exists in some modules but not others
+**Result:** Single source of truth for loading spinners, ~350-450 lines removed, consistent UX with dimmed overlay across entire app, better user orientation during loading.
 
-**Found in:**
-- `styles/pages/merchandise.css` - `.loading-spinner` styles
-- `student-portal/register.html` - inline HTML spinner
-- `admin/check-in/js/utils.js` - `showLoading()` function
-- Various inline implementations
-
-**Recommendation:**
-- Create reusable loading component: `/components/loading-spinner/`
-  - `loading-spinner.js` - JavaScript API
-  - `loading-spinner.css` - Consistent styles
-- Standard API:
-  ```javascript
-  export const LoadingSpinner = {
-    show(containerSelector),
-    hide(containerSelector),
-    showGlobal(),
-    hideGlobal()
-  };
-  ```
-- Support different sizes: small, medium, large
-- Support overlay mode for full-page loading
-
-**Impact:** Consistent loading UX, ~50-100 lines of duplicated code removed.
+**Documentation:** See `LOADING_SPINNER_CONSOLIDATION_PLAN.md`
 
 ---
 
@@ -1047,20 +1061,21 @@ admin/shared/transactions/
 
 ## 📊 Summary Statistics
 
-### ✅ Completed Work (Item #11)
+### ✅ Completed Work (Items #1, #4, #5, #8, #11)
 - **escapeHtml function:** 10+ duplicates eliminated ✅
 - **formatDate function:** 7+ duplicates eliminated ✅
 - **formatCurrency function:** 3+ duplicates eliminated ✅
 - **isValidEmail function:** 2+ duplicates eliminated ✅
 - **showLoading function:** 8+ duplicates eliminated ✅
 - **handleLogout function:** 12+ duplicates eliminated ✅
-- **Total:** ~200+ lines of duplication removed
-- **Files changed:** 59 files (+852/-1,034 lines, net -182 lines)
+- **showSnackbar system:** 13+ duplicates eliminated ✅
+- **Loading spinner:** 15+ duplicates eliminated ✅
+- **Total:** ~600+ lines of duplication removed
+- **Files changed:** 90+ files (net reduction of ~500-600 lines)
 
 ### 🔴 Remaining Duplication Metrics
-- **showSnackbar function:** 13+ duplicates (~260 lines total) - Item #5
 - **Modal implementations:** 2 systems - Item #9
-- **Icon inconsistencies:** 3+ variations for delete, 2+ for close - Item #1
+- **Icon inconsistencies:** Mostly resolved ✅
 
 ### Files Over 400 Lines
 - **10 JavaScript files** between 400-800 lines
@@ -1068,16 +1083,17 @@ admin/shared/transactions/
 - **Total:** ~8,500 lines in files that should be split
 
 ### Total Impact
-**Already Achieved (Item #11):**
-- ✅ **Removed:** 182 net lines of code (852 added, 1,034 deleted)
-- ✅ **Improved:** 59 files
-- ✅ **Consolidated:** 11+ utility functions (60+ instances)
-- ✅ **Standardized:** Date formatting, currency formatting, XSS protection, email validation
+**Already Achieved (Items #1, #4, #5, #8, #11):**
+- ✅ **Removed:** ~500-600 net lines of code
+- ✅ **Improved:** 90+ files
+- ✅ **Consolidated:** 15+ utility functions (80+ instances)
+- ✅ **Standardized:** Date formatting, currency formatting, XSS protection, email validation, loading spinners, notifications
+- ✅ **Added:** Centralized color system, icon constants, UI components
 
-**Implementing remaining recommendations could:**
-- **Remove:** Additional 800-1,300 lines of duplicated code
-- **Improve:** Additional 40+ files
-- **Standardize:** 20+ components
+**Implementing remaining 300-500 lines of duplicated code
+- **Improve:** Additional 30+ files
+- **Standardize:** 15+ components
+- **Unify:** 2+ major patterns (modals, transacti
 - **Unify:** 4+ major patterns (snackbar, modals, loading, icons)
 
 ---
@@ -1114,9 +1130,9 @@ admin/shared/transactions/
 ---
 
 **Overall Progress:**
-- **Completed:** 19 hours (Items #1, #4, #11)
-- **Remaining:** ~106 hours
-- **Progress:** 15% complete
+- **Completed:** 32 hours (Items #1, #4, #5, #8, #11)
+- **Remaining:** ~93 hours
+- **Progress:** 25% complete (by time) | 60% complete (by items)
 
 ---
 

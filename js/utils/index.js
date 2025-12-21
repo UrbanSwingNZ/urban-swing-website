@@ -60,6 +60,7 @@ window.formatDateToString = dateUtils.formatDateToString;
 window.parseDateString = dateUtils.parseDateString;
 
 window.showLoading = uiUtils.showLoading;
+window.showLoadingButton = uiUtils.showLoadingButton;
 window.showError = uiUtils.showError;
 window.navigateTo = uiUtils.navigateTo;
 window.handleLogout = uiUtils.handleLogout;

@@ -3,6 +3,8 @@
    Advanced interactivity and UI enhancements
    ======================================== */
 
+@import url('../../styles/components/loading-spinner.css');
+
 /* ============================================
    1. SCROLL TO TOP BUTTON
    ============================================ */
@@ -314,13 +316,6 @@ img.loaded {
   border: 3px solid var(--header-overlay-strong);
   border-radius: 50%;
   border-top-color: white;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* ============================================
