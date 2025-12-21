@@ -3,6 +3,8 @@
  * Functions for UI state management and user feedback
  */
 
+import { getMessageIcon } from './icon-constants.js';
+
 /**
  * Show or hide loading spinner
  * @param {boolean} show - Whether to show or hide the spinner
@@ -88,10 +90,7 @@ export function showSnackbar(message, type = 'success', duration = 3000) {
     snackbar.className = `snackbar snackbar-${type}`;
 
     // Add icon based on type
-    let icon = 'fa-check-circle';
-    if (type === 'error') icon = 'fa-exclamation-circle';
-    if (type === 'warning') icon = 'fa-exclamation-triangle';
-    if (type === 'info') icon = 'fa-info-circle';
+    const icon = getMessageIcon(type);
 
     snackbar.innerHTML = `
         <i class="fas ${icon}"></i>

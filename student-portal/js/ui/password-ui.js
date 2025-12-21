@@ -40,13 +40,13 @@ function setupPasswordToggle(inputId, toggleId) {
         
         if (input.type === 'password') {
             input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
+            icon.classList.remove(ICONS.EYE);
+            icon.classList.add(ICONS.EYE_SLASH);
             toggle.setAttribute('aria-label', 'Hide password');
         } else {
             input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+            icon.classList.remove(ICONS.EYE_SLASH);
+            icon.classList.add(ICONS.EYE);
             toggle.setAttribute('aria-label', 'Show password');
         }
     });
@@ -131,7 +131,7 @@ async function handleCopyPassword() {
         const icon = copyBtn.querySelector('i');
         const originalClass = icon.className;
         
-        icon.className = 'fas fa-check';
+        icon.className = `fas ${ICONS.CONFIRM}`;
         copyBtn.classList.add('copied');
         
         // Reset after 2 seconds

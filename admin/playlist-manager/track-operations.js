@@ -540,7 +540,7 @@ function showMobileTrackMenu(track) {
     options.push({ label: 'Move to Playlist', icon: 'fa-arrow-right', action: () => handleMoveTrack(track) });
   }
   
-  options.push({ label: 'Delete from Playlist', icon: 'fa-trash', action: () => handleDeleteTrack(track.uri, track.name), class: 'menu-delete' });
+  options.push({ label: 'Delete from Playlist', icon: ICONS.DELETE, action: () => handleDeleteTrack(track.uri, track.name), class: 'menu-delete' });
 
   // Overlay
   const menuOverlay = document.createElement('div');

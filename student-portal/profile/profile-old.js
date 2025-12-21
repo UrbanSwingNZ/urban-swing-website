@@ -406,10 +406,7 @@ function showSnackbar(message, type = 'success', duration = 3000) {
     snackbar.classList.add(`snackbar-${type}`);
     
     // Add icon based on type
-    let icon = 'fa-check-circle';
-    if (type === 'error') icon = 'fa-exclamation-circle';
-    if (type === 'warning') icon = 'fa-exclamation-triangle';
-    if (type === 'info') icon = 'fa-info-circle';
+    const icon = getMessageIcon(type);
     
     snackbar.innerHTML = `
         <i class="fas ${icon}"></i>

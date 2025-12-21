@@ -144,19 +144,19 @@ class TransactionRenderer {
     getPaymentBadgeHTML(transaction) {
         // Check if online payment first (has stripeCustomerId)
         if (transaction.stripeCustomerId) {
-            return '<span class="payment-badge online"><i class="fas fa-globe"></i> Online</span>';
+            return `<span class="payment-badge online"><i class="fas ${ICONS.PAYMENT_ONLINE}"></i> Online</span>`;
         }
         
         const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
         
         if (paymentMethod === 'cash') {
-            return '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';
+            return `<span class="payment-badge cash"><i class="fas ${ICONS.PAYMENT_CASH}"></i> Cash</span>`;
         } else if (paymentMethod === 'eftpos') {
-            return '<span class="payment-badge eftpos"><i class="fas fa-credit-card"></i> EFTPOS</span>';
+            return `<span class="payment-badge eftpos"><i class="fas ${ICONS.PAYMENT_EFTPOS}"></i> EFTPOS</span>`;
         } else if (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') {
-            return '<span class="payment-badge bank"><i class="fas fa-building-columns"></i> Bank Transfer</span>';
+            return `<span class="payment-badge bank"><i class="fas ${ICONS.PAYMENT_BANK}"></i> Bank Transfer</span>`;
         } else {
-            return '<span class="payment-badge unknown"><i class="fas fa-question-circle"></i> Unknown</span>';
+            return `<span class="payment-badge unknown"><i class="fas ${ICONS.PAYMENT_UNKNOWN}"></i> Unknown</span>`;
         }
     }
 

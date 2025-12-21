@@ -436,75 +436,6 @@ Based on hardcoded colors that don't have exact matches:
 
 ---
 
-## Testing Checklist
-
-After implementation, visually verify these sections:
-
-### Critical: Date Picker Component (30+ changes)
-- [ ] Open admin check-in page and test date picker
-- [ ] Verify purple brand color appears correctly on selected dates
-- [ ] Test hover states on date cells (should show purple background)
-- [ ] Verify month navigation arrows work and are styled correctly
-- [ ] Check border colors (should be gray, not black or missing)
-- [ ] Verify background colors on disabled dates
-- [ ] Test year/month dropdowns for proper styling
-- [ ] Verify shadows and overlays render correctly
-
-### Admin Section (80+ --admin-purple replacements)
-- [ ] **Check-in page**: Verify gradient headers, button colors, status badges
-- [ ] **Student database**: Check row hover states, action button colors
-- [ ] **Concessions**: Verify card colors, purchase buttons
-- [ ] **Admin tools**: Test transaction filters, backup UI, concession types
-- [ ] **Playlist manager**: Check search results, purple accents
-- [ ] **Modals**: Verify header gradients, button colors (purple/blue/pink)
-- [ ] **Success/error/warning alerts**: Check color consistency
-
-### Student Portal (95+ changes across multiple files)
-- [ ] **Login page** (student-portal.css): Verify shadows, overlays, error colors
-- [ ] **Registration form**: Check input focus colors (purple), validation colors
-- [ ] **Dashboard**: Verify header gradient (purple to blue), card colors
-- [ ] **Purchase page**: Check package cards, button colors, price highlights
-- [ ] **Profile page**: Verify info cards, edit button colors
-- [ ] **Transaction history**: Check badge colors (success/pending/error)
-- [ ] **Concession cards**: Verify purple accents, quantity selectors
-- [ ] **Prepay section**: Check form styling, submit button colors
-- [ ] **Check-ins tab**: Verify status badges, date displays
-
-### Banners (4 changes)
-- [ ] **Closedown warning banner**: Verify yellow background (#fff3cd)
-- [ ] Check orange border and icon color
-- [ ] Verify warning text is dark orange
-
-### Browser Console & Errors
-- [ ] Open DevTools Console (F12)
-- [ ] Navigate through all major sections
-- [ ] Look for CSS errors like "invalid property value" or "unknown variable"
-- [ ] Check for warnings about unresolved `var()` references
-- [ ] Verify no 404 errors for colors.css imports
-
-### Visual Consistency
-- [ ] **Critical**: Colors should look IDENTICAL to before refactoring
-- [ ] Purple brand color (#9a16f5) should be consistent across all sections
-- [ ] Blue accents (#3534fa) should match previous appearance
-- [ ] Pink highlights (#e800f2) should be unchanged
-- [ ] Success/error/warning colors should look the same
-- [ ] Shadows and overlays should have same opacity
-- [ ] Border colors should match previous styling
-
-### Cross-Section Tests
-- [ ] Test navigation between admin sections (verify consistent styling)
-- [ ] Test navigation between student portal sections
-- [ ] Switch between light/dark mode if applicable
-- [ ] Test responsive layouts (mobile drawer, etc.)
-
-### Files to Spot-Check
-- [ ] Open `/styles/date-picker/date-picker.css` - verify no hardcoded colors remain
-- [ ] Open `/admin/admin.css` - verify no :root { --admin-* } block exists
-- [ ] Verify `/student-portal/css/base/variables.css` is deleted
-- [ ] Check that `/styles/base/colors.css` has new --shadow-text and --border-overlay-strong variables
-
----
-
 ## Expected Impact
 
 **Before:**
@@ -570,9 +501,11 @@ After implementation, visually verify these sections:
 **Remaining:**
 - Phase 7: Visual testing and verification (user to perform)
 
+**Testing:** See [COMBINED_REFACTORING_SUMMARY.md](COMBINED_REFACTORING_SUMMARY.md) for comprehensive testing checklist.
+
 **Next Steps:**
 1. Run development server
-2. Complete testing checklist above
+2. Complete testing checklist in COMBINED_REFACTORING_SUMMARY.md
 3. Verify all colors render correctly
 4. Check browser console for errors
 5. If all tests pass, commit changes and merge to main

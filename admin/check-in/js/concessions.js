@@ -38,7 +38,7 @@ function formatConcessionBlock(block) {
     });
     
     const expired = isExpired(expiryDate);
-    const icon = expired ? 'fa-exclamation-triangle' : 'fa-clock';
+    const icon = expired ? ICONS.WARNING : ICONS.CLOCK;
     const expiredClass = expired ? ' expired' : '';
     
     return `<div class="concession-block${expiredClass}">

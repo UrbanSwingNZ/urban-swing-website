@@ -246,7 +246,7 @@ class ModalService {
         
         try {
             confirmBtn.disabled = true;
-            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            confirmBtn.innerHTML = `<i class="fas ${ICONS.LOADING}"></i> Updating...`;
             
             // Update the class date
             await this.prepaidClassesService.updateClassDate(this.currentTransactionId, newDate);
