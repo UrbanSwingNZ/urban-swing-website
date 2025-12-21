@@ -1,4 +1,5 @@
 @import url('../../styles/base/colors.css');
+@import url('../../styles/components/snackbar.css');
 
 /* Pre-Pay for Class Styles */
 
@@ -923,50 +924,4 @@ input[type="text"]::placeholder {
     .back-nav {
         margin-bottom: 16px;
     }
-}
-
-/* Snackbar Notifications */
-.snackbar {
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--purple-primary);
-    color: white;
-    padding: 16px 24px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 12px var(--shadow-text);
-    z-index: 10000;
-    transition: bottom 0.3s ease;
-    min-width: 300px;
-    max-width: 500px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    font-size: 0.95rem;
-}
-
-.snackbar.show {
-    bottom: 30px;
-}
-
-.snackbar i {
-    font-size: 1.2rem;
-}
-
-.snackbar.success {
-    background: var(--status-active-gradient);
-}
-
-.snackbar.error {
-    background: var(--status-inactive-gradient);
-}
-
-.snackbar.warning {
-    background: var(--status-warning-gradient);
-}
-
-.snackbar.info {
-    background: var(--status-info-gradient);
 }

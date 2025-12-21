@@ -21,6 +21,9 @@ import * as dateUtils from './date-utils.js';
 import * as uiUtils from './ui-utils.js';
 import * as iconConstants from './icon-constants.js';
 
+// Import showSnackbar from new centralized location
+import { showSnackbar } from '/components/snackbar/snackbar.js';
+
 // Re-export for ES6 module imports
 export * from './dom-utils.js';
 export * from './format-utils.js';
@@ -28,6 +31,9 @@ export * from './validation-utils.js';
 export * from './date-utils.js';
 export * from './ui-utils.js';
 export * from './icon-constants.js';
+
+// Export showSnackbar from new location
+export { showSnackbar };
 
 // Make utilities available globally for backward compatibility
 // This allows non-module scripts to access these functions
@@ -57,7 +63,7 @@ window.showLoading = uiUtils.showLoading;
 window.showError = uiUtils.showError;
 window.navigateTo = uiUtils.navigateTo;
 window.handleLogout = uiUtils.handleLogout;
-window.showSnackbar = uiUtils.showSnackbar;
+window.showSnackbar = showSnackbar; // From /components/snackbar/snackbar.js
 
 window.ICONS = iconConstants.ICONS;
 window.getMessageIcon = iconConstants.getMessageIcon;
