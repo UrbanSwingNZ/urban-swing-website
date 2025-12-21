@@ -242,7 +242,7 @@ select.filter-input:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--gray-550);
     transition: 0.3s;
     border-radius: 24px;
 }
@@ -409,37 +409,37 @@ select.filter-input:focus {
 
 .type-badge.casual-student {
     background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    color: var(--blue-accent);
 }
 
 .type-badge.gift {
     background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
+    color: var(--success-dark);
 }
 
 .type-badge.cash {
-    background: #fff3e0;
-    color: #e65100;
+    background: var(--warning-lighter);
+    color: var(--warning-darker);
 }
 
 .type-badge.eftpos {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: var(--info-light);
+    color: var(--blue-darker);
 }
 
 .type-badge.bank-transfer {
-    background: #f3e5f5;
-    color: #6a1b9a;
+    background: var(--bg-purple-pale);
+    color: var(--purple-darker);
 }
 
 .type-badge.other {
-    background: #f5f5f5;
-    color: #616161;
+    background: var(--gray-300);
+    color: var(--gray-750);
 }
 
 .type-badge.reversed {
-    background: #ffebee;
-    color: #c62828;
+    background: var(--bg-error-pale);
+    color: var(--error-darker);
     margin-right: 0.5rem;
 }
 
@@ -487,37 +487,37 @@ select.filter-input:focus {
 }
 
 .payment-badge.cash {
-    background: #fff3e0;
-    color: #e65100;
+    background: var(--warning-lighter);
+    color: var(--warning-darker);
 }
 
 .payment-badge.eftpos {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: var(--info-light);
+    color: var(--blue-darker);
 }
 
 .payment-badge.online {
     background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    color: var(--success-darker);
 }
 
 .payment-badge.bank {
-    background: #f3e5f5;
-    color: #6a1b9a;
+    background: var(--bg-purple-pale);
+    color: var(--purple-darker);
 }
 
 .payment-badge.na {
-    background: #f5f5f5;
+    background: var(--gray-300);
     color: #757575;
 }
 
 .payment-badge.unknown {
-    background: #f5f5f5;
-    color: #616161;
+    background: var(--gray-300);
+    color: var(--gray-750);
 }
 
 .na-text {
-    color: #999;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -633,8 +633,8 @@ select.filter-input:focus {
 .snackbar {
     visibility: hidden;
     min-width: 250px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--text-primary);
+    color: var(--white);
     text-align: center;
     border-radius: 4px;
     padding: 1rem 1.5rem;
@@ -1163,7 +1163,7 @@ select.filter-input:focus {
             text-align: right;
             justify-self: end;
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-light);
             font-size: 0;
         }
 
@@ -1190,7 +1190,7 @@ select.filter-input:focus {
         #transactions-table td:nth-child(6):not(.empty)::before {
             content: 'EFTPOS';
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-light);
             opacity: 0.7;
         }
 
@@ -1211,7 +1211,7 @@ select.filter-input:focus {
         #transactions-table td:nth-child(7):not(.empty)::before {
             content: 'Bank Transfer';
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-light);
             opacity: 0.7;
         }
 

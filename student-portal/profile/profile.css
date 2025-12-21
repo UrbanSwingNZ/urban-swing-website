@@ -121,7 +121,7 @@
 label:has(+ input[required])::after,
 label:has(+ textarea[required])::after {
     content: ' *';
-    color: #d32f2f;
+    color: var(--error-muted);
 }
 
 .form-group input,
@@ -170,7 +170,7 @@ label:has(+ textarea[required])::after {
 }
 
 .checkbox-label:hover {
-    background: #e8e8f0;
+    background: var(--gray-400);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -191,19 +191,19 @@ label:has(+ textarea[required])::after {
     align-items: center;
     gap: 12px;
     padding: 16px;
-    background: #e3f2fd;
-    border-left: 4px solid #1976d2;
+    background: var(--info-light);
+    border-left: 4px solid var(--blue-dark);
     border-radius: 8px;
     margin-bottom: 20px;
 }
 
 .security-info i {
-    color: #1976d2;
+    color: var(--blue-dark);
     font-size: 1.2rem;
 }
 
 .security-info p {
-    color: #0d47a1;
+    color: var(--blue-darker);
     font-size: 0.95rem;
     margin: 0;
 }
@@ -214,20 +214,20 @@ label:has(+ textarea[required])::after {
     align-items: flex-start;
     gap: 12px;
     padding: 16px;
-    background: #fff4e6;
-    border: 2px solid #ffa726;
+    background: var(--bg-warning-pale);
+    border: 2px solid var(--border-orange);
     border-radius: 8px;
     margin-bottom: 20px;
 }
 
 .admin-note i {
-    color: #ffa726;
+    color: var(--border-orange);
     font-size: 1.2rem;
     margin-top: 2px;
 }
 
 .admin-note p {
-    color: #e65100;
+    color: var(--warning-darker);
     font-size: 0.9rem;
     margin: 0;
 }
@@ -325,7 +325,7 @@ label:has(+ textarea[required])::after {
 }
 
 .modal-footer .btn-danger {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -344,7 +344,7 @@ label:has(+ textarea[required])::after {
 }
 
 .modal-footer .btn-danger:hover {
-    background: #c82333;
+    background: var(--error-dark);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
 }
@@ -360,7 +360,7 @@ label:has(+ textarea[required])::after {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--bg-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -412,7 +412,7 @@ label:has(+ textarea[required])::after {
 }
 
 .modal-header i {
-    color: #ff9800;
+    color: var(--text-orange);
     font-size: 1.5rem;
 }
 
@@ -474,7 +474,7 @@ label:has(+ textarea[required])::after {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
 }
 
 .snackbar-error {

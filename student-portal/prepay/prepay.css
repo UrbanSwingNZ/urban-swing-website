@@ -102,9 +102,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.25rem;
-    border: 2px solid #f0f0f0;
+    border: 2px solid var(--hover-light);
     border-radius: 8px;
-    background: #fafafa;
+    background: var(--gray-50);
     transition: all 0.3s ease;
 }
 
@@ -223,7 +223,7 @@
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
@@ -234,14 +234,14 @@
 }
 
 .required {
-    color: #e74c3c;
+    color: var(--error-medium);
     margin-left: 0.25rem;
 }
 
 /* Field Help Text */
 .field-help {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-light);
     margin-top: 0.5rem;
     margin-bottom: 0;
 }
@@ -258,15 +258,15 @@
 }
 
 .validation-message.error {
-    background-color: #fee;
-    border: 1px solid #fcc;
-    color: #c33;
+    background-color: var(--bg-error-pale-alt);
+    border: 1px solid var(--border-error-light);
+    color: var(--text-error-light);
 }
 
 .validation-message.success {
-    background-color: #efe;
-    border: 1px solid #cfc;
-    color: #3c3;
+    background-color: var(--bg-success-pale);
+    border: 1px solid var(--border-success-light);
+    color: var(--text-success-light);
 }
 
 .validation-message i {
@@ -282,7 +282,7 @@
 }
 
 .loading-text {
-    color: #666;
+    color: var(--text-light);
     font-style: italic;
 }
 
@@ -290,7 +290,7 @@
     display: flex;
     align-items: flex-start;
     padding: 1rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -329,7 +329,7 @@
 
 .radio-title {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1rem;
 }
 
@@ -341,7 +341,7 @@
 
 .radio-description {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-light);
     line-height: 1.4;
     margin: 0;
 }
@@ -366,7 +366,7 @@
 }
 
 .radio-notice i {
-    color: #f57c00;
+    color: var(--text-warning);
     font-size: 0.9rem;
     margin-top: 0.15rem;
     flex-shrink: 0;
@@ -375,14 +375,14 @@
 .radio-notice p {
     margin: 0;
     font-size: 0.85rem;
-    color: #663c00;
+    color: var(--text-warning-dark);
     line-height: 1.4;
 }
 
 .promo-badge {
     display: inline-block;
     padding: 0.25rem 0.5rem;
-    background: #4caf50;
+    background: var(--success-light);
     color: white;
     font-size: 0.75rem;
     font-weight: 700;
@@ -393,7 +393,7 @@
 /* Stripe Elements */
 .stripe-element {
     padding: 12px 16px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     border-radius: 8px;
     background: white;
     transition: all 0.3s ease;
@@ -410,7 +410,7 @@
 /* Stripe Card Element (Combined Card Input) */
 .stripe-card-element {
     padding: 12px 16px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     border-radius: 8px;
     background: white;
     transition: border-color 0.2s ease;
@@ -432,18 +432,18 @@
 }
 
 .stripe-card-element.StripeElement--invalid {
-    border-color: #e74c3c;
+    border-color: var(--border-error);
 }
 
 .stripe-card-element.StripeElement--complete {
-    border-color: #27ae60;
+    border-color: var(--border-success);
 }
 
 /* Text Input */
 input[type="text"] {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -458,7 +458,7 @@ input[type="text"]:focus {
 }
 
 input[type="text"]::placeholder {
-    color: #999;
+    color: var(--text-muted);
 }
 
 /* Form Row (for side-by-side inputs) */
@@ -470,7 +470,7 @@ input[type="text"]::placeholder {
 
 /* Error Messages */
 .error-message {
-    color: #e74c3c;
+    color: var(--error-medium);
     font-size: 0.875rem;
     margin-top: 0.5rem;
     display: none;
@@ -485,8 +485,8 @@ input[type="text"]::placeholder {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
+    background: var(--bg-success-light);
+    color: var(--success);
     padding: 12px 16px;
     border-radius: 6px;
     margin-top: 16px;
@@ -541,7 +541,7 @@ input[type="text"]::placeholder {
     gap: 16px;
     margin-top: 32px;
     padding-top: 24px;
-    border-top: 2px solid #f0f0f0;
+    border-top: 2px solid var(--hover-light);
 }
 
 /* Loading State */
@@ -582,7 +582,7 @@ input[type="text"]::placeholder {
 }
 
 .coming-soon-notice i {
-    color: #f57c00;
+    color: var(--text-warning);
     font-size: 1.1rem;
     margin-top: 0.15rem;
     flex-shrink: 0;
@@ -590,37 +590,37 @@ input[type="text"]::placeholder {
 
 .coming-soon-notice p {
     margin: 0;
-    color: #663c00;
+    color: var(--text-warning-dark);
     line-height: 1.5;
     font-size: 0.9rem;
 }
 
 .coming-soon-notice strong {
-    color: #f57c00;
+    color: var(--text-warning);
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 .empty-state i {
     font-size: 4rem;
-    color: #ddd;
+    color: var(--gray-500);
     margin-bottom: 1.5rem;
 }
 
 .empty-state h2 {
     font-size: 1.8rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .empty-state p {
     font-size: 1.1rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 /* Modal Styles */
@@ -630,7 +630,7 @@ input[type="text"]::placeholder {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--bg-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -762,7 +762,7 @@ input[type="text"]::placeholder {
 }
 
 .modal-footer .btn-danger {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -781,7 +781,7 @@ input[type="text"]::placeholder {
 }
 
 .modal-footer .btn-danger:hover {
-    background: #c82333;
+    background: var(--error-dark);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
 }
@@ -956,7 +956,7 @@ input[type="text"]::placeholder {
 }
 
 .snackbar.success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
 }
 
 .snackbar.error {

@@ -449,7 +449,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 /* Reversed gift styling */
 .gift-item-reversed {
     opacity: 0.6;
-    border-left-color: #999;
+    border-left-color: var(--text-muted);
 }
 
 .gift-item-reversed:hover {
@@ -463,7 +463,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 }
 
 .gift-item-reversed .gift-item-details strong {
-    color: #999 !important;
+    color: var(--text-muted) !important;
 }
 
 .reversed-badge {
@@ -574,7 +574,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 
 .error-message {
     text-align: center;
-    color: #c62828;
+    color: var(--error-darker);
     padding: 20px;
     background: rgba(198, 40, 40, 0.05);
     border-radius: 4px;
@@ -593,7 +593,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 }
 
 .success-header h3 i {
-    color: #4caf50;
+    color: var(--success-light);
 }
 
 .success-message {
@@ -854,7 +854,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 
     .gift-form-container {
         box-shadow: none;
-        border: 1px solid #ddd;
+        border: 1px solid var(--gray-500);
     }
 }
 
@@ -889,7 +889,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
 }
 
 .snackbar-error {

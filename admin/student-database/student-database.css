@@ -242,17 +242,17 @@
 
 /* Deleted Student Row Styling */
 .deleted-student {
-    color: #dc3545;
+    color: var(--error);
     font-style: italic;
     opacity: 0.8;
 }
 
 .deleted-student td {
-    color: #dc3545;
+    color: var(--error);
 }
 
 .deleted-student strong {
-    color: #dc3545;
+    color: var(--error);
 }
 
 .concession-badge {
@@ -328,8 +328,8 @@
 }
 
 .btn-icon.btn-delete:hover {
-    background: #dc3545;
-    border-color: #dc3545;
+    background: var(--error);
+    border-color: var(--error);
     color: white;
 }
 
@@ -709,7 +709,7 @@ textarea:focus {
     /* Pronouns - below name */
     .students-table tbody tr td:nth-child(4) {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-light);
         padding-top: 0.5rem;
         padding-bottom: 1rem;
     }
@@ -875,7 +875,7 @@ textarea:focus {
 
     .search-input::placeholder {
         font-size: 0.85rem;
-        color: #999;
+        color: var(--text-muted);
         opacity: 0.8;
     }
 
@@ -1306,7 +1306,7 @@ textarea:focus {
 
 .concession-item.locked {
     opacity: 0.6;
-    background: rgba(128, 128, 128, 0.1);
+    background: var(--shadow-light);
 }
 
 /* Keep colored borders for locked items based on their state */
@@ -1319,7 +1319,7 @@ textarea:focus {
 }
 
 .concession-item.locked:not(.expired):not(.depleted) {
-    border-left: 4px solid #6c757d;
+    border-left: 4px solid var(--text-muted-alt);
 }
 
 .concession-info {
@@ -1418,7 +1418,7 @@ textarea:focus {
 
 .badge-locked {
     background: rgba(108, 117, 125, 0.15);
-    color: #6c757d;
+    color: var(--text-muted-alt);
 }
 
 .bulk-actions {
@@ -1465,7 +1465,7 @@ textarea:focus {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
 }
 
 .snackbar-error {

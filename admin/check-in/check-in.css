@@ -322,33 +322,33 @@
 }
 
 .payment-badge.cash {
-    background: #fff3e0;
-    color: #e65100;
+    background: var(--warning-lighter);
+    color: var(--warning-darker);
 }
 
 .payment-badge.eftpos {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: var(--info-light);
+    color: var(--blue-darker);
 }
 
 .payment-badge.online {
     background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    color: var(--success-darker);
 }
 
 .payment-badge.bank {
-    background: #f3e5f5;
-    color: #6a1b9a;
+    background: var(--bg-purple-pale);
+    color: var(--purple-darker);
 }
 
 .payment-badge.na {
-    background: #f5f5f5;
+    background: var(--gray-300);
     color: #757575;
 }
 
 .payment-badge.unknown {
-    background: #f5f5f5;
-    color: #616161;
+    background: var(--gray-300);
+    color: var(--gray-750);
 }
 
 #checkin-transactions-table .payment-amount {
@@ -377,7 +377,7 @@
 
 .type-badge.gift {
     background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
+    color: var(--success-dark);
 }
 
 .type-badge.casual,
@@ -388,17 +388,17 @@
 
 .type-badge.casual-student {
     background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    color: var(--blue-accent);
 }
 
 .type-badge.online {
     background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    color: var(--success-darker);
     margin-left: 5px;
 }
 
 .type-badge.reversed {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     margin-right: 5px;
 }
@@ -501,7 +501,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--gray-550);
     transition: 0.3s;
     border-radius: 24px;
 }
@@ -693,8 +693,8 @@
 }
 
 .btn-icon.btn-delete:hover {
-    background: #dc3545;
-    border-color: #dc3545;
+    background: var(--error);
+    border-color: var(--error);
     color: white;
 }
 
@@ -722,7 +722,7 @@
 
 .checkin-type.casual-student {
     background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    color: var(--blue-accent);
 }
 
 .checkin-type.free {
@@ -752,7 +752,7 @@
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 700;
-    background-color: #dc3545;
+    background-color: var(--error);
     color: white;
     margin-left: 8px;
 }
@@ -1076,7 +1076,7 @@ textarea.form-control {
     max-height: 300px;
     overflow-y: auto;
     z-index: 10000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 6px var(--bg-overlay-dark);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1197,7 +1197,7 @@ textarea.form-control {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
 }
 
 .snackbar-error {
@@ -1248,17 +1248,17 @@ textarea.form-control {
 .online-payment-message.success {
     background: rgba(76, 175, 80, 0.1);
     border: 1px solid rgba(76, 175, 80, 0.3);
-    color: #2e7d32;
+    color: var(--success-dark);
 }
 
 .online-payment-message.success i {
-    color: #4caf50;
+    color: var(--success-light);
 }
 
 .online-payment-message.warning {
     background: rgba(255, 152, 0, 0.1);
     border: 1px solid rgba(255, 152, 0, 0.3);
-    color: #e65100;
+    color: var(--warning-darker);
 }
 
 .online-payment-message.warning i {
@@ -1268,7 +1268,7 @@ textarea.form-control {
 .online-payment-message.error {
     background: rgba(244, 67, 54, 0.1);
     border: 1px solid rgba(244, 67, 54, 0.3);
-    color: #c62828;
+    color: var(--error-darker);
 }
 
 .online-payment-message.error i {
@@ -1905,5 +1905,5 @@ textarea.form-control {
 
 .badge-locked {
     background: rgba(108, 117, 125, 0.15);
-    color: #6c757d;
+    color: var(--text-muted-alt);
 }
