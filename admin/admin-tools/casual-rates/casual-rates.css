@@ -34,7 +34,7 @@
 
 .casual-rate-card {
     background: white;
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--hover-light);
     border-radius: 12px;
     padding: 25px 20px;
     position: relative;
@@ -46,17 +46,17 @@
 }
 
 .casual-rate-card.active {
-    border-color: #f0f0f0;
+    border-color: var(--hover-light);
 }
 
 .casual-rate-card.inactive {
     opacity: 0.6;
-    border-color: #f0f0f0;
+    border-color: var(--hover-light);
 }
 
 .casual-rate-card.promo {
     border-color: #ff9800;
-    background: linear-gradient(135deg, #fff5e6 0%, #ffffff 100%);
+    background: linear-gradient(135deg, #fff5e6 0%, var(--white) 100%);
 }
 
 .casual-rate-card:hover {
@@ -73,7 +73,7 @@
     position: absolute;
     top: 15px;
     left: 15px;
-    color: #999;
+    color: var(--text-muted);
     cursor: grab;
     font-size: 1.2rem;
 }
@@ -159,12 +159,12 @@
 
 .btn-delete-rate {
     background: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-    border: 1px solid #dc3545;
+    color: var(--error);
+    border: 1px solid var(--error);
 }
 
 .btn-delete-rate:hover {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
@@ -213,7 +213,7 @@
 .rate-form-group textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 6px;
     font-size: 1rem;
     font-family: inherit;
@@ -261,7 +261,7 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #666;
+    color: var(--text-light);
     font-size: 1.1rem;
     font-weight: bold;
     pointer-events: none;
@@ -279,21 +279,21 @@
     padding: 60px 20px;
     background: #f9f9f9;
     border-radius: 12px;
-    border: 2px dashed #ddd;
+    border: 2px dashed var(--gray-500);
 }
 
 .empty-state-rates i {
     font-size: 3rem;
-    color: #ccc;
+    color: var(--gray-550);
     margin-bottom: 15px;
 }
 
 .empty-state-rates h3 {
     margin: 15px 0 10px 0;
-    color: #666;
+    color: var(--text-light);
 }
 
 .empty-state-rates p {
-    color: #999;
+    color: var(--text-muted);
     margin: 0;
 }

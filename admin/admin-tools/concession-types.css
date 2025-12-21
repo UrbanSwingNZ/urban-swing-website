@@ -154,7 +154,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--gray-550);
     transition: 0.3s;
     border-radius: 24px;
 }
@@ -338,7 +338,7 @@
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background: var(--text-muted-alt);
     color: white;
     border: none;
     padding: 12px 24px;

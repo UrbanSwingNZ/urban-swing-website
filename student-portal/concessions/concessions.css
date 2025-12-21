@@ -117,7 +117,7 @@
 
 .concession-item.locked {
     opacity: 0.6;
-    background: rgba(128, 128, 128, 0.1);
+    background: var(--shadow-light);
 }
 
 .concession-item.expired.locked {
@@ -129,7 +129,7 @@
 }
 
 .concession-item.locked:not(.expired):not(.depleted) {
-    border-left: 4px solid #6c757d;
+    border-left: 4px solid var(--text-muted-alt);
 }
 
 .concession-item.gifted {
@@ -191,12 +191,12 @@
 
 .badge-locked {
     background: rgba(108, 117, 125, 0.15);
-    color: #6c757d;
+    color: var(--text-muted-alt);
 }
 
 .badge-gifted {
-    background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
     border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
@@ -215,18 +215,18 @@
 
 .no-data i {
     font-size: 4rem;
-    color: #e0e0e0;
+    color: var(--gray-450);
     margin-bottom: 1rem;
 }
 
 .no-data h3 {
-    color: #666;
+    color: var(--text-light);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
 }
 
 .no-data p {
-    color: #999;
+    color: var(--text-muted);
     font-size: 1rem;
 }
 
