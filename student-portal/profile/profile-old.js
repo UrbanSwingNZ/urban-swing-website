@@ -395,34 +395,8 @@ function loadStudentDashboard(student) {
     loadStudentProfile(student);
 }
 
-/**
- * Show snackbar notification
- */
-function showSnackbar(message, type = 'success', duration = 3000) {
-    const snackbar = document.getElementById('snackbar');
-    
-    // Remove existing classes
-    snackbar.className = 'snackbar';
-    snackbar.classList.add(`snackbar-${type}`);
-    
-    // Add icon based on type
-    const icon = getMessageIcon(type);
-    
-    snackbar.innerHTML = `
-        <i class="fas ${icon}"></i>
-        <span>${message}</span>
-    `;
-    
-    // Show snackbar
-    setTimeout(() => {
-        snackbar.classList.add('show');
-    }, 10);
-    
-    // Hide after duration
-    setTimeout(() => {
-        snackbar.classList.remove('show');
-    }, duration);
-}
+// Uses global window.showSnackbar from /components/snackbar/snackbar.js
+// (Loaded via /js/utils/index.js)
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
