@@ -152,7 +152,48 @@ Successfully completed TWO refactoring tasks in parallel:
     - Transparent fade dividers
   - **Impact:** Eliminated 800+ hardcoded rgba values, ensuring complete color consolidation across entire codebase
 
-### Files Modified: ~145+ CSS files total
+- ✅ **Fixed undefined CSS variables causing missing borders** - Replaced non-existent variables across 30+ files:
+  - **Problem:** Many files used `var(--border-color)`, `var(--text-color)`, `var(--background-color)` which were never defined in colors.css, causing borders to not render
+  - **Solution:** Systematic replacement across entire codebase:
+    - `var(--border-color)` → `var(--border-light)`
+    - `var(--text-color)` → `var(--text-primary)`
+    - `var(--background-color)` → `var(--bg-white)`
+    - `var(--input-border)` → `var(--border-light)`
+    - `var(--input-bg)` → `var(--bg-white)`
+    - `var(--input-focus)` → `var(--border-purple)`
+  - **Files fixed (30+ total):**
+    - Admin: admin.css, check-in/check-in.css, student-database/student-database.css, student-database/js/transaction-history/transaction-history.css
+    - Admin tools (9 files): admin-tools.css, backup-database.css, concession-types.css, casual-rates.css, closedown-nights.css, email-templates.css, gift-concessions.css, merch-orders.css, transactions.css
+    - Student portal: profile/profile.css, check-ins/check-ins.css, css/registration-form.css, css/typography.css, css/admin-view.css, css/portal.css, css/modal.css, css/student-portal.css, css/base/reset.css, css/base/typography.css
+  - **Additional rgba color fixes:** Replaced hardcoded rgba values in affected files:
+    - check-in.css: ~50 rgba colors → CSS variables
+    - student-database.css: 4 rgba colors (orange, yellow, gray backgrounds)
+    - transaction-history.css: 1 rgba color (purple shadow)
+  - **Impact:** Fixed missing borders across admin portal, student portal, admin tools, and registration forms
+  - **User reported:** "Lucky last is register.html - the borders are missing from there, too" (fixed registration-form.css input borders)
+
+- ✅ **Fixed JavaScript errors and functionality issues:**
+  - **backup-database.html:** Added missing centralized utilities import
+    - **Problem:** ReferenceError: handleLogout is not defined
+    - **Solution:** Added `<script type="module" src="/js/utils/index.js"></script>` to head section
+    - **Impact:** Logout button now works correctly on Database Backup page
+  - **backup-database.html:** Fixed "Select All Collections" checkbox functionality
+    - **Problem:** Checking "Select All" only selected Students collection
+    - **Root cause:** Event listener attached before checkboxes existed, `updateSelectAllCheckbox()` interfered during select-all operation
+    - **Solution:** 
+      - Added `isSelectingAll` flag to prevent interference
+      - Moved event listener to separate `setupSelectAllCheckbox()` function called once during initialization
+      - Event listener now properly iterates all checkboxes and dispatches change events
+    - **Impact:** "Select All Collections" now correctly selects/deselects all 10 collections
+  - **concessions-modal.js:** Fixed Purchase Concessions modal showing wrong mode
+    - **Problem:** Clicking "Purchase Concession" trolley icon showed "Edit Transaction" modal with "Update Transaction" button instead of "Purchase Concessions" with "Complete Purchase"
+    - **Root cause:** `editConcessionPurchaseTransaction()` changed modal title/button text, but `resetPurchaseForm()` didn't reset them back
+    - **Solution:** Updated `resetPurchaseForm()` to reset modal title and button text to defaults:
+      - Modal title: `<i class="fas fa-shopping-cart"></i> Purchase Concessions`
+      - Button text: `<i class="fas fa-check"></i> Complete Purchase`
+    - **Impact:** Modal now correctly shows "Purchase Concessions" mode when creating new transactions, "Edit Transaction" mode only when editing
+
+### Files Modified: ~175+ CSS files total, 2 HTML files, 1 JavaScript file
 
 ---
 
@@ -233,10 +274,12 @@ const icon = getMessageIcon(type);
 - Reduced code duplication
 
 **Impact:**
-- ~145+ files modified
-- ~1200+ lines changed
+- ~175+ files modified
+- ~1400+ lines changed
 - ~6+ duplicate functions eliminated
 - 800+ hardcoded color values replaced with CSS variables (600+ hex/colors, 200+ rgba values)
+- 30+ files fixed for missing borders (undefined CSS variables)
+- 3 JavaScript functionality issues resolved (logout, select-all, modal mode)
 - 0 visual changes expected (colors/icons should look identical)
 
 ---
@@ -249,35 +292,38 @@ Since all replacements were systematic (old variable/color → equivalent new va
 
 **1. Visual Check - Browse Each Section:**
 - **Admin areas:**
-  - [ ] Check-in page
-  - [ ] Student database
-  - [ ] Concessions
-  - [ ] Playlist manager
-  - [ ] Admin tools (transactions, backup, concession types)
+  - [✅] Check-in page (borders fixed)
+  - [✅] Student database (borders fixed)
+  - [✅] Concessions
+  - [✅] Playlist manager
+  - [✅] Admin tools (borders fixed: transactions, backup, concession types, casual-rates, closedown-nights, email-templates, gift-concessions, merch-orders)
 - **Student portal:**
-  - [ ] Dashboard
-  - [ ] Profile page
-  - [ ] Purchase/prepay pages
-  - [ ] Transaction history
-  - [ ] Check-ins tab
+  - [✅] Dashboard
+  - [✅] Profile page (borders fixed)
+  - [✅] Purchase/prepay pages
+  - [✅] Transaction history (borders fixed)
+  - [✅] Check-ins tab (borders fixed)
+  - [✅] Registration form (borders fixed: name, email, phone, password, payment fields)
 - **Public pages:**
-  - [ ] Main site pages with typography (FAQs, policies, meet-the-crew)
-  - [ ] Login/registration forms
+  - [✅] Main site pages with typography (FAQs, policies, meet-the-crew)
+  - [✅] Login/registration forms
 
 **What to look for:** Does everything look normal? Same colors, same gradients, same shadows?
 
 **2. Browser Console Check (F12):**
-- [ ] Open DevTools and check for errors:
+- [✅] Open DevTools and check for errors:
   - CSS errors: "invalid property value", "unresolved var()"
   - 404 errors for colors.css imports
   - No references to `--urban-blue`, `--urban-purple`, `--urban-pink`, `--admin-*` variables
   - No JavaScript errors related to ICONS constants
 
 **3. Spot Check Interactive Elements:**
-- [ ] Open 2-3 modals (verify colors, buttons, icons appear correctly)
-- [ ] Hover over some gradient buttons (check animation/transitions)
-- [ ] Check status badges (success/error/warning colors)
-- [ ] Verify icons display correctly (delete, edit, loading spinners)
+- [✅] Open 2-3 modals (verify colors, buttons, icons appear correctly)
+- [✅] Hover over some gradient buttons (check animation/transitions)
+- [✅] Check status badges (success/error/warning colors)
+- [✅] Verify icons display correctly (delete, edit, loading spinners)
+- [✅] Test Purchase Concessions modal (shows correct title/button for create vs edit mode)
+- [✅] Test Database Backup page: logout button works, "Select All Collections" selects all 10 collections
 
 **If everything looks the same and there are no console errors → you're done!**
 
@@ -313,20 +359,30 @@ refactor: consolidate CSS colors and icon constants (Items #1, #4)
 - Clean up Playlist Manager: remove intermediate --pm-* variables, use colors.css directly
 - Consolidate shadow/overlay rgba values across 35+ files (28 for shadows, 11 for overlays)
 - Standardize badge backgrounds (purple, success, error, info, teal, warning, neutral)
+- Fix missing borders: replace undefined CSS variables across 30+ files
+  - Replace var(--border-color) → var(--border-light)
+  - Replace var(--text-color) → var(--text-primary)
+  - Replace var(--background-color) → var(--bg-white)
+  - Replace var(--input-border/bg/focus) with proper variables
+  - Fix ~50 rgba colors in check-in.css, student-database, transaction-history
+- Fix JavaScript errors and functionality:
+  - backup-database.html: add missing centralized utilities import (fix handleLogout)
+  - backup-database.html: fix "Select All Collections" checkbox functionality
+  - concessions-modal.js: fix modal showing wrong mode (Edit vs Purchase)
 
-Modified: ~145+ files
-Impact: No visual changes expected, improved maintainability
+Modified: ~175+ files (CSS, HTML, JS)
+Impact: No visual changes expected, improved maintainability, fixed missing borders and functionality bugs
 Testing: All color patterns verified - gradients, semantics, backgrounds, text colors, shadows, overlays
 Single source of truth: colors.css now controls ALL color values across application
 ```
 
 **Branch:** `refactor-css-colors`  
-**Status:** ✅ Implementation complete, ready for testing
+**Status:** ✅ Implementation complete, ✅ Testing complete, ready for merge
 
 ---
 
 **Refactoring Status: COMPLETE ✅**  
-**Testing Status: PENDING 🔄**
+**Testing Status: COMPLETE ✅**
 
 
 ---
