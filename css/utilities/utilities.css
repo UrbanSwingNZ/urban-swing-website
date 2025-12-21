@@ -3,6 +3,8 @@
    Helper classes for common styling needs
    ======================================== */
 
+@import url('../../styles/components/loading-spinner.css');
+
 /* Display Utilities */
 .d-none { display: none; }
 .d-block { display: block; }
@@ -97,10 +99,6 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 /* Animation Classes */

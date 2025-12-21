@@ -30,16 +30,11 @@
     <!-- Modal System -->
     <script type="module" src="/components/modals/modal-base.js"></script>
     <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
 </head>
 <body>
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading students...</p>
-    </div>
-
     <!-- Main Container -->
-    <div id="main-container" class="dashboard-container" style="display: none;">
+    <div id="main-container" class="dashboard-container">
         <!-- Header -->
 
         <!-- Main Content -->
@@ -418,6 +413,21 @@
     <script src="../concessions/js/concessions-modal.js?v=2"></script>
     <script src="../concessions/js/casual-entry-modal.js?v=1"></script>
     <script src="../concessions/js/concessions-admin.js?v=2"></script>
+    
+    <script>
+    // Show/hide loading spinner using centralized component
+    function showLoading(show) {
+        if (show) {
+            if (window.LoadingSpinner) {
+                window.LoadingSpinner.showGlobal('Loading...');
+            }
+        } else {
+            if (window.LoadingSpinner) {
+                window.LoadingSpinner.hideGlobal();
+            }
+        }
+    }
+    </script>
     
     <script src="js/main.js?v=2"></script>
     

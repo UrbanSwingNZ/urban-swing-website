@@ -4,6 +4,7 @@
  */
 
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+import { showLoadingButton, showLoading } from '/js/utils/index.js';
 import { UIController } from './ui-controller.js';
 import { ModalService } from './modal-service.js';
 
@@ -273,8 +274,7 @@ async function processPayment(rate, classDate) {
     const submitText = document.getElementById('submit-text');
     const originalText = submitText.textContent;
     
-    submitBtn.disabled = true;
-    submitText.textContent = 'Processing...';
+    showLoadingButton('submit-btn', true, 'Processing...');
     showLoading(true);
     
     try {
