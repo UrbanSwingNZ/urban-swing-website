@@ -17,7 +17,7 @@
 .transaction-student-info {
     padding: 20px 24px;
     background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .transaction-student-info h3 {
@@ -35,7 +35,7 @@
 /* Tabs */
 .transaction-tabs {
     display: flex;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-light);
     background: var(--bg-secondary);
 }
 
@@ -106,7 +106,7 @@
     align-items: center;
     padding: 12px 16px;
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     transition: all 0.2s ease;
 }
@@ -144,7 +144,7 @@
     align-items: center;
     padding: 16px;
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     transition: all 0.2s ease;
 }
@@ -322,8 +322,8 @@
     user-select: none;
     padding: 12px;
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-left: 4px solid var(--border-color);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--border-light);
     border-radius: 6px;
     margin: 0 0 0 0;
     transition: all 0.2s ease;
@@ -378,7 +378,7 @@
 .concession-item {
     padding: 12px 16px 16px 16px;
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-left: 4px solid var(--success);
     border-radius: 6px;
     margin-bottom: 8px;
@@ -486,7 +486,7 @@
 .btn-lock-toggle {
     padding: 6px 14px;
     font-size: 0.85rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     background: transparent;
     border-radius: 4px;
     cursor: pointer;
@@ -530,7 +530,7 @@
 .btn-delete-block:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    border-color: var(--border-color);
+    border-color: var(--border-light);
     color: var(--text-muted);
 }
 
@@ -579,7 +579,7 @@
 .concession-notes-input {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.9rem;
@@ -593,7 +593,7 @@
 .concession-notes-input:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .concession-notes-input::placeholder {
@@ -644,13 +644,13 @@
     }
     
     .transaction-tab {
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-light);
         border-left: 3px solid transparent;
     }
     
     .transaction-tab.active {
         border-left-color: var(--purple-primary);
-        border-bottom-color: var(--border-color);
+        border-bottom-color: var(--border-light);
     }
     
     .payment-item,
@@ -681,3 +681,4 @@
         flex: 1;
     }
 }
+
