@@ -32,7 +32,7 @@
 .search-results-container {
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--pm-card-bg);
+  background: var(--card-light);
   padding: 20px;
   text-align: center;
   min-height: 100px;
@@ -65,7 +65,7 @@
 }
 
 .search-result-item:hover {
-  background: var(--pm-hover-bg);
+  background: var(--hover-light);
 }
 
 .search-result-item:last-child {
@@ -83,7 +83,7 @@
   height: 50px;
   border-radius: 6px;
   object-fit: cover;
-  background: var(--pm-border-light);
+  background: var(--gray-450);
 }
 
 .search-result-info {
@@ -100,7 +100,7 @@
 }
 
 .search-result-artist {
-  color: #888;
+  color: var(--gray-650);
   font-size: 0.9rem;
   margin: 0;
   overflow: hidden;
@@ -109,7 +109,7 @@
 }
 
 .search-result-duration {
-  color: #888;
+  color: var(--gray-650);
   font-size: 0.85rem;
   min-width: 50px;
   text-align: right;

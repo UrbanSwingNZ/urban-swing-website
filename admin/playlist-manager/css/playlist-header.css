@@ -8,7 +8,7 @@
 .playlist-header {
   padding: 30px;
   background: linear-gradient(180deg, rgba(154, 22, 245, 0.1) 0%, transparent 100%);
-  border-bottom: 1px solid var(--pm-border-light);
+  border-bottom: 1px solid var(--gray-450);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -46,12 +46,12 @@
 
 .playlist-meta {
   font-size: 0.9rem;
-  color: #999;
+  color: var(--text-muted);
   margin-bottom: 0.5em;
 }
 
 .playlist-description {
-  color: #888;
+  color: var(--gray-650);
   margin-bottom: 0;
 }
 
@@ -131,6 +131,6 @@
 
 @media (prefers-color-scheme: dark) {
   .playlist-header {
-    border-bottom-color: var(--pm-border-dark);
+    border-bottom-color: var(--hover-dark);
   }
 }

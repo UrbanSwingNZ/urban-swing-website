@@ -7,8 +7,8 @@
 .snackbar {
   visibility: hidden;
   min-width: 250px;
-  background-color: #333;
-  color: #fff;
+  background-color: var(--text-primary);
+  color: var(--white);
   text-align: center;
   border-radius: 8px;
   padding: 16px 24px;
@@ -28,7 +28,7 @@
 }
 
 .snackbar-success {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, var(--success-light), #45a049);
 }
 
 .snackbar-error {
@@ -100,7 +100,7 @@
 .track-delete-btn {
   background: none;
   border: none;
-  color: #888;
+  color: var(--gray-650);
   cursor: pointer;
   padding: 6px 8px;
   border-radius: 4px;
