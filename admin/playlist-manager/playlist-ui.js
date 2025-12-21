@@ -4,13 +4,18 @@
 import { loadUserInfo } from './playlist-auth.js';
 import { loadPlaylists } from './playlist-operations.js';
 import { showSnackbar as centralizedSnackbar } from '/js/utils/index.js';
+import { LoadingSpinner } from '/components/loading-spinner/loading-spinner.js';
 
 // ========================================
 // UI HELPERS
 // ========================================
 
 export function showLoading(show) {
-  document.getElementById('loading-spinner').style.display = show ? 'flex' : 'none';
+  if (show) {
+    LoadingSpinner.showGlobal('Loading...');
+  } else {
+    LoadingSpinner.hideGlobal();
+  }
 }
 
 export function showError(message) {

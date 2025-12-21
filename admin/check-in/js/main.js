@@ -5,17 +5,21 @@
 
 /**
  * Check-in specific loading display
- * This version also hides/shows the main container (special check-in behavior)
+ * Shows the main container when loading completes
  */
 function showCheckInLoading(show = true) {
-    const spinner = document.getElementById('loading-spinner');
     const container = document.getElementById('main-container');
-
-    if (spinner && container) {
-        // When show=true: show spinner, hide container
-        // When show=false: hide spinner, show container
-        spinner.style.display = show ? 'flex' : 'none';
-        container.style.display = show ? 'none' : 'block';
+    
+    if (show) {
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.showGlobal('Loading...');
+        }
+    } else {
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.hideGlobal();
+        }
+        // Show container when loading completes
+        if (container) container.style.display = 'block';
     }
 }
 

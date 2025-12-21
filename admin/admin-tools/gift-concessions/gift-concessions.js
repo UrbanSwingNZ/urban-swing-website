@@ -699,8 +699,15 @@ function closeSuccessModalAndReset() {
  * Show/hide loading spinner
  */
 function showLoading(show = true) {
-    const spinner = document.getElementById('loading-spinner');
-    spinner.style.display = show ? 'flex' : 'none';
+    if (show) {
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.showGlobal('Processing...');
+        }
+    } else {
+        if (window.LoadingSpinner) {
+            window.LoadingSpinner.hideGlobal();
+        }
+    }
 }
 
 /**

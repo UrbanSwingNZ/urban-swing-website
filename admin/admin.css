@@ -8,6 +8,7 @@
 @import url('admin-modals.css');
 @import url('../styles/base/colors.css');
 @import url('../styles/base/buttons.css');
+@import url('../styles/components/loading-spinner.css');
 @import url('../styles/components/tiles.css');
 
 /* Remove white border around gradient */
@@ -280,50 +281,6 @@ html, body {
 }
 
 
-
-/* ========================================
-   LOADING SPINNER - Shared Component
-   Used by all admin pages
-   ======================================== */
-
-.loading-spinner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-dark);
-  z-index: 9999;
-  font-size: 1.2em;
-  color: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-.loading-spinner .spinner,
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 6px solid #eee;
-  border-top: 6px solid var(--pink-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 18px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-spinner p {
-  margin: 0;
-  font-size: 1.1em;
-  color: white;
-}
 
 /* ========================================
    SEARCH BOX - Shared Component

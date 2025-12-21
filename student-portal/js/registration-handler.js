@@ -4,7 +4,7 @@
  */
 
 // Import centralized utilities
-import { isValidEmail } from '/js/utils/index.js';
+import { isValidEmail, showLoadingButton } from '/js/utils/index.js';
 
 let registrationState = {
     emailCheckPassed: false,
@@ -118,25 +118,6 @@ function showErrorInElement(elementId, message) {
     const errorEl = document.getElementById(elementId);
     if (errorEl) {
         errorEl.textContent = message;
-    }
-}
-
-/**
- * Show/hide loading state on button
- * @param {string} buttonId - ID of button element
- * @param {boolean} show - Whether to show loading state
- */
-function showLoadingButton(buttonId, show) {
-    const button = document.getElementById(buttonId);
-    if (!button) return;
-    
-    if (show) {
-        button.disabled = true;
-        button.dataset.originalText = button.textContent;
-        button.innerHTML = `<i class="fas ${ICONS.LOADING}"></i> Checking...`;
-    } else {
-        button.disabled = false;
-        button.textContent = button.dataset.originalText || 'Continue';
     }
 }
 
