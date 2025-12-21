@@ -12,15 +12,15 @@
 /* Student Info Card */
 .student-info-card {
     padding: 16px;
-    background: var(--bg-secondary, #f8f9fa);
-    border-left: 4px solid var(--admin-purple, #9a16f5);
+    background: var(--bg-secondary);
+    border-left: 4px solid var(--purple-primary);
     border-radius: 6px;
 }
 
 .student-info-card h4 {
     margin: 0 0 4px 0;
     font-size: 1.1rem;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .student-info-card p {
@@ -30,12 +30,12 @@
 
 /* Date Picker Styling */
 #casual-entry-date-picker {
-    background: var(--background-color, white);
-    border: 1px solid var(--admin-purple, #9a16f5);
+    background: var(--background-color);
+    border: 1px solid var(--purple-primary);
     border-radius: 6px;
     padding: 10px 12px;
     font-size: 0.95rem;
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -49,14 +49,14 @@
 }
 
 #casual-entry-date-picker:hover {
-    border-color: var(--admin-purple, #9a16f5);
-    color: var(--admin-purple, #9a16f5);
+    border-color: var(--purple-primary);
+    color: var(--purple-primary);
     background: rgba(154, 22, 245, 0.05);
 }
 
 #casual-entry-date-picker:focus {
     outline: none;
-    border-color: var(--admin-purple, #9a16f5);
+    border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
 }

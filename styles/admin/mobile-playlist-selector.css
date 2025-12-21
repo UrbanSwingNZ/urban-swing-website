@@ -99,7 +99,7 @@
     left: 0;
     right: 0;
     max-height: 80vh;
-    background: var(--pm-card-light);
+    background: var(--card-light);
     border-radius: 0 0 16px 16px;
     box-shadow: 0 4px 20px var(--shadow-strong);
     transform: translateY(-100%);
@@ -111,7 +111,7 @@
 
   @media (prefers-color-scheme: dark) {
     .mobile-playlist-dropdown {
-      background: var(--pm-card-dark);
+      background: var(--card-dark);
     }
   }
 
@@ -125,13 +125,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px;
-    border-bottom: 1px solid var(--pm-border-light);
+    border-bottom: 1px solid var(--gray-450);
     background: var(--gradient-header);
   }
 
   @media (prefers-color-scheme: dark) {
     .mobile-playlist-header {
-      border-bottom-color: var(--pm-border-dark);
+      border-bottom-color: var(--hover-dark);
     }
   }
 
@@ -166,17 +166,17 @@
   /* Search box */
   .mobile-playlist-search {
     padding: 15px 20px;
-    border-bottom: 1px solid var(--pm-border-light);
+    border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
     gap: 10px;
-    background: var(--pm-bg-light);
+    background: var(--bg-light);
   }
 
   @media (prefers-color-scheme: dark) {
     .mobile-playlist-search {
-      background: var(--pm-bg-dark);
-      border-bottom-color: var(--pm-border-dark);
+      background: var(--bg-dark);
+      border-bottom-color: var(--hover-dark);
     }
   }
 
@@ -212,14 +212,14 @@
   }
 
   .mobile-playlists-list li {
-    border-bottom: 1px solid var(--pm-border-light);
+    border-bottom: 1px solid var(--gray-450);
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
 
   @media (prefers-color-scheme: dark) {
     .mobile-playlists-list li {
-      border-bottom-color: var(--pm-border-dark);
+      border-bottom-color: var(--hover-dark);
     }
   }
 
@@ -228,12 +228,12 @@
   }
 
   .mobile-playlists-list li:active {
-    background-color: var(--pm-hover-light);
+    background-color: var(--hover-light);
   }
 
   @media (prefers-color-scheme: dark) {
     .mobile-playlists-list li:active {
-      background-color: var(--pm-hover-dark);
+      background-color: var(--hover-dark);
     }
   }
 

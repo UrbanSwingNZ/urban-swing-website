@@ -3,14 +3,16 @@
  * Styled to match the student ID notice banner
  */
 
+@import url('../base/colors.css');
+
 .closedown-banner {
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
     margin: 0 0 2rem 0;
     padding: 1rem 1.5rem;
-    background: #fff3cd;
-    border-bottom: 3px solid #ffc107;
+    background: var(--bg-warning-light);
+    border-bottom: 3px solid var(--warning);
     width: 100%;
     box-sizing: border-box;
 }
@@ -25,7 +27,7 @@
 }
 
 .closedown-banner-content i {
-    color: #f57c00;
+    color: var(--text-warning);
     font-size: 1.25rem;
     margin-top: 0.15rem;
     flex-shrink: 0;
@@ -33,7 +35,7 @@
 
 .closedown-banner-text {
     flex: 1;
-    color: #663c00;
+    color: var(--text-warning-dark);
     font-size: 0.95rem;
     line-height: 1.5;
 }

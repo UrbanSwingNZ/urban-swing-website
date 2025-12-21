@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* ========================================
    ADMIN TOOLS PAGE STYLES
    ======================================== */
@@ -21,10 +23,10 @@
 }
 
 .tool-card {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 30px var(--admin-shadow);
+    box-shadow: 0 10px 30px var(--shadow-medium);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -36,13 +38,13 @@
 
 @media (prefers-color-scheme: dark) {
     .tool-card {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
 .tool-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px var(--admin-shadow);
+    box-shadow: 0 15px 40px var(--shadow-medium);
 }
 
 .tool-card-placeholder {
@@ -52,7 +54,7 @@
 .tool-card h3 {
     font-size: 1.5rem;
     margin-bottom: 15px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .tool-card > p {
@@ -70,7 +72,7 @@
 
 .tool-features li {
     padding: 8px 0;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
     display: flex;
     align-items: center;
@@ -78,7 +80,7 @@
 }
 
 .tool-features i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 0.85rem;
 }
 
@@ -203,4 +205,5 @@
         padding: 20px 10px;
     }
 }
+
 

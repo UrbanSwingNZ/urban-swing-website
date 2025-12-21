@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* Transaction History Styles */
 
 .transactions-content {
@@ -18,7 +20,7 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
 
@@ -45,7 +47,7 @@
 .total-count span,
 .total-amount span {
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.1rem;
 }
 
@@ -53,7 +55,7 @@
 .table-container {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     overflow: hidden;
 }
 
@@ -63,7 +65,7 @@
 }
 
 #transactions-table thead {
-    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    background: var(--gradient-full);
     color: white;
 }
 
@@ -81,12 +83,12 @@
 }
 
 #transactions-table tbody tr {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--hover-light);
     transition: background-color 0.2s ease;
 }
 
 #transactions-table tbody tr:hover {
-    background-color: #f8f9ff;
+    background-color: var(--gray-250);
 }
 
 #transactions-table tbody tr:last-child {
@@ -117,7 +119,7 @@
 /* Date Column */
 .transaction-date {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
 }
 
 /* Type Column with Badges */
@@ -139,34 +141,34 @@
 }
 
 .type-badge.concession {
-    background: rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple);
+    background: var(--badge-package-bg);
+    color: var(--purple-primary);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
-    background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
+    background: var(--badge-casual-bg);
+    color: var(--blue-primary);
 }
 
 .type-badge.casual-student {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    background: var(--badge-info-bg);
+    color: var(--badge-info-text);
 }
 
 .type-badge.gift {
-    background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
 }
 
 .type-badge.online {
-    background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    background: var(--badge-teal-bg);
+    color: var(--badge-teal-text);
 }
 
 .type-badge.reversed {
-    background: #ffebee;
-    color: #c62828;
+    background: var(--badge-error-bg);
+    color: var(--badge-error-text);
     margin-right: 0.5rem;
 }
 
@@ -191,34 +193,34 @@
 }
 
 .payment-badge.cash {
-    background: #fff3e0;
-    color: #e65100;
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
 }
 
 .payment-badge.eftpos {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: var(--badge-blue-bg);
+    color: var(--badge-blue-text);
 }
 
 .payment-badge.bank {
-    background: #f3e5f5;
-    color: #6a1b9a;
+    background: var(--badge-purple-bg);
+    color: var(--badge-purple-text);
 }
 
 .payment-badge.online {
-    background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    background: var(--badge-teal-bg);
+    color: var(--badge-teal-text);
 }
 
 .payment-badge.unknown {
-    background: #f5f5f5;
-    color: #616161;
+    background: var(--badge-neutral-bg);
+    color: var(--badge-neutral-text);
 }
 
 /* Amount Column */
 .amount {
     font-weight: 700;
-    color: #2c5282;
+    color: var(--blue-heading);
     font-size: 1rem;
 }
 
@@ -228,23 +230,23 @@
     padding: 4rem 2rem;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .no-data i {
     font-size: 4rem;
-    color: #e0e0e0;
+    color: var(--gray-450);
     margin-bottom: 1rem;
 }
 
 .no-data h3 {
-    color: #666;
+    color: var(--text-light);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
 }
 
 .no-data p {
-    color: #999;
+    color: var(--text-muted);
     font-size: 1rem;
 }
 
@@ -258,7 +260,7 @@
     padding: 1rem;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .pagination-btn {
@@ -287,7 +289,7 @@
 .transaction-card {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     padding: 1.25rem;
     margin-bottom: 1rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -295,7 +297,7 @@
 
 .transaction-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .transaction-card.reversed {
@@ -315,19 +317,19 @@
     align-items: flex-start;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid var(--hover-light);
 }
 
 .card-date {
     font-weight: 700;
     font-size: 1.1rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .card-amount {
     font-weight: 700;
     font-size: 1.3rem;
-    color: #2c5282;
+    color: var(--blue-heading);
 }
 
 .card-body {

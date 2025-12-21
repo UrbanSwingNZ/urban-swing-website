@@ -3,6 +3,8 @@
    Modern buttons with gradients and effects
    ======================================== */
 
+@import url('../../styles/base/colors.css');
+
 /* Base Button Styles */
 .btn {
   display: inline-flex;
@@ -24,7 +26,7 @@
 
 /* Primary Button - Gradient */
 .btn-primary {
-  background: linear-gradient(135deg, var(--urban-blue), var(--urban-purple));
+  background: var(--gradient-blue-purple);
   color: white;
   box-shadow: var(--shadow-sm);
 }
@@ -32,7 +34,7 @@
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  background: linear-gradient(135deg, var(--urban-purple), var(--urban-pink));
+  background: var(--gradient-purple-pink);
 }
 
 .btn-primary:active {
@@ -43,12 +45,12 @@
 /* Secondary Button - Outline */
 .btn-secondary {
   background: transparent;
-  color: var(--urban-pink);
-  border: 2px solid var(--urban-pink);
+  color: var(--pink-primary);
+  border: 2px solid var(--pink-primary);
 }
 
 .btn-secondary:hover {
-  background: var(--urban-pink);
+  background: var(--pink-primary);
   color: white;
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
@@ -76,7 +78,7 @@
 }
 
 .btn-success:hover {
-  background: #218838;
+  background: var(--success-lighter);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -88,7 +90,7 @@
 }
 
 .btn-danger:hover {
-  background: #c82333;
+  background: var(--error-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -180,7 +182,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--urban-pink), var(--urban-purple));
+  background: var(--gradient-purple-pink);
   color: white;
   padding: var(--space-md) var(--space-xl);
   text-decoration: none;
@@ -197,7 +199,7 @@
 
 .register-button:hover,
 .cta-button:hover {
-  background: linear-gradient(135deg, var(--urban-purple), var(--urban-blue));
+  background: var(--gradient-blue-purple);
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
   text-decoration: none;

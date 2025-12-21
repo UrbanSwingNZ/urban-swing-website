@@ -6,6 +6,61 @@ This document provides a comprehensive analysis of refactoring opportunities acr
 
 ---
 
+## 📊 PROGRESS TRACKER
+
+**Completed Items:**
+- ✅ **Item #11:** Centralized Utilities Library (Dec 21, 2025) - _Also covers #2, #3, #6, #7_
+  - 59 files changed, +852/-1,034 lines (net -182 lines)
+  - Created `/js/utils/` with 6 modules
+  - Fixed 6 bugs during testing
+  - Comprehensive testing completed
+  - **Documentation:** See `CENTRALIZED_UTILS_SUMMARY.md`
+
+- ✅ **Item #1:** Icon Consolidation (Dec 21, 2025) - _Combined with Item #4_
+  - Created `/js/utils/icon-constants.js` with 60+ standardized icons
+  - Eliminated duplicate icon logic in 6+ files
+  - Updated 17+ JavaScript files to use icon constants
+  - **Documentation:** See `CSS_COLORS_AND_ICONS_REFACTORING.md`
+
+- ✅ **Item #4:** CSS Color Consolidation (Dec 21, 2025) - _Combined with Item #1_
+  - Replaced 180+ --admin-* variable references
+  - Replaced 800+ hardcoded color values (600+ hex, 200+ rgba)
+  - Fixed 30+ files with undefined CSS variables (missing borders)
+  - Modified ~175+ CSS files, 2 HTML files, 1 JS file
+  - Fixed 3 JavaScript bugs (handleLogout, select-all, modal mode)
+  - Added @import statements to 22+ CSS files
+  - Consolidated 60+ inline gradients to use CSS variables
+  - Removed all legacy --admin-* and --urban-* variables
+  - **Documentation:** See `CSS_COLORS_AND_ICONS_REFACTORING.md`
+
+**Next Recommended Items:**
+- 🔴 **Item #5:** Snackbar system (5 hours) - _Can now use centralized utilities_
+- 🔴 **Item #8:** Loading spinner (3 hours) - _Can now use centralized utilities_
+- 🔴 **Item #9:** Modal consolidation (4 hours) - _Can leverage utilities and consistent styling_
+
+**Total Progress:** 7 of 15 items complete (47%) | **Time Saved:** ~24 hours completed
+
+---
+
+## 🚀 QUICK START FOR NEXT SESSION
+
+To resume refactoring work:
+
+1. **Review Progress:** Check completed items above (Items #1, #4, #11 complete)
+2. **Pick Next Item:** Recommended: Item #5 (Snackbar), #8 (Loading spinner), or #9 (Modal consolidation)
+3. **Read Item Details:** See full description in sections below
+4. **Check Dependencies:** Items #1, #2, #3, #4, #6, #7, #11 are done
+5. **Reference Docs:** 
+   - See `CENTRALIZED_UTILS_SUMMARY.md` for utility usage
+   - See `CSS_COLORS_AND_ICONS_REFACTORING.md` for colors/icons details
+
+**Key Context:**
+- `/js/utils/` contains centralized utilities (escapeHtml, formatDate, formatCurrency, etc.)
+- `/styles/base/colors.css` is the authoritative color system
+- `/css/` directory is legacy - being phased out in favor of `/styles/`
+
+---
+
 ## ⚡ RECOMMENDED IMPLEMENTATION ORDER
 
 **Important:** While items below are ordered by difficulty, there's a key dependency that will save significant work if addressed first.
@@ -31,24 +86,23 @@ This means **doing the same work twice**.
 
 ### Better Approach
 
-**Week 1: Foundation (17 hours)**
-1. ✅ **#11: Create centralized utilities library FIRST** (12 hours)
+**Week 1: Foundation (17 hours) - ✅ COMPLETE**
+1. ✅ **#11: Create centralized utilities library FIRST** (12 hours) - **COMPLETE**
    - Set up the proper structure: `/js/utils/`
    - Create `dom-utils.js`, `format-utils.js`, `validation-utils.js`
    - This gives you a "home" for all the utility functions
-2. ✅ **#1: Consolidate icon usage** (2 hours) - Independent, no dependencies
-3. ✅ **#4: Consolidate color variables** (3 hours) - CSS-focused, independent from JS work
+2. ✅ **#1: Consolidate icon usage** (2 hours) - **COMPLETE**
+   - Created `/js/utils/icon-constants.js`
+   - Updated 17+ files to use centralized icons
+3. ✅ **#4: Consolidate color variables** (5 hours) - **COMPLETE** (took longer due to scope)
+   - Replaced 800+ hardcoded colors across 175+ files
+   - Fixed missing borders and JavaScript bugs
+   - Consolidated all color variables to `/styles/base/colors.css`
 
-**Week 2: Populate Utilities (6 hours)**
-4. ✅ **#2, #3, #6, #7 together** (~6 hours total instead of 9)
-   - Now you just move functions into the pre-existing structure
-   - No double-refactoring needed
-   - All imports point to the right place from the start
-
-**Week 3: Components (12 hours)**
-5. ✅ **#5: Snackbar system** (5 hours)
-6. ✅ **#8: Loading spinner** (3 hours)
-7. ✅ **#9: Modal consolidation** (4 hours)
+**Week 2: Components (12 hours) - NEXT UP**
+4. 🔴 **#5: Snackbar system** (5 hours)
+5. 🔴 **#8: Loading spinner** (3 hours)
+6. 🔴 **#9: Modal consolidation** (4 hours)
 
 **Week 4-6: Larger Projects (40 hours)**
 8. ✅ **#10: Split large files** (20 hours)
@@ -437,87 +491,88 @@ import { ConfirmationModal } from '@components/modals/confirmation-modal';
 
 ## �🟢 Quick Wins (Easy - 1-2 hours each)
 
-### 1. Consolidate Icon Usage
+### 1. ✅ Consolidate Icon Usage - **COMPLETE**
 
-**Issue:** Inconsistent icon classes used for the same actions across the codebase.
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed with Item #4 (CSS Colors)**
 
-**Examples found:**
-- Delete icons: `fa-trash`, `fa-trash-alt`, `fa-times` (sometimes used for delete)
-- Close icons: `fa-times`, `fa-close`, `fa-remove` (all mean the same thing)
+**What Was Done:**
+- Created `/js/utils/icon-constants.js` with 60+ standardized icon constants
+- Added `getMessageIcon(type)` helper function for message type icons
+- Added `createIcon(name, classes)` helper function
+- Exported from `/js/utils/index.js` for both ES6 modules and global access
+- Updated 15+ JavaScript files to use icon constants
+- Eliminated duplicate icon mapping logic in 6+ files
 
-**Recommendation:**
-- Create an icon constants file (`/js/icon-constants.js` or add to existing utils)
-- Define standard icons:
-  ```javascript
-  export const ICONS = {
-    DELETE: 'fa-trash-alt',
-    CLOSE: 'fa-times',
-    EDIT: 'fa-edit',
-    SAVE: 'fa-save',
-    WARNING: 'fa-exclamation-triangle',
-    SUCCESS: 'fa-check-circle',
-    ERROR: 'fa-exclamation-circle',
-    INFO: 'fa-info-circle'
-  };
-  ```
-- Find and replace all hardcoded icon strings with constants
+**Key Replacements:**
+- `'fa-trash'` or `'fa-trash-alt'` → `ICONS.DELETE`
+- `'fa-edit'` → `ICONS.EDIT`
+- `'fa-spinner fa-spin'` → `ICONS.LOADING`
+- `'fa-check-circle'` → `ICONS.SUCCESS` or `getMessageIcon('success')`
+- `'fa-exclamation-circle'` → `ICONS.ERROR`
+- `'fa-exclamation-triangle'` → `ICONS.WARNING`
+
+**Result:** Single source of truth for all icons, consistent icon usage across all sections, easy to update icons globally.
+
+**Documentation:** See `ICON_CONSOLIDATION_ANALYSIS.md` and `COMBINED_REFACTORING_SUMMARY.md` for full details.
 
 **Impact:** Better consistency, easier to update icons globally, clearer intent in code.
 
 ---
 
-### 2. Consolidate `escapeHtml()` Function
+### 2. ✅ Consolidate `escapeHtml()` Function - **COMPLETE**
 
-**Issue:** The `escapeHtml()` utility function is duplicated in **at least 8 different files**:
-- `student-portal/js/utils.js`
-- `student-portal/js/ui/modal.js`
-- `student-portal/js/registration/ui-helpers.js`
-- `admin/admin-tools/merch-orders/merch-orders-utils.js`
-- `admin/admin-tools/closedown-nights/closedown-nights.js`
-- `admin/admin-tools/transactions/js/utils.js`
-- `admin/check-in/js/utils.js`
-- And more...
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed as part of Item #11**
 
-**Recommendation:**
-- Create a shared utilities module: `/js/shared-utils.js`
-- Export `escapeHtml()` from there
-- Replace all duplicate implementations with imports
-- Consider adding it to a global utilities object if using non-module scripts
+**What Was Done:**
+- Created `/js/utils/dom-utils.js` with centralized `escapeHtml()` function
+- Eliminated 10+ duplicate implementations across 8+ files
+- All files now import from `/js/utils/index.js`
+- Added JSDoc documentation and null/undefined safety
 
-**Impact:** Reduced code duplication (~50-80 lines), single source of truth for XSS protection.
+**Result:** Single source of truth for XSS protection, ~80 lines of duplication removed.
+
+See [Item #11](#11-create-centralized-utilities-library--complete) for full implementation details.
 
 ---
 
-### 3. Consolidate `isValidEmail()` / Email Validation
+### 3. ✅ Consolidate `isValidEmail()` / Email Validation - **COMPLETE**
 
-**Issue:** Email validation regex is duplicated in multiple files:
-- `student-portal/js/utils.js` - has `isValidEmail()`
-- `student-portal/js/registration-handler.js` - duplicate implementation
-- `js/password-reset-utils.js` - uses inline regex
-- Different regex patterns in some cases
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed as part of Item #11**
 
-**Recommendation:**
-- Keep one canonical implementation in `/js/shared-utils.js`
-- Export and import consistently
-- Use the same regex pattern everywhere: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+**What Was Done:**
+- Created `/js/utils/validation-utils.js` with centralized `isValidEmail()` function
+- Eliminated 2+ duplicate implementations with different regex patterns
+- All files now import from `/js/utils/index.js`
+- Standardized on single regex pattern: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
 
-**Impact:** Consistent email validation, easier to update validation logic.
+**Result:** Consistent email validation across entire codebase.
+
+See [Item #11](#11-create-centralized-utilities-library--complete) for full implementation details.
 
 ---
 
-### 4. Consolidate Color Variables in CSS
+### 4. ✅ Consolidate Color Variables in CSS - **COMPLETE**
 
-**Issue:** Hardcoded hex colors found throughout CSS files despite having a centralized color system in `/styles/base/colors.css`.
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed with Item #1 (Icon Consolidation)**
 
-**Examples:**
-- Date picker still uses hardcoded `#9a16f5`, `#e0e0e0`, `rgba(154, 22, 245, 0.1)`, etc.
-- Many CSS files have colors that should reference CSS variables
+**What Was Done:**
+- Added missing color variables (--shadow-text, --border-overlay-strong) to `/styles/base/colors.css`
+- Removed duplicate custom `--admin-*` variables from admin.css
+- Deleted redundant `/student-portal/css/base/variables.css` file
+- Replaced 180+ `--admin-*` variable references with standard color variables across 22 CSS files
+- Replaced 200+ hardcoded hex/rgba colors with CSS variables
+- Added @import statements to 22 CSS files for self-containment
 
-**Recommendation:**
-- Audit all CSS files for hardcoded colors using grep
-- Replace with appropriate CSS variables from `/styles/base/colors.css`
-- For colors not in the system, add them to the colors file first
-- Example: Replace `#9a16f5` with `var(--purple-primary)`
+**Key Replacements:**
+- `var(--admin-purple)` → `var(--purple-primary)`
+- `var(--admin-blue)` → `var(--blue-primary)`
+- `#9a16f5` → `var(--purple-primary)`
+- `#e0e0e0` → `var(--border-light)` or `var(--gray-450)`
+- `rgba(0,0,0,0.2)` → `var(--shadow-medium)`
+
+**Result:** All colors reference single source of truth (`/styles/base/colors.css`), easy to update brand colors globally, consistent visual experience.
+
+**Documentation:** See `CSS_COLOR_CONSOLIDATION_ANALYSIS.md` and `COMBINED_REFACTORING_SUMMARY.md` for full details.
 
 **Impact:** Easier theming, consistent branding, single source for color changes.
 
@@ -525,7 +580,11 @@ import { ConfirmationModal } from '@components/modals/confirmation-modal';
 
 ## 🟡 Medium Effort (Moderate - 3-5 hours each)
 
-### 5. Consolidate Snackbar/Notification System
+### 5. 🔴 Consolidate Snackbar/Notification System
+
+**Status:** 🔴 TODO | **Estimated Time:** 5 hours | **Dependencies:** Item #11 ✅ (complete)
+
+> **💡 TIP:** Can now leverage centralized utilities from Item #11 for this work.
 
 **Issue:** Snackbar/notification functionality is duplicated in **13+ files** with slightly different implementations:
 - `student-portal/profile/profile-old.js`
@@ -562,75 +621,45 @@ import { ConfirmationModal } from '@components/modals/confirmation-modal';
 
 ---
 
-### 6. Consolidate Date Formatting Functions
+### 6. ✅ Consolidate Date Formatting Functions - **COMPLETE**
 
-**Issue:** Date formatting is implemented differently across many files:
-- `formatDate()` function exists in at least 10+ files
-- Different formats in different places:
-  - Some use `toLocaleDateString('en-NZ')`
-  - Different options objects
-  - Some format as DD/MM/YYYY, others as "Month Day, Year"
-- Functions: `formatDate()`, `formatDateDDMMYYYY()`, `formatDateToString()`, `parseDateString()`, `formatTime()`, `formatTimestamp()`, `formatDateForBanner()`
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed as part of Item #11**
 
-**Files with date utilities:**
-- `student-portal/transactions/transaction-renderer.js`
-- `student-portal/prepay/prepaid-classes-service.js`
-- `student-portal/js/utils.js`
-- `student-portal/concessions/concessions.js`
-- `admin/check-in/js/date-manager.js`
-- `admin/check-in/js/utils.js`
-- `admin/student-database/js/concessions/concessions-actions.js`
-- `functions/closedown-nights/closedown-nights.js`
-- And more...
+**What Was Done:**
+- Created `/js/utils/format-utils.js` with centralized date formatting functions
+- Created `/js/utils/date-utils.js` with date manipulation utilities
+- Eliminated 7+ duplicate `formatDate()` implementations
+- Consolidated functions: `formatDate()`, `formatDateDDMMYYYY()`, `formatTime()`, `formatTimestamp()`, `formatDateToString()`, `parseDateString()`, and more
+- All use consistent NZ locale formatting
+- Added comprehensive JSDoc documentation
 
-**Recommendation:**
-- Create a centralized date utilities module: `/js/date-utils.js`
-- Provide standard formatters:
-  ```javascript
-  export const DateFormatters = {
-    formatDate(date, locale = 'en-NZ'),
-    formatDateTime(date),
-    formatTime(date),
-    formatDateDDMMYYYY(date),
-    parseDate(dateString),
-    formatRelative(date), // "2 days ago"
-    formatForBanner(date),
-    // etc.
-  };
-  ```
-- Consider using a library like `date-fns` or `dayjs` for consistency
-- Replace all implementations with imports
+**Result:** ~200 lines of duplication removed, consistent date handling across entire app.
 
-**Impact:** ~150-250 lines of duplicated code removed, consistent date formatting across app.
+See [Item #11](#11-create-centralized-utilities-library--complete) for full implementation details.
 
 ---
 
-### 7. Consolidate Currency Formatting
+### 7. ✅ Consolidate Currency Formatting - **COMPLETE**
 
-**Issue:** `formatCurrency()` function duplicated in multiple places:
-- `student-portal/js/utils.js`
-- `admin/admin-tools/transactions/js/utils.js`
-- Some files use inline formatting like `$${amount.toFixed(2)}`
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed as part of Item #11**
 
-**Recommendation:**
-- Add to shared utils or create `/js/currency-utils.js`
-- Standard implementation:
-  ```javascript
-  export function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-NZ', {
-      style: 'currency',
-      currency: 'NZD'
-    }).format(amount);
-  }
-  ```
-- Replace all implementations
-- Consider adding variants: `formatCurrencyCompact()`, `formatCurrencyCents()`, etc.
+**What Was Done:**
+- Created `/js/utils/format-utils.js` with centralized `formatCurrency()` function
+- Uses Intl.NumberFormat for proper NZD formatting (superior to all previous implementations)
+- Eliminated 3+ duplicate implementations
+- Replaced inline `$${amount.toFixed(2)}` patterns across multiple files
 
-**Impact:** Consistent currency display, easier to change currency or format.
+**Result:** Consistent currency display across entire app, proper internationalization support.
+
+See [Item #11](#11-create-centralized-utilities-library--complete) for full implementation details.
 
 ---
 
-### 8. Create Shared Loading/Spinner Component
+### 8. 🔴 Create Shared Loading/Spinner Component
+
+**Status:** 🔴 TODO | **Estimated Time:** 3 hours | **Dependencies:** Item #11 ✅ (complete)
+
+> **💡 TIP:** Can now leverage centralized `showLoading()` from Item #11 as foundation.
 
 **Issue:** Loading spinners implemented differently across the app:
 - HTML structure varies (some in `prepay.css`, some in `merchandise.css`)
@@ -664,7 +693,9 @@ import { ConfirmationModal } from '@components/modals/confirmation-modal';
 
 ---
 
-### 9. Consolidate Modal Implementations
+### 9. 🔴 Consolidate Modal Implementations
+
+**Status:** 🔴 TODO | **Estimated Time:** 4 hours | **Dependencies:** None
 
 **Issue:** Two different modal systems exist:
 1. **New system** (good): `/components/modals/` with `BaseModal` and `ConfirmationModal`
@@ -690,7 +721,9 @@ import { ConfirmationModal } from '@components/modals/confirmation-modal';
 
 ## 🔴 Larger Refactoring Projects (Complex - 8-20 hours each)
 
-### 10. Split Large JavaScript Files into Modules
+### 10. 🔴 Split Large JavaScript Files into Modules
+
+**Status:** 🔴 TODO | **Estimated Time:** 20 hours | **Dependencies:** None
 
 **Issue:** Many JavaScript files exceed 400-1000+ lines, making them hard to maintain.
 
@@ -731,285 +764,53 @@ admin/playlist-manager/
 
 ---
 
-### 11. Create Centralized Utilities Library ✅ **COMPLETE**
+### 11. ✅ Create Centralized Utilities Library - **COMPLETE**
 
-**Status:** All phases complete including comprehensive user testing. Item #11 successfully implemented and deployed.
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Tested, Deployed, and Merged to main**
 
 **What Was Done:**
-- ✅ Created `/js/utils/` with 6 modules (535 lines of documented utilities)
-- ✅ Migrated 17 files to use centralized utilities
-- ✅ Centralized handleLogout across 12 files, removed 9 redundant logout handlers
-- ✅ Deleted 5 old utils.js wrapper files
-- ✅ Updated 7 HTML files to import from centralized location
-- ✅ Eliminated ~200+ lines of duplicate code
-- ✅ Consolidated 11+ duplicate functions (60+ instances)
-- ✅ Added comprehensive JSDoc documentation
-- ✅ Comprehensive user testing completed
-- ✅ Fixed 6 bugs discovered during testing:
-  - Module loading issues in student portal (registration, concessions)
-  - Missing centralized utilities imports (4 student portal pages)
-  - Redundant logout wrappers and event listeners cleanup
-  - Logout button spacing fix
+- Created `/js/utils/` with 6 modules (535 lines of documented utilities)
+- Migrated 17 files, deleted 5 old utils.js wrapper files
+- Consolidated 11+ functions: escapeHtml, formatDate, formatCurrency, isValidEmail, showLoading, handleLogout, and more
+- Eliminated 60+ duplicate instances across codebase
+- Fixed 6 bugs discovered during comprehensive user testing
+- Net result: **59 files changed, +852/-1,034 lines (net -182 lines, 15% code reduction)**
 
-**Documentation:**
-- `UTILITY_AUDIT.md` - Complete audit of all utility functions
-- `CENTRALIZED_UTILS_TESTING.md` - Comprehensive test plan with 30+ test cases
-- `CENTRALIZED_UTILS_SUMMARY.md` - Implementation summary and next steps
+**Key Utilities Created:**
+- `/js/utils/dom-utils.js` - `escapeHtml()`, `createElement()`
+- `/js/utils/format-utils.js` - `formatDate()`, `formatCurrency()`, `formatTimestamp()`, `toTitleCase()`
+- `/js/utils/validation-utils.js` - `isValidEmail()`, `hasFieldChanged()`, `isRequired()`
+- `/js/utils/date-utils.js` - `normalizeDate()`, `isToday()`, date string utilities
+- `/js/utils/ui-utils.js` - `showLoading()`, `showError()`, `navigateTo()`, `handleLogout()`
+- `/js/utils/index.js` - Main export aggregator
 
-**Issue:** Utility functions scattered across multiple `utils.js` files with duplication and inconsistency.
-
-**Current state BEFORE refactoring:**
-- `student-portal/js/utils.js` (131 lines)
-- `admin/student-database/js/utils.js` (143 lines)
-- `admin/check-in/js/utils.js` (202 lines)
-- `admin/admin-tools/transactions/js/utils.js` (60 lines)
-- `admin/admin-tools/concession-types/utils.js` (36 lines)
-
-**Common duplications across these files:**
-- `escapeHtml()` - XSS protection (10+ duplicates found)
-- `formatDate()` - Date formatting (7+ duplicates found)
-- `formatCurrency()` - Currency formatting (3+ duplicates found)
-- `showSnackbar()` - Notifications (8+ duplicates found, becomes component in #5)
-- `showLoading()` - Loading states (8+ duplicates found)
-- `isValidEmail()` - Email validation (2+ duplicates found)
-- `formatTimestamp()` - Firestore timestamps (4+ duplicates found)
-- `toTitleCase()` - Text capitalization (2+ duplicates found)
-
----
-
-#### Implementation Results
-
-**Created Structure:**
-
-```
-js/
-└── utils/
-    ├── index.js              # Main export file (27 lines)
-    ├── dom-utils.js          # DOM manipulation (58 lines)
-    ├── format-utils.js       # Formatting utilities (169 lines)
-    ├── validation-utils.js   # Validation functions (52 lines)
-    ├── date-utils.js         # Date utilities (109 lines)
-    └── ui-utils.js           # UI state management (42 lines)
-```
-
-**Total:** ~457 lines of centralized, documented utilities
-
-**Files Migrated:**
-
-Primary utils.js files (5):
-- ✅ `student-portal/js/utils.js` (131→75 lines, 43% reduction)
-- ✅ `admin/student-database/js/utils.js` (143→95 lines, 33% reduction)
-- ✅ `admin/check-in/js/utils.js` (202→99 lines, 51% reduction)
-- ✅ `admin/admin-tools/transactions/js/utils.js` (60→56 lines, 7% reduction)
-- ✅ `admin/admin-tools/concession-types/utils.js` (36→46 lines, expanded with docs)
-
-**Additional Files Migrated (10 files):**
-1. `student-portal/js/registration/ui-helpers.js` - escapeHtml, showSnackbar
-2. `student-portal/js/ui/modal.js` - escapeHtml
-3. `student-portal/js/registration-handler.js` - isValidEmail
-4. `admin/check-in/js/students.js` - getStudentFullName (documented)
-5. `admin/admin-tools/gift-concessions/gift-concessions.js` - formatDate, escapeHtml, showSnackbar
-6. `admin/admin-tools/closedown-nights/closedown-nights.js` - formatDate, formatTimestamp, escapeHtml
-7. `student-portal/concessions/concessions.js` - formatDateDDMMYYYY, showLoading
-8. `admin/check-in/js/checkin-transactions.js` - formatCurrency
-9. `admin/playlist-manager/playlist-ui.js` - showSnackbar
-10. `admin/admin-tools/email-templates/modules/ui/event-listeners.js` - showSnackbar (REMOVED - now imports from centralized)
-
----
-
-#### Functions Implemented
-
-**dom-utils.js:**
+**Usage Example:**
 ```javascript
-export function escapeHtml(text)                    // XSS protection (10+ duplicates eliminated)
-export function createElement(tag, attrs, content)  // Element creation helper
+import { escapeHtml, formatDate, formatCurrency, isValidEmail } from '/js/utils/index.js';
 ```
 
-**format-utils.js:**
-```javascript
-export function formatDate(date, options)           // NZ locale date (7+ duplicates eliminated)
-export function formatDateDDMMYYYY(date)            // DD/MM/YYYY format
-export function formatTime(timestamp)               // Time only
-export function formatTimestamp(timestamp)          // Date + time (4 duplicates eliminated)
-export function formatCurrency(amount)              // NZD currency (3 duplicates eliminated)
-export function toTitleCase(text)                   // Title Case String (2 duplicates eliminated)
-```
-
-**validation-utils.js:**
-```javascript
-export function isValidEmail(email)                 // Email validation (2 duplicates eliminated)
-export function hasFieldChanged(current, original)  // Form change detection
-export function isRequired(value)                   // Required field validation
-```
-
-**date-utils.js:**
-```javascript
-export function normalizeDate(date)                 // Set date to start of day
-export function isToday(timestamp)                  // Check if date is today
-export function getStartOfToday()                   // Get midnight today
-export function getEndOfToday()                     // Get 23:59:59 today
-export function getTodayDateString()                // Today as YYYY-MM-DD
-export function formatDateToString(date)            // Date to YYYY-MM-DD
-export function parseDateString(dateString)         // YYYY-MM-DD to Date object
-```
-
-**ui-utils.js:**
-```javascript
-export function showLoading(show)                   // Loading spinner control (8+ duplicates eliminated)
-export function showError(message)                  // Error alert display (3 duplicates eliminated)
-export function navigateTo(path)                    // Navigation helper
-```
-
-**index.js:**
-```javascript
-// Re-exports all utilities for easy importing
-export * from './dom-utils.js';
-export * from './format-utils.js';
-export * from './validation-utils.js';
-export * from './date-utils.js';
-export * from './ui-utils.js';
-```
-
----
-
-#### Testing Results ✅
-
-**User Testing Completed:** December 21, 2025
-
-**Testing Coverage:**
-- ✅ Admin Portal: All sections tested (Check-In, Student Database, Transactions, Gift Concessions, Closedown Nights, Concession Types, Playlist Manager)
-- ✅ Student Portal: Dashboard, Profile, Concessions, Transactions, Check-ins tested (payment flows excluded as not required)
-- ✅ Logout functionality: Tested and working in both admin and student portals
-- ✅ Critical utility functions: formatDate, formatCurrency, escapeHtml, isValidEmail, showLoading, showSnackbar all verified
-- ✅ Console errors: None found after fixes applied
-- ✅ No regressions: All existing functionality preserved
-
-**Test Results:** PASS - All critical paths working correctly
-
-**Original Testing Plan:**
-
-For reference, here's what testing looked like:
-
-```javascript
-// Quick browser console test
-import { escapeHtml, formatCurrency, formatDate } from '/js/utils/index.js';
-
-console.log('XSS:', escapeHtml('<script>alert("xss")</script>'));
-// Expected: &lt;script&gt;alert("xss")&lt;/script&gt;
-
-console.log('Currency:', formatCurrency(1234.56));
-// Expected: $1,234.56
-
-console.log('Date:', formatDate(new Date()));
-// Expected: 19 Dec 2025 (or current date)
-```
-
-**Critical User Flows:**
-- Student registration (email validation, XSS protection)
-- Check-in flow (loading spinner behavior)
-- Transaction displays (currency, date formatting)
-- Admin operations (various utilities)
-
-**Phase 6: Cleanup ✅ COMPLETE**
-
-Files DELETED:
-- ✅ `student-portal/js/utils.js`
-- ✅ `admin/student-database/js/utils.js`
-- ✅ `admin/check-in/js/utils.js`
-- ✅ `admin/admin-tools/transactions/js/utils.js`
-- ✅ `admin/admin-tools/concession-types/utils.js`
-
-HTML Files Updated:
-- ✅ `student-portal/purchase/index.html`
-- ✅ `student-portal/profile/index.html`
-- ✅ `student-portal/prepay/index.html`
-- ✅ `admin/student-database/index.html`
-- ✅ `admin/check-in/index.html`
-- ✅ `admin/admin-tools/transactions/index.html`
-- ✅ `admin/admin-tools/concession-types.html`
-
-Additional Files Fixed During Testing:
-- ✅ `student-portal/index.html`
-- ✅ `student-portal/dashboard/index.html`
-- ✅ `student-portal/transactions/index.html`
-- ✅ `student-portal/concessions/index.html`
-- ✅ `student-portal/check-ins/index.html`
-- ✅ `admin/components/admin-header.html`
-
-Final Actions:
-- ✅ All remaining references updated
-- ✅ Final tests passed
-- ✅ Changes committed and pushed to `refactor-centralised-utilities` branch
-
----
-
-#### Key Implementation Decisions
-
-**1. ES6 Modules:**
-All utilities use modern import/export syntax with absolute paths:
-```javascript
-import { formatDate, formatCurrency } from '/js/utils/index.js';
-```
-
-**2. Backward Compatibility:**
-Migrated utils.js files import from centralized library and re-export for compatibility:
-```javascript
-// Re-export for backward compatibility during migration
-export {
-    escapeHtml,
-    formatCurrency,
-    formatDate
-};
-```
-
-**3. Domain-Specific Functions Retained:**
-- `showSnackbar()` kept in individual files (becomes shared component in Item #5)
-- `API_CONFIG` kept in portal-specific utils
-- Special check-in `showLoading()` behavior preserved
-
-**4. Enhanced Implementations:**
-- `formatCurrency()` uses Intl.NumberFormat (superior to all existing versions)
-- `escapeHtml()` handles null/undefined safely
-- All functions have JSDoc documentation
-
----
-
-#### Impact Summary
-
-**Code Quality:**
+**Impact:**
 - ✅ Single source of truth for common utilities
-- ✅ Consistent implementations across codebase
-- ✅ Comprehensive JSDoc documentation
-- ✅ Better IDE autocomplete support
+- ✅ Consistent XSS protection, date/currency formatting across entire app
+- ✅ **Items #2, #3, #6, #7 effectively complete** (escapeHtml, isValidEmail, formatDate, formatCurrency)
+- ✅ Foundation established for Items #5 (snackbar) and #8 (loading spinner)
+- ✅ Easier maintenance: update once, fixes everywhere
+- ✅ Better developer experience: JSDoc documentation, IDE autocomplete
 
-**Immediate Benefits:**
-- ✅ ~200+ lines eliminated from migrated files
-- ✅ 11+ duplicate functions consolidated
-- ✅ 60+ duplicate instances replaced
-- ✅ Consistent XSS protection
-- ✅ Centralized logout handling
-- ✅ Easier to maintain (update once, fixes everywhere)
-- ✅ All console errors resolved
-
-**Long-term Benefits:**
-- Faster feature development (import vs rewrite)
-- Fewer bugs (single tested implementation)
-- Easier onboarding (utilities in one place)
-- Foundation for Items #5 a4 hours (implementation + testing + bug fixes)
+**Full Documentation:** See `CENTRALIZED_UTILS_SUMMARY.md` for implementation details and `UTILITY_AUDIT.md` for complete function inventory.
 
 ---
 
-**Status:** ✅ **COMPLETE & DEPLOYED** - All phases complete, tested, and merged. See `CENTRALIZED_UTILS_SUMMARY.md` for full details.
+### 12. 🔴 Consolidate CSS Architecture
 
-**Deployment Date:** December 21, 2025  
-**Branch:** `refactor-centralised-utilities` (pushed and ready for merge)  
-**Test Results:** PASS - All critical functionality verified
+**Status:** 🔴 TODO | **Estimated Time:** 20 hours | **Dependencies:** None
 
-**Status:** ✅ **COMPLETE** - Ready for user testing. See `CENTRALIZED_UTILS_SUMMARY.md` for full details.
-
----
-
-### 12. Consolidate CSS Architecture
+> **⚠️ CRITICAL CSS CONTEXT:**
+> - `/styles/` is the **source of truth** - This is the newer, preferred location
+> - `/css/` is **legacy** - Original location, being phased out
+> - `/styles/base/colors.css` is **THE** color system - all color variables should reference this
+> - Many files have custom variables that should be replaced with colors.css references
+> - See "🎨 CRITICAL CSS CONTEXT" section above for full migration details
 
 **Issue:** 69 CSS files with potential duplication, inconsistent naming, and scattered component styles.
 
@@ -1068,6 +869,26 @@ export {
 - Consolidate button styles into `/styles/base/buttons.css`
 - Move all modal styles to `/styles/modals/`
 
+**Phase 2.5: Design Token Reorganization** (3 hours) ⚠️ **NEW**
+- **Rename and relocate `/css/base/variables.css` to `/styles/base/design-tokens.css`**
+  - Current location is in legacy `/css/` directory
+  - Should be in `/styles/base/` alongside `colors.css`
+  - Better name clarifies purpose (non-color design tokens)
+- **Move `/css/base/typography.css` to `/styles/base/typography.css`**
+  - Keep typography system with other base styles
+  - Already updated to import colors.css correctly
+- **Update all imports** across the codebase:
+  - Change `css/base/variables.css` → `styles/base/design-tokens.css`
+  - Change `css/base/typography.css` → `styles/base/typography.css`
+  - ~15 files to update (student portal, admin sections)
+- **Consider future splitting** (optional, can be Phase 2.6):
+  - Option A: Keep as single `design-tokens.css` file (current)
+  - Option B: Split into semantic files:
+    - `spacing.css` (--space-*, --max-width-*)
+    - `typography-tokens.css` (--font-*, --line-height-*)
+    - `effects.css` (--radius-*, --transition-*, --z-*)
+  - Recommendation: Keep as single file for now, split only if it grows beyond 100 lines
+
 **Phase 3: Component Extraction** (6 hours)
 - Extract common components:
   - Snackbar → `/styles/components/snackbar.css`
@@ -1086,7 +907,11 @@ export {
 
 ---
 
-### 13. Create Design System / Component Library
+### 13. 🔴 Create Design System / Component Library
+
+**Status:** 🔴 TODO | **Estimated Time:** 24 hours | **Dependencies:** Item #12 (recommended)
+
+> **💡 TIP:** Do Item #12 (CSS consolidation) first to create a clean foundation.
 
 **Issue:** No formal design system leads to inconsistent UI patterns, duplicated components, and slower development.
 
@@ -1136,7 +961,11 @@ Build a mini design system:
 
 ---
 
-### 14. Refactor Transaction History System
+### 14. 🔴 Refactor Transaction History System
+
+**Status:** 🔴 TODO | **Estimated Time:** 16 hours | **Dependencies:** Item #11 ✅ (complete)
+
+> **💡 TIP:** Can leverage centralized utilities from Item #11 for formatDate, formatCurrency, etc.
 
 **Issue:** Transaction history functionality split across multiple large files with duplicated logic.
 
@@ -1177,7 +1006,9 @@ admin/shared/transactions/
 
 ---
 
-### 15. Migrate Old Files to New Patterns
+### 15. 🔴 Migrate Old Files to New Patterns
+
+**Status:** 🔴 TODO | **Estimated Time:** 14 hours | **Dependencies:** None
 
 **Issue:** Several "-old.js" files still exist with outdated patterns:
 
@@ -1212,14 +1043,20 @@ admin/shared/transactions/
 
 ## 📊 Summary Statistics
 
-### Duplication Metrics
-- **showSnackbar function:** 13+ duplicates (~260 lines total)
-- **escapeHtml function:** 8+ duplicates (~80 lines total)
-- **formatDate function:** 10+ duplicates (~150 lines total)
-- **formatCurrency function:** 3+ duplicates (~30 lines total)
-- **isValidEmail function:** 3+ duplicates (~30 lines total)
-- **Modal implementations:** 2 systems
-- **Icon inconsistencies:** 3+ variations for delete, 2+ for close
+### ✅ Completed Work (Item #11)
+- **escapeHtml function:** 10+ duplicates eliminated ✅
+- **formatDate function:** 7+ duplicates eliminated ✅
+- **formatCurrency function:** 3+ duplicates eliminated ✅
+- **isValidEmail function:** 2+ duplicates eliminated ✅
+- **showLoading function:** 8+ duplicates eliminated ✅
+- **handleLogout function:** 12+ duplicates eliminated ✅
+- **Total:** ~200+ lines of duplication removed
+- **Files changed:** 59 files (+852/-1,034 lines, net -182 lines)
+
+### 🔴 Remaining Duplication Metrics
+- **showSnackbar function:** 13+ duplicates (~260 lines total) - Item #5
+- **Modal implementations:** 2 systems - Item #9
+- **Icon inconsistencies:** 3+ variations for delete, 2+ for close - Item #1
 
 ### Files Over 400 Lines
 - **10 JavaScript files** between 400-800 lines
@@ -1227,46 +1064,55 @@ admin/shared/transactions/
 - **Total:** ~8,500 lines in files that should be split
 
 ### Total Impact
-Implementing all recommendations could:
-- **Remove:** 1,000-1,500 lines of duplicated code
-- **Improve:** 50+ files
+**Already Achieved (Item #11):**
+- ✅ **Removed:** 182 net lines of code (852 added, 1,034 deleted)
+- ✅ **Improved:** 59 files
+- ✅ **Consolidated:** 11+ utility functions (60+ instances)
+- ✅ **Standardized:** Date formatting, currency formatting, XSS protection, email validation
+
+**Implementing remaining recommendations could:**
+- **Remove:** Additional 800-1,300 lines of duplicated code
+- **Improve:** Additional 40+ files
 - **Standardize:** 20+ components
-- **Unify:** 5+ major patterns
+- **Unify:** 4+ major patterns (snackbar, modals, loading, icons)
 
 ---
 
 ## 🎯 Recommended Implementation Order
 
-### Week 1: Quick Wins
-1. Consolidate icon usage (2 hours)
-2. Consolidate `escapeHtml()` (2 hours)
-3. Consolidate `isValidEmail()` (1 hour)
-4. Consolidate color variables (3 hours)
+### ✅ Week 1: Foundation & Quick Wins (COMPLETED - Dec 21, 2025)
+1. ✅ Item #11: Centralized utilities library (12 hours) - Also covers #2, #3, #6, #7
+2. ✅ Item #1: Consolidate icon usage (2 hours)
+3. ✅ Item #4: Consolidate color variables (5 hours)
 
-**Total: 8 hours | Impact: High | Risk: Low**
+**Total: 19 hours completed | Impact: Very High | Risk: Low**
 
-### Week 2-3: Medium Effort
-5. Consolidate snackbar system (5 hours)
-6. Consolidate date formatting (4 hours)
-7. Consolidate currency formatting (2 hours)
-8. Create shared loading component (3 hours)
-9. Consolidate modal implementations (4 hours)
+### 🔴 Week 2: Components (NEXT - Recommended Start)
+1. 🔴 Item #5: Consolidate snackbar system (5 hours)
+2. 🔴 Item #8: Create shared loading component (3 hours)
+3. 🔴 Item #9: Consolidate modal implementations (4 hours)
 
-**Total: 18 hours | Impact: Very High | Risk: Medium**
+**Total: 12 hours | Impact: Very High | Risk: Medium**
 
-### Week 4-6: Larger Projects
-10. Split large JavaScript files (20 hours)
-11. Create centralized utilities library (12 hours)
-12. Consolidate CSS architecture (20 hours)
+### 🔴 Week 3-5: Larger Projects
+4. 🔴 Item #10: Split large JavaScript files (20 hours)
+5. 🔴 Item #12: Consolidate CSS architecture (20 hours)
 
-**Total: 52 hours | Impact: Very High | Risk: Medium-High**
+**Total: 40 hours | Impact: Very High | Risk: Medium-High**
 
-### Week 7-8: Design System
-13. Create design system (24 hours)
-14. Refactor transaction system (16 hours)
-15. Migrate old files (14 hours)
+### 🔴 Week 6-8: Design System & Advanced Refactoring
+6. 🔴 Item #13: Create design system (24 hours)
+7. 🔴 Item #14: Refactor transaction system (16 hours)
+8. 🔴 Item #15: Migrate old files (14 hours)
 
 **Total: 54 hours | Impact: High | Risk: Medium**
+
+---
+
+**Overall Progress:**
+- **Completed:** 19 hours (Items #1, #4, #11)
+- **Remaining:** ~106 hours
+- **Progress:** 15% complete
 
 ---
 
@@ -1289,16 +1135,38 @@ For each refactoring:
 
 ## 📝 Notes
 
-- This analysis is based on code as of December 19, 2025
-- Some files may have changed since analysis
+**Document Status:**
+- **Created:** December 19, 2025
+- **Last Updated:** December 21, 2025
+- **Progress:** Items #1, #4, #11 complete (Items #2, #3, #6, #7 also complete as part of #11)
+
+**Implementation Guidelines:**
 - Estimated times are for one developer
 - Always work on a branch and test thoroughly
 - Consider feature flags for major changes
 - Update documentation as you refactor
+- Leverage centralized utilities from `/js/utils/` for new work
+- Reference `/styles/base/colors.css` for all color variables
+
+**Next Steps:**
+- **Recommended:** Start with Item #5 (Snackbar system) - 5 hours
+- **Alternative:** Item #8 (Loading spinner) - 3 hours
+- **Alternative:** Item #9 (Modal consolidation) - 4 hours
+- All three can leverage centralized utilities from Item #11
+- See "QUICK START FOR NEXT SESSION" section at top for guidance
 
 ---
 
-**Total Estimated Effort:** 132 hours (~3-4 weeks full-time)  
-**Expected Code Reduction:** 1,000-1,500 lines  
-**Maintainability Improvement:** Significant  
+**Total Estimated Effort:** 
+- **Completed:** 19 hours (15%)
+- **Remaining:** 106 hours
+- **Original Total:** 125 hours (~3 weeks full-time)
+
+**Code Reduction Achieved:** 
+- Items #1, #4, #11: ~182 net lines (15% reduction in touched files)
+- 800+ hardcoded colors replaced with CSS variables
+- 60+ icon instances standardized
+
+**Expected Additional Reduction:** 600-1,100 lines  
+**Maintainability Improvement:** Significant (single source of truth for utilities, colors, and icons)  
 **Risk Level:** Medium (with proper testing)

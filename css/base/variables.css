@@ -1,50 +1,13 @@
 /* ========================================
    CSS CUSTOM PROPERTIES (VARIABLES)
-   Urban Swing Design System
+   Urban Swing Design System - Non-Color Tokens
    Based on Admin Portal & Playlist Manager
+   
+   NOTE: All color definitions have been moved to /styles/base/colors.css
+   This file contains spacing, typography, layout, and other design tokens
    ======================================== */
 
 :root {
-  /* Brand Colors - Urban Swing Palette */
-  --urban-blue: #3534Fa;
-  --urban-purple: #9a16f5;
-  --urban-pink: #e800f2;
-  
-  /* Background Colors */
-  --bg-light: #f8f9fa;
-  --bg-dark: #121212;
-  --bg-gradient: linear-gradient(135deg, var(--urban-blue) 0%, var(--urban-purple) 50%, var(--urban-pink) 100%);
-  
-  /* Card/Surface Colors */
-  --card-light: #ffffff;
-  --card-dark: #1e1e1e;
-  
-  /* Text Colors */
-  --text-light: #333333;
-  --text-dark: #e0e0e0;
-  --text-muted-light: #666666;
-  --text-muted-dark: #999999;
-  
-  /* Border Colors */
-  --border-light: #e0e0e0;
-  --border-dark: #2a2a2a;
-  
-  /* Hover States */
-  --hover-light: #f0f0f0;
-  --hover-dark: #282828;
-  
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.2);
-  
-  /* Status Colors */
-  --success: #28a745;
-  --error: #dc3545;
-  --warning: #ffc107;
-  --info: #17a2b8;
-  
   /* Spacing Scale */
   --space-xs: 8px;
   --space-sm: 16px;
@@ -102,44 +65,4 @@
   --z-modal: 500;
   --z-popover: 600;
   --z-tooltip: 700;
-  
-  /* Default Theme - Light Mode */
-  --background-color: var(--bg-light);
-  --text-color: var(--text-light);
-  --text-muted: var(--text-muted-light);
-  --card-bg: var(--card-light);
-  --border-color: var(--border-light);
-  --hover-bg: var(--hover-light);
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: var(--bg-dark);
-    --text-color: var(--text-dark);
-    --text-muted: var(--text-muted-dark);
-    --card-bg: var(--card-dark);
-    --border-color: var(--border-dark);
-    --hover-bg: var(--hover-dark);
-    
-    /* Adjust shadows for dark mode */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
-    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.7);
-  }
-}
-
-/* Gradient Text Utility (used throughout) */
-.gradient-text {
-  background: linear-gradient(135deg, var(--urban-blue), var(--urban-pink));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent; /* Fallback */
-}
-
-/* Gradient Background Utility */
-.gradient-bg {
-  background: var(--bg-gradient);
 }

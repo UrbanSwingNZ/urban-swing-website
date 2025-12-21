@@ -190,16 +190,16 @@ function buildConcessionSection(title, count, blocks, status, isExpanded) {
     
     switch (status) {
         case 'active':
-            icon = 'fa-check-circle';
-            iconColor = 'var(--admin-success)';
+            icon = ICONS.SUCCESS;
+            iconColor = 'var(--success)';
             break;
         case 'expired':
-            icon = 'fa-exclamation-circle';
-            iconColor = 'var(--admin-error)';
+            icon = ICONS.ERROR;
+            iconColor = 'var(--error)';
             break;
         case 'depleted':
             icon = 'fa-battery-empty';
-            iconColor = 'var(--admin-warning)';
+            iconColor = 'var(--warning)';
             break;
         default:
             icon = 'fa-circle';

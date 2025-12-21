@@ -2,7 +2,7 @@
    STUDENT PORTAL - LOGIN PAGE STYLES
    ======================================== */
 
-/* Import base variables */
+/* Import base styles */
 @import url('../../css/base/variables.css');
 @import url('../../styles/base/colors.css');
 
@@ -33,7 +33,7 @@ body {
     height: auto;
     margin: 0 auto var(--space-sm);
     display: block;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 4px 12px var(--shadow-medium));
 }
 
 /* Student Portal Heading */
@@ -42,7 +42,7 @@ h1 {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
     margin: 0 0 var(--space-md);
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 8px var(--shadow-text);
 }
 
 /* Button Group */
@@ -58,9 +58,9 @@ h1 {
     padding: var(--space-sm) var(--space-md);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--header-overlay-semi);
     color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--border-overlay-medium);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--transition-base);
@@ -68,14 +68,14 @@ h1 {
 }
 
 .toggle-btn:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--header-overlay-strong);
+    border-color: var(--border-overlay-strong);
     transform: translateY(-2px);
 }
 
 .toggle-btn.active {
     background-color: white;
-    color: var(--urban-purple);
+    color: var(--purple-primary);
     border-color: white;
 }
 
@@ -119,12 +119,12 @@ h1 {
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--urban-purple);
+    border-color: var(--purple-primary);
 }
 
 /* Error Message */
 .error-message {
-    color: #dc2626;
+    color: var(--error);
     font-size: var(--font-size-sm);
     margin-top: var(--space-xs);
     min-height: 20px;
@@ -163,15 +163,15 @@ h1 {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     background-color: transparent;
-    color: var(--urban-purple);
-    border: 2px solid var(--urban-purple);
+    color: var(--purple-primary);
+    border: 2px solid var(--purple-primary);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--transition-base);
 }
 
 .reset-btn:hover {
-    background-color: var(--urban-purple);
+    background-color: var(--purple-primary);
     color: white;
 }
 
@@ -201,3 +201,4 @@ h1 {
         flex-direction: column;
     }
 }
+

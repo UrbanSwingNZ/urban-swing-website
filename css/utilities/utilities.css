@@ -200,7 +200,7 @@
   position: absolute;
   top: -40px;
   left: 0;
-  background: var(--urban-purple);
+  background: var(--purple-primary);
   color: white;
   padding: var(--space-sm);
   z-index: var(--z-tooltip);

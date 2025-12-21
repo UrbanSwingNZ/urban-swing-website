@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    SEARCH RESULTS STYLES
    Track search results in modal
@@ -8,18 +10,18 @@
   padding: 0;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--admin-card-light);
+  background: var(--card-light);
   padding: 12px 15px;
 }
 
 @media (prefers-color-scheme: dark) {
   .modal-body .search-box {
-    background: var(--admin-card-dark);
+    background: var(--card-dark);
   }
 }
 
 .modal-body .search-box:focus-within {
-  border-color: var(--admin-purple);
+  border-color: var(--purple-primary);
   box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
 }
 
@@ -30,7 +32,7 @@
 .search-results-container {
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--pm-card-bg);
+  background: var(--card-light);
   padding: 20px;
   text-align: center;
   min-height: 100px;
@@ -63,7 +65,7 @@
 }
 
 .search-result-item:hover {
-  background: var(--pm-hover-bg);
+  background: var(--hover-light);
 }
 
 .search-result-item:last-child {
@@ -73,7 +75,7 @@
 .search-result-checkbox {
   width: 18px;
   height: 18px;
-  accent-color: var(--pm-purple);
+  accent-color: var(--purple-primary);
 }
 
 .search-result-image {
@@ -81,7 +83,7 @@
   height: 50px;
   border-radius: 6px;
   object-fit: cover;
-  background: var(--pm-border-light);
+  background: var(--gray-450);
 }
 
 .search-result-info {
@@ -98,7 +100,7 @@
 }
 
 .search-result-artist {
-  color: #888;
+  color: var(--gray-650);
   font-size: 0.9rem;
   margin: 0;
   overflow: hidden;
@@ -107,7 +109,7 @@
 }
 
 .search-result-duration {
-  color: #888;
+  color: var(--gray-650);
   font-size: 0.85rem;
   min-width: 50px;
   text-align: right;

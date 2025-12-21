@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* ========================================
    CHECK-IN PAGE STYLES
    Uses parent styles from admin.css and admin-modals.css
@@ -37,10 +39,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--header-overlay-light);
     padding: 12px 16px;
     border-radius: 8px;
-    border: 1px solid rgba(154, 22, 245, 0.2);
+    border: 1px solid var(--bg-purple-alt-stronger);
 }
 
 .date-label {
@@ -49,13 +51,13 @@
     gap: 8px;
     font-size: 0.95rem;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
     white-space: nowrap;
     margin: 0;
 }
 
 .date-label i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .date-input-wrapper {
@@ -66,10 +68,10 @@
 
 .date-input {
     padding: 8px 40px 8px 12px;
-    border: 1px solid rgba(154, 22, 245, 0.3);
+    border: 1px solid var(--bg-purple-alt-stronger);
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-color);
+    background: var(--header-overlay-light);
+    color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
     cursor: pointer;
@@ -79,15 +81,15 @@
 }
 
 .date-input:hover {
-    border-color: var(--admin-purple);
-    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--purple-primary);
+    background: var(--header-overlay-medium);
 }
 
 .date-input:focus {
     outline: none;
-    border-color: var(--admin-purple);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    background: var(--header-overlay-light);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 /* Custom calendar button overlay */
@@ -98,7 +100,7 @@
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     cursor: pointer;
     padding: 4px 8px;
     display: flex;
@@ -133,7 +135,7 @@
 /* Show hover state on custom button when hovering over input */
 .date-input-wrapper:hover .calendar-button {
     color: white;
-    background: var(--admin-purple);
+    background: var(--purple-primary);
 }
 
 /* Button styles inherited from admin-modals.css */
@@ -147,10 +149,10 @@
     top: calc(100% + 5px);
     left: 0;
     right: 0;
-    background: var(--background-color);
-    border: 2px solid var(--border-color);
+    background: var(--bg-white);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px var(--shadow-text);
     max-height: 300px;
     overflow-y: auto;
     z-index: 1000;
@@ -160,7 +162,7 @@
     padding: 12px 16px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .search-result-item:last-child {
@@ -168,12 +170,12 @@
 }
 
 .search-result-item:hover {
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-light);
 }
 
 .search-result-name {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
@@ -184,7 +186,7 @@
 
 .search-result-balance {
     font-size: 0.85rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-top: 4px;
 }
 
@@ -202,7 +204,7 @@
     background: var(--card-bg);
     border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
 
@@ -211,7 +213,7 @@
     background: var(--card-bg);
     border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 /* Summary Row in Transactions Section */
@@ -221,8 +223,8 @@
     gap: 1.5rem;
     padding: 1rem 0;
     margin-bottom: 1.5rem;
-    border-top: 1px solid rgba(154, 22, 245, 0.2);
-    border-bottom: 1px solid rgba(154, 22, 245, 0.2);
+    border-top: 1px solid var(--bg-purple-alt-stronger);
+    border-bottom: 1px solid var(--bg-purple-alt-stronger);
 }
 
 .summary-item {
@@ -240,16 +242,16 @@
 .summary-value {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 /* Table Container */
 .table-container {
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
-    border: 1px solid rgba(154, 22, 245, 0.2);
+    border: 1px solid var(--bg-purple-alt-stronger);
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 #checkin-transactions-table {
@@ -258,7 +260,7 @@
 }
 
 #checkin-transactions-table thead {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: var(--gradient-blue-purple);
 }
 
 #checkin-transactions-table thead th {
@@ -275,12 +277,12 @@
 }
 
 #checkin-transactions-table tbody tr {
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     transition: background-color 0.2s ease;
 }
 
 #checkin-transactions-table tbody tr:hover {
-    background-color: rgba(154, 22, 245, 0.05);
+    background-color: var(--bg-purple-light);
 }
 
 #checkin-transactions-table tbody tr:last-child {
@@ -289,7 +291,7 @@
 
 #checkin-transactions-table tbody td {
     padding: 16px;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -299,7 +301,7 @@
 
 #checkin-transactions-table .amount-cell {
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     text-align: right;
 }
 
@@ -320,33 +322,33 @@
 }
 
 .payment-badge.cash {
-    background: #fff3e0;
-    color: #e65100;
+    background: var(--warning-lighter);
+    color: var(--warning-darker);
 }
 
 .payment-badge.eftpos {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: var(--info-light);
+    color: var(--blue-darker);
 }
 
 .payment-badge.online {
-    background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    background: var(--bg-success-light);
+    color: var(--success-darker);
 }
 
 .payment-badge.bank {
-    background: #f3e5f5;
-    color: #6a1b9a;
+    background: var(--bg-purple-pale);
+    color: var(--purple-darker);
 }
 
 .payment-badge.na {
-    background: #f5f5f5;
+    background: var(--gray-300);
     color: #757575;
 }
 
 .payment-badge.unknown {
-    background: #f5f5f5;
-    color: #616161;
+    background: var(--gray-300);
+    color: var(--gray-750);
 }
 
 #checkin-transactions-table .payment-amount {
@@ -369,34 +371,34 @@
 }
 
 .type-badge.concession {
-    background: rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+    color: var(--purple-primary);
 }
 
 .type-badge.gift {
-    background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
+    background: var(--bg-success-light);
+    color: var(--success-dark);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
-    background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
+    background: var(--bg-blue-light);
+    color: var(--blue-primary);
 }
 
 .type-badge.casual-student {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    background: var(--bg-blue-light);
+    color: var(--blue-accent);
 }
 
 .type-badge.online {
-    background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    background: var(--bg-success-light);
+    color: var(--success-darker);
     margin-left: 5px;
 }
 
 .type-badge.reversed {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     margin-right: 5px;
 }
@@ -404,7 +406,7 @@
 /* Reversed Transaction Styling */
 .reversed-transaction {
     opacity: 0.6;
-    background-color: rgba(220, 53, 69, 0.05);
+    background-color: var(--bg-error-light);
 }
 
 .reversed-transaction td {
@@ -419,7 +421,7 @@
 }
 
 .accordion-header:hover {
-    background-color: rgba(154, 22, 245, 0.03);
+    background-color: var(--bg-purple-alt);
     border-radius: 8px;
 }
 
@@ -431,7 +433,7 @@
 
 .accordion-icon {
     font-size: 1rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     transition: transform 0.3s ease;
 }
 
@@ -457,7 +459,7 @@
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-light);
 }
 
 .section-header.collapsed {
@@ -499,7 +501,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--gray-550);
     transition: 0.3s;
     border-radius: 24px;
 }
@@ -517,7 +519,7 @@
 }
 
 .toggle-switch input:checked + .toggle-slider {
-    background-color: var(--admin-purple);
+    background-color: var(--purple-primary);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -525,20 +527,20 @@
 }
 
 .toggle-switch input:focus + .toggle-slider {
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.2);
+    box-shadow: 0 0 0 3px var(--bg-purple-alt-stronger);
 }
 
 .toggle-label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     user-select: none;
 }
 
 .toggle-label i {
     margin-right: 0.25rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .section-title {
@@ -550,11 +552,11 @@
 .section-title h2 {
     margin: 0;
     font-size: 1.5rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .checkin-count {
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: var(--gradient-blue-purple);
     color: white;
     padding: 4px 12px;
     border-radius: 20px;
@@ -588,7 +590,7 @@
 .empty-state h3 {
     font-size: 1.3rem;
     margin-bottom: 10px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .empty-state p {
@@ -607,14 +609,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     transition: all 0.2s ease;
 }
 
 .checkin-item:hover {
-    background-color: rgba(154, 22, 245, 0.05);
+    background-color: var(--bg-purple-light);
 }
 
 .checkin-info-row {
@@ -626,7 +628,7 @@
 }
 
 .checkin-check {
-    color: var(--admin-green);
+    color: var(--success);
     font-size: 1.2rem;
     margin-right: 16px;
 }
@@ -644,7 +646,7 @@
 
 .checkin-name {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 1rem;
 }
 
@@ -672,17 +674,17 @@
 .btn-icon {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .btn-icon:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple);
+    border-color: var(--purple-primary);
     transform: translateY(-2px);
 }
 
@@ -691,52 +693,52 @@
 }
 
 .btn-icon.btn-delete:hover {
-    background: #dc3545;
-    border-color: #dc3545;
+    background: var(--error);
+    border-color: var(--error);
     color: white;
 }
 
 .btn-icon.btn-invoice.invoiced {
-    color: var(--admin-purple);
-    border-color: var(--admin-purple);
-    background: rgba(154, 22, 245, 0.1);
+    color: var(--purple-primary);
+    border-color: var(--purple-primary);
+    background: var(--bg-purple-medium);
 }
 
 .btn-icon.btn-invoice:hover {
-    border-color: var(--admin-purple);
-    color: var(--admin-purple);
-    background: rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    color: var(--purple-primary);
+    background: var(--bg-purple-medium);
 }
 
 .checkin-type.concession {
-    background: rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+    color: var(--purple-primary);
 }
 
 .checkin-type.casual {
-    background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
+    background: var(--bg-blue-light);
+    color: var(--blue-primary);
 }
 
 .checkin-type.casual-student {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    background: var(--bg-blue-light);
+    color: var(--blue-accent);
 }
 
 .checkin-type.free {
-    background: rgba(40, 167, 69, 0.1);
-    color: var(--admin-green);
+    background: var(--bg-success-light);
+    color: var(--success);
 }
 
 .checkin-type.crew {
-    background: rgba(255, 152, 0, 0.1);
+    background: var(--warning-lighter);
     color: #ff9800;
 }
 
 /* Reversed Check-in Styling */
 .reversed-checkin {
     opacity: 0.6;
-    background-color: rgba(220, 53, 69, 0.05) !important;
+    background-color: var(--bg-error-light) !important;
 }
 
 .reversed-checkin .checkin-name {
@@ -750,7 +752,7 @@
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 700;
-    background-color: #dc3545;
+    background-color: var(--error);
     color: white;
     margin-left: 8px;
 }
@@ -770,24 +772,24 @@
 
 .search-results-modal {
     margin-top: 8px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     max-height: 200px;
     overflow-y: auto;
-    background: var(--background-color);
+    background: var(--bg-white);
 }
 
 .student-info-card {
     padding: 16px;
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
-    border-left: 4px solid var(--admin-purple);
+    border-left: 4px solid var(--purple-primary);
     margin-bottom: 20px;
 }
 
 .student-info-card h4 {
     margin: 0 0 5px 0;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 1.1rem;
 }
 
@@ -800,8 +802,8 @@
 .student-info-card .btn-icon {
     padding: 8px 12px;
     background: white;
-    color: var(--admin-purple);
-    border: 2px solid var(--admin-purple);
+    color: var(--purple-primary);
+    border: 2px solid var(--purple-primary);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -812,15 +814,15 @@
 }
 
 .student-info-card .btn-icon:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     transform: translateY(-1px);
 }
 
 /* Concession Info */
 .concession-info {
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 20px;
@@ -831,11 +833,11 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 12px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .concession-header i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .concession-blocks {
@@ -849,7 +851,7 @@
 }
 
 .concession-block.expired {
-    color: var(--admin-error);
+    color: var(--error);
     font-weight: 500;
 }
 
@@ -876,20 +878,20 @@
     cursor: pointer;
     width: 18px;
     height: 18px;
-    accent-color: var(--admin-purple);
+    accent-color: var(--purple-primary);
 }
 
 .radio-option:hover .radio-label {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 .radio-option input[type="radio"]:checked + .radio-label {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-weight: 600;
 }
 
 .radio-label {
-    color: var(--text-color);
+    color: var(--text-primary);
     cursor: pointer;
     user-select: none;
     line-height: 12px;
@@ -899,11 +901,11 @@
 .form-control {
     width: 100%;
     padding: 10px 32px 10px 12px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     font-size: 0.8rem;
     background: var(--card-bg);
-    color: var(--text-color);
+    color: var(--text-primary);
     transition: all 0.3s ease;
     height: 48px;
     box-sizing: border-box;
@@ -912,8 +914,8 @@
 
 .form-control:focus {
     outline: none;
-    border-color: var(--admin-purple);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 select.form-control {
@@ -963,7 +965,7 @@ textarea.form-control {
 }
 
 .clear-search-btn:hover {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
 }
 
 /* Purchase Section */
@@ -978,7 +980,7 @@ textarea.form-control {
 
 /* Purchase Summary */
 .purchase-summary {
-    background: var(--background-color);
+    background: var(--bg-white);
     padding: 16px;
     border-radius: 8px;
     margin-top: 16px;
@@ -992,7 +994,7 @@ textarea.form-control {
 }
 
 .summary-row strong {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.3rem;
 }
 
@@ -1012,7 +1014,7 @@ textarea.form-control {
     margin-bottom: 20px;
     padding: 16px;
     padding-top: 8px;
-    background: var(--background-color);
+    background: var(--bg-white);
     border-radius: 8px;
     position: relative;
     z-index: 100;
@@ -1030,7 +1032,7 @@ textarea.form-control {
 
 .filter-group label {
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.9rem;
     margin-bottom: 4px;
 }
@@ -1067,19 +1069,19 @@ textarea.form-control {
 
 .search-results-dropdown {
     position: fixed;
-    background: var(--admin-card-light);
-    border: 1px solid rgba(154, 22, 245, 0.3);
+    background: var(--card-light);
+    border: 1px solid var(--bg-purple-alt-stronger);
     border-top: none;
     border-radius: 0 0 8px 8px;
     max-height: 300px;
     overflow-y: auto;
     z-index: 10000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 6px var(--bg-overlay-dark);
 }
 
 @media (prefers-color-scheme: dark) {
     .search-results-dropdown {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
@@ -1087,11 +1089,11 @@ textarea.form-control {
     padding: 12px 16px;
     cursor: pointer;
     transition: background 0.2s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--header-overlay-light);
 }
 
 .search-results-dropdown .student-result:hover {
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
 }
 
 .search-results-dropdown .student-result:last-child {
@@ -1100,7 +1102,7 @@ textarea.form-control {
 
 .search-results-dropdown .student-result .student-name {
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
@@ -1133,20 +1135,20 @@ textarea.form-control {
     display: flex;
     align-items: center;
     padding: 12px;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
 }
 
 .history-date {
     min-width: 80px;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .history-student {
     flex: 1;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .history-time {
@@ -1170,14 +1172,14 @@ textarea.form-control {
     bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     padding: 16px 24px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     transition: bottom 0.3s ease;
     min-width: 300px;
@@ -1195,7 +1197,7 @@ textarea.form-control {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
 }
 
 .snackbar-error {
@@ -1244,19 +1246,19 @@ textarea.form-control {
 }
 
 .online-payment-message.success {
-    background: rgba(76, 175, 80, 0.1);
-    border: 1px solid rgba(76, 175, 80, 0.3);
-    color: #2e7d32;
+    background: var(--bg-success-light);
+    border: 1px solid var(--bg-success-medium);
+    color: var(--success-dark);
 }
 
 .online-payment-message.success i {
-    color: #4caf50;
+    color: var(--success-light);
 }
 
 .online-payment-message.warning {
-    background: rgba(255, 152, 0, 0.1);
-    border: 1px solid rgba(255, 152, 0, 0.3);
-    color: #e65100;
+    background: var(--warning-lighter);
+    border: 1px solid var(--warning-light);
+    color: var(--warning-darker);
 }
 
 .online-payment-message.warning i {
@@ -1264,9 +1266,9 @@ textarea.form-control {
 }
 
 .online-payment-message.error {
-    background: rgba(244, 67, 54, 0.1);
-    border: 1px solid rgba(244, 67, 54, 0.3);
-    color: #c62828;
+    background: var(--bg-error-light);
+    border: 1px solid var(--bg-error-medium);
+    color: var(--error-darker);
 }
 
 .online-payment-message.error i {
@@ -1278,38 +1280,38 @@ textarea.form-control {
     align-items: center;
     justify-content: space-between;
     padding: 10px 16px;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     margin-top: 8px;
     transition: all 0.2s ease;
 }
 
 .online-payment-transaction.current-transaction {
-    background: rgba(154, 22, 245, 0.08);
-    border-color: var(--admin-purple);
+    background: var(--bg-purple-light);
+    border-color: var(--purple-primary);
 }
 
 .online-payment-transaction:hover {
-    background: rgba(154, 22, 245, 0.05);
-    border-color: var(--admin-purple);
+    background: var(--bg-purple-light);
+    border-color: var(--purple-primary);
 }
 
 .online-payment-transaction.current-transaction:hover {
-    background: rgba(154, 22, 245, 0.12);
-    border-color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+    border-color: var(--purple-primary);
 }
 
 .transaction-info {
     flex: 1;
     font-size: 0.9rem;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .current-badge {
     padding: 6px 16px;
-    background: rgba(154, 22, 245, 0.15);
-    color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+    color: var(--purple-primary);
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -1320,7 +1322,7 @@ textarea.form-control {
 .btn-use-transaction,
 .btn-change-transaction {
     padding: 6px 14px;
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     border: none;
     border-radius: 6px;
@@ -1333,19 +1335,19 @@ textarea.form-control {
 
 .btn-use-transaction:hover,
 .btn-change-transaction:hover {
-    background: var(--admin-blue);
+    background: var(--blue-primary);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.3);
+    box-shadow: 0 2px 8px var(--bg-purple-alt-stronger);
 }
 
 .btn-change-transaction {
     background: transparent;
-    color: var(--admin-purple);
-    border: 1px solid var(--admin-purple);
+    color: var(--purple-primary);
+    border: 1px solid var(--purple-primary);
 }
 
 .btn-change-transaction:hover {
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
 }
 
@@ -1386,17 +1388,17 @@ textarea.form-control {
         gap: 0.75rem;
         padding: 1rem;
         border-radius: 8px;
-        border: 1px solid rgba(154, 22, 245, 0.2);
-        border-left: 4px solid var(--admin-purple);
-        background: var(--background-color);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--bg-purple-alt-stronger);
+        border-left: 4px solid var(--purple-primary);
+        background: var(--bg-white);
+        box-shadow: 0 2px 8px var(--shadow-light);
         transition: all 0.2s ease;
         align-items: start;
     }
 
     .checkin-item:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: var(--admin-purple);
+        box-shadow: 0 4px 12px var(--shadow-medium);
+        border-color: var(--purple-primary);
     }
 
     .checkin-item.reversed-checkin {
@@ -1419,7 +1421,7 @@ textarea.form-control {
     .checkin-name {
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--text-color);
+        color: var(--text-primary);
     }
 
     .reversed-badge {
@@ -1459,7 +1461,7 @@ textarea.form-control {
         justify-content: flex-start;
         gap: 0.5rem;
         padding-top: 0.5rem;
-        border-top: 1px solid rgba(154, 22, 245, 0.1);
+        border-top: 1px solid var(--bg-purple-medium);
     }
 
     /* Move type badge to row 1, right column only */
@@ -1585,7 +1587,7 @@ textarea.form-control {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
         padding: 1rem;
-        background: var(--background-color);
+        background: var(--bg-white);
         border-radius: 8px;
         width: 100%;
         box-sizing: border-box;
@@ -1611,7 +1613,7 @@ textarea.form-control {
         justify-content: flex-start;
         align-items: flex-start;
         padding: 12px 16px;
-        background: var(--input-bg, #f8f9fa);
+        background: var(--input-bg);
         border-radius: 6px;
         gap: 4px;
         text-align: left;
@@ -1622,7 +1624,7 @@ textarea.form-control {
 
     .summary-label {
         font-size: 0.75rem;
-        color: var(--text-color);
+        color: var(--text-primary);
         font-weight: 600;
         margin: 0;
         text-align: left;
@@ -1635,7 +1637,7 @@ textarea.form-control {
     .summary-value {
         font-size: 1rem;
         font-weight: 700;
-        color: var(--admin-purple);
+        color: var(--purple-primary);
         margin: 0;
         text-align: left;
         width: 100%;
@@ -1712,17 +1714,17 @@ textarea.form-control {
         grid-template-columns: 1fr auto;
         gap: 0.75rem;
         padding: 1rem;
-        background: var(--background-color);
-        border: 1px solid rgba(154, 22, 245, 0.2);
-        border-left: 4px solid var(--admin-purple);
+        background: var(--bg-white);
+        border: 1px solid var(--bg-purple-alt-stronger);
+        border-left: 4px solid var(--purple-primary);
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px var(--shadow-light);
         transition: all 0.2s ease;
     }
 
     #checkin-transactions-table tbody tr:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: var(--admin-purple);
+        box-shadow: 0 4px 12px var(--shadow-medium);
+        border-color: var(--purple-primary);
     }
 
     #checkin-transactions-table tbody tr.reversed-transaction {
@@ -1744,7 +1746,7 @@ textarea.form-control {
         content: attr(data-label);
         font-size: 0.75rem;
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-primary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -1789,13 +1791,13 @@ textarea.form-control {
         text-align: right;
         align-items: flex-end;
         padding-top: 0.5rem;
-        border-top: 1px solid rgba(154, 22, 245, 0.1);
+        border-top: 1px solid var(--bg-purple-medium);
     }
 
     #checkin-transactions-table tbody td:nth-child(4) .amount-cell {
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--admin-purple);
+        color: var(--purple-primary);
     }
 
     /* Hide the individual payment amount columns (Cash, EFTPOS, Online, Bank Transfer) on mobile */
@@ -1815,7 +1817,7 @@ textarea.form-control {
 
     #checkin-transactions-table .payment-amount {
         font-weight: 600;
-        color: var(--admin-purple);
+        color: var(--purple-primary);
     }
 
     #checkin-transactions-table .payment-amount.empty {
@@ -1887,21 +1889,21 @@ textarea.form-control {
 }
 
 .badge-yes {
-    background: rgba(40, 167, 69, 0.15);
-    color: var(--admin-success);
+    background: var(--bg-success-light);
+    color: var(--success);
 }
 
 .badge-no {
-    background: rgba(220, 53, 69, 0.15);
-    color: var(--admin-error);
+    background: var(--bg-error-light);
+    color: var(--error);
 }
 
 .badge-warning {
-    background: rgba(255, 165, 0, 0.15);
+    background: var(--warning-lighter);
     color: #ff8800;
 }
 
 .badge-locked {
-    background: rgba(108, 117, 125, 0.15);
-    color: #6c757d;
+    background: var(--bg-gray-medium);
+    color: var(--text-muted-alt);
 }

@@ -86,7 +86,7 @@ function displayHistoryStudentResults(students, positionDropdown) {
     // Add "All Students" option at the top
     const allStudentsHtml = `
         <div class="student-result" data-student-id="">
-            <div class="student-name" style="font-weight: 600; color: var(--admin-purple);">All Students</div>
+            <div class="student-name" style="font-weight: 600; color: var(--purple-primary);">All Students</div>
             <div class="student-email">Show all check-ins</div>
         </div>
     `;

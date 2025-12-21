@@ -242,7 +242,7 @@ import { BaseModal } from '../../components/modals/modal-base.js';
 
         // Disable submit button
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing Password...';
+        submitBtn.innerHTML = `<i class="fas ${ICONS.LOADING}"></i> Changing Password...`;
         hideMessage();
 
         try {
