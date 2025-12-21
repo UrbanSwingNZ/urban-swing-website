@@ -100,7 +100,7 @@ h1 {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -121,17 +121,17 @@ h1 {
 .form-group select {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid var(--input-border);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.2s ease;
-    background: var(--input-bg);
+    background: var(--bg-white);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--input-focus);
+    border-color: var(--border-purple);
     box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
@@ -197,7 +197,7 @@ h1 {
 
 .portal-info p {
     margin: 0 0 8px 0;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .portal-info p:first-child {
@@ -214,7 +214,7 @@ h1 {
 
 .portal-info ul li {
     padding: 6px 0;
-    color: var(--text-color);
+    color: var(--text-primary);
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -240,7 +240,7 @@ h1 {
 /* Payment Section */
 .payment-section {
     background: var(--bg-light);
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 12px;
     padding: 24px;
     margin: 30px 0;
@@ -276,7 +276,7 @@ h1 {
     display: flex;
     align-items: center;
     padding: 16px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -386,7 +386,7 @@ h1 {
 /* Stripe Card Element */
 .stripe-card-element {
     padding: 12px 16px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     background: white;
     transition: border-color 0.2s ease;
@@ -502,7 +502,7 @@ h1 {
 
 .modal-header {
     padding: 24px 30px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -533,7 +533,7 @@ h1 {
 
 .modal-close:hover {
     background: var(--bg-light);
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .modal-body {
@@ -546,18 +546,18 @@ h1 {
 }
 
 .terms-content h5 {
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-top: 20px;
 }
 
 .terms-content p {
-    color: var(--text-color);
+    color: var(--text-primary);
     line-height: 1.8;
 }
 
 .modal-footer {
     padding: 20px 30px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: flex-end;
 }
@@ -583,7 +583,7 @@ h1 {
 /* Password Section */
 .password-section {
     background: var(--bg-light);
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 12px;
     padding: 24px;
     margin: 30px 0;
@@ -608,16 +608,16 @@ h1 {
 .password-input-wrapper input[type="text"] {
     width: 100%;
     padding: 12px 50px 12px 16px;
-    border: 2px solid var(--input-border);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.2s ease;
-    background: var(--input-bg);
+    background: var(--bg-white);
 }
 
 .password-input-wrapper input:focus {
     outline: none;
-    border-color: var(--input-focus);
+    border-color: var(--border-purple);
     box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
@@ -654,7 +654,7 @@ h1 {
 .password-generator-helper .helper-text {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -877,18 +877,18 @@ h1 {
 #adminNotes {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid var(--input-border);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.2s ease;
-    background: var(--input-bg);
+    background: var(--bg-white);
     font-family: inherit;
     resize: vertical;
 }
 
 #adminNotes:focus {
     outline: none;
-    border-color: var(--input-focus);
+    border-color: var(--border-purple);
     box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
@@ -935,4 +935,6 @@ h1 {
 .snackbar i {
     font-size: 1.2rem;
 }
+
+
 
