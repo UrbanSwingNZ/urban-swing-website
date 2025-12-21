@@ -112,7 +112,7 @@
 .student-selector {
     background: white;
     padding: 20px 24px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-light);
 }
 
 .selector-content {
@@ -125,7 +125,7 @@
 
 .selector-content label {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -140,7 +140,7 @@
     flex: 1;
     max-width: 500px;
     padding: 12px 16px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     font-size: 1rem;
     background: white;
@@ -167,7 +167,7 @@
 
 .welcome-section h2 {
     font-size: 2rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -276,7 +276,7 @@
 
 .nav-card h3 {
     font-size: 1.2rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -316,7 +316,7 @@
 
 .empty-state h2 {
     font-size: 2rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -359,3 +359,4 @@
         font-size: 1.5rem;
     }
 }
+
