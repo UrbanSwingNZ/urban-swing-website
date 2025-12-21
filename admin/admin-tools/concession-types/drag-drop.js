@@ -107,7 +107,7 @@ function showOrderUpdateSuccess() {
   
   const originalHTML = dragHint.innerHTML;
   dragHint.innerHTML = '<i class="fas fa-check-circle"></i> Order saved!';
-  dragHint.style.color = 'var(--admin-success)';
+  dragHint.style.color = 'var(--success)';
   
   setTimeout(() => {
     dragHint.innerHTML = originalHTML;

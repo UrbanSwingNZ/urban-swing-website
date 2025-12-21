@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* admin-view.css - Admin View of Student Portal */
 
 /* Import shared tile styles */
@@ -5,7 +7,7 @@
 
 /* Admin Banner */
 .admin-banner {
-    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    background: var(--gradient-full);
     color: white;
     padding: 16px 24px;
     position: sticky;
@@ -43,11 +45,11 @@
     flex: 1;
     max-width: 500px;
     padding: 10px 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--header-overlay-strong);
     border-radius: 6px;
     font-size: 0.95rem;
-    background: rgba(255, 255, 255, 0.95);
-    color: var(--text-color);
+    background: var(--card-light);
+    color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -56,12 +58,12 @@
     outline: none;
     border-color: white;
     background: white;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 3px var(--header-overlay-semi);
 }
 
 .btn-back-admin {
     background: white;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     padding: 10px 20px;
     border-radius: 6px;
     font-weight: 600;
@@ -72,9 +74,9 @@
 }
 
 .btn-back-admin:hover {
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 /* Portal Container */
@@ -85,9 +87,9 @@
 
 /* Header */
 .portal-header {
-    background: linear-gradient(90deg, var(--admin-blue) 0%, var(--admin-purple) 50%, var(--admin-pink) 100%);
+    background: var(--gradient-full);
     padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .header-content {
@@ -112,9 +114,9 @@
 }
 
 .logout-btn {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--header-overlay-semi);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--header-overlay-strong);
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
@@ -127,8 +129,8 @@
 }
 
 .logout-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--header-overlay-strong);
+    border-color: var(--border-overlay-strong);
     transform: translateY(-1px);
 }
 
@@ -145,7 +147,7 @@
 
 .welcome-section h2 {
     font-size: 2rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -169,19 +171,19 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-light);
     transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 16px var(--shadow-medium);
     transform: translateY(-2px);
 }
 
 .stat-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: var(--gradient-blue-purple);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -200,7 +202,7 @@
 .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin: 0;
 }
 
@@ -215,14 +217,14 @@
     background: white;
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-light);
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
 }
 
 .nav-card:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px var(--shadow-medium);
     transform: translateY(-4px);
 }
 
@@ -233,11 +235,11 @@
 
 .nav-card.disabled:hover {
     transform: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .nav-card h3 {
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -251,7 +253,7 @@
     position: absolute;
     top: 16px;
     right: 16px;
-    background: var(--admin-warning);
+    background: var(--warning);
     color: white;
     padding: 4px 12px;
     border-radius: 12px;
@@ -277,7 +279,7 @@
 
 .empty-state h2 {
     font-size: 2rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -441,3 +443,4 @@
     font-size: 1.1em;
     color: var(--text-white);
 }
+

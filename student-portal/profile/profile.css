@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* Profile & Settings Page Styles */
 
 .profile-content {
@@ -25,12 +27,12 @@
     background: white;
     border-radius: 12px;
     margin-bottom: 32px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .profile-icon {
     font-size: 3.5rem;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     flex-shrink: 0;
 }
 
@@ -40,7 +42,7 @@
 
 .profile-header h2 {
     font-size: 1.75rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
@@ -55,13 +57,13 @@
     background: white;
     border-radius: 12px;
     padding: 32px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .form-section {
     margin-bottom: 32px;
     padding-bottom: 32px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-light);
 }
 
 .form-section:last-of-type {
@@ -72,7 +74,7 @@
 
 .form-section h3 {
     font-size: 1.3rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -83,7 +85,7 @@
     content: '';
     width: 4px;
     height: 24px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: var(--gradient-blue-purple);
     border-radius: 2px;
 }
 
@@ -106,7 +108,7 @@
 
 .form-group label {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
     font-size: 0.95rem;
 }
@@ -119,14 +121,14 @@
 label:has(+ input[required])::after,
 label:has(+ textarea[required])::after {
     content: ' *';
-    color: #d32f2f;
+    color: var(--error-muted);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     padding: 12px 16px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.2s ease;
@@ -142,8 +144,8 @@ label:has(+ textarea[required])::after {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--admin-purple);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .form-group textarea {
@@ -168,7 +170,7 @@ label:has(+ textarea[required])::after {
 }
 
 .checkbox-label:hover {
-    background: #e8e8f0;
+    background: var(--gray-400);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -179,7 +181,7 @@ label:has(+ textarea[required])::after {
 
 .checkbox-label span {
     flex: 1;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -189,19 +191,19 @@ label:has(+ textarea[required])::after {
     align-items: center;
     gap: 12px;
     padding: 16px;
-    background: #e3f2fd;
-    border-left: 4px solid #1976d2;
+    background: var(--info-light);
+    border-left: 4px solid var(--blue-dark);
     border-radius: 8px;
     margin-bottom: 20px;
 }
 
 .security-info i {
-    color: #1976d2;
+    color: var(--blue-dark);
     font-size: 1.2rem;
 }
 
 .security-info p {
-    color: #0d47a1;
+    color: var(--blue-darker);
     font-size: 0.95rem;
     margin: 0;
 }
@@ -212,20 +214,20 @@ label:has(+ textarea[required])::after {
     align-items: flex-start;
     gap: 12px;
     padding: 16px;
-    background: #fff4e6;
-    border: 2px solid #ffa726;
+    background: var(--bg-warning-pale);
+    border: 2px solid var(--border-orange);
     border-radius: 8px;
     margin-bottom: 20px;
 }
 
 .admin-note i {
-    color: #ffa726;
+    color: var(--border-orange);
     font-size: 1.2rem;
     margin-top: 2px;
 }
 
 .admin-note p {
-    color: #e65100;
+    color: var(--warning-darker);
     font-size: 0.9rem;
     margin: 0;
 }
@@ -246,7 +248,7 @@ label:has(+ textarea[required])::after {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -257,8 +259,8 @@ label:has(+ textarea[required])::after {
 .spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid var(--border-color);
-    border-top-color: var(--admin-purple);
+    border: 4px solid var(--border-light);
+    border-top-color: var(--purple-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -269,7 +271,7 @@ label:has(+ textarea[required])::after {
 
 .loading-spinner p {
     margin-top: 16px;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -301,13 +303,13 @@ label:has(+ textarea[required])::after {
 .modal-footer .btn-secondary {
     padding: 10px 20px;
     background: transparent;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-light);
     border-radius: 6px;
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--text-color);
+    color: var(--text-primary);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -318,12 +320,12 @@ label:has(+ textarea[required])::after {
 }
 
 .modal-footer .btn-secondary:hover {
-    background: var(--border-color);
+    background: var(--border-light);
     transform: translateY(-2px);
 }
 
 .modal-footer .btn-danger {
-    background: #dc3545;
+    background: var(--error);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -342,9 +344,9 @@ label:has(+ textarea[required])::after {
 }
 
 .modal-footer .btn-danger:hover {
-    background: #c82333;
+    background: var(--error-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 5px 15px var(--bg-error-strong);
 }
 
 .modal-footer .btn-danger i {
@@ -358,7 +360,7 @@ label:has(+ textarea[required])::after {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--bg-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -374,7 +376,7 @@ label:has(+ textarea[required])::after {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px var(--shadow-text);
     animation: modalSlideIn 0.3s ease;
     overflow: hidden;
 }
@@ -392,7 +394,7 @@ label:has(+ textarea[required])::after {
 
 .modal-header {
     padding: 25px 30px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -402,7 +404,7 @@ label:has(+ textarea[required])::after {
 .modal-header h3 {
     margin: 0;
     font-size: 1.3rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -410,13 +412,13 @@ label:has(+ textarea[required])::after {
 }
 
 .modal-header i {
-    color: #ff9800;
+    color: var(--text-orange);
     font-size: 1.5rem;
 }
 
 .modal-body {
     padding: 30px;
-    color: var(--text-color);
+    color: var(--text-primary);
     flex: 1;
     overflow-y: auto;
 }
@@ -433,7 +435,7 @@ label:has(+ textarea[required])::after {
 
 .modal-footer {
     padding: 20px 30px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     display: flex;
     gap: 15px;
     justify-content: flex-end;
@@ -447,14 +449,14 @@ label:has(+ textarea[required])::after {
     bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--admin-purple);
+    background: var(--purple-primary);
     color: white;
     padding: 16px 24px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     transition: bottom 0.3s ease;
     min-width: 300px;
@@ -472,17 +474,18 @@ label:has(+ textarea[required])::after {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    background: var(--status-active-gradient);
 }
 
 .snackbar-error {
-    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    background: var(--status-inactive-gradient);
 }
 
 .snackbar-warning {
-    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    background: var(--status-warning-gradient);
 }
 
 .snackbar-info {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    background: var(--status-info-gradient);
 }
+

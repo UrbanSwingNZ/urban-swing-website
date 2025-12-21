@@ -133,7 +133,7 @@ function showLoadingButton(buttonId, show) {
     if (show) {
         button.disabled = true;
         button.dataset.originalText = button.textContent;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+        button.innerHTML = `<i class="fas ${ICONS.LOADING}"></i> Checking...`;
     } else {
         button.disabled = false;
         button.textContent = button.dataset.originalText || 'Continue';

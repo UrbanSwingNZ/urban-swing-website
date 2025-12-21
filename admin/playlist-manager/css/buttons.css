@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    BUTTON STYLES
    Base styles inherited from admin-modals.css
@@ -5,8 +7,8 @@
    ======================================== */
 
 .btn-filter {
-  background: var(--pm-card-light);
-  border: 1px solid var(--pm-border-light);
+  background: var(--card-light);
+  border: 1px solid var(--gray-450);
   color: var(--text-color);
   padding: 8px 16px;
   border-radius: 20px;
@@ -16,19 +18,19 @@
 }
 
 .btn-filter:hover {
-  border-color: var(--pm-purple);
-  color: var(--pm-purple);
+  border-color: var(--purple-primary);
+  color: var(--purple-primary);
 }
 
 .btn-filter.active {
-  background: var(--pm-purple);
-  border-color: var(--pm-purple);
+  background: var(--purple-primary);
+  border-color: var(--purple-primary);
   color: white;
 }
 
 @media (prefers-color-scheme: dark) {
   .btn-filter {
-    background: var(--pm-card-dark);
-    border-color: var(--pm-border-dark);
+    background: var(--card-dark);
+    border-color: var(--hover-dark);
   }
 }

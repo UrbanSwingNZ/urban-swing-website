@@ -139,7 +139,7 @@ function displayOnlinePaymentStatus(transactions, checkinDate) {
     if (currentTransactionId) {
         messagesContainer.innerHTML = `
             <div class="online-payment-message ${exactMatch ? 'success' : 'warning'}">
-                <i class="fas ${exactMatch ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+                <i class="fas ${exactMatch ? ICONS.SUCCESS : ICONS.WARNING}"></i>
                 <span>${exactMatch ? 'Found match for' : 'No match for'} ${formatDate(checkinDate)}. Available online payments:</span>
             </div>
         `;

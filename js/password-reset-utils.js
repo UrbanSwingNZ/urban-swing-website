@@ -210,7 +210,7 @@ function createPasswordResetModal(options = {}) {
                     
                     // Disable submit button
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    submitBtn.innerHTML = `<i class="fas ${ICONS.LOADING}"></i> Sending...`;
                     messageEl.style.display = 'none';
 
                     const result = await sendPasswordReset(email, {

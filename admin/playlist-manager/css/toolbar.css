@@ -8,7 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--pm-border-light);
+  border-bottom: 1px solid var(--gray-450);
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -24,7 +24,7 @@
 
 @media (prefers-color-scheme: dark) {
   .tracks-toolbar {
-    border-bottom-color: var(--pm-border-dark);
+    border-bottom-color: var(--hover-dark);
   }
 }
 
@@ -33,10 +33,10 @@
   max-width: 400px;
   min-width: 200px;
   padding: 0;
-  border: 1px solid var(--pm-border-light);
+  border: 1px solid var(--gray-450);
   border-radius: 20px;
   padding: 8px 15px;
-  background: var(--pm-card-light);
+  background: var(--card-light);
 }
 
 @media (max-width: 768px) {
@@ -47,8 +47,8 @@
 
 @media (prefers-color-scheme: dark) {
   .tracks-toolbar .search-box {
-    border-color: var(--pm-border-dark);
-    background: var(--pm-card-dark);
+    border-color: var(--hover-dark);
+    background: var(--card-dark);
   }
 }
 

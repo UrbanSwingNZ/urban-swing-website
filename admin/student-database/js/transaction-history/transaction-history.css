@@ -16,27 +16,27 @@
 /* Student Info Header */
 .transaction-student-info {
     padding: 20px 24px;
-    background: var(--bg-secondary, #f8f9fa);
-    border-bottom: 1px solid var(--border-color, #dee2e6);
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .transaction-student-info h3 {
     margin: 0 0 4px 0;
     font-size: 1.25rem;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .transaction-student-info p {
     margin: 0;
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
     font-size: 0.9rem;
 }
 
 /* Tabs */
 .transaction-tabs {
     display: flex;
-    border-bottom: 2px solid var(--border-color, #dee2e6);
-    background: var(--bg-secondary, #f8f9fa);
+    border-bottom: 2px solid var(--border-light);
+    background: var(--bg-secondary);
 }
 
 .transaction-tab {
@@ -48,20 +48,20 @@
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: 500;
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
     transition: all 0.2s ease;
     position: relative;
     bottom: -2px;
 }
 
 .transaction-tab:hover {
-    color: var(--text-primary, #212529);
-    background: rgba(0, 0, 0, 0.02);
+    color: var(--text-primary);
+    background: var(--shadow-light);
 }
 
 .transaction-tab.active {
-    color: var(--admin-purple, #9a16f5);
-    border-bottom-color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
+    border-bottom-color: var(--purple-primary);
     background: white;
 }
 
@@ -86,11 +86,11 @@
 .section-summary {
     margin: 0 0 16px 0;
     padding: 12px 16px;
-    background: var(--bg-secondary, #f8f9fa);
-    border-left: 4px solid var(--admin-purple, #9a16f5);
+    background: var(--bg-secondary);
+    border-left: 4px solid var(--purple-primary);
     border-radius: 4px;
     font-weight: 500;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 /* Attendance List */
@@ -105,15 +105,15 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    background: var(--bg-primary, white);
-    border: 1px solid var(--border-color, #dee2e6);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     transition: all 0.2s ease;
 }
 
 .attendance-item:hover {
-    border-color: var(--admin-purple, #9a16f5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-color: var(--purple-primary);
+    box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .attendance-date-time {
@@ -124,7 +124,7 @@
 
 .attendance-date {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .attendance-time {
@@ -143,15 +143,15 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px;
-    background: var(--bg-primary, white);
-    border: 1px solid var(--border-color, #dee2e6);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     transition: all 0.2s ease;
 }
 
 .payment-item:hover {
-    border-color: var(--admin-purple, #9a16f5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-color: var(--purple-primary);
+    box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .payment-date-info {
@@ -168,7 +168,7 @@
 
 .payment-date {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .payment-time {
@@ -182,7 +182,7 @@
 }
 
 .payment-package strong {
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .payment-class-date {
@@ -190,7 +190,7 @@
     align-items: center;
     gap: 6px;
     font-size: 0.9rem;
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
     margin-top: 4px;
 }
 
@@ -208,7 +208,7 @@
 .payment-amount {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--admin-success, #28a745);
+    color: var(--success);
 }
 
 .payment-method {
@@ -228,9 +228,9 @@
 .btn-edit-transaction {
     padding: 6px 12px;
     background: transparent;
-    border: 1px solid var(--admin-purple, #9a16f5);
+    border: 1px solid var(--purple-primary);
     border-radius: 4px;
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.85rem;
@@ -240,7 +240,7 @@
 }
 
 .btn-edit-transaction:hover {
-    background: var(--admin-purple, #9a16f5);
+    background: var(--purple-primary);
     color: white;
 }
 
@@ -252,9 +252,9 @@
 .btn-delete-transaction {
     padding: 6px 12px;
     background: transparent;
-    border: 1px solid var(--admin-error, #dc3545);
+    border: 1px solid var(--error);
     border-radius: 4px;
-    color: var(--admin-error, #dc3545);
+    color: var(--error);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.85rem;
@@ -264,7 +264,7 @@
 }
 
 .btn-delete-transaction:hover {
-    background: var(--admin-error, #dc3545);
+    background: var(--error);
     color: white;
 }
 
@@ -279,7 +279,7 @@
     gap: 16px;
     margin-bottom: 24px;
     padding: 20px;
-    background: linear-gradient(135deg, var(--admin-blue, #3b82f6), var(--admin-purple, #9a16f5));
+    background: var(--gradient-blue-purple);
     border-radius: 8px;
     color: white;
 }
@@ -309,7 +309,7 @@
 .concessions-section h4 {
     margin: 0 0 12px 0;
     font-size: 1rem;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .concessions-section h4 i {
@@ -321,9 +321,9 @@
     cursor: pointer;
     user-select: none;
     padding: 12px;
-    background: var(--bg-primary, white);
-    border: 1px solid var(--border-color, #dee2e6);
-    border-left: 4px solid var(--border-color, #dee2e6);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--border-light);
     border-radius: 6px;
     margin: 0 0 0 0;
     transition: all 0.2s ease;
@@ -331,31 +331,31 @@
     align-items: center;
     justify-content: space-between;
     font-size: 1rem;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 .concession-accordion-header:hover {
-    background: rgba(154, 22, 245, 0.05);
-    border-color: var(--admin-purple, #9a16f5);
+    background: var(--bg-purple-alt-medium);
+    border-color: var(--purple-primary);
 }
 
 /* Colored borders for different accordion states */
 .concession-accordion-header[data-target*="active"] {
-    border-left-color: var(--admin-success, #28a745);
+    border-left-color: var(--success);
 }
 
 .concession-accordion-header[data-target*="expired"] {
-    border-left-color: var(--admin-error, #dc3545);
+    border-left-color: var(--error);
 }
 
 .concession-accordion-header[data-target*="depleted"] {
-    border-left-color: var(--admin-warning, #ffc107);
+    border-left-color: var(--warning);
 }
 
 .concession-accordion-header .accordion-icon {
     transition: transform 0.2s ease;
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
 }
 
 .concession-accordion-header.active .accordion-icon {
@@ -377,35 +377,35 @@
 /* Concession Items - Reuse from existing concessions.css */
 .concession-item {
     padding: 12px 16px 16px 16px;
-    background: var(--bg-primary, white);
-    border: 1px solid var(--border-color, #dee2e6);
-    border-left: 4px solid var(--admin-success, #28a745);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--success);
     border-radius: 6px;
     margin-bottom: 8px;
 }
 
 .concession-item.expired {
-    border-left-color: var(--admin-error, #dc3545);
-    background: rgba(220, 53, 69, 0.02);
+    border-left-color: var(--error);
+    background: var(--bg-error-light);
 }
 
 .concession-item.depleted {
-    border-left-color: var(--admin-warning, #ffc107);
-    background: rgba(255, 193, 7, 0.02);
+    border-left-color: var(--warning);
+    background: var(--badge-warning-bg);
 }
 
 .concession-item.gifted {
-    border-left-color: var(--admin-purple, #9a16f5);
+    border-left-color: var(--purple-primary);
     border-left-width: 4px;
-    background: rgba(154, 22, 245, 0.02);
+    background: var(--bg-purple-alt);
 }
 
 .concession-item.gifted.expired {
-    border-left-color: var(--admin-error, #dc3545);
+    border-left-color: var(--error);
 }
 
 .concession-item.gifted.depleted {
-    border-left-color: var(--admin-warning, #ffc107);
+    border-left-color: var(--warning);
 }
 
 .concession-info {
@@ -413,7 +413,7 @@
 }
 
 .concession-info strong {
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
 }
 
 /* Concession Content Layout */
@@ -433,7 +433,7 @@
     flex-direction: column;
     gap: 8px;
     font-size: 0.9rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
 }
 
 .concession-details span {
@@ -443,7 +443,7 @@
 }
 
 .concession-details i {
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
 }
 
 /* Concession Actions */
@@ -466,7 +466,7 @@
 }
 
 .badge-gifted {
-    background: var(--admin-purple, #9a16f5);
+    background: var(--purple-primary);
     color: white;
     padding: 4px 10px;
     border-radius: 4px;
@@ -486,19 +486,19 @@
 .btn-lock-toggle {
     padding: 6px 14px;
     font-size: 0.85rem;
-    border: 1px solid var(--border-color, #dee2e6);
+    border: 1px solid var(--border-light);
     background: transparent;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
     font-weight: 500;
 }
 
 .btn-lock-toggle:hover:not(:disabled) {
-    background: var(--admin-purple, #9a16f5);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple, #9a16f5);
+    border-color: var(--purple-primary);
 }
 
 .btn-lock-toggle:disabled {
@@ -513,25 +513,25 @@
 .btn-delete-block {
     padding: 6px 14px;
     font-size: 0.85rem;
-    border: 1px solid var(--admin-error, #dc3545);
+    border: 1px solid var(--error);
     background: transparent;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--admin-error, #dc3545);
+    color: var(--error);
     font-weight: 500;
 }
 
 .btn-delete-block:hover:not(:disabled) {
-    background: var(--admin-error, #dc3545);
+    background: var(--error);
     color: white;
 }
 
 .btn-delete-block:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    border-color: var(--border-color, #dee2e6);
-    color: var(--text-muted, #6c757d);
+    border-color: var(--border-light);
+    color: var(--text-muted);
 }
 
 .btn-delete-block i {
@@ -542,12 +542,12 @@
     display: inline-flex;
     align-items: center;
     padding: 4px 10px;
-    background: rgba(108, 117, 125, 0.15);
-    border: 1px solid rgba(108, 117, 125, 0.3);
+    background: var(--badge-neutral-bg);
+    border: 1px solid var(--text-muted-alt);
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -562,8 +562,8 @@
     display: flex;
     flex-direction: column;
     padding: 12px;
-    background: rgba(154, 22, 245, 0.02);
-    border: 1px solid rgba(154, 22, 245, 0.15);
+    background: var(--bg-purple-alt);
+    border: 1px solid var(--bg-purple-medium);
     border-radius: 4px;
     height: fit-content;
 }
@@ -572,14 +572,14 @@
     display: block;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--text-primary);
     margin-bottom: 6px;
 }
 
 .concession-notes-input {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid var(--border-color, #dee2e6);
+    border: 1px solid var(--border-light);
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.9rem;
@@ -592,12 +592,12 @@
 
 .concession-notes-input:focus {
     outline: none;
-    border-color: var(--admin-purple, #9a16f5);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .concession-notes-input::placeholder {
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -609,28 +609,28 @@
 }
 
 .notes-save-status.saving {
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
 }
 
 .notes-save-status.saved {
-    color: var(--admin-success, #28a745);
+    color: var(--success);
 }
 
 .notes-save-status.error {
-    color: var(--admin-error, #dc3545);
+    color: var(--error);
 }
 
 /* Utility Classes */
 .text-success {
-    color: var(--admin-success, #28a745) !important;
+    color: var(--success) !important;
 }
 
 .text-warning {
-    color: var(--admin-warning, #ffc107) !important;
+    color: var(--warning) !important;
 }
 
 .text-error {
-    color: var(--admin-error, #dc3545) !important;
+    color: var(--error) !important;
 }
 
 /* Responsive */
@@ -644,13 +644,13 @@
     }
     
     .transaction-tab {
-        border-bottom: 1px solid var(--border-color, #dee2e6);
+        border-bottom: 1px solid var(--border-light);
         border-left: 3px solid transparent;
     }
     
     .transaction-tab.active {
-        border-left-color: var(--admin-purple, #9a16f5);
-        border-bottom-color: var(--border-color, #dee2e6);
+        border-left-color: var(--purple-primary);
+        border-bottom-color: var(--border-light);
     }
     
     .payment-item,
@@ -681,3 +681,4 @@
         flex: 1;
     }
 }
+

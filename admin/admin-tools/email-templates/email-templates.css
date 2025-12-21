@@ -13,7 +13,7 @@
 .templates-sidebar {
     width: 300px;
     background: white;
-    border-right: 1px solid #e0e0e0;
+    border-right: 1px solid var(--gray-450);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -21,7 +21,7 @@
 
 .sidebar-header {
     padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,7 +30,7 @@
 .sidebar-header h2 {
     margin: 0;
     font-size: 1.2rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .sidebar-actions {
@@ -41,7 +41,7 @@
 .btn-icon {
     background: none;
     border: none;
-    color: #666;
+    color: var(--text-light);
     cursor: pointer;
     padding: 8px;
     border-radius: 4px;
@@ -49,7 +49,7 @@
 }
 
 .btn-icon:hover {
-    background: #f0f0f0;
+    background: var(--hover-light);
     color: #9a16f5;
 }
 
@@ -62,7 +62,7 @@
 .loading-state {
     text-align: center;
     padding: 40px 20px;
-    color: #999;
+    color: var(--text-muted);
 }
 
 .loading-state i {
@@ -77,9 +77,9 @@
 
 .category-header {
     padding: 8px 12px;
-    background: #f8f9fa;
+    background: var(--bg-light);
     font-weight: 600;
-    color: #666;
+    color: var(--text-light);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -100,8 +100,8 @@
 }
 
 .template-item:hover {
-    background: #f8f9fa;
-    border-color: #e0e0e0;
+    background: var(--bg-light);
+    border-color: var(--gray-450);
 }
 
 .template-item.active {
@@ -120,13 +120,13 @@
 
 .template-item-name {
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 2px;
 }
 
 .template-item-id {
     font-size: 0.75rem;
-    color: #999;
+    color: var(--text-muted);
     font-family: 'Courier New', monospace;
 }
 
@@ -138,7 +138,7 @@
 }
 
 .template-item .status-indicator.inactive {
-    background: #dc3545;
+    background: var(--error);
 }
 
 .template-item.base-template {
@@ -165,7 +165,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #999;
+    color: var(--text-muted);
     padding: 40px;
 }
 
@@ -177,7 +177,7 @@
 
 .no-selection-state h2 {
     margin: 0 0 10px 0;
-    color: #666;
+    color: var(--text-light);
 }
 
 .no-selection-state p {
@@ -195,11 +195,11 @@
 
 .editor-toolbar {
     padding: 20px 24px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #fafafa;
+    background: var(--bg-gray-light);
 }
 
 .toolbar-left {
@@ -211,7 +211,7 @@
 .toolbar-left h2 {
     margin: 0;
     font-size: 1.3rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .status-badge {
@@ -251,7 +251,7 @@
 /* ===== Tabs ===== */
 .editor-tabs {
     display: flex;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
     background: white;
 }
 
@@ -260,7 +260,7 @@
     border: none;
     background: none;
     cursor: pointer;
-    color: #666;
+    color: var(--text-light);
     font-size: 0.95rem;
     font-weight: 500;
     border-bottom: 3px solid transparent;
@@ -271,8 +271,8 @@
 }
 
 .tab-btn:hover {
-    color: #333;
-    background: #f8f9fa;
+    color: var(--text-primary);
+    background: var(--bg-light);
 }
 
 .tab-btn.active {
@@ -299,7 +299,7 @@
 .editor-mode-tabs {
     display: flex;
     gap: 0;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 8px;
     padding: 4px;
     margin-bottom: 15px;
@@ -311,7 +311,7 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    color: #666;
+    color: var(--text-light);
     font-size: 0.9rem;
     font-weight: 500;
     border-radius: 6px;
@@ -322,14 +322,14 @@
 }
 
 .editor-mode-btn:hover {
-    color: #333;
+    color: var(--text-primary);
     background: rgba(154, 22, 245, 0.1);
 }
 
 .editor-mode-btn.active {
     background: white;
     color: #9a16f5;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--shadow-light);
 }
 
 .editor-mode-btn i {
@@ -351,7 +351,7 @@
 .editor-section label {
     display: block;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -364,14 +364,14 @@
 
 .variable-hint {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-light);
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
 .variable-hint code {
-    background: #f8f9fa;
+    background: var(--bg-light);
     padding: 2px 6px;
     border-radius: 3px;
     font-family: 'Courier New', monospace;
@@ -381,7 +381,7 @@
 .form-control {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 6px;
     font-size: 0.95rem;
     font-family: inherit;
@@ -395,7 +395,7 @@
 }
 
 .editor-wrapper {
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 6px;
     overflow: hidden;
 }
@@ -408,7 +408,7 @@
 .text-editor {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 6px;
     font-family: 'Courier New', monospace;
     font-size: 0.9rem;
@@ -424,7 +424,7 @@
 
 /* ===== Variables Panel ===== */
 .variables-panel {
-    background: #f8f9fa;
+    background: var(--bg-light);
     padding: 20px;
     border-radius: 8px;
     margin-top: 24px;
@@ -433,7 +433,7 @@
 .variables-panel h3 {
     margin: 0 0 15px 0;
     font-size: 1rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .variables-list {
@@ -449,7 +449,7 @@
 }
 
 .variable-object {
-    background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
+    background: linear-gradient(135deg, var(--bg-purple-pale), var(--info-light));
     border-left: 3px solid #9a16f5;
     font-weight: 600;
 }
@@ -460,11 +460,11 @@
     gap: 4px;
     margin-left: 20px;
     padding-left: 12px;
-    border-left: 2px solid #e0e0e0;
+    border-left: 2px solid var(--gray-450);
 }
 
 .variable-property {
-    background: #fafafa;
+    background: var(--bg-gray-light);
 }
 
 .variable-property .variable-name {
@@ -475,7 +475,7 @@
     background: white;
     padding: 10px 12px;
     border-radius: 6px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--gray-450);
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -495,12 +495,12 @@
 
 .variable-description {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 .variable-example {
     font-size: 0.75rem;
-    color: #999;
+    color: var(--text-muted);
     margin-top: 4px;
     font-style: italic;
 }
@@ -509,7 +509,7 @@
 .settings-section {
     margin-bottom: 30px;
     padding-bottom: 30px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
 }
 
 .settings-section:last-child {
@@ -518,7 +518,7 @@
 
 .settings-section h3 {
     margin: 0 0 20px 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.1rem;
 }
 
@@ -534,14 +534,14 @@
 }
 
 .settings-description {
-    color: #666;
+    color: var(--text-light);
     font-size: 0.9rem;
     margin: 0 0 20px 0;
     line-height: 1.5;
 }
 
 .settings-description code {
-    background: #f8f9fa;
+    background: var(--bg-light);
     padding: 2px 6px;
     border-radius: 3px;
     font-family: 'Courier New', monospace;
@@ -563,14 +563,14 @@
 
 .info-item label {
     font-weight: 600;
-    color: #666;
+    color: var(--text-light);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .info-item span {
-    color: #333;
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -580,7 +580,7 @@
     gap: 10px;
     cursor: pointer;
     padding: 12px;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 6px;
     transition: background 0.2s;
 }
@@ -604,7 +604,7 @@
     width: 100%;
     border-collapse: collapse;
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--gray-450);
     border-radius: 6px;
     overflow: hidden;
 }
@@ -622,7 +622,7 @@
 }
 
 .variables-table tbody tr {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
     transition: background 0.2s;
 }
 
@@ -631,7 +631,7 @@
 }
 
 .variables-table tbody tr:hover {
-    background: #f8f9fa;
+    background: var(--bg-light);
 }
 
 .variables-table td {
@@ -658,7 +658,7 @@
 .no-data-message {
     text-align: center;
     padding: 40px 20px;
-    color: #999;
+    color: var(--text-muted);
     font-size: 0.95rem;
 }
 
@@ -668,14 +668,14 @@
 }
 
 .required {
-    color: #dc3545;
+    color: var(--error);
 }
 
 .form-text {
     display: block;
     margin-top: 4px;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 /* ===== Buttons ===== */
@@ -693,7 +693,7 @@
 }
 
 .btn-danger-lg {
-    background: var(--admin-error, #dc3545);
+    background: var(--error);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -727,7 +727,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--bg-overlay-dark);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -746,7 +746,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 40px var(--shadow-text);
 }
 
 .modal-content.modal-large {
@@ -755,11 +755,11 @@
 
 .modal-header {
     padding: 25px 30px;
-    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(135deg, var(--admin-blue, #3534Fa), var(--admin-purple, #9a16f5));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     border-radius: 12px 12px 0 0;
 }
 
@@ -789,14 +789,14 @@
     margin-top: 24px;
     justify-content: flex-end;
     padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--gray-450);
 }
 
 /* ===== Preview Modal ===== */
 .preview-controls {
     margin-bottom: 30px;
     padding: 20px;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 8px;
 }
 
@@ -807,7 +807,7 @@
 
 .preview-controls p {
     margin: 0 0 15px 0;
-    color: #666;
+    color: var(--text-light);
     font-size: 0.9rem;
 }
 
@@ -821,14 +821,14 @@
 
 .student-selection label {
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
     margin: 0;
     padding-bottom: 10px;
 }
 
 .student-selection select {
     padding: 10px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 6px;
     font-size: 0.95rem;
     background: white;
@@ -857,12 +857,12 @@
 .preview-variable-input label {
     font-weight: 500;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 .preview-variable-input input {
     padding: 8px 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 4px;
     font-size: 0.9rem;
 }
@@ -874,7 +874,7 @@
 
 .preview-subject {
     padding: 12px;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 6px;
     margin-bottom: 15px;
     font-size: 0.95rem;
@@ -884,7 +884,7 @@
     display: flex;
     gap: 5px;
     margin-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
 }
 
 .preview-tab-btn {
@@ -892,7 +892,7 @@
     border: none;
     background: none;
     cursor: pointer;
-    color: #666;
+    color: var(--text-light);
     border-bottom: 3px solid transparent;
     font-weight: 500;
 }
@@ -917,13 +917,13 @@
 #preview-frame {
     width: 100%;
     height: 500px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--gray-450);
     border-radius: 6px;
     background: white;
 }
 
 #preview-text-content {
-    background: #f8f9fa;
+    background: var(--bg-light);
     padding: 20px;
     border-radius: 6px;
     font-family: 'Courier New', monospace;
@@ -942,9 +942,9 @@
 
 .version-item {
     padding: 20px;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--gray-450);
 }
 
 .version-item.current {
@@ -982,7 +982,7 @@
 
 .version-meta {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 .version-actions {
@@ -993,13 +993,13 @@
 .version-preview {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--gray-500);
 }
 
 .version-preview h4 {
     margin: 0 0 10px 0;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-light);
 }
 
 .version-preview pre {
@@ -1027,7 +1027,7 @@
 
 .form-group label {
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
     font-size: 0.9rem;
 }
 
@@ -1035,7 +1035,7 @@
 .form-group select,
 .form-group textarea {
     padding: 10px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-500);
     border-radius: 6px;
     font-size: 0.95rem;
 }
@@ -1050,27 +1050,27 @@
 
 .form-hint {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-light);
     margin-top: 4px;
 }
 
 /* ===== Delete Modal ===== */
 .template-info-delete {
-    background: #f8f9fa;
+    background: var(--bg-light);
     padding: 15px;
     border-radius: 6px;
     margin: 15px 0;
-    border-left: 3px solid var(--admin-error, #dc3545);
+    border-left: 3px solid var(--error);
 }
 
 .template-info-delete strong {
     display: block;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
 .text-muted {
-    color: #666;
+    color: var(--text-light);
     font-size: 0.9rem;
     font-style: italic;
 }
@@ -1080,7 +1080,7 @@
 }
 
 .modal-header.error {
-    background: linear-gradient(135deg, #dc3545, #c82333);
+    background: linear-gradient(135deg, var(--error), #c82333);
 }
 
 .modal-header.error h3 {
@@ -1102,9 +1102,9 @@
 }
 
 .btn-help {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--header-overlay-semi);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--header-overlay-strong);
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 0.85rem;
@@ -1116,14 +1116,14 @@
 }
 
 .btn-help:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--header-overlay-strong);
+    border-color: var(--border-overlay-strong);
 }
 
 /* Variable Properties Preview */
 .variable-properties-preview {
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
+    background: var(--bg-light);
+    border: 1px solid var(--gray-450);
     border-radius: 6px;
     padding: 16px;
     margin-top: 20px;
@@ -1132,7 +1132,7 @@
 .variable-properties-preview h4 {
     margin: 0 0 12px 0;
     font-size: 0.95rem;
-    color: #333;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1150,7 +1150,7 @@
 
 .property-item {
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--gray-450);
     border-radius: 4px;
     padding: 10px 12px;
     font-size: 0.9rem;
@@ -1164,13 +1164,13 @@
 }
 
 .property-description {
-    color: #666;
+    color: var(--text-light);
     font-size: 0.85rem;
     margin-bottom: 4px;
 }
 
 .property-example {
-    color: #999;
+    color: var(--text-muted);
     font-size: 0.8rem;
     font-style: italic;
 }
@@ -1178,7 +1178,7 @@
 /* ===== Visual Editor Variable Styling ===== */
 /* Style ${variableName} placeholders in TinyMCE visual editor */
 .mce-content-body .template-variable {
-    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    background: linear-gradient(135deg, var(--info-light), var(--bg-purple-pale));
     color: #9a16f5;
     padding: 2px 8px;
     border-radius: 12px;
@@ -1209,7 +1209,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     z-index: 9999;
     display: flex;
     flex-direction: column;
@@ -1233,7 +1233,7 @@
 
 .loading-spinner p {
     margin-top: 20px;
-    color: #666;
+    color: var(--text-light);
     font-size: 1.1rem;
 }
 
@@ -1270,7 +1270,7 @@
     background: #323232;
     color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     display: flex;
     align-items: center;
@@ -1285,7 +1285,7 @@
 }
 
 .snackbar.success {
-    background: #4caf50;
+    background: var(--success-light);
 }
 
 .snackbar.error {
@@ -1322,7 +1322,7 @@
 .insert-variable-search {
     position: relative;
     padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--gray-450);
     flex-shrink: 0;
 }
 
@@ -1337,7 +1337,7 @@
     left: 32px;
     top: 50%;
     transform: translateY(-50%);
-    color: #999;
+    color: var(--text-muted);
     pointer-events: none;
 }
 
@@ -1356,7 +1356,7 @@
     background: white;
     padding: 16px 18px;
     border-radius: 8px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     cursor: pointer;
     transition: all 0.2s ease;
     margin-bottom: 8px;
@@ -1374,7 +1374,7 @@
 }
 
 .insert-variables-list .variable-object {
-    background: linear-gradient(135deg, #f3e5f5, #e3f2fd);
+    background: linear-gradient(135deg, var(--bg-purple-pale), var(--info-light));
     border-left: 4px solid #9a16f5;
     font-weight: 600;
     padding-left: 18px;
@@ -1383,13 +1383,13 @@
 .insert-variables-list .variable-properties {
     margin-left: 24px;
     padding-left: 16px;
-    border-left: 3px solid #e0e0e0;
+    border-left: 3px solid var(--gray-450);
     margin-top: 8px;
 }
 
 .insert-variables-list .variable-property {
-    background: #fafafa;
-    border: 1px solid #e0e0e0;
+    background: var(--bg-gray-light);
+    border: 1px solid var(--gray-450);
     padding: 14px 16px;
     padding-left: 18px;
 }
@@ -1410,13 +1410,13 @@
 
 .insert-variables-list .variable-description {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-light);
     line-height: 1.4;
 }
 
 .insert-variables-list .variable-example {
     font-size: 0.8rem;
-    color: #999;
+    color: var(--text-muted);
     margin-top: 6px;
     font-style: italic;
 }
@@ -1425,7 +1425,7 @@
 .insert-variables-empty {
     text-align: center;
     padding: 60px 20px;
-    color: #999;
+    color: var(--text-muted);
 }
 
 .insert-variables-empty i {
@@ -1436,7 +1436,7 @@
 
 .insert-variables-empty h4 {
     margin: 0 0 8px 0;
-    color: #666;
+    color: var(--text-light);
     font-size: 1.1rem;
 }
 
@@ -1444,4 +1444,5 @@
     margin: 0;
     font-size: 0.9rem;
 }
+
 

@@ -73,7 +73,7 @@
   background: none;
   -webkit-text-fill-color: white;
   margin-bottom: var(--space-md);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 8px var(--shadow-medium);
 }
 
 .hero p {
@@ -207,7 +207,7 @@
 .divider-gradient {
   border: none;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--urban-purple), transparent);
+  background: linear-gradient(90deg, transparent, var(--purple-primary), transparent);
   margin: var(--space-xl) 0;
 }
 

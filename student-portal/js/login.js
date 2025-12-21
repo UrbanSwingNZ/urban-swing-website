@@ -132,7 +132,7 @@ async function handleLogin() {
     
     // Disable button and show loading state
     loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+    loginBtn.innerHTML = `<i class="fas ${ICONS.LOADING}"></i> Logging in...`;
     
     try {
         // First, check if email exists in students collection

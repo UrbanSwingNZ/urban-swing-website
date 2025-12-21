@@ -66,7 +66,7 @@ function showRateError() {
     const priceElements = document.querySelectorAll('.rate-price');
     priceElements.forEach(el => {
         el.textContent = 'Price unavailable';
-        el.style.color = 'var(--admin-error)';
+        el.style.color = 'var(--error)';
     });
 }
 

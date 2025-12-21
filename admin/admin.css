@@ -19,43 +19,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Color Variables (matching main site) */
-:root {
-  --admin-pink: #e800f2;
-  --admin-blue: #3534Fa;
-  --admin-purple: #9a16f5;
-  --admin-bg-light: #f8f9fa;
-  --admin-bg-dark: #1a1a1a;
-  --admin-card-light: #ffffff;
-  --admin-card-dark: #2d2d2d;
-  --admin-text-light: #333333;
-  --admin-text-dark: #e0e0e0;
-  --admin-border-light: #e0e0e0;
-  --admin-border-dark: #404040;
-  --admin-success: #28a745;
-  --admin-error: #dc3545;
-  --admin-warning: #ffc107;
-  --admin-shadow: rgba(0, 0, 0, 0.1);
-  
-  /* Theme-aware variables - Light mode defaults */
-  --text-color: var(--admin-text-light);
-  --background-color: var(--admin-card-light);
-  --border-color: var(--admin-border-light);
-  --input-bg: #ffffff;
-  --text-muted: #999999;
-}
 
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --admin-shadow: rgba(0, 0, 0, 0.4);
-    --text-color: var(--admin-text-dark);
-    --background-color: var(--admin-card-dark);
-    --border-color: var(--admin-border-dark);
-    --input-bg: #1a1a1a;
-    --text-muted: #888888;
-  }
-}
 
 /* Reset admin-specific elements */
 .auth-container,
@@ -64,9 +28,11 @@ html, body {
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   min-height: 100vh;
-  background: var(--background-color);
-  color: var(--text-color);
+  background: var(--bg-white);
+  color: var(--text-primary);
 }
+
+
 
 /* ========================================
    LOGIN PAGE STYLES
@@ -81,20 +47,16 @@ html, body {
 }
 
 .auth-card {
-  background: var(--admin-card-light);
+  background: var(--white);
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 0 20px 60px var(--admin-shadow);
+  box-shadow: 0 20px 60px var(--shadow-medium);
   max-width: 450px;
   width: 100%;
   text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  .auth-card {
-    background: var(--admin-card-dark);
-  }
-}
+
 
 .auth-card a {
   display: inline-block;
@@ -115,18 +77,20 @@ html, body {
 .auth-card h1 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .auth-card .subtitle {
-  color: var(--text-color);
+  color: var(--text-primary);
   opacity: 0.7;
   margin-bottom: 30px;
   font-size: 0.95rem;
 }
+
+
 
 /* Form Styles */
 .form-group {
@@ -139,34 +103,40 @@ html, body {
   margin-bottom: 8px;
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--text-color);
+  color: var(--text-primary);
 }
+
+
 
 .form-group label i {
   margin-right: 5px;
-  color: var(--admin-purple);
+  color: var(--purple-primary);
 }
 
 .form-group input {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--border-light);
   border-radius: 10px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: var(--input-bg);
-  color: var(--text-color);
+  background: var(--bg-white);
+  color: var(--text-primary);
 }
 
+
+
 .form-group input::placeholder {
-  color: var(--text-color);
+  color: var(--text-primary);
   opacity: 0.5;
 }
 
+
+
 .form-group input:focus {
   outline: none;
-  border-color: var(--admin-purple);
-  box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+  border-color: var(--purple-primary);
+  box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 /* Form Submit Buttons (scoped to auth forms only) */
@@ -182,10 +152,10 @@ html, body {
 .error-message {
   margin-top: 15px;
   padding: 12px;
-  background: rgba(220, 53, 69, 0.1);
-  border: 1px solid var(--admin-error);
+  background: var(--bg-error-light);
+  border: 1px solid var(--error);
   border-radius: 8px;
-  color: var(--admin-error);
+  color: var(--error);
   font-size: 0.9rem;
   display: none;
 }
@@ -232,14 +202,14 @@ html, body {
 .dashboard-welcome h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--admin-blue), var(--admin-pink));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .dashboard-welcome p {
-  color: #888;
+  color: var(--gray-650);
   font-size: 1.1rem;
 }
 
@@ -252,10 +222,10 @@ html, body {
 }
 
 .dashboard-tile {
-  background: var(--admin-card-light);
+  background: var(--white);
   border-radius: 20px;
   padding: 40px 30px;
-  box-shadow: 0 10px 30px var(--admin-shadow);
+  box-shadow: 0 10px 30px var(--shadow-medium);
   transition: all 0.3s ease;
   text-align: center;
   position: relative;
@@ -265,32 +235,30 @@ html, body {
   color: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
-  .dashboard-tile {
-    background: var(--admin-card-dark);
-  }
-}
+
 
 .dashboard-tile:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 40px var(--admin-shadow);
+  box-shadow: 0 15px 40px var(--shadow-medium);
 }
 
 .dashboard-tile h3 {
   margin-bottom: 15px;
-  color: var(--text-color);
+  color: var(--text-primary);
 }
 
+
+
 .dashboard-tile p {
-  color: #888;
+  color: var(--gray-650);
   margin-bottom: 25px;
   line-height: 1.6;
 }
 
 /* Dashboard Info */
 .dashboard-info {
-  background: rgba(53, 52, 250, 0.1);
-  border-left: 4px solid var(--admin-blue);
+  background: var(--bg-blue-light);
+  border-left: 4px solid var(--blue-primary);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -298,25 +266,20 @@ html, body {
 
 .dashboard-info i {
   margin-right: 8px;
-  color: var(--admin-blue);
+  color: var(--blue-primary);
 }
 
 /* Footer */
 .admin-footer {
-  background: var(--admin-card-light);
+  background: var(--white);
   padding: 20px;
   text-align: center;
-  color: #888;
-  border-top: 1px solid var(--admin-border-light);
+  color: var(--gray-650);
+  border-top: 1px solid var(--border-light);
   font-size: 0.9rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .admin-footer {
-    background: var(--admin-card-dark);
-    border-top-color: var(--admin-border-dark);
-  }
-}
+
 
 /* ========================================
    LOADING SPINNER - Shared Component
@@ -333,7 +296,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #1a1a1a;
+  background: var(--bg-dark);
   z-index: 9999;
   font-size: 1.2em;
   color: white;
@@ -345,7 +308,7 @@ html, body {
   width: 48px;
   height: 48px;
   border: 6px solid #eee;
-  border-top: 6px solid var(--admin-pink);
+  border-top: 6px solid var(--pink-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 18px;
@@ -377,7 +340,7 @@ html, body {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--admin-purple);
+  color: var(--purple-primary);
   font-size: 1rem;
   pointer-events: none;
 }
@@ -385,20 +348,22 @@ html, body {
 .search-input {
   width: 100%;
   padding: 8px 45px 8px 48px;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--border-light);
   border-radius: 8px;
   font-size: 0.95rem;
   background: var(--card-bg);
-  color: var(--text-color);
+  color: var(--text-primary);
   transition: all 0.3s ease;
   height: 36px;
   box-sizing: border-box;
 }
 
+
+
 .search-input:focus {
   outline: none;
-  border-color: var(--admin-purple);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  border-color: var(--purple-primary);
+  box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .search-input::placeholder {
@@ -423,8 +388,8 @@ html, body {
 }
 
 .clear-search:hover {
-  color: var(--admin-purple);
-  background: rgba(139, 92, 246, 0.1);
+  color: var(--purple-primary);
+  background: var(--bg-purple-medium);
 }
 
 .search-results-info {
@@ -434,7 +399,7 @@ html, body {
 }
 
 .search-results-info strong {
-  color: var(--admin-purple);
+  color: var(--purple-primary);
   font-weight: 600;
 }
 
@@ -499,13 +464,15 @@ html, body {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-size: 0.9rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
 
+
+
 .form-group label i {
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     margin-right: 5px;
 }
 
@@ -518,10 +485,10 @@ html, body {
 .form-group select {
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
-    background: var(--admin-card-light);
-    color: var(--text-color);
+    background: var(--white);
+    color: var(--text-primary);
     font-size: 0.95rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -529,21 +496,12 @@ html, body {
     min-width: 0; /* Allow inputs to shrink */
 }
 
-@media (prefers-color-scheme: dark) {
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group input[type="tel"],
-    .form-group input[type="password"],
-    .form-group textarea,
-    .form-group select {
-        background: var(--admin-card-dark);
-    }
-}
+
 
 .form-group input[readonly],
 .form-group textarea[readonly],
 .form-group select[disabled] {
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-light);
     cursor: default;
 }
 
@@ -551,8 +509,8 @@ html, body {
 .form-group textarea:not([readonly]):focus,
 .form-group select:not([disabled]):focus {
     outline: none;
-    border-color: var(--admin-purple);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .form-group textarea {
@@ -583,8 +541,10 @@ html, body {
 }
 
 .checkbox-label span {
-    color: var(--text-color);
+    color: var(--text-primary);
 }
+
+
 
 .checkbox-label input[type="checkbox"] {
     width: 16px;
@@ -606,11 +566,13 @@ html, body {
     gap: 20px;
     padding: 15px 0;
     margin-top: 10px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     font-size: 0.8rem;
     opacity: 0.6;
     flex-wrap: wrap;
 }
+
+
 
 .timestamp-item {
     display: flex;
@@ -628,5 +590,7 @@ html, body {
 }
 
 .timestamp-item span:last-child {
-    color: var(--text-color);
+    color: var(--text-primary);
 }
+
+

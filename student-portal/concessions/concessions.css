@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* My Concessions Page Styles */
 
 .concessions-content {
@@ -18,7 +20,7 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
 
@@ -37,7 +39,7 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -50,7 +52,7 @@
 
 .concession-accordion-header:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .concession-accordion-header i.fas:first-child {
@@ -90,44 +92,44 @@
     padding: 1.5rem;
     background: white;
     border: 1px solid var(--border-color);
-    border-left: 4px solid var(--admin-success);
+    border-left: 4px solid var(--success);
     border-radius: 8px;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .concession-item:hover {
-    border-color: var(--admin-purple);
-    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    box-shadow: 0 2px 8px var(--bg-purple-medium);
 }
 
 .concession-item.expired {
     opacity: 0.7;
-    background: rgba(220, 53, 69, 0.05);
-    border-left: 4px solid var(--admin-error);
+    background: var(--bg-error-light);
+    border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted {
     opacity: 0.7;
-    background: rgba(255, 193, 7, 0.05);
-    border-left: 4px solid var(--admin-warning);
+    background: var(--badge-warning-bg);
+    border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked {
     opacity: 0.6;
-    background: rgba(128, 128, 128, 0.1);
+    background: var(--shadow-light);
 }
 
 .concession-item.expired.locked {
-    border-left: 4px solid var(--admin-error);
+    border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted.locked {
-    border-left: 4px solid var(--admin-warning);
+    border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked:not(.expired):not(.depleted) {
-    border-left: 4px solid #6c757d;
+    border-left: 4px solid var(--text-muted-alt);
 }
 
 .concession-item.gifted {
@@ -171,7 +173,7 @@
 .concession-details i {
     width: 18px;
     text-align: center;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     opacity: 0.7;
 }
 
@@ -188,14 +190,14 @@
 }
 
 .badge-locked {
-    background: rgba(108, 117, 125, 0.15);
-    color: #6c757d;
+    background: var(--badge-neutral-bg);
+    color: var(--text-muted-alt);
 }
 
 .badge-gifted {
-    background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
+    border: 1px solid var(--border-success);
 }
 
 .badge i {
@@ -208,23 +210,23 @@
     padding: 4rem 2rem;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .no-data i {
     font-size: 4rem;
-    color: #e0e0e0;
+    color: var(--gray-450);
     margin-bottom: 1rem;
 }
 
 .no-data h3 {
-    color: #666;
+    color: var(--text-light);
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
 }
 
 .no-data p {
-    color: #999;
+    color: var(--text-muted);
     font-size: 1rem;
 }
 

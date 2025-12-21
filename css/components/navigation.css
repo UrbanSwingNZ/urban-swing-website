@@ -4,6 +4,8 @@
    Desktop button styles imported from /styles/base/buttons.css
    ======================================== */
 
+@import url('../../styles/base/colors.css');
+
 /* Navigation Container */
 nav {
   width: 100%;
@@ -30,7 +32,7 @@ nav {
     left: -280px;
     width: 280px;
     height: 100vh;
-    background: linear-gradient(180deg, var(--urban-blue) 0%, var(--urban-purple) 50%, var(--urban-pink) 100%);
+    background: var(--gradient-full);
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -66,14 +68,14 @@ nav {
     align-items: center;
     margin: 0 0 var(--space-lg) 0;
     padding: 0 0 var(--space-md) 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--header-overlay-semi);
   }
   
   .mobile-menu-logo {
     width: 100px;
     height: 100px;
     object-fit: contain;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 8px var(--shadow-text));
   }
   
   #menu a {
@@ -83,19 +85,19 @@ nav {
     text-align: left;
     font-size: 1rem;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--header-overlay-medium);
   }
   
   #menu a:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: var(--header-overlay-bright);
     transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--shadow-medium);
   }
   
   /* Active page styling in mobile menu */
   #menu a.active {
-    background: rgba(255, 255, 255, 0.3);
-    border-left: 4px solid var(--urban-pink);
+    background: var(--header-overlay-strong);
+    border-left: 4px solid var(--pink-primary);
     padding-left: 12px;
   }
   
@@ -107,7 +109,7 @@ nav {
     left: 280px;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--bg-overlay-dark);
     z-index: var(--z-modal-backdrop);
     animation: fadeIn var(--transition-base);
     pointer-events: auto;

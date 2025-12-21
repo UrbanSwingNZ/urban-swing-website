@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    TRACK TABLE AND PLAYBACK STYLES
    Track list, drag and drop, play buttons
@@ -21,23 +23,23 @@
   padding: 15px 10px;
   text-align: left;
   font-weight: 600;
-  color: #888;
+  color: var(--gray-650);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--pm-border-light);
+  border-bottom: 2px solid var(--gray-450);
   z-index: 10;
 }
 
 .tracks-table tbody tr {
   position: relative;
   transition: all 0.2s ease;
-  border-bottom: 1px solid var(--pm-border-light);
+  border-bottom: 1px solid var(--gray-450);
   cursor: default;
 }
 
 .tracks-table tbody tr:hover {
-  background: var(--pm-hover-light);
+  background: var(--hover-light);
 }
 
 .tracks-table tbody tr.sortable-ghost {
@@ -45,8 +47,8 @@
 }
 
 .tracks-table tbody tr.sortable-drag {
-  background: var(--pm-card-light);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background: var(--card-light);
+  box-shadow: 0 5px 15px var(--shadow-text);
 }
 
 /* Lazy Loading Indicator */
@@ -84,7 +86,7 @@
 
 /* Drag Handle */
 .drag-handle {
-  color: #888;
+  color: var(--gray-650);
   cursor: move;
   font-size: 1.2rem;
   opacity: 0;
@@ -126,7 +128,7 @@
 }
 
 .track-artist {
-  color: #888;
+  color: var(--gray-650);
   font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
@@ -134,7 +136,7 @@
 }
 
 .track-number {
-  color: #888;
+  color: var(--gray-650);
 }
 
 /* Now Playing Animation */
@@ -238,7 +240,7 @@
 }
 
 .track-menu-btn:hover {
-  background: var(--pm-hover-light);
+  background: var(--hover-light);
 }
 
 /* Search play button in Add Tracks modal */
@@ -251,7 +253,7 @@
 .bpm-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
+  background: var(--gradient-blue-purple);
   color: white;
   border-radius: 12px;
   font-size: 0.85rem;
@@ -261,7 +263,7 @@
 
 .bpm-badge.loading {
   opacity: 0.5;
-  background: #666;
+  background: var(--gray-700);
 }
 
 .explicit-badge {
@@ -270,7 +272,7 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  background: #999;
+  background: var(--text-muted);
   color: white;
   border-radius: 3px;
   font-size: 0.75rem;
@@ -332,7 +334,7 @@
   .track-artist-mobile {
     display: block !important;
     font-size: 0.85rem;
-    color: #888;
+    color: var(--gray-650);
     margin-top: 4px;
   }
   
@@ -381,24 +383,24 @@
 
 @media (prefers-color-scheme: dark) {
   .tracks-table thead th {
-    background: var(--pm-bg-dark);
-    border-bottom-color: var(--pm-border-dark);
+    background: var(--bg-dark);
+    border-bottom-color: var(--hover-dark);
   }
   
   .tracks-table tbody tr {
-    border-bottom-color: var(--pm-border-dark);
+    border-bottom-color: var(--hover-dark);
   }
   
   .tracks-table tbody tr:hover {
-    background: var(--pm-hover-dark);
+    background: var(--hover-dark);
   }
   
   .tracks-table tbody tr.sortable-drag {
-    background: var(--pm-card-dark);
+    background: var(--card-dark);
   }
   
   .track-menu-btn:hover {
-    background: var(--pm-hover-dark);
+    background: var(--hover-dark);
   }
   
   .track-play-btn:hover {
@@ -414,10 +416,10 @@
   position: absolute;
   right: 0;
   top: 100%;
-  background: var(--pm-card-light);
-  border: 1px solid var(--pm-border-light);
+  background: var(--card-light);
+  border: 1px solid var(--gray-450);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-medium);
   z-index: 2000;
   min-width: 160px;
   opacity: 0;
@@ -458,13 +460,13 @@
 }
 
 .track-menu button:hover {
-  background: var(--pm-hover-bg);
+  background: var(--hover-light);
 }
 
 @media (prefers-color-scheme: dark) {
   .track-menu {
-    background: var(--pm-card-dark);
-    border-color: var(--pm-border-dark);
+    background: var(--card-dark);
+    border-color: var(--hover-dark);
   }
 }
 
@@ -478,7 +480,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-overlay);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -492,12 +494,12 @@
 }
 
 .track-menu-mobile {
-  background: var(--pm-card-light);
+  background: var(--card-light);
   border-radius: 16px 16px 0 0;
   width: 100%;
   max-width: 500px;
   padding: 20px;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -4px 20px var(--shadow-text);
   animation: slideUp 0.3s ease;
 }
 
@@ -511,7 +513,7 @@
   font-weight: 600;
   color: var(--text-color);
   padding: 0 0 15px 0;
-  border-bottom: 1px solid var(--pm-border-light);
+  border-bottom: 1px solid var(--gray-450);
   margin-bottom: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -537,7 +539,7 @@
 }
 
 .track-menu-item:hover {
-  background: var(--pm-hover-bg);
+  background: var(--hover-light);
 }
 
 .track-menu-item i {
@@ -548,28 +550,28 @@
 .track-menu-item.menu-cancel {
   margin-top: 10px;
   justify-content: center !important;
-  color: #888;
-  border-top: 1px solid var(--pm-border-light);
+  color: var(--gray-650);
+  border-top: 1px solid var(--gray-450);
   padding-top: 20px;
   margin-bottom: 0;
 }
 
 .track-menu-item.menu-cancel:hover {
-  background: var(--pm-hover-bg);
+  background: var(--hover-light);
   color: var(--text-color);
 }
 
 @media (prefers-color-scheme: dark) {
   .track-menu-mobile {
-    background: var(--pm-card-dark);
+    background: var(--card-dark);
   }
   
   .track-menu-title {
-    border-bottom-color: var(--pm-border-dark);
+    border-bottom-color: var(--hover-dark);
   }
   
   .track-menu-item.menu-cancel {
-    border-top-color: var(--pm-border-dark);
+    border-top-color: var(--hover-dark);
   }
 }
 
@@ -591,5 +593,5 @@
 }
 
 .swipe-delete-icon i {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 2px 4px var(--shadow-text));
 }

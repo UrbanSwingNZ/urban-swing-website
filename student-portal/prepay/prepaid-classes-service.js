@@ -117,7 +117,7 @@ class PrepaidClassesService {
         
         const changeDateButton = canEdit ? `
             <button type="button" class="btn-primary btn-change-date" data-transaction-id="${classItem.id}">
-                <i class="fas fa-edit"></i>
+                <i class="fas ${ICONS.EDIT}"></i>
                 Change Date
             </button>
         ` : '';

@@ -1,3 +1,5 @@
+@import url('../../styles/base/colors.css');
+
 /* Check-In History Page Styles */
 
 .checkins-content {
@@ -22,12 +24,12 @@
     padding: 24px 32px;
     border-radius: 12px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .header-info h2 {
     font-size: 1.75rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -38,7 +40,7 @@
 
 .total-count span {
     font-weight: 700;
-    color: var(--admin-purple);
+    color: var(--purple-primary);
     font-size: 1.1rem;
 }
 
@@ -47,7 +49,7 @@
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .checkin-item {
@@ -55,7 +57,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 32px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     transition: background-color 0.2s ease;
 }
 
@@ -69,7 +71,7 @@
 
 .checkin-item.reversed {
     opacity: 0.6;
-    background-color: rgba(220, 53, 69, 0.05);
+    background-color: var(--bg-error-light);
 }
 
 .checkin-date {
@@ -82,7 +84,7 @@
 .date-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, var(--admin-blue), var(--admin-purple));
+    background: var(--gradient-blue-purple);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -112,7 +114,7 @@
 .date-details .full-date {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .checkin-type {
@@ -132,38 +134,38 @@
 }
 
 .type-badge.concession {
-    background: rgba(154, 22, 245, 0.1);
-    color: var(--admin-purple);
+    background: var(--bg-purple-medium);
+    color: var(--purple-primary);
 }
 
 .type-badge.gift {
-    background: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
+    background: var(--badge-success-bg);
+    color: var(--success-dark);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
-    background: rgba(53, 52, 250, 0.1);
-    color: var(--admin-blue);
+    background: var(--badge-casual-bg);
+    color: var(--blue-primary);
 }
 
 .type-badge.casual-student {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+    background: var(--badge-info-bg);
+    color: var(--blue-accent);
 }
 
 .type-badge.free {
-    background: rgba(40, 167, 69, 0.1);
+    background: var(--bg-success-light);
     color: #28a745;
 }
 
 .type-badge.online {
-    background: rgba(0, 150, 136, 0.1);
-    color: #00796b;
+    background: var(--badge-teal-bg);
+    color: var(--success-darker);
 }
 
 .type-badge.reversed {
-    background: #dc3545;
+    background: var(--error);
     color: white;
 }
 
@@ -176,13 +178,13 @@
 
 .no-data i {
     font-size: 4rem;
-    color: var(--border-color);
+    color: var(--border-light);
     margin-bottom: 20px;
 }
 
 .no-data h3 {
     font-size: 1.5rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -197,7 +199,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -208,8 +210,8 @@
 .spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid var(--border-color);
-    border-top-color: var(--admin-purple);
+    border: 4px solid var(--border-light);
+    border-top-color: var(--purple-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -220,7 +222,7 @@
 
 .loading-spinner p {
     margin-top: 16px;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -233,7 +235,7 @@
     background: white;
     border-radius: 12px;
     margin-top: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .pagination-btn {
@@ -242,7 +244,7 @@
 
 .pagination-info {
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -285,3 +287,4 @@
         font-size: 0.9rem;
     }
 }
+

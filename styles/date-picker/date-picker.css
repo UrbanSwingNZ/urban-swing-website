@@ -7,6 +7,8 @@
  * Works in conjunction with date-picker.js
  */
 
+@import url('../base/colors.css');
+
 /* Date Input Wrapper */
 .date-input-wrapper {
     position: relative;
@@ -35,7 +37,7 @@
 input.date-picker-input {
     width: 100%;
     padding: 8px 40px 8px 12px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     border-radius: 8px;
     font-size: 0.95rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -49,13 +51,13 @@ input.date-picker-input {
 .date-input-wrapper input[type="text"]:focus,
 input.date-picker-input:focus {
     outline: none;
-    border-color: var(--admin-purple, #9a16f5);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .date-input-wrapper input[type="text"]::placeholder,
 input.date-picker-input::placeholder {
-    color: #999;
+    color: var(--gray-600);
 }
 
 /* Calendar Icon in Input */
@@ -65,7 +67,7 @@ input.date-picker-input::placeholder {
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
     font-size: 1rem !important;
     pointer-events: none;
 }
@@ -74,9 +76,9 @@ input.date-picker-input::placeholder {
 .custom-calendar {
     position: absolute;
     background: white;
-    border: 2px solid var(--admin-purple, #9a16f5);
+    border: 2px solid var(--purple-primary);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px var(--shadow-medium);
     padding: 1rem;
     margin-top: 0.5rem;
     z-index: 1000;
@@ -91,13 +93,13 @@ input.date-picker-input::placeholder {
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid var(--gray-350);
 }
 
 /* Calendar Navigation Buttons */
 .calendar-nav-btn {
     background: white;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--gray-450);
     border-radius: 6px;
     width: 36px;
     height: 36px;
@@ -106,7 +108,7 @@ input.date-picker-input::placeholder {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #666;
+    color: var(--gray-700);
     font-size: 1rem;
 }
 
@@ -115,16 +117,16 @@ input.date-picker-input::placeholder {
 }
 
 .calendar-nav-btn:hover {
-    border-color: var(--admin-purple, #9a16f5);
-    color: var(--admin-purple, #9a16f5);
-    background: rgba(154, 22, 245, 0.05);
+    border-color: var(--purple-primary);
+    color: var(--purple-primary);
+    background: var(--bg-purple-light);
 }
 
 /* Month and Year Display */
 .calendar-month-year {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 /* Calendar Weekdays Header */
@@ -139,13 +141,13 @@ input.date-picker-input::placeholder {
     text-align: center;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #666;
+    color: var(--gray-700);
     padding: 0.5rem;
 }
 
 /* Highlight Thursday in header (when it's an allowed day) */
 .calendar-weekday.thursday {
-    color: var(--admin-purple, #9a16f5);
+    color: var(--purple-primary);
 }
 
 /* Calendar Days Grid */
@@ -174,20 +176,20 @@ input.date-picker-input::placeholder {
 
 /* Past dates (disabled) */
 .calendar-day.past {
-    color: #ccc;
-    background: #f9f9f9;
+    color: var(--gray-550);
+    background: var(--gray-100);
 }
 
 /* Not allowed days (not in allowedDays array) and closedown dates */
 .calendar-day.not-allowed {
-    color: #999;
-    background: #f5f5f5;
+    color: var(--gray-600);
+    background: var(--gray-300);
 }
 
 /* Allowed days (can be selected) */
 .calendar-day.allowed-day {
-    color: var(--admin-purple, #9a16f5);
-    background: rgba(139, 69, 255, 0.1);
+    color: var(--purple-primary);
+    background: var(--bg-purple-alt-strong);
     font-weight: 600;
     cursor: pointer;
     border: 2px solid transparent;
@@ -195,8 +197,8 @@ input.date-picker-input::placeholder {
 
 /* Legacy support: Thursday class (for backward compatibility) */
 .calendar-day.thursday {
-    color: var(--admin-purple, #9a16f5);
-    background: rgba(139, 69, 255, 0.1);
+    color: var(--purple-primary);
+    background: var(--bg-purple-alt-strong);
     font-weight: 600;
     cursor: pointer;
     border: 2px solid transparent;
@@ -205,23 +207,23 @@ input.date-picker-input::placeholder {
 /* Hover state for allowed days */
 .calendar-day.allowed-day:hover,
 .calendar-day.thursday:hover {
-    background: rgba(139, 69, 255, 0.2);
-    border-color: var(--admin-purple, #9a16f5);
+    background: var(--bg-purple-alt-stronger);
+    border-color: var(--purple-primary);
     transform: scale(1.05);
 }
 
 /* Selected date */
 .calendar-day.allowed-day.selected,
 .calendar-day.thursday.selected {
-    background: var(--admin-purple, #9a16f5);
+    background: var(--purple-primary);
     color: white;
-    border-color: var(--admin-purple, #9a16f5);
+    border-color: var(--purple-primary);
 }
 
 /* Today indicator */
 .calendar-day.today.allowed-day,
 .calendar-day.today.thursday {
-    border: 2px solid var(--admin-purple, #9a16f5);
+    border: 2px solid var(--purple-primary);
 }
 
 /* Responsive Design */
