@@ -49,7 +49,7 @@ body {
     padding: 1.5rem;
     margin-bottom: 2rem;
     border: 1px solid rgba(154, 22, 245, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 /* Filter Labels Row */
@@ -185,7 +185,7 @@ select.filter-input:focus {
     max-height: 300px;
     overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .student-filter-item {
@@ -317,7 +317,7 @@ select.filter-input:focus {
     border-radius: 8px;
     border: 1px solid rgba(154, 22, 245, 0.2);
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     max-height: 70vh;
     overflow-y: auto;
     position: relative;
@@ -354,7 +354,7 @@ select.filter-input:focus {
 }
 
 #transactions-table th.sortable:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--header-overlay-light);
 }
 
 #transactions-table th.align-right {
@@ -644,7 +644,7 @@ select.filter-input:focus {
     bottom: 30px;
     transform: translateX(-50%);
     font-size: 0.95rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
 }
 
 .snackbar.show {
@@ -1096,7 +1096,7 @@ select.filter-input:focus {
 
         #transactions-table tbody tr:hover {
             background: var(--background-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px var(--shadow-light);
         }
 
         /* Reversed transaction styling */

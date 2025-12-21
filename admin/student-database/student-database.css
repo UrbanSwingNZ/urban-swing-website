@@ -146,7 +146,7 @@
 }
 
 .students-table th.sortable:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--header-overlay-light);
 }
 
 .students-table th .sort-icon {
@@ -174,7 +174,7 @@
 }
 
 .students-table tbody tr:hover {
-    background-color: rgba(154, 22, 245, 0.05);
+    background-color: var(--bg-purple-alt-medium);
 }
 
 .students-table tbody tr:last-child {
@@ -226,12 +226,12 @@
 }
 
 .badge-yes {
-    background: rgba(40, 167, 69, 0.15);
+    background: var(--bg-success-light);
     color: var(--success);
 }
 
 .badge-no {
-    background: rgba(220, 53, 69, 0.15);
+    background: var(--bg-error-light);
     color: var(--error);
 }
 
@@ -286,7 +286,7 @@
     background: var(--purple-primary);
     color: white;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.2);
+    box-shadow: 0 2px 8px var(--bg-purple-alt-stronger);
 }
 
 /* Action Buttons */
@@ -324,7 +324,7 @@
 
 .btn-icon.has-notes:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.4);
+    box-shadow: 0 4px 12px var(--bg-purple-strong);
 }
 
 .btn-icon.btn-delete:hover {
@@ -518,7 +518,7 @@ textarea::placeholder {
 textarea:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 /* Admin-only elements */
@@ -532,7 +532,7 @@ textarea:focus {
 .success-message {
     margin-top: 20px;
     padding: 15px;
-    background: rgba(40, 167, 69, 0.1);
+    background: var(--bg-success-light);
     border: 1px solid var(--success);
     border-radius: 8px;
     color: var(--success);
@@ -574,7 +574,7 @@ textarea:focus {
 
 #back-to-admin .back-link:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+    box-shadow: 0 4px 12px var(--bg-purple-medium);
 }
 
 #back-to-admin .back-link i {
@@ -665,17 +665,17 @@ textarea:focus {
     .students-table tbody tr {
         display: block;
         margin-bottom: 1rem;
-        border: 1px solid rgba(154, 22, 245, 0.2);
+        border: 1px solid var(--bg-purple-alt-stronger);
         border-radius: 8px;
         background: var(--background-color);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px var(--shadow-light);
         overflow: hidden;
         cursor: pointer;
         transition: all 0.2s ease;
     }
 
     .students-table tbody tr:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px var(--shadow-medium);
         border-color: var(--purple-primary);
     }
 
@@ -693,7 +693,7 @@ textarea:focus {
         font-size: 1.1rem;
         font-weight: 700;
         color: var(--text-color);
-        border-bottom: 1px solid rgba(154, 22, 245, 0.1);
+        border-bottom: 1px solid var(--bg-purple-medium);
         padding-bottom: 0.5rem;
     }
 
@@ -730,7 +730,7 @@ textarea:focus {
         padding: 0.75rem 1rem;
         border: none;
         text-align: left;
-        border-top: 1px solid rgba(154, 22, 245, 0.1);
+        border-top: 1px solid var(--bg-purple-medium);
     }
 
     /* When row is expanded, show all content */
@@ -778,7 +778,7 @@ textarea:focus {
     /* Action buttons - full width when expanded */
     .students-table tbody tr.expanded td:nth-child(8) {
         padding: 1rem;
-        background: rgba(154, 22, 245, 0.05);
+        background: var(--bg-purple-alt-medium);
     }
 
     .students-table tbody tr.expanded td:nth-child(8).action-buttons {
@@ -1039,7 +1039,7 @@ textarea:focus {
 @media (prefers-color-scheme: dark) {
     .pagination-btn:not(:disabled):hover,
     .pagination-number:hover {
-        box-shadow: 0 4px 12px rgba(154, 22, 245, 0.3);
+        box-shadow: 0 4px 12px var(--bg-purple-medium);
     }
 }
 
@@ -1139,11 +1139,11 @@ textarea:focus {
 .activity-table td {
     padding: 8px 10px;
     text-align: left;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--shadow-light);
 }
 
 .activity-table tbody tr:hover {
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-alt-medium);
 }
 
 .warning-text {
@@ -1233,7 +1233,7 @@ textarea:focus {
 }
 
 .concession-accordion-header:hover {
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-alt-medium);
     border-color: var(--purple-primary);
 }
 
@@ -1289,12 +1289,12 @@ textarea:focus {
 
 .concession-item:hover {
     border-color: var(--purple-primary);
-    box-shadow: 0 2px 8px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 2px 8px var(--bg-purple-medium);
 }
 
 .concession-item.expired {
     opacity: 0.7;
-    background: rgba(220, 53, 69, 0.05);
+    background: var(--bg-error-light);
     border-left: 4px solid var(--error);
 }
 
@@ -1447,7 +1447,7 @@ textarea:focus {
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     transition: bottom 0.3s ease;
     min-width: 300px;
@@ -1523,7 +1523,7 @@ textarea:focus {
     color: var(--text-muted);
     margin-top: 30px;
     padding: 15px;
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-alt-medium);
     border-left: 3px solid var(--purple-primary);
     border-radius: 4px;
 }

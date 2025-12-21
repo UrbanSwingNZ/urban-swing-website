@@ -27,7 +27,7 @@
     background: white;
     border-radius: 12px;
     margin-bottom: 32px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .profile-icon {
@@ -57,7 +57,7 @@
     background: white;
     border-radius: 12px;
     padding: 32px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .form-section {
@@ -145,7 +145,7 @@ label:has(+ textarea[required])::after {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 .form-group textarea {
@@ -248,7 +248,7 @@ label:has(+ textarea[required])::after {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -346,7 +346,7 @@ label:has(+ textarea[required])::after {
 .modal-footer .btn-danger:hover {
     background: var(--error-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 5px 15px var(--bg-error-strong);
 }
 
 .modal-footer .btn-danger i {
@@ -376,7 +376,7 @@ label:has(+ textarea[required])::after {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px var(--shadow-text);
     animation: modalSlideIn 0.3s ease;
     overflow: hidden;
 }
@@ -456,7 +456,7 @@ label:has(+ textarea[required])::after {
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     transition: bottom 0.3s ease;
     min-width: 300px;
@@ -474,17 +474,17 @@ label:has(+ textarea[required])::after {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
+    background: var(--status-active-gradient);
 }
 
 .snackbar-error {
-    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    background: var(--status-inactive-gradient);
 }
 
 .snackbar-warning {
-    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    background: var(--status-warning-gradient);
 }
 
 .snackbar-info {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    background: var(--status-info-gradient);
 }

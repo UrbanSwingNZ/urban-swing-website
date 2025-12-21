@@ -180,7 +180,7 @@
 }
 
 .toggle-switch:hover .toggle-slider {
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 4px var(--shadow-text);
 }
 
 .toggle-switch input:focus + .toggle-slider {

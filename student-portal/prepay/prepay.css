@@ -26,7 +26,7 @@
     background: white;
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .prepaid-header {
@@ -110,9 +110,9 @@
 
 .prepaid-class-item:hover {
     border-color: var(--purple-primary);
-    background: rgba(139, 69, 255, 0.02);
+    background: var(--bg-purple-alt);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px var(--shadow-light);
 }
 
 .prepaid-class-info {
@@ -190,7 +190,7 @@
     background: white;
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
 
@@ -299,12 +299,12 @@
 
 .radio-option:hover {
     border-color: var(--purple-primary);
-    background: rgba(139, 69, 255, 0.02);
+    background: var(--bg-purple-alt);
 }
 
 .radio-option.selected {
     border-color: var(--purple-primary);
-    background: rgba(139, 69, 255, 0.05);
+    background: var(--bg-purple-alt-medium);
 }
 
 .radio-option input[type="radio"] {
@@ -352,8 +352,8 @@
     gap: 0.5rem;
     margin-top: 0.75rem;
     padding: 0.75rem;
-    background: #fff3cd;
-    border-left: 3px solid #ffc107;
+    background: var(--warning-light);
+    border-left: 3px solid var(--warning);
     border-radius: 4px;
     opacity: 0;
     transform: translateY(-10px);
@@ -404,7 +404,7 @@
 
 .stripe-element:focus-within {
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-alt-strong);
 }
 
 /* Stripe Card Element (Combined Card Input) */
@@ -454,7 +454,7 @@ input[type="text"] {
 input[type="text"]:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-alt-strong);
 }
 
 input[type="text"]::placeholder {
@@ -506,7 +506,7 @@ input[type="text"]::placeholder {
 .terms-acceptance {
     margin-top: 20px;
     padding: 16px;
-    background: rgba(154, 22, 245, 0.05);
+    background: var(--bg-purple-light);
     border-left: 3px solid var(--purple-primary);
     border-radius: 6px;
 }
@@ -559,7 +559,7 @@ input[type="text"]::placeholder {
     left: 50%;
     margin-left: -10px;
     margin-top: -10px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid var(--header-overlay-strong);
     border-radius: 50%;
     border-top-color: white;
     animation: spin 0.8s linear infinite;
@@ -575,8 +575,8 @@ input[type="text"]::placeholder {
     align-items: flex-start;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    background: linear-gradient(135deg, #fff3cd, #fff8e1);
-    border: 1px solid #ffc107;
+    background: var(--gradient-warning);
+    border: 1px solid var(--warning);
     border-radius: 8px;
     margin-bottom: 1.5rem;
 }
@@ -646,7 +646,7 @@ input[type="text"]::placeholder {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px var(--shadow-text);
     animation: modalSlideIn 0.3s ease;
     overflow: hidden;
 }
@@ -783,7 +783,7 @@ input[type="text"]::placeholder {
 .modal-footer .btn-danger:hover {
     background: var(--error-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 5px 15px var(--bg-error-strong);
 }
 
 .modal-footer .btn-danger i {
@@ -938,7 +938,7 @@ input[type="text"]::placeholder {
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     transition: bottom 0.3s ease;
     min-width: 300px;
@@ -956,17 +956,17 @@ input[type="text"]::placeholder {
 }
 
 .snackbar.success {
-    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
+    background: var(--status-active-gradient);
 }
 
 .snackbar.error {
-    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    background: var(--status-inactive-gradient);
 }
 
 .snackbar.warning {
-    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    background: var(--status-warning-gradient);
 }
 
 .snackbar.info {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    background: var(--status-info-gradient);
 }

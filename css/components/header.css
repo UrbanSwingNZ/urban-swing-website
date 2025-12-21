@@ -71,9 +71,9 @@ header {
   margin: 0;
   padding: 0;
   font-size: var(--font-size-lg);
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--card-light);
   font-weight: var(--font-weight-normal);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px var(--shadow-medium);
   letter-spacing: 0.5px;
 }
 
@@ -97,14 +97,14 @@ header {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-round);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--header-overlay-light);
   backdrop-filter: blur(10px);
 }
 
 .social-icons a:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--header-overlay-bright);
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 /* Remove external link arrow from social icons */
@@ -119,9 +119,9 @@ a.no-external-icon::after {
   position: absolute;
   top: var(--space-md);
   left: var(--space-md);
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--header-overlay-semi);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--header-overlay-strong);
   border-radius: var(--radius-md);
   padding: var(--space-sm);
   font-size: var(--font-size-2xl);
@@ -136,7 +136,7 @@ a.no-external-icon::after {
 }
 
 #hamburger-menu:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--header-overlay-strong);
   transform: scale(1.05);
 }
 
@@ -145,9 +145,9 @@ a.no-external-icon::after {
   position: fixed;
   top: var(--space-md);
   right: var(--space-md);
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--header-overlay-semi);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--header-overlay-strong);
   border-radius: var(--radius-md);
   padding: var(--space-sm);
   font-size: var(--font-size-2xl);
@@ -162,7 +162,7 @@ a.no-external-icon::after {
 }
 
 #close-menu:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--header-overlay-strong);
   transform: rotate(90deg) scale(1.1);
 }
 
