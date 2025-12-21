@@ -29,7 +29,7 @@
 
 .header-info h2 {
     font-size: 1.75rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -57,7 +57,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 32px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     transition: background-color 0.2s ease;
 }
 
@@ -114,7 +114,7 @@
 .date-details .full-date {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .checkin-type {
@@ -178,13 +178,13 @@
 
 .no-data i {
     font-size: 4rem;
-    color: var(--border-color);
+    color: var(--border-light);
     margin-bottom: 20px;
 }
 
 .no-data h3 {
     font-size: 1.5rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -210,7 +210,7 @@
 .spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid var(--border-color);
+    border: 4px solid var(--border-light);
     border-top-color: var(--purple-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -222,7 +222,7 @@
 
 .loading-spinner p {
     margin-top: 16px;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -244,7 +244,7 @@
 
 .pagination-info {
     font-size: 0.95rem;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -287,3 +287,4 @@
         font-size: 0.9rem;
     }
 }
+
