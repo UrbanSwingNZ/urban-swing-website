@@ -199,7 +199,7 @@ function buildConcessionSection(title, count, blocks, status, isExpanded) {
             break;
         case 'depleted':
             icon = 'fa-battery-empty';
-            iconColor = 'var(--admin-warning)';
+            iconColor = 'var(--warning)';
             break;
         default:
             icon = 'fa-circle';

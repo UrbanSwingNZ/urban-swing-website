@@ -74,7 +74,7 @@ h1 {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    background: var(--gradient-header);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -690,7 +690,7 @@ h1 {
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 100%);
+    background: var(--gradient-blue-purple);
     color: white;
     border: none;
     padding: 12px 24px;

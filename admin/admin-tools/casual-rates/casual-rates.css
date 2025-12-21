@@ -10,17 +10,17 @@
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color, #e0e0e0);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .section-header h2 {
     margin: 0;
-    color: var(--primary-color, #9a16f5);
+    color: var(--primary-color);
     font-size: 1.5rem;
 }
 
 .section-header .section-description {
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
     font-size: 0.95rem;
     margin: 5px 0 0 0;
 }
@@ -94,7 +94,7 @@
 .rate-name {
     margin: 40px 0 15px 0;
     font-size: 1.2rem;
-    color: var(--text-primary, #333);
+    color: var(--text-primary);
     font-weight: 600;
     text-align: center;
     min-height: 1.5em;
@@ -108,13 +108,13 @@
 .rate-price {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--primary-color, #9a16f5);
+    color: var(--primary-color);
     margin: 15px 0;
     text-align: center;
 }
 
 .rate-description {
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin: 10px 0;
     min-height: 40px;
@@ -173,7 +173,7 @@
 .add-rate-btn {
     width: 100%;
     padding: 15px;
-    background: var(--primary-color, #9a16f5);
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 8px;
@@ -188,7 +188,7 @@
 }
 
 .add-rate-btn:hover {
-    background: var(--primary-hover, #7a0fd5);
+    background: var(--primary-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(154, 22, 245, 0.3);
 }
@@ -206,7 +206,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-primary, #333);
+    color: var(--text-primary);
 }
 
 .rate-form-group input,
@@ -223,7 +223,7 @@
 .rate-form-group input:focus,
 .rate-form-group textarea:focus {
     outline: none;
-    border-color: var(--primary-color, #9a16f5);
+    border-color: var(--primary-color);
 }
 
 .rate-form-group textarea {

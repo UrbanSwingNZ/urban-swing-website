@@ -92,7 +92,7 @@
 .table-container {
     background: var(--background-color);
     border-radius: 12px;
-    box-shadow: 0 2px 8px var(--admin-shadow);
+    box-shadow: 0 2px 8px var(--shadow-medium);
     overflow: hidden;
     max-height: 70vh;
     overflow-y: auto;
@@ -105,7 +105,7 @@
 }
 
 .students-table thead {
-    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     color: white;
     position: sticky;
     top: 0;
@@ -390,21 +390,21 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: linear-gradient(135deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+    background: var(--gradient-full);
 }
 
 .register-card {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 20px 60px var(--admin-shadow);
+    box-shadow: 0 20px 60px var(--shadow-medium);
     max-width: 500px;
     width: 100%;
 }
 
 @media (prefers-color-scheme: dark) {
     .register-card {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
@@ -419,7 +419,7 @@
     font-size: 2rem;
     margin-bottom: 10px;
     text-align: center;
-    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    background: var(--gradient-header);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -961,7 +961,7 @@ textarea:focus {
 }
 
 .pagination-number.active {
-    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     color: white;
     border-color: transparent;
 }

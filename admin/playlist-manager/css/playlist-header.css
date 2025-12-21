@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    PLAYLIST HEADER STYLES
    Playlist tile, name, metadata, and actions
@@ -36,7 +38,7 @@
 .playlist-header-info h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-pink));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -23,10 +23,10 @@
 }
 
 .tool-card {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 30px var(--admin-shadow);
+    box-shadow: 0 10px 30px var(--shadow-medium);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -38,13 +38,13 @@
 
 @media (prefers-color-scheme: dark) {
     .tool-card {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
 .tool-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px var(--admin-shadow);
+    box-shadow: 0 15px 40px var(--shadow-medium);
 }
 
 .tool-card-placeholder {
