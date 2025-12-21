@@ -693,7 +693,7 @@
 }
 
 .btn-danger-lg {
-    background: var(--admin-error, #dc3545);
+    background: var(--error);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -755,11 +755,11 @@
 
 .modal-header {
     padding: 25px 30px;
-    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(135deg, var(--admin-blue, #3534Fa), var(--admin-purple, #9a16f5));
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     border-radius: 12px 12px 0 0;
 }
 
@@ -1060,7 +1060,7 @@
     padding: 15px;
     border-radius: 6px;
     margin: 15px 0;
-    border-left: 3px solid var(--admin-error, #dc3545);
+    border-left: 3px solid var(--error);
 }
 
 .template-info-delete strong {

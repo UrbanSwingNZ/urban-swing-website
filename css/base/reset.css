@@ -111,13 +111,13 @@ button {
 
 /* Links */
 a {
-  color: var(--urban-pink);
+  color: var(--pink-primary);
   text-decoration: none;
   transition: color var(--transition-base);
 }
 
 a:hover {
-  color: var(--urban-purple);
+  color: var(--purple-primary);
 }
 
 /* Focus styles for accessibility */
@@ -126,7 +126,7 @@ button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid var(--urban-pink);
+  outline: 3px solid var(--pink-primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }

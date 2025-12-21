@@ -7,7 +7,7 @@
 
 /* Admin Banner */
 .admin-banner {
-    background: linear-gradient(90deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+    background: var(--gradient-full);
     color: white;
     padding: 16px 24px;
     position: sticky;
@@ -87,7 +87,7 @@
 
 /* Header */
 .portal-header {
-    background: linear-gradient(90deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+    background: var(--gradient-full);
     padding: 24px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -183,7 +183,7 @@
 .stat-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     border-radius: 12px;
     display: flex;
     align-items: center;

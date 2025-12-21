@@ -28,11 +28,11 @@ html, body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Import colors from centralized system */
+@import url('../../styles/base/colors.css');
+
 /* Import parent styles if needed */
 :root {
-  --pm-blue: #3534Fa;
-  --pm-purple: #9a16f5;
-  --pm-pink: #e800f2;
   --pm-green: #1db954; /* Spotify green */
   --pm-bg-light: #f8f9fa;
   --pm-bg-dark: #121212;
@@ -103,7 +103,7 @@ html, body {
 .connect-card h2 {
   font-size: 2rem;
   margin-bottom: 15px;
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-pink));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -166,7 +166,7 @@ html, body {
 .empty-state i {
   font-size: 4rem;
   margin-bottom: 20px;
-  color: var(--pm-purple);
+  color: var(--purple-primary);
   opacity: 0.5;
 }
 

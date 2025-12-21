@@ -46,7 +46,7 @@ function showStatusUpdateSuccess(action) {
   
   const isActivated = action === 'activated';
   dragHint.innerHTML = `<i class="fas fa-check-circle"></i> Package ${action}!`;
-  dragHint.style.color = isActivated ? 'var(--admin-success)' : 'var(--admin-error)';
+  dragHint.style.color = isActivated ? 'var(--success)' : 'var(--error)';
   
   setTimeout(() => {
     dragHint.innerHTML = originalHTML;

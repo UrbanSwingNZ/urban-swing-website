@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    SIDEBAR STYLES
    Playlist sidebar, search, and list
@@ -124,7 +126,7 @@
 
 .playlists-list li.active {
   background: var(--pm-hover-light);
-  border-left-color: var(--pm-purple);
+  border-left-color: var(--purple-primary);
   font-weight: 600;
 }
 
@@ -174,7 +176,7 @@
   opacity: 1;
   background: var(--pm-card-light);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  border-left-color: var(--pm-purple);
+  border-left-color: var(--purple-primary);
   cursor: move;
 }
 
@@ -210,7 +212,7 @@
 
 .playlist-menu-btn:hover {
   background: rgba(128, 128, 128, 0.1);
-  color: var(--pm-purple);
+  color: var(--purple-primary);
 }
 
 .playlist-menu {

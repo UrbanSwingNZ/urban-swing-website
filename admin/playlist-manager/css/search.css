@@ -10,13 +10,13 @@
   padding: 0;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--admin-card-light);
+  background: var(--card-light);
   padding: 12px 15px;
 }
 
 @media (prefers-color-scheme: dark) {
   .modal-body .search-box {
-    background: var(--admin-card-dark);
+    background: var(--card-dark);
   }
 }
 
@@ -75,7 +75,7 @@
 .search-result-checkbox {
   width: 18px;
   height: 18px;
-  accent-color: var(--pm-purple);
+  accent-color: var(--purple-primary);
 }
 
 .search-result-image {

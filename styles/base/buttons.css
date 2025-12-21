@@ -67,7 +67,7 @@
    ======================================== */
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+  background: var(--gradient-blue-purple);
   color: var(--text-white);
   border: none;
   padding: 8px 12px;
@@ -87,7 +87,7 @@
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--purple-primary), var(--pink-primary));
+  background: var(--gradient-purple-pink);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px var(--bg-purple-strong);
   color: var(--text-white) !important;
@@ -98,7 +98,7 @@
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary)) !important;
+  background: var(--gradient-blue-purple) !important;
 }
 
 .btn-primary-lg {

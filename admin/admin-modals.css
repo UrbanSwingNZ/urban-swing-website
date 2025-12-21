@@ -117,7 +117,7 @@
 /* Dark mode button styles */
 @media (prefers-color-scheme: dark) {
     .btn-secondary {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
         border-color: var(--border-color);
     }
     
@@ -145,7 +145,7 @@
 }
 
 .modal-content {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 16px;
     max-width: 600px;
     width: 100%;
@@ -159,7 +159,7 @@
 
 @media (prefers-color-scheme: dark) {
     .modal-content {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
@@ -266,14 +266,14 @@
 
 .duplicate-student {
     padding: 12px;
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 6px;
     margin-bottom: 10px;
 }
 
 @media (prefers-color-scheme: dark) {
     .duplicate-student {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 

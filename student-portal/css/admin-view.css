@@ -4,7 +4,7 @@
 
 /* Admin Banner */
 .admin-banner {
-    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     color: white;
     padding: 16px 24px;
     position: sticky;
@@ -102,7 +102,7 @@
     font-size: 1.8rem;
     color: var(--purple-primary);
     margin: 0;
-    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    background: var(--gradient-header);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -203,7 +203,7 @@
 .stat-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     border-radius: 12px;
     display: flex;
     align-items: center;

@@ -207,7 +207,7 @@
 .divider-gradient {
   border: none;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--urban-purple), transparent);
+  background: linear-gradient(90deg, transparent, var(--purple-primary), transparent);
   margin: var(--space-xl) 0;
 }
 

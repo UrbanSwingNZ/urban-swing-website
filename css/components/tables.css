@@ -237,7 +237,7 @@ table {
     white-space: nowrap; /* Prevent price from wrapping */
     text-align: right;
     font-size: 1.2em;
-    color: var(--urban-purple) !important;
+    color: var(--purple-primary) !important;
     font-weight: 600;
   }
   

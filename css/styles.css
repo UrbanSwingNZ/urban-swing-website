@@ -1,10 +1,10 @@
+/* Import color system */
+@import url('../styles/base/colors.css');
+
 /* Set light mode as the default */
 :root {
-  --urban-swing-blue: #3534Fa;
-  --urban-swing-purple: #9a16f5;
-  --urban-swing-pink: #e800f2;
-  --background-color: white;
-  --text-color: black;
+  --background-color: var(--bg-white);
+  --text-color: var(--text-primary);
   --common-max-width: 1100px;
 }
 
@@ -45,15 +45,15 @@
 
 /* Icon Hover Effect */
 .social-icons a:hover {
-  color: var(--urban-swing-pink); /* Highlight color on hover */
+  color: var(--pink-primary); /* Highlight color on hover */
 }
 
 
 /* Dark Mode Styles (Automatically applied via media query) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color: black;
-    --text-color: white;
+    --background-color: var(--bg-dark);
+    --text-color: var(--text-white);
   }
 }
 
@@ -86,7 +86,7 @@ object {
 }
 
 a {
-  color: var(--urban-swing-pink);
+  color: var(--pink-primary);
 }
 
 /* Accessibility: Focus styles for keyboard navigation */
@@ -94,7 +94,7 @@ a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid var(--urban-swing-pink);
+  outline: 3px solid var(--pink-primary);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -120,13 +120,13 @@ html {
 }
 
 h1 {
-  color: var(--urban-swing-blue);
+  color: var(--blue-primary);
   padding-bottom: 50px;
   text-align: center;
 }
 
 h2 {
-  color: var(--urban-swing-purple);
+  color: var(--purple-primary);
 }
 
 p {
@@ -157,14 +157,14 @@ header {
 .header-text h1 {
   margin: 0;
   font-size: 2.5em;
-  color: var(--urban-swing-blue);
+  color: var(--blue-primary);
 }
 
 .header-text p {
   margin: 0;
   font-size: 1.5em;
   font-family: Verdana;
-  color: var(--urban-swing-pink);
+  color: var(--pink-primary);
 }
 
 /* Wrapper for all page content */
@@ -178,18 +178,18 @@ header {
 }
 
 .content-wrapper a:hover {
-  background-color: var(--urban-swing-pink);
+  background-color: var(--pink-primary);
   color: white;
 }
 
 .container p {
-  color: var(--urban-swing-pink);
+  color: var(--pink-primary);
   font-size: 1.5em;
   margin-top: 50px;
 }
 
 .faq-container h3 {
-  color: var(--urban-swing-purple);
+  color: var(--purple-primary);
 }
 
 .other-classes-container {
@@ -210,7 +210,7 @@ header {
 }
 
 .crew-table tr {
-  border-bottom: 1px solid var(--urban-swing-pink);
+  border-bottom: 1px solid var(--pink-primary);
 }
 
 .crew-table td {
@@ -294,7 +294,7 @@ nav {
 }
 
 #menu a:hover {
-  background-color: var(--urban-swing-pink);
+  background-color: var(--pink-primary);
   color: white;
 }
 
@@ -318,7 +318,7 @@ nav {
 /* Style for the Register Now button */
 .register-button {
   display: inline-block;
-  background-color: var(--urban-swing-pink);
+  background-color: var(--pink-primary);
   color: white;
   padding: 12px 20px;
   text-decoration: none;
@@ -342,7 +342,7 @@ nav {
 }
 
 .register-button:hover {
-  background-color: var(--urban-swing-purple);
+  background-color: var(--purple-primary);
 }
 
 /* Mobile Styles for Sliding Menu */

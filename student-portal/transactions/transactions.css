@@ -65,7 +65,7 @@
 }
 
 #transactions-table thead {
-    background: linear-gradient(90deg, var(--blue-primary) 0%, var(--purple-primary) 50%, var(--pink-primary) 100%);
+    background: var(--gradient-full);
     color: white;
 }
 

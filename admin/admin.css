@@ -50,10 +50,10 @@ html, body {
 }
 
 .auth-card {
-  background: var(--admin-card-light);
+  background: var(--card-light);
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 0 20px 60px var(--admin-shadow);
+  box-shadow: 0 20px 60px var(--shadow-medium);
   max-width: 450px;
   width: 100%;
   text-align: center;
@@ -61,7 +61,7 @@ html, body {
 
 @media (prefers-color-scheme: dark) {
   .auth-card {
-    background: var(--admin-card-dark);
+    background: var(--card-dark);
   }
 }
 
@@ -84,7 +84,7 @@ html, body {
 .auth-card h1 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -201,7 +201,7 @@ html, body {
 .dashboard-welcome h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -221,10 +221,10 @@ html, body {
 }
 
 .dashboard-tile {
-  background: var(--admin-card-light);
+  background: var(--card-light);
   border-radius: 20px;
   padding: 40px 30px;
-  box-shadow: 0 10px 30px var(--admin-shadow);
+  box-shadow: 0 10px 30px var(--shadow-medium);
   transition: all 0.3s ease;
   text-align: center;
   position: relative;
@@ -236,13 +236,13 @@ html, body {
 
 @media (prefers-color-scheme: dark) {
   .dashboard-tile {
-    background: var(--admin-card-dark);
+    background: var(--card-dark);
   }
 }
 
 .dashboard-tile:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 40px var(--admin-shadow);
+  box-shadow: 0 15px 40px var(--shadow-medium);
 }
 
 .dashboard-tile h3 {
@@ -272,18 +272,18 @@ html, body {
 
 /* Footer */
 .admin-footer {
-  background: var(--admin-card-light);
+  background: var(--card-light);
   padding: 20px;
   text-align: center;
   color: #888;
-  border-top: 1px solid var(--admin-border-light);
+  border-top: 1px solid var(--border-light);
   font-size: 0.9rem;
 }
 
 @media (prefers-color-scheme: dark) {
   .admin-footer {
-    background: var(--admin-card-dark);
-    border-top-color: var(--admin-border-dark);
+    background: var(--card-dark);
+    border-top-color: var(--border-dark);
   }
 }
 
@@ -489,7 +489,7 @@ html, body {
     padding: 12px 15px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--admin-card-light);
+    background: var(--card-light);
     color: var(--text-color);
     font-size: 0.95rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -505,7 +505,7 @@ html, body {
     .form-group input[type="password"],
     .form-group textarea,
     .form-group select {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 

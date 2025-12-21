@@ -17,7 +17,7 @@
 
 /* Tool Introduction */
 .tool-intro {
-    background: linear-gradient(135deg, var(--purple-primary) 0%, #9b59b6 100%);
+    background: var(--gradient-purple-pink);
     color: white;
     padding: 16px 20px;
     border-radius: 8px;

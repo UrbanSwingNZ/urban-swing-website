@@ -3,6 +3,8 @@
    Modern typography system with gradient text
    ======================================== */
 
+@import url('../../styles/base/colors.css');
+
 /* Body text */
 body {
   font-family: var(--font-family);
@@ -26,7 +28,7 @@ h6 {
 
 h1 {
   font-size: var(--font-size-4xl);
-  background: linear-gradient(135deg, var(--urban-blue), var(--urban-pink));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -36,12 +38,12 @@ h1 {
 
 h2 {
   font-size: var(--font-size-3xl);
-  color: var(--urban-purple);
+  color: var(--purple-primary);
 }
 
 h3 {
   font-size: var(--font-size-2xl);
-  color: var(--urban-purple);
+  color: var(--purple-primary);
 }
 
 h4 {
@@ -68,14 +70,14 @@ p {
 
 /* Links */
 a {
-  color: var(--urban-pink);
+  color: var(--pink-primary);
   text-decoration: none;
   transition: all var(--transition-base);
   font-weight: var(--font-weight-medium);
 }
 
 a:hover {
-  color: var(--urban-purple);
+  color: var(--purple-primary);
   text-decoration: underline;
 }
 
@@ -121,7 +123,7 @@ pre code {
 
 /* Blockquote */
 blockquote {
-  border-left: 4px solid var(--urban-purple);
+  border-left: 4px solid var(--purple-primary);
   padding-left: var(--space-md);
   margin: var(--space-md) 0;
   font-style: italic;
@@ -185,7 +187,7 @@ hr {
 
 /* Gradient text utility */
 .gradient-text {
-  background: linear-gradient(135deg, var(--urban-blue), var(--urban-pink));
+  background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

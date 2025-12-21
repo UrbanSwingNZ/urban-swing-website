@@ -1,6 +1,6 @@
 /* merchandise.css - Merchandise Order Form Styles */
 
-@import url('../styles/base/colors.css');
+@import url('../base/colors.css');
 
 /* Loading Spinner */
 .loading-spinner {

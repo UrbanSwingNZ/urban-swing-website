@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    TRACK TABLE AND PLAYBACK STYLES
    Track list, drag and drop, play buttons
@@ -251,7 +253,7 @@
 .bpm-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: linear-gradient(135deg, var(--pm-blue), var(--pm-purple));
+  background: var(--gradient-blue-purple);
   color: white;
   border-radius: 12px;
   font-size: 0.85rem;

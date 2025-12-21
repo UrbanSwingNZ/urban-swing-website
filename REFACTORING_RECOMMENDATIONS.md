@@ -857,6 +857,26 @@ import { escapeHtml, formatDate, formatCurrency, isValidEmail } from '/js/utils/
 - Consolidate button styles into `/styles/base/buttons.css`
 - Move all modal styles to `/styles/modals/`
 
+**Phase 2.5: Design Token Reorganization** (3 hours) ⚠️ **NEW**
+- **Rename and relocate `/css/base/variables.css` to `/styles/base/design-tokens.css`**
+  - Current location is in legacy `/css/` directory
+  - Should be in `/styles/base/` alongside `colors.css`
+  - Better name clarifies purpose (non-color design tokens)
+- **Move `/css/base/typography.css` to `/styles/base/typography.css`**
+  - Keep typography system with other base styles
+  - Already updated to import colors.css correctly
+- **Update all imports** across the codebase:
+  - Change `css/base/variables.css` → `styles/base/design-tokens.css`
+  - Change `css/base/typography.css` → `styles/base/typography.css`
+  - ~15 files to update (student portal, admin sections)
+- **Consider future splitting** (optional, can be Phase 2.6):
+  - Option A: Keep as single `design-tokens.css` file (current)
+  - Option B: Split into semantic files:
+    - `spacing.css` (--space-*, --max-width-*)
+    - `typography-tokens.css` (--font-*, --line-height-*)
+    - `effects.css` (--radius-*, --transition-*, --z-*)
+  - Recommendation: Keep as single file for now, split only if it grows beyond 100 lines
+
 **Phase 3: Component Extraction** (6 hours)
 - Extract common components:
   - Snackbar → `/styles/components/snackbar.css`

@@ -66,7 +66,7 @@
 .select-all {
     margin: 25px 0;
     padding: 18px;
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -77,7 +77,7 @@
 
 @media (prefers-color-scheme: dark) {
     .select-all {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
@@ -108,7 +108,7 @@
 }
 
 .collection-card {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border: 2px solid var(--border-color);
     border-radius: 12px;
     padding: 20px;
@@ -118,13 +118,13 @@
 
 @media (prefers-color-scheme: dark) {
     .collection-card {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
 .collection-card:hover {
     border-color: var(--purple-primary);
-    box-shadow: 0 4px 12px var(--admin-shadow);
+    box-shadow: 0 4px 12px var(--shadow-medium);
     transform: translateY(-2px);
 }
 
@@ -172,7 +172,7 @@
 }
 
 .stat-card {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -182,19 +182,19 @@
 
 @media (prefers-color-scheme: dark) {
     .stat-card {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--admin-shadow);
+    box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .stat-value {
     font-size: 2.5rem;
     font-weight: bold;
-    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -295,7 +295,7 @@
 }
 
 .progress-fill {
-    background: linear-gradient(90deg, var(--blue-primary), var(--purple-primary));
+    background: var(--gradient-blue-purple);
     height: 100%;
     transition: width 0.3s ease;
     display: flex;
@@ -314,7 +314,7 @@
 
 /* Backup Info Section */
 .backup-info {
-    background: var(--admin-card-light);
+    background: var(--card-light);
     border-radius: 12px;
     padding: 25px;
     margin: 25px 0;
@@ -323,7 +323,7 @@
 
 @media (prefers-color-scheme: dark) {
     .backup-info {
-        background: var(--admin-card-dark);
+        background: var(--card-dark);
     }
 }
 

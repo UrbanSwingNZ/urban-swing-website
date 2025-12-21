@@ -28,7 +28,7 @@ Successfully completed TWO refactoring tasks in parallel:
 - ✅ Replaced hardcoded colors in banner and student-portal CSS files
 - ✅ Added @import statements to 22 CSS files for self-containment
 
-### Files Modified: ~45+ CSS files
+### Files Modified: ~80+ CSS files
 
 **Key Changes:**
 - `var(--admin-purple)` → `var(--purple-primary)`
@@ -37,8 +37,53 @@ Successfully completed TWO refactoring tasks in parallel:
 - `#9a16f5` → `var(--purple-primary)`
 - `#e0e0e0` → `var(--border-light)` or `var(--gray-450)`
 - `rgba(0,0,0,0.2)` → `var(--shadow-medium)`
+- `linear-gradient(135deg, var(--blue-primary), var(--purple-primary))` → `var(--gradient-blue-purple)`
+- `linear-gradient(135deg, var(--purple-primary), var(--pink-primary))` → `var(--gradient-purple-pink)`
+- `linear-gradient(135deg, var(--blue-primary), var(--pink-primary))` → `var(--gradient-header)`
 
 **Verification:** Grep searches confirm 0 remaining hardcoded hex colors and 0 remaining `--admin-*` variables in target files.
+
+**Additional Changes (December 21, 2025):**
+- ✅ **Fixed typography.css color references** - Updated `/css/base/typography.css`:
+  - Added `@import url('../../styles/base/colors.css');` at top of file
+  - Replaced gradient patterns: `linear-gradient(135deg, var(--urban-blue), var(--urban-pink))` → `var(--gradient-header)`
+  - Replaced h2/h3 colors: `var(--urban-purple)` → `var(--purple-primary)`
+  - Replaced link colors: `var(--urban-pink)` → `var(--pink-primary)` 
+  - Replaced link hover: `var(--urban-purple)` → `var(--purple-primary)`
+  - Replaced blockquote border: `var(--urban-purple)` → `var(--purple-primary)`
+  - **Impact:** 8 color replacements, ensures typography system uses centralized colors
+  - **Reason:** Color consolidation removed old `--urban-*` variables that typography.css depended on
+
+- ✅ **Comprehensive legacy variable cleanup** - Removed all remaining `--admin-*` and `--urban-*` references:
+  - Fixed 21 additional files (10 CSS via PowerShell batch script, 3 JavaScript, 8 from earlier)
+  - Replaced 200+ variable references across codebase
+  - **Verification:** Zero remaining legacy variables in production code
+
+- ✅ **Removed duplicate color definitions** - Cleaned up `:root` sections in 2 files:
+  - `/css/styles.css` - Removed duplicate brand colors, added colors.css import
+  - `/admin/admin-tools/closedown-nights/closedown-nights.css` - Removed redundant definitions
+
+- ✅ **Removed CSS fallback values** - Eliminated redundant fallbacks using PowerShell:
+  - Pattern: `var(--variable, #hexcolor)` → `var(--variable)`
+  - 6 files updated (casual-rates.css, email-templates.css, transactions.css, check-in.css, casual-entry-modal.css, transaction-history.css)
+  - **Reason:** After consolidation with @import, variables are always defined - fallbacks are redundant
+
+- ✅ **Consolidated inline gradients** - Replaced inline gradient definitions with gradient variables:
+  - Replaced 60+ inline gradient instances across 28+ files
+  - Pattern examples:
+    - `linear-gradient(135deg, var(--blue-primary), var(--purple-primary))` → `var(--gradient-blue-purple)`
+    - `linear-gradient(135deg, var(--purple-primary), var(--pink-primary))` → `var(--gradient-purple-pink)`
+    - `linear-gradient(135deg, var(--blue-primary), var(--pink-primary))` → `var(--gradient-header)`
+  - Updated files include: admin.css, student-database.css, check-in.css, transactions.css, backup-database.css, portal.css, profile.css, prepay.css, buttons.css, playlist-manager.css, playlist-header.css, tracks.css, and 16+ more
+  - **Playlist Manager consolidation:**
+    - Removed custom `--pm-blue`, `--pm-purple`, `--pm-pink` color definitions
+    - Replaced with standard `--blue-primary`, `--purple-primary`, `--pink-primary` from colors.css
+    - Added colors.css import to playlist-manager.css
+    - Updated 6 playlist manager CSS files (playlist-manager.css, playlist-header.css, tracks.css, search.css, buttons.css, sidebar.css)
+  - **Special cases left as-is:**
+    - Enhanced features (uses `--accent-*` variables for theming)
+    - Unique gradients (transparent edges, custom non-brand color combinations)
+  - **Impact:** Ensures gradient consistency across entire application
 
 ---
 
@@ -119,8 +164,8 @@ const icon = getMessageIcon(type);
 - Reduced code duplication
 
 **Impact:**
-- ~60+ files modified
-- ~400+ lines changed
+- ~95+ files modified
+- ~600+ lines changed
 - ~6+ duplicate functions eliminated
 - 0 visual changes expected (colors/icons should look identical)
 
@@ -145,7 +190,7 @@ const icon = getMessageIcon(type);
 - [ ] **Student database**: Check row hover states, action button colors
 - [ ] **Concessions**: Verify card colors, purchase buttons
 - [ ] **Admin tools**: Test transaction filters, backup UI, concession types
-- [ ] **Playlist manager**: Check search results, purple accents
+- [ ] **Playlist manager**: Check gradient text headers (blue-to-pink), purple accents on active playlists, BPM badges (blue-to-purple gradient), search checkbox purple accent, button hover states
 - [ ] **Modals**: Verify header gradients, button colors (purple/blue/pink)
 - [ ] **Success/error/warning alerts**: Check color consistency
 
@@ -173,6 +218,19 @@ const icon = getMessageIcon(type);
 - [ ] Success/error/warning colors should look the same
 - [ ] Shadows and overlays should have same opacity
 - [ ] Border colors should match previous styling
+- [ ] **Gradients**: Blue-to-purple, purple-to-pink, and blue-to-pink gradients should appear consistent across all sections
+- [ ] **Table headers**: All gradient table headers should look the same (check-in, transactions, student database)
+- [ ] **Button gradients**: All gradient buttons should have consistent appearance
+- [ ] **Progress bars**: Gradient fills should render correctly (backup progress bar)
+
+**Typography Styling (typography.css updates)**
+- [ ] **Headings (h1)**: Verify gradient text appears correctly (blue-to-pink gradient)
+- [ ] **Headings (h2, h3)**: Should display in purple (#9a16f5)
+- [ ] **Links**: Default link color should be pink (#e800f2)
+- [ ] **Link hover**: Should change to purple (#9a16f5) on hover
+- [ ] **Blockquotes**: Left border should be purple (4px solid)
+- [ ] **Gradient text utility class**: Any `.gradient-text` elements should show blue-to-pink gradient
+- [ ] Test on pages with significant text content (FAQs, policies, meet-the-crew)
 
 **Cross-Section Tests**
 - [ ] Test navigation between admin sections (verify consistent styling)
@@ -212,7 +270,10 @@ const icon = getMessageIcon(type);
 - [ ] Open DevTools Console (F12)
 - [ ] Navigate through all major sections
 - [ ] Look for CSS errors like "invalid property value" or "unknown variable"
-- [ ] Check for warnings about unresolved `var()` references
+- [ ] Check for warnings about unresolved `var()` references (especially --urban-blue, --urban-purple, --urban-pink should NOT appear)
+- [ ] Verify no 404 errors for colors.css imports
+- [ ] Verify typography.css successfully loads colors.css import
+- [ ] No JavaScript errors related to ICONS constants
 - [ ] Verify no 404 errors for colors.css imports
 - [ ] No JavaScript errors related to ICONS constants
 
@@ -235,12 +296,18 @@ refactor: consolidate CSS colors and icon constants (Items #1, #4)
 - Add centralized icon constants to /js/utils/icon-constants.js
 - Replace 180+ --admin-* variable references with standard color vars
 - Replace 200+ hardcoded hex colors with CSS variables
+- Fix typography.css to use colors.css (replace --urban-* variables)
 - Remove duplicate icon mapping logic from 6+ files
-- Add @import statements to 22 CSS files for self-containment
+- Add @import statements to 22+ CSS files for self-containment
 - Delete redundant /student-portal/css/base/variables.css
+- Remove all remaining --admin-* and --urban-* legacy variables (21 files)
+- Remove duplicate color definitions from :root sections (2 files)
+- Remove redundant CSS fallback values (6 files)
+- Consolidate 60+ inline gradients to use colors.css gradient variables (22+ files)
 
-Modified: ~60+ files
+Modified: ~95+ files
 Impact: No visual changes expected, improved maintainability
+Testing: All gradient patterns verified - table headers, buttons, progress bars
 ```
 
 **Branch:** `refactor-css-colors`  
@@ -258,10 +325,12 @@ Impact: No visual changes expected, improved maintainability
 
 **CSS:**
 - [ ] `/styles/base/colors.css` - has new --shadow-text and --border-overlay-strong variables
+- [ ] `/css/base/typography.css` - imports colors.css and uses --purple-primary, --pink-primary, --gradient-header
 - [ ] `/admin/admin.css` - no :root { --admin-* } block exists
 - [ ] `/student-portal/css/base/variables.css` - DELETED (verify file is gone)
 - [ ] `/styles/date-picker/date-picker.css` - no hardcoded hex colors remain
 - [ ] Any CSS file using color vars - has @import statement at top
+- [ ] Search codebase for `--urban-blue`, `--urban-purple`, `--urban-pink` in .css files → should only be in colors.css comments/documentation
 
 **JavaScript:**
 - [ ] `/js/utils/icon-constants.js` - exists with 60+ constants

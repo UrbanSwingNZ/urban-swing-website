@@ -1,3 +1,5 @@
+@import url('../../../styles/base/colors.css');
+
 /* ========================================
    BUTTON STYLES
    Base styles inherited from admin-modals.css
@@ -16,13 +18,13 @@
 }
 
 .btn-filter:hover {
-  border-color: var(--pm-purple);
-  color: var(--pm-purple);
+  border-color: var(--purple-primary);
+  color: var(--purple-primary);
 }
 
 .btn-filter.active {
-  background: var(--pm-purple);
-  border-color: var(--pm-purple);
+  background: var(--purple-primary);
+  border-color: var(--purple-primary);
   color: white;
 }
 
