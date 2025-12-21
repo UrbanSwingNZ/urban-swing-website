@@ -3,6 +3,9 @@
  * Styling for Email Templates Management Tool
  */
 
+@import url('../../../styles/base/colors.css');
+@import url('../../../styles/components/snackbar.css');
+
 /* ===== Layout ===== */
 .templates-layout {
     display: flex;
@@ -1256,52 +1259,6 @@
     .info-grid {
         grid-template-columns: 1fr;
     }
-}
-
-/* ===== Snackbar Messages ===== */
-.snackbar {
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 300px;
-    max-width: 500px;
-    padding: 16px 24px;
-    background: #323232;
-    color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--shadow-text);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.95rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    transition: bottom 0.3s ease;
-}
-
-.snackbar.show {
-    bottom: 30px;
-}
-
-.snackbar.success {
-    background: var(--success-light);
-}
-
-.snackbar.error {
-    background: #f44336;
-}
-
-.snackbar.warning {
-    background: #ff9800;
-}
-
-.snackbar i {
-    font-size: 1.2rem;
-}
-
-.snackbar-message {
-    flex: 1;
 }
 
 /* ===== Insert Variable Modal ===== */

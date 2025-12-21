@@ -1,6 +1,7 @@
 /* registration-form.css - Registration Form Styles */
 
 @import url('../../styles/base/colors.css');
+@import url('../../styles/components/snackbar.css');
 
 /* Loading Spinner */
 .loading-spinner {
@@ -890,50 +891,6 @@ h1 {
     outline: none;
     border-color: var(--border-purple);
     box-shadow: 0 0 0 3px var(--bg-purple-medium);
-}
-
-/* Snackbar */
-.snackbar {
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--gray-850);
-    color: white;
-    padding: 16px 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--shadow-text);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
-    transition: bottom 0.3s ease;
-    max-width: 90%;
-}
-
-.snackbar.show {
-    bottom: 30px;
-}
-
-.snackbar-success {
-    background: var(--success-light);
-}
-
-.snackbar-error {
-    background: var(--error);
-}
-
-.snackbar-warning {
-    background: var(--text-orange);
-}
-
-.snackbar-info {
-    background: var(--blue-medium);
-}
-
-.snackbar i {
-    font-size: 1.2rem;
 }
 
 

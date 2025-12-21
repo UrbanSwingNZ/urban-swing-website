@@ -1,0 +1,97 @@
+/* ========================================
+   SNACKBAR COMPONENT
+   Centralized notification styles
+   ======================================== */
+
+@import url('../../styles/base/colors.css');
+
+/* Base snackbar styles */
+.snackbar {
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--purple-primary);
+  color: var(--white);
+  padding: 16px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px var(--shadow-text);
+  z-index: 10000;
+  transition: bottom 0.3s ease;
+  min-width: 300px;
+  max-width: 500px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 0.95rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Show state - slide up animation */
+.snackbar.show {
+  bottom: 30px;
+}
+
+/* Queue support - position override */
+.snackbar[data-position] {
+  bottom: var(--snackbar-bottom, 30px);
+}
+
+/* Icon styling */
+.snackbar i {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Message text */
+.snackbar span {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* Type variants - using status gradients from colors.css */
+.snackbar-success {
+  background: var(--status-active-gradient);
+}
+
+.snackbar-error {
+  background: var(--status-inactive-gradient);
+}
+
+.snackbar-warning {
+  background: var(--status-warning-gradient);
+}
+
+.snackbar-info {
+  background: var(--status-info-gradient);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .snackbar {
+    min-width: 250px;
+    max-width: calc(100vw - 40px);
+    font-size: 0.9rem;
+    padding: 14px 20px;
+  }
+  
+  .snackbar i {
+    font-size: 1.1rem;
+  }
+}
+
+/* Smaller mobile screens */
+@media (max-width: 480px) {
+  .snackbar {
+    min-width: 200px;
+    max-width: calc(100vw - 32px);
+    padding: 12px 16px;
+    font-size: 0.875rem;
+  }
+  
+  .snackbar i {
+    font-size: 1rem;
+  }
+}
