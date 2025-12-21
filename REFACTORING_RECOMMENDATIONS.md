@@ -14,14 +14,20 @@ This document provides a comprehensive analysis of refactoring opportunities acr
   - Created `/js/utils/` with 6 modules
   - Fixed 6 bugs during testing
   - Comprehensive testing completed
+- ✅ **Item #1:** Consolidate icon usage (Dec 21, 2025) - _Combined with Item #4_
+  - Created `/js/utils/icon-constants.js` with 60+ standardized icons
+  - Eliminated duplicate icon logic in 6+ files
+  - Updated 15+ JavaScript files to use icon constants
+- ✅ **Item #4:** Consolidate color variables (Dec 21, 2025) - _Combined with Item #1_
+  - Replaced 180+ --admin-* variable references
+  - Replaced 200+ hardcoded hex colors with CSS variables
+  - Modified ~45 CSS files, added @import statements to 22 files
 
 **Next Recommended Items:**
-- 🔴 **Item #1:** Consolidate icon usage (2 hours) - _Quick win, independent_
-- 🔴 **Item #4:** Consolidate color variables (3 hours) - _CSS-focused, independent_
 - 🔴 **Item #5:** Snackbar system (5 hours) - _Can now use centralized utilities_
 - 🔴 **Item #8:** Loading spinner (3 hours) - _Can now use centralized utilities_
 
-**Total Progress:** 5 of 15 items complete (33%) | **Time Saved:** ~14 hours completed
+**Total Progress:** 7 of 15 items complete (47%) | **Time Saved:** ~19 hours completed
 
 ---
 
@@ -473,30 +479,29 @@ import { ConfirmationModal } from '@components/modals/confirmation-modal';
 
 ## �🟢 Quick Wins (Easy - 1-2 hours each)
 
-### 1. Consolidate Icon Usage
+### 1. ✅ Consolidate Icon Usage - **COMPLETE**
 
-**Issue:** Inconsistent icon classes used for the same actions across the codebase.
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed with Item #4 (CSS Colors)**
 
-**Examples found:**
-- Delete icons: `fa-trash`, `fa-trash-alt`, `fa-times` (sometimes used for delete)
-- Close icons: `fa-times`, `fa-close`, `fa-remove` (all mean the same thing)
+**What Was Done:**
+- Created `/js/utils/icon-constants.js` with 60+ standardized icon constants
+- Added `getMessageIcon(type)` helper function for message type icons
+- Added `createIcon(name, classes)` helper function
+- Exported from `/js/utils/index.js` for both ES6 modules and global access
+- Updated 15+ JavaScript files to use icon constants
+- Eliminated duplicate icon mapping logic in 6+ files
 
-**Recommendation:**
-- Create an icon constants file (`/js/icon-constants.js` or add to existing utils)
-- Define standard icons:
-  ```javascript
-  export const ICONS = {
-    DELETE: 'fa-trash-alt',
-    CLOSE: 'fa-times',
-    EDIT: 'fa-edit',
-    SAVE: 'fa-save',
-    WARNING: 'fa-exclamation-triangle',
-    SUCCESS: 'fa-check-circle',
-    ERROR: 'fa-exclamation-circle',
-    INFO: 'fa-info-circle'
-  };
-  ```
-- Find and replace all hardcoded icon strings with constants
+**Key Replacements:**
+- `'fa-trash'` or `'fa-trash-alt'` → `ICONS.DELETE`
+- `'fa-edit'` → `ICONS.EDIT`
+- `'fa-spinner fa-spin'` → `ICONS.LOADING`
+- `'fa-check-circle'` → `ICONS.SUCCESS` or `getMessageIcon('success')`
+- `'fa-exclamation-circle'` → `ICONS.ERROR`
+- `'fa-exclamation-triangle'` → `ICONS.WARNING`
+
+**Result:** Single source of truth for all icons, consistent icon usage across all sections, easy to update icons globally.
+
+**Documentation:** See `ICON_CONSOLIDATION_ANALYSIS.md` and `COMBINED_REFACTORING_SUMMARY.md` for full details.
 
 **Impact:** Better consistency, easier to update icons globally, clearer intent in code.
 
@@ -534,27 +539,28 @@ See [Item #11](#11-create-centralized-utilities-library--complete) for full impl
 
 ---
 
-### 4. 🔴 Consolidate Color Variables in CSS
+### 4. ✅ Consolidate Color Variables in CSS - **COMPLETE**
 
-**Status:** 🔴 TODO | **Estimated Time:** 3 hours | **Dependencies:** None
+**Status:** ✅ COMPLETE (Dec 21, 2025) | **Completed with Item #1 (Icon Consolidation)**
 
-> **⚠️ CRITICAL CSS CONTEXT:**
-> - `/styles/base/colors.css` is the **authoritative color system**
-> - `/css/` directory is **legacy** - being phased out in favor of `/styles/`
-> - Many files have custom variables (e.g., `--admin-blue`) that should reference `colors.css` (e.g., `var(--blue-primary)`)
-> - See "🎨 CRITICAL CSS CONTEXT" section below for full migration details
+**What Was Done:**
+- Added missing color variables (--shadow-text, --border-overlay-strong) to `/styles/base/colors.css`
+- Removed duplicate custom `--admin-*` variables from admin.css
+- Deleted redundant `/student-portal/css/base/variables.css` file
+- Replaced 180+ `--admin-*` variable references with standard color variables across 22 CSS files
+- Replaced 200+ hardcoded hex/rgba colors with CSS variables
+- Added @import statements to 22 CSS files for self-containment
 
-**Issue:** Hardcoded hex colors found throughout CSS files despite having a centralized color system in `/styles/base/colors.css`.
+**Key Replacements:**
+- `var(--admin-purple)` → `var(--purple-primary)`
+- `var(--admin-blue)` → `var(--blue-primary)`
+- `#9a16f5` → `var(--purple-primary)`
+- `#e0e0e0` → `var(--border-light)` or `var(--gray-450)`
+- `rgba(0,0,0,0.2)` → `var(--shadow-medium)`
 
-**Examples:**
-- Date picker still uses hardcoded `#9a16f5`, `#e0e0e0`, `rgba(154, 22, 245, 0.1)`, etc.
-- Many CSS files have colors that should reference CSS variables
+**Result:** All colors reference single source of truth (`/styles/base/colors.css`), easy to update brand colors globally, consistent visual experience.
 
-**Recommendation:**
-- Audit all CSS files for hardcoded colors using grep
-- Replace with appropriate CSS variables from `/styles/base/colors.css`
-- For colors not in the system, add them to the colors file first
-- Example: Replace `#9a16f5` with `var(--purple-primary)`
+**Documentation:** See `CSS_COLOR_CONSOLIDATION_ANALYSIS.md` and `COMBINED_REFACTORING_SUMMARY.md` for full details.
 
 **Impact:** Easier theming, consistent branding, single source for color changes.
 
