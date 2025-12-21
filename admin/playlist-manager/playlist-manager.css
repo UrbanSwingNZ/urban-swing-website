@@ -71,7 +71,7 @@ html, body {
   background: var(--card-light);
   padding: 60px 40px;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px var(--shadow-light);
   text-align: center;
   max-width: 500px;
 }
@@ -198,7 +198,7 @@ html, body {
     bottom: 0;
     z-index: 99;
     transition: left 0.3s ease;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 0 10px var(--shadow-text);
   }
   
   .pm-sidebar.open {

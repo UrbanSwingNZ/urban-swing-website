@@ -22,7 +22,7 @@
     background: white;
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
 
@@ -85,7 +85,7 @@ select {
 select:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-alt-strong);
 }
 
 select:disabled {
@@ -98,7 +98,7 @@ select:disabled {
 .package-details {
     margin-top: 0.75rem;
     padding: 1rem;
-    background: linear-gradient(135deg, rgba(139, 69, 255, 0.05), rgba(139, 69, 255, 0.1));
+    background: var(--bg-stripe-purple);
     border-left: 4px solid var(--purple-primary);
     border-radius: 6px;
 }
@@ -133,7 +133,7 @@ select:disabled {
 
 .stripe-element:focus-within {
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-alt-strong);
 }
 
 /* Stripe Card Element (Combined Card Input) */
@@ -183,7 +183,7 @@ input[type="text"] {
 input[type="text"]:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-alt-strong);
 }
 
 input[type="text"]::placeholder {
@@ -288,7 +288,7 @@ input[type="text"]::placeholder {
     left: 50%;
     margin-left: -10px;
     margin-top: -10px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid var(--header-overlay-strong);
     border-radius: 50%;
     border-top-color: white;
     animation: spin 0.8s linear infinite;
@@ -304,7 +304,7 @@ input[type="text"]::placeholder {
     align-items: flex-start;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    background: linear-gradient(135deg, #fff3cd, #fff8e1);
+    background: var(--gradient-warning);
     border: 1px solid #ffc107;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -375,7 +375,7 @@ input[type="text"]::placeholder {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px var(--shadow-text);
     animation: modalSlideIn 0.3s ease;
     overflow: hidden;
 }
@@ -488,7 +488,7 @@ input[type="text"]::placeholder {
 .modal-footer .btn-danger:hover {
     background: var(--error-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 5px 15px var(--bg-error-strong);
 }
 
 .modal-footer .btn-danger i {

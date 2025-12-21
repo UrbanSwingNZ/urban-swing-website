@@ -175,7 +175,7 @@
 .playlists-list li.playlist-sortable-drag {
   opacity: 1;
   background: var(--card-light);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px var(--shadow-text);
   border-left-color: var(--purple-primary);
   cursor: move;
 }
@@ -222,7 +222,7 @@
   background: var(--card-light);
   border: 1px solid var(--gray-450);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--shadow-medium);
   z-index: 2000;
   min-width: 140px;
   opacity: 0;
@@ -283,7 +283,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-overlay);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -297,7 +297,7 @@
   width: 100%;
   max-width: 500px;
   padding: 20px;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -4px 20px var(--shadow-text);
   animation: slideUp 0.3s ease;
   position: relative !important;
   top: auto !important;

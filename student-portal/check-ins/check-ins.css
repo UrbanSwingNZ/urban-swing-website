@@ -24,7 +24,7 @@
     padding: 24px 32px;
     border-radius: 12px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .header-info h2 {
@@ -49,7 +49,7 @@
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .checkin-item {
@@ -71,7 +71,7 @@
 
 .checkin-item.reversed {
     opacity: 0.6;
-    background-color: rgba(220, 53, 69, 0.05);
+    background-color: var(--bg-error-light);
 }
 
 .checkin-date {
@@ -134,33 +134,33 @@
 }
 
 .type-badge.concession {
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
     color: var(--purple-primary);
 }
 
 .type-badge.gift {
-    background: rgba(76, 175, 80, 0.1);
+    background: var(--badge-success-bg);
     color: var(--success-dark);
 }
 
 .type-badge.casual,
 .type-badge.casual-entry {
-    background: rgba(53, 52, 250, 0.1);
+    background: var(--badge-casual-bg);
     color: var(--blue-primary);
 }
 
 .type-badge.casual-student {
-    background: rgba(23, 162, 184, 0.1);
+    background: var(--badge-info-bg);
     color: var(--blue-accent);
 }
 
 .type-badge.free {
-    background: rgba(40, 167, 69, 0.1);
+    background: var(--bg-success-light);
     color: #28a745;
 }
 
 .type-badge.online {
-    background: rgba(0, 150, 136, 0.1);
+    background: var(--badge-teal-bg);
     color: var(--success-darker);
 }
 
@@ -199,7 +199,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -235,7 +235,7 @@
     background: white;
     border-radius: 12px;
     margin-top: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .pagination-btn {

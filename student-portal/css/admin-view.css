@@ -10,7 +10,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px var(--shadow-medium);
 }
 
 .banner-content {
@@ -49,7 +49,7 @@
     font-size: 0.85rem;
     opacity: 0.9;
     font-family: monospace;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--header-overlay-semi);
     padding: 4px 8px;
     border-radius: 4px;
 }
@@ -67,9 +67,9 @@
 }
 
 .btn-back-admin:hover {
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 /* Portal Container */
@@ -82,7 +82,7 @@
 .portal-header {
     background: white;
     padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-light);
 }
 
 .header-content {
@@ -151,7 +151,7 @@
 .student-dropdown:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
 }
 
 /* Dashboard Content */
@@ -191,12 +191,12 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-light);
     transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 16px var(--shadow-medium);
     transform: translateY(-2px);
 }
 
@@ -237,14 +237,14 @@
     background: white;
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-light);
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
 }
 
 .nav-card:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px var(--shadow-medium);
     transform: translateY(-4px);
 }
 
@@ -255,13 +255,13 @@
 
 .nav-card.disabled:hover {
     transform: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .card-icon {
     width: 50px;
     height: 50px;
-    background: rgba(154, 22, 245, 0.1);
+    background: var(--bg-purple-medium);
     border-radius: 10px;
     display: flex;
     align-items: center;

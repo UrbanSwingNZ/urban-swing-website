@@ -329,7 +329,7 @@
 .editor-mode-btn.active {
     background: white;
     color: #9a16f5;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--shadow-light);
 }
 
 .editor-mode-btn i {
@@ -746,7 +746,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 40px var(--shadow-text);
 }
 
 .modal-content.modal-large {
@@ -1102,9 +1102,9 @@
 }
 
 .btn-help {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--header-overlay-semi);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--header-overlay-strong);
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 0.85rem;
@@ -1116,8 +1116,8 @@
 }
 
 .btn-help:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--header-overlay-strong);
+    border-color: var(--border-overlay-strong);
 }
 
 /* Variable Properties Preview */
@@ -1209,7 +1209,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-light);
     z-index: 9999;
     display: flex;
     flex-direction: column;
@@ -1270,7 +1270,7 @@
     background: #323232;
     color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-text);
     z-index: 10000;
     display: flex;
     align-items: center;
