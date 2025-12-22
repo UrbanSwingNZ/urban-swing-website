@@ -3,6 +3,7 @@
    Advanced interactivity and UI enhancements
    ======================================== */
 
+@import url('../../styles/base/colors.css');
 @import url('../../styles/components/loading-spinner.css');
 
 /* ============================================
@@ -16,120 +17,38 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-  border: none;
+  background: var(--gradient-blue-purple);
+  color: var(--white);
+  border: 2px solid var(--border-overlay-medium);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2em;
   box-shadow: var(--shadow-lg);
-  transition: all var(--transition-normal);
+  transition: all 0.3s ease;
   z-index: 999;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.3s ease forwards;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .scroll-to-top:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.05);
   box-shadow: var(--shadow-xl);
+  border-color: var(--border-overlay-strong);
 }
 
 .scroll-to-top:active {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
 }
 
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ============================================
-   2. MODAL COMPONENT
-   ============================================ */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-normal);
-  backdrop-filter: blur(4px);
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-container {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-xl);
-  max-width: 600px;
-  width: 90%;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-xl);
-  transform: scale(0.9) translateY(20px);
-  transition: all var(--transition-normal);
-}
-
-.modal-overlay.active .modal-container {
-  transform: scale(1) translateY(0);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-lg) var(--space-xl);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.modal-title {
-  margin: 0;
-  color: var(--accent-primary);
-  font-size: 1.5rem;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-}
-
-.modal-close:hover {
-  background: var(--border-light);
-  color: var(--accent-primary);
-}
-
-.modal-body {
-  padding: var(--space-xl);
+.scroll-to-top i {
+  font-size: 1.1em;
+  filter: drop-shadow(0 1px 2px var(--shadow-text));
 }
 
 /* ============================================
-   3. FAQ ACCORDION
+   2. FAQ ACCORDION
    ============================================ */
 
 .faq-question-button {
@@ -192,7 +111,7 @@
 }
 
 /* ============================================
-   4. MOBILE MENU / HAMBURGER
+   3. MOBILE MENU / HAMBURGER
    ============================================ */
 
 .hamburger-menu {
@@ -259,7 +178,7 @@
 }
 
 /* ============================================
-   5. LOADING STATES
+   4. LOADING STATES
    ============================================ */
 
 /* Image loading */
@@ -319,7 +238,7 @@ img.loaded {
 }
 
 /* ============================================
-   6. SKIP LINK (Accessibility)
+   5. SKIP LINK (Accessibility)
    ============================================ */
 
 .skip-link {
@@ -344,7 +263,7 @@ img.loaded {
 }
 
 /* ============================================
-   7. ACTIVE NAVIGATION
+   6. ACTIVE NAVIGATION
    ============================================ */
 
 .nav-btn.active {
@@ -359,7 +278,7 @@ img.loaded {
 }
 
 /* ============================================
-   8. FORM ENHANCEMENTS
+   7. FORM ENHANCEMENTS
    ============================================ */
 
 input.valid,
@@ -387,7 +306,7 @@ select.error:focus {
 }
 
 /* ============================================
-   9. SMOOTH TRANSITIONS
+   8. SMOOTH TRANSITIONS
    ============================================ */
 
 /* Smooth scroll behavior */
@@ -412,7 +331,7 @@ body.page-loaded {
 }
 
 /* ============================================
-   10. FOCUS VISIBLE (Better Accessibility)
+   9. FOCUS VISIBLE (Better Accessibility)
    ============================================ */
 
 /* Remove default focus, add custom */
@@ -433,7 +352,7 @@ a:focus-visible {
 }
 
 /* ============================================
-   11. SKELETON SCREENS
+   10. SKELETON SCREENS
    ============================================ */
 
 .skeleton {
@@ -465,7 +384,7 @@ a:focus-visible {
 }
 
 /* ============================================
-   12. TOOLTIPS
+   11. TOOLTIPS
    ============================================ */
 
 [data-tooltip] {
@@ -509,7 +428,7 @@ a:focus-visible {
 }
 
 /* ============================================
-   13. RESPONSIVE IMPROVEMENTS
+   12. RESPONSIVE IMPROVEMENTS
    ============================================ */
 
 @media (max-width: 767px) {
@@ -540,7 +459,7 @@ a:focus-visible {
 }
 
 /* ============================================
-   14. PRINT STYLES
+   13. PRINT STYLES
    ============================================ */
 
 @media print {
