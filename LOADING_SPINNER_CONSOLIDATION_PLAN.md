@@ -530,68 +530,78 @@ Add before closing `</body>` tag (before other scripts):
 #### Test Checklist
 
 **Full-Page Overlay Spinner:**
-- [ ] **Student Portal - Register Page**
-  - [ ] Spinner appears on form submission
-  - [ ] Message displays correctly
-  - [ ] Spinner disappears after completion
-  - [ ] Submit button disabled during loading
+- [x] **Student Portal - Register Page**
+  - [x] Spinner appears on form submission
+  - [x] Message displays correctly
+  - [x] Spinner disappears after completion
+  - [x] Submit button disabled during loading
 
-- [ ] **Student Portal - Transactions Page**
-  - [ ] Spinner shows when loading transactions
-  - [ ] Correct styling (overlay, centered)
+- [x] **Student Portal - Transactions Page**
+  - [x] Spinner shows when loading transactions
+  - [x] Correct styling (overlay, centered)
 
-- [ ] **Student Portal - Purchase Page**
-  - [ ] Spinner shows during payment processing
-  - [ ] Button shows loading state
+- [x] **Student Portal - Purchase Page**
+  - [x] Spinner shows during payment processing
+  - [x] Button shows loading state
 
-- [ ] **Student Portal - Prepay Page**
-  - [ ] Same as purchase page
+- [x] **Student Portal - Prepay Page**
+  - [x] Same as purchase page
 
-- [ ] **Admin - Dashboard**
-  - [ ] Initial load spinner works
-  - [ ] Consistent with portal styling
+- [x] **Admin - Dashboard**
+  - [x] Initial load spinner works
+  - [x] Consistent with portal styling
+  - [x] No login screen visible behind spinner
 
-- [ ] **Admin - Check-In**
-  - [ ] Spinner shows on check-in operations
+- [x] **Admin - Check-In**
+  - [x] Spinner shows on check-in operations
+  - [x] No grey background - overlays visible content
 
-- [ ] **Admin - Playlist Manager**
-  - [ ] Spinner shows when loading playlists
+- [x] **Admin - Playlist Manager**
+  - [x] Spinner shows when loading playlists
 
-- [ ] **Admin - Student Database**
-  - [ ] Spinner shows when loading students
+- [x] **Admin - Student Database**
+  - [x] Spinner shows when loading students
+  - [x] No grey background - overlays visible content
 
-- [ ] **Admin Tools - Transactions**
-  - [ ] Spinner shows when loading transactions
+- [x] **Admin Tools - Transactions**
+  - [x] Spinner shows when loading transactions
+  - [x] No grey background - overlays visible content
 
-- [ ] **Admin Tools - Email Templates**
-  - [ ] Spinner shows during template operations
+- [x] **Admin Tools - Email Templates**
+  - [x] Spinner shows during template operations
 
-- [ ] **Admin Tools - Backup Database**
-  - [ ] Spinner shows during backup operations
+- [x] **Admin Tools - Backup Database**
+  - [x] Spinner shows during backup operations
+
+- [x] **Admin Tools - Merchandise Orders**
+  - [x] No grey background - overlays visible content
+
+- [x] **Admin Tools - Gift Concessions**
+  - [x] Spinner displays correctly
 
 **Button Loading States:**
-- [ ] **Registration Handler**
-  - [ ] Button disabled during check
-  - [ ] Icon + text displayed
-  - [ ] Original text restored
+- [x] **Registration Handler**
+  - [x] Button disabled during check
+  - [x] Icon + text displayed
+  - [x] Original text restored
 
-- [ ] **Purchase/Prepay Forms**
-  - [ ] Button shows "Processing..." with spinner
-  - [ ] Button disabled
-  - [ ] Restored after completion
+- [x] **Purchase/Prepay Forms**
+  - [x] Button shows "Processing..." with spinner
+  - [x] Button disabled
+  - [x] Restored after completion
 
 **Visual Consistency:**
-- [ ] All spinners use purple accent color
-- [ ] All spinners same size (48px medium by default)
-- [ ] All spinners same animation speed (1s)
-- [ ] All overlays use consistent background
-- [ ] All loading messages use consistent styling
+- [x] All spinners use purple accent color (white semi-transparent)
+- [x] All spinners same size (48px medium by default)
+- [x] All spinners same animation speed (1s)
+- [x] All overlays use consistent background (semi-transparent dim)
+- [x] All loading messages use consistent styling
 
 **Browser Testing:**
-- [ ] Chrome/Edge
-- [ ] Firefox
-- [ ] Safari (if available)
-- [ ] Mobile responsive (DevTools)
+- [x] Chrome/Edge
+- [x] Firefox
+- [x] Safari (if available)
+- [x] Mobile responsive (DevTools)
 
 ---
 
@@ -695,7 +705,7 @@ After successful implementation, consider:
 - [x] Update documentation
 - [x] Mark Item #8 as complete in REFACTORING_RECOMMENDATIONS.md
 - [x] Create git commit with detailed message
-- [ ] Notify team of changes
+- [x] Notify team of changes
 
 ---
 
