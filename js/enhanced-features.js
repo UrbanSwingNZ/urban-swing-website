@@ -118,138 +118,7 @@ function initActiveNavigation() {
 }
 
 // ============================================
-// 5. MODAL COMPONENT
-// ============================================
-
-class Modal {
-  constructor(options = {}) {
-    this.modalId = options.id || 'modal-' + Date.now();
-    this.title = options.title || '';
-    this.content = options.content || '';
-    this.onClose = options.onClose || null;
-    this.modal = null;
-    this.previousFocus = null;
-    
-    this.create();
-  }
-
-  create() {
-    // Create modal HTML
-    const modalHTML = `
-      <div class="modal-overlay" id="${this.modalId}" role="dialog" aria-modal="true" aria-labelledby="${this.modalId}-title">
-        <div class="modal-container">
-          <div class="modal-header">
-            <h2 id="${this.modalId}-title" class="modal-title">${this.title}</h2>
-            <button class="modal-close" aria-label="Close modal">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <div class="modal-body">
-            ${this.content}
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Add to DOM
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    this.modal = document.getElementById(this.modalId);
-
-    // Bind events
-    this.bindEvents();
-  }
-
-  bindEvents() {
-    // Close button
-    const closeBtn = this.modal.querySelector('.modal-close');
-    closeBtn.addEventListener('click', () => this.close());
-
-    // Click outside to close
-    this.modal.addEventListener('click', (e) => {
-      if (e.target === this.modal) {
-        this.close();
-      }
-    });
-
-    // ESC key to close
-    this.escapeHandler = (e) => {
-      if (e.key === 'Escape') {
-        this.close();
-      }
-    };
-    document.addEventListener('keydown', this.escapeHandler);
-
-    // Trap focus within modal
-    this.trapFocus();
-  }
-
-  trapFocus() {
-    const focusableElements = this.modal.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
-
-    this.modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Tab') {
-        if (e.shiftKey && document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
-        }
-      }
-    });
-  }
-
-  open() {
-    this.previousFocus = document.activeElement;
-    this.modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    
-    // Focus first focusable element
-    setTimeout(() => {
-      const firstFocusable = this.modal.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      if (firstFocusable) {
-        firstFocusable.focus();
-      }
-    }, 100);
-  }
-
-  close() {
-    this.modal.classList.remove('active');
-    document.body.style.overflow = '';
-    document.removeEventListener('keydown', this.escapeHandler);
-    
-    // Restore focus
-    if (this.previousFocus) {
-      this.previousFocus.focus();
-    }
-    
-    // Call onClose callback if provided
-    if (this.onClose) {
-      this.onClose();
-    }
-    
-    // Remove from DOM after animation
-    setTimeout(() => {
-      this.modal.remove();
-    }, 300);
-  }
-}
-
-// Global modal helper
-window.showModal = function(options) {
-  const modal = new Modal(options);
-  modal.open();
-  return modal;
-};
-
-// ============================================
-// 6. FAQ ACCORDION
+// 5. FAQ ACCORDION
 // ============================================
 
 function initFAQAccordion() {
@@ -302,7 +171,7 @@ function initFAQAccordion() {
 }
 
 // ============================================
-// 7. MOBILE MENU
+// 6. MOBILE MENU
 // ============================================
 
 function initMobileMenu() {
@@ -351,7 +220,7 @@ function initMobileMenu() {
 }
 
 // ============================================
-// 8. LOADING STATES
+// 7. LOADING STATES
 // ============================================
 
 function initLoadingStates() {
@@ -374,7 +243,7 @@ function initLoadingStates() {
 }
 
 // ============================================
-// 9. SKIP LINK FOR ACCESSIBILITY
+// 8. SKIP LINK FOR ACCESSIBILITY
 // ============================================
 
 function initSkipLink() {
@@ -392,7 +261,7 @@ function initSkipLink() {
 }
 
 // ============================================
-// 10. FORM ENHANCEMENTS
+// 9. FORM ENHANCEMENTS
 // ============================================
 
 function initFormEnhancements() {
@@ -462,7 +331,5 @@ function debounce(func, wait) {
 
 // Export for use in other scripts
 window.urbanSwing = {
-  Modal,
-  showModal: window.showModal,
   debounce
 };
