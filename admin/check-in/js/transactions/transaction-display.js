@@ -148,12 +148,12 @@ function updateCheckinTransactionSummary(transactions) {
  * @returns {string} Payment badge HTML
  */
 function getCheckinPaymentBadgeHTML(transaction) {
-    // Check if online payment first (has stripeCustomerId)
-    if (transaction.stripeCustomerId) {
+    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
+    
+    // Check for online payment (stripeCustomerId or paymentMethod is 'online')
+    if (transaction.stripeCustomerId || paymentMethod === 'online') {
         return '<span class="payment-badge online"><i class="fas fa-globe"></i> Online</span>';
     }
-    
-    const paymentMethod = String(transaction.paymentMethod || '').toLowerCase();
     
     if (paymentMethod === 'cash') {
         return '<span class="payment-badge cash"><i class="fas fa-money-bill-wave"></i> Cash</span>';

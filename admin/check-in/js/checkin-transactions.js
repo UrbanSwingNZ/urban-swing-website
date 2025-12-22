@@ -21,16 +21,11 @@ async function loadCheckinTransactions() {
     setupTransactionsListener(selectedDate, (transactions) => {
         checkinTransactions = transactions;
         
-        // Filter out reversed transactions by default
-        const showReversed = document.getElementById('show-reversed-checkins-toggle')?.checked || false;
-        const transactionsToDisplay = showReversed 
-            ? checkinTransactions 
-            : checkinTransactions.filter(t => !t.reversed);
-        
+        // Show all transactions including reversed ones
         // Sort by date descending
-        transactionsToDisplay.sort((a, b) => b.date - a.date);
+        checkinTransactions.sort((a, b) => b.date - a.date);
         
-        displayCheckinTransactions(transactionsToDisplay);
+        displayCheckinTransactions(checkinTransactions);
     });
 }
 
@@ -38,13 +33,9 @@ async function loadCheckinTransactions() {
  * Refresh transactions display (called when toggle changes)
  */
 function refreshCheckinTransactionsDisplay() {
-    const showReversed = document.getElementById('show-reversed-checkins-toggle')?.checked || false;
-    const transactionsToDisplay = showReversed 
-        ? checkinTransactions 
-        : checkinTransactions.filter(t => !t.reversed);
-    
-    transactionsToDisplay.sort((a, b) => b.date - a.date);
-    displayCheckinTransactions(transactionsToDisplay);
+    // Show all transactions including reversed ones
+    checkinTransactions.sort((a, b) => b.date - a.date);
+    displayCheckinTransactions(checkinTransactions);
 }
 
 // Expose functions globally for use in other modules

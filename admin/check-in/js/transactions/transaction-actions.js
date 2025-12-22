@@ -151,6 +151,7 @@ export function confirmDeleteCheckinTransaction(transaction) {
  */
 async function deleteCheckinTransaction(transaction) {
     try {
+        // Mark transaction as reversed
         await firebase.firestore()
             .collection(transaction.collection)
             .doc(transaction.id)
@@ -158,6 +159,40 @@ async function deleteCheckinTransaction(transaction) {
                 reversed: true,
                 reversedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+        
+        // If this is a concession purchase, delete the associated concession block and adjust student balance
+        if (transaction.type === 'concession-purchase') {
+            // Find the associated concession block
+            const blocksSnapshot = await firebase.firestore()
+                .collection('concessionBlocks')
+                .where('transactionId', '==', transaction.id)
+                .get();
+            
+            if (!blocksSnapshot.empty) {
+                const blockDoc = blocksSnapshot.docs[0];
+                const blockData = blockDoc.data();
+                
+                // Calculate remaining classes that were unused
+                const unusedClasses = blockData.remainingQuantity;
+                
+                // Delete the concession block
+                await firebase.firestore()
+                    .collection('concessionBlocks')
+                    .doc(blockDoc.id)
+                    .delete();
+                
+                // Adjust student's concession balance (subtract unused classes)
+                if (transaction.studentId && unusedClasses > 0) {
+                    await firebase.firestore()
+                        .collection('students')
+                        .doc(transaction.studentId)
+                        .update({
+                            concessionBalance: firebase.firestore.FieldValue.increment(-unusedClasses),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                }
+            }
+        }
         
         // Reload transactions
         if (typeof window.loadCheckinTransactions === 'function') {

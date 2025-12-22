@@ -40,11 +40,11 @@
 ## Test 1: Page Load & Structure
 
 **What to check:**
-- ⏳ Check-in page loads without console errors
-- ⏳ No 404 errors for JavaScript modules
-- ⏳ Transactions section visible
-- ⏳ Summary statistics row displays (count, amount, cash, eftpos, online, bank)
-- ⏳ Show Reversed toggle visible
+- 🟢Check-in page loads without console errors
+- 🟢No 404 errors for JavaScript modules
+- 🟢Transactions section visible
+- 🟢Summary statistics row displays (count, amount, cash, eftpos, online, bank)
+- 🟢Show Reversed toggle visible
 
 **How to test:**
 1. Navigate to check-in page
@@ -57,11 +57,11 @@
 ## Test 2: Load Transactions for Selected Date
 
 **What to check:**
-- ⏳ Selecting a date loads transactions for that date only
-- ⏳ Transactions table displays with correct columns
-- ⏳ Each row shows: Date, Student Name, Type badge, Amount, Payment badge, Actions
-- ⏳ Summary statistics calculate correctly
-- ⏳ Real-time listener works (add transaction in Firestore → automatically appears)
+- 🟢Selecting a date loads transactions for that date only
+- 🟢Transactions table displays with correct columns
+- 🟢Each row shows: Date, Student Name, Type badge, Amount, Payment badge, Actions
+- 🟢Summary statistics calculate correctly
+- 🟢Real-time listener works (add transaction in Firestore → automatically appears)
 
 **How to test:**
 1. Select a date with known transactions
@@ -74,11 +74,11 @@
 ## Test 3: Transaction Type Badges
 
 **What to check:**
-- ⏳ Concession Purchase → blue "Concession Purchase" badge
-- ⏳ Concession Gift → purple "Gifted Concessions" badge
-- ⏳ Casual Entry → green "Casual Entry" badge
-- ⏳ Casual Student → orange "Casual Student" badge
-- ⏳ Reversed transactions → red "REVERSED" badge
+- 🟢Concession Purchase → blue "Concession Purchase" badge
+- 🟢Concession Gift → purple "Gifted Concessions" badge
+- 🟢Casual Entry → green "Casual Entry" badge
+- 🟢Casual Student → orange "Casual Student" badge
+- 🟢Reversed transactions → red "REVERSED" badge
 
 **How to test:**
 1. View transactions of different types
@@ -90,11 +90,11 @@
 ## Test 4: Payment Method Badges
 
 **What to check:**
-- ⏳ Cash → yellow "Cash" badge with money icon
-- ⏳ EFTPOS → blue "EFTPOS" badge with card icon
-- ⏳ Bank Transfer → purple "Bank Transfer" badge with bank icon
-- ⏳ Online/Stripe → green "Online" badge with globe icon
-- ⏳ None/Unknown → grey badge
+- 🟢Cash → yellow "Cash" badge with money icon
+- 🟢EFTPOS → blue "EFTPOS" badge with card icon
+- 🟢Bank Transfer → purple "Bank Transfer" badge with bank icon
+- 🔴Online/Stripe → green "Online" badge with globe icon
+- 🟢None/Unknown → grey badge
 
 **How to test:**
 1. View transactions with different payment methods
@@ -105,13 +105,13 @@
 ## Test 5: Summary Statistics
 
 **What to check:**
-- ⏳ Total Count matches number of displayed transactions
-- ⏳ Total Amount sums all transaction amounts correctly
-- ⏳ Cash total sums only cash transactions
-- ⏳ EFTPOS total sums only eftpos transactions
-- ⏳ Online total sums only online transactions
-- ⏳ Bank Transfer total sums only bank transfers
-- ⏳ Summary updates when Show Reversed toggle changes
+- 🟢Total Count matches number of displayed transactions
+- 🟢Total Amount sums all transaction amounts correctly
+- 🟢Cash total sums only cash transactions
+- 🟢EFTPOS total sums only eftpos transactions
+- 🟢Online total sums only online transactions
+- 🟢Bank Transfer total sums only bank transfers
+- 🟢Summary updates when Show Reversed toggle changes
 
 **How to test:**
 1. Manually count and sum transactions
@@ -123,11 +123,11 @@
 ## Test 6: Show Reversed Toggle
 
 **What to check:**
-- ⏳ Toggle starts OFF (reversed transactions hidden)
-- ⏳ Turning toggle ON shows reversed transactions
-- ⏳ Reversed transactions have "REVERSED" badge
-- ⏳ Reversed transactions have disabled action buttons
-- ⏳ Summary includes reversed transactions when toggle ON
+- 🟡Toggle starts OFF (reversed transactions hidden)
+- 🟡Turning toggle ON shows reversed transactions
+- 🟡Reversed transactions have "REVERSED" badge
+- 🟡Reversed transactions have disabled action buttons
+- 🟡Summary includes reversed transactions when toggle ON
 
 **How to test:**
 1. Verify reversed transactions don't show initially
@@ -141,13 +141,13 @@
 ## Test 7: Invoice Toggle (Super Admin Only)
 
 **What to check:**
-- ⏳ Invoice button visible for super admin (dance@urbanswing.co.nz)
-- ⏳ Invoice button NOT visible for front desk users
-- ⏳ Clicking invoice button toggles status
-- ⏳ Button visual updates (color changes)
-- ⏳ Status saves to Firestore
-- ⏳ Success snackbar displays
-- ⏳ Reversed transactions cannot be invoiced (button disabled)
+- 🟢Invoice button visible for super admin (dance@urbanswing.co.nz)
+- 🟢Invoice button NOT visible for front desk users
+- 🟢Clicking invoice button toggles status
+- 🟢Button visual updates (color changes)
+- 🟢Status saves to Firestore
+- 🟢Success snackbar displays
+- 🟡Reversed transactions cannot be invoiced (button disabled)
 
 **How to test:**
 1. Login as super admin
@@ -162,14 +162,14 @@
 ## Test 8: Edit Casual Entry Transaction
 
 **What to check:**
-- ⏳ Clicking Edit button on casual entry opens modal
-- ⏳ Modal shows "Edit Casual Entry" title
-- ⏳ Form pre-populates with current transaction data
-- ⏳ Can change date, payment method, amount
-- ⏳ Saving updates transaction in Firestore
-- ⏳ Table refreshes automatically with updated data
-- ⏳ Success snackbar displays
-- ⏳ Summary updates if amount changed
+- 🟢Clicking Edit button on casual entry opens modal
+- 🟢Modal shows "Edit Casual Entry" title
+- 🟢Form pre-populates with current transaction data
+- 🟢Can change date, payment method, amount
+- 🟢Saving updates transaction in Firestore
+- 🟢Table refreshes automatically with updated data
+- 🟢Success snackbar displays
+- 🟢Summary updates if amount changed
 
 **How to test:**
 1. Find a casual entry transaction (not reversed)
@@ -185,15 +185,15 @@
 ## Test 9: Edit Concession Purchase Transaction
 
 **What to check:**
-- ⏳ Clicking Edit button on concession purchase opens modal
-- ⏳ Modal shows "Edit Transaction" title
-- ⏳ Form pre-populates with current transaction data
-- ⏳ Can change date, package, payment method
-- ⏳ Saving updates transaction in Firestore
-- ⏳ Associated concession block updates correctly
-- ⏳ Student balance updates if package quantity changed
-- ⏳ Table refreshes automatically with updated data
-- ⏳ Success snackbar displays
+- 🟢Clicking Edit button on concession purchase opens modal
+- 🟢Modal shows "Edit Transaction" title
+- 🟢Form pre-populates with current transaction data
+- 🟢Can change date, package, payment method
+- 🟢Saving updates transaction in Firestore
+- 🟢Associated concession block updates correctly
+- 🟢Student balance updates if package quantity changed
+- 🟢Table refreshes automatically with updated data
+- 🟢Success snackbar displays
 
 **How to test:**
 1. Find a concession purchase transaction
@@ -209,15 +209,15 @@
 ## Test 10: Delete Transaction
 
 **What to check:**
-- ⏳ Delete button visible for super admin OR on today's date
-- ⏳ Delete button NOT visible for front desk on past dates
-- ⏳ Clicking delete opens confirmation modal
-- ⏳ Modal shows transaction details
-- ⏳ Clicking "Delete Transaction" marks as reversed
-- ⏳ Transaction disappears from list
-- ⏳ Transaction marked as reversed in Firestore
-- ⏳ Success snackbar displays
-- ⏳ Reversed transactions cannot be deleted again (button disabled)
+- 🟢Delete button visible for super admin OR on today's date
+- 🟡Delete button NOT visible for front desk on past dates
+- 🟢Clicking delete opens confirmation modal
+- 🟢Modal shows transaction details
+- 🟢Clicking "Delete Transaction" marks as reversed
+- 🟢Transaction disappears from list
+- 🟢Transaction marked as reversed in Firestore
+- 🟢Success snackbar displays
+- 🟢Reversed transactions cannot be deleted again (button disabled)
 
 **How to test:**
 1. Login as super admin (or front desk on today's date)
@@ -234,12 +234,12 @@
 ## Test 11: Change Selected Date
 
 **What to check:**
-- ⏳ Changing check-in date reloads transactions for new date
-- ⏳ Old date transactions disappear
-- ⏳ New date transactions appear
-- ⏳ Summary statistics update for new date
-- ⏳ Real-time listener switches to new date
-- ⏳ No console errors when switching dates
+- 🟢Changing check-in date reloads transactions for new date
+- 🟢Old date transactions disappear
+- 🟢New date transactions appear
+- 🟢Summary statistics update for new date
+- 🟢Real-time listener switches to new date
+- 🟢No console errors when switching dates
 
 **How to test:**
 1. Note current date's transactions
@@ -254,10 +254,10 @@
 ## Test 12: Empty State
 
 **What to check:**
-- ⏳ Selecting a date with no transactions shows empty state
-- ⏳ Empty state shows icon and message
-- ⏳ Summary shows zeros
-- ⏳ No table rows display
+- 🟢Selecting a date with no transactions shows empty state
+- 🟢Empty state shows icon and message
+- 🟢Summary shows zeros
+- 🟢No table rows display
 
 **How to test:**
 1. Select a date with no transactions (e.g., future date)
@@ -269,11 +269,11 @@
 ## Test 13: Real-Time Updates
 
 **What to check:**
-- ⏳ Adding transaction via check-in form → appears in list immediately
-- ⏳ Editing transaction via modal → updates in list immediately
-- ⏳ Deleting transaction → disappears immediately
-- ⏳ Summary statistics update in real-time
-- ⏳ No page refresh required
+- 🟢Adding transaction via check-in form → appears in list immediately
+- 🟢Editing transaction via modal → updates in list immediately
+- 🟢Deleting transaction → disappears immediately
+- 🟢Summary statistics update in real-time
+- 🟢No page refresh required
 
 **How to test:**
 1. Have transactions list open
