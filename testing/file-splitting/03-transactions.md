@@ -8,20 +8,26 @@
 
 ---
 
-## File #3: `checkin-transactions.js` → 4 Modules
+## File #3: `checkin-transactions.js` → 7 Modules
 
 **Refactoring Complete:** ✅ December 23, 2025  
-**Status:** ⏳ Testing Pending
+**Additional Refactoring:** ✅ December 23, 2025 (Split transaction-actions.js)
+**Status:** ⏳ Testing Required
 
 **What Changed:**
 - Original: 1 file, 685 lines
-- New: 4 modules (loader, display, actions, coordinator)
-- Files: Created 3 new modules, Modified 1 (main coordinator - reduced to 54 lines), Created 1 subdirectory
+- Phase 1: 4 modules (loader, display, actions, coordinator)
+- Phase 2: Split actions into 4 focused modules
+- Files: Created 6 new modules, Modified 1 (main coordinator - reduced to 54 lines), Created 1 subdirectory
 
 **Module Structure:**
 - `transactions/transaction-loader.js` (140 lines) - Firestore real-time listener, data loading & normalization
 - `transactions/transaction-display.js` (180 lines) - Render transactions table, summary statistics, badges
-- `transactions/transaction-actions.js` (404 lines) - Edit, delete (reverse), invoice toggle
+- `transactions/transaction-invoice.js` (45 lines) - Invoice status toggling
+- `transactions/transaction-deletion.js` (115 lines) - Delete transactions, concession block cleanup
+- `transactions/transaction-edit-casual.js` (45 lines) - Edit casual entry transactions
+- `transactions/transaction-edit-concession.js` (235 lines) - Edit concession purchase transactions
+- `transactions/transaction-actions.js` (48 lines) - Actions coordinator
 - `checkin-transactions.js` (54 lines) - Main coordinator (92% reduction from 685 lines)
 
 ---
@@ -93,7 +99,7 @@
 - 🟢Cash → yellow "Cash" badge with money icon
 - 🟢EFTPOS → blue "EFTPOS" badge with card icon
 - 🟢Bank Transfer → purple "Bank Transfer" badge with bank icon
-- 🔴Online/Stripe → green "Online" badge with globe icon
+- 🟢Online/Stripe → green "Online" badge with globe icon
 - 🟢None/Unknown → grey badge
 
 **How to test:**
@@ -125,9 +131,9 @@
 **What to check:**
 - 🟡Toggle starts OFF (reversed transactions hidden)
 - 🟡Turning toggle ON shows reversed transactions
-- 🟡Reversed transactions have "REVERSED" badge
-- 🟡Reversed transactions have disabled action buttons
-- 🟡Summary includes reversed transactions when toggle ON
+- 🟢Reversed transactions have "REVERSED" badge
+- 🟢Reversed transactions have disabled action buttons
+- 🟢Summary includes reversed transactions when toggle ON
 
 **How to test:**
 1. Verify reversed transactions don't show initially
@@ -140,14 +146,16 @@
 
 ## Test 7: Invoice Toggle (Super Admin Only)
 
+**⚠️ RETEST REQUIRED** - Uses new `transaction-invoice.js` module
+
 **What to check:**
 - 🟢Invoice button visible for super admin (dance@urbanswing.co.nz)
-- 🟢Invoice button NOT visible for front desk users
+- 🟡Invoice button NOT visible for front desk users
 - 🟢Clicking invoice button toggles status
 - 🟢Button visual updates (color changes)
 - 🟢Status saves to Firestore
 - 🟢Success snackbar displays
-- 🟡Reversed transactions cannot be invoiced (button disabled)
+- 🟢Reversed transactions cannot be invoiced (button disabled)
 
 **How to test:**
 1. Login as super admin
@@ -160,6 +168,8 @@
 ---
 
 ## Test 8: Edit Casual Entry Transaction
+
+**⚠️ RETEST REQUIRED** - Uses new `transaction-edit-casual.js` module
 
 **What to check:**
 - 🟢Clicking Edit button on casual entry opens modal
@@ -183,6 +193,8 @@
 ---
 
 ## Test 9: Edit Concession Purchase Transaction
+
+**⚠️ RETEST REQUIRED** - Uses new `transaction-edit-concession.js` module
 
 **What to check:**
 - 🟢Clicking Edit button on concession purchase opens modal
@@ -208,9 +220,11 @@
 
 ## Test 10: Delete Transaction
 
+**⚠️ RETEST REQUIRED** - Uses new `transaction-deletion.js` module (now includes concession block cleanup)
+
 **What to check:**
-- 🟢Delete button visible for super admin OR on today's date
-- 🟡Delete button NOT visible for front desk on past dates
+- 🟡Delete button visible for super admin OR on today's date
+- 🟡 Delete button NOT visible for front desk on past dates
 - 🟢Clicking delete opens confirmation modal
 - 🟢Modal shows transaction details
 - 🟢Clicking "Delete Transaction" marks as reversed
@@ -218,16 +232,28 @@
 - 🟢Transaction marked as reversed in Firestore
 - 🟢Success snackbar displays
 - 🟢Reversed transactions cannot be deleted again (button disabled)
+- 🟢**NEW:** Deleting concession purchase deletes associated concession block
+- 🟢**NEW:** Deleting concession purchase adjusts student's concession balance
 
 **How to test:**
 1. Login as super admin (or front desk on today's date)
-2. Click delete button on transaction
-3. Verify confirmation modal appears
-4. Click "Delete Transaction"
-5. Verify transaction disappears from table
-6. Toggle "Show Reversed" ON
-7. Verify transaction appears with REVERSED badge
-8. Check Firestore to confirm reversed: true, reversedAt timestamp
+2. **For Casual Entry Transaction:**
+   - Click delete button on casual transaction
+   - Verify confirmation modal appears
+   - Click "Delete Transaction"
+   - Verify transaction disappears from table
+   - Toggle "Show Reversed" ON
+   - Verify transaction appears with REVERSED badge
+   - Check Firestore to confirm reversed: true, reversedAt timestamp
+3. **For Concession Purchase Transaction (NEW):**
+   - Note student's concession balance before deletion
+   - Click delete button on concession purchase
+   - Verify confirmation modal appears
+   - Click "Delete Transaction"
+   - Verify transaction disappears from table
+   - Check Firestore: transaction marked as reversed
+   - Check Firestore: associated concession block is deleted
+   - Check Firestore: student's concession balance decreased by unused classes
 
 ---
 
