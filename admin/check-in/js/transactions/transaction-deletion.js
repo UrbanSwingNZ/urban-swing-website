@@ -72,6 +72,17 @@ async function deleteCheckinTransaction(transaction) {
                 // Calculate remaining classes that were unused
                 const unusedClasses = blockData.remainingQuantity;
                 
+                // Store the block data in the transaction for potential restoration
+                await firebase.firestore()
+                    .collection(transaction.collection)
+                    .doc(transaction.id)
+                    .update({
+                        deletedBlockData: {
+                            blockId: blockDoc.id,
+                            ...blockData
+                        }
+                    });
+                
                 // Delete the concession block
                 await firebase.firestore()
                     .collection('concessionBlocks')
@@ -101,5 +112,68 @@ async function deleteCheckinTransaction(transaction) {
     } catch (error) {
         console.error('Error reversing transaction:', error);
         showSnackbar('Error reversing transaction: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Restore a reversed transaction (unmark as reversed)
+ * @param {Object} transaction - Transaction data
+ */
+export async function restoreCheckinTransaction(transaction) {
+    try {
+        // Fetch full transaction data to check for deleted block data
+        const transactionDoc = await firebase.firestore()
+            .collection(transaction.collection)
+            .doc(transaction.id)
+            .get();
+        
+        if (!transactionDoc.exists) {
+            showSnackbar('Transaction not found', 'error');
+            return;
+        }
+        
+        const transactionData = transactionDoc.data();
+        
+        // If this is a concession purchase, restore the concession block
+        if (transaction.type === 'concession-purchase' && transactionData.deletedBlockData) {
+            const blockData = transactionData.deletedBlockData;
+            const unusedClasses = blockData.remainingQuantity;
+            
+            // Recreate the concession block
+            const blockDataToRestore = { ...blockData };
+            delete blockDataToRestore.blockId; // Remove blockId as it's not part of the document data
+            
+            await firebase.firestore()
+                .collection('concessionBlocks')
+                .doc(blockData.blockId)
+                .set(blockDataToRestore);
+            
+            // Restore student's concession balance (add back unused classes)
+            if (transaction.studentId && unusedClasses > 0) {
+                await firebase.firestore()
+                    .collection('students')
+                    .doc(transaction.studentId)
+                    .update({
+                        concessionBalance: firebase.firestore.FieldValue.increment(unusedClasses),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+            }
+        }
+        
+        // Unmark as reversed and remove deleted block data
+        await firebase.firestore()
+            .collection(transaction.collection)
+            .doc(transaction.id)
+            .update({
+                reversed: false,
+                reversedAt: firebase.firestore.FieldValue.delete(),
+                deletedBlockData: firebase.firestore.FieldValue.delete()
+            });
+        
+        showSnackbar('Transaction restored successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error restoring transaction:', error);
+        showSnackbar('Error restoring transaction: ' + error.message, 'error');
     }
 }

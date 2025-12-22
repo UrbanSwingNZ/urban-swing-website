@@ -4,12 +4,12 @@
  */
 
 import { toggleCheckinTransactionInvoiced } from './transaction-invoice.js';
-import { confirmDeleteCheckinTransaction } from './transaction-deletion.js';
+import { confirmDeleteCheckinTransaction, restoreCheckinTransaction } from './transaction-deletion.js';
 import { editCasualTransaction } from './transaction-edit-casual.js';
 import { editConcessionPurchaseTransaction } from './transaction-edit-concession.js';
 
 // Re-export functions for external use
-export { toggleCheckinTransactionInvoiced, confirmDeleteCheckinTransaction };
+export { toggleCheckinTransactionInvoiced, confirmDeleteCheckinTransaction, restoreCheckinTransaction };
 
 /**
  * Edit a transaction - routes to appropriate editor based on transaction type
