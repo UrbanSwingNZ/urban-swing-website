@@ -31,105 +31,130 @@
 
 ---
 
-## 🟢 START HERE - QUICK WINS (400-600 lines)
+## 🟢 PHASE 1: QUICK WINS (400-600 lines)
 **These files are smaller, isolated, and provide quick wins to establish the refactoring pattern.**
-
-#### 1. `admin/playlist-manager/track-operations.js` - 1,283 lines
-**Category:** Playlist Management  
-**Complexity:** Very High  
-**Time Estimate:** 6 hours
-
-**Current Structure:**
-- **Lines 1-26:** Imports, configuration (performance settings, BPM loading config)
-- **Lines 27-143:** Track loading & audio features (loadTracks, lazyLoadAudioFeaturesForRenderedTracks, updateBPMCells)
-- **Lines 144-414:** Track display & rendering (displayTracks, renderTrackBatch, setupLazyTrackLoading)
-- **Lines 415-596:** Mobile interactions (addSwipeToDelete, addLongPressMenu, showMobileTrackMenu)
-- **Lines 597-622:** Track search (handleTrackSearch)
-- **Lines 623-691:** Drag & drop (initializeDragDrop, handleDragEnd, updateTrackNumbers, updateSaveOrderButton, handleSaveOrder)
-- **Lines 692-904:** Track menu & actions (showTrackMenu, handleTrackAction, handleConfirmAction, handleDeleteTrack, removeTrackFromPlaylist)
-- **Lines 905-1100:** Add tracks modal (openAddTracksModal, closeAddTracksModal, handleTracksSearch, searchAndDisplayTracks, handleTrackSelection, addSelectedTracks)
-- **Lines 1101-1283:** Audio playback (handlePlayPauseTrack, pauseCurrentTrack, resumeTrack, playTrack, playPreviewFallback, stopCurrentAudio) + utilities (formatTotalDuration)
-
-**Functional Modules Identified:**
-1. **Track Loading** (~116 lines) - API calls, data fetching, audio features
-2. **Track Rendering** (~270 lines) - Display logic, progressive rendering, lazy loading
-3. **Track Actions** (~213 lines) - Menu, delete, add tracks modal
-4. **Drag & Drop** (~69 lines) - Reordering, save order functionality
-5. **Mobile Interactions** (~181 lines) - Swipe to delete, long-press menu
-6. **Audio Playback** (~182 lines) - Play/pause, preview fallback, state management
-7. **Search** (~26 lines) - Track filtering
-8. **Utilities** (~10 lines) - Helper functions
-
-**Recommended Split:**
-```
-admin/playlist-manager/tracks/
-├── track-loader.js           (~140 lines) - loadTracks, audio features, BPM loading
-├── track-renderer.js         (~290 lines) - displayTracks, renderTrackBatch, lazy loading
-├── track-actions.js          (~230 lines) - Menu, delete, add tracks modal, handleTrackAction
-├── track-drag-drop.js        (~80 lines) - Drag/drop, reordering, save functionality
-├── track-mobile.js           (~200 lines) - Mobile gestures, swipe, long-press
-├── track-audio.js            (~200 lines) - Audio playback, pause/resume, preview
-├── track-search.js           (~30 lines) - Search/filter functionality
-└── track-utils.js            (~20 lines) - Shared utilities, formatters
-```
-
-**Dependencies:**
-- Imports from: `playlist-state.js`, `playlist-ui.js`, `playlist-operations.js`
-- Exports used by: `playlist-operations.js`, main playlist manager page
-
-**Notes:**
-- High cohesion within each module
-- Clear separation of concerns
-- Mobile interactions can be entirely isolated
-- Audio playback is independent functionality
+**Do these files in order - from easiest to hardest.**
 
 ---
 
-#### 2. `admin/playlist-manager/playlist-operations.js` - 716 lines
-**Category:** Playlist Management  
-**Complexity:** High  
-**Time Estimate:** 4 hours
+### ✅ File #1: `student-portal/profile/change-password.js` - 456 lines
+**Category:** Student Portal  
+**Complexity:** Low  
+**Time Estimate:** 2 hours  
+**Status:** ✅ COMPLETE - December 22, 2025
 
-**Current Structure:**
-- **Lines 1-12:** Imports
-- **Lines 13-167:** Playlist loading & display (loadPlaylists, displayPlaylists, initializePlaylistDragDrop)
-- **Lines 168-226:** Playlist search (handlePlaylistSearch)
-- **Lines 227-311:** Playlist selection & track count updates (updatePlaylistTrackCount, selectPlaylist, performPlaylistSelection)
-- **Lines 312-396:** Create playlist modal (openCreatePlaylistModal, closeCreatePlaylistModal, handleCreatePlaylist)
-- **Lines 397-468:** Delete playlist (handleDeletePlaylist, confirmDeletePlaylist)
-- **Lines 469-549:** Rename playlist modal (openRenamePlaylistModal, closeRenamePlaylistModal, handleRenamePlaylist)
-- **Lines 550-686:** Playlist menu & actions (showPlaylistMenu)
-- **Lines 687-716:** Playlist menu handlers (handlePlaylistMenuAction, handleRemovePlaylistFromLibrary)
-
-**Functional Modules Identified:**
-1. **Playlist CRUD** (~190 lines) - Create, delete, rename playlists
-2. **Playlist Display** (~135 lines) - Load, display, drag-drop
-3. **Playlist UI** (~150 lines) - Menus, modals, interactions
-4. **Playlist Selection** (~85 lines) - Select, track count updates
-5. **Playlist Search** (~20 lines) - Filter functionality
-
-**Recommended Split:**
-```
-admin/playlist-manager/playlists/
-├── playlist-crud.js          (~200 lines) - Create, delete, rename operations
-├── playlist-display.js       (~150 lines) - Load, display, drag-drop
-├── playlist-ui.js            (~170 lines) - Modals, menus, menu actions
-├── playlist-selection.js     (~100 lines) - Selection, track count updates
-└── playlist-search.js        (~30 lines) - Search/filter functionality
-```
-
-**Dependencies:**
-- Imports from: `confirmation-modal.js`, `playlist-state.js`, `playlist-ui.js`, `track-operations.js`, `mobile-playlist-selector.js`
-- Exports used by: `track-operations.js`, main playlist manager page
-
-**Notes:**
-- Natural separation between CRUD, display, and UI
-- Modals can be grouped into UI module
-- Menu actions are tightly coupled to menu display
+**Split into 3 modules:**
+- `password-validation.js` (99 lines) - Validation logic
+- `password-api.js` (68 lines) - Firebase auth operations
+- `password-ui.js` (324 lines) - Modal and UI interactions
 
 ---
 
-### File #8: `admin/admin-tools/gift-concessions/gift-concessions.js` - 733 lines
+### ✅ File #2: `admin/admin-tools/casual-rates/casual-rates-display.js` - 469 lines
+**Category:** Admin Tools - Casual Rates  
+**Complexity:** Low  
+**Time Estimate:** 1.5 hours  
+**Status:** ✅ COMPLETE - December 22, 2025
+
+**Split into 4 modules:**
+- `rates-loader.js` (118 lines) - Firestore operations, data loading
+- `rates-display.js` (201 lines) - Render cards, drag-drop UI
+- `rates-actions.js` (206 lines) - Create, edit, delete operations
+- `rates-ui.js` (56 lines) - Main entry point, initialization
+
+---
+
+### File #3: `admin/check-in/js/transactions.js` - 510 lines
+**Category:** Check-in System  
+**Complexity:** Low-Medium  
+**Time Estimate:** 2 hours
+
+**Current Structure:**
+- Load all check-in transactions
+- Filter by date range, payment type, student
+- Export to CSV
+- Display in table with sorting
+
+**Recommended Split:**
+```
+admin/check-in/js/transactions/
+├── transaction-loader.js     (~150 lines) - Load and query transactions
+├── transaction-display.js    (~180 lines) - Render table, sorting
+├── transaction-filters.js    (~120 lines) - Date, student, type filters
+└── transaction-export.js     (~60 lines) - CSV export functionality
+```
+
+---
+
+### File #4: `admin/check-in/js/checkin-online-payment.js` - 500 lines
+**Category:** Check-in System  
+**Complexity:** Medium  
+**Time Estimate:** 2 hours
+
+**Current Structure:**
+- Initialize payment form
+- Process online check-in payment via Stripe
+- Handle payment confirmation
+- Update Firestore with transaction
+
+**Recommended Split:**
+```
+admin/check-in/js/online-payment/
+├── payment-init.js           (~150 lines) - Form setup, student selection
+├── payment-process.js        (~200 lines) - Stripe payment processing
+└── payment-confirm.js        (~150 lines) - Confirmation, Firestore update
+```
+
+---
+
+### File #5: `admin/check-in/js/todays-checkins.js` - 420 lines
+**Category:** Check-in System  
+**Complexity:** Low-Medium  
+**Time Estimate:** 1.5 hours
+
+**Current Structure:**
+- Load today's check-ins from Firestore
+- Display in list format
+- Real-time listener for updates
+- Simple filtering
+
+**Recommended Split:**
+```
+admin/check-in/js/todays-checkins/
+├── checkin-loader.js         (~150 lines) - Real-time listener, load data
+├── checkin-display.js        (~200 lines) - Render check-in list
+└── checkin-filters.js        (~70 lines) - Filter functionality
+```
+
+---
+
+### File #6: `admin/check-in/js/checkin-firestore.js` - 452 lines
+**Category:** Check-in System  
+**Complexity:** Medium  
+**Time Estimate:** 1.5 hours
+
+**Current Structure:**
+- Create check-in in Firestore
+- Update check-in records
+- Delete check-ins
+- Query check-in data
+
+**Recommended Split:**
+```
+admin/check-in/js/firestore/
+├── checkin-create.js         (~150 lines) - Create operations
+├── checkin-update.js         (~150 lines) - Update operations
+└── checkin-query.js          (~150 lines) - Query and delete operations
+```
+
+---
+
+## 🟡 PHASE 2: MID-COMPLEXITY FILES (600-800 lines)
+**Tackle these after completing Phase 1.**
+
+---
+
+### File #7: `admin/check-in/js/checkin-transactions.js` - 665 lines
 **Category:** Admin Tools  
 **Complexity:** High  
 **Time Estimate:** 3 hours
@@ -174,42 +199,9 @@ admin/admin-tools/gift-concessions/
 ---
 
 ### File #9: `admin/student-database/js/modal.js` - 640 lines
-**Category:** Check-in System  
-**Complexity:** High  
-**Time Estimate:** 3 hours
-
-**Current Structure:**
-- **Lines 1-13:** Imports, state
-- **Lines 14-137:** Real-time listener & processing (setupTransactionsListener, processTransactionsSnapshot, loadCheckinTransactions)
-- **Lines 138-305:** Transaction display (displayCheckinTransactions, createCheckinTransactionRow, updateCheckinTransactionSummary, getCheckinPaymentBadgeHTML)
-- **Lines 306-417:** Transaction actions (refreshCheckinTransactionsDisplay, toggleCheckinTransactionInvoiced, editCheckinTransaction)
-- **Lines 418-576:** Transaction deletion & editing (confirmDeleteCheckinTransaction, deleteCheckinTransaction, editConcessionPurchaseTransaction)
-- **Lines 577-665:** Update concession modal (updateConcessionPurchase)
-
-**Functional Modules Identified:**
-1. **Transaction Loading** (~137 lines) - Listener, snapshot processing, Firebase queries
-2. **Transaction Display** (~167 lines) - Render list, rows, summary, badges
-3. **Transaction CRUD** (~361 lines) - Edit, delete, toggle invoiced, update
-
-**Recommended Split:**
-```
-admin/check-in/js/transactions/
-├── transaction-loader.js     (~150 lines) - Real-time listener, data loading
-├── transaction-display.js    (~180 lines) - Render transactions, summary, badges
-└── transaction-crud.js       (~380 lines) - Edit, delete, invoiced toggle, modals
-```
-
-**Notes:**
-- Display logic can be entirely separated from CRUD
-- Real-time listener is independent concern
-- CRUD operations are complex (includes modals)
-
----
-
 **Category:** Student Database  
 **Complexity:** High  
 **Time Estimate:** 3 hours
-**Priority:** 🟡 Mid Priority
 
 **Current Structure:**
 - **Lines 1-105:** Student modal (viewStudent, editStudent, openStudentModal, closeStudentModal, saveStudentChanges)
@@ -243,7 +235,6 @@ admin/student-database/js/modals/
 **Category:** Student Database - Transaction History  
 **Complexity:** Medium  
 **Time Estimate:** 2.5 hours
-**Priority:** 🟡 Mid Priority
 
 **Current Structure:**
 - Load payment transactions from Firestore
@@ -266,8 +257,8 @@ admin/student-database/js/transaction-history/payments/
 
 ---
 
-## 🔴 DEFERRED TO END (Over 800 lines)
-**These files are actively used during development - refactor last.**
+## 🔴 PHASE 3: DEFERRED TO END (Over 800 lines)
+**These files are actively used during development - refactor LAST after all other files are complete.**
 
 ### File #11: `admin/playlist-manager/track-operations.js` - 1,283 lines
 **Category:** Playlist Management  
@@ -399,13 +390,13 @@ admin/playlist-manager/playlists/
 | **Email Templates** | **1** | **666** | **666** | **❌ Excluded** |
 
 ### By Implementation Order
-| Priority | Files | Total Lines | Estimated Time |
-|----------|-------|-------------|----------------|
-| 🟢 Quick Wins (400-600) | 6 | 2,693 | 11 hours |
-| 🟡 Mid Priority (600-800) | 4 | 2,618 | 11.5 hours |
-| 🔴 Deferred (800+) | 2 | 1,999 | 10 hours |
-| ❌ Excluded (Email Templates) | 1 | 666 | 0 hours |
-| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** |
+| Priority | Files | Total Lines | Estimated Time | Status |
+|----------|-------|-------------|----------------|--------|
+| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 2/6 Complete |
+| 🟡 Phase 2 Mid Priority (600-800) | 4 | 2,618 | 11.5 hours | ⏳ Pending |
+| 🔴 Phase 3 Deferred (800+) | 2 | 1,999 | 10 hours | ⏳ Deferred |
+| ❌ Excluded (Email Templates) | 1 | 666 | 0 hours | ❌ Skipped |
+| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~18% Complete** |
 
 ### Module Breakdown (Excluding Email Templates)
 - **Display/Rendering modules:** ~1,950 lines across 12 files
@@ -436,11 +427,11 @@ admin/playlist-manager/playlists/
 **Files (in recommended order):**
 
 **Day 1:**
-1. `change-password.js` (2 hours) - Isolated component, clear boundaries
-2. `casual-rates-display.js` (1.5 hours) - Simple CRUD pattern
+1. ✅ `change-password.js` (2 hours) - COMPLETE
+2. ✅ `casual-rates-display.js` (1.5 hours) - COMPLETE
 
 **Day 2:**
-3. `transactions.js` (2 hours) - Good display/filter/export pattern
+3. 🎯 `transactions.js` (2 hours) - **NEXT - Good display/filter/export pattern**
 4. `checkin-online-payment.js` (2 hours) - Payment flow (init/process/confirm)
 
 **Day 3:**
@@ -705,37 +696,41 @@ After completing refactoring:
 
 1. ✅ **Review audit** - Complete
 2. ✅ **Exclude email templates** - Marked for future deletion
-3. ✅ **Defer playlist files** - Save for last (active development needed)
+3. ✅ **Defer playlist files** - Save for Phase 3 (active development needed)
 4. ✅ **Create feature branch** - Already on `refactor-split-large-files`
-5. 🎯 **Begin Phase 1** - Start with `change-password.js` (easiest file)
-6. **Test thoroughly** after each file
-7. **Commit incrementally** (one file per commit)
-8. **Update documentation** as you go
+5. ✅ **Phase 1, File #1** - change-password.js complete
+6. ✅ **Phase 1, File #2** - casual-rates-display.js complete
+7. 🎯 **Phase 1, File #3** - transactions.js (NEXT)
+8. **Test thoroughly** after each file
+9. **Commit incrementally** (one file per commit)
+10. **Update documentation** as you go
 
-### Recommended Starting File
+### Current Status: Phase 1 - File #3
 
-**🎯 `student-portal/profile/change-password.js` (456 lines → 3 modules, 2 hours)**
+**🎯 Next File: `admin/check-in/js/transactions.js` (510 lines → 4 modules, 2 hours)**
 
-**Why This File First:**
-- ✅ Smallest scope in Phase 1
-- ✅ Clear separation: validation, UI, API
-- ✅ Isolated component (no cross-dependencies)
-- ✅ Easy to test (just password change flow)
-- ✅ Good proof-of-concept for module splitting pattern
-- ✅ Low risk (student portal component)
+**Why This File Next:**
+- ✅ Good display/filter/export pattern to practice
+- ✅ Mid-size Phase 1 file (manageable complexity)
+- ✅ Clear module separation: loader, display, filters, export
+- ✅ Check-in system (consistent with File #2)
+- ✅ Low-medium risk, straightforward refactor
+- ✅ Reinforces patterns from Files #1 and #2
 
 **Expected Outcome:**
-- Split into 3 clean modules in ~2 hours
-- Establish import/export patterns
-- Create testing checklist template
-- Build confidence for larger files
+- Split into 4 clean modules in ~2 hours
+- Practice more complex module organization
+- Add CSV export as separate concern
+- Build confidence for remaining Phase 1 files
 
 ---
 
 **Last Updated:** December 22, 2025  
-**Status:** ✅ Audit Complete & Adjusted - Ready for Phase 1  
-**Changes from Original:**
-- ❌ Excluded email template system (1 file, 666 lines) - scheduled for deletion
-- 🔴 Deferred playlist manager files (2 files, 1,999 lines) - user needs active access
-- 🟢 Prioritized quick wins first (6 files, 11 hours) - smaller, isolated files
-- 📊 Updated totals: 12 files, 7,310 lines, 32.5 hours (down from 13 files, 37 hours)
+**Status:** 🔄 Phase 1 In Progress (2/6 Complete) - File #3 Next  
+**Progress:**
+- ✅ File #1: change-password.js (456 lines → 3 modules) - COMPLETE
+- ✅ File #2: casual-rates-display.js (469 lines → 4 modules) - COMPLETE
+- 🎯 File #3: transactions.js (510 lines → 4 modules) - NEXT
+- ⏳ Files #4-6: Remaining Phase 1 quick wins
+- ⏳ Phase 2: 4 mid-complexity files (11.5 hours)
+- 🔴 Phase 3: 2 playlist manager files (10 hours) - DEFERRED TO LAST

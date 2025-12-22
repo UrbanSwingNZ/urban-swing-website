@@ -37,6 +37,7 @@ async function initializeProfile() {
     
     // Check if viewing as admin or as student
     isViewingAsAdmin = isAdminView();
+    window.isViewingAsAdmin = isViewingAsAdmin; // Expose for other modules
     
     if (isViewingAsAdmin) {
         // Admin view - check if there's a selected student from persistence
@@ -115,8 +116,14 @@ async function loadStudentProfile(student) {
     
     // Ensure we're tracking admin status correctly
     isViewingAsAdmin = isAdminView();
+    window.isViewingAsAdmin = isViewingAsAdmin; // Expose for other modules
     
     loadProfileData(student, student.id);
+    
+    // Dispatch event for other modules to respond to student load
+    window.dispatchEvent(new CustomEvent('studentLoaded', { 
+        detail: { student, isAdminView: isViewingAsAdmin } 
+    }));
 }
 
 /**
