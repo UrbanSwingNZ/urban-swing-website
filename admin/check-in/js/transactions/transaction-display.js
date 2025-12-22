@@ -90,15 +90,23 @@ function createCheckinTransactionRow(transaction) {
                         ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-edit"></i>
                 </button>
-                ${canDelete ? `<button class="btn-icon btn-delete" 
-                        title="${transaction.reversed ? 'Cannot delete reversed transaction' : 'Delete Transaction'}"
-                        data-id="${transaction.id}"
-                        data-collection="${transaction.collection}"
-                        data-student="${escapeHtml(transaction.studentName)}"
-                        data-amount="${transaction.amount}"
-                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
-                    <i class="fas fa-trash-alt"></i>
-                </button>` : ''}
+                ${canDelete ? 
+                    transaction.reversed ? 
+                        `<button class="btn-icon btn-restore" 
+                            title="Restore Transaction"
+                            data-id="${transaction.id}"
+                            data-collection="${transaction.collection}">
+                            <i class="fas fa-undo"></i>
+                        </button>` :
+                        `<button class="btn-icon btn-delete" 
+                            title="Delete Transaction"
+                            data-id="${transaction.id}"
+                            data-collection="${transaction.collection}"
+                            data-student="${escapeHtml(transaction.studentName)}"
+                            data-amount="${transaction.amount}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>` 
+                    : ''}
             </div>
         </td>
     `;
@@ -117,6 +125,11 @@ function createCheckinTransactionRow(transaction) {
     const deleteBtn = row.querySelector('.btn-delete');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => window.confirmDeleteCheckinTransaction(transaction));
+    }
+    
+    const restoreBtn = row.querySelector('.btn-restore');
+    if (restoreBtn) {
+        restoreBtn.addEventListener('click', () => window.restoreCheckinTransaction(transaction));
     }
     
     return row;
