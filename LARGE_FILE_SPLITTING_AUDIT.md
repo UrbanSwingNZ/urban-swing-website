@@ -91,24 +91,21 @@
 
 ---
 
-### File #4: `admin/check-in/js/checkin-online-payment.js` - 500 lines
+### ✅ File #4: `admin/check-in/js/checkin-online-payment.js` - 484 lines
 **Category:** Check-in System  
 **Complexity:** Medium  
-**Time Estimate:** 2 hours
+**Time Estimate:** 2 hours (actual: 2 hours)  
+**Status:** ✅ COMPLETE - December 23, 2025
 
-**Current Structure:**
-- Initialize payment form
-- Process online check-in payment via Stripe
-- Handle payment confirmation
-- Update Firestore with transaction
+**Split into 3 modules:**
+- `online-payment/payment-validation.js` (215 lines) - Query & validate online transactions, auto-select logic, date range filtering
+- `online-payment/payment-display.js` (154 lines) - Display transaction lists, success/warning/error messages
+- `online-payment/payment-selection.js` (135 lines) - Select transactions, manage selection state, update dates
+- `checkin-online-payment.js` (59 lines) - Main coordinator (88% reduction from 484 lines)
 
-**Recommended Split:**
-```
-admin/check-in/js/online-payment/
-├── payment-init.js           (~150 lines) - Form setup, student selection
-├── payment-process.js        (~200 lines) - Stripe payment processing
-└── payment-confirm.js        (~150 lines) - Confirmation, Firestore update
-```
+**Bug Fixes:**
+- Fixed date range filtering to use classDate instead of transactionDate
+- Added window exposure for all functions used by non-module scripts
 
 ---
 
@@ -397,11 +394,11 @@ admin/playlist-manager/playlists/
 ### By Implementation Order
 | Priority | Files | Total Lines | Estimated Time | Status |
 |----------|-------|-------------|----------------|--------|
-| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 3/6 Complete |
+| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 4/6 Complete |
 | 🟡 Phase 2 Mid Priority (600-800) | 4 | 2,618 | 11.5 hours | ⏳ Pending |
 | 🔴 Phase 3 Deferred (800+) | 2 | 1,999 | 10 hours | ⏳ Deferred |
 | ❌ Excluded (Email Templates) | 1 | 666 | 0 hours | ❌ Skipped |
-| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~33% Complete** |
+| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~47% Complete** |
 
 ### Module Breakdown (Excluding Email Templates)
 - **Display/Rendering modules:** ~1,950 lines across 12 files
@@ -437,10 +434,10 @@ admin/playlist-manager/playlists/
 
 **Day 2:**
 3. ✅ `checkin-transactions.js` (3 hours) - COMPLETE - Enhanced with Restore functionality
-4. 🎯 `checkin-online-payment.js` (2 hours) - **NEXT - Payment flow (init/process/confirm)**
+4. ✅ `checkin-online-payment.js` (2 hours) - COMPLETE - Fixed date filtering bug
 
 **Day 3:**
-5. `todays-checkins.js` (1.5 hours) - Simple list display
+5. 🎯 `todays-checkins.js` (1.5 hours) - **NEXT - Simple list display**
 6. `checkin-firestore.js` (1.5 hours) - Clean CRUD operations
 
 ### Phase 2: Mid-Complexity Files (Week 2 - 11.5 hours)
@@ -710,33 +707,34 @@ After completing refactoring:
 9. **Commit incrementally** (one file per commit)
 10. **Update documentation** as you go
 
-### Current Status: Phase 1 - File #4
+### Current Status: Phase 1 - File #5
 
-**🎯 Next File: `admin/check-in/js/checkin-online-payment.js` (500 lines → 3 modules, 2 hours)**
+**🎯 Next File: `admin/check-in/js/todays-checkins.js` (420 lines → 3 modules, 1.5 hours)**
 
 **Why This File Next:**
-- ✅ Clear payment flow (init/process/confirm pattern)
-- ✅ Mid-size Phase 1 file (manageable complexity)
-- ✅ Check-in system (consistent with Files #2 and #3)
-- ✅ Good separation: form setup, Stripe processing, confirmation
-- ✅ Low-medium risk, straightforward refactor
-- ✅ Reinforces patterns from Files #1-3
+- ✅ Simple list display functionality
+- ✅ Real-time listener pattern (practiced in File #3)
+- ✅ Clear separation: loader, display, filters
+- ✅ Check-in system (consistent with previous files)
+- ✅ Low-medium complexity
+- ✅ Good practice for remaining Phase 1 files
 
 **Expected Outcome:**
-- Split into 3 clean modules in ~2 hours
-- Clear payment processing flow separation
-- Improved maintainability for Stripe integration
-- Continue building Phase 1 momentum
+- Split into 3 clean modules in ~1.5 hours
+- Clear separation of data loading and UI
+- Consistent with established patterns
+- Final preparation before checkin-firestore.js
 
 ---
 
 **Last Updated:** December 23, 2025  
-**Status:** 🔄 Phase 1 In Progress (3/6 Complete - 50%) - File #4 Next  
+**Status:** 🔄 Phase 1 In Progress (4/6 Complete - 67%) - File #5 Next  
 **Progress:**
 - ✅ File #1: change-password.js (456 lines → 3 modules) - COMPLETE
 - ✅ File #2: casual-rates-display.js (469 lines → 4 modules) - COMPLETE
 - ✅ File #3: checkin-transactions.js (685 lines → 7 modules + enhancements) - COMPLETE
-- 🎯 File #4: checkin-online-payment.js (500 lines → 3 modules) - NEXT
-- ⏳ Files #5-6: Remaining Phase 1 quick wins (2 files)
+- ✅ File #4: checkin-online-payment.js (484 lines → 3 modules + bug fixes) - COMPLETE
+- 🎯 File #5: todays-checkins.js (420 lines → 3 modules) - NEXT
+- ⏳ File #6: checkin-firestore.js (452 lines → 3 modules)
 - ⏳ Phase 2: 4 mid-complexity files (11.5 hours)
 - 🔴 Phase 3: 2 playlist manager files (10 hours) - DEFERRED TO LAST
