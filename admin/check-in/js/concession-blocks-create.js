@@ -53,8 +53,11 @@ async function createConcessionBlock(studentId, packageData, quantity, price, pa
         const now = new Date();
         const isExpired = actualExpiryDate && actualExpiryDate < now;
         
-        // Format purchase date for document ID (YYYY-MM-DD)
-        const dateStr = actualPurchaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        // Format purchase date for document ID (YYYY-MM-DD) - use local date to avoid timezone issues
+        const year = actualPurchaseDate.getFullYear();
+        const month = String(actualPurchaseDate.getMonth() + 1).padStart(2, '0');
+        const day = String(actualPurchaseDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
         
         // Create document ID: firstName-lastName-purchased-YYYY-MM-DD-timestamp (lowercase)
         // Added timestamp to ensure uniqueness when multiple blocks purchased on same day
