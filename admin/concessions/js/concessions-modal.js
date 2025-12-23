@@ -185,6 +185,10 @@ function closePurchaseConcessionsModal() {
     purchaseModalCallback = null;
     purchaseModalParentModal = null;
     purchaseModalParentStudent = null;
+    
+    // Clean up any editing state (used by transaction editing)
+    delete window.editingTransactionId;
+    delete window.editingStudentId;
 }
 
 /**
