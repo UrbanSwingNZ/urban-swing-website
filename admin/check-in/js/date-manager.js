@@ -146,3 +146,9 @@ function isSelectedDateToday() {
     const todayStr = getTodayDateString();
     return selectedDateStr === todayStr;
 }
+
+// Expose functions to window for use by modules and other scripts
+window.getTodayDateString = getTodayDateString;
+window.getSelectedCheckinDate = getSelectedCheckinDate;
+window.getSelectedCheckinDateString = getSelectedCheckinDateString;
+window.isSelectedDateToday = isSelectedDateToday;

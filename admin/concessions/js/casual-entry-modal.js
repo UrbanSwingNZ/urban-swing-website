@@ -12,6 +12,8 @@ let casualEntryModalData = {
     parentModalId: null
 };
 
+let casualEntryDatePicker = null; // DatePicker instance
+
 /**
  * Initialize the casual entry edit modal HTML (call once on page load)
  */
@@ -37,7 +39,11 @@ function initializeCasualEntryModal() {
                 
                 <div class="form-group">
                     <label><i class="fas fa-calendar"></i> Entry Date</label>
-                    <input type="date" id="casual-entry-date-picker" class="form-control" title="Entry date">
+                    <div class="date-input-wrapper">
+                        <input type="text" id="casual-entry-date-picker" class="form-control" readonly placeholder="Select date" title="Entry date">
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
+                    </div>
+                    <div id="casual-entry-date-calendar" class="custom-calendar" style="display: none;"></div>
                 </div>
 
                 <div class="form-group">
@@ -69,6 +75,16 @@ function initializeCasualEntryModal() {
     
     // Append to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Initialize custom date picker (allow backdating, prevent future dates)
+    casualEntryDatePicker = new DatePicker('casual-entry-date-picker', 'casual-entry-date-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false, // Allow backdating
+        maxDate: new Date(), // Prevent future dates
+        onDateSelected: () => {
+            updateCasualEntryButton();
+        }
+    });
     
     // Initialize event listeners
     setupCasualEntryModalListeners();
@@ -135,22 +151,9 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
         emailElement.style.display = 'none';
     }
     
-    // Set date
-    const datePicker = document.getElementById('casual-entry-date-picker');
-    if (entryDate) {
-        // Format date as YYYY-MM-DD in local timezone (no UTC conversion)
-        const year = entryDate.getFullYear();
-        const month = String(entryDate.getMonth() + 1).padStart(2, '0');
-        const day = String(entryDate.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-        datePicker.value = dateStr;
-        
-        // Set max date to today in local timezone
-        const today = new Date();
-        const maxYear = today.getFullYear();
-        const maxMonth = String(today.getMonth() + 1).padStart(2, '0');
-        const maxDay = String(today.getDate()).padStart(2, '0');
-        datePicker.max = `${maxYear}-${maxMonth}-${maxDay}`;
+    // Set date using custom DatePicker
+    if (entryDate && casualEntryDatePicker) {
+        casualEntryDatePicker.setDate(entryDate);
     }
     
     // Set payment method
@@ -216,30 +219,8 @@ function closeCasualEntryModal() {
  * Setup modal event listeners
  */
 function setupCasualEntryModalListeners() {
-    const datePicker = document.getElementById('casual-entry-date-picker');
     const paymentSelect = document.getElementById('casual-entry-payment-select');
     const confirmBtn = document.getElementById('confirm-casual-entry-btn');
-    
-    // Date picker validation (similar to purchase modal)
-    datePicker.addEventListener('change', () => {
-        const selectedDate = new Date(datePicker.value);
-        const today = new Date();
-        const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
-        
-        // Warn if backdating more than 30 days
-        if (daysDiff > 30) {
-            datePicker.style.borderColor = 'var(--warning-color, #ff9800)';
-            datePicker.title = `Warning: Backdating by ${daysDiff} days`;
-        } else if (daysDiff > 0) {
-            datePicker.style.borderColor = 'var(--info-color, #2196F3)';
-            datePicker.title = `Backdating by ${daysDiff} day${daysDiff === 1 ? '' : 's'}`;
-        } else {
-            datePicker.style.borderColor = '';
-            datePicker.title = 'Entry date';
-        }
-        
-        updateCasualEntryButton();
-    });
     
     // Payment selection enables button
     paymentSelect.addEventListener('change', () => {
@@ -287,8 +268,8 @@ async function handleCasualEntryUpdate() {
             showLoading();
         }
         
-        // Parse date
-        const [year, month, day] = entryDate.split('-').map(Number);
+        // Parse date from d/mm/yyyy format
+        const [day, month, year] = entryDate.split('/').map(Number);
         const parsedDate = new Date(year, month - 1, day, 12, 0, 0);
         
         if (isNaN(parsedDate.getTime())) {

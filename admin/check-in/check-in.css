@@ -410,10 +410,6 @@
     background-color: var(--bg-error-light);
 }
 
-.reversed-transaction td {
-    text-decoration: line-through;
-}
-
 /* Accordion Functionality */
 .accordion-header {
     cursor: pointer;
@@ -743,7 +739,6 @@
 }
 
 .reversed-checkin .checkin-name {
-    text-decoration: line-through;
     color: var(--text-muted);
 }
 
