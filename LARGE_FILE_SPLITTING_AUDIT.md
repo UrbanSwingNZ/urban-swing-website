@@ -67,14 +67,27 @@
 ### ✅ File #3: `admin/check-in/js/checkin-transactions.js` - 685 lines
 **Category:** Check-in System  
 **Complexity:** Low-Medium  
-**Time Estimate:** 2 hours  
+**Time Estimate:** 2 hours (actual: 3 hours with enhancements)  
 **Status:** ✅ COMPLETE - December 23, 2025
 
-**Split into 4 modules:**
+**Split into 7 modules:**
 - `transactions/transaction-loader.js` (140 lines) - Real-time Firestore listener, data loading & normalization
-- `transactions/transaction-display.js` (180 lines) - Table rendering, summary statistics, payment badges
-- `transactions/transaction-actions.js` (404 lines) - Edit, delete (reverse), invoice toggle operations
-- `checkin-transactions.js` (54 lines) - Main coordinator (92% reduction from 685 lines)
+- `transactions/transaction-display.js` (178 lines) - Table rendering, summary statistics, payment badges
+- `transactions/transaction-invoice.js` (45 lines) - Invoice status toggling
+- `transactions/transaction-deletion.js` (158 lines) - Delete transactions, concession block cleanup, restore functionality
+- `transactions/transaction-edit-casual.js` (45 lines) - Edit casual entry transactions
+- `transactions/transaction-edit-concession.js` (235 lines) - Edit concession purchase transactions
+- `transactions/transaction-actions.js` (48 lines) - Actions coordinator
+- `checkin-transactions.js` (58 lines) - Main coordinator (92% reduction from 685 lines)
+
+**Enhancements Added:**
+- Implemented Restore functionality with full block recreation
+- Fixed online payment badge display
+- Enhanced concession block deletion with balance adjustment
+- Improved modal state management
+- Standardized DatePicker usage across modals
+- Restored Show Reversed toggle functionality
+- Removed strikethrough styling from reversed items
 
 ---
 
@@ -384,11 +397,11 @@ admin/playlist-manager/playlists/
 ### By Implementation Order
 | Priority | Files | Total Lines | Estimated Time | Status |
 |----------|-------|-------------|----------------|--------|
-| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 2/6 Complete |
+| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 3/6 Complete |
 | 🟡 Phase 2 Mid Priority (600-800) | 4 | 2,618 | 11.5 hours | ⏳ Pending |
 | 🔴 Phase 3 Deferred (800+) | 2 | 1,999 | 10 hours | ⏳ Deferred |
 | ❌ Excluded (Email Templates) | 1 | 666 | 0 hours | ❌ Skipped |
-| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~18% Complete** |
+| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~33% Complete** |
 
 ### Module Breakdown (Excluding Email Templates)
 - **Display/Rendering modules:** ~1,950 lines across 12 files
@@ -423,8 +436,8 @@ admin/playlist-manager/playlists/
 2. ✅ `casual-rates-display.js` (1.5 hours) - COMPLETE
 
 **Day 2:**
-3. 🎯 `transactions.js` (2 hours) - **NEXT - Good display/filter/export pattern**
-4. `checkin-online-payment.js` (2 hours) - Payment flow (init/process/confirm)
+3. ✅ `checkin-transactions.js` (3 hours) - COMPLETE - Enhanced with Restore functionality
+4. 🎯 `checkin-online-payment.js` (2 hours) - **NEXT - Payment flow (init/process/confirm)**
 
 **Day 3:**
 5. `todays-checkins.js` (1.5 hours) - Simple list display
@@ -697,32 +710,33 @@ After completing refactoring:
 9. **Commit incrementally** (one file per commit)
 10. **Update documentation** as you go
 
-### Current Status: Phase 1 - File #3
+### Current Status: Phase 1 - File #4
 
-**🎯 Next File: `admin/check-in/js/transactions.js` (510 lines → 4 modules, 2 hours)**
+**🎯 Next File: `admin/check-in/js/checkin-online-payment.js` (500 lines → 3 modules, 2 hours)**
 
 **Why This File Next:**
-- ✅ Good display/filter/export pattern to practice
+- ✅ Clear payment flow (init/process/confirm pattern)
 - ✅ Mid-size Phase 1 file (manageable complexity)
-- ✅ Clear module separation: loader, display, filters, export
-- ✅ Check-in system (consistent with File #2)
+- ✅ Check-in system (consistent with Files #2 and #3)
+- ✅ Good separation: form setup, Stripe processing, confirmation
 - ✅ Low-medium risk, straightforward refactor
-- ✅ Reinforces patterns from Files #1 and #2
+- ✅ Reinforces patterns from Files #1-3
 
 **Expected Outcome:**
-- Split into 4 clean modules in ~2 hours
-- Practice more complex module organization
-- Add CSV export as separate concern
-- Build confidence for remaining Phase 1 files
+- Split into 3 clean modules in ~2 hours
+- Clear payment processing flow separation
+- Improved maintainability for Stripe integration
+- Continue building Phase 1 momentum
 
 ---
 
-**Last Updated:** December 22, 2025  
-**Status:** 🔄 Phase 1 In Progress (2/6 Complete) - File #3 Next  
+**Last Updated:** December 23, 2025  
+**Status:** 🔄 Phase 1 In Progress (3/6 Complete - 50%) - File #4 Next  
 **Progress:**
 - ✅ File #1: change-password.js (456 lines → 3 modules) - COMPLETE
 - ✅ File #2: casual-rates-display.js (469 lines → 4 modules) - COMPLETE
-- 🎯 File #3: transactions.js (510 lines → 4 modules) - NEXT
-- ⏳ Files #4-6: Remaining Phase 1 quick wins
+- ✅ File #3: checkin-transactions.js (685 lines → 7 modules + enhancements) - COMPLETE
+- 🎯 File #4: checkin-online-payment.js (500 lines → 3 modules) - NEXT
+- ⏳ Files #5-6: Remaining Phase 1 quick wins (2 files)
 - ⏳ Phase 2: 4 mid-complexity files (11.5 hours)
 - 🔴 Phase 3: 2 playlist manager files (10 hours) - DEFERRED TO LAST

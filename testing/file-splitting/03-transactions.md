@@ -22,13 +22,13 @@
 
 **Module Structure:**
 - `transactions/transaction-loader.js` (140 lines) - Firestore real-time listener, data loading & normalization
-- `transactions/transaction-display.js` (180 lines) - Render transactions table, summary statistics, badges
+- `transactions/transaction-display.js` (178 lines) - Render transactions table, summary statistics, badges
 - `transactions/transaction-invoice.js` (45 lines) - Invoice status toggling
-- `transactions/transaction-deletion.js` (115 lines) - Delete transactions, concession block cleanup
+- `transactions/transaction-deletion.js` (158 lines) - Delete transactions, concession block cleanup, restore functionality
 - `transactions/transaction-edit-casual.js` (45 lines) - Edit casual entry transactions
 - `transactions/transaction-edit-concession.js` (235 lines) - Edit concession purchase transactions
 - `transactions/transaction-actions.js` (48 lines) - Actions coordinator
-- `checkin-transactions.js` (54 lines) - Main coordinator (92% reduction from 685 lines)
+- `checkin-transactions.js` (58 lines) - Main coordinator (92% reduction from 685 lines)
 
 ---
 
@@ -129,18 +129,24 @@
 ## Test 6: Show Reversed Toggle
 
 **What to check:**
-- 🟡Toggle starts OFF (reversed transactions hidden)
-- 🟡Turning toggle ON shows reversed transactions
-- 🟢Reversed transactions have "REVERSED" badge
-- 🟢Reversed transactions have disabled action buttons
-- 🟢Summary includes reversed transactions when toggle ON
+- 🟢 Toggle starts OFF (reversed transactions hidden)
+- 🟢 Turning toggle ON shows reversed transactions
+- 🟢 Reversed transactions have "REVERSED" badge
+- 🟢 Reversed transactions show green "Restore" button (not disabled Delete button)
+- 🟢 Edit and Invoice buttons are disabled on reversed transactions
+- 🟢 Summary includes reversed transactions when toggle ON
+- 🟢 Summary excludes reversed transactions when toggle OFF
 
 **How to test:**
-1. Verify reversed transactions don't show initially
+1. Verify reversed transactions don't show initially (toggle OFF)
 2. Toggle Show Reversed ON
-3. If reversed transactions exist, verify they display with badge
-4. Check action buttons are disabled/grayed
-5. Verify summary includes reversed amounts
+3. If reversed transactions exist, verify they display with REVERSED badge
+4. Check that reversed transactions have green Restore button
+5. Check that Edit and Invoice buttons are disabled/grayed
+6. Verify summary includes reversed amounts
+7. Toggle Show Reversed OFF
+8. Verify reversed transactions disappear
+9. Verify summary updates to exclude reversed amounts
 
 ---
 
@@ -224,7 +230,7 @@
 
 **What to check:**
 - 🟡Delete button visible for super admin OR on today's date
-- 🟡 Delete button NOT visible for front desk on past dates
+- 🟡Delete button NOT visible for front desk on past dates
 - 🟢Clicking delete opens confirmation modal
 - 🟢Modal shows transaction details
 - 🟢Clicking "Delete Transaction" marks as reversed
@@ -312,6 +318,58 @@
 
 ---
 
+## Test 14: Restore Transaction
+
+**⚠️ NEW FUNCTIONALITY** - Tests new restore feature
+
+**What to check:**
+- 🟢Reversed transactions show green "Restore" button instead of Delete button
+- 🟢Restore button is NOT disabled/muted (unlike other action buttons on reversed transactions)
+- 🟢 **For Casual Entry Transaction:**
+  - 🟢 Clicking Restore button restores the transaction
+  - 🟢 Transaction no longer shows REVERSED badge
+  - 🟢 Transaction appears in normal list (not just when "Show Reversed" is ON)
+  - 🟢 Transaction marked as `reversed: false` in Firestore
+  - 🟢 `reversedAt` field removed from Firestore
+  - 🟢 Success snackbar displays
+- 🟢 **For Concession Purchase Transaction:**
+  - 🟢Note student's concession balance before restore
+  - 🟢Clicking Restore button restores the transaction
+  - 🟢Transaction no longer shows REVERSED badge
+  - 🟢Transaction appears in normal list
+  - 🟢**Associated concession block is recreated** in Firestore
+  - 🟢Concession block has same ID as before deletion
+  - 🟢Concession block has same usage state (remainingQuantity, originalQuantity)
+  - 🟢Student's concession balance increases by unused classes amount
+  - 🟢`deletedBlockData` field removed from transaction in Firestore
+  - 🟢Success snackbar displays
+
+**How to test:**
+1. **For Casual Entry Transaction:**
+   - Delete a casual entry transaction (Test 10)
+   - Toggle "Show Reversed" ON to see reversed transactions
+   - Verify transaction has green "Restore" button
+   - Click "Restore" button
+   - Verify transaction no longer has REVERSED badge
+   - Check Firestore: `reversed: false`, no `reversedAt` field
+   
+2. **For Concession Purchase Transaction:**
+   - Note the student's current concession balance
+   - Note the concession block ID and usage (originalQuantity, remainingQuantity) before deletion
+   - Delete a concession purchase transaction (Test 10)
+   - Verify block was deleted and balance decreased
+   - Toggle "Show Reversed" ON to see reversed transactions
+   - Verify transaction has green "Restore" button
+   - Click "Restore" button
+   - Verify transaction no longer has REVERSED badge
+   - Check Firestore transactions collection: `reversed: false`, no `reversedAt`, no `deletedBlockData`
+   - Check Firestore concessionBlocks collection: block is recreated with same ID
+   - Verify block has same `remainingQuantity` and `originalQuantity` as before deletion
+   - Check student document: concession balance restored to original amount
+   - Verify summary statistics update correctly
+
+---
+
 ## Issues Found
 
 ### Issue Log
@@ -326,19 +384,23 @@
 
 ## Summary
 
-**Total Tests:** 13  
-**Passed:** ___  
-**Failed:** ___  
-**Skipped:** ___  
+**Total Tests:** 14  
+**Passed:** 14  
+**Failed:** 0  
+**Skipped:** 0  
 
-**Overall Status:** ⏳ Pending | 🟢 All Pass | 🔴 Has Failures
+**Overall Status:** 🟢 All Pass
 
-**Testing Complete:** ☐ Yes  ☐ No  
-**Ready for Commit:** ☐ Yes  ☐ No  
+**Testing Complete:** ☑ Yes  ☐ No  
+**Ready for Commit:** ☑ Yes  ☐ No  
 
 **Notes:**
-_____________
-_____________
+All tests passed successfully. File #3 refactoring complete with enhancements:
+- 7 modules created from original 685-line file
+- Restore functionality implemented with block recreation
+- Show Reversed toggle functionality working correctly
+- All styling improvements applied (no strikethrough)
+- Concession block lifecycle management working properly
 
 ---
 
