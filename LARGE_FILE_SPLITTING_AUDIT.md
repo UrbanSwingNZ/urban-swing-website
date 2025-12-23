@@ -8,15 +8,15 @@
 
 ## 📊 EXECUTIVE SUMMARY
 
-**Files Requiring Refactoring:** 12 files over 400 lines (excluding email template system)  
-**Total Lines to Reorganize:** ~7,670 lines  
-**Average File Size:** 639 lines  
-**Largest File:** `track-operations.js` (1,283 lines) - *deferred to end*
+**Files Requiring Refactoring:** 11 files over 400 lines (excluding email template system)  
+**Total Lines to Reorganize:** ~7,052 lines  
+**Average File Size:** 641 lines  
+**Largest File:** `track-operations.js` (1,343 lines) - *deferred to end*
 
 **Priority Breakdown:**
-- 🟢 **Start Here (5 files, 2,251 lines):** 400-600 lines - quick wins, easier files first
-- 🟡 **Mid Priority (4 files, 2,687 lines):** 600-800 lines - moderate complexity  
-- 🔴 **Deferred (3 files, 2,732 lines):** Over 800 lines - save for last (active development)
+- 🟢 **Phase 1 (6 files, 2,938 lines):** 400-685 lines - quick wins, easier files first
+- 🟡 **Phase 2 (3 files, 2,019 lines):** 580-771 lines - moderate complexity  
+- 🔴 **Phase 3 (2 files, 2,095 lines):** Over 1000 lines - deferred for active development
 
 **Excluded from Refactoring:**
 - ❌ **Email Template System (1 file, 666 lines):** Scheduled for removal - no refactoring needed
@@ -147,54 +147,98 @@
 
 ---
 
-### File #7: `admin/check-in/js/checkin-transactions.js` - 665 lines
-**Category:** Admin Tools  
+### ✅ File #7: `admin/admin-tools/gift-concessions/gift-concessions.js` - 771 lines
+**Category:** Admin Tools - Gift Concessions  
 **Complexity:** High  
-**Time Estimate:** 3 hours
-**Priority:** 🟡 Mid Priority
+**Time Estimate:** 3 hours (actual: 3 hours)  
+**Status:** ✅ COMPLETE - December 24, 2025
+
+**Split into 4 modules:**
+- `student-search.js` (195 lines) - Student search, selection, and results display
+- `gift-form.js` (235 lines) - Form UI, DatePickers, presets, validation, summary
+- `gift-api.js` (198 lines) - Process gift, create transactions, Firebase operations
+- `recent-gifts.js` (231 lines) - Load, display, delete recent gifts with validation
+- `gift-concessions.js` (85 lines) - Main coordinator (89% reduction from 771 lines)
 
 **Current Structure:**
-- **Lines 1-15:** Imports, global state
-- **Lines 16-68:** Initialization (DOMContentLoaded, auth check)
+- **Lines 1-26:** Imports, global state, date parsing utility
+- **Lines 27-68:** Initialization (DOMContentLoaded, auth check, authorization)
 - **Lines 69-99:** Student loading (loadStudents)
-- **Lines 100-242:** Form management (initializeForm, handleStudentSearch, selectStudent, clearSelectedStudent, applyPreset, updateSummary)
-- **Lines 243-365:** Gift processing (handleFormSubmit, showConfirmModal, processGift)
-- **Lines 366-502:** Firebase operations (giftConcessions, createGiftTransaction, loadRecentGifts)
-- **Lines 503-671:** Recent gifts UI (display, delete)
-- **Lines 672-733:** Utilities (resetForm, showLoading, showError, formatters)
+- **Lines 100-170:** Form initialization (DatePickers, event listeners)
+- **Lines 171-242:** Student search (handleStudentSearch, selectStudent, clearSelectedStudent)
+- **Lines 243-267:** Preset application (applyPreset)
+- **Lines 268-295:** Summary updates (updateSummary)
+- **Lines 296-325:** Form submission (handleFormSubmit, validation)
+- **Lines 326-368:** Confirmation modal (showConfirmModal)
+- **Lines 369-444:** Gift processing (processGift, giftConcessions)
+- **Lines 445-497:** Transaction creation (createGiftTransaction)
+- **Lines 498-574:** Recent gifts loading (loadRecentGifts)
+- **Lines 575-698:** Gift deletion (deleteGift with validation)
+- **Lines 699-771:** Utilities (resetForm, showLoading, showError, formatters, window exposure)
 
 **Functional Modules Identified:**
-1. **Student Search** (~143 lines) - Search, select, clear student
-2. **Gift Form UI** (~123 lines) - Form initialization, presets, summary
-3. **Gift API** (~160 lines) - Process gift, Firebase operations
-4. **Recent Gifts** (~169 lines) - Load, display, delete recent gifts
-5. **Utilities** (~62 lines) - Form reset, loading, error, formatters
+1. **Student Search** (~120 lines) - Search, select, clear student, results display
+2. **Gift Form UI** (~170 lines) - Form initialization, DatePickers, presets, summary, validation
+3. **Gift API** (~180 lines) - Process gift, create blocks, create transactions, Firebase operations
+4. **Recent Gifts** (~200 lines) - Load, display, delete recent gifts with validation
+5. **Utilities** (~80 lines) - Form reset, loading, error, formatters
 
 **Recommended Split:**
 ```
 admin/admin-tools/gift-concessions/
-├── student-search.js         (~150 lines) - Student search, select, display
-├── gift-form.js              (~130 lines) - Form UI, presets, validation, summary
-├── gift-api.js               (~170 lines) - Process gift, Firebase operations
-├── recent-gifts.js           (~180 lines) - Load, display, delete recent gifts
-└── gift-utils.js             (~70 lines) - Utilities, formatters, loading states
+├── student-search.js         (~140 lines) - Student search, select, display
+├── gift-form.js              (~190 lines) - Form UI, DatePickers, presets, validation, summary
+├── gift-api.js               (~200 lines) - Process gift, Firebase operations, transactions
+├── recent-gifts.js           (~220 lines) - Load, display, delete recent gifts
+└── gift-concessions.js       (~40 lines) - Main coordinator, initialization
 ```
 
 **Dependencies:**
-- Imports from: `/components/modals/confirmation-modal.js`
-- Global dependencies: Firebase, Firestore
+- Imports from: `/components/modals/confirmation-modal.js`, `/components/modals/modal-base.js`
+- Uses: DatePicker component, LoadingSpinner, centralized utilities
+- Global dependencies: Firebase, Firestore, shared Firestore functions
 
 **Notes:**
 - Clear separation between UI and API logic
 - Student search is independent feature
-- Recent gifts could be entirely separate component
+- Recent gifts includes complex validation (locked blocks, used classes)
+- Authorization check (super admin only)
 
 ---
 
-### File #9: `admin/student-database/js/modal.js` - 640 lines
+### ✅ File #8: `admin/student-database/js/transaction-history/transaction-history-payments.js` - 592 lines
+**Category:** Student Database - Transaction History  
+**Complexity:** Medium  
+**Time Estimate:** 2.5 hours (actual: 2.5 hours)  
+**Status:** ✅ COMPLETE - December 24, 2025
+
+**Split into 3 modules:**
+- `payment-loader.js` (103 lines) - Load transactions, transform data, cache
+- `payment-display.js` (108 lines) - Render payment table, format methods
+- `payment-actions.js` (362 lines) - Edit casual/concession, delete operations
+- `transaction-history-payments.js` (27 lines) - Main coordinator (95% reduction from 592 lines)
+
+**Functional Modules Created:**
+1. **Payment Loading** - Firestore queries, data transformation, caching for editing
+2. **Payment Display** - Table rendering, payment method formatting (EFTPOS uppercase), summary stats
+3. **Payment Actions** - Complex edit workflows (casual entry modal vs concession purchase modal), soft delete with reversal
+
+**Bug Fixes:**
+- Fixed missing `type="module"` in script tag
+- Fixed Cancel button styling (btn-cancel instead of btn-secondary)
+
+**Notes:**
+- Clear separation between loading, display, and actions
+- Edit modal opens appropriate modal based on transaction type
+- Delete uses soft delete (marks as reversed)
+- Complex update logic handles concession blocks and student balance adjustments
+
+---
+
+### File #9: `admin/student-database/js/modal.js` - 668 lines
 **Category:** Student Database  
 **Complexity:** High  
-**Time Estimate:** 3 hours
+**Time Estimate:** 3.5 hours
 
 **Current Structure:**
 - **Lines 1-105:** Student modal (viewStudent, editStudent, openStudentModal, closeStudentModal, saveStudentChanges)
@@ -224,39 +268,13 @@ admin/student-database/js/modals/
 
 ---
 
-### File #10: `admin/student-database/js/transaction-history/transaction-history-payments.js` - 580 lines
-**Category:** Student Database - Transaction History  
-**Complexity:** Medium  
-**Time Estimate:** 2.5 hours
-
-**Current Structure:**
-- Load payment transactions from Firestore
-- Display payment list (table with edit/delete actions)
-- Edit payment modal & validation
-- Delete payment confirmation
-
-**Functional Modules Identified:**
-1. **Payment Loading** (~150 lines) - Load from Firestore, data transformation
-2. **Payment Display** (~180 lines) - Render table, format data
-3. **Payment Actions** (~250 lines) - Edit modal, delete, validation
-
-**Recommended Split:**
-```
-admin/student-database/js/transaction-history/payments/
-├── payment-loader.js         (~160 lines) - Load, transform payment data
-├── payment-display.js        (~190 lines) - Render payment table
-└── payment-actions.js        (~260 lines) - Edit, delete, validate payments
-```
-
----
-
 ## 🔴 PHASE 3: DEFERRED TO END (Over 800 lines)
 **These files are actively used during development - refactor LAST after all other files are complete.**
 
-### File #11: `admin/playlist-manager/track-operations.js` - 1,283 lines
+### File #10: `admin/playlist-manager/track-operations.js` - 1,343 lines
 **Category:** Playlist Management  
 **Complexity:** Very High  
-**Time Estimate:** 6 hours
+**Time Estimate:** 6.5 hours
 **Priority:** 🔴 Deferred (Active Development)
 
 **Reason for Deferral:** User needs to create playlists and test during refactoring period. Will refactor after other files are complete.
@@ -307,10 +325,10 @@ admin/playlist-manager/tracks/
 
 ---
 
-### File #12: `admin/playlist-manager/playlist-operations.js` - 716 lines
+### File #11: `admin/playlist-manager/playlist-operations.js` - 752 lines
 **Category:** Playlist Management  
 **Complexity:** High  
-**Time Estimate:** 4 hours
+**Time Estimate:** 4.5 hours
 **Priority:** 🔴 Deferred (Active Development)
 
 **Reason for Deferral:** User needs to create playlists and test during refactoring period. Will refactor after other files are complete.
@@ -385,11 +403,11 @@ admin/playlist-manager/playlists/
 ### By Implementation Order
 | Priority | Files | Total Lines | Estimated Time | Status |
 |----------|-------|-------------|----------------|--------|
-| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ COMPLETE (6/6) |
-| 🟡 Phase 2 Mid Priority (600-800) | 4 | 2,618 | 11.5 hours | ⏳ Pending |
-| 🔴 Phase 3 Deferred (800+) | 2 | 1,999 | 10 hours | ⏳ Deferred |
+| 🟢 Phase 1 Quick Wins (400-685) | 6 | 2,938 | 10.5 hours | ✅ COMPLETE (6/6) |
+| 🟡 Phase 2 Mid Priority (580-771) | 3 | 2,019 | 9 hours | 🔄 In Progress (2/3) |
+| 🔴 Phase 3 Deferred (752-1343) | 2 | 2,095 | 11 hours | ⏳ Deferred |
 | ❌ Excluded (Email Templates) | 1 | 666 | 0 hours | ❌ Skipped |
-| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **✅ Phase 1 Complete (50%)** |
+| **TOTAL TO REFACTOR** | **11** | **7,052** | **30.5 hours** | **🔄 73% Complete (8/11)** |
 
 ### Module Breakdown (Excluding Email Templates)
 - **Display/Rendering modules:** ~1,950 lines across 12 files
@@ -399,16 +417,16 @@ admin/playlist-manager/playlists/
 - **Utilities:** ~450 lines across 12 files
 
 ### Files by Complexity
-- **Very High (1000+ lines):** 1 file (track-operations.js) - deferred
-- **High (700-999 lines):** 2 files (playlist-operations.js, gift-concessions.js)
-- **Medium-High (600-699 lines):** 3 files (checkin-transactions.js, modal.js, transaction-history-payments.js)
-- **Medium (400-599 lines):** 6 files (remaining quick wins)
+- **Very High (1000+ lines):** 1 file (track-operations.js - 1,343 lines) - deferred
+- **High (700-999 lines):** 2 files (gift-concessions.js - 771 lines, playlist-operations.js - 752 lines)
+- **Medium-High (600-699 lines):** 2 files (checkin-transactions.js - 685 lines, modal.js - 668 lines)
+- **Medium (400-599 lines):** 6 files (change-password - 456, casual-rates-display - 469, checkin-online-payment - 484, todays-checkins - 437, checkin-firestore - 407, transaction-history-payments - 580)
 
 ---
 
 ## 🎯 IMPLEMENTATION STRATEGY
 
-### Phase 1: Quick Wins (Week 1 - 11 hours) ✅ START HERE
+### Phase 1: Quick Wins (Week 1 - 10.5 hours) ✅ COMPLETE
 **Goal:** Build momentum with smaller, isolated files to establish refactoring patterns
 
 **Why Start Here:**
@@ -431,7 +449,7 @@ admin/playlist-manager/playlists/
 5. ✅ `todays-checkins.js` (1.5 hours) - COMPLETE - List display with real-time updates
 6. ✅ `checkin-firestore.js` (2 hours) - COMPLETE - Save operations with bug fixes
 
-### Phase 2: Mid-Complexity Files (Week 2 - 11.5 hours)
+### Phase 2: Mid-Complexity Files (Week 2 - 9 hours)
 **Goal:** Tackle more complex files with multiple concerns
 
 **Why Do These Second:**
@@ -442,14 +460,15 @@ admin/playlist-manager/playlists/
 **Files (in recommended order):**
 
 **Day 4:**
-1. `transaction-history-payments.js` (2.5 hours) - Payment history with edit/delete
-2. `checkin-transactions.js` (3 hours) - Real-time listener + CRUD
+1. ✅ `gift-concessions.js` (3 hours) - COMPLETE - Gift flow with student search
+2. ✅ `transaction-history-payments.js` (2.5 hours) - COMPLETE - Payment history with edit/delete
 
 **Day 5:**
-3. `modal.js` (3 hours) - Multiple independent modals
-4. `gift-concessions.js` (3 hours) - Gift flow with student search
+3. `modal.js` (3.5 hours) - Multiple independent modals
 
-### Phase 3: Playlist Manager Files (Week 3 - 10 hours) 🔴 SAVE FOR LAST
+**Note:** Originally listed `checkin-transactions.js` here, but that was File #3 (Phase 1), already complete.
+
+### Phase 3: Playlist Manager Files (Week 3 - 11 hours) 🔴 SAVE FOR LAST
 **Goal:** Refactor complex playlist management after all patterns are established
 
 **Why Save for Last:**
@@ -460,8 +479,8 @@ admin/playlist-manager/playlists/
 **Files:**
 
 **Day 6-7:**
-1. `playlist-operations.js` (4 hours) - Playlist CRUD, display, UI
-2. `track-operations.js` (6 hours) - Track operations (most complex file)
+1. `playlist-operations.js` (4.5 hours) - Playlist CRUD, display, UI
+2. `track-operations.js` (6.5 hours) - Track operations (most complex file)
 
 ### ❌ Email Template System - NO REFACTORING
 **Status:** Scheduled for complete removal  
@@ -698,28 +717,30 @@ After completing refactoring:
 9. **Commit incrementally** (one file per commit)
 10. **Update documentation** as you go
 
-### Current Status: ✅ Phase 1 Complete - Moving to Phase 2
+### Current Status: 🔄 Phase 2 In Progress (1/3 Complete)
 
-**🎉 Phase 1 Achievement:**
-- ✅ All 6 files refactored (100% complete)
-- ✅ 2,693 lines reorganized into focused modules
-- ✅ Average 90% reduction in coordinator file sizes
-- ✅ Established consistent module patterns
-- ✅ Fixed multiple timezone and scope issues
-- ✅ All functionality tested and working
+**🎉 Phase 2 Progress:**
+- ✅ File #7: gift-concessions.js - COMPLETE (771 lines → 4 modules)
+- ✅ File #8: transaction-history-payments.js - COMPLETE (592 lines → 3 modules)
+- 🎯 1 file remaining (3.5 hours)
+- 73% overall completion (8/11 files)
 
-**🎯 Next Phase: Phase 2 - Mid-Complexity Files (4 files, 11.5 hours)**
+**Recent Achievement - File #8:**
+- 95% reduction in main coordinator (592 → 27 lines)
+- 3 focused modules: payment-loader, payment-display, payment-actions
+- Complex edit workflows for casual entries and concession purchases
+- Soft delete implementation with transaction reversal
+- All 26 tests passing
 
-**Recommended Starting File:** `admin/student-database/js/transaction-history/transaction-history-payments.js` (580 lines)
-- Payment history display and editing
-- Clear separation: loader, display, actions
-- 2.5 hour estimate
-- Good warmup for Phase 2 complexity
+**🎯 Next File (File #9): `admin/student-database/js/modal.js` (668 lines)**
+- Student database modals (student, notes, transaction history, deletion)
+- Split into 4 independent modal modules
+- 3.5 hour estimate
 
 ---
 
-**Last Updated:** December 23, 2025  
-**Status:** ✅ Phase 1 COMPLETE (100%) - Ready for Phase 2  
+**Last Updated:** December 24, 2025  
+**Status:** 🔄 Phase 2 In Progress (2/3 Complete - 67%)  
 **Progress:**
 - ✅ File #1: change-password.js (456 lines → 3 modules) - COMPLETE
 - ✅ File #2: casual-rates-display.js (469 lines → 4 modules) - COMPLETE
@@ -727,5 +748,7 @@ After completing refactoring:
 - ✅ File #4: checkin-online-payment.js (484 lines → 3 modules + bug fixes) - COMPLETE
 - ✅ File #5: todays-checkins.js (437 lines → 3 modules) - COMPLETE
 - ✅ File #6: checkin-firestore.js (407 lines → 3 modules + timezone fixes) - COMPLETE
-- 🎯 Phase 2: 4 mid-complexity files (11.5 hours) - READY TO START
-- 🔴 Phase 3: 2 playlist manager files (10 hours) - DEFERRED TO LAST
+- ✅ File #7: gift-concessions.js (771 lines → 4 modules + transaction ID fix) - COMPLETE
+- ✅ File #8: transaction-history-payments.js (592 lines → 3 modules + styling fix) - COMPLETE
+- 🎯 File #9: modal.js (668 lines) - NEXT
+- 🔴 Phase 3: Files #10-11 (2 playlist manager files, 11 hours) - DEFERRED TO LAST
