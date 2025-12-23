@@ -109,24 +109,17 @@
 
 ---
 
-### File #5: `admin/check-in/js/todays-checkins.js` - 420 lines
+### ✅ File #5: `admin/check-in/js/todays-checkins.js` - 437 lines
 **Category:** Check-in System  
 **Complexity:** Low-Medium  
-**Time Estimate:** 1.5 hours
+**Time Estimate:** 1.5 hours (actual: 1.5 hours)  
+**Status:** ✅ COMPLETE - December 23, 2025
 
-**Current Structure:**
-- Load today's check-ins from Firestore
-- Display in list format
-- Real-time listener for updates
-- Simple filtering
-
-**Recommended Split:**
-```
-admin/check-in/js/todays-checkins/
-├── checkin-loader.js         (~150 lines) - Real-time listener, load data
-├── checkin-display.js        (~200 lines) - Render check-in list
-└── checkin-filters.js        (~70 lines) - Filter functionality
-```
+**Split into 3 modules:**
+- `checkin-loader.js` (127 lines) - Real-time Firestore listener, data loading & processing
+- `checkin-display.js` (264 lines) - Render check-in list, event listeners, edit/delete operations
+- `checkin-filters.js` (26 lines) - Show/hide reversed check-ins toggle
+- `todays-checkins.js` (33 lines) - Main coordinator (92% reduction from 437 lines)
 
 ---
 
@@ -394,11 +387,11 @@ admin/playlist-manager/playlists/
 ### By Implementation Order
 | Priority | Files | Total Lines | Estimated Time | Status |
 |----------|-------|-------------|----------------|--------|
-| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 4/6 Complete |
+| 🟢 Phase 1 Quick Wins (400-600) | 6 | 2,693 | 11 hours | ✅ 5/6 Complete |
 | 🟡 Phase 2 Mid Priority (600-800) | 4 | 2,618 | 11.5 hours | ⏳ Pending |
 | 🔴 Phase 3 Deferred (800+) | 2 | 1,999 | 10 hours | ⏳ Deferred |
 | ❌ Excluded (Email Templates) | 1 | 666 | 0 hours | ❌ Skipped |
-| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~47% Complete** |
+| **TOTAL TO REFACTOR** | **12** | **7,310** | **32.5 hours** | **~55% Complete** |
 
 ### Module Breakdown (Excluding Email Templates)
 - **Display/Rendering modules:** ~1,950 lines across 12 files
@@ -437,8 +430,8 @@ admin/playlist-manager/playlists/
 4. ✅ `checkin-online-payment.js` (2 hours) - COMPLETE - Fixed date filtering bug
 
 **Day 3:**
-5. 🎯 `todays-checkins.js` (1.5 hours) - **NEXT - Simple list display**
-6. `checkin-firestore.js` (1.5 hours) - Clean CRUD operations
+5. ✅ `todays-checkins.js` (1.5 hours) - COMPLETE - List display with real-time updates
+6. 🎯 `checkin-firestore.js` (1.5 hours) - **NEXT - Clean CRUD operations**
 
 ### Phase 2: Mid-Complexity Files (Week 2 - 11.5 hours)
 **Goal:** Tackle more complex files with multiple concerns
@@ -707,34 +700,33 @@ After completing refactoring:
 9. **Commit incrementally** (one file per commit)
 10. **Update documentation** as you go
 
-### Current Status: Phase 1 - File #5
+### Current Status: Phase 1 - File #6
 
-**🎯 Next File: `admin/check-in/js/todays-checkins.js` (420 lines → 3 modules, 1.5 hours)**
+**🎯 Next File: `admin/check-in/js/checkin-firestore.js` (452 lines → 3 modules, 1.5 hours)**
 
 **Why This File Next:**
-- ✅ Simple list display functionality
-- ✅ Real-time listener pattern (practiced in File #3)
-- ✅ Clear separation: loader, display, filters
-- ✅ Check-in system (consistent with previous files)
-- ✅ Low-medium complexity
-- ✅ Good practice for remaining Phase 1 files
+- ✅ Final Phase 1 file - completes check-in system refactoring
+- ✅ Clean CRUD operations (create, update, query/delete)
+- ✅ Clear functional boundaries
+- ✅ Consistent with established patterns
+- ✅ Will complete 100% of Phase 1 (6/6 files)
 
 **Expected Outcome:**
 - Split into 3 clean modules in ~1.5 hours
-- Clear separation of data loading and UI
-- Consistent with established patterns
-- Final preparation before checkin-firestore.js
+- Completes Phase 1 refactoring (all quick wins)
+- Ready to move to Phase 2 (mid-complexity files)
+- Establishes solid foundation for remaining work
 
 ---
 
 **Last Updated:** December 23, 2025  
-**Status:** 🔄 Phase 1 In Progress (4/6 Complete - 67%) - File #5 Next  
+**Status:** 🔄 Phase 1 In Progress (5/6 Complete - 83%) - File #6 Next  
 **Progress:**
 - ✅ File #1: change-password.js (456 lines → 3 modules) - COMPLETE
 - ✅ File #2: casual-rates-display.js (469 lines → 4 modules) - COMPLETE
 - ✅ File #3: checkin-transactions.js (685 lines → 7 modules + enhancements) - COMPLETE
 - ✅ File #4: checkin-online-payment.js (484 lines → 3 modules + bug fixes) - COMPLETE
-- 🎯 File #5: todays-checkins.js (420 lines → 3 modules) - NEXT
-- ⏳ File #6: checkin-firestore.js (452 lines → 3 modules)
+- ✅ File #5: todays-checkins.js (437 lines → 3 modules) - COMPLETE
+- 🎯 File #6: checkin-firestore.js (452 lines → 3 modules) - NEXT
 - ⏳ Phase 2: 4 mid-complexity files (11.5 hours)
 - 🔴 Phase 3: 2 playlist manager files (10 hours) - DEFERRED TO LAST
