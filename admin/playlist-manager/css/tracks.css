@@ -153,7 +153,7 @@
 .now-playing-animation .bar {
   width: 3px;
   height: 100%;
-  background: var(--pm-green);
+  background: var(--spotify-green);
   border-radius: 3px;
   animation: sound-wave 1s ease-in-out infinite;
   transform-origin: bottom;
@@ -220,7 +220,7 @@
 }
 
 .track-play-btn {
-  color: var(--pm-green);
+  color: var(--spotify-green);
 }
 
 .track-play-btn:hover {
@@ -247,6 +247,13 @@
 .search-play-btn {
   flex-shrink: 0;
   margin-left: 0;
+  opacity: 1 !important; /* Always visible in search results */
+  color: var(--spotify-green);
+}
+
+.search-play-btn:hover {
+  background: rgba(29, 185, 84, 0.1);
+  transform: scale(1.1);
 }
 
 /* Badges */

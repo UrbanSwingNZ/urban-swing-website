@@ -198,8 +198,18 @@ async function removeTrackFromPlaylist(trackUri, trackName) {
     return;
   }
   
+  // Check if the track being deleted is currently playing
+  const { getCurrentPlayingTrackUri, stopCurrentAudio } = await import('./track-audio.js');
+  const playingUri = getCurrentPlayingTrackUri();
+  const shouldStopAudio = playingUri === trackUri;
+  
   try {
     await spotifyAPI.removeTracksFromPlaylist(currentPlaylistId, [trackUri]);
+    
+    // Stop audio if this track was playing
+    if (shouldStopAudio) {
+      await stopCurrentAudio();
+    }
     
     // Update playlist track count (-1)
     await updatePlaylistTrackCount(currentPlaylistId, -1);

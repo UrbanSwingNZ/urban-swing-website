@@ -36,13 +36,13 @@ export function openAddTracksModal() {
   }, 100);
 }
 
-export function closeAddTracksModal() {
+export async function closeAddTracksModal() {
   const modal = document.getElementById('add-tracks-modal');
   modal.style.display = 'none';
   State.setSelectedTracks([]);
   
   // Stop any playing audio when modal closes
-  stopCurrentAudio();
+  await stopCurrentAudio();
 }
 
 let searchTimeout;
@@ -56,7 +56,7 @@ export function handleTracksSearch(e) {
   if (query.length === 0) {
     document.getElementById('search-results').innerHTML = '<p class="text-muted">Enter a search term to find tracks</p>';
     // Stop any playing audio when search is cleared
-    stopCurrentAudio();
+    stopCurrentAudio().catch(err => console.warn('Could not stop audio:', err));
     return;
   }
   
@@ -83,6 +83,10 @@ async function searchAndDisplayTracks(query) {
     
     const selectedTracks = State.getSelectedTracks();
     
+    // Get currently playing track from track-audio module
+    const { getCurrentPlayingTrackUri } = await import('./track-audio.js');
+    const currentlyPlayingUri = getCurrentPlayingTrackUri();
+    
     // Partition tracks: selected tracks first, then unselected
     const selectedTrackIds = new Set(selectedTracks.map(t => t.id));
     const selectedResults = tracks.filter(t => selectedTrackIds.has(t.id));
@@ -91,11 +95,15 @@ async function searchAndDisplayTracks(query) {
     
     resultsContainer.innerHTML = orderedTracks.map(track => {
       const isSelected = selectedTrackIds.has(track.id);
+      const isPlaying = currentlyPlayingUri === track.uri;
+      const playIcon = isPlaying ? 'fa-pause' : 'fa-play';
+      const playingClass = isPlaying ? 'playing' : '';
+      const animationDisplay = isPlaying ? 'flex' : 'none';
       return `
         <div class="search-result-item" data-track-id="${track.id}" data-track-uri="${track.uri}">
           <input type="checkbox" class="search-result-checkbox" ${isSelected ? 'checked' : ''}>
-          <button class="track-play-btn search-play-btn" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Play track">
-            <i class="fas fa-play"></i>
+          <button class="track-play-btn search-play-btn ${playingClass}" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Play track">
+            <i class="fas ${playIcon}"></i>
           </button>
           <img src="${track.album?.images?.[2]?.url || '../../images/urban-swing-logo-glow-black-circle.png'}" 
                alt="${track.name}" class="search-result-image">
@@ -103,7 +111,15 @@ async function searchAndDisplayTracks(query) {
             <h4 class="search-result-title">${track.name}</h4>
             <p class="search-result-artist">${track.artists?.map(a => a.name).join(', ')}</p>
           </div>
-          <span class="search-result-duration">${spotifyAPI.formatDuration(track.duration_ms)}</span>
+          <div class="search-result-duration-container">
+            <div class="now-playing-animation" style="display: ${animationDisplay};">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+            </div>
+            <span class="search-result-duration">${spotifyAPI.formatDuration(track.duration_ms)}</span>
+          </div>
         </div>
       `;
     }).join('');
@@ -115,7 +131,9 @@ async function searchAndDisplayTracks(query) {
         if (e.target.type === 'checkbox' || 
             e.target.classList.contains('track-play-btn') ||
             e.target.classList.contains('search-play-btn') ||
-            e.target.closest('.track-play-btn')) {
+            e.target.closest('.track-play-btn') ||
+            e.target.closest('.search-play-btn') ||
+            e.target.closest('button')) {
           return;
         }
         
@@ -131,9 +149,9 @@ async function searchAndDisplayTracks(query) {
       
       // Add play button handler
       const playBtn = item.querySelector('.track-play-btn');
-      playBtn.addEventListener('click', (e) => {
+      playBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        handleTrackPlayPause(playBtn, playBtn.dataset.trackUri, playBtn.dataset.trackId);
+        await handleTrackPlayPause(playBtn, playBtn.dataset.trackUri, playBtn.dataset.trackId);
       });
     });
     
@@ -143,7 +161,7 @@ async function searchAndDisplayTracks(query) {
   }
 }
 
-function handleTrackSelection(trackId, isSelected, allTracks) {
+async function handleTrackSelection(trackId, isSelected, allTracks) {
   console.log('Track selection:', trackId, isSelected);
   const track = allTracks.find(t => t.id === trackId);
   console.log('Found track:', track);
@@ -168,7 +186,7 @@ function handleTrackSelection(trackId, isSelected, allTracks) {
   // Re-render search results to move selected tracks to top
   const searchInput = document.getElementById('search-tracks-input');
   if (searchInput && searchInput.value.trim()) {
-    searchAndDisplayTracks(searchInput.value.trim());
+    await searchAndDisplayTracks(searchInput.value.trim());
   }
 }
 
@@ -216,7 +234,10 @@ export async function handleAddSelectedTracks() {
     const result = await spotifyAPI.addTracksToPlaylist(currentPlaylistId, trackUris);
     console.log('Add tracks result:', result);
     
-    closeAddTracksModal();
+    // Stop any playing audio
+    await stopCurrentAudio();
+    
+    await closeAddTracksModal();
     
     // Wait a moment for Spotify to sync, then reload the playlist
     await new Promise(resolve => setTimeout(resolve, 1000));

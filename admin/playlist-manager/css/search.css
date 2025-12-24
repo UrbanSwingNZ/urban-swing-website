@@ -115,6 +115,18 @@
   text-align: right;
 }
 
+.search-result-duration-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.search-result-duration-container .now-playing-animation {
+  height: 14px;
+  width: 18px;
+}
+
 .search-play-btn {
   flex-shrink: 0;
   margin-left: 0;
