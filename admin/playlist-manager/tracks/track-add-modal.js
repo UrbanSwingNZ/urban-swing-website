@@ -189,6 +189,17 @@ export async function handleAddSelectedTracks() {
   const currentPlaylistId = State.getCurrentPlaylistId();
   console.log('Current playlist ID:', currentPlaylistId);
   
+  // Check for duplicates
+  const currentTracks = State.getCurrentTracks();
+  const currentTrackUris = new Set(currentTracks.map(t => t.track?.uri).filter(Boolean));
+  const duplicates = selectedTracks.filter(track => currentTrackUris.has(track.uri));
+  
+  if (duplicates.length > 0) {
+    const duplicateNames = duplicates.map(t => t.name).join(', ');
+    showError(`Cannot add duplicate track${duplicates.length > 1 ? 's' : ''}: ${duplicateNames}`);
+    return;
+  }
+  
   const button = document.getElementById('add-selected-tracks-btn');
   const originalText = button.innerHTML;
   button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
