@@ -86,7 +86,7 @@ export function displayPlaylists(playlists) {
         <img src="${imageUrl}" alt="${playlist.name}">
         <div class="playlist-item-info">
           <div class="playlist-item-name">${playlist.name}</div>
-          <div class="playlist-item-count">${playlist.tracks.total} tracks</div>
+          <div class="playlist-item-count">${playlist.tracks.total} tracks • <span class="playlist-item-duration">0 min</span></div>
         </div>
         <div class="playlist-item-actions">
           <button class="playlist-menu-btn" data-playlist-id="${playlist.id}">
