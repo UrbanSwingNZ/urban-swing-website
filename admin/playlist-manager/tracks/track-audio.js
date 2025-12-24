@@ -70,9 +70,19 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
       // Toggle play/pause for current track
       await togglePlayback();
       
-      // Update state in localStorage
-      const isPaused = state.paused;
-      savePlaybackState(trackUri, !isPaused);
+      // Update button icon based on current state
+      const wasPaused = state.paused;
+      if (wasPaused) {
+        // Was paused, now playing
+        button.innerHTML = '<i class="fas fa-pause"></i>';
+        button.classList.add('playing');
+        savePlaybackState(trackUri, true);
+      } else {
+        // Was playing, now paused
+        button.innerHTML = '<i class="fas fa-play"></i>';
+        button.classList.remove('playing');
+        savePlaybackState(trackUri, false);
+      }
       
       return;
     }
@@ -86,20 +96,24 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     const accessToken = spotifyAPI.accessToken;
     await playTrack(trackUri, accessToken);
     
-    // Determine if button is actually a button or the row element (mobile)
-    const row = button.closest('tr') || button;
-    const actualButton = button.classList?.contains('track-play-btn') ? button : row.querySelector('.track-play-btn');
+    // Determine if button is in table row (main view) or modal
+    const row = button.closest('tr');
+    const actualButton = button.classList?.contains('track-play-btn') || button.classList?.contains('search-play-btn') 
+      ? button 
+      : (row ? row.querySelector('.track-play-btn') : button);
     
     // Update UI - remove playing state from previous track
     if (currentPlayingButton && currentPlayingButton !== actualButton) {
-      if (currentPlayingButton.classList?.contains('track-play-btn')) {
+      if (currentPlayingButton.classList?.contains('track-play-btn') || currentPlayingButton.classList?.contains('search-play-btn')) {
         currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
         currentPlayingButton.classList.remove('playing');
       }
-      // Remove playing animation from previous track
-      const prevRow = currentPlayingButton.closest('tr') || currentPlayingButton;
-      const prevColNumber = prevRow.querySelector('.col-number');
-      prevColNumber?.classList.remove('playing');
+      // Remove playing animation from previous track (only in main table view)
+      const prevRow = currentPlayingButton.closest('tr');
+      if (prevRow) {
+        const prevColNumber = prevRow.querySelector('.col-number');
+        prevColNumber?.classList.remove('playing');
+      }
     }
     
     // Update UI - add playing state to current track
@@ -107,12 +121,14 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
       actualButton.innerHTML = '<i class="fas fa-pause"></i>';
       actualButton.classList.add('playing');
     }
-    currentPlayingButton = actualButton || row;
+    currentPlayingButton = actualButton;
     currentPlayingTrackUri = trackUri;
     
-    // Add playing animation to current track
-    const colNumber = row.querySelector('.col-number');
-    colNumber?.classList.add('playing');
+    // Add playing animation to current track (only in main table view)
+    if (row) {
+      const colNumber = row.querySelector('.col-number');
+      colNumber?.classList.add('playing');
+    }
     
     // Save state to localStorage
     savePlaybackState(trackUri, true);
@@ -163,7 +179,7 @@ function playPreviewFallback(button, previewUrl) {
 }
 
 // Stop any playing audio when loading new tracks
-export function stopCurrentAudio() {
+export async function stopCurrentAudio() {
   if (currentPlayingButton) {
     currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
     currentPlayingButton.classList.remove('playing');
@@ -176,8 +192,23 @@ export function stopCurrentAudio() {
     previewAudio = null;
   }
   
+  // Pause Spotify Web Player if it's playing
+  try {
+    const { pausePlayback, isReady } = await import('../spotify-player.js');
+    if (isReady()) {
+      await pausePlayback();
+    }
+  } catch (error) {
+    console.warn('Could not pause Spotify player:', error);
+  }
+  
   // Clear playback state from localStorage
   clearPlaybackState();
+}
+
+// Get currently playing track URI
+export function getCurrentPlayingTrackUri() {
+  return currentPlayingTrackUri;
 }
 
 // Expose to window for import compatibility

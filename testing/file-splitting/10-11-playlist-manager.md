@@ -145,7 +145,7 @@
 - [🟡] **6.14** Confirmation required for delete
 - [✅] **6.15** Track disappears immediately after delete
 - [✅] **6.16** Track count decreases after delete
-- [🔴] **6.17** Duplicate track error shows helpful message
+- [✅] **6.17** Duplicate track error shows helpful message
 - [✅] **6.18** Close destination modal without action cancels
 
 **Modules Tested:** track-actions.js, playlist-display.js (track count update)
@@ -155,23 +155,23 @@
 ### 7. Mobile Track Interactions
 **Flow:** User interacts with tracks on mobile/tablet
 
-- [ ] **7.1** Tap track row to play/pause (if applicable)
-- [ ] **7.2** Swipe left on track shows delete icon
-- [ ] **7.3** Swipe left >100px triggers delete
-- [ ] **7.4** Visual feedback during swipe (transform, background)
-- [ ] **7.5** Swipe right returns track to original position
-- [ ] **7.6** Vertical scrolling doesn't trigger swipe
-- [ ] **7.7** Long-press track (500ms) opens mobile menu
-- [ ] **7.8** Mobile menu shows as bottom sheet overlay
-- [ ] **7.9** Menu shows track name at top
-- [ ] **7.10** Menu shows "Copy to Playlist"
-- [ ] **7.11** Menu shows "Move to Playlist" (if owned)
-- [ ] **7.12** Menu shows "Delete from Playlist"
-- [ ] **7.13** Menu shows "Cancel" button
-- [ ] **7.14** Tap overlay closes menu
-- [ ] **7.15** Cancel button closes menu
-- [ ] **7.16** Menu actions work same as desktop
-- [ ] **7.17** Touch gestures don't conflict with scrolling
+- [🟡]**7.1** Tap track row to play/pause (if applicable)
+- [🟡] **7.2** Swipe left on track shows delete icon
+- [🟡] **7.3** Swipe left >100px triggers delete
+- [🟡] **7.4** Visual feedback during swipe (transform, background)
+- [🟡] **7.5** Swipe right returns track to original position
+- [🟡] **7.6** Vertical scrolling doesn't trigger swipe
+- [🟡] **7.7** Long-press track (500ms) opens mobile menu
+- [🟡] **7.8** Mobile menu shows as bottom sheet overlay
+- [🟡] **7.9** Menu shows track name at top
+- [🟡] **7.10** Menu shows "Copy to Playlist"
+- [🟡] **7.11** Menu shows "Move to Playlist" (if owned)
+- [🟡] **7.12** Menu shows "Delete from Playlist"
+- [🟡] **7.13** Menu shows "Cancel" button
+- [🟡] **7.14** Tap overlay closes menu
+- [🟡] **7.15** Cancel button closes menu
+- [🟡] **7.16** Menu actions work same as desktop
+- [🟡] **7.17** Touch gestures don't conflict with scrolling
 
 **Modules Tested:** track-mobile.js, track-actions.js
 
@@ -180,26 +180,26 @@
 ### 8. Add Tracks Modal
 **Flow:** User searches and adds tracks to playlist
 
-- [ ] **8.1** Click "Add Tracks" button opens modal
-- [ ] **8.2** Modal displays with search box focused
-- [ ] **8.3** Type search query (debounced 300ms)
-- [ ] **8.4** Search results display with album art
-- [ ] **8.5** Results show track name, artist, duration
-- [ ] **8.6** Each result has checkbox for selection
-- [ ] **8.7** Each result has play button
-- [ ] **8.8** Click row toggles checkbox
-- [ ] **8.9** Click checkbox toggles selection
-- [ ] **8.10** Selected tracks move to top of results
-- [ ] **8.11** "Add Tracks" button updates with count (e.g., "Add 3 Tracks")
-- [ ] **8.12** Play button previews track (30-second sample)
+- [✅] **8.1** Click "Add Tracks" button opens modal
+- [✅] **8.2** Modal displays with search box focused
+- [✅] **8.3** Type search query (debounced 300ms)
+- [✅] **8.4** Search results display with album art
+- [✅] **8.5** Results show track name, artist, duration
+- [✅] **8.6** Each result has checkbox for selection
+- [🔴] **8.7** Each result has play button
+- [✅] **8.8** Click row toggles checkbox
+- [✅] **8.9** Click checkbox toggles selection
+- [✅] **8.10** Selected tracks move to top of results
+- [✅] **8.11** "Add Tracks" button updates with count (e.g., "Add 3 Tracks")
+- [🔴] **8.12** Play button previews track (30-second sample)
 - [ ] **8.13** Stop current audio before playing new
-- [ ] **8.14** Click "Add Tracks" adds selected tracks
-- [ ] **8.15** Success message shows after adding
-- [ ] **8.16** Track list refreshes with new tracks
-- [ ] **8.17** Track count increases by number added
-- [ ] **8.18** Modal closes after adding
-- [ ] **8.19** Close modal (X) cancels without adding
-- [ ] **8.20** Modal resets when reopened
+- [✅] **8.14** Click "Add Tracks" adds selected tracks
+- [✅] **8.15** Success message shows after adding
+- [✅] **8.16** Track list refreshes with new tracks
+- [✅] **8.17** Track count increases by number added
+- [✅] **8.18** Modal closes after adding
+- [✅] **8.19** Close modal (X) cancels without adding
+- [✅] **8.20** Modal resets when reopened
 
 **Modules Tested:** track-add-modal.js, track-loader.js (reload), playlist-display.js (track count)
 
