@@ -38,6 +38,10 @@ export async function initializePlayer(accessToken) {
       });
 
       player.addListener('playback_error', ({ message }) => {
+        // Suppress "no list was loaded" errors which are harmless
+        if (message.includes('no list was loaded')) {
+          return;
+        }
         console.error('Playback Error:', message);
       });
 

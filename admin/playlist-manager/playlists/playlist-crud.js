@@ -28,12 +28,22 @@ export function openCreatePlaylistModal() {
     form.reset();
   }
   
+  // Explicitly clear fields to ensure reset
+  const nameField = document.getElementById('new-playlist-name');
+  const descField = document.getElementById('new-playlist-description');
+  const publicCheckbox = document.getElementById('playlist-public');
+  const collaborativeCheckbox = document.getElementById('playlist-collaborative');
+  
+  if (nameField) nameField.value = '';
+  if (descField) descField.value = '';
+  if (publicCheckbox) publicCheckbox.checked = true;
+  if (collaborativeCheckbox) collaborativeCheckbox.checked = false;
+  
   // Show modal
   modal.style.display = 'block';
   
   // Focus on name field
   setTimeout(() => {
-    const nameField = document.getElementById('new-playlist-name');
     if (nameField) {
       nameField.focus();
     }
@@ -202,6 +212,14 @@ export function openRenamePlaylistModal(playlist) {
   setTimeout(() => {
     input.focus();
     input.select();
+    
+    // Add Enter key handler
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleRenamePlaylist();
+      }
+    };
   }, 100);
 }
 
@@ -285,11 +303,34 @@ export async function handleRemovePlaylistFromLibrary() {
   
   const playlistName = playlist.name;
   
-  // Confirm the action
-  if (!confirm(`Remove "${playlistName}" from your library?\n\nThis won't delete the playlist, but it will be removed from your library.`)) {
-    return;
-  }
+  // Create and show remove confirmation modal
+  const removeModal = new ConfirmationModal({
+    title: 'Remove Playlist from Library',
+    message: `
+      <p>Remove this playlist from your library?</p>
+      <div class="student-info-delete">
+        <strong>${playlistName}</strong>
+      </div>
+      <p class="text-muted" style="margin-top: 15px;">This won't delete the playlist, but it will be removed from your library.</p>
+    `,
+    icon: 'fas fa-minus-circle',
+    variant: 'danger',
+    confirmText: 'Remove from Library',
+    confirmClass: 'btn-delete',
+    cancelText: 'Cancel',
+    cancelClass: 'btn-cancel',
+    onConfirm: async () => {
+      await confirmRemovePlaylistFromLibrary(playlist);
+    }
+  });
   
+  removeModal.show();
+}
+
+/**
+ * Execute playlist removal after confirmation
+ */
+async function confirmRemovePlaylistFromLibrary(playlist) {
   showLoading(true);
   
   try {
@@ -315,7 +356,7 @@ export async function handleRemovePlaylistFromLibrary() {
     // Refresh the playlists list
     displayPlaylists(allPlaylists);
     
-    showSnackbar(`Removed "${playlistName}" from your library`);
+    showSnackbar(`Removed "${playlist.name}" from your library`);
   } catch (error) {
     console.error('Error removing playlist from library:', error);
     showError('Failed to remove playlist from library: ' + error.message);
