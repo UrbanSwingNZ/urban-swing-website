@@ -38,6 +38,10 @@ export async function initializePlayer(accessToken) {
       });
 
       player.addListener('playback_error', ({ message }) => {
+        // Suppress "no list was loaded" errors which are harmless
+        if (message.includes('no list was loaded')) {
+          return;
+        }
         console.error('Playback Error:', message);
       });
 
@@ -131,10 +135,15 @@ function updatePlaybackUI(state) {
   const isPaused = state.paused;
 
   // Update all play buttons to reflect current playback state
-  document.querySelectorAll('.track-play-btn').forEach(btn => {
-    const trackUri = btn.closest('tr')?.dataset.trackUri;
+  document.querySelectorAll('.track-play-btn, .search-play-btn').forEach(btn => {
+    // Get track URI from either table row or button dataset
     const row = btn.closest('tr');
+    const trackUri = row?.dataset.trackUri || btn.dataset.trackUri;
     const colNumber = row?.querySelector('.col-number');
+    
+    // For modal buttons, get the animation container
+    const searchResultItem = btn.closest('.search-result-item');
+    const modalAnimation = searchResultItem?.querySelector('.now-playing-animation');
     
     if (trackUri === currentTrack.uri) {
       // This is the currently playing/paused track
@@ -142,16 +151,19 @@ function updatePlaybackUI(state) {
         btn.innerHTML = '<i class="fas fa-play"></i>';
         btn.classList.remove('playing');
         colNumber?.classList.remove('playing');
+        if (modalAnimation) modalAnimation.style.display = 'none';
       } else {
         btn.innerHTML = '<i class="fas fa-pause"></i>';
         btn.classList.add('playing');
         colNumber?.classList.add('playing');
+        if (modalAnimation) modalAnimation.style.display = 'flex';
       }
     } else {
       // Other tracks should show play icon
       btn.innerHTML = '<i class="fas fa-play"></i>';
       btn.classList.remove('playing');
       colNumber?.classList.remove('playing');
+      if (modalAnimation) modalAnimation.style.display = 'none';
     }
   });
 
