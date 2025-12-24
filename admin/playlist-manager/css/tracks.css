@@ -19,7 +19,7 @@
 .tracks-table thead th {
   position: sticky;
   top: 0;
-  background: var(--background-color);
+  background-color: var(--white);
   padding: 15px 10px;
   text-align: left;
   font-weight: 600;
