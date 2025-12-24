@@ -51,7 +51,8 @@ export async function loadTracks(playlistId) {
     const totalMs = currentTracks.reduce((sum, item) => {
       return sum + (item.track?.duration_ms || 0);
     }, 0);
-    document.getElementById('playlist-duration').textContent = formatTotalDuration(totalMs);
+    const formattedDuration = formatTotalDuration(totalMs);
+    document.getElementById('playlist-duration').textContent = formattedDuration;
     
     // Update header track count with actual loaded track count
     const headerTrackCount = document.getElementById('playlist-track-count');
@@ -59,14 +60,14 @@ export async function loadTracks(playlistId) {
       headerTrackCount.textContent = currentTracks.length;
     }
     
-    // Update sidebar track count with actual loaded track count
+    // Update sidebar track count and duration with actual loaded data
     setTimeout(() => {
       // Update desktop sidebar (in playlist list)
       const playlistItem = document.querySelector(`.playlists-list [data-playlist-id="${playlistId}"]`);
       if (playlistItem) {
         const countEl = playlistItem.querySelector('.playlist-item-count');
         if (countEl) {
-          countEl.textContent = `${currentTracks.length} tracks`;
+          countEl.innerHTML = `${currentTracks.length} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
         }
       }
       
@@ -75,7 +76,7 @@ export async function loadTracks(playlistId) {
       if (mobilePlaylistItem) {
         const mobileCountEl = mobilePlaylistItem.querySelector('.playlist-tracks');
         if (mobileCountEl) {
-          mobileCountEl.textContent = `${currentTracks.length} tracks`;
+          mobileCountEl.innerHTML = `${currentTracks.length} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
         }
       }
     }, 100);
