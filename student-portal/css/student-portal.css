@@ -3,7 +3,7 @@
    ======================================== */
 
 /* Import base styles */
-@import url('../../css/base/variables.css');
+@import url('../../styles/base/design-tokens.css');
 @import url('../../styles/base/colors.css');
 
 /* Body with gradient background */
