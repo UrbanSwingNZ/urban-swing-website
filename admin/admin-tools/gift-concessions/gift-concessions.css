@@ -23,7 +23,7 @@
     padding: 16px 20px;
     border-radius: 8px;
     margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(138, 43, 226, 0.2);
+    box-shadow: 0 2px 8px var(--shadow-medium);
 }
 
 .tool-intro p {
@@ -469,7 +469,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 
 .reversed-badge {
     display: inline-block;
-    background: #e53935;
+    background: var(--error-light);
     color: white;
     padding: 2px 8px;
     border-radius: 4px;
@@ -577,7 +577,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     text-align: center;
     color: var(--error-darker);
     padding: 20px;
-    background: rgba(198, 40, 40, 0.05);
+    background: var(--bg-error-light);
     border-radius: 4px;
 }
 
