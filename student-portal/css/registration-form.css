@@ -608,7 +608,7 @@ h1 {
 }
 
 .password-toggle:hover {
-    background: rgba(133, 18, 214, 0.1);
+    background: var(--bg-purple-medium);
 }
 
 .password-toggle:focus {
@@ -682,7 +682,7 @@ h1 {
 
 .btn-secondary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(133, 18, 214, 0.4);
+    box-shadow: 0 6px 20px var(--bg-purple-strong);
 }
 
 .btn-secondary:active {
@@ -692,8 +692,8 @@ h1 {
 .generated-password {
     margin-top: 16px;
     padding: 16px;
-    background: rgba(76, 175, 80, 0.1);
-    border: 2px solid rgba(76, 175, 80, 0.3);
+    background: var(--bg-success-light);
+    border: 2px solid var(--border-success);
     border-radius: 8px;
     animation: slideDown 0.3s ease;
 }
@@ -728,7 +728,7 @@ h1 {
     background: white;
     padding: 12px;
     border-radius: 6px;
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    border: 1px solid var(--border-success);
 }
 
 .generated-password-value {
