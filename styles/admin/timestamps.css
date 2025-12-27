@@ -3,6 +3,8 @@
    Shows created/updated timestamps for admin records
    ======================================== */
 
+@import url('../base/design-tokens.css');
+
 /* Note: colors.css should be imported before this file */
 
 .timestamps {

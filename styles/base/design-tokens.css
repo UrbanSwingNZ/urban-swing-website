@@ -97,4 +97,7 @@
   --z-modal: 500;
   --z-popover: 600;
   --z-tooltip: 700;
+  --z-nav-toggle: 1001;
+  --z-nav-overlay: 1050;
+  --z-nav-drawer: 1100;
 }

@@ -1,4 +1,5 @@
 @import url('../../styles/base/colors.css');
+@import url('../../styles/base/design-tokens.css');
 @import url('../../styles/components/snackbar.css');
 
 /* ========================================
@@ -41,15 +42,15 @@
     align-items: center;
     gap: 12px;
     background: var(--header-overlay-light);
-    padding: 12px 16px;
-    border-radius: 8px;
+    padding: 12px var(--space-sm);
+    border-radius: var(--radius-sm);
     border: 1px solid var(--bg-purple-alt-stronger);
 }
 
 .date-label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-primary);
@@ -68,7 +69,7 @@
 }
 
 .date-input {
-    padding: 8px 40px 8px 12px;
+    padding: var(--space-xs) 40px var(--space-xs) 12px;
     border: 1px solid var(--bg-purple-alt-stronger);
     border-radius: 6px;
     background: var(--header-overlay-light);
@@ -96,14 +97,14 @@
 /* Custom calendar button overlay */
 .calendar-button {
     position: absolute;
-    right: 8px;
+    right: var(--space-xs);
     top: 50%;
     transform: translateY(-50%);
     background: transparent;
     border: none;
     color: var(--purple-primary);
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px var(--space-xs);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -152,7 +153,7 @@
     right: 0;
     background: var(--bg-white);
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     box-shadow: 0 8px 24px var(--shadow-text);
     max-height: 300px;
     overflow-y: auto;
@@ -160,7 +161,7 @@
 }
 
 .search-result-item {
-    padding: 12px 16px;
+    padding: 12px var(--space-sm);
     cursor: pointer;
     transition: background-color 0.2s ease;
     border-bottom: 1px solid var(--border-light);
@@ -192,7 +193,7 @@
 }
 
 .no-results {
-    padding: 16px;
+    padding: var(--space-sm);
     text-align: center;
     color: var(--text-muted);
 }
@@ -203,7 +204,7 @@
 
 .checkins-section {
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 25px;
     box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
@@ -212,7 +213,7 @@
 /* Transactions Section */
 .transactions-section {
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 25px;
     box-shadow: 0 2px 8px var(--shadow-light);
 }
@@ -249,7 +250,7 @@
 /* Table Container */
 .table-container {
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--bg-purple-alt-stronger);
     overflow: hidden;
     box-shadow: 0 2px 8px var(--shadow-light);
@@ -266,7 +267,7 @@
 
 #checkin-transactions-table thead th {
     color: white;
-    padding: 16px;
+    padding: var(--space-sm);
     text-align: left;
     font-weight: 600;
     font-size: 0.95rem;
@@ -291,7 +292,7 @@
 }
 
 #checkin-transactions-table tbody td {
-    padding: 16px;
+    padding: var(--space-sm);
     color: var(--text-primary);
     font-size: 0.95rem;
 }
@@ -312,7 +313,7 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -366,7 +367,7 @@
 .type-badge {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 0.85rem;
     font-weight: 600;
 }
@@ -419,13 +420,13 @@
 
 .accordion-header:hover {
     background-color: var(--bg-purple-alt);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .accordion-header .section-title {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .accordion-icon {
@@ -556,7 +557,7 @@
     background: var(--gradient-blue-purple);
     color: white;
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 0.9rem;
     font-weight: 600;
 }
@@ -565,10 +566,10 @@
     background: #ff9800;
     color: white;
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 0.9rem;
     font-weight: 600;
-    margin-left: 8px;
+    margin-left: var(--space-xs);
 }
 
 /* Empty State */
@@ -598,17 +599,17 @@
 .checkins-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .checkin-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px;
+    padding: var(--space-sm);
     background: var(--bg-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     transition: all 0.2s ease;
 }
 
@@ -619,7 +620,7 @@
 .checkin-info-row {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--space-sm);
     flex: 1;
     cursor: pointer;
 }
@@ -634,7 +635,7 @@
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: var(--space-md);
 }
 
 .checkin-student {
@@ -650,9 +651,9 @@
 .checkin-type {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     padding: 6px 12px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -660,12 +661,12 @@
 
 .checkin-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
     align-items: center;
 }
 
 .checkin-actions .btn-purchase {
-    padding: 8px !important;
+    padding: var(--space-xs) !important;
 }
 
 .btn-icon {
@@ -776,9 +777,9 @@
 }
 
 .student-info-card {
-    padding: 16px;
+    padding: var(--space-sm);
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border-left: 4px solid var(--purple-primary);
     margin-bottom: 20px;
 }
@@ -819,15 +820,15 @@
 .concession-info {
     background: var(--bg-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
     margin-bottom: 20px;
 }
 
 .concession-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     margin-bottom: 12px;
     color: var(--text-primary);
 }
@@ -859,7 +860,7 @@
 .radio-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .radio-option {
@@ -898,7 +899,7 @@
     width: 100%;
     padding: 10px 32px 10px 12px;
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.8rem;
     background: var(--card-bg);
     color: var(--text-primary);
@@ -977,9 +978,9 @@ textarea.form-control {
 /* Purchase Summary */
 .purchase-summary {
     background: var(--bg-white);
-    padding: 16px;
-    border-radius: 8px;
-    margin-top: 16px;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-sm);
 }
 
 .summary-row {
@@ -1005,13 +1006,13 @@ textarea.form-control {
 
 .history-filters {
     display: flex;
-    gap: 20px;
+    gap: var(--space-md);
     flex-wrap: wrap;
     margin-bottom: 20px;
-    padding: 16px;
+    padding: var(--space-sm);
     padding-top: 8px;
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     position: relative;
     z-index: 100;
 }
@@ -1019,7 +1020,7 @@ textarea.form-control {
 .filter-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
     flex: 1;
     min-width: 200px;
     position: relative;
@@ -1044,7 +1045,7 @@ textarea.form-control {
 
 .date-range-inputs {
     display: flex;
-    gap: 16px;
+    gap: var(--space-sm);
     flex-wrap: wrap;
 }
 
@@ -1068,7 +1069,7 @@ textarea.form-control {
     background: var(--card-light);
     border: 1px solid var(--bg-purple-alt-stronger);
     border-top: none;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     max-height: 300px;
     overflow-y: auto;
     z-index: 10000;
@@ -1122,7 +1123,7 @@ textarea.form-control {
 .history-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-xs);
     max-height: 400px;
     overflow-y: auto;
 }
@@ -1167,17 +1168,17 @@ textarea.form-control {
 
 .online-payment-messages {
     margin-top: 16px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
 }
 
 .online-payment-message {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-sm);
     padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-xs);
     font-size: 0.95rem;
 }
 
@@ -1232,7 +1233,7 @@ textarea.form-control {
     background: var(--bg-white);
     border: 1px solid var(--border-light);
     border-radius: 6px;
-    margin-top: 8px;
+    margin-top: var(--space-xs);
     transition: all 0.2s ease;
 }
 
@@ -1261,7 +1262,7 @@ textarea.form-control {
     padding: 6px 16px;
     background: var(--bg-purple-medium);
     color: var(--purple-primary);
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -1314,7 +1315,7 @@ textarea.form-control {
     /* Accordion Header - Stack badges on separate line */
     .section-header .section-title {
         flex-wrap: wrap;
-        gap: 8px;
+        gap: var(--space-xs);
     }
 
     .section-title h2 {
@@ -1326,7 +1327,7 @@ textarea.form-control {
     .crew-count {
         margin-left: 0;
         font-size: 0.85rem;
-        padding: 3px 10px;
+        padding: 3px var(--space-xs);
     }
 
     /* Mobile Card Layout for Check-ins */
@@ -1336,7 +1337,7 @@ textarea.form-control {
         grid-template-rows: auto auto;
         gap: 0.75rem;
         padding: 1rem;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         border: 1px solid var(--bg-purple-alt-stronger);
         border-left: 4px solid var(--purple-primary);
         background: var(--bg-white);
@@ -1394,9 +1395,9 @@ textarea.form-control {
     }
 
     .checkin-type {
-        padding: 4px 10px;
+        padding: 4px var(--space-xs);
         font-size: 0.8rem;
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         font-weight: 600;
         white-space: nowrap;
     }
@@ -1423,11 +1424,11 @@ textarea.form-control {
     /* Action Buttons */
     .checkin-actions .btn-icon {
         display: inline-flex;
-        padding: 0.5rem 0.75rem;
+        padding: var(--space-xs) 0.75rem;
         font-size: 0.85rem;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: var(--space-xs);
         border-radius: 6px;
         flex: 1;
     }
@@ -1453,7 +1454,7 @@ textarea.form-control {
         width: 100%;
         justify-content: space-between;
         box-sizing: border-box;
-        padding: 10px 12px;
+        padding: var(--space-xs) 12px;
     }
 
     .date-input-wrapper {
@@ -1466,7 +1467,7 @@ textarea.form-control {
         width: 100%;
         min-width: 0;
         box-sizing: border-box;
-        padding: 8px 35px 8px 10px;
+        padding: var(--space-xs) 35px var(--space-xs) var(--space-xs);
     }
 
     .date-label {
@@ -1484,7 +1485,7 @@ textarea.form-control {
     .checkin-info {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: var(--space-xs);
     }
 
     .history-filters {
@@ -1521,7 +1522,7 @@ textarea.form-control {
     .history-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: var(--space-xs);
     }
 
     .history-date,
@@ -1531,13 +1532,62 @@ textarea.form-control {
     }
 
     /* Summary Grid Layout - Same as Transactions Page */
+    .transactions-section .summary-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--bg-white);
+        border-radius: var(--radius-sm);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* First row: Total Transactions and Total Amount */
+    .transactions-section .summary-item:nth-child(1),
+    .transactions-section .summary-item:nth-child(2) {
+        grid-column: span 1;
+    }
+
+    /* Second row: Cash, EFTPOS, Online, Bank Transfer */
+    .transactions-section .summary-item:nth-child(3),
+    .transactions-section .summary-item:nth-child(4),
+    .transactions-section .summary-item:nth-child(5),
+    .transactions-section .summary-item:nth-child(6) {
+        grid-column: span 1;
+    }
+
+    /* Left column items - left aligned */
+    .transactions-section .summary-item:nth-child(odd) {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    /* Right column items - right aligned */
+    .transactions-section .summary-item:nth-child(even) {
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .transactions-section .summary-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 12px 16px;
+        background: var(--input-bg);
+        border-radius: 6px;
+        gap: 4px;
+        box-sizing: border-box;
+    }
+
+    /* Summary Grid Layout - Old Pattern */
     .summary-row {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
         padding: 1rem;
         background: var(--bg-white);
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         width: 100%;
         box-sizing: border-box;
     }
@@ -1666,7 +1716,7 @@ textarea.form-control {
         background: var(--bg-white);
         border: 1px solid var(--bg-purple-alt-stronger);
         border-left: 4px solid var(--purple-primary);
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         box-shadow: 0 2px 8px var(--shadow-light);
         transition: all 0.2s ease;
     }
@@ -1806,7 +1856,7 @@ textarea.form-control {
     .checkin-info-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: var(--space-xs);
     }
 
     .checkin-check {

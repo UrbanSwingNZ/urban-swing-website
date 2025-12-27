@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 @import url('../../../styles/components/snackbar.css');
 @import url('../../../styles/components/loading-spinner.css');
 
@@ -40,7 +41,7 @@ body {
 /* Filters Section */
 .filters-container {
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 1.5rem;
     margin-bottom: 2rem;
     border: 1px solid var(--bg-purple-medium);
@@ -143,7 +144,7 @@ select.filter-input:focus {
 
 .clear-student-btn {
     position: absolute;
-    right: 8px;
+    right: var(--space-xs);
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -176,7 +177,7 @@ select.filter-input:focus {
 }
 
 .student-filter-item {
-    padding: 12px;
+    padding: var(--space-sm);
     cursor: pointer;
     transition: background-color 0.2s ease;
     border-bottom: 1px solid var(--border-light);
@@ -231,7 +232,7 @@ select.filter-input:focus {
     bottom: 0;
     background-color: var(--gray-550);
     transition: 0.3s;
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
 }
 
 .toggle-slider:before {
@@ -301,7 +302,7 @@ select.filter-input:focus {
 /* Table Styles - matching student database table */
 .table-container {
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--bg-purple-medium);
     overflow: hidden;
     box-shadow: 0 2px 8px var(--shadow-light);
@@ -324,7 +325,7 @@ select.filter-input:focus {
 }
 
 #transactions-table th {
-    padding: 16px;
+    padding: var(--space-sm);
     text-align: left;
     font-weight: 600;
     font-size: 0.9rem;
@@ -377,7 +378,7 @@ select.filter-input:focus {
 .type-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -457,7 +458,7 @@ select.filter-input:focus {
     align-items: center;
     gap: 0.4rem;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -570,7 +571,7 @@ select.filter-input:focus {
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     background: var(--error);
     color: white;
 }
@@ -805,7 +806,7 @@ select.filter-input:focus {
         gap: 0.75rem;
         padding: 1rem;
         background: var(--bg-white);
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
     }
 
     /* First row: Total Transactions and Total Amount */
@@ -987,7 +988,7 @@ select.filter-input:focus {
             display: block;
             margin-bottom: 1rem;
             border: 1px solid var(--bg-purple-medium);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 1rem;
             background: var(--bg-white);
             position: relative;
@@ -1130,7 +1131,7 @@ select.filter-input:focus {
 
 /* 2. Reduce modal padding to match Student Transaction History */
 #purchase-concessions-modal .modal-body {
-    padding: 24px;
+    padding: var(--space-md);
 }
 
 #purchase-concessions-modal .modal-footer {
@@ -1147,7 +1148,7 @@ select.filter-input:focus {
 #purchase-concessions-modal .student-info-card {
     background: var(--bg-secondary);
     border-left: 4px solid var(--purple-primary);
-    padding: 16px;
+    padding: var(--space-sm);
     border-radius: 6px;
     margin-bottom: 20px;
 }
@@ -1179,8 +1180,8 @@ select.filter-input:focus {
     font-size: 1.1rem;
     background: var(--bg-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
 }
 
 #purchase-concessions-modal .summary-row span {

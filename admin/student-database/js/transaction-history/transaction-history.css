@@ -3,6 +3,8 @@
  * Styles for the transaction history modal
  */
 
+@import url('../../../../styles/base/design-tokens.css');
+
 /* Transaction History Modal */
 #transaction-history-modal .modal-content {
     max-width: 900px;
@@ -15,7 +17,7 @@
 
 /* Student Info Header */
 .transaction-student-info {
-    padding: 20px 24px;
+    padding: 20px var(--space-md);
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-light);
 }
@@ -41,7 +43,7 @@
 
 .transaction-tab {
     flex: 1;
-    padding: 16px 20px;
+    padding: var(--space-sm) 20px;
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
@@ -66,13 +68,13 @@
 }
 
 .transaction-tab i {
-    margin-right: 8px;
+    margin-right: var(--space-xs);
 }
 
 /* Tab Content */
 .transaction-tab-content {
     display: none;
-    padding: 24px;
+    padding: var(--space-md);
     min-height: 300px;
     max-height: 500px;
     overflow-y: auto;
@@ -84,8 +86,8 @@
 
 /* Section Summary */
 .section-summary {
-    margin: 0 0 16px 0;
-    padding: 12px 16px;
+    margin: 0 0 var(--space-sm) 0;
+    padding: 12px var(--space-sm);
     background: var(--bg-secondary);
     border-left: 4px solid var(--purple-primary);
     border-radius: 4px;
@@ -97,14 +99,14 @@
 .attendance-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .attendance-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 12px var(--space-sm);
     background: var(--bg-primary);
     border: 1px solid var(--border-light);
     border-radius: 6px;
@@ -135,14 +137,14 @@
 .payments-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .payment-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: var(--space-sm);
     background: var(--bg-primary);
     border: 1px solid var(--border-light);
     border-radius: 6px;
@@ -157,7 +159,7 @@
 .payment-date-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .payment-date-time {
@@ -219,9 +221,9 @@
 /* Action buttons container */
 .payment-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
     align-items: center;
-    margin-top: 8px;
+    margin-top: var(--space-xs);
 }
 
 /* Edit Transaction Button */
@@ -276,11 +278,11 @@
 .concession-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
     padding: 20px;
     background: var(--gradient-blue-purple);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: white;
 }
 
@@ -303,7 +305,7 @@
 
 /* Concessions Sections */
 .concessions-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-md);
 }
 
 .concessions-section h4 {
@@ -419,7 +421,7 @@
 /* Concession Content Layout */
 .concession-content {
     display: flex;
-    gap: 16px;
+    gap: var(--space-sm);
     align-items: flex-start;
 }
 
@@ -431,7 +433,7 @@
 .concession-details {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
     font-size: 0.9rem;
     color: var(--text-muted);
 }
@@ -448,16 +450,16 @@
 
 /* Concession Actions */
 .concession-actions {
-    margin-top: 8px;
+    margin-top: var(--space-xs);
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
     justify-content: space-between;
     align-items: center;
 }
 
 .concession-actions-left {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .concession-actions-right {
@@ -578,7 +580,7 @@
 
 .concession-notes-input {
     width: 100%;
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--border-light);
     border-radius: 4px;
     font-family: inherit;

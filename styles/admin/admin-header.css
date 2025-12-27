@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('../base/design-tokens.css');
 @import url('../base/buttons.css');
 @import url('admin-header-mobile.css');
 
@@ -104,7 +105,7 @@
 }
 
 .student-selector-inline .student-dropdown {
-  padding: 8px 12px;
+  padding: var(--space-xs) 12px;
   border: 2px solid var(--border-overlay-medium);
   border-radius: 6px;
   font-size: 0.9rem;
@@ -165,8 +166,8 @@
   background: var(--header-overlay-semi);
   color: var(--text-white);
   border: 1px solid var(--border-overlay-medium);
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;

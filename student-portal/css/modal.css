@@ -1,5 +1,7 @@
 /* modal.css - Modal Styling for Student Portal */
 
+@import url('../../styles/base/design-tokens.css');
+
 .modal {
     display: none;
     position: fixed;
@@ -16,7 +18,7 @@
 
 .modal-content {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     max-width: 500px;
     width: 100%;
     max-height: 90vh;
@@ -81,7 +83,7 @@
 .existing-student-item {
     background: rgba(255, 152, 0, 0.05);
     border-left: 3px solid #ff9800;
-    padding: 16px;
+    padding: var(--space-sm);
     border-radius: 6px;
     margin-bottom: 12px;
     display: flex;
@@ -120,7 +122,7 @@
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .modal-footer .btn-continue {

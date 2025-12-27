@@ -1,4 +1,5 @@
 @import url('../styles/base/colors.css');
+@import url('../styles/base/design-tokens.css');
 
 /* ========================================
    ADMIN MODAL & BUTTON STYLES
@@ -13,7 +14,7 @@
     background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -23,7 +24,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
     height: 36px;
     box-sizing: border-box;
     line-height: 1;
@@ -55,7 +56,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
     height: 36px;
     box-sizing: border-box;
     line-height: 1;
@@ -70,7 +71,7 @@
     background: var(--error);
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -80,7 +81,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
     height: 36px;
     box-sizing: border-box;
     line-height: 1;
@@ -96,7 +97,7 @@
     background: var(--success);
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -106,7 +107,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
     height: 36px;
     box-sizing: border-box;
     line-height: 1;
@@ -150,7 +151,7 @@
 
 .modal-content {
     background: var(--card-light);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     max-width: 600px;
     width: 100%;
     max-height: 90vh;
@@ -263,7 +264,7 @@
 .duplicate-list {
     background: rgba(154, 22, 245, 0.05);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 15px;
     margin: 15px 0;
 }
@@ -334,7 +335,7 @@
 
     .timestamps {
         flex-direction: column;
-        gap: 8px;
+        gap: var(--space-xs);
         align-items: flex-start;
     }
 }

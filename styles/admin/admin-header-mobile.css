@@ -3,6 +3,8 @@
    Mobile responsive styles for shared header component
    ======================================== */
 
+@import url('../base/design-tokens.css');
+
 /* Hide mobile hamburger menu on desktop */
 @media (min-width: 769px) {
   .mobile-nav-toggle {
@@ -61,7 +63,7 @@
     grid-row: 1;
     margin-left: 0;
     flex-direction: row;
-    gap: 8px;
+    gap: var(--space-xs);
   }
 
   /* Hide logout button on mobile - it will be in hamburger menu */
@@ -108,8 +110,8 @@
     display: block;
     width: 100%;
     text-align: left;
-    border-radius: 8px;
-    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    padding: 10px var(--space-sm);
     font-size: 0.95rem;
   }
   

@@ -1,4 +1,5 @@
 @import url('../../styles/base/colors.css');
+@import url('../../styles/base/design-tokens.css');
 
 /* My Concessions Page Styles */
 
@@ -19,7 +20,7 @@
 .concessions-header {
     background: white;
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
@@ -38,7 +39,7 @@
 .concession-accordion-header {
     background: white;
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
     cursor: pointer;
     display: flex;
@@ -93,7 +94,7 @@
     background: white;
     border: 1px solid var(--border-color);
     border-left: 4px solid var(--success);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px var(--shadow-light);
 }
@@ -146,8 +147,8 @@
 .concession-info {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-xs);
 }
 
 .concession-info strong {
@@ -167,7 +168,7 @@
 .concession-details span {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .concession-details i {
@@ -183,7 +184,7 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.3rem 0.7rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.8rem;
     font-weight: 600;
     white-space: nowrap;
@@ -209,7 +210,7 @@
     text-align: center;
     padding: 4rem 2rem;
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 

@@ -5,6 +5,7 @@
    ======================================== */
 
 /* Note: colors.css should be imported before this file */
+@import url('../base/design-tokens.css');
 
 .search-box {
   position: relative;
@@ -13,7 +14,7 @@
 
 .search-icon {
   position: absolute;
-  left: 16px;
+  left: var(--space-sm);
   top: 50%;
   transform: translateY(-50%);
   color: var(--purple-primary);
@@ -23,9 +24,9 @@
 
 .search-input {
   width: 100%;
-  padding: 8px 45px 8px 48px;
+  padding: var(--space-xs) 45px var(--space-xs) 48px;
   border: 2px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.95rem;
   background: var(--card-bg);
   color: var(--text-primary);
@@ -46,14 +47,14 @@
 
 .clear-search {
   position: absolute;
-  right: 12px;
+  right: var(--space-xs);
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-xs);
   border-radius: 4px;
   transition: all 0.2s ease;
   display: flex;
@@ -67,7 +68,7 @@
 }
 
 .search-results-info {
-  margin-top: 12px;
+  margin-top: var(--space-xs);
   font-size: 0.9rem;
   color: var(--text-muted);
 }

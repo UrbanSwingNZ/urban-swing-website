@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 
 /* ========================================
    PLAYLIST HEADER STYLES
@@ -29,7 +30,7 @@
 .playlist-cover {
   width: 150px;
   height: 150px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   object-fit: cover;
   box-shadow: 0 8px 24px var(--shadow-medium);
   flex-shrink: 0;
@@ -118,7 +119,7 @@
   
   .playlist-actions-row {
     width: 100%;
-    gap: 8px;
+    gap: var(--space-xs);
     margin-top: 10px;
     justify-content: flex-start;
   }

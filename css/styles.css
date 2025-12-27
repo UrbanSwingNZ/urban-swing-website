@@ -1,5 +1,6 @@
 /* Import color system */
 @import url('../styles/base/colors.css');
+@import url('../styles/base/design-tokens.css');
 
 /* Set light mode as the default */
 :root {
@@ -32,7 +33,7 @@
   justify-content: center; /* Center the icons horizontally */
   gap: 50px; /* Spacing between the icons */
   margin-top: 10px; /* Space between the menu and icons */
-  margin-bottom: 20px;
+  margin-bottom: var(--space-md);
 }
 
 /* Individual Icon Styles */
