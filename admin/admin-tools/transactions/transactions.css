@@ -47,16 +47,8 @@ body {
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
-/* Filter Labels Row */
-.filters-labels-row {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-/* Filter Controls Row */
-.filters-controls-row {
+/* Filters Grid - Desktop layout */
+.filters-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
@@ -749,28 +741,12 @@ select.filter-input:focus {
         margin-right: 0;
     }
 
-    .filters-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+    /* Stack filters vertically on mobile with labels above fields */
+    .filters-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
         width: 100%;
-        box-sizing: border-box;
-    }
-    
-    /* From and To dates - side by side on first row */
-    .filter-group:nth-child(1),
-    .filter-group:nth-child(2) {
-        grid-column: span 1;
-    }
-    
-    /* Type dropdown - full width on second row */
-    .filter-group:nth-child(3) {
-        grid-column: span 2;
-    }
-    
-    /* Student search - full width on third row */
-    .filter-group:nth-child(4) {
-        grid-column: span 2;
     }
     
     .filter-group {
@@ -778,6 +754,7 @@ select.filter-input:focus {
         min-width: auto;
         box-sizing: border-box;
         max-width: 100%;
+        gap: 0.25rem;
     }
 
     .filter-group input,
@@ -799,39 +776,20 @@ select.filter-input:focus {
         max-width: 100%;
     }
     
-    .filter-actions {
-        grid-column: span 2;
-        width: 100%;
-        margin-left: 0;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        box-sizing: border-box;
+    .filters-actions-row {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
     }
     
-    /* Apply Filters button - full width on first row */
-    .filter-actions #apply-filters-btn {
-        grid-column: span 2;
+    .filters-actions-row button {
         width: 100%;
-        box-sizing: border-box;
     }
     
-    /* Reset button and Show Reversed toggle - side by side on second row */
-    .filter-actions #reset-filters-btn {
-        grid-column: span 1;
+    .filters-actions-row .toggle-group {
         width: 100%;
-        box-sizing: border-box;
-    }
-    
-    .filter-actions .toggle-group {
-        grid-column: span 1;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-sizing: border-box;
-        width: 100%;
-        max-width: 100%;
+        justify-content: center;
     }
 
     .toggle-label {
@@ -867,12 +825,32 @@ select.filter-input:focus {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: flex-start;
         padding: 12px 16px;
         background: var(--input-bg);
         border-radius: 6px;
         gap: 4px;
+    }
+
+    /* Left column items - left aligned */
+    .summary-item:nth-child(odd) {
+        align-items: flex-start;
         text-align: left;
+    }
+
+    .summary-item:nth-child(odd) .summary-label,
+    .summary-item:nth-child(odd) .summary-value {
+        text-align: left;
+    }
+
+    /* Right column items - right aligned */
+    .summary-item:nth-child(even) {
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .summary-item:nth-child(even) .summary-label,
+    .summary-item:nth-child(even) .summary-value {
+        text-align: right;
     }
 
     .summary-label {
@@ -880,7 +858,6 @@ select.filter-input:focus {
         color: var(--text-primary);
         font-weight: 600;
         margin: 0;
-        text-align: left;
         width: 100%;
     }
 
@@ -889,7 +866,6 @@ select.filter-input:focus {
         font-weight: 700;
         color: var(--purple-primary);
         margin: 0;
-        text-align: left;
         width: 100%;
     }
 
@@ -1054,16 +1030,8 @@ select.filter-input:focus {
             color: var(--text-primary);
         }
 
-        /* Type Badge - Row 2 Left (under date) */
-        #transactions-table td:nth-child(2) {
-            grid-column: 1;
-            grid-row: 2;
-            text-align: left;
-            justify-self: start;
-        }
-
         /* Student Name - Top Right */
-        #transactions-table td:nth-child(3) {
+        #transactions-table td:nth-child(2) {
             grid-column: 2;
             grid-row: 1;
             font-size: 0.95rem;
@@ -1072,92 +1040,44 @@ select.filter-input:focus {
             justify-self: end;
         }
 
-        /* Amount - Row 2 Right */
+        /* Type Badge - Row 2 Left (under date) */
+        #transactions-table td:nth-child(3) {
+            grid-column: 1;
+            grid-row: 2;
+            text-align: left;
+            justify-self: start;
+        }
+
+        /* Date of Prepaid Class - Hide on mobile */
         #transactions-table td:nth-child(4) {
+            display: none;
+        }
+
+        /* Amount - Row 2 Right */
+        #transactions-table td:nth-child(5) {
             grid-column: 2;
             grid-row: 2;
             text-align: right;
             justify-self: end;
         }
 
-        /* Cash (5th child) - Show as payment method in row 3 when not empty */
-        #transactions-table td:nth-child(5):not(.empty) {
+        /* Payment Method Badge - Row 3 Right */
+        #transactions-table td:nth-child(6) {
             grid-column: 2;
             grid-row: 3;
             text-align: right;
             justify-self: end;
-            font-size: 0.85rem;
-            color: var(--text-light);
-            font-size: 0;
-        }
-
-        #transactions-table td:nth-child(5):not(.empty)::before {
-            content: 'Cash';
-            font-size: 0.85rem;
-            opacity: 0.7;
-        }
-
-        /* Hide empty Cash cells */
-        #transactions-table td:nth-child(5).empty {
-            display: none !important;
-        }
-
-        /* EFTPOS (6th child) - Show as payment method in row 3 when not empty */
-        #transactions-table td:nth-child(6):not(.empty) {
-            grid-column: 2;
-            grid-row: 3;
-            text-align: right;
-            justify-self: end;
-            font-size: 0;
-        }
-
-        #transactions-table td:nth-child(6):not(.empty)::before {
-            content: 'EFTPOS';
-            font-size: 0.85rem;
-            color: var(--text-light);
-            opacity: 0.7;
-        }
-
-        /* Hide empty EFTPOS cells */
-        #transactions-table td:nth-child(6).empty {
-            display: none !important;
-        }
-
-        /* Bank Transfer (7th child) - Show as payment method in row 3 when not empty */
-        #transactions-table td:nth-child(7):not(.empty) {
-            grid-column: 2;
-            grid-row: 3;
-            text-align: right;
-            justify-self: end;
-            font-size: 0;
-        }
-
-        #transactions-table td:nth-child(7):not(.empty)::before {
-            content: 'Bank Transfer';
-            font-size: 0.85rem;
-            color: var(--text-light);
-            opacity: 0.7;
-        }
-
-        /* Hide empty Bank Transfer cells */
-        #transactions-table td:nth-child(7).empty {
-            display: none !important;
         }
 
         /* Action Buttons - Row 4 spanning both columns */
-        #transactions-table td:nth-child(8) {
+        #transactions-table td:nth-child(7) {
             grid-column: 1 / -1;
             grid-row: 4;
             align-self: start;
         }
 
         /* Add labels before values on mobile */
-        #transactions-table td:nth-child(1)::before {
-            content: '';
-            display: none;
-        }
-
-        #transactions-table td:nth-child(3)::before {
+        #transactions-table td:nth-child(2)::before {
             content: '';
             display: block;
             font-size: 0.75rem;
@@ -1167,7 +1087,7 @@ select.filter-input:focus {
             margin-bottom: 2px;
         }
 
-        #transactions-table td:nth-child(4)::before {
+        #transactions-table td:nth-child(5)::before {
             content: 'Amount';
             display: block;
             font-size: 0.75rem;

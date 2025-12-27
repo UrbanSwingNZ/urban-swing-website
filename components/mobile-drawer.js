@@ -158,12 +158,10 @@ class MobileDrawer {
             if (normalizedItemHref === '' || normalizedItemHref === '/') {
                 isCurrentPage = normalizedCurrentPath === '' || normalizedCurrentPath === '/' || normalizedCurrentPath === '/index.html';
             } else {
-                // For other pages
+                // For other pages - use exact matching only, no startsWith to avoid parent path false positives
                 isCurrentPage = normalizedCurrentPath === normalizedItemHref || 
                                 normalizedCurrentPath === normalizedItemHref + '/index.html' ||
-                                normalizedItemHref === normalizedCurrentPath + '/index.html' ||
-                                normalizedCurrentPath.startsWith(normalizedItemHref + '/') ||
-                                (item.dataPage && currentPath.includes(item.dataPage));
+                                normalizedItemHref === normalizedCurrentPath + '/index.html';
             }
             
             if (isCurrentPage) {
