@@ -77,7 +77,7 @@
     color: white;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
 }
 
 .orders-table th {

@@ -20,7 +20,7 @@
   align-items: center;
   gap: var(--space-xs);
   box-shadow: 0 4px 12px var(--shadow-text);
-  z-index: 10000;
+  z-index: var(--z-notification);
   transition: bottom 0.3s ease;
   min-width: 300px;
   max-width: 500px;

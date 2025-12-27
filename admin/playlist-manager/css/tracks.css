@@ -29,7 +29,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 2px solid var(--gray-450);
-  z-index: 10;
+  z-index: calc(var(--z-base) + 9);
 }
 
 .tracks-table tbody tr {
@@ -428,7 +428,7 @@
   border: 1px solid var(--gray-450);
   border-radius: 6px;
   box-shadow: 0 4px 12px var(--shadow-medium);
-  z-index: 2000;
+  z-index: var(--z-popover);
   min-width: 160px;
   opacity: 0;
   transform: translateY(-10px);
@@ -492,7 +492,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 9999;
+  z-index: var(--z-modal-high);
   animation: fadeIn 0.2s ease;
 }
 
@@ -597,7 +597,7 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.1s ease;
-  z-index: 10;
+  z-index: calc(var(--z-base) + 9);
 }
 
 .swipe-delete-icon i {

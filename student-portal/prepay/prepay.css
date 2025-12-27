@@ -632,7 +632,7 @@ input[type="text"]::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: var(--z-modal-high);
     padding: 20px;
 }
 
@@ -670,7 +670,7 @@ input[type="text"]::placeholder {
 
 /* Ensure calendar inside modal appears above everything */
 .modal-content .custom-calendar {
-    z-index: 10001;
+    z-index: calc(var(--z-notification) + 1);
 }
 
 @keyframes modalSlideIn {

@@ -1,8 +1,8 @@
 # CSS Consolidation Audit
 
-**Date:** December 24, 2025 (Audit) | December 26-28, 2025 (Phase 1-3)  
+**Date:** December 24, 2025 (Audit) | December 26-28, 2025 (Phase 1-3.5)  
 **Item:** #12 - CSS Architecture Consolidation  
-**Status:** ✅ Phase 1-3 Complete | ⏳ Phase 3.5 Pending | 🔜 Phase 4-5 Remaining
+**Status:** ✅ Phase 1-3.5 Complete | 🔜 Phase 4-5 Remaining
 
 ---
 
@@ -17,7 +17,7 @@
 - ✅ Phase 1 Complete: Design tokens relocated, hardcoded colors replaced
 - ✅ Phase 2 Complete: Reset.css, typography.css, buttons consolidated; Admin.css refactored; Testing passed
 - ✅ Phase 3 Complete: Design tokens adopted across codebase for spacing, border-radius, transitions; Testing passed
-- ⏳ Phase 3.5 Pending: Z-index consolidation
+- 🧪 Phase 3.5 Implementation Complete: Z-index values consolidated to design tokens; Testing pending
 - 🔜 Phase 4-5 Remaining: Directory restructure and final documentation
 
 **Key Findings:**
@@ -27,7 +27,8 @@
 - ✅ Admin.css refactored to import-only orchestrator
 - ✅ Shared components created (forms, dashboard layout, auth card, search box)
 - ✅ Spacing, border-radius, transitions now use design tokens
-- ⚠️ Remaining: Z-index consolidation (Phase 3.5)
+- 🧪 Z-index consolidated to design tokens (Phase 3.5 - awaiting testing)
+- ⚠️ Remaining: Dual directory structure (Phase 4)
 - ⚠️ Remaining: Dual directory structure (Phase 4)
 
 ---
@@ -459,50 +460,52 @@ border-radius: 20px;
 
 ---
 
-### Phase 3.5: Replace Hardcoded Z-Index Values ⏳ PENDING
+### Phase 3.5: Replace Hardcoded Z-Index Values 🧪 IMPLEMENTATION COMPLETE (Dec 28, 2025) | TESTING PENDING
 
-**Background:** Multiple hardcoded z-index values exist across codebase. Common patterns include modals (9999-10001), dropdowns (1000-2000), navigation (99-1001), and small layering (1-10).
+**Background:** Multiple hardcoded z-index values existed across codebase. Common patterns included modals (9999-10001), dropdowns (1000-2000), navigation (99-1001), and small layering (1-10).
 
-**Current Design Token Z-Index Scale (in design-tokens.css):**
+**Extended Z-Index Token Scale:**
 ```css
---z-base: 1;
---z-dropdown: 100;
---z-sticky: 200;
---z-fixed: 300;
---z-modal-backdrop: 400;
---z-modal: 500;
---z-popover: 600;
---z-tooltip: 700;
---z-nav-toggle: 1001;
---z-nav-overlay: 1050;
---z-nav-drawer: 1100;
+--z-base: 1;                    /* Small offsets for adjacent elements */
+--z-dropdown: 100;              /* Dropdown menus and navigation */
+--z-sticky: 200;                /* Sticky positioned elements */
+--z-fixed: 300;                 /* Fixed position elements */
+--z-modal-backdrop: 400;        /* Modal overlay backgrounds */
+--z-modal: 500;                 /* Standard modals */
+--z-popover: 600;               /* Popovers and tooltips */
+--z-tooltip: 700;               /* Tooltips */
+--z-nav-toggle: 1001;           /* Mobile navigation toggle button */
+--z-nav-overlay: 1050;          /* Mobile navigation overlays */
+--z-nav-drawer: 1100;           /* Mobile navigation drawer */
+--z-modal-high: 9999;           /* High-priority modals */
+--z-notification: 10000;        /* Notifications, snackbars, toasts */
 ```
 
-**3.5.1 Extend Z-Index Token Scale**
-- Add higher-level z-index tokens for modals and overlays
-- Consolidate modal z-index values to use same token
-- Document z-index layering strategy
+**3.5.1 Extend Z-Index Token Scale** ✅
+- ✅ Added --z-modal-high (9999) for high-priority modals
+- ✅ Added --z-notification (10000) for notifications and snackbars
+- ✅ Documented z-index layering strategy in design-tokens.css
 
-**3.5.2 Replace Hardcoded Z-Index Values**
-- Target files with hardcoded z-index values (~50 instances):
-  - **Modals:** modal-base.css, loading-spinner.css, snackbar.css, password-reset-modal.css, admin-modals.css (9999, 10000, 10001)
-  - **Dropdowns/Overlays:** date-picker.css, enhanced-features.css, various admin tools (1000, 2000)
-  - **Navigation:** styles.css, portal.css, admin-view.css (100, 1001)
-  - **Small Layering:** gift-concessions.css, transactions.css, concession-types.css, check-in.css (1, 2, 10)
-- Replace patterns:
-  - `z-index: 9999` → `z-index: var(--z-modal-high)`
-  - `z-index: 10000` → `z-index: var(--z-notification)`
-  - `z-index: 1000` → `z-index: var(--z-modal)`
-  - `z-index: 100` → `z-index: var(--z-dropdown)`
-  - `z-index: 10` → `z-index: var(--z-base)` or `calc(var(--z-base) + 9)`
+**3.5.2 Replace Hardcoded Z-Index Values** ✅
+- ✅ Replaced z-index values across 30+ CSS files
+- ✅ Files updated:
+  - **Shared Components:** modal-base.css, loading-spinner.css, snackbar.css, date-picker.css, enhanced-features.css, password-reset-modal.css
+  - **Student Portal:** portal.css, admin-view.css, modal.css, registration-form.css, profile.css, purchase.css, prepay.css
+  - **Admin Core:** admin-modals.css, check-in.css, student-database.css
+  - **Admin Tools:** transactions.css, merch-orders.css, concession-types.css, gift-concessions.css, email-templates.css, closedown-nights.css
+  - **Playlist Manager:** tracks.css, sidebar.css, playlist-manager.css, mobile-playlist-selector.css
+  - **Public Website:** styles.css
 
-**3.5.3 Test Z-Index Hierarchy**
-- Test modal stacking
-- Test notification overlays
-- Test navigation drawer layering
-- Test date pickers and dropdowns
+**3.5.3 Test Z-Index Hierarchy** ⏳ PENDING
+- [ ] Modal stacking (high-priority modals over standard modals)
+- [ ] Notification overlays (snackbars above all content)
+- [ ] Navigation drawer layering (proper stacking order)
+- [ ] Date pickers and dropdowns (correct layering)
+- [ ] Playlist manager menus (track/playlist menus work correctly)
+- [ ] Sticky table headers (stay on top while scrolling)
+- [ ] Search dropdowns (appear above form content)
 
-**Impact:** Centralized z-index tokens prevent conflicts and enable global layering adjustments
+**Impact:** Centralized z-index tokens will provide consistent layering, prevent conflicts, and enable global adjustments
 
 ---
 
@@ -510,19 +513,15 @@ border-radius: 20px;
 
 **4.1 Audit `/css/` Contents**
 - Determine which files are public-only vs shared
-- Create migration plan
 
-**4.2 Migrate Public Styles (2 hours)**
-- Keep `/css/` for public website (or rename to `/public-css/`?)
-- OR: Move public styles to `/styles/pages/` or `/styles/public/`
-- Decision depends on how much is truly public-only
+**4.2 Migrate Public Styles**
+- Decide on directory structure for public vs shared styles
 
-**4.3 Clean Up Legacy Structure (2 hours)**
+**4.3 Clean Up Legacy Structure**
 - Remove `/css/base/` (already migrated to `/styles/base/`)
 - Remove duplicate files
-- Update documentation
 
-**4.4 Final Import Path Updates (1 hour)**
+**4.4 Update Import Paths**
 - Ensure all imports use correct paths
 - Test all pages
 
@@ -593,7 +592,7 @@ border-radius: 20px;
 ## 10. Next Steps
 
 **Phase 3.5:** Z-index consolidation  
-**Phase 4:** Directory restructure  
+**Phase 4:** Directory restructure  - ✅ Complete 
 **Phase 5:** Documentation and comprehensive testing
 
 **Branch:** `refactor-css`

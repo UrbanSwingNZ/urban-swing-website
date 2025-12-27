@@ -363,7 +363,7 @@ nav {
     position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 1001;
+    z-index: var(--z-nav-toggle);
   }
 
   #public-mobile-nav-toggle span {

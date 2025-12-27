@@ -92,7 +92,7 @@
     cursor: grab;
     padding: 5px;
     transition: all 0.2s ease;
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
 .drag-handle:hover {
@@ -115,7 +115,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-xs);
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
 }
 
 .status-label {

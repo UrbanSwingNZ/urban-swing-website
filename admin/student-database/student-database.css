@@ -111,7 +111,7 @@
     color: white;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
 }
 
 .students-table th {
@@ -1450,7 +1450,7 @@ textarea:focus {
     align-items: center;
     gap: 12px;
     box-shadow: 0 4px 12px var(--shadow-text);
-    z-index: 10000;
+    z-index: var(--z-notification);
     transition: bottom 0.3s ease;
     min-width: 300px;
     max-width: 500px;

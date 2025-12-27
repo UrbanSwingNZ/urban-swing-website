@@ -172,7 +172,7 @@ select.filter-input:focus {
     border-radius: 6px;
     max-height: 300px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: var(--z-modal);
     box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
@@ -321,7 +321,7 @@ select.filter-input:focus {
     color: white;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
 }
 
 #transactions-table th {

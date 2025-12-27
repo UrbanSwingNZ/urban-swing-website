@@ -66,6 +66,9 @@ function initializePage() {
     if (typeof initializeCasualEntryModal === 'function') {
         initializeCasualEntryModal();
     }
+    if (typeof initializeAddConcessionModal === 'function') {
+        initializeAddConcessionModal();
+    }
     
     // Initialize student filter
     if (typeof initializeStudentFilter === 'function') {
