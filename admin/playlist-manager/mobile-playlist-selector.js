@@ -3,6 +3,8 @@
    Handles the mobile playlist dropdown functionality
    ======================================== */
 
+import { formatTotalDuration } from './tracks/track-utils.js';
+
 export function initMobilePlaylistSelector() {
   const mobileBtn = document.getElementById('mobile-playlist-btn');
   const mobileOverlay = document.getElementById('mobile-playlist-overlay');
@@ -110,12 +112,16 @@ export function populateMobilePlaylistList(playlists, selectedPlaylistId) {
       ? playlist.images[0].url 
       : '../../images/urban-swing-logo-glow-black-circle.png';
 
+    const formattedDuration = playlist.calculatedDuration 
+      ? formatTotalDuration(playlist.calculatedDuration)
+      : '0 min';
+
     li.innerHTML = `
       <a href="#" data-playlist-id="${playlist.id}">
         <img src="${imageUrl}" alt="${playlist.name}">
         <div class="playlist-info">
           <p class="playlist-name">${playlist.name}</p>
-          <p class="playlist-tracks">${playlist.tracks?.total || 0} tracks</p>
+          <p class="playlist-tracks">${playlist.tracks?.total || 0} tracks • ${formattedDuration}</p>
         </div>
       </a>
     `;
