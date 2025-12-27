@@ -66,6 +66,12 @@
   display: flex;
   align-items: center;
   letter-spacing: 1px;
+  /* Override typography.css h1 gradient on gradient background */
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
+  text-align: left;
 }
 
 /* User Info Section */
@@ -149,6 +155,9 @@
 .back-button:hover {
   background: var(--header-overlay-strong);
   transform: scale(1.1);
+  /* Override typography.css link hover color */
+  color: var(--text-white);
+  text-decoration: none;
 }
 
 /* Logout Button */

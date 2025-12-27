@@ -8,8 +8,8 @@
 
 /* Base Styles */
 @import url('../styles/base/design-tokens.css');
-@import url('base/reset.css');
-@import url('base/typography.css');
+@import url('../styles/base/reset.css');
+@import url('../styles/base/typography.css');
 @import url('/styles/base/colors.css');
 @import url('/styles/base/buttons.css');
 
