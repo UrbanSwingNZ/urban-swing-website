@@ -81,6 +81,10 @@
     transform: translateY(-1px);
 }
 
+.btn-add-package:hover i {
+    color: white;
+}
+
 /* Prevent label from triggering button hover */
 .form-group label:has(.btn-add-package) {
     pointer-events: none; /* Disable pointer events on label */

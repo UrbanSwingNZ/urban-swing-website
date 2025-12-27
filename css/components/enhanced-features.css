@@ -27,7 +27,7 @@
   font-size: 1.2em;
   box-shadow: var(--shadow-lg);
   transition: all 0.3s ease;
-  z-index: 999;
+  z-index: var(--z-fixed);
   opacity: 1;
   transform: translateY(0);
 }
@@ -122,7 +122,7 @@
   border: none;
   cursor: pointer;
   padding: var(--space-sm);
-  z-index: 1001;
+  z-index: var(--z-nav-toggle);
   position: relative;
 }
 
@@ -164,7 +164,7 @@
     box-shadow: var(--shadow-xl);
     transform: translateX(100%);
     transition: transform var(--transition-normal);
-    z-index: 1000;
+    z-index: var(--z-nav-overlay);
   }
   
   .nav-buttons.mobile-open {
@@ -251,7 +251,7 @@ img.loaded {
   border-radius: var(--radius-md);
   text-decoration: none;
   font-weight: 600;
-  z-index: 10000;
+  z-index: var(--z-notification);
   transition: top var(--transition-fast);
   box-shadow: var(--shadow-lg);
 }
@@ -407,7 +407,7 @@ a:focus-visible {
   opacity: 0;
   pointer-events: none;
   transition: all var(--transition-fast);
-  z-index: 1000;
+  z-index: var(--z-modal);
 }
 
 [data-tooltip]::after {

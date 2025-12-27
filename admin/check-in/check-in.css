@@ -111,7 +111,7 @@
     border-radius: 4px;
     transition: all 0.2s ease;
     pointer-events: none;
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
 .calendar-button i {
@@ -126,7 +126,7 @@
     height: 100%;
     cursor: pointer;
     opacity: 0;
-    z-index: 2;
+    z-index: calc(var(--z-base) + 1);
 }
 
 /* Firefox date picker */
@@ -157,7 +157,7 @@
     box-shadow: 0 8px 24px var(--shadow-text);
     max-height: 300px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: var(--z-modal);
 }
 
 .search-result-item {
@@ -939,7 +939,7 @@ textarea.form-control {
 .search-input-wrapper .form-control {
     padding-right: 40px;
     position: relative;
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
 .clear-search-btn {
@@ -954,7 +954,7 @@ textarea.form-control {
     padding: 4px 8px;
     line-height: 1;
     transition: color 0.2s ease;
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
     height: 24px;
     display: flex;
     align-items: center;
@@ -1014,7 +1014,7 @@ textarea.form-control {
     background: var(--bg-white);
     border-radius: var(--radius-sm);
     position: relative;
-    z-index: 100;
+    z-index: var(--z-dropdown);
 }
 
 .filter-group {
@@ -1024,7 +1024,7 @@ textarea.form-control {
     flex: 1;
     min-width: 200px;
     position: relative;
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
 }
 
 .filter-group label {
@@ -1057,7 +1057,7 @@ textarea.form-control {
 .student-search-wrapper {
     position: relative;
     width: 100%;
-    z-index: 100;
+    z-index: var(--z-dropdown);
 }
 
 .student-search-wrapper .form-control {
@@ -1072,7 +1072,7 @@ textarea.form-control {
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     max-height: 300px;
     overflow-y: auto;
-    z-index: 10000;
+    z-index: var(--z-notification);
     box-shadow: 0 4px 6px var(--bg-overlay-dark);
 }
 
@@ -1111,7 +1111,7 @@ textarea.form-control {
 .history-results {
     margin-top: 20px;
     position: relative;
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
 .results-count {
