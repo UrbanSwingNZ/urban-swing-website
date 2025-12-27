@@ -71,12 +71,22 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    pointer-events: auto; /* Ensure button responds to its own hovers only */
 }
 
 .btn-add-package:hover {
     background: var(--purple-primary);
     color: white;
     transform: translateY(-1px);
+}
+
+/* Prevent label from triggering button hover */
+.form-group label:has(.btn-add-package) {
+    pointer-events: none; /* Disable pointer events on label */
+}
+
+.form-group label:has(.btn-add-package) .btn-add-package {
+    pointer-events: auto; /* Re-enable ONLY on button */
 }
 
 .btn-add-package i {

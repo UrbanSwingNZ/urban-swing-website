@@ -1,0 +1,36 @@
+/* ========================================
+   TIMESTAMP DISPLAY COMPONENT
+   Shows created/updated timestamps for admin records
+   ======================================== */
+
+/* Note: colors.css should be imported before this file */
+
+.timestamps {
+  display: flex;
+  gap: 20px;
+  padding: 15px 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.8rem;
+  opacity: 0.6;
+  flex-wrap: wrap;
+}
+
+.timestamp-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timestamp-item i {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.timestamp-label {
+  font-weight: 500;
+}
+
+.timestamp-item span:last-child {
+  color: var(--text-primary);
+}

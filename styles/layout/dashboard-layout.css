@@ -1,0 +1,93 @@
+/* ========================================
+   DASHBOARD LAYOUT
+   Shared dashboard structure for admin and student portal
+   ======================================== */
+
+/* Note: colors.css should be imported before this file */
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+.dashboard-main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.dashboard-welcome {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-welcome h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  background: var(--gradient-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-welcome p {
+  color: var(--gray-650);
+  font-size: 1.1rem;
+}
+
+.dashboard-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.dashboard-info {
+  background: var(--bg-blue-light);
+  border-left: 4px solid var(--blue-primary);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.dashboard-info i {
+  margin-right: 8px;
+  color: var(--blue-primary);
+}
+
+/* Footer */
+.admin-footer {
+  background: var(--white);
+  padding: 20px;
+  text-align: center;
+  color: var(--gray-650);
+  border-top: 1px solid var(--border-light);
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .dashboard-tiles {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dashboard-welcome h2 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-main {
+    padding: 30px 15px;
+  }
+}

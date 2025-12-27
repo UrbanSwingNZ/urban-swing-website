@@ -85,6 +85,60 @@
 }
 
 /* ========================================
+   TILE LINK BEHAVIOR
+   Override typography.css link styles for tiles
+   ======================================== */
+
+/* Remove underline from tile links */
+a.tile-gradient,
+a .tile-icon-content h3,
+a .tile-icon-content p {
+  text-decoration: none;
+}
+
+a.tile-gradient:hover,
+a.tile-gradient:hover h3,
+a.tile-gradient:hover p {
+  text-decoration: none;
+}
+
+/* ========================================
+   DASHBOARD TILES
+   Full tile/card component for dashboard pages
+   ======================================== */
+
+.dashboard-tile {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 10px 30px var(--shadow-medium);
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dashboard-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px var(--shadow-medium);
+  text-decoration: none;
+}
+
+.dashboard-tile h3 {
+  margin-bottom: 15px;
+  color: var(--text-primary);
+}
+
+.dashboard-tile p {
+  color: var(--gray-650);
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+/* ========================================
    MOBILE RESPONSIVE
    ======================================== */
 
@@ -97,5 +151,9 @@
   
   .tile-icon-image {
     margin: 0 auto;
+  }
+
+  .dashboard-tile {
+    padding: 30px 20px;
   }
 }
