@@ -62,6 +62,12 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     // Import player module
     const { playTrack, togglePlayback, getCurrentState, isReady } = await import('../spotify-player.js');
     
+    // Determine the actual button element FIRST (in case button is actually a row on mobile)
+    const row = button.closest('tr') || (button.tagName === 'TR' ? button : null);
+    const actualButton = button.classList?.contains('track-play-btn') || button.classList?.contains('search-play-btn') 
+      ? button 
+      : (row ? row.querySelector('.track-play-btn') : button);
+    
     // Check if this is the currently playing track
     const state = await getCurrentState();
     const isCurrentTrack = state && state.track_window?.current_track?.uri === trackUri;
@@ -74,13 +80,13 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
       const wasPaused = state.paused;
       if (wasPaused) {
         // Was paused, now playing
-        button.innerHTML = '<i class="fas fa-pause"></i>';
-        button.classList.add('playing');
+        actualButton.innerHTML = '<i class="fas fa-pause"></i>';
+        actualButton.classList.add('playing');
         savePlaybackState(trackUri, true);
       } else {
         // Was playing, now paused
-        button.innerHTML = '<i class="fas fa-play"></i>';
-        button.classList.remove('playing');
+        actualButton.innerHTML = '<i class="fas fa-play"></i>';
+        actualButton.classList.remove('playing');
         savePlaybackState(trackUri, false);
       }
       
@@ -95,12 +101,6 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     // Play new track
     const accessToken = spotifyAPI.accessToken;
     await playTrack(trackUri, accessToken);
-    
-    // Determine if button is in table row (main view) or modal
-    const row = button.closest('tr');
-    const actualButton = button.classList?.contains('track-play-btn') || button.classList?.contains('search-play-btn') 
-      ? button 
-      : (row ? row.querySelector('.track-play-btn') : button);
     
     // Update UI - remove playing state from previous track
     if (currentPlayingButton && currentPlayingButton !== actualButton) {
