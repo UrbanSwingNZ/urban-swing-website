@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 
 /* ========================================
    SIDEBAR STYLES
@@ -46,7 +47,7 @@
 
 .sidebar-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .btn-icon {
@@ -55,9 +56,9 @@
   color: var(--text-color);
   font-size: 1.1rem;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-xs);
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .btn-icon:hover {
@@ -205,7 +206,7 @@
   border: none;
   color: var(--gray-650);
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-xs);
   border-radius: 4px;
   transition: all 0.2s;
 }
@@ -250,7 +251,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 8px;
+  gap: var(--space-xs);
   white-space: nowrap;
 }
 
@@ -293,7 +294,7 @@
 
 .playlist-menu-mobile {
   background: var(--card-light);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   width: 100%;
   max-width: 500px;
   padding: 20px;
@@ -338,7 +339,7 @@
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 6px;
 }
 
@@ -395,7 +396,7 @@
 .playlist-item img {
   width: 50px;
   height: 50px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   object-fit: cover;
 }
 

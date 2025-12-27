@@ -4,6 +4,8 @@
  * Base modal styles inherited from /styles/modals/modal-base.css
  */
 
+@import url('../../../styles/base/design-tokens.css');
+
 /* Modal Size */
 #edit-casual-entry-modal .modal-content {
     max-width: 500px;
@@ -11,7 +13,7 @@
 
 /* Student Info Card */
 .student-info-card {
-    padding: 16px;
+    padding: var(--space-sm);
     background: var(--bg-secondary);
     border-left: 4px solid var(--purple-primary);
     border-radius: 6px;

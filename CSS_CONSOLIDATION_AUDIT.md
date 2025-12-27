@@ -1,8 +1,8 @@
 # CSS Consolidation Audit
 
-**Date:** December 24, 2025 (Audit) | December 26, 2025 (Phase 1) | December 27, 2025 (Phase 2)  
+**Date:** December 24, 2025 (Audit) | December 26-28, 2025 (Phase 1-3)  
 **Item:** #12 - CSS Architecture Consolidation  
-**Status:** ✅ Phase 1-2 Complete | ⏳ Phase 3-5 Remaining
+**Status:** ✅ Phase 1-3 Complete | ⏳ Phase 3.5 Pending | 🔜 Phase 4-5 Remaining
 
 ---
 
@@ -13,23 +13,22 @@
 - **`/css/`** (31 files) - **LEGACY** - Original location, being phased out
 - **Total:** 48 CSS files in dual directory structure
 
-**Progress Status (Dec 27, 2025):**
-- ✅ Phase 1 Complete: Design tokens relocated, 38 hardcoded colors replaced
-- ✅ Phase 2.1 Complete: Reset.css consolidated to /styles/base/
-- ✅ Phase 2.2 Complete: Typography.css consolidated to /styles/base/
-- ✅ Phase 2.3 Complete: Button system audit complete (no changes needed)
-- ✅ Phase 2.4 Complete: Admin.css refactored to import-only orchestrator, 6 new shared components created
+**Progress Status (Dec 28, 2025):**
+- ✅ Phase 1 Complete: Design tokens relocated, hardcoded colors replaced
+- ✅ Phase 2 Complete: Reset.css, typography.css, buttons consolidated; Admin.css refactored; Testing passed
+- ✅ Phase 3 Complete: Design tokens adopted across codebase for spacing, border-radius, transitions; Testing passed
+- ⏳ Phase 3.5 Pending: Z-index consolidation
+- 🔜 Phase 4-5 Remaining: Directory restructure and final documentation
 
 **Key Findings:**
-- ✅ Good: 40+ files already import `colors.css` as single source of truth
-- ✅ Good: Design tokens system established in `/styles/base/design-tokens.css`
-- ✅ Resolved: Reset and typography files consolidated to /styles/base/
-- ✅ Resolved: Admin.css refactored to import-only orchestrator
-- ✅ Resolved: Form styles consolidated to /styles/components/forms.css
-- ✅ Resolved: Dashboard layout consolidated to /styles/layout/dashboard-layout.css
-- ⚠️ Remaining: Dual directory structure (`/css/` vs `/styles/`) - address in Phase 4
-- ⚠️ Remaining: Inconsistent spacing patterns - address in Phase 3
-- ⚠️ Issue: Inconsistent spacing patterns (mix of CSS variables and hardcoded px values)
+- ✅ Colors centralized in `colors.css`
+- ✅ Design tokens system established in `/styles/base/design-tokens.css`
+- ✅ Base styles consolidated (reset, typography, buttons)
+- ✅ Admin.css refactored to import-only orchestrator
+- ✅ Shared components created (forms, dashboard layout, auth card, search box)
+- ✅ Spacing, border-radius, transitions now use design tokens
+- ⚠️ Remaining: Z-index consolidation (Phase 3.5)
+- ⚠️ Remaining: Dual directory structure (Phase 4)
 
 ---
 
@@ -351,15 +350,15 @@ border-radius: 20px;
 
 ## 6. Recommendations by Phase
 
-### Phase 1: Quick Wins (4 hours) ✅ COMPLETE (Dec 26, 2025)
+### Phase 1: Quick Wins ✅ COMPLETE (Dec 26, 2025)
 
-**1.1 Relocate Variables File (1 hour)** ✅
+**1.1 Relocate Variables File** ✅
 - ✅ Moved `/css/base/variables.css` → `/styles/base/design-tokens.css`
 - ✅ Updated 10 imports (1 CSS file, 8 student portal HTML files, 1 public CSS file)
 - ✅ Deleted old variables.css file
 - ✅ Fixed public pages that lost formatting
 
-**1.2 Add Missing Color Variables (1 hour)** ✅
+**1.2 Add Missing Color Variables** ✅
 - ✅ Added to `colors.css`:
   ```css
   --gold: #ffd700;                    /* Gold accent */
@@ -367,8 +366,8 @@ border-radius: 20px;
   ```
 - ✅ Decided not to add `--purple-alt` (single use case uses existing variable)
 
-**1.3 Replace Low-Hanging Hardcoded Colors (2 hours)** ✅
-- ✅ Replaced 38 hardcoded color instances across 4 files
+**1.3 Replace Hardcoded Colors** ✅
+- ✅ Replaced hardcoded color instances across multiple files
 - ✅ admin-tools/gift-concessions.css (3 replacements)
 - ✅ admin-tools/concession-types.css (6 replacements)
 - ✅ student-portal/css/registration-form.css (4 replacements)
@@ -379,9 +378,9 @@ border-radius: 20px;
 
 ---
 
-### Phase 2: Consolidate Core Styles (14 hours)
+### Phase 2: Consolidate Core Styles ✅ COMPLETE (Dec 27, 2025)
 
-**2.1 Audit & Merge Reset/Base Files (2 hours)** ✅ COMPLETE (Dec 27, 2025) ✅
+**2.1 Audit & Merge Reset/Base Files** ✅
 - ✅ Compared `/css/base/reset.css` (142 lines, comprehensive) vs `/student-portal/css/base/reset.css` (27 lines, minimal)
 - ✅ Created `/styles/base/reset.css` using comprehensive version
 - ✅ Updated 10 imports (9 HTML files + modern-styles.css)
@@ -389,7 +388,7 @@ border-radius: 20px;
 - ✅ Ready to delete old files after testing
 - **Testing:** See `/testing/css-consolidation/PHASE_2_TESTING.md`
 
-**2.2 Audit & Merge Typography Files (2 hours)** ✅ COMPLETE (Dec 27, 2025) ✅
+**2.2 Audit & Merge Typography Files** ✅
 - ✅ Compared `/css/base/typography.css` (214 lines, comprehensive) vs `/student-portal/css/base/typography.css` (42 lines, minimal)
 - ✅ Created `/styles/base/typography.css` using comprehensive version
 - ✅ Updated 10 imports (9 HTML files + modern-styles.css)
@@ -398,91 +397,118 @@ border-radius: 20px;
 - ✅ Ready to delete old files after testing
 - **Testing:** See `/testing/css-consolidation/PHASE_2_TESTING.md`
 
-**2.3 Standardize Button System (2 hours)** ✅ COMPLETE (Dec 27, 2025) ✅
+**2.3 Standardize Button System** ✅
 - ✅ Audited playlist-manager buttons vs central buttons
 - ✅ Result: .btn-filter is playlist-specific, no changes needed
 - ✅ Central button system already well-organized with .btn-primary, .btn-cancel, .btn-delete
 - **No files modified**
 
-**2.4 Refactor Admin.css to Import-Only Orchestrator (8 hours)** ✅ COMPLETE (Dec 27, 2025) ✅
+**2.4 Refactor Admin.css to Import-Only Orchestrator** ✅
 
-*Background:* Admin.css (554 lines) currently mixes imports with custom styles. Analysis revealed most styles can be shared components or use existing shared components with better organization.
+*Background:* Admin.css was a 554-line file mixing imports with custom styles. Refactored into shared components.
 
-**Subtasks:**
+**2.4.1 Create New Shared Components** ✅
+- ✅ Created `/styles/components/forms.css` - Consolidated form styles
+- ✅ Created `/styles/components/auth-card.css` - Login card component
+- ✅ Created `/styles/components/search-box.css` - Search box component
+- ✅ Created `/styles/layout/dashboard-layout.css` - Shared dashboard structure
 
-**2.4.1 Create New Shared Components (5 hours)** ✅ COMPLETE ✅
-- ✅ Created `/styles/components/forms.css` (179 lines)
-  - Consolidated all `.form-group`, `.form-row`, `.checkbox-label` styles
-  - Includes input groups, labels, textareas, selects, error messages
-  - Ready for reuse across admin, student portal, and public pages
-
-- ✅ Created `/styles/components/auth-card.css` (94 lines)
-  - Generalized admin login card component for reuse
-  - Includes: `.auth-container`, `.auth-card` with gradient background
-  - Works for both admin and student portal login pages
-
-- ✅ Created `/styles/components/search-box.css` (76 lines)
-  - Moved search box component from admin.css
-  - Includes: `.search-box`, `.search-input`, `.search-icon`, `.clear-search`
-  - Reusable across admin student-database, check-in, and future pages
-
-- ✅ Created `/styles/layout/dashboard-layout.css` (92 lines)
-  - Shared dashboard structure for admin and student portal
-  - Includes: `.dashboard-container`, `.dashboard-main`, `.dashboard-welcome`, `.dashboard-tiles`
-  - Eliminates duplication between admin and student portal
-
-**2.4.2 Extend Existing Tiles Component (1 hour)** ✅ COMPLETE ✅
+**2.4.2 Extend Existing Tiles Component** ✅
 - ✅ Extended `/styles/components/tiles.css` with `.dashboard-tile` variant
-- ✅ Includes hover effects, shadows, responsive adjustments
-- ✅ Unified tile/card system for both portals
 
-**2.4.3 Create Admin-Specific Styles (1 hour)** ✅ COMPLETE ✅
-- ✅ Created `/styles/admin/timestamps.css` (38 lines)
-  - Admin-specific timestamp display component
-  - Small, specialized, only used in admin forms
+**2.4.3 Create Admin-Specific Styles** ✅
+- ✅ Created `/styles/admin/timestamps.css` - Admin timestamp display
+- ✅ Created `/styles/admin/admin-specific.css` - Admin-only styles
 
-- ✅ Created `/styles/admin/admin-specific.css` (15 lines)
-  - Minimal file for truly admin-only styles
-  - Currently contains html/body margin/padding reset
+**2.4.4 Refactor Admin.css Structure** ✅
+- ✅ Converted admin.css to import-only orchestrator
+- ✅ Organized imports into logical sections
 
-**2.4.4 Refactor Admin.css Structure (1 hour)** ✅ COMPLETE ✅
-- ✅ Converted admin.css from 554 lines to 27-line import-only orchestrator
-- ✅ Organized imports into sections: Base, Shared Components, Layout, Admin-Specific
-- ✅ All custom styles extracted to appropriate component files
-- **Result:** Better organization, improved reusability
-- Test all 12 admin HTML pages
+**2.5 Phase 2 Testing** ✅
+- ✅ Desktop testing: All 12 admin pages, all modals verified
+- ✅ Mobile testing: All admin pages, student portal tested
+- ✅ Fixed mobile bugs discovered during testing:
+  - Student portal profile page race condition (admin users)
+  - Mobile drawer active state detection (path matching)
+  - Transactions page filter layout on mobile
+  - Transactions page card layout column mapping
+  - Transactions page summary alignment on mobile
+- **Testing:** All visual regressions resolved, zero breaking changes
 
-**Impact:**
-- **Before:** admin.css = 554 lines (mixed imports + custom styles)
-- **After:** 
-  - admin.css = ~20 lines (imports only)
-  - admin-specific.css = ~100 lines (truly admin-only)
-  - 5 new shared components = ~490 lines (reusable across entire app)
-- **Benefit:** Eliminates duplication, makes admin portal consistent with rest of app, enables reuse of forms/search/auth/dashboard components elsewhere
+**Impact:** Admin.css refactored from mixed imports/styles to clean import-only orchestrator with shared components reusable across entire application
 
 ---
 
-### Phase 3: Adopt Design Tokens Widely (4 hours)
+### Phase 3: Adopt Design Tokens ✅ COMPLETE (Dec 27-28, 2025)
 
-**3.1 Replace Hardcoded Spacing (3 hours)**
-- Target files with most hardcoded px values:
-  - admin-tools CSS files (8 files)
-  - playlist-manager CSS files (8 files)
-  - Public website CSS files (2 files)
-- Replace common patterns:
-  - `padding: 40px` → `padding: var(--space-lg)`
-  - `gap: 30px` → `gap: var(--space-md)`
-  - `border-radius: 20px` → `border-radius: var(--radius-xl)`
+**3.1 Replace Hardcoded Spacing** ✅
+- ✅ Replaced hardcoded spacing values with design tokens across multiple files
+- ✅ Standardized padding, margin, gap values → var(--space-*)
+- ✅ Standardized border-radius → var(--radius-*)
+- ✅ Standardized transitions → var(--transition-*)
 
-**3.2 Add Design Token Imports (1 hour)**
-- Add `@import url('../../styles/base/design-tokens.css');` to all files
-- Ensure proper order: colors.css first, then design-tokens.css
+**3.2 Add Design Token Imports** ✅
+- ✅ Added design-tokens.css imports across codebase
+- ✅ Ensured proper import order
+
+**3.3 Phase 3 Testing** ✅
+- **Testing Document:** `/testing/css-consolidation/PHASE_3_TESTING.md`
+- **Result:** Testing passed - no visual regressions
+
+**Impact:** Consistent spacing system enables global design adjustments and eliminates inconsistencies
 
 ---
 
-### Phase 4: Directory Restructure (6 hours)
+### Phase 3.5: Replace Hardcoded Z-Index Values ⏳ PENDING
 
-**4.1 Audit `/css/` Contents (1 hour)**
+**Background:** Multiple hardcoded z-index values exist across codebase. Common patterns include modals (9999-10001), dropdowns (1000-2000), navigation (99-1001), and small layering (1-10).
+
+**Current Design Token Z-Index Scale (in design-tokens.css):**
+```css
+--z-base: 1;
+--z-dropdown: 100;
+--z-sticky: 200;
+--z-fixed: 300;
+--z-modal-backdrop: 400;
+--z-modal: 500;
+--z-popover: 600;
+--z-tooltip: 700;
+--z-nav-toggle: 1001;
+--z-nav-overlay: 1050;
+--z-nav-drawer: 1100;
+```
+
+**3.5.1 Extend Z-Index Token Scale**
+- Add higher-level z-index tokens for modals and overlays
+- Consolidate modal z-index values to use same token
+- Document z-index layering strategy
+
+**3.5.2 Replace Hardcoded Z-Index Values**
+- Target files with hardcoded z-index values (~50 instances):
+  - **Modals:** modal-base.css, loading-spinner.css, snackbar.css, password-reset-modal.css, admin-modals.css (9999, 10000, 10001)
+  - **Dropdowns/Overlays:** date-picker.css, enhanced-features.css, various admin tools (1000, 2000)
+  - **Navigation:** styles.css, portal.css, admin-view.css (100, 1001)
+  - **Small Layering:** gift-concessions.css, transactions.css, concession-types.css, check-in.css (1, 2, 10)
+- Replace patterns:
+  - `z-index: 9999` → `z-index: var(--z-modal-high)`
+  - `z-index: 10000` → `z-index: var(--z-notification)`
+  - `z-index: 1000` → `z-index: var(--z-modal)`
+  - `z-index: 100` → `z-index: var(--z-dropdown)`
+  - `z-index: 10` → `z-index: var(--z-base)` or `calc(var(--z-base) + 9)`
+
+**3.5.3 Test Z-Index Hierarchy**
+- Test modal stacking
+- Test notification overlays
+- Test navigation drawer layering
+- Test date pickers and dropdowns
+
+**Impact:** Centralized z-index tokens prevent conflicts and enable global layering adjustments
+
+---
+
+### Phase 4: Directory Restructure 🔜 PENDING
+
+**4.1 Audit `/css/` Contents**
 - Determine which files are public-only vs shared
 - Create migration plan
 
@@ -549,61 +575,28 @@ border-radius: 20px;
 
 ---
 
-## 8. Success Metrics
+## 8. Remaining Phases
 
-**Before:**
-- 2 CSS directories (confusing)
-- 50+ hardcoded hex colors
-- 100+ hardcoded rgba values
-- 1 file uses design tokens
-- Inconsistent spacing patterns
+**Phase 4: Directory Restructure**
+- Migrate remaining `/css/` files to `/styles/` directory
+- Consolidate duplicate files
+- Update all import paths across entire codebase
+- Remove legacy `/css/base/` directory
 
-**After (Target):**
-- 1 primary CSS directory (`/styles/`)
-- 0 hardcoded colors (all use CSS variables)
-- 0 hardcoded rgba values (all use CSS variables)
-- 48 files use design tokens
-- Consistent spacing via tokens
-
-**Code Quality:**
-- Single source of truth for colors
-- Single source of truth for spacing
-- Easy to update brand colors globally
-- Easy to adjust spacing scale globally
-- Clear documentation
-
----
-
-## 9. Time Estimates
-
-| Phase | Task | Time |
-|-------|------|------|
-| 1 | Quick wins (variables, colors) | 4h ✅ |
-| 2 | Consolidate core styles + admin refactor | 14h (2h ✅ + 2h ✅ + 10h pending) |
-| 3 | Adopt design tokens widely | 4h |
-| 4 | Directory restructure | 6h |
-| 5 | Documentation & testing | 4h |
-| **Total** | | **32h** |
-
-**Updated from original 24h estimate** - Admin.css refactoring adds 8 hours but significantly improves consistency and eliminates duplication across admin and student portal.
+**Phase 5: Documentation & Final Testing**
+- Create CSS style guide documenting color usage, spacing patterns, import conventions
+- Comprehensive testing across all admin, student portal, and public pages
+- Final verification of zero visual regressions
 
 ---
 
 ## 10. Next Steps
 
-**Immediate Actions:**
-1. Review this audit with team/developer
-2. Approve Phase 1 work (quick wins)
-3. Start with moving variables.css to design-tokens.css
-4. Begin replacing hardcoded colors in admin-tools
+**Phase 3.5:** Z-index consolidation  
+**Phase 4:** Directory restructure  
+**Phase 5:** Documentation and comprehensive testing
 
-**Branch:**
-✅ Already on `refactor-css` branch
-
-**Testing:**
-- Test after each phase
-- Visual regression testing for each section
-- Document any issues found
+**Branch:** `refactor-css`
 
 ---
 

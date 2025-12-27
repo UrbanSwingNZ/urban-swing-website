@@ -1,5 +1,6 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/components/loading-spinner.css');
+@import url('../../styles/base/design-tokens.css');
 
 /* Check-In History Page Styles */
 
@@ -16,22 +17,22 @@
 
 /* Back Navigation */
 .back-nav {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-md);
 }
 
 /* Header */
 .checkins-header {
     background: white;
     padding: 24px 32px;
-    border-radius: 12px;
-    margin-bottom: 24px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
 .header-info h2 {
     font-size: 1.75rem;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
 }
 
 .total-count {
@@ -48,7 +49,7 @@
 /* Check-Ins List */
 .checkins-list {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: 0 2px 8px var(--shadow-light);
 }
@@ -128,7 +129,7 @@
 .type-badge {
     display: inline-block;
     padding: 6px 14px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -199,7 +200,7 @@
     align-items: center;
     padding: 24px 32px;
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     margin-top: 24px;
     box-shadow: 0 2px 8px var(--shadow-light);
 }
@@ -223,7 +224,7 @@
     .checkin-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: var(--space-sm);
         padding: 20px;
     }
     
@@ -236,13 +237,13 @@
     }
 
     .pagination-controls {
-        padding: 16px;
+        padding: var(--space-sm);
         flex-wrap: wrap;
         gap: 12px;
     }
 
     .pagination-btn {
-        padding: 8px 16px;
+        padding: var(--space-xs) 16px;
         font-size: 0.85rem;
     }
 

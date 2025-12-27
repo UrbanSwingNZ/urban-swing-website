@@ -5,6 +5,7 @@
 
 /* Import required base styles */
 @import url('../base/colors.css');
+@import url('../base/design-tokens.css');
 
 /* ========================================
    OPTION CARDS CONTAINER
@@ -13,7 +14,7 @@
 .login-options-container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-sm);
     width: 100%;
     margin: 0 auto;
 }
@@ -24,8 +25,8 @@
 
 .option-card {
     background: var(--white);
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px var(--shadow-light);
@@ -85,7 +86,7 @@
 .option-card-header {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--space-sm);
     margin-bottom: 4px;
 }
 
@@ -96,7 +97,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     color: var(--white);
     font-size: 1.75rem;
 }
@@ -162,7 +163,7 @@
 
 /* Form elements within option cards */
 .option-form .form-group {
-    margin-bottom: 16px;
+    margin-bottom: var(--space-sm);
 }
 
 .option-form .form-group:last-of-type {
@@ -182,7 +183,7 @@
     padding: 12px;
     font-size: 1rem;
     border: 2px solid var(--gray-400);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     transition: border-color 0.2s ease;
     box-sizing: border-box;
 }
@@ -217,7 +218,7 @@
     background-color: transparent;
     color: var(--purple-primary);
     border: 2px solid var(--purple-primary);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all 0.2s ease;
 }

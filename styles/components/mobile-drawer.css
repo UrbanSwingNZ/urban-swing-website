@@ -4,6 +4,8 @@
    Used by admin, student portal, and public site
    ======================================== */
 
+@import url('../base/design-tokens.css');
+
 /* Mobile Navigation Toggle Button (Hamburger) */
 .mobile-nav-toggle,
 .student-mobile-nav-toggle {
@@ -17,7 +19,7 @@
   cursor: pointer;
   padding: 0;
   margin: 0;
-  z-index: 1001;
+  z-index: var(--z-nav-toggle);
   position: relative;
   outline: none;
   box-shadow: none;
@@ -42,10 +44,10 @@
   height: 100vh;
   background: var(--gradient-header);
   box-shadow: 2px 0 10px var(--shadow-light);
-  z-index: 1100;
+  z-index: var(--z-nav-drawer);
   transition: left 0.3s ease;
   overflow-y: auto;
-  padding: 80px 0 20px 0;
+  padding: 80px 0 var(--space-md) 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -64,7 +66,7 @@
   font-size: 24px;
   cursor: pointer;
   padding: 5px;
-  z-index: 1101;
+  z-index: calc(var(--z-nav-drawer) + 1);
   transition: transform 0.2s ease;
 }
 
@@ -97,7 +99,7 @@
   width: 100%;
   height: 100%;
   background: var(--bg-overlay-dark);
-  z-index: 1099;
+  z-index: calc(var(--z-nav-drawer) - 1);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -131,8 +133,8 @@
 .mobile-drawer-menu button {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
   color: var(--text-white);
   text-decoration: none;
   font-size: 1rem;
@@ -155,7 +157,7 @@
   background: var(--bg-overlay-medium);
   font-weight: 600;
   border-left: 4px solid var(--pink-primary);
-  padding-left: 20px;
+  padding-left: var(--space-md);
 }
 
 .mobile-drawer-menu a.active:hover {
@@ -171,7 +173,7 @@
 /* Logout Button in Drawer */
 .drawer-logout-btn {
   width: 100%;
-  padding: 16px 20px;
+  padding: var(--space-sm) var(--space-md);
   background: none;
   border: none;
   color: var(--text-white);
@@ -179,7 +181,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-xs);
   transition: all 0.2s ease;
   font-family: inherit;
 }

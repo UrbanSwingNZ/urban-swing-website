@@ -6,6 +6,7 @@
 
 /* Import colors for gradient variables */
 @import url('../base/colors.css');
+@import url('../base/design-tokens.css');
 
 /* ========================================
    BASE TILE STYLES
@@ -31,7 +32,7 @@
 .tile-icon {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--space-sm);
 }
 
 .tile-icon-image {
@@ -42,7 +43,7 @@
   align-items: center;
   justify-content: center;
   background: var(--gradient-full);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--white);
   font-size: 1.75rem;
 }
@@ -75,7 +76,7 @@
 }
 
 .tile-icon-centered .tile-icon-image {
-  margin: 0 auto 12px;
+  margin: 0 auto var(--space-xs);
 }
 
 /* Tile heading styles */
@@ -109,8 +110,8 @@ a.tile-gradient:hover p {
 
 .dashboard-tile {
   background: var(--white);
-  border-radius: 20px;
-  padding: 40px 30px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg) 30px;
   box-shadow: 0 10px 30px var(--shadow-medium);
   transition: all 0.3s ease;
   text-align: center;
@@ -154,6 +155,6 @@ a.tile-gradient:hover p {
   }
 
   .dashboard-tile {
-    padding: 30px 20px;
+    padding: var(--space-md) 20px;
   }
 }

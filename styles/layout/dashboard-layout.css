@@ -4,6 +4,7 @@
    ======================================== */
 
 /* Note: colors.css should be imported before this file */
+@import url('../base/design-tokens.css');
 
 .dashboard-container {
   display: flex;
@@ -21,12 +22,12 @@
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: var(--space-lg) 20px;
 }
 
 .dashboard-welcome {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: var(--space-lg);
 }
 
 .dashboard-welcome h2 {
@@ -46,27 +47,27 @@
 .dashboard-tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  margin-bottom: 40px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
 }
 
 .dashboard-info {
   background: var(--bg-blue-light);
   border-left: 4px solid var(--blue-primary);
-  padding: 20px;
+  padding: var(--space-md);
   border-radius: 10px;
   text-align: center;
 }
 
 .dashboard-info i {
-  margin-right: 8px;
+  margin-right: var(--space-xs);
   color: var(--blue-primary);
 }
 
 /* Footer */
 .admin-footer {
   background: var(--white);
-  padding: 20px;
+  padding: var(--space-md);
   text-align: center;
   color: var(--gray-650);
   border-top: 1px solid var(--border-light);
@@ -80,7 +81,7 @@
 @media (max-width: 768px) {
   .dashboard-tiles {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: var(--space-md);
   }
 
   .dashboard-welcome h2 {

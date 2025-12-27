@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 
 /* ========================================
    BUTTON STYLES
@@ -10,8 +11,8 @@
   background: var(--card-light);
   border: 1px solid var(--gray-450);
   color: var(--text-color);
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-xl);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;

@@ -1,4 +1,5 @@
 @import url('../../styles/base/colors.css');
+@import url('../../styles/base/design-tokens.css');
 
 /* ========================================
    CONCESSION TYPES MANAGER STYLES
@@ -26,7 +27,7 @@
 .drag-hint {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     color: var(--text-muted);
     font-size: 0.9rem;
     font-style: italic;
@@ -46,10 +47,10 @@
 
 .package-card {
     background: var(--card-light);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 25px 20px 25px 35px;
     box-shadow: 0 4px 12px var(--shadow-medium);
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     position: relative;
     border: 2px solid transparent;
     cursor: move;
@@ -113,7 +114,7 @@
     right: 15px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     z-index: 10;
 }
 
@@ -121,7 +122,7 @@
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    transition: color 0.3s ease;
+    transition: color var(--transition-base);
 }
 
 .status-label.active {
@@ -156,7 +157,7 @@
     bottom: 0;
     background-color: var(--gray-550);
     transition: 0.3s;
-    border-radius: 24px;
+    border-radius: var(--space-md);
 }
 
 .toggle-slider:before {
@@ -294,7 +295,7 @@
 
 .btn-delete {
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
@@ -320,7 +321,7 @@
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -328,7 +329,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .btn-danger:hover {
@@ -341,8 +342,8 @@
     background: var(--text-muted-alt);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 12px var(--space-md);
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -350,7 +351,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .btn-secondary:hover {
@@ -363,8 +364,8 @@
     background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 12px var(--space-md);
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -372,7 +373,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .btn-primary:hover {
@@ -540,7 +541,7 @@
 
     .package-actions {
         flex-direction: column;
-        gap: 8px;
+        gap: var(--space-xs);
     }
 
     .btn-edit,

@@ -4,6 +4,8 @@
  * Uses color variables from /styles/base/colors.css
  */
 
+@import url('../base/design-tokens.css');
+
 /* ========================================
    MODAL CONTAINER & OVERLAY
    ======================================== */
@@ -19,7 +21,7 @@
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 /* ========================================
@@ -28,7 +30,7 @@
 
 .modal-content {
     background: var(--bg-white);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     max-width: 600px;
     width: 100%;
     max-height: 90vh;
@@ -96,7 +98,7 @@
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-xs);
 }
 
 .modal-header h2 i,
@@ -120,7 +122,7 @@
     transition: all 0.2s ease;
     line-height: 1;
     padding: 0;
-    margin-left: 16px;
+    margin-left: var(--space-sm);
 }
 
 .modal-close:hover {
@@ -138,14 +140,14 @@
    ======================================== */
 
 .modal-body {
-    padding: 30px;
+    padding: var(--space-md);
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
 }
 
 .modal-body p {
-    margin: 0 0 16px 0;
+    margin: 0 0 var(--space-sm) 0;
     color: var(--text-secondary);
     line-height: 1.6;
 }
@@ -159,10 +161,10 @@
    ======================================== */
 
 .modal-footer {
-    padding: 20px 30px;
+    padding: var(--space-md) 30px;
     border-top: 1px solid var(--gray-450);
     display: flex;
-    gap: 12px;
+    gap: var(--space-xs);
     justify-content: flex-end;
     flex-shrink: 0;
 }
@@ -178,7 +180,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
     height: 36px;
     box-sizing: border-box;
     line-height: 1;
@@ -208,7 +210,7 @@
 
 @media (max-width: 768px) {
     .modal {
-        padding: 10px;
+        padding: var(--space-xs);
         align-items: flex-start;
         padding-top: 60px;
     }
@@ -221,7 +223,7 @@
     .modal-header,
     .modal-body,
     .modal-footer {
-        padding: 20px;
+        padding: var(--space-md);
     }
 
     .modal-footer {

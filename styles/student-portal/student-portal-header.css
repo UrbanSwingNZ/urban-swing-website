@@ -7,6 +7,7 @@
 @import url('../base/buttons.css');
 @import url('../components/mobile-drawer.css');
 @import url('student-portal-header-mobile.css');
+@import url('../base/design-tokens.css');
 
 /* Header Container */
 .student-portal-header {
@@ -74,7 +75,7 @@
 .student-user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--space-xs);
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -95,7 +96,7 @@
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
@@ -122,5 +123,10 @@
 @media (max-width: 768px) {
   .student-mobile-nav-toggle {
     display: flex !important;
+  }
+
+  /* Hide logout button on mobile - it's in the drawer */
+  .btn-logout {
+    display: none !important;
   }
 }

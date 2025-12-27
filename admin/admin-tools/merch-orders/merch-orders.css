@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 
 /* ========================================
    MERCHANDISE ORDERS STYLES
@@ -57,7 +58,7 @@
 
 .table-container {
     background: var(--bg-white);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-medium);
     overflow: hidden;
     max-height: 70vh;
@@ -80,7 +81,7 @@
 }
 
 .orders-table th {
-    padding: 16px;
+    padding: var(--space-sm);
     text-align: left;
     font-weight: 600;
     font-size: 0.9rem;
@@ -161,7 +162,7 @@
 .badge {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -201,7 +202,7 @@
 /* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .btn-icon {
@@ -276,7 +277,7 @@
 .filter-checkbox {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     cursor: pointer;
     font-size: 0.95rem;
     color: var(--text-primary);
@@ -334,7 +335,7 @@
 .detail-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: var(--space-sm);
 }
 
 .detail-item {

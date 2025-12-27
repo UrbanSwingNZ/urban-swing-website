@@ -3,6 +3,8 @@
    Responsive mobile styles for student portal header
    ======================================== */
 
+@import url('../base/design-tokens.css');
+
 @media (max-width: 768px) {
   /* Show mobile nav toggle */
   .student-portal-header .student-mobile-nav-toggle {

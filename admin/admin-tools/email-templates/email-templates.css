@@ -4,6 +4,7 @@
  */
 
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 @import url('../../../styles/components/snackbar.css');
 @import url('../../../styles/components/loading-spinner.css');
 
@@ -24,7 +25,7 @@
 }
 
 .sidebar-header {
-    padding: 20px;
+    padding: var(--space-md);
     border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
@@ -39,7 +40,7 @@
 
 .sidebar-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .btn-icon {
@@ -47,7 +48,7 @@
     border: none;
     color: var(--text-light);
     cursor: pointer;
-    padding: 8px;
+    padding: var(--space-xs);
     border-radius: 4px;
     transition: all 0.2s;
 }
@@ -88,7 +89,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border-radius: 4px;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
 }
 
 .template-item {
@@ -170,7 +171,7 @@
     align-items: center;
     justify-content: center;
     color: var(--text-muted);
-    padding: 40px;
+    padding: var(--space-lg);
 }
 
 .no-selection-state i {
@@ -220,7 +221,7 @@
 
 .status-badge {
     padding: 4px 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -239,7 +240,7 @@
 .toolbar-right {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .toolbar-button-row {
@@ -271,7 +272,7 @@
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .tab-btn:hover {
@@ -304,7 +305,7 @@
     display: flex;
     gap: 0;
     background: var(--bg-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 4px;
     margin-bottom: 15px;
     width: fit-content;
@@ -322,7 +323,7 @@
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .editor-mode-btn:hover {
@@ -343,27 +344,27 @@
 
 /* ===== Editor Panel ===== */
 .editor-panel {
-    padding: 24px;
+    padding: var(--space-md);
     height: 100%;
     overflow-y: auto;
 }
 
 .editor-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-md);
 }
 
 .editor-section label {
     display: block;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
 }
 
 .editor-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
 }
 
 .variable-hint {
@@ -429,8 +430,8 @@
 /* ===== Variables Panel ===== */
 .variables-panel {
     background: var(--bg-light);
-    padding: 20px;
-    border-radius: 8px;
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
     margin-top: 24px;
 }
 
@@ -521,7 +522,7 @@
 }
 
 .settings-section h3 {
-    margin: 0 0 20px 0;
+    margin: 0 0 var(--space-md) 0;
     color: var(--text-primary);
     font-size: 1.1rem;
 }
@@ -530,7 +531,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-sm);
 }
 
 .settings-header h3 {
@@ -583,7 +584,7 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    padding: 12px;
+    padding: var(--space-sm);
     background: var(--bg-light);
     border-radius: 6px;
     transition: background 0.2s;
@@ -651,7 +652,7 @@
 
 .variable-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .variable-actions .btn-icon {
@@ -709,7 +710,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-xs);
     white-space: nowrap;
 }
 
@@ -743,7 +744,7 @@
 
 .modal-content {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     max-width: 600px;
     width: 90%;
     max-height: 85vh;
@@ -764,7 +765,7 @@
     align-items: center;
     justify-content: space-between;
     background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
-    border-radius: 12px 12px 0 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .modal-header h2 {
@@ -773,7 +774,7 @@
     color: white;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-sm);
     font-weight: 600;
 }
 
@@ -782,15 +783,15 @@
 }
 
 .modal-body {
-    padding: 24px;
+    padding: var(--space-md);
     overflow-y: auto;
     flex: 1;
 }
 
 .modal-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 24px;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
     justify-content: flex-end;
     padding-top: 20px;
     border-top: 1px solid var(--gray-450);
@@ -799,9 +800,9 @@
 /* ===== Preview Modal ===== */
 .preview-controls {
     margin-bottom: 30px;
-    padding: 20px;
+    padding: var(--space-md);
     background: var(--bg-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .preview-controls h3 {
@@ -877,7 +878,7 @@
 }
 
 .preview-subject {
-    padding: 12px;
+    padding: var(--space-sm);
     background: var(--bg-light);
     border-radius: 6px;
     margin-bottom: 15px;
@@ -941,13 +942,13 @@
 .version-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: var(--space-sm);
 }
 
 .version-item {
-    padding: 20px;
+    padding: var(--space-md);
     background: var(--bg-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--gray-450);
 }
 
@@ -960,13 +961,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-sm);
 }
 
 .version-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: var(--space-sm);
 }
 
 .version-number {
@@ -979,7 +980,7 @@
     background: var(--purple-primary);
     color: white;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.75rem;
     font-weight: 600;
 }
@@ -1008,7 +1009,7 @@
 
 .version-preview pre {
     background: white;
-    padding: 12px;
+    padding: var(--space-sm);
     border-radius: 6px;
     font-size: 0.8rem;
     max-height: 150px;
@@ -1026,7 +1027,7 @@
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .form-group label {
@@ -1128,18 +1129,18 @@
 .variable-properties-preview {
     background: var(--bg-light);
     border: 1px solid var(--gray-450);
-    border-radius: 6px;
-    padding: 16px;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
     margin-top: 20px;
 }
 
 .variable-properties-preview h4 {
-    margin: 0 0 12px 0;
+    margin: 0 0 var(--space-sm) 0;
     font-size: 0.95rem;
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .variable-properties-preview h4 i {
@@ -1149,7 +1150,7 @@
 .properties-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .property-item {
@@ -1185,7 +1186,7 @@
     background: linear-gradient(135deg, var(--info-light), var(--bg-purple-pale));
     color: var(--purple-primary);
     padding: 2px 8px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-family: 'Courier New', monospace;
     font-weight: 600;
     font-size: 0.9em;
@@ -1239,7 +1240,7 @@
 
 .insert-variable-search {
     position: relative;
-    padding: 20px;
+    padding: var(--space-md);
     border-bottom: 1px solid var(--gray-450);
     flex-shrink: 0;
 }
@@ -1260,20 +1261,20 @@
 }
 
 .insert-variables-list {
-    padding: 20px;
+    padding: var(--space-md);
     overflow-y: auto;
     flex: 1;
     max-height: 500px;
 }
 
 .insert-variables-list .variable-group {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
 }
 
 .insert-variables-list .variable-item {
     background: white;
-    padding: 16px 18px;
-    border-radius: 8px;
+    padding: var(--space-sm) 18px;
+    border-radius: var(--radius-sm);
     border: 2px solid var(--gray-450);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1302,7 +1303,7 @@
     margin-left: 24px;
     padding-left: 16px;
     border-left: 3px solid var(--gray-450);
-    margin-top: 8px;
+    margin-top: var(--space-xs);
 }
 
 .insert-variables-list .variable-property {
