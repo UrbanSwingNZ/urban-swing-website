@@ -80,8 +80,11 @@ const AdminMobileNav = {
                 // Extract text (remove icon)
                 const text = link.textContent.trim();
 
+                // Extract pathname from href for consistent matching
+                const url = new URL(link.href, window.location.origin);
+                
                 items.push({
-                    href: link.href,
+                    href: url.pathname,
                     icon: iconClass,
                     label: text,
                     dataPage: link.dataset.page || ''
