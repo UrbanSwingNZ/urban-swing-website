@@ -7,6 +7,28 @@ import { updateSaveOrderButton, loadTracks } from '../track-operations.js';
 import { populateMobilePlaylistList, updateSelectedPlaylist } from '../mobile-playlist-selector.js';
 import { showPlaylistMenu } from './playlist-ui-handlers.js';
 import { selectPlaylist } from './playlist-selection.js';
+import { formatTotalDuration } from '../tracks/track-utils.js';
+
+/**
+ * Calculate playlist duration by fetching first batch of tracks
+ */
+async function calculatePlaylistDuration(playlistId) {
+  try {
+    // Fetch first 100 tracks to calculate duration
+    const response = await spotifyAPI.getPlaylistTracks(playlistId, 100, 0);
+    const tracks = response.items;
+    
+    // Calculate total duration from these tracks
+    const totalMs = tracks.reduce((sum, item) => {
+      return sum + (item.track?.duration_ms || 0);
+    }, 0);
+    
+    return totalMs;
+  } catch (error) {
+    console.error(`Error calculating duration for playlist ${playlistId}:`, error);
+    return 0;
+  }
+}
 
 /**
  * Load all playlists from Spotify and display them
@@ -20,14 +42,26 @@ export async function loadPlaylists() {
     State.setCurrentUserId(currentUser.id);
     
     const playlists = await spotifyAPI.getAllUserPlaylists();
-    State.setAllPlaylists(playlists);
-    displayPlaylists(playlists);
+    
+    // Calculate durations for all playlists (in parallel for speed)
+    const playlistsWithDurations = await Promise.all(
+      playlists.map(async (playlist) => {
+        const durationMs = await calculatePlaylistDuration(playlist.id);
+        return {
+          ...playlist,
+          calculatedDuration: durationMs
+        };
+      })
+    );
+    
+    State.setAllPlaylists(playlistsWithDurations);
+    displayPlaylists(playlistsWithDurations);
     
     // After loading playlists, check if there's a saved playlist to restore
     // Only restore if coming from a page refresh (not navigation/disconnect)
     const savedPlaylistId = localStorage.getItem('last_viewed_playlist');
     if (savedPlaylistId && performance && performance.navigation && performance.navigation.type === 1) { // 1 = reload
-      const savedPlaylist = playlists.find(p => p.id === savedPlaylistId);
+      const savedPlaylist = playlistsWithDurations.find(p => p.id === savedPlaylistId);
       if (savedPlaylist) {
         // Restore the last viewed playlist
         const { performPlaylistSelection } = await import('./playlist-selection.js');
@@ -78,6 +112,10 @@ export function displayPlaylists(playlists) {
       ? playlist.images[playlist.images.length - 1].url 
       : '../../images/urban-swing-logo-glow-black-circle.png';
     
+    const formattedDuration = playlist.calculatedDuration 
+      ? formatTotalDuration(playlist.calculatedDuration)
+      : '0 min';
+    
     li.innerHTML = `
       <div class="playlist-item">
         <div class="playlist-drag-handle">
@@ -86,7 +124,7 @@ export function displayPlaylists(playlists) {
         <img src="${imageUrl}" alt="${playlist.name}">
         <div class="playlist-item-info">
           <div class="playlist-item-name">${playlist.name}</div>
-          <div class="playlist-item-count">${playlist.tracks.total} tracks • <span class="playlist-item-duration">0 min</span></div>
+          <div class="playlist-item-count">${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span></div>
         </div>
         <div class="playlist-item-actions">
           <button class="playlist-menu-btn" data-playlist-id="${playlist.id}">
