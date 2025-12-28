@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 @import url('../../../styles/components/snackbar.css');
 @import url('../../../styles/components/loading-spinner.css');
 
@@ -40,23 +41,15 @@ body {
 /* Filters Section */
 .filters-container {
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 1.5rem;
     margin-bottom: 2rem;
     border: 1px solid var(--bg-purple-medium);
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
-/* Filter Labels Row */
-.filters-labels-row {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-/* Filter Controls Row */
-.filters-controls-row {
+/* Filters Grid - Desktop layout */
+.filters-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
@@ -92,14 +85,14 @@ body {
 /* Date inputs and Select dropdown - matching check-in page style */
 .filter-input[type="date"],
 select.filter-input {
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--bg-purple-medium);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .filter-input[type="date"] {
@@ -128,14 +121,14 @@ select.filter-input:focus {
 }
 
 #student-filter {
-    padding: 8px 32px 8px 12px;
+    padding: var(--space-xs) 32px 8px 12px;
     border: 1px solid var(--bg-purple-medium);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     width: 100%;
 }
 
@@ -151,7 +144,7 @@ select.filter-input:focus {
 
 .clear-student-btn {
     position: absolute;
-    right: 8px;
+    right: var(--space-xs);
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -161,7 +154,7 @@ select.filter-input:focus {
     cursor: pointer;
     padding: 4px 8px;
     line-height: 1;
-    transition: color 0.2s ease;
+    transition: color var(--transition-fast);
 }
 
 .clear-student-btn:hover {
@@ -176,17 +169,17 @@ select.filter-input:focus {
     margin-top: 4px;
     background: var(--bg-white);
     border: 1px solid var(--bg-purple-medium);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     max-height: 300px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: var(--z-modal);
     box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .student-filter-item {
-    padding: 12px;
+    padding: var(--space-sm);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
     border-bottom: 1px solid var(--border-light);
 }
 
@@ -239,7 +232,7 @@ select.filter-input:focus {
     bottom: 0;
     background-color: var(--gray-550);
     transition: 0.3s;
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
 }
 
 .toggle-slider:before {
@@ -309,7 +302,7 @@ select.filter-input:focus {
 /* Table Styles - matching student database table */
 .table-container {
     background: var(--bg-white);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--bg-purple-medium);
     overflow: hidden;
     box-shadow: 0 2px 8px var(--shadow-light);
@@ -328,11 +321,11 @@ select.filter-input:focus {
     color: white;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: calc(var(--z-base) + 9);
 }
 
 #transactions-table th {
-    padding: 16px;
+    padding: var(--space-sm);
     text-align: left;
     font-weight: 600;
     font-size: 0.9rem;
@@ -385,7 +378,7 @@ select.filter-input:focus {
 .type-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -465,7 +458,7 @@ select.filter-input:focus {
     align-items: center;
     gap: 0.4rem;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -533,7 +526,7 @@ select.filter-input:focus {
     background: var(--bg-white);
     border: 1px solid var(--bg-purple-medium);
     padding: 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
     transition: all 0.2s;
     font-size: 0.95rem;
@@ -565,20 +558,20 @@ select.filter-input:focus {
 
 /* Buttons - using admin.css btn-primary-lg style */
 .btn-primary {
-    padding: 12px 24px;
+    padding: var(--space-sm) 24px;
 }
 
 .btn-danger {
-    padding: 12px 24px;
+    padding: var(--space-sm) 24px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     background: var(--error);
     color: white;
 }
@@ -623,7 +616,7 @@ select.filter-input:focus {
    ======================================== */
 
 .pagination-wrapper {
-    margin-top: 30px;
+    margin-top: var(--space-xl);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -632,17 +625,17 @@ select.filter-input:focus {
 .pagination {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .pagination-btn {
-    padding: 8px 16px;
+    padding: var(--space-xs) 16px;
     background: transparent;
     border: 1px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     font-size: 0.9rem;
     font-weight: 500;
     display: inline-flex;
@@ -668,13 +661,13 @@ select.filter-input:focus {
 }
 
 .pagination-number {
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     background: transparent;
     border: 1px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     font-size: 0.9rem;
     font-weight: 500;
     min-width: 40px;
@@ -699,7 +692,7 @@ select.filter-input:focus {
 }
 
 .pagination-info-wrapper {
-    margin-top: 15px;
+    margin-top: var(--space-sm);
     text-align: center;
 }
 
@@ -749,28 +742,12 @@ select.filter-input:focus {
         margin-right: 0;
     }
 
-    .filters-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+    /* Stack filters vertically on mobile with labels above fields */
+    .filters-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
         width: 100%;
-        box-sizing: border-box;
-    }
-    
-    /* From and To dates - side by side on first row */
-    .filter-group:nth-child(1),
-    .filter-group:nth-child(2) {
-        grid-column: span 1;
-    }
-    
-    /* Type dropdown - full width on second row */
-    .filter-group:nth-child(3) {
-        grid-column: span 2;
-    }
-    
-    /* Student search - full width on third row */
-    .filter-group:nth-child(4) {
-        grid-column: span 2;
     }
     
     .filter-group {
@@ -778,6 +755,7 @@ select.filter-input:focus {
         min-width: auto;
         box-sizing: border-box;
         max-width: 100%;
+        gap: 0.25rem;
     }
 
     .filter-group input,
@@ -799,39 +777,20 @@ select.filter-input:focus {
         max-width: 100%;
     }
     
-    .filter-actions {
-        grid-column: span 2;
-        width: 100%;
-        margin-left: 0;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        box-sizing: border-box;
+    .filters-actions-row {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
     }
     
-    /* Apply Filters button - full width on first row */
-    .filter-actions #apply-filters-btn {
-        grid-column: span 2;
+    .filters-actions-row button {
         width: 100%;
-        box-sizing: border-box;
     }
     
-    /* Reset button and Show Reversed toggle - side by side on second row */
-    .filter-actions #reset-filters-btn {
-        grid-column: span 1;
+    .filters-actions-row .toggle-group {
         width: 100%;
-        box-sizing: border-box;
-    }
-    
-    .filter-actions .toggle-group {
-        grid-column: span 1;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-sizing: border-box;
-        width: 100%;
-        max-width: 100%;
+        justify-content: center;
     }
 
     .toggle-label {
@@ -847,7 +806,7 @@ select.filter-input:focus {
         gap: 0.75rem;
         padding: 1rem;
         background: var(--bg-white);
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
     }
 
     /* First row: Total Transactions and Total Amount */
@@ -867,12 +826,32 @@ select.filter-input:focus {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: flex-start;
-        padding: 12px 16px;
+        padding: var(--space-sm) 16px;
         background: var(--input-bg);
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         gap: 4px;
+    }
+
+    /* Left column items - left aligned */
+    .summary-item:nth-child(odd) {
+        align-items: flex-start;
         text-align: left;
+    }
+
+    .summary-item:nth-child(odd) .summary-label,
+    .summary-item:nth-child(odd) .summary-value {
+        text-align: left;
+    }
+
+    /* Right column items - right aligned */
+    .summary-item:nth-child(even) {
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .summary-item:nth-child(even) .summary-label,
+    .summary-item:nth-child(even) .summary-value {
+        text-align: right;
     }
 
     .summary-label {
@@ -880,7 +859,6 @@ select.filter-input:focus {
         color: var(--text-primary);
         font-weight: 600;
         margin: 0;
-        text-align: left;
         width: 100%;
     }
 
@@ -889,7 +867,6 @@ select.filter-input:focus {
         font-weight: 700;
         color: var(--purple-primary);
         margin: 0;
-        text-align: left;
         width: 100%;
     }
 
@@ -938,7 +915,7 @@ select.filter-input:focus {
     }
 
     .pagination-wrapper {
-        margin-top: 20px;
+        margin-top: var(--space-md);
         flex-direction: column;
         gap: 0.75rem;
     }
@@ -1011,7 +988,7 @@ select.filter-input:focus {
             display: block;
             margin-bottom: 1rem;
             border: 1px solid var(--bg-purple-medium);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 1rem;
             background: var(--bg-white);
             position: relative;
@@ -1054,16 +1031,8 @@ select.filter-input:focus {
             color: var(--text-primary);
         }
 
-        /* Type Badge - Row 2 Left (under date) */
-        #transactions-table td:nth-child(2) {
-            grid-column: 1;
-            grid-row: 2;
-            text-align: left;
-            justify-self: start;
-        }
-
         /* Student Name - Top Right */
-        #transactions-table td:nth-child(3) {
+        #transactions-table td:nth-child(2) {
             grid-column: 2;
             grid-row: 1;
             font-size: 0.95rem;
@@ -1072,92 +1041,44 @@ select.filter-input:focus {
             justify-self: end;
         }
 
-        /* Amount - Row 2 Right */
+        /* Type Badge - Row 2 Left (under date) */
+        #transactions-table td:nth-child(3) {
+            grid-column: 1;
+            grid-row: 2;
+            text-align: left;
+            justify-self: start;
+        }
+
+        /* Date of Prepaid Class - Hide on mobile */
         #transactions-table td:nth-child(4) {
+            display: none;
+        }
+
+        /* Amount - Row 2 Right */
+        #transactions-table td:nth-child(5) {
             grid-column: 2;
             grid-row: 2;
             text-align: right;
             justify-self: end;
         }
 
-        /* Cash (5th child) - Show as payment method in row 3 when not empty */
-        #transactions-table td:nth-child(5):not(.empty) {
+        /* Payment Method Badge - Row 3 Right */
+        #transactions-table td:nth-child(6) {
             grid-column: 2;
             grid-row: 3;
             text-align: right;
             justify-self: end;
-            font-size: 0.85rem;
-            color: var(--text-light);
-            font-size: 0;
-        }
-
-        #transactions-table td:nth-child(5):not(.empty)::before {
-            content: 'Cash';
-            font-size: 0.85rem;
-            opacity: 0.7;
-        }
-
-        /* Hide empty Cash cells */
-        #transactions-table td:nth-child(5).empty {
-            display: none !important;
-        }
-
-        /* EFTPOS (6th child) - Show as payment method in row 3 when not empty */
-        #transactions-table td:nth-child(6):not(.empty) {
-            grid-column: 2;
-            grid-row: 3;
-            text-align: right;
-            justify-self: end;
-            font-size: 0;
-        }
-
-        #transactions-table td:nth-child(6):not(.empty)::before {
-            content: 'EFTPOS';
-            font-size: 0.85rem;
-            color: var(--text-light);
-            opacity: 0.7;
-        }
-
-        /* Hide empty EFTPOS cells */
-        #transactions-table td:nth-child(6).empty {
-            display: none !important;
-        }
-
-        /* Bank Transfer (7th child) - Show as payment method in row 3 when not empty */
-        #transactions-table td:nth-child(7):not(.empty) {
-            grid-column: 2;
-            grid-row: 3;
-            text-align: right;
-            justify-self: end;
-            font-size: 0;
-        }
-
-        #transactions-table td:nth-child(7):not(.empty)::before {
-            content: 'Bank Transfer';
-            font-size: 0.85rem;
-            color: var(--text-light);
-            opacity: 0.7;
-        }
-
-        /* Hide empty Bank Transfer cells */
-        #transactions-table td:nth-child(7).empty {
-            display: none !important;
         }
 
         /* Action Buttons - Row 4 spanning both columns */
-        #transactions-table td:nth-child(8) {
+        #transactions-table td:nth-child(7) {
             grid-column: 1 / -1;
             grid-row: 4;
             align-self: start;
         }
 
         /* Add labels before values on mobile */
-        #transactions-table td:nth-child(1)::before {
-            content: '';
-            display: none;
-        }
-
-        #transactions-table td:nth-child(3)::before {
+        #transactions-table td:nth-child(2)::before {
             content: '';
             display: block;
             font-size: 0.75rem;
@@ -1167,7 +1088,7 @@ select.filter-input:focus {
             margin-bottom: 2px;
         }
 
-        #transactions-table td:nth-child(4)::before {
+        #transactions-table td:nth-child(5)::before {
             content: 'Amount';
             display: block;
             font-size: 0.75rem;
@@ -1210,11 +1131,11 @@ select.filter-input:focus {
 
 /* 2. Reduce modal padding to match Student Transaction History */
 #purchase-concessions-modal .modal-body {
-    padding: 24px;
+    padding: var(--space-md);
 }
 
 #purchase-concessions-modal .modal-footer {
-    padding: 16px 24px;
+    padding: var(--space-md) 24px;
 }
 
 /* Fix date picker alignment - align bottom with heading */
@@ -1227,9 +1148,9 @@ select.filter-input:focus {
 #purchase-concessions-modal .student-info-card {
     background: var(--bg-secondary);
     border-left: 4px solid var(--purple-primary);
-    padding: 16px;
-    border-radius: 6px;
-    margin-bottom: 20px;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
 }
 
 #purchase-concessions-modal .student-info-card h4 {
@@ -1248,8 +1169,8 @@ select.filter-input:focus {
 #purchase-concessions-modal .purchase-summary {
     background: transparent;
     border: none;
-    padding: 16px 0;
-    margin-top: 20px;
+    padding: var(--space-md) 0;
+    margin-top: var(--space-md);
 }
 
 #purchase-concessions-modal .summary-row {
@@ -1259,8 +1180,8 @@ select.filter-input:focus {
     font-size: 1.1rem;
     background: var(--bg-white);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
 }
 
 #purchase-concessions-modal .summary-row span {
@@ -1276,7 +1197,7 @@ select.filter-input:focus {
 #purchase-concessions-modal .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 

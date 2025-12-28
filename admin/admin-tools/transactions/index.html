@@ -35,28 +35,9 @@
         <main class="main-content">
             <!-- Filters Section -->
             <div class="filters-container">
-                <!-- Row 1: Filter Labels -->
-                <div class="filters-labels-row">
+                <div class="filters-grid">
                     <div class="filter-group">
                         <label for="date-from"><i class="fas fa-calendar-alt"></i> From:</label>
-                    </div>
-                    <div class="filter-group">
-                        <label for="date-to"><i class="fas fa-calendar-alt"></i> To:</label>
-                    </div>
-                    <div class="filter-group">
-                        <label for="transaction-type"><i class="fas fa-filter"></i> Type:</label>
-                    </div>
-                    <div class="filter-group">
-                        <label for="payment-method-filter"><i class="fas fa-credit-card"></i> Payment Method:</label>
-                    </div>
-                    <div class="filter-group">
-                        <label for="student-filter"><i class="fas fa-user"></i> Student:</label>
-                    </div>
-                </div>
-                
-                <!-- Row 2: Filter Controls -->
-                <div class="filters-controls-row">
-                    <div class="filter-group">
                         <div class="date-input-wrapper">
                             <input type="text" id="date-from" class="filter-input" readonly placeholder="Select from date">
                             <i class="fas fa-calendar-alt date-input-icon"></i>
@@ -65,6 +46,7 @@
                     </div>
                     
                     <div class="filter-group">
+                        <label for="date-to"><i class="fas fa-calendar-alt"></i> To:</label>
                         <div class="date-input-wrapper">
                             <input type="text" id="date-to" class="filter-input" readonly placeholder="Select to date">
                             <i class="fas fa-calendar-alt date-input-icon"></i>
@@ -73,6 +55,7 @@
                     </div>
                     
                     <div class="filter-group">
+                        <label for="transaction-type"><i class="fas fa-filter"></i> Type:</label>
                         <select id="transaction-type" class="filter-input">
                             <option value="all">All Transactions</option>
                             <option value="concession-purchase">Concession Purchase</option>
@@ -82,6 +65,7 @@
                     </div>
                     
                     <div class="filter-group">
+                        <label for="payment-method-filter"><i class="fas fa-credit-card"></i> Payment Method:</label>
                         <select id="payment-method-filter" class="filter-input">
                             <option value="all">All Methods</option>
                             <option value="cash">Cash</option>
@@ -92,6 +76,7 @@
                     </div>
                     
                     <div class="filter-group">
+                        <label for="student-filter"><i class="fas fa-user"></i> Student:</label>
                         <div class="student-filter-wrapper">
                             <input type="text" id="student-filter" class="filter-input" placeholder="All Students" autocomplete="off">
                             <button type="button" class="clear-student-btn" id="clear-student-filter" style="display: none;">&times;</button>
@@ -210,6 +195,7 @@
     
     <!-- Concessions Modules -->
     <script src="../../concessions/js/concessions-data.js?v=2"></script>
+    <script src="../../concessions/js/concessions-admin.js?v=2"></script>
     <script src="../../concessions/js/concessions-modal.js?v=2"></script>
     <script src="../../concessions/js/casual-entry-modal.js?v=1"></script>
     

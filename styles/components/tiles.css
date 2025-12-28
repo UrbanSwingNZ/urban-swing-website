@@ -6,6 +6,7 @@
 
 /* Import colors for gradient variables */
 @import url('../base/colors.css');
+@import url('../base/design-tokens.css');
 
 /* ========================================
    BASE TILE STYLES
@@ -31,7 +32,7 @@
 .tile-icon {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--space-sm);
 }
 
 .tile-icon-image {
@@ -42,7 +43,7 @@
   align-items: center;
   justify-content: center;
   background: var(--gradient-full);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--white);
   font-size: 1.75rem;
 }
@@ -75,13 +76,67 @@
 }
 
 .tile-icon-centered .tile-icon-image {
-  margin: 0 auto 12px;
+  margin: 0 auto var(--space-xs);
 }
 
 /* Tile heading styles */
 .tile-icon-content h3 {
   font-size: 1.5rem;
-  margin-bottom: 15px;
+  margin-bottom: var(--space-sm);
+}
+
+/* ========================================
+   TILE LINK BEHAVIOR
+   Override typography.css link styles for tiles
+   ======================================== */
+
+/* Remove underline from tile links */
+a.tile-gradient,
+a .tile-icon-content h3,
+a .tile-icon-content p {
+  text-decoration: none;
+}
+
+a.tile-gradient:hover,
+a.tile-gradient:hover h3,
+a.tile-gradient:hover p {
+  text-decoration: none;
+}
+
+/* ========================================
+   DASHBOARD TILES
+   Full tile/card component for dashboard pages
+   ======================================== */
+
+.dashboard-tile {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg) 30px;
+  box-shadow: 0 10px 30px var(--shadow-medium);
+  transition: all var(--transition-base);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dashboard-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px var(--shadow-medium);
+  text-decoration: none;
+}
+
+.dashboard-tile h3 {
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+}
+
+.dashboard-tile p {
+  color: var(--gray-650);
+  margin-bottom: var(--space-lg);
+  line-height: 1.6;
 }
 
 /* ========================================
@@ -97,5 +152,9 @@
   
   .tile-icon-image {
     margin: 0 auto;
+  }
+
+  .dashboard-tile {
+    padding: var(--space-md) 20px;
   }
 }

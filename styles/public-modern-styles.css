@@ -7,28 +7,27 @@
 /* Import order matters - base styles first, then components */
 
 /* Base Styles */
-@import url('base/variables.css');
+@import url('base/design-tokens.css');
 @import url('base/reset.css');
 @import url('base/typography.css');
-@import url('/styles/base/colors.css');
-@import url('/styles/base/buttons.css');
+@import url('base/colors.css');
+@import url('base/buttons.css');
 
 /* Layout */
-@import url('layout/layout.css');
+@import url('layout/public-layout.css');
 
 /* Components */
-@import url('components/header.css');
-@import url('components/navigation.css');
-@import url('components/buttons.css');
-@import url('components/cards.css');
-@import url('components/tables.css');
+@import url('components/public-header.css');
+@import url('components/public-navigation.css');
+@import url('components/public-cards.css');
+@import url('components/public-tables.css');
 @import url('components/faq.css');
-@import url('components/enhanced-features.css');
-@import url('/styles/components/mobile-drawer.css');
-@import url('/styles/components/tiles.css');
+@import url('components/public-enhanced-features.css');
+@import url('components/mobile-drawer.css');
+@import url('components/tiles.css');
 
 /* Utilities */
-@import url('utilities/utilities.css');
+@import url('utilities/public-utilities.css');
 
 /* ========================================
    LEGACY SUPPORT & OVERRIDES
@@ -225,7 +224,7 @@ table {
     position: absolute;
     top: 0;
     left: 0;
-    margin: 15px;
+    margin: var(--space-sm);
   }
 
   .crew-table td {

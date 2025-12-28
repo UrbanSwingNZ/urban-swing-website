@@ -1,4 +1,5 @@
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 
 /* ========================================
    SIDEBAR STYLES
@@ -23,7 +24,7 @@
 }
 
 .sidebar-header {
-  padding: 20px;
+  padding: var(--space-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -41,12 +42,12 @@
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
 }
 
 .sidebar-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .btn-icon {
@@ -55,9 +56,9 @@
   color: var(--text-color);
   font-size: 1.1rem;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-xs);
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .btn-icon:hover {
@@ -73,10 +74,10 @@
 
 /* Search Box */
 .search-box {
-  padding: 15px 20px;
+  padding: var(--space-sm) 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -107,9 +108,9 @@
 }
 
 .playlists-list li {
-  padding: 15px 20px;
+  padding: var(--space-sm) 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   border-left: 3px solid transparent;
   user-select: none;
 }
@@ -139,7 +140,7 @@
 .playlist-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   width: 100%;
   position: relative;
 }
@@ -205,8 +206,8 @@
   border: none;
   color: var(--gray-650);
   cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
+  padding: var(--space-xs);
+  border-radius: var(--radius-xs);
   transition: all 0.2s;
 }
 
@@ -221,14 +222,14 @@
   top: 100%;
   background: var(--card-light);
   border: 1px solid var(--gray-450);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   box-shadow: 0 4px 12px var(--shadow-medium);
-  z-index: 2000;
+  z-index: var(--z-popover);
   min-width: 140px;
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .playlist-menu.show {
@@ -239,7 +240,7 @@
 
 .playlist-menu button {
   width: 100%;
-  padding: 10px 12px;
+  padding: var(--space-xs) 12px;
   border: none;
   background: none;
   text-align: left !important;
@@ -250,12 +251,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 8px;
+  gap: var(--space-xs);
   white-space: nowrap;
 }
 
 .playlist-menu button:first-child {
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--radius-sm) 6px 0 0;
 }
 
 .playlist-menu button:last-child {
@@ -287,16 +288,16 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 9999;
+  z-index: var(--z-modal-high);
   animation: fadeIn 0.2s ease;
 }
 
 .playlist-menu-mobile {
   background: var(--card-light);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   width: 100%;
   max-width: 500px;
-  padding: 20px;
+  padding: var(--space-md);
   box-shadow: 0 -4px 20px var(--shadow-text);
   animation: slideUp 0.3s ease;
   position: relative !important;
@@ -318,7 +319,7 @@
   color: var(--text-color);
   padding: 0 0 15px 0;
   border-bottom: 1px solid var(--gray-450);
-  margin-bottom: 10px;
+  margin-bottom: var(--space-xs);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -337,8 +338,8 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 12px;
-  border-radius: 8px;
+  gap: var(--space-sm);
+  border-radius: var(--radius-sm);
   margin-bottom: 6px;
 }
 
@@ -352,7 +353,7 @@
 }
 
 .playlist-menu-item.menu-cancel {
-  margin-top: 10px;
+  margin-top: var(--space-xs);
   justify-content: center !important;
   color: var(--gray-650);
   border-top: 1px solid var(--gray-450);
@@ -395,7 +396,7 @@
 .playlist-item img {
   width: 50px;
   height: 50px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   object-fit: cover;
 }
 

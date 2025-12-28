@@ -1,0 +1,95 @@
+/* ========================================
+   AUTH CARD COMPONENT
+   Login and registration card layout
+   Used on admin and student portal login/register pages
+   ======================================== */
+
+/* Note: colors.css should be imported before this file */
+@import url('../base/design-tokens.css');
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background: var(--gradient-header);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  color: var(--text-primary);
+}
+
+.auth-card {
+  background: var(--white);
+  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px var(--shadow-medium);
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+}
+
+.auth-card a {
+  display: inline-block;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.auth-card a:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.auth-card .logo {
+  width: 200px;
+  max-width: 80%;
+  margin-bottom: var(--space-md);
+}
+
+.auth-card h1 {
+  font-size: 2rem;
+  margin-bottom: var(--space-xs);
+  background: var(--gradient-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-card .subtitle {
+  color: var(--text-primary);
+  opacity: 0.7;
+  margin-bottom: var(--space-xl);
+  font-size: 0.95rem;
+}
+
+/* Form Submit Buttons (scoped to auth forms only) */
+.auth-container .btn-primary {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  margin-top: var(--space-xs);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: var(--space-xl) 20px;
+  }
+
+  .auth-card h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: var(--space-lg) 15px;
+  }
+
+  .auth-card .logo {
+    width: 150px;
+  }
+}

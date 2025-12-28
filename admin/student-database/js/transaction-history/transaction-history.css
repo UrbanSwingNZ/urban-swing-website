@@ -3,6 +3,8 @@
  * Styles for the transaction history modal
  */
 
+@import url('../../../../styles/base/design-tokens.css');
+
 /* Transaction History Modal */
 #transaction-history-modal .modal-content {
     max-width: 900px;
@@ -15,7 +17,7 @@
 
 /* Student Info Header */
 .transaction-student-info {
-    padding: 20px 24px;
+    padding: var(--space-md) var(--space-md);
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-light);
 }
@@ -41,7 +43,7 @@
 
 .transaction-tab {
     flex: 1;
-    padding: 16px 20px;
+    padding: var(--space-sm) 20px;
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
@@ -49,7 +51,7 @@
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-muted);
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     position: relative;
     bottom: -2px;
 }
@@ -66,13 +68,13 @@
 }
 
 .transaction-tab i {
-    margin-right: 8px;
+    margin-right: var(--space-xs);
 }
 
 /* Tab Content */
 .transaction-tab-content {
     display: none;
-    padding: 24px;
+    padding: var(--space-md);
     min-height: 300px;
     max-height: 500px;
     overflow-y: auto;
@@ -84,11 +86,11 @@
 
 /* Section Summary */
 .section-summary {
-    margin: 0 0 16px 0;
-    padding: 12px 16px;
+    margin: 0 0 var(--space-sm) 0;
+    padding: var(--space-sm) var(--space-sm);
     background: var(--bg-secondary);
     border-left: 4px solid var(--purple-primary);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-weight: 500;
     color: var(--text-primary);
 }
@@ -97,18 +99,18 @@
 .attendance-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .attendance-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: var(--space-sm) var(--space-sm);
     background: var(--bg-primary);
     border: 1px solid var(--border-light);
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
 }
 
 .attendance-item:hover {
@@ -135,18 +137,18 @@
 .payments-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .payment-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: var(--space-sm);
     background: var(--bg-primary);
     border: 1px solid var(--border-light);
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
 }
 
 .payment-item:hover {
@@ -157,7 +159,7 @@
 .payment-date-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .payment-date-time {
@@ -219,9 +221,9 @@
 /* Action buttons container */
 .payment-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
     align-items: center;
-    margin-top: 8px;
+    margin-top: var(--space-xs);
 }
 
 /* Edit Transaction Button */
@@ -229,10 +231,10 @@
     padding: 6px 12px;
     background: transparent;
     border: 1px solid var(--purple-primary);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     color: var(--purple-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
@@ -253,10 +255,10 @@
     padding: 6px 12px;
     background: transparent;
     border: 1px solid var(--error);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     color: var(--error);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
@@ -276,11 +278,11 @@
 .concession-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-    padding: 20px;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
     background: var(--gradient-blue-purple);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: white;
 }
 
@@ -303,7 +305,7 @@
 
 /* Concessions Sections */
 .concessions-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-md);
 }
 
 .concessions-section h4 {
@@ -313,20 +315,20 @@
 }
 
 .concessions-section h4 i {
-    margin-right: 8px;
+    margin-right: var(--space-xs);
 }
 
 /* Accordion styles for concession sections in transaction history */
 .concession-accordion-header {
     cursor: pointer;
     user-select: none;
-    padding: 12px;
+    padding: var(--space-sm);
     background: var(--bg-primary);
     border: 1px solid var(--border-light);
     border-left: 4px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     margin: 0 0 0 0;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -371,17 +373,17 @@
 
 .accordion-content.show {
     max-height: 2000px;
-    margin-top: 12px;
+    margin-top: var(--space-sm);
 }
 
 /* Concession Items - Reuse from existing concessions.css */
 .concession-item {
-    padding: 12px 16px 16px 16px;
+    padding: var(--space-sm) 16px 16px 16px;
     background: var(--bg-primary);
     border: 1px solid var(--border-light);
     border-left: 4px solid var(--success);
-    border-radius: 6px;
-    margin-bottom: 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-xs);
 }
 
 .concession-item.expired {
@@ -409,7 +411,7 @@
 }
 
 .concession-info {
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
 }
 
 .concession-info strong {
@@ -419,7 +421,7 @@
 /* Concession Content Layout */
 .concession-content {
     display: flex;
-    gap: 16px;
+    gap: var(--space-sm);
     align-items: flex-start;
 }
 
@@ -431,7 +433,7 @@
 .concession-details {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
     font-size: 0.9rem;
     color: var(--text-muted);
 }
@@ -448,16 +450,16 @@
 
 /* Concession Actions */
 .concession-actions {
-    margin-top: 8px;
+    margin-top: var(--space-xs);
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
     justify-content: space-between;
     align-items: center;
 }
 
 .concession-actions-left {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .concession-actions-right {
@@ -469,7 +471,7 @@
     background: var(--purple-primary);
     color: white;
     padding: 4px 10px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 0.75rem;
     font-weight: 600;
     display: inline-flex;
@@ -488,9 +490,9 @@
     font-size: 0.85rem;
     border: 1px solid var(--border-light);
     background: transparent;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     color: var(--text-primary);
     font-weight: 500;
 }
@@ -515,9 +517,9 @@
     font-size: 0.85rem;
     border: 1px solid var(--error);
     background: transparent;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     color: var(--error);
     font-weight: 500;
 }
@@ -544,7 +546,7 @@
     padding: 4px 10px;
     background: var(--badge-neutral-bg);
     border: 1px solid var(--text-muted-alt);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-muted);
@@ -561,10 +563,10 @@
     flex: 0 0 350px;
     display: flex;
     flex-direction: column;
-    padding: 12px;
+    padding: var(--space-sm);
     background: var(--bg-purple-alt);
     border: 1px solid var(--bg-purple-medium);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     height: fit-content;
 }
 
@@ -578,16 +580,16 @@
 
 .concession-notes-input {
     width: 100%;
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--border-light);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-family: inherit;
     font-size: 0.9rem;
     resize: vertical;
     min-height: 80px;
     max-height: 150px;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--transition-fast), box-shadow 0.2s ease;
 }
 
 .concession-notes-input:focus {
@@ -657,7 +659,7 @@
     .attendance-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: var(--space-sm);
     }
     
     .payment-amount-method {

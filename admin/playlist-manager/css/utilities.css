@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../../../styles/base/colors.css');
+@import url('../../../styles/base/design-tokens.css');
 @import url('../../../styles/components/snackbar.css');
 
 /* Animations */
@@ -59,8 +60,8 @@
   border: none;
   color: var(--gray-650);
   cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 4px;
+  padding: 6px var(--space-xs);
+  border-radius: var(--radius-xs);
   font-size: 0.85rem;
   transition: all 0.2s;
   margin-right: 4px;

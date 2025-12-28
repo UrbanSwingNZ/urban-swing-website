@@ -1,4 +1,5 @@
 @import url('../../styles/base/colors.css');
+@import url('../../styles/base/design-tokens.css');
 
 /* Transaction History Styles */
 
@@ -19,7 +20,7 @@
 .transactions-header {
     background: white;
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
     margin-bottom: 2rem;
 }
@@ -54,7 +55,7 @@
 /* Table Container */
 .table-container {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
     overflow: hidden;
 }
@@ -84,7 +85,7 @@
 
 #transactions-table tbody tr {
     border-bottom: 1px solid var(--hover-light);
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
 }
 
 #transactions-table tbody tr:hover {
@@ -111,8 +112,8 @@
         45deg,
         transparent,
         transparent 10px,
-        rgba(255, 0, 0, 0.02) 10px,
-        rgba(255, 0, 0, 0.02) 20px
+        var(--bg-error-light) 10px,
+        var(--bg-error-light) 20px
     );
 }
 
@@ -134,7 +135,7 @@
 .type-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -182,7 +183,7 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.25rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -229,7 +230,7 @@
     text-align: center;
     padding: 4rem 2rem;
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
@@ -259,7 +260,7 @@
     margin-top: 2rem;
     padding: 1rem;
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
@@ -288,7 +289,7 @@
 
 .transaction-card {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: 0 2px 8px var(--shadow-light);
     padding: 1.25rem;
     margin-bottom: 1rem;
@@ -306,8 +307,8 @@
         45deg,
         white,
         white 10px,
-        rgba(255, 0, 0, 0.02) 10px,
-        rgba(255, 0, 0, 0.02) 20px
+        var(--bg-error-light) 10px,
+        var(--bg-error-light) 20px
     );
 }
 

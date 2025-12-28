@@ -1,9 +1,12 @@
 /* ========================================
    TYPOGRAPHY
    Modern typography system with gradient text
+   
+   This is the single source of truth for typography styles
+   Consolidated from /css/base/typography.css
+   
+   USAGE: Import this after design-tokens.css and colors.css
    ======================================== */
-
-@import url('../../styles/base/colors.css');
 
 /* Body text */
 body {
@@ -191,6 +194,18 @@ hr {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* White text utility - for headings on gradient backgrounds */
+.text-white,
+h1.text-white,
+h2.text-white,
+h3.text-white {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  background-clip: initial !important;
+  color: var(--white) !important;
 }
 
 /* Mobile typography adjustments */

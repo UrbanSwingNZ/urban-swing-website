@@ -1,4 +1,5 @@
 @import url('../../styles/base/colors.css');
+@import url('../../styles/base/design-tokens.css');
 
 /* ========================================
    ADMIN TOOLS PAGE STYLES
@@ -6,7 +7,7 @@
 
 .tools-intro {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: var(--space-lg);
 }
 
 .tools-intro p {
@@ -19,15 +20,15 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 30px;
-    margin-bottom: 40px;
+    margin-bottom: var(--space-lg);
 }
 
 .tool-card {
     background: var(--card-light);
-    border-radius: 20px;
-    padding: 30px;
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
     box-shadow: 0 10px 30px var(--shadow-medium);
-    transition: all 0.3s ease;
+    transition: var(--transition-base);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -53,13 +54,13 @@
 
 .tool-card h3 {
     font-size: 1.5rem;
-    margin-bottom: 15px;
+    margin-bottom: var(--space-sm);
     color: var(--text-primary);
 }
 
 .tool-card > p {
     color: var(--text-muted);
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
     line-height: 1.6;
     flex-grow: 1;
 }
@@ -71,12 +72,12 @@
 }
 
 .tool-features li {
-    padding: 8px 0;
+    padding: var(--space-xs) 0;
     color: var(--text-primary);
     font-size: 0.95rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .tool-features i {
@@ -97,7 +98,7 @@
         flex-wrap: nowrap !important;
         justify-content: space-between !important;
         align-items: center !important;
-        gap: 12px !important;
+        gap: var(--space-sm) !important;
         text-align: left !important;
     }
 
@@ -120,7 +121,7 @@
         margin-left: auto !important;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: var(--space-xs);
     }
 
     /* Hide email on mobile */
@@ -129,13 +130,13 @@
     }
 
     .tools-intro {
-        margin-bottom: 30px;
+        margin-bottom: var(--space-xl);
         padding: 0;
     }
 
     .tools-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: var(--space-md);
         padding: 0;
         margin: 0 0 30px 0;
         width: 100%;
@@ -143,7 +144,7 @@
     }
 
     .tool-card {
-        padding: 25px 20px;
+        padding: var(--space-lg) 20px;
         margin: 0;
         width: 100%;
         box-sizing: border-box;
@@ -180,7 +181,7 @@
     }
 
     .dashboard-main {
-        padding: 30px 15px;
+        padding: var(--space-xl) 15px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
@@ -194,15 +195,15 @@
     }
 
     .tools-grid {
-        gap: 15px;
+        gap: var(--space-sm);
     }
 
     .tool-card {
-        padding: 20px 15px;
+        padding: var(--space-md) 15px;
     }
 
     .dashboard-main {
-        padding: 20px 10px;
+        padding: var(--space-md) 10px;
     }
 }
 

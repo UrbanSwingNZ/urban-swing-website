@@ -3,6 +3,8 @@
    Persistent dropdown for selecting playlists on mobile
    ======================================== */
 
+@import url('../base/design-tokens.css');
+
 /* Hide on desktop by default */
 .mobile-playlist-selector,
 .mobile-playlist-overlay {
@@ -24,7 +26,7 @@
     border-bottom: 1px solid var(--border-light);
     position: relative;
     width: 100%;
-    z-index: 100;
+    z-index: var(--z-dropdown);
     order: -1; /* Ensure it appears first in flex layout */
   }
 
@@ -42,7 +44,7 @@
     justify-content: space-between;
     padding: 0 15px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
@@ -52,7 +54,7 @@
 
   .mobile-playlist-btn i:first-child {
     font-size: 18px;
-    margin-right: 12px;
+    margin-right: var(--space-sm);
   }
 
   .mobile-playlist-btn span {
@@ -81,7 +83,7 @@
     right: 0;
     bottom: 0;
     background: var(--bg-overlay);
-    z-index: 999;
+    z-index: var(--z-nav-overlay);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -100,7 +102,7 @@
     right: 0;
     max-height: 80vh;
     background: var(--card-light);
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     box-shadow: 0 4px 20px var(--shadow-strong);
     transform: translateY(-100%);
     transition: transform 0.3s ease;
@@ -124,7 +126,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px;
+    padding: var(--space-md);
     border-bottom: 1px solid var(--gray-450);
     background: var(--gradient-header);
   }
@@ -141,7 +143,7 @@
     color: var(--text-white);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
   }
 
   .close-mobile-playlist {
@@ -156,7 +158,7 @@
     justify-content: center;
     cursor: pointer;
     border-radius: 50%;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
   }
 
   .close-mobile-playlist:active {
@@ -165,11 +167,11 @@
 
   /* Search box */
   .mobile-playlist-search {
-    padding: 15px 20px;
+    padding: var(--space-sm) 20px;
     border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
     background: var(--bg-light);
   }
 
@@ -214,7 +216,7 @@
   .mobile-playlists-list li {
     border-bottom: 1px solid var(--gray-450);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -244,16 +246,16 @@
   .mobile-playlists-list a {
     display: flex;
     align-items: center;
-    padding: 12px 20px;
+    padding: var(--space-sm) 20px;
     text-decoration: none;
     color: var(--text-color);
-    gap: 12px;
+    gap: var(--space-sm);
   }
 
   .mobile-playlists-list img {
     width: 48px;
     height: 48px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     object-fit: cover;
     flex-shrink: 0;
   }
@@ -281,7 +283,7 @@
 
   /* Empty state */
   .mobile-playlists-list .empty-message {
-    padding: 40px 20px;
+    padding: var(--space-lg) 20px;
     text-align: center;
     color: var(--text-color);
     opacity: 0.6;
@@ -289,7 +291,7 @@
 
   .mobile-playlists-list .empty-message i {
     font-size: 3rem;
-    margin-bottom: 15px;
+    margin-bottom: var(--space-sm);
     display: block;
     opacity: 0.3;
   }

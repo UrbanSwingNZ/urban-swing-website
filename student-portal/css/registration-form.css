@@ -3,11 +3,12 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/components/snackbar.css');
 @import url('../../styles/components/loading-spinner.css');
+@import url('../../styles/base/design-tokens.css');
 
 /* Loading Spinner Message */
 .loading-spinner p {
     color: white;
-    margin-top: 20px;
+    margin-top: var(--space-md);
     font-size: 1.1rem;
 }
 
@@ -18,16 +19,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: var(--space-lg) 20px;
 }
 
 .register-card {
     background: white;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     box-shadow: 0 20px 60px var(--shadow-text);
     max-width: 600px;
     width: 100%;
-    padding: 40px;
+    padding: var(--space-lg);
 }
 
 .logo {
@@ -47,7 +48,7 @@ h1 {
     text-align: center;
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: var(--space-xs);
     background: var(--gradient-header);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -57,27 +58,27 @@ h1 {
 .subtitle {
     text-align: center;
     color: var(--text-muted);
-    margin-bottom: 30px;
+    margin-bottom: var(--space-xl);
     font-size: 1.1rem;
 }
 
 /* Form Styles */
 .registration-form {
-    margin-top: 30px;
+    margin-top: var(--space-xl);
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
     font-weight: 600;
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .form-group label i {
@@ -94,11 +95,11 @@ h1 {
 .form-group input[type="tel"],
 .form-group select {
     width: 100%;
-    padding: 12px 16px;
+    padding: var(--space-sm) 16px;
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     background: var(--bg-white);
 }
 
@@ -127,13 +128,13 @@ h1 {
 
 /* Checkbox Group */
 .checkbox-group {
-    margin-bottom: 16px;
+    margin-bottom: var(--space-sm);
 }
 
 .checkbox-label {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: var(--space-xs);
     cursor: pointer;
     font-weight: normal;
 }
@@ -164,9 +165,9 @@ h1 {
 .portal-info {
     background: var(--bg-light);
     border-left: 4px solid var(--purple-primary);
-    padding: 16px;
-    margin-top: 12px;
-    border-radius: 4px;
+    padding: var(--space-sm);
+    margin-top: var(--space-sm);
+    border-radius: var(--radius-xs);
 }
 
 .portal-info p {
@@ -177,13 +178,13 @@ h1 {
 .portal-info p:first-child {
     font-weight: 600;
     color: var(--purple-primary);
-    margin-bottom: 12px;
+    margin-bottom: var(--space-sm);
 }
 
 .portal-info ul {
     list-style: none;
     padding: 0;
-    margin: 12px 0;
+    margin: var(--space-sm) 0;
 }
 
 .portal-info ul li {
@@ -191,7 +192,7 @@ h1 {
     color: var(--text-primary);
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .portal-info ul li i {
@@ -204,7 +205,7 @@ h1 {
     font-size: 0.9rem;
     color: var(--text-muted);
     font-style: italic;
-    margin-top: 12px !important;
+    margin-top: var(--space-sm) !important;
 }
 
 .portal-info-note i {
@@ -215,26 +216,26 @@ h1 {
 .payment-section {
     background: var(--bg-light);
     border: 2px solid var(--border-light);
-    border-radius: 12px;
-    padding: 24px;
-    margin: 30px 0;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin: var(--space-xl) 0;
 }
 
 .payment-section h3 {
     color: var(--purple-primary);
     font-size: 1.2rem;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-sm);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .payment-info {
     background: var(--bg-purple-medium);
     color: var(--purple-primary);
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin-bottom: 20px;
+    padding: var(--space-sm) 16px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
     font-weight: 600;
     text-align: center;
 }
@@ -243,17 +244,17 @@ h1 {
 .rate-options {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .rate-option {
     display: flex;
     align-items: center;
-    padding: 16px;
+    padding: var(--space-sm);
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     background: white;
     flex-wrap: wrap;
 }
@@ -264,7 +265,7 @@ h1 {
 }
 
 .rate-option input[type="radio"] {
-    margin-right: 12px;
+    margin-right: var(--space-sm);
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -308,7 +309,7 @@ h1 {
     padding: 0.75rem;
     background: var(--warning-light);
     border-left: 3px solid var(--warning);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     width: 100%;
     flex-basis: 100%;
     opacity: 0;
@@ -338,18 +339,18 @@ h1 {
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: var(--space-sm);
 }
 
 .payment-notice {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
     background: var(--bg-success-light);
     color: var(--success);
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin-top: 16px;
+    padding: var(--space-sm) 16px;
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-sm);
     font-size: 0.9rem;
 }
 
@@ -359,11 +360,11 @@ h1 {
 
 /* Stripe Card Element */
 .stripe-card-element {
-    padding: 12px 16px;
+    padding: var(--space-sm) 16px;
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     background: white;
-    transition: border-color 0.2s ease;
+    transition: border-color var(--transition-fast);
     min-height: 44px;
     cursor: text;
 }
@@ -394,8 +395,8 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 20px;
+    gap: var(--space-xs);
+    padding: var(--space-md);
     color: var(--text-secondary);
 }
 
@@ -407,18 +408,18 @@ h1 {
 .btn-submit-custom {
     width: 100%;
     height: 48px;
-    margin-top: 30px;
+    margin-top: var(--space-xl);
 }
 
 /* Messages */
 .success-message,
 .error-message {
-    padding: 16px;
-    border-radius: 8px;
-    margin-top: 20px;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-md);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
     font-weight: 500;
 }
 
@@ -440,13 +441,13 @@ h1 {
     font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
+    gap: var(--space-xs);
+    transition: all var(--transition-fast);
 }
 
 .back-link:hover {
     color: #8512d6;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 /* Terms Modal */
@@ -458,15 +459,15 @@ h1 {
     width: 100%;
     height: 100%;
     background: var(--bg-overlay-dark);
-    z-index: 1000;
+    z-index: var(--z-modal);
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 .modal-content {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     max-width: 700px;
     width: 100%;
     max-height: 90vh;
@@ -475,7 +476,7 @@ h1 {
 }
 
 .modal-header {
-    padding: 24px 30px;
+    padding: var(--space-lg) 30px;
     border-bottom: 1px solid var(--border-light);
     display: flex;
     justify-content: space-between;
@@ -487,7 +488,7 @@ h1 {
     color: var(--purple-primary);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .modal-close {
@@ -501,8 +502,8 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    border-radius: var(--radius-xs);
+    transition: all var(--transition-fast);
 }
 
 .modal-close:hover {
@@ -511,17 +512,17 @@ h1 {
 }
 
 .modal-body {
-    padding: 30px;
+    padding: var(--space-xl);
 }
 
 .terms-content h4 {
     color: var(--purple-primary);
-    margin-top: 24px;
+    margin-top: var(--space-lg);
 }
 
 .terms-content h5 {
     color: var(--text-primary);
-    margin-top: 20px;
+    margin-top: var(--space-md);
 }
 
 .terms-content p {
@@ -530,7 +531,7 @@ h1 {
 }
 
 .modal-footer {
-    padding: 20px 30px;
+    padding: var(--space-md) 30px;
     border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: flex-end;
@@ -540,14 +541,14 @@ h1 {
     background: var(--purple-primary);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: var(--space-xs) 20px;
+    border-radius: var(--radius-sm);
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
+    gap: var(--space-xs);
+    transition: all var(--transition-fast);
 }
 
 .modal-footer .btn-primary:hover {
@@ -558,18 +559,18 @@ h1 {
 .password-section {
     background: var(--bg-light);
     border: 2px solid var(--border-light);
-    border-radius: 12px;
-    padding: 24px;
-    margin: 30px 0;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin: var(--space-xl) 0;
 }
 
 .password-section h3 {
     color: var(--purple-primary);
     font-size: 1.2rem;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .password-input-wrapper {
@@ -581,11 +582,11 @@ h1 {
 .password-input-wrapper input[type="password"],
 .password-input-wrapper input[type="text"] {
     width: 100%;
-    padding: 12px 50px 12px 16px;
+    padding: var(--space-sm) 50px 12px 16px;
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     background: var(--bg-white);
 }
 
@@ -602,13 +603,13 @@ h1 {
     border: none;
     color: var(--purple-primary);
     cursor: pointer;
-    padding: 8px;
-    transition: all 0.2s ease;
-    border-radius: 4px;
+    padding: var(--space-xs);
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-xs);
 }
 
 .password-toggle:hover {
-    background: rgba(133, 18, 214, 0.1);
+    background: var(--bg-purple-medium);
 }
 
 .password-toggle:focus {
@@ -618,10 +619,10 @@ h1 {
 
 /* Password Generator Helper */
 .password-generator-helper {
-    margin-top: 16px;
-    padding: 12px;
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
     background: rgba(133, 18, 214, 0.05);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border-left: 3px solid var(--purple-primary);
 }
 
@@ -649,7 +650,7 @@ h1 {
     font-weight: 600;
     padding: 0;
     font-size: 0.9rem;
-    transition: color 0.2s ease;
+    transition: color var(--transition-fast);
 }
 
 .btn-link:hover {
@@ -667,22 +668,22 @@ h1 {
     background: var(--gradient-blue-purple);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: var(--space-sm) 24px;
+    border-radius: var(--radius-sm);
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    transition: all 0.3s ease;
+    gap: var(--space-xs);
+    transition: all var(--transition-base);
     width: 100%;
-    margin-top: 12px;
+    margin-top: var(--space-sm);
 }
 
 .btn-secondary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(133, 18, 214, 0.4);
+    box-shadow: 0 6px 20px var(--bg-purple-strong);
 }
 
 .btn-secondary:active {
@@ -690,11 +691,11 @@ h1 {
 }
 
 .generated-password {
-    margin-top: 16px;
-    padding: 16px;
-    background: rgba(76, 175, 80, 0.1);
-    border: 2px solid rgba(76, 175, 80, 0.3);
-    border-radius: 8px;
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--bg-success-light);
+    border: 2px solid var(--border-success);
+    border-radius: var(--radius-sm);
     animation: slideDown 0.3s ease;
 }
 
@@ -712,7 +713,7 @@ h1 {
 .generated-password-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-xs);
 }
 
 .generated-password-label {
@@ -724,11 +725,11 @@ h1 {
 .generated-password-value-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-xs);
     background: white;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-success);
 }
 
 .generated-password-value {
@@ -744,10 +745,10 @@ h1 {
     background: var(--purple-primary);
     color: white;
     border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: var(--space-xs) 12px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -769,11 +770,11 @@ h1 {
 /* Responsive */
 @media (max-width: 768px) {
     .register-container {
-        padding: 20px 10px;
+        padding: var(--space-md) 10px;
     }
     
     .register-card {
-        padding: 30px 20px;
+        padding: var(--space-xl) 20px;
     }
     
     .form-row {
@@ -782,17 +783,17 @@ h1 {
     
     .payment-section,
     .password-section {
-        padding: 20px 16px;
+        padding: var(--space-md) 16px;
     }
     
     .modal-content {
-        margin: 10px;
+        margin: var(--space-xs);
     }
     
     .modal-header,
     .modal-body,
     .modal-footer {
-        padding: 20px;
+        padding: var(--space-md);
     }
     
     .generated-password-value {
@@ -807,8 +808,8 @@ h1 {
     justify-content: space-between;
     align-items: center;
     user-select: none;
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
+    transition: all var(--transition-base);
+    margin-bottom: var(--space-md);
 }
 
 .accordion-section .accordion-header:hover {
@@ -850,11 +851,11 @@ h1 {
 /* Admin Notes Textarea */
 #adminNotes {
     width: 100%;
-    padding: 12px 16px;
+    padding: var(--space-sm) 16px;
     border: 2px solid var(--border-light);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     background: var(--bg-white);
     font-family: inherit;
     resize: vertical;

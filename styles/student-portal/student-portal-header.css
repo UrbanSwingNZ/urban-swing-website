@@ -7,12 +7,13 @@
 @import url('../base/buttons.css');
 @import url('../components/mobile-drawer.css');
 @import url('student-portal-header-mobile.css');
+@import url('../base/design-tokens.css');
 
 /* Header Container */
 .student-portal-header {
   background: var(--gradient-header);
   color: var(--text-white);
-  padding: 20px 20px 0;
+  padding: var(--space-md) 20px 0;
   box-shadow: 0 4px 12px var(--shadow-light);
 }
 
@@ -29,7 +30,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .student-portal-header-content a {
@@ -62,13 +63,19 @@
   display: flex;
   align-items: center;
   letter-spacing: 1px;
+  /* Override typography.css h1 gradient on gradient background */
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
+  text-align: left;
 }
 
 /* User Info Section */
 .student-user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--space-xs);
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -84,14 +91,14 @@
   background: var(--header-overlay-semi);
   color: var(--text-white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: var(--space-xs) 20px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   font-size: 0.9rem;
 }
 
@@ -116,5 +123,10 @@
 @media (max-width: 768px) {
   .student-mobile-nav-toggle {
     display: flex !important;
+  }
+
+  /* Hide logout button on mobile - it's in the drawer */
+  .btn-logout {
+    display: none !important;
   }
 }
