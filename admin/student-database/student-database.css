@@ -297,67 +297,7 @@
     gap: var(--space-xs);
 }
 
-.btn-icon {
-    padding: var(--space-xs) 12px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    color: var(--text-primary);
-}
-
-.btn-icon:hover {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-    transform: translateY(-2px);
-}
-
-.btn-icon i {
-    font-size: 0.9rem;
-}
-
-.btn-icon.has-notes {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-.btn-icon.has-notes:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--bg-purple-strong);
-}
-
-.btn-icon.btn-delete:hover {
-    background: var(--error);
-    border-color: var(--error);
-    color: white;
-}
-
-.btn-icon.btn-restore {
-    color: var(--success);
-    border-color: var(--success);
-}
-
-.btn-icon.btn-restore:hover {
-    background: var(--success);
-    border-color: var(--success);
-    color: white;
-}
-
-.btn-icon.btn-disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.btn-icon.btn-disabled:hover {
-    background: transparent;
-    color: var(--text-primary);
-    border-color: var(--border-light);
-    transform: none;
-}
+/* Icon button styles now in /styles/base/buttons.css */
 
 /* Empty State */
 .empty-state {
