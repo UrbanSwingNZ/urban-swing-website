@@ -51,7 +51,7 @@
     border-left: 3px solid var(--error);
     padding: var(--space-xs) var(--space-sm);
     margin: var(--space-sm) 0;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
 }
 
 .student-info-delete strong {

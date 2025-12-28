@@ -15,12 +15,12 @@
     color: white;
     border: none;
     padding: var(--space-xs) 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.85rem;
     font-weight: 600;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -46,12 +46,12 @@
     padding: 6px 10px;
     background: transparent;
     border: 2px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.85rem;
     font-weight: 600;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     color: var(--text-color);
     display: inline-flex;
     align-items: center;
@@ -72,12 +72,12 @@
     color: white;
     border: none;
     padding: var(--space-xs) 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.85rem;
     font-weight: 600;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -98,12 +98,12 @@
     color: white;
     border: none;
     padding: var(--space-xs) 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.85rem;
     font-weight: 600;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -146,7 +146,7 @@
     align-items: center;
     justify-content: center;
     z-index: var(--z-modal-high);
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 .modal-content {
@@ -180,7 +180,7 @@
 }
 
 .modal-header {
-    padding: 25px 30px;
+    padding: var(--space-lg) 30px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -202,7 +202,7 @@
     color: var(--error);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .modal-header i {
@@ -232,7 +232,7 @@
 }
 
 .modal-body {
-    padding: 30px;
+    padding: var(--space-xl);
     color: var(--text-color);
     flex: 1;
     overflow-y: auto;
@@ -242,16 +242,40 @@
 }
 
 .modal-body p {
-    margin-bottom: 15px;
+    margin-bottom: var(--space-sm);
     line-height: 1.6;
     font-family: inherit;
 }
 
+/* Form elements in modals */
+.modal-body select,
+.modal-body input[type="text"],
+.modal-body input[type="email"],
+.modal-body input[type="number"],
+.modal-body textarea {
+    padding: var(--space-xs) var(--space-sm);
+    border: 2px solid var(--gray-450);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+    width: 100%;
+    box-sizing: border-box;
+    background: white;
+    line-height: var(--line-height-base);
+}
+
+.modal-body select:focus,
+.modal-body input:focus,
+.modal-body textarea:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
+}
+
 .modal-footer {
-    padding: 20px 30px;
+    padding: var(--space-md) 30px;
     border-top: 1px solid var(--border-color);
     display: flex;
-    gap: 15px;
+    gap: var(--space-sm);
     justify-content: flex-end;
     align-items: center;
     flex-shrink: 0;
@@ -265,15 +289,15 @@
     background: rgba(154, 22, 245, 0.05);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    padding: 15px;
-    margin: 15px 0;
+    padding: var(--space-sm);
+    margin: var(--space-sm) 0;
 }
 
 .duplicate-student {
-    padding: 12px;
+    padding: var(--space-sm);
     background: var(--card-light);
-    border-radius: 6px;
-    margin-bottom: 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-xs);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -305,19 +329,19 @@
 @media (max-width: 768px) {
     .modal-content {
         max-width: 100%;
-        margin: 20px;
+        margin: var(--space-md);
     }
 
     .modal-body {
-        padding: 20px;
+        padding: var(--space-md);
     }
 
     .modal-header {
-        padding: 20px;
+        padding: var(--space-md);
     }
 
     .modal-footer {
-        padding: 15px 20px;
+        padding: var(--space-sm) 20px;
         flex-direction: column;
     }
 
@@ -330,7 +354,7 @@
 
     .form-row {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: var(--space-sm);
     }
 
     .timestamps {
@@ -357,6 +381,6 @@
 .text-muted {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin-top: 10px;
+    margin-top: var(--space-xs);
     font-family: inherit;
 }

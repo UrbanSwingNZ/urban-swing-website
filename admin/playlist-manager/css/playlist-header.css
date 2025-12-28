@@ -7,7 +7,7 @@
    ======================================== */
 
 .playlist-header {
-  padding: 30px;
+  padding: var(--space-xl);
   background: linear-gradient(180deg, rgba(154, 22, 245, 0.1) 0%, transparent 100%);
   border-bottom: 1px solid var(--gray-450);
   display: flex;
@@ -18,7 +18,7 @@
 .playlist-header-flex {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .playlist-header-info {
@@ -38,7 +38,7 @@
 
 .playlist-header-info h2 {
   font-size: 2rem;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-xs);
   background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -58,13 +58,13 @@
 
 .playlist-actions-row {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
 }
 
 .playlist-actions {
   display: flex;
-  gap: 10px;
+  gap: var(--space-xs);
   align-items: center;
   min-height: 44px;
   flex-wrap: wrap;
@@ -81,15 +81,15 @@
 /* Mobile Playlist Header */
 @media (max-width: 768px) {
   .playlist-header {
-    padding: 15px;
+    padding: var(--space-sm);
     flex-direction: column;
-    gap: 15px;
+    gap: var(--space-sm);
   }
   
   .playlist-header-flex {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-sm);
     width: 100%;
   }
   
@@ -120,7 +120,7 @@
   .playlist-actions-row {
     width: 100%;
     gap: var(--space-xs);
-    margin-top: 10px;
+    margin-top: var(--space-xs);
     justify-content: flex-start;
   }
   

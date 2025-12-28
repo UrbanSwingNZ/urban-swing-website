@@ -28,7 +28,7 @@
     border-radius: var(--radius-md);
     padding: var(--space-md);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     box-shadow: 0 4px 12px var(--shadow-light);
     border: 3px solid transparent;
     position: relative;
@@ -42,7 +42,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    border-radius: 12px 12px 0 0;
+    border-radius: var(--radius-lg) 12px 0 0;
     transition: height 0.3s ease;
 }
 
@@ -140,7 +140,7 @@
 
 .option-form {
     display: none;
-    margin-top: 20px;
+    margin-top: var(--space-md);
     padding-top: 20px;
     border-top: 2px solid var(--gray-400);
     animation: slideDown 0.3s ease;
@@ -167,7 +167,7 @@
 }
 
 .option-form .form-group:last-of-type {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
 }
 
 .option-form label {
@@ -180,11 +180,11 @@
 
 .option-form input {
     width: 100%;
-    padding: 12px;
+    padding: var(--space-sm);
     font-size: 1rem;
     border: 2px solid var(--gray-400);
     border-radius: var(--radius-sm);
-    transition: border-color 0.2s ease;
+    transition: border-color var(--transition-fast);
     box-sizing: border-box;
 }
 
@@ -205,14 +205,14 @@
 /* Primary button width override for option forms */
 .option-form .btn-primary {
     width: 100%;
-    padding: 10px 20px;
-    margin-bottom: 8px;
+    padding: var(--space-xs) 20px;
+    margin-bottom: var(--space-xs);
 }
 
 /* Secondary button (reset password) */
 .option-form .reset-btn {
     width: 100%;
-    padding: 10px 20px;
+    padding: var(--space-xs) 20px;
     font-size: 0.9rem;
     font-weight: 500;
     background-color: transparent;
@@ -220,7 +220,7 @@
     border: 2px solid var(--purple-primary);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .option-form .reset-btn:hover {
@@ -234,11 +234,11 @@
 
 @media (max-width: 600px) {
     .option-card {
-        padding: 20px;
+        padding: var(--space-md);
     }
     
     .option-card-header {
-        gap: 12px;
+        gap: var(--space-sm);
     }
     
     .option-icon {

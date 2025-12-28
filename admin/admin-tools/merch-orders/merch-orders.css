@@ -12,7 +12,7 @@
 
 .database-main {
     flex: 1;
-    padding: 30px 20px;
+    padding: var(--space-xl) 20px;
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
@@ -22,9 +22,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: var(--space-xl);
     flex-wrap: wrap;
-    gap: 20px;
+    gap: var(--space-md);
 }
 
 .database-title h2 {
@@ -49,7 +49,7 @@
    ======================================== */
 
 .database-search {
-    margin-bottom: 25px;
+    margin-bottom: var(--space-lg);
 }
 
 /* ========================================
@@ -206,12 +206,12 @@
 }
 
 .btn-icon {
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     background: transparent;
     border: 1px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     color: var(--text-primary);
 }
 
@@ -271,7 +271,7 @@
 
 /* Filter Controls */
 .filter-controls {
-    margin-top: 12px;
+    margin-top: var(--space-sm);
 }
 
 .filter-checkbox {
@@ -296,19 +296,19 @@
 
 .empty-state i {
     color: var(--purple-primary);
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
     opacity: 0.3;
 }
 
 .empty-state h3 {
     font-size: 1.4rem;
-    margin-bottom: 10px;
+    margin-bottom: var(--space-xs);
     color: var(--text-primary);
 }
 
 .empty-state p {
     font-size: 1rem;
-    margin-bottom: 25px;
+    margin-bottom: var(--space-lg);
 }
 
 /* ========================================
@@ -320,14 +320,14 @@
 }
 
 .order-detail-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-lg);
 }
 
 .order-detail-section h3 {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--purple-primary);
-    margin-bottom: 12px;
+    margin-bottom: var(--space-sm);
     padding-bottom: 8px;
     border-bottom: 2px solid var(--border-light);
 }
@@ -364,10 +364,10 @@
 }
 
 .items-list li {
-    padding: 12px;
+    padding: var(--space-sm);
     background: var(--hover-background);
-    border-radius: 6px;
-    margin-bottom: 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-xs);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -381,7 +381,7 @@
 .item-details {
     font-size: 0.9rem;
     color: var(--text-muted);
-    margin-left: 12px;
+    margin-left: var(--space-sm);
 }
 
 /* ========================================
@@ -396,7 +396,7 @@
 
 @media (max-width: 768px) {
     .database-main {
-        padding: 20px 15px;
+        padding: var(--space-md) 15px;
     }
     
     .orders-table {
@@ -405,7 +405,7 @@
     
     .orders-table th,
     .orders-table td {
-        padding: 10px 8px;
+        padding: var(--space-xs) 8px;
     }
     
     .action-buttons {

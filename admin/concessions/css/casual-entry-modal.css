@@ -16,7 +16,7 @@
     padding: var(--space-sm);
     background: var(--bg-secondary);
     border-left: 4px solid var(--purple-primary);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
 }
 
 .student-info-card h4 {
@@ -34,12 +34,12 @@
 #casual-entry-date-picker {
     background: var(--background-color);
     border: 1px solid var(--purple-primary);
-    border-radius: 6px;
-    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) 12px;
     font-size: 0.95rem;
     color: var(--purple-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-weight: 500;
 }

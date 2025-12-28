@@ -11,7 +11,7 @@
     padding: 1rem;
     background: var(--bg-light);
     border-left: 4px solid var(--purple-primary);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
 }
 
 .page-intro p {
@@ -69,7 +69,7 @@
     width: 100px;
     padding: 0.5rem;
     border: 1px solid var(--gray-500);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 1rem;
 }
 
@@ -117,11 +117,12 @@
 }
 
 .form-group input[type="text"],
-.form-group input[type="number"] {
+.form-group input[type="number"],
+.form-group select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--gray-500);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 1rem;
 }
 
@@ -219,7 +220,7 @@
     align-items: flex-start;
     padding: 1rem;
     border: 1px solid var(--gray-450);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: #f9f9f9;
     transition: box-shadow 0.2s;
 }
@@ -263,7 +264,7 @@
 .closedown-badge {
     display: inline-block;
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 0.75rem;
     font-weight: 600;
     margin-left: 0.5rem;
@@ -285,12 +286,12 @@
 }
 
 .btn-icon {
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     background: transparent;
     border: 1px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     color: var(--text-primary);
     font-size: 0.9rem;
 }
@@ -355,7 +356,7 @@
 .success-message,
 .error-message {
     padding: 1rem;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     margin-top: 1rem;
     display: flex;
     align-items: center;
@@ -433,7 +434,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     transition: background 0.2s;
 }
 

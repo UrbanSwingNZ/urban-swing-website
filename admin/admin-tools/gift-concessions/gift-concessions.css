@@ -1,5 +1,6 @@
 @import url('../../../styles/base/colors.css');
 @import url('../../../styles/base/design-tokens.css');
+@import url('../../../styles/base/buttons.css');
 @import url('../../../styles/components/snackbar.css');
 
 /**
@@ -11,7 +12,7 @@
 .dashboard-main {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 20px;
+    padding: var(--space-md);
     width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
@@ -23,7 +24,7 @@
     color: white;
     padding: var(--space-sm) 20px;
     border-radius: var(--radius-sm);
-    margin-bottom: 30px;
+    margin-bottom: var(--space-xl);
     box-shadow: 0 2px 8px var(--shadow-medium);
 }
 
@@ -32,7 +33,7 @@
     font-size: 1rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .tool-intro i {
@@ -44,8 +45,8 @@
     background: var(--bg-white);
     border-radius: var(--radius-sm);
     box-shadow: 0 2px 8px var(--shadow-light);
-    padding: 30px;
-    margin-bottom: 30px;
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xl);
     width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
@@ -53,7 +54,7 @@
 
 /* Form Sections */
 .form-section {
-    margin-bottom: 30px;
+    margin-bottom: var(--space-xl);
     padding-bottom: 30px;
     border-bottom: 2px solid var(--border-light);
 }
@@ -70,7 +71,7 @@
     margin: 0 0 20px 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 /* Student Search */
@@ -96,7 +97,7 @@
     cursor: pointer;
     padding: 4px var(--space-xs);
     line-height: 1;
-    transition: color 0.2s ease;
+    transition: color var(--transition-fast);
     z-index: calc(var(--z-base) + 9);
     height: 24px;
     display: flex;
@@ -111,7 +112,7 @@
 .search-results-dropdown {
     margin-top: var(--space-xs);
     border: 1px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     max-height: 200px;
     overflow-y: auto;
     background: var(--bg-white);
@@ -119,9 +120,9 @@
 }
 
 .form-control {
-    padding: 10px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--border-light);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 1rem;
     width: 100%;
     background: var(--input-bg);
@@ -129,7 +130,7 @@
 }
 
 .search-result-item {
-    padding: 12px 15px;
+    padding: var(--space-sm) 15px;
     cursor: pointer;
     border-bottom: 1px solid var(--border-light);
     transition: background 0.2s ease;
@@ -140,7 +141,7 @@
 }
 
 .search-result-item:hover {
-    background: rgba(138, 43, 226, 0.05);
+    background: var(--bg-purple-light);
 }
 
 .search-result-item h4 {
@@ -162,23 +163,23 @@
     padding: 2px var(--space-xs);
     border-radius: var(--radius-md);
     font-size: 0.75rem;
-    margin-left: 8px;
+    margin-left: var(--space-xs);
     font-weight: 600;
 }
 
 .no-results {
-    padding: 20px;
+    padding: var(--space-md);
     text-align: center;
     color: var(--text-muted);
 }
 
 /* Selected Student Card */
 .selected-student-card {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.05) 0%, rgba(155, 89, 182, 0.05) 100%);
+    background: var(--bg-purple-light);
     border: 2px solid var(--purple-primary);
     border-radius: var(--radius-sm);
     padding: var(--space-sm);
-    margin-top: 12px;
+    margin-top: var(--space-sm);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -228,12 +229,12 @@
 
 .btn-clear {
     background: transparent;
-    border: 1px solid rgba(138, 43, 226, 0.3);
+    border: 1px solid var(--bg-purple-medium);
     color: var(--purple-primary);
     padding: var(--space-xs) 12px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .btn-clear:hover {
@@ -246,19 +247,19 @@
 .preset-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-xs);
 }
 
 .btn-preset {
     background: var(--bg-white);
     border: 2px solid var(--purple-primary);
     color: var(--purple-primary);
-    padding: 12px var(--space-sm);
-    border-radius: 6px;
+    padding: var(--space-sm) var(--space-sm);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -269,7 +270,7 @@
     background: var(--purple-primary);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-purple);
 }
 
 .btn-preset i {
@@ -280,7 +281,7 @@
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: var(--space-md);
     width: 100%;
     box-sizing: border-box;
 }
@@ -292,9 +293,9 @@
 
 /* Ensure consistent height for all inputs */
 .form-control {
-    padding: 10px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--border-light);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 1rem;
     width: 100%;
     height: 44px; /* Consistent height for all inputs */
@@ -312,14 +313,14 @@ textarea.form-control {
 
 /* Date inputs - matching app style */
 input[type="date"].form-control {
-    padding: 8px 12px;
-    border: 1px solid rgba(154, 22, 245, 0.3);
-    border-radius: 6px;
+    padding: var(--space-xs) 12px;
+    border: 1px solid var(--bg-purple-medium);
+    border-radius: var(--radius-sm);
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     cursor: pointer;
     height: 44px; /* Match other inputs */
 }
@@ -338,7 +339,7 @@ input[type="date"].form-control:hover {
 input[type="date"].form-control:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+    box-shadow: 0 0 0 3px var(--bg-purple-light);
 }
 
 /* Calendar icon color for date inputs */
@@ -350,16 +351,16 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 
 /* Gift Summary */
 .summary-section {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.05) 0%, rgba(155, 89, 182, 0.05) 100%);
+    background: var(--bg-purple-light);
     border-radius: var(--radius-sm);
-    padding: 20px;
+    padding: var(--space-md);
     border: 2px solid var(--purple-primary);
 }
 
 .gift-summary {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .summary-row {
@@ -367,7 +368,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     justify-content: space-between;
     align-items: center;
     padding: var(--space-xs) 0;
-    border-bottom: 1px solid rgba(138, 43, 226, 0.1);
+    border-bottom: 1px solid var(--bg-purple-light);
 }
 
 .summary-row:last-child {
@@ -394,15 +395,15 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 /* Form Actions */
 .form-actions {
     display: flex;
-    gap: 12px;
+    gap: var(--space-sm);
     justify-content: flex-end;
-    margin-top: 30px;
+    margin-top: var(--space-xl);
     padding-top: 20px;
     border-top: 2px solid var(--border-light);
 }
 
 .form-actions button {
-    padding: 12px var(--space-md);
+    padding: var(--space-sm) var(--space-md);
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -414,7 +415,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     background: var(--bg-white);
     border-radius: var(--radius-sm);
     box-shadow: 0 2px 8px var(--shadow-light);
-    padding: 30px;
+    padding: var(--space-xl);
     width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
@@ -426,25 +427,25 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     margin: 0 0 20px 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .recent-gifts-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .gift-item {
     background: var(--bg-white);
     border-left: 4px solid var(--purple-primary);
     padding: var(--space-sm);
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    border-radius: var(--radius-xs);
+    transition: all var(--transition-fast);
 }
 
 .gift-item:hover {
-    box-shadow: 0 2px 8px rgba(138, 43, 226, 0.15);
+    box-shadow: 0 2px 8px var(--shadow-purple);
     transform: translateX(4px);
 }
 
@@ -473,7 +474,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     background: var(--error-light);
     color: white;
     padding: 2px var(--space-xs);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 0.75rem;
     font-weight: 600;
     margin-left: var(--space-xs);
@@ -485,7 +486,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
 }
 
 .gift-item-header h4 {
@@ -501,7 +502,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 .gift-item-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-sm);
 }
 
 .gift-item-date {
@@ -514,7 +515,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     background: var(--bg-white);
     border: 1px solid var(--bg-purple-medium);
     padding: 0.4rem 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
     transition: all 0.2s;
     font-size: 0.9rem;
@@ -555,7 +556,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 .loading-message {
     text-align: center;
     color: var(--text-muted);
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 .loading-message i {
@@ -565,7 +566,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 .empty-message {
     text-align: center;
     color: var(--text-muted);
-    padding: 20px;
+    padding: var(--space-md);
     font-style: italic;
 }
 
@@ -577,9 +578,9 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 .error-message {
     text-align: center;
     color: var(--error-darker);
-    padding: 20px;
+    padding: var(--space-md);
     background: var(--bg-error-light);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
 }
 
 .error-message i {
@@ -591,7 +592,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     color: var(--purple-primary);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .success-header h3 i {
@@ -599,7 +600,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 }
 
 .success-message {
-    padding: 30px;
+    padding: var(--space-xl);
 }
 
 .success-message p {
@@ -612,16 +613,16 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    margin-top: 20px;
+    margin-top: var(--space-md);
 }
 
 .success-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 12px 16px;
-    background: rgba(138, 43, 226, 0.05);
-    border-radius: 6px;
+    padding: var(--space-sm) 16px;
+    background: var(--bg-purple-light);
+    border-radius: var(--radius-sm);
     border-left: 3px solid var(--purple-primary);
 }
 
@@ -630,7 +631,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     font-size: 0.95rem;
     font-weight: 500;
     flex-shrink: 0;
-    margin-right: 20px;
+    margin-right: var(--space-md);
 }
 
 .success-row .value {
@@ -646,17 +647,17 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 }
 
 .success-reason {
-    background: rgba(138, 43, 226, 0.03);
-    border: 1px solid rgba(138, 43, 226, 0.2);
-    border-radius: 6px;
-    padding: 12px 16px;
+    background: var(--bg-purple-alt-light);
+    border: 1px solid var(--bg-purple-light);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) 16px;
 }
 
 .success-reason .label {
     color: var(--text-muted);
     font-size: 0.9rem;
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
     display: block;
 }
 
@@ -672,16 +673,16 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 .confirm-detail-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background: rgba(138, 43, 226, 0.05);
-    border-radius: 6px;
+    padding: var(--space-sm);
+    background: var(--bg-purple-light);
+    border-radius: var(--radius-sm);
     border-left: 3px solid var(--purple-primary);
 }
 
@@ -705,10 +706,10 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 
 /* Notes in confirm modal */
 .confirm-notes {
-    background: rgba(138, 43, 226, 0.03);
-    border: 1px solid rgba(138, 43, 226, 0.2);
-    border-radius: 6px;
-    padding: 12px;
+    background: var(--bg-purple-alt-light);
+    border: 1px solid var(--bg-purple-light);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
 }
 
 .confirm-notes .label {
@@ -733,7 +734,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
         flex-direction: row !important;
         justify-content: space-between;
         align-items: center;
-        gap: 12px;
+        gap: var(--space-sm);
         text-align: left !important;
     }
 
@@ -775,7 +776,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     }
 
     .dashboard-main {
-        padding: 12px;
+        padding: var(--space-sm);
     }
 
     .gift-form-container,
@@ -784,13 +785,13 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     }
 
     .form-section {
-        margin-bottom: 24px;
+        margin-bottom: var(--space-lg);
         padding-bottom: 24px;
     }
 
     .form-row {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: var(--space-sm);
     }
 
     .preset-buttons {
@@ -809,7 +810,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     .selected-student-card {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: var(--space-sm);
     }
 
     .btn-clear {
@@ -837,7 +838,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
     }
 
     .tool-intro {
-        padding: 12px 16px;
+        padding: var(--space-sm) 16px;
     }
 
     .tool-intro p {

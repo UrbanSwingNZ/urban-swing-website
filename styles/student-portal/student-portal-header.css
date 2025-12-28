@@ -13,7 +13,7 @@
 .student-portal-header {
   background: var(--gradient-header);
   color: var(--text-white);
-  padding: 20px 20px 0;
+  padding: var(--space-md) 20px 0;
   box-shadow: 0 4px 12px var(--shadow-light);
 }
 
@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .student-portal-header-content a {
@@ -91,14 +91,14 @@
   background: var(--header-overlay-semi);
   color: var(--text-white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: var(--space-xs) 20px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   font-size: 0.9rem;
 }
 

@@ -79,7 +79,7 @@
    ======================================== */
 
 .modal-header {
-    padding: 25px 30px;
+    padding: var(--space-lg) 30px;
     background: var(--gradient-blue-purple);
     border-bottom: none;
     display: flex;
@@ -119,7 +119,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     line-height: 1;
     padding: 0;
     margin-left: var(--space-sm);
@@ -171,12 +171,12 @@
 
 .modal-footer button {
     /* Button classes from buttons.css handle their own styling */
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: var(--space-xs) 20px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;

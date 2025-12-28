@@ -40,7 +40,7 @@
   padding: var(--space-xs) var(--space-md);
   display: inline-block;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   background: var(--header-overlay-light);
   backdrop-filter: blur(10px);
   border-bottom: 3px solid transparent;
@@ -72,12 +72,12 @@
   color: var(--text-white);
   border: none;
   padding: var(--space-xs) var(--space-xs);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -104,8 +104,8 @@
 }
 
 .btn-primary-lg {
-  padding: var(--space-xs) var(--space-md);
-  font-size: 1rem;
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1.125rem;
   white-space: nowrap;
 }
 
@@ -114,12 +114,12 @@
   color: var(--error);
   border: 1px solid var(--error);
   padding: var(--space-xs) var(--space-xs);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -145,8 +145,9 @@
 }
 
 .btn-cancel-lg {
-  padding: 12px 32px;
-  font-size: 1rem;
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1.125rem;
+  white-space: nowrap;
 }
 
 .btn-delete {
@@ -154,12 +155,12 @@
   color: var(--white);
   border: none;
   padding: var(--space-xs) var(--space-xs);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -197,12 +198,12 @@
   color: var(--text-color);
   border: none;
   padding: var(--space-xs) var(--space-xs);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -223,12 +224,12 @@
   color: var(--white);
   border: none;
   padding: var(--space-xs) var(--space-xs);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;

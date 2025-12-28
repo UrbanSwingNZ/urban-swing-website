@@ -26,7 +26,7 @@
   justify-content: center;
   font-size: 1.2em;
   box-shadow: var(--shadow-lg);
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   z-index: var(--z-fixed);
   opacity: 1;
   transform: translateY(0);

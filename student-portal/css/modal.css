@@ -13,7 +13,7 @@
     z-index: var(--z-modal);
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 .modal-content {
@@ -39,11 +39,11 @@
 }
 
 .modal-header {
-    padding: 24px 30px;
+    padding: var(--space-lg) 30px;
     border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .modal-header h3 {
@@ -52,7 +52,7 @@
     color: var(--text-primary);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .modal-header i {
@@ -61,7 +61,7 @@
 }
 
 .modal-body {
-    padding: 30px;
+    padding: var(--space-xl);
 }
 
 .modal-body p {
@@ -76,7 +76,7 @@
 }
 
 .existing-students-list {
-    margin: 20px 0;
+    margin: var(--space-md) 0;
     padding: 0;
 }
 
@@ -84,8 +84,8 @@
     background: rgba(255, 152, 0, 0.05);
     border-left: 3px solid #ff9800;
     padding: var(--space-sm);
-    border-radius: 6px;
-    margin-bottom: 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -106,20 +106,20 @@
 }
 
 .modal-footer {
-    padding: 20px 30px;
+    padding: var(--space-md) 30px;
     border-top: 1px solid var(--gray-450);
     display: flex;
-    gap: 12px;
+    gap: var(--space-sm);
     justify-content: flex-end;
 }
 
 .modal-footer button {
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: var(--space-xs) 20px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     gap: var(--space-xs);
@@ -137,7 +137,7 @@
 /* Responsive */
 @media (max-width: 600px) {
     .modal {
-        padding: 10px;
+        padding: var(--space-xs);
     }
     
     .modal-content {
@@ -147,7 +147,7 @@
     .modal-header,
     .modal-body,
     .modal-footer {
-        padding: 20px;
+        padding: var(--space-md);
     }
     
     .modal-footer {

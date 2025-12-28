@@ -21,7 +21,7 @@
   position: sticky;
   top: 0;
   background-color: var(--white);
-  padding: 15px 10px;
+  padding: var(--space-sm) 10px;
   text-align: left;
   font-weight: 600;
   color: var(--gray-650);
@@ -34,7 +34,7 @@
 
 .tracks-table tbody tr {
   position: relative;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   border-bottom: 1px solid var(--gray-450);
   cursor: default;
 }
@@ -63,16 +63,16 @@
 }
 
 .tracks-table tbody tr.lazy-loading-indicator td {
-  padding: 30px;
+  padding: var(--space-xl);
   font-size: 0.9rem;
 }
 
 .tracks-table tbody tr.lazy-loading-indicator i.fa-spinner {
-  margin-right: 8px;
+  margin-right: var(--space-xs);
 }
 
 .tracks-table td {
-  padding: 12px 10px;
+  padding: var(--space-sm) 10px;
 }
 
 /* Column Widths */
@@ -108,7 +108,7 @@
 .track-album-art {
   width: 40px;
   height: 40px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   object-fit: cover;
 }
 
@@ -212,7 +212,7 @@
   padding: 5px;
   border-radius: 50%;
   opacity: 0;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   width: 32px;
   height: 32px;
   display: flex;
@@ -311,11 +311,11 @@
   
   /* Reduce padding on mobile */
   .tracks-table td {
-    padding: 10px 6px;
+    padding: var(--space-xs) 6px;
   }
   
   .tracks-table thead th {
-    padding: 12px 6px;
+    padding: var(--space-sm) 6px;
     font-size: 0.75rem;
   }
   
@@ -426,14 +426,14 @@
   top: 100%;
   background: var(--card-light);
   border: 1px solid var(--gray-450);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   box-shadow: 0 4px 12px var(--shadow-medium);
   z-index: var(--z-popover);
   min-width: 160px;
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .track-menu.show {
@@ -444,7 +444,7 @@
 
 .track-menu button {
   width: 100%;
-  padding: 10px 12px;
+  padding: var(--space-xs) 12px;
   border: none;
   background: none;
   text-align: left !important;
@@ -460,7 +460,7 @@
 }
 
 .track-menu button:first-child {
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--radius-sm) 6px 0 0;
 }
 
 .track-menu button:last-child {
@@ -506,7 +506,7 @@
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   width: 100%;
   max-width: 500px;
-  padding: 20px;
+  padding: var(--space-md);
   box-shadow: 0 -4px 20px var(--shadow-text);
   animation: slideUp 0.3s ease;
 }
@@ -522,7 +522,7 @@
   color: var(--text-color);
   padding: 0 0 15px 0;
   border-bottom: 1px solid var(--gray-450);
-  margin-bottom: 10px;
+  margin-bottom: var(--space-xs);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -556,7 +556,7 @@
 }
 
 .track-menu-item.menu-cancel {
-  margin-top: 10px;
+  margin-top: var(--space-xs);
   justify-content: center !important;
   color: var(--gray-650);
   border-top: 1px solid var(--gray-450);

@@ -52,7 +52,7 @@
 
 /* Loading message */
 .loading-spinner p {
-    margin-top: 20px;
+    margin-top: var(--space-md);
     color: var(--text-white);
     font-size: 1.1rem;
     font-weight: 500;
@@ -63,7 +63,7 @@
 .loading-spinner.inline {
     position: relative;
     background: transparent;
-    padding: 20px;
+    padding: var(--space-md);
     backdrop-filter: none;
 }
 
