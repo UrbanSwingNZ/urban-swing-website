@@ -218,6 +218,58 @@
   transform: translateY(-2px);
 }
 
+/* Logout Button - Used in headers */
+.btn-logout {
+  background: var(--header-overlay-semi);
+  color: var(--text-white);
+  border: 1px solid var(--border-overlay-medium);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.btn-logout:hover {
+  background: var(--header-overlay-strong);
+  transform: translateY(-2px);
+}
+
+.btn-logout i {
+  font-size: 1rem;
+}
+
+/* Back Button - Circular icon button */
+.back-button,
+.btn-back {
+  background: var(--header-overlay-semi);
+  color: var(--text-white);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.back-button:hover,
+.btn-back:hover {
+  background: var(--header-overlay-strong);
+  transform: scale(1.1);
+  color: var(--text-white);
+  text-decoration: none;
+}
+
 /* Success Button */
 .btn-success {
   background: var(--success);
