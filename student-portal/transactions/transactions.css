@@ -1,6 +1,7 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/base/design-tokens.css');
 @import url('../../styles/components/badges.css');
+@import url('../../styles/components/tables.css');
 
 /* Transaction History Styles */
 
@@ -53,75 +54,8 @@
     font-size: 1.1rem;
 }
 
-/* Table Container */
-.table-container {
-    background: white;
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px var(--shadow-light);
-    overflow: hidden;
-}
-
-#transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#transactions-table thead {
-    background: var(--gradient-full);
-    color: white;
-}
-
-#transactions-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-#transactions-table th.align-right {
-    text-align: right;
-}
-
-#transactions-table tbody tr {
-    border-bottom: 1px solid var(--hover-light);
-    transition: background-color var(--transition-fast);
-}
-
-#transactions-table tbody tr:hover {
-    background-color: var(--gray-250);
-}
-
-#transactions-table tbody tr:last-child {
-    border-bottom: none;
-}
-
 #transactions-table td {
-    padding: 1rem;
     vertical-align: middle;
-}
-
-#transactions-table td.align-right {
-    text-align: right;
-}
-
-/* Reversed Transaction Styling */
-#transactions-table tbody tr.reversed {
-    opacity: 0.6;
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 10px,
-        var(--bg-error-light) 10px,
-        var(--bg-error-light) 20px
-    );
-}
-
-/* Date Column */
-.transaction-date {
-    font-weight: 600;
-    color: var(--text-primary);
 }
 
 /* Type Column with Badges */

@@ -1,0 +1,302 @@
+/**
+ * tables.css
+ * Centralized table component styles
+ * Used across admin and student portal for data tables
+ */
+
+@import url('../base/colors.css');
+@import url('../base/design-tokens.css');
+
+/* ============================================
+   TABLE CONTAINER
+   ============================================ */
+
+/**
+ * Standard scrollable table container
+ * Used for most data tables
+ */
+.table-container {
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 8px var(--shadow-medium);
+    overflow: hidden;
+    max-height: 70vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Variant without max-height restriction */
+.table-container.no-scroll {
+    max-height: none;
+    overflow-y: visible;
+}
+
+/* Variant with border instead of just shadow */
+.table-container.bordered {
+    border: 1px solid var(--bg-purple-alt-stronger);
+}
+
+/* ============================================
+   BASE TABLE STYLES
+   ============================================ */
+
+/**
+ * Base data table styling
+ * Apply to any table that needs standard formatting
+ */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    padding: var(--space-sm);
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table td {
+    padding: var(--space-sm);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+/* Alignment utilities */
+.data-table th.align-right,
+.data-table td.align-right {
+    text-align: right;
+}
+
+.data-table th.align-center,
+.data-table td.align-center {
+    text-align: center;
+}
+
+/* ============================================
+   TABLE HEADERS
+   ============================================ */
+
+/**
+ * Gradient header style
+ * Purple-blue gradient background with white text
+ */
+.data-table thead.table-header-gradient {
+    background: var(--gradient-full) !important;
+    color: white !important;
+}
+
+/* Full rainbow gradient variant (used in student portal) */
+.data-table thead.table-header-gradient-full {
+    background: var(--gradient-full) !important;
+    color: white !important;
+}
+
+/* Sticky header for scrollable tables */
+.data-table thead.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: calc(var(--z-base) + 9);
+}
+
+/* Combine gradient and sticky */
+.data-table thead.table-header-gradient.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: calc(var(--z-base) + 9);
+}
+
+/* ============================================
+   SORTABLE COLUMNS
+   ============================================ */
+
+/**
+ * Sortable column header
+ * Includes hover state and sort icon positioning
+ */
+.data-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 30px;
+}
+
+.data-table th.sortable:hover {
+    background-color: var(--header-overlay-light);
+}
+
+/* Sort icon */
+.data-table th.sortable .sort-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.data-table th.sortable:hover .sort-icon {
+    opacity: 0.8;
+}
+
+.data-table th.sortable .sort-icon.active {
+    opacity: 1;
+}
+
+/* Inline sort icon (alternative placement) */
+.data-table th.sortable .sort-icon-inline {
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    font-size: 0.8rem;
+}
+
+.data-table th.sortable .sort-icon-inline.active {
+    opacity: 1;
+}
+
+/* ============================================
+   TABLE BODY ROWS
+   ============================================ */
+
+/**
+ * Standard row styling with borders and hover
+ */
+.data-table tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background-color var(--transition-fast);
+}
+
+.data-table tbody tr:hover {
+    background-color: var(--bg-purple-alt-medium);
+}
+
+.data-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Clickable rows */
+.data-table tbody tr.clickable {
+    cursor: pointer;
+}
+
+/* ============================================
+   ROW STATES
+   ============================================ */
+
+/**
+ * Reversed/cancelled transaction row
+ * Diagonal stripe pattern with reduced opacity
+ */
+.data-table tbody tr.reversed {
+    opacity: 0.6;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        var(--bg-error-light) 10px,
+        var(--bg-error-light) 20px
+    );
+}
+
+/* Alternative reversed styling (for check-in system) */
+.data-table tbody tr.reversed-transaction {
+    background: var(--bg-error-light);
+    opacity: 0.7;
+}
+
+/* Disabled/inactive row */
+.data-table tbody tr.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Selected row */
+.data-table tbody tr.selected {
+    background-color: var(--bg-purple-alt);
+}
+
+/* ============================================
+   SPECIAL CELL TYPES
+   ============================================ */
+
+/**
+ * Amount cell - emphasized monetary value
+ */
+.data-table .amount-cell {
+    font-weight: 700;
+    color: var(--purple-primary);
+}
+
+/**
+ * Date cell - emphasized date value
+ */
+.data-table .date-cell {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/**
+ * Action buttons cell
+ * Contains icon buttons for row actions
+ */
+.data-table .action-buttons {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+/**
+ * Empty table message
+ * Centered text for when table has no data
+ */
+.data-table tbody tr.empty-state td {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ============================================
+   RESPONSIVE BEHAVIOR
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Reduce padding on mobile */
+    .data-table th,
+    .data-table td {
+        padding: var(--space-xs);
+        font-size: 0.85rem;
+    }
+
+    /* Adjust sortable icon spacing */
+    .data-table th.sortable {
+        padding-right: 24px;
+    }
+
+    .data-table th.sortable .sort-icon {
+        right: 6px;
+        font-size: 0.7rem;
+    }
+
+    /* Reduce table container height */
+    .table-container {
+        max-height: 60vh;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further reduce padding on small mobile */
+    .data-table th,
+    .data-table td {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+}

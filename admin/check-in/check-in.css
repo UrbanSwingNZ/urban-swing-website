@@ -2,6 +2,7 @@
 @import url('../../styles/base/design-tokens.css');
 @import url('../../styles/components/snackbar.css');
 @import url('../../styles/components/badges.css');
+@import url('../../styles/components/tables.css');
 
 /* ========================================
    CHECK-IN PAGE STYLES
@@ -249,57 +250,8 @@
 }
 
 /* Table Container */
-.table-container {
-    background: var(--bg-white);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--bg-purple-alt-stronger);
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow-light);
-}
-
-#checkin-transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#checkin-transactions-table thead {
-    background: var(--gradient-blue-purple);
-}
-
 #checkin-transactions-table thead th {
-    color: white;
-    padding: var(--space-sm);
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-
-#checkin-transactions-table thead th.align-right {
-    text-align: right;
-}
-
-#checkin-transactions-table tbody tr {
-    border-bottom: 1px solid var(--border-light);
-    transition: background-color var(--transition-fast);
-}
-
-#checkin-transactions-table tbody tr:hover {
-    background-color: var(--bg-purple-light);
-}
-
-#checkin-transactions-table tbody tr:last-child {
-    border-bottom: none;
-}
-
-#checkin-transactions-table tbody td {
-    padding: var(--space-sm);
-    color: var(--text-primary);
-    font-size: 0.95rem;
-}
-
-#checkin-transactions-table tbody td.align-right {
-    text-align: right;
+    white-space: nowrap; /* Check-in specific: prevent header wrapping */
 }
 
 #checkin-transactions-table .amount-cell {
