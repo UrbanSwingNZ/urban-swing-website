@@ -713,6 +713,653 @@ Badges are small labeled status indicators used throughout the application to di
 
 ---
 
+## Form Validation Patterns
+
+### Current Implementation
+
+**Status:** Mixed patterns in use - standardization recommended
+
+The application uses multiple validation approaches across different forms. This section documents the current patterns and recommended standard approach for consistency.
+
+### Validation Approaches
+
+#### 1. Inline Error Messages (Field-Level)
+
+**Purpose:** Immediate feedback on individual field validation  
+**Location:** Below or next to the invalid field  
+**Usage:** Email format, password requirements, required fields
+
+**HTML Structure:**
+```html
+<div class="form-group">
+  <label for="email">Email Address</label>
+  <input type="email" id="email" required>
+  <div id="email-error" class="error-message" style="display: none;"></div>
+</div>
+```
+
+**CSS Classes:**
+- `.error-message` - Red background, error border, error icon
+- `.success-message` - Green background, success border, check icon
+- `.validation-message.error` - Alternative styling (prepay forms)
+
+**Display Pattern:**
+```javascript
+function showFieldError(fieldId, message) {
+  const field = document.getElementById(fieldId);
+  const errorEl = document.getElementById(`${fieldId}-error`);
+  
+  errorEl.textContent = message;
+  errorEl.style.display = 'block';
+  field.setAttribute('aria-invalid', 'true');
+  field.setAttribute('aria-describedby', `${fieldId}-error`);
+  field.focus();
+}
+
+function clearFieldError(fieldId) {
+  const field = document.getElementById(fieldId);
+  const errorEl = document.getElementById(`${fieldId}-error`);
+  
+  errorEl.style.display = 'none';
+  field.removeAttribute('aria-invalid');
+  field.removeAttribute('aria-describedby');
+}
+```
+
+#### 2. Snackbar Notifications (Form-Level)
+
+**Purpose:** Success confirmations, API errors, system messages  
+**Location:** Bottom-right corner (mobile: centered bottom)  
+**Usage:** Form submission success, network errors, warnings
+
+**When to Use:**
+- ✅ Form submission success ("Password changed successfully!")
+- ✅ API/network errors ("Failed to save. Please try again.")
+- ✅ System messages ("Session expired. Please log in.")
+- ✅ Non-blocking warnings ("Some fields were auto-corrected.")
+
+**When NOT to Use:**
+- ❌ Field validation errors (use inline instead)
+- ❌ Multiple simultaneous errors (use inline per field)
+- ❌ Errors requiring field correction (use inline)
+
+**Pattern:**
+```javascript
+import { showSnackbar } from '/components/snackbar/snackbar.js';
+
+// Success
+showSnackbar('Changes saved successfully!', 'success');
+
+// Error
+showSnackbar('Failed to save. Please try again.', 'error');
+
+// Warning
+showSnackbar('Some fields were updated automatically.', 'warning');
+
+// Info
+showSnackbar('Remember to verify your email.', 'info');
+```
+
+#### 3. Modal Dialogs (Confirmations)
+
+**Purpose:** Destructive action confirmations, critical decisions  
+**Usage:** Delete confirmations, unsaved changes warnings
+
+**When to Use:**
+- ✅ Confirm destructive actions ("Delete this record?")
+- ✅ Warn about data loss ("Unsaved changes will be lost.")
+- ✅ Critical decisions requiring attention
+
+**Pattern:**
+```javascript
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
+const confirmed = await ConfirmationModal.confirm({
+  title: 'Discard Changes?',
+  message: 'You have unsaved changes. Are you sure you want to leave?',
+  confirmText: 'Discard',
+  cancelText: 'Keep Editing',
+  danger: true
+});
+
+if (confirmed) {
+  // Proceed with action
+}
+```
+
+### Standard Validation Pattern
+
+**Recommended approach for all forms:**
+
+```javascript
+/**
+ * Standard form submission handler
+ */
+async function handleFormSubmit(event) {
+  event.preventDefault();
+  
+  // 1. Collect form data
+  const formData = new FormData(event.target);
+  const data = Object.fromEntries(formData);
+  
+  // 2. Client-side validation (field-level)
+  const validation = validateFormFields(data);
+  if (!validation.isValid) {
+    showFieldError(validation.field, validation.message);
+    return;
+  }
+  
+  // 3. Clear any previous errors
+  clearAllFieldErrors();
+  
+  // 4. Show loading state
+  LoadingSpinner.showButton('submit-btn', 'Saving...');
+  
+  try {
+    // 5. Submit to API
+    const result = await saveData(data);
+    
+    // 6. Success feedback (snackbar)
+    showSnackbar('Changes saved successfully!', 'success');
+    
+    // 7. Optional: Navigate or update UI
+    // navigateTo('/dashboard');
+    
+  } catch (error) {
+    // 8. Handle API errors (snackbar)
+    console.error('Save error:', error);
+    showSnackbar(
+      error.message || 'Failed to save. Please try again.',
+      'error'
+    );
+    
+  } finally {
+    // 9. Always hide loading state
+    LoadingSpinner.hideButton('submit-btn');
+  }
+}
+```
+
+### Validation Utilities
+
+**Location:** `/js/utils/validation-utils.js`
+
+**Available Validators:**
+
+#### Email Validation
+```javascript
+import { isValidEmail } from '/js/utils/validation-utils.js';
+
+if (!isValidEmail(email)) {
+  showFieldError('email', 'Please enter a valid email address.');
+  return false;
+}
+```
+
+#### Required Field Check
+```javascript
+import { isRequired } from '/js/utils/validation-utils.js';
+
+if (!isRequired(firstName)) {
+  showFieldError('firstName', 'First name is required.');
+  return false;
+}
+```
+
+#### Field Change Detection
+```javascript
+import { hasFieldChanged } from '/js/utils/validation-utils.js';
+
+if (!hasFieldChanged(originalValue, newValue)) {
+  showSnackbar('No changes detected.', 'info');
+  return;
+}
+```
+
+### Password Validation
+
+**Implementations:**
+- `/student-portal/profile/password/password-validation.js` - Password change
+- `/student-portal/js/registration/validation.js` - Registration
+- `/student-portal/js/utils/password-generator.js` - Strength checking
+
+**Standard Rules:**
+- Minimum 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- Must match confirmation
+- Cannot be same as current (for changes)
+
+**Validation Pattern:**
+```javascript
+function validatePassword(password) {
+  if (password.length < 8) {
+    return {
+      isValid: false,
+      message: 'Password must be at least 8 characters long.'
+    };
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    return {
+      isValid: false,
+      message: 'Password must contain at least one uppercase letter.'
+    };
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    return {
+      isValid: false,
+      message: 'Password must contain at least one lowercase letter.'
+    };
+  }
+  
+  return {
+    isValid: true,
+    message: ''
+  };
+}
+```
+
+### Date Validation
+
+**Implementation:** `/student-portal/prepay/validation-service.js`
+
+**Common Patterns:**
+
+#### Thursday Validation (Classes)
+```javascript
+function isThursday(date) {
+  return date.getDay() === 4;
+}
+
+if (!isThursday(selectedDate)) {
+  return {
+    isValid: false,
+    message: 'Please select a Thursday. Classes are only held on Thursdays.'
+  };
+}
+```
+
+#### Past Date Check
+```javascript
+function isPastDate(date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const checkDate = new Date(date);
+  checkDate.setHours(0, 0, 0, 0);
+  return checkDate < today;
+}
+
+if (isPastDate(selectedDate)) {
+  return {
+    isValid: false,
+    message: 'Please select a current or future date.'
+  };
+}
+```
+
+#### Duplicate Check (Async)
+```javascript
+async function checkForDuplicateClass(selectedDate, studentId) {
+  const existing = await queryExistingBooking(selectedDate, studentId);
+  
+  if (existing) {
+    return {
+      isValid: false,
+      message: 'You have already pre-paid for a class on this date.'
+    };
+  }
+  
+  return { isValid: true, message: '' };
+}
+```
+
+### Validation Return Format
+
+**Standard format for all validators:**
+
+```javascript
+{
+  isValid: boolean,    // true if validation passed
+  message: string,     // Error message if invalid, empty if valid
+  field?: string       // Optional: specific field that failed (for multi-field validation)
+}
+```
+
+**Examples:**
+```javascript
+// Success
+{ isValid: true, message: '' }
+
+// Field error
+{ isValid: false, message: 'Email is required.', field: 'email' }
+
+// Form error
+{ isValid: false, message: 'Passwords do not match.' }
+```
+
+### HTML5 Validation
+
+**Use HTML5 attributes for basic validation:**
+
+```html
+<!-- Required field -->
+<input type="text" id="name" required>
+
+<!-- Email format -->
+<input type="email" id="email" required>
+
+<!-- Pattern matching -->
+<input type="tel" id="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+
+<!-- Min/max values -->
+<input type="number" id="age" min="16" max="120">
+
+<!-- Min/max length -->
+<input type="text" id="username" minlength="3" maxlength="20">
+```
+
+**Disable default browser validation:**
+```html
+<form novalidate>
+  <!-- Use custom JavaScript validation instead -->
+</form>
+```
+
+### Stripe Element Validation
+
+**Location:** Payment forms (purchase, prepay, registration)
+
+**Pattern:**
+```javascript
+// Listen for changes
+cardElement.on('change', (event) => {
+  const errorDiv = document.getElementById('card-errors');
+  
+  if (event.error) {
+    // Show inline error
+    errorDiv.textContent = event.error.message;
+    errorDiv.style.display = 'block';
+  } else {
+    // Clear error
+    errorDiv.style.display = 'none';
+  }
+});
+
+// Validate before submission
+if (!event.complete) {
+  showFieldError('card-element', 'Please enter complete card details.');
+  return;
+}
+```
+
+**Stripe Element States:**
+- `.StripeElement--focus` - Element has focus
+- `.StripeElement--invalid` - Invalid input (red border)
+- `.StripeElement--complete` - Valid complete input (green border)
+
+### Accessibility Requirements
+
+#### ARIA Attributes
+
+**Invalid Fields:**
+```html
+<input 
+  type="email" 
+  id="email"
+  aria-invalid="true"
+  aria-describedby="email-error"
+>
+<div id="email-error" class="error-message" role="alert">
+  Please enter a valid email address.
+</div>
+```
+
+**Valid Fields:**
+```html
+<input 
+  type="email" 
+  id="email"
+  aria-invalid="false"
+>
+```
+
+#### Live Regions
+
+**Error announcements:**
+```html
+<div id="form-errors" role="alert" aria-live="assertive" aria-atomic="true">
+  <!-- Errors announced to screen readers -->
+</div>
+```
+
+#### Focus Management
+
+**After validation error:**
+```javascript
+function showFieldError(fieldId, message) {
+  // Show error message
+  const errorEl = document.getElementById(`${fieldId}-error`);
+  errorEl.textContent = message;
+  errorEl.style.display = 'block';
+  
+  // Set ARIA attributes
+  const field = document.getElementById(fieldId);
+  field.setAttribute('aria-invalid', 'true');
+  field.setAttribute('aria-describedby', `${fieldId}-error`);
+  
+  // Move focus to invalid field
+  field.focus();
+}
+```
+
+### Common Validation Scenarios
+
+#### Multi-Step Forms
+
+**Pattern:**
+```javascript
+let currentStep = 1;
+
+function validateStep(step) {
+  switch(step) {
+    case 1:
+      return validatePersonalInfo();
+    case 2:
+      return validatePaymentInfo();
+    case 3:
+      return validateConfirmation();
+  }
+}
+
+function nextStep() {
+  const validation = validateStep(currentStep);
+  
+  if (!validation.isValid) {
+    showFieldError(validation.field, validation.message);
+    return;
+  }
+  
+  currentStep++;
+  showStep(currentStep);
+}
+```
+
+#### Dependent Fields
+
+**Pattern:**
+```javascript
+// Payment method affects required fields
+const paymentMethod = document.getElementById('payment-method').value;
+
+if (paymentMethod === 'online') {
+  if (!transactionId) {
+    return {
+      isValid: false,
+      field: 'transaction-id',
+      message: 'Please select an online transaction.'
+    };
+  }
+}
+
+if (paymentMethod === 'cash' || paymentMethod === 'eftpos') {
+  if (!amount || amount <= 0) {
+    return {
+      isValid: false,
+      field: 'amount',
+      message: 'Please enter a valid amount.'
+    };
+  }
+}
+```
+
+#### Real-Time Validation
+
+**Pattern:**
+```javascript
+// Validate on blur (after user leaves field)
+emailInput.addEventListener('blur', (e) => {
+  const email = e.target.value.trim();
+  
+  if (!email) {
+    clearFieldError('email');
+    return;
+  }
+  
+  if (!isValidEmail(email)) {
+    showFieldError('email', 'Please enter a valid email address.');
+  } else {
+    clearFieldError('email');
+  }
+});
+
+// Clear error on input (as user types)
+emailInput.addEventListener('input', () => {
+  const errorEl = document.getElementById('email-error');
+  if (errorEl.style.display === 'block') {
+    clearFieldError('email');
+  }
+});
+```
+
+### Error Message Guidelines
+
+**Writing Clear Error Messages:**
+
+✅ **Good Messages:**
+- "Please enter your email address." (clear action)
+- "Password must be at least 8 characters." (specific requirement)
+- "Passwords do not match." (clear problem)
+- "Please select a Thursday." (specific constraint)
+
+❌ **Avoid:**
+- "Invalid input." (too vague)
+- "Error." (no context)
+- "Wrong!" (not helpful)
+- "This field is required." (generic, use field-specific message)
+
+**Message Patterns:**
+- **Required:** "Please enter your [field name]."
+- **Format:** "Please enter a valid [field type]."
+- **Length:** "[Field] must be at least [X] characters."
+- **Match:** "[Field 1] and [Field 2] do not match."
+- **Range:** "[Field] must be between [min] and [max]."
+- **Custom:** Specific to business logic (e.g., "Classes are only on Thursdays.")
+
+### Best Practices
+
+#### DO:
+- ✅ Validate on blur (after field loses focus)
+- ✅ Clear errors on input (as user types corrections)
+- ✅ Show one error at a time per field
+- ✅ Use inline errors for field validation
+- ✅ Use snackbar for form-level success/errors
+- ✅ Disable submit button during submission
+- ✅ Show loading state on buttons
+- ✅ Set `aria-invalid` and `aria-describedby`
+- ✅ Move focus to first invalid field
+- ✅ Use positive confirmation for success
+
+#### DON'T:
+- ❌ Validate on every keystroke (too aggressive)
+- ❌ Show multiple errors in one message
+- ❌ Use alert() for validation errors
+- ❌ Submit form without validation
+- ❌ Show generic "Error" messages
+- ❌ Leave error messages after correction
+- ❌ Use modals for simple validation errors
+- ❌ Forget to clear previous errors
+
+### Testing Validation
+
+**Test Cases:**
+
+1. **Empty Fields:** All required fields empty
+2. **Invalid Format:** Wrong email/phone format
+3. **Length Requirements:** Too short/long
+4. **Pattern Matching:** Password requirements, custom patterns
+5. **Matching Fields:** Password confirmation, email confirmation
+6. **Dependent Fields:** Conditional required fields
+7. **Async Validation:** Duplicate checks, API validation
+8. **Submission Success:** Valid data submits correctly
+9. **Submission Failure:** Network errors handled gracefully
+10. **Accessibility:** Screen reader announcements, keyboard navigation
+
+**Manual Testing:**
+- Test with keyboard only (no mouse)
+- Test with screen reader (NVDA, JAWS, VoiceOver)
+- Test on mobile devices (touch targets, virtual keyboard)
+- Test with slow network (loading states)
+
+### Files Reference
+
+**Validation Utilities:**
+- `/js/utils/validation-utils.js` - Core validators (email, required, hasChanged)
+- `/student-portal/profile/password/password-validation.js` - Password validation
+- `/student-portal/js/registration/validation.js` - Registration validation
+- `/student-portal/prepay/validation-service.js` - Date and duplicate validation
+- `/admin/check-in/js/firestore/checkin-validation.js` - Check-in validation
+- `/admin/check-in/js/online-payment/payment-validation.js` - Payment validation
+
+**UI Components:**
+- `/components/snackbar/snackbar.js` - Snackbar notifications
+- `/components/modals/confirmation-modal.js` - Confirmation dialogs
+- `/components/loading-spinner/loading-spinner.js` - Loading states
+
+**Styling:**
+- `/styles/components/forms.css` - Form and validation styles
+- `.error-message` - Inline error styling
+- `.success-message` - Success message styling
+
+### Consolidation Recommendations
+
+**Future Work (not yet implemented):**
+
+1. **Create FormValidator Component** (~3 hours)
+   - Unified API for field validation
+   - Automatic ARIA attribute management
+   - Built-in error display/clear methods
+
+2. **Consolidate Password Validation** (~2 hours)
+   - Single password validation module
+   - Shared across registration, password change, admin tools
+   - Consistent requirements and messages
+
+3. **Standardize Error Display** (~2 hours)
+   - Single `.error-message` CSS class
+   - Remove `.validation-message` variants
+   - Consistent positioning and animation
+
+4. **Enhance Accessibility** (~2 hours)
+   - Add aria-live regions to all forms
+   - Improve focus management
+   - Test with screen readers
+
+**Total Estimated Effort:** ~12-16 hours
+
+---
+
 ## Modal System
 
 ### Current Implementation
