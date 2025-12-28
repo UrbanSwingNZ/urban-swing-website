@@ -1,0 +1,259 @@
+/* ========================================
+   BADGE SYSTEM
+   Centralized badge styles for status, type, and category indicators
+   ======================================== */
+
+/* ========================================
+   BASE BADGE
+   ======================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge i {
+    font-size: 0.75rem;
+}
+
+/* ========================================
+   STATUS BADGES (Yes/No/Warning)
+   ======================================== */
+
+.badge-yes {
+    background: var(--bg-success-light);
+    color: var(--success);
+    text-transform: uppercase;
+}
+
+.badge-no {
+    background: var(--bg-error-light);
+    color: var(--error);
+    text-transform: uppercase;
+}
+
+.badge-warning {
+    background: var(--bg-warning-pale);
+    color: var(--text-orange);
+    text-transform: uppercase;
+}
+
+/* ========================================
+   TYPE BADGES (Transaction/Check-in Types)
+   ======================================== */
+
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.type-badge.concession {
+    background: var(--bg-purple-medium);
+    color: var(--purple-primary);
+}
+
+.type-badge.casual,
+.type-badge.casual-entry {
+    background: var(--bg-blue-light);
+    color: var(--blue-primary);
+}
+
+.type-badge.casual-student {
+    background: var(--bg-teal-light);
+    color: var(--blue-accent);
+}
+
+.type-badge.gift {
+    background: var(--bg-success-light);
+    color: var(--success-dark);
+}
+
+.type-badge.online {
+    background: var(--bg-teal-light);
+    color: var(--blue-accent);
+}
+
+.type-badge.reversed {
+    background: var(--bg-error-pale);
+    color: var(--error-darker);
+    margin-right: 0.5rem;
+}
+
+/* Payment method type badges (admin transactions only) */
+.type-badge.cash {
+    background: var(--warning-lighter);
+    color: var(--warning-darker);
+}
+
+.type-badge.eftpos {
+    background: var(--info-light);
+    color: var(--blue-darker);
+}
+
+.type-badge.bank-transfer {
+    background: var(--bg-purple-pale);
+    color: var(--purple-darker);
+}
+
+.type-badge.other {
+    background: var(--gray-300);
+    color: var(--gray-750);
+}
+
+/* ========================================
+   PAYMENT BADGES (with icons)
+   ======================================== */
+
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.payment-badge i {
+    font-size: 0.9rem;
+}
+
+.payment-badge.cash {
+    background: var(--warning-lighter);
+    color: var(--warning-darker);
+}
+
+.payment-badge.eftpos {
+    background: var(--info-light);
+    color: var(--blue-darker);
+}
+
+.payment-badge.online {
+    background: var(--bg-teal-light);
+    color: var(--success-darker);
+}
+
+.payment-badge.bank {
+    background: var(--bg-purple-pale);
+    color: var(--purple-darker);
+}
+
+.payment-badge.na,
+.payment-badge.unknown {
+    background: var(--gray-300);
+    color: var(--gray-750);
+}
+
+/* ========================================
+   ORDER STATUS BADGES (Merch Orders)
+   ======================================== */
+
+.badge-pending {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+    text-transform: uppercase;
+}
+
+.badge-invoiced {
+    background: var(--bg-purple-pale);
+    color: var(--purple-primary);
+    text-transform: uppercase;
+}
+
+.badge-complete {
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
+    text-transform: uppercase;
+}
+
+.badge-deleted {
+    background: var(--badge-error-bg);
+    color: var(--badge-error-text);
+    text-transform: uppercase;
+}
+
+/* ========================================
+   CONCESSION STATUS BADGES
+   ======================================== */
+
+.badge-locked {
+    background: var(--badge-neutral-bg);
+    color: var(--text-muted-alt);
+}
+
+.badge-gifted {
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
+    border: 1px solid var(--border-success);
+}
+
+/* Interactive concession badge */
+.concession-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+/* ========================================
+   DISPLAY STATUS BADGES (Closedown Nights)
+   ======================================== */
+
+.badge-display {
+    background: var(--bg-success-light);
+    color: var(--success);
+    text-transform: uppercase;
+}
+
+.badge-no-display {
+    background: var(--gray-300);
+    color: var(--gray-750);
+    text-transform: uppercase;
+}
+
+/* ========================================
+   BADGE SIZE MODIFIERS
+   ======================================== */
+
+.badge-sm {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.badge-lg {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.9rem;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .type-badge,
+    .payment-badge,
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+    
+    .payment-badge i {
+        font-size: 0.8rem;
+    }
+}

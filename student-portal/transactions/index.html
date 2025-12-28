@@ -49,9 +49,9 @@
                 </div>
 
                 <!-- Transactions Table (Desktop) -->
-                <div class="table-container">
-                    <table id="transactions-table">
-                        <thead>
+                <div class="table-container no-scroll">
+                    <table id="transactions-table" class="data-table">
+                        <thead class="table-header-gradient">
                             <tr>
                                 <th>Date</th>
                                 <th>Type</th>
@@ -73,15 +73,7 @@
 
                 <!-- Pagination Controls -->
                 <div id="pagination-controls" class="pagination-controls" style="display: none;">
-                    <button id="prev-page" class="btn-primary pagination-btn">
-                        <i class="fas fa-chevron-left"></i>
-                        Previous
-                    </button>
-                    <span id="page-info" class="page-info">Page 1 of 1</span>
-                    <button id="next-page" class="btn-primary pagination-btn">
-                        Next
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <!-- Pagination will be rendered here dynamically -->
                 </div>
 
                 <!-- Empty State -->

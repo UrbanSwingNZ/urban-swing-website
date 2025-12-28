@@ -42,7 +42,7 @@ function initializePurchaseConcessionsModal() {
                 <div class="form-group">
                     <label style="display: flex; justify-content: space-between; align-items: center;">
                         <span><i class="fas fa-box"></i> Package</span>
-                        <button type="button" class="btn-add-package" onclick="openAddConcessionModal()" title="Add new package">
+                        <button type="button" class="btn-primary btn-primary-sm" onclick="openAddConcessionModal()" title="Add new package">
                             <i class="fas fa-plus"></i> Add Package
                         </button>
                     </label>
@@ -138,7 +138,7 @@ async function openPurchaseConcessionsModal(studentId = null, callback = null, p
     }
     
     // Show/hide Add Package button based on admin status
-    const addPackageBtn = document.querySelector('.btn-add-package');
+    const addPackageBtn = document.querySelector('.btn-primary.btn-primary-sm');
     if (addPackageBtn) {
         const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
         const isAdmin = user && user.email === 'dance@urbanswing.co.nz';

@@ -268,7 +268,7 @@ label:has(+ textarea[required])::after {
     }
 }
 
-/* Modal Button Styles */
+/* Modal-specific button styles (local variants for modals only) */
 .modal-footer .btn-secondary {
     padding: var(--space-xs) 20px;
     background: transparent;

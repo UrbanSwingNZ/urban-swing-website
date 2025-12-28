@@ -1,5 +1,7 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/base/design-tokens.css');
+@import url('../../styles/components/badges.css');
+@import url('../../styles/components/tables.css');
 
 /* Transaction History Styles */
 
@@ -52,75 +54,8 @@
     font-size: 1.1rem;
 }
 
-/* Table Container */
-.table-container {
-    background: white;
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px var(--shadow-light);
-    overflow: hidden;
-}
-
-#transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#transactions-table thead {
-    background: var(--gradient-full);
-    color: white;
-}
-
-#transactions-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-#transactions-table th.align-right {
-    text-align: right;
-}
-
-#transactions-table tbody tr {
-    border-bottom: 1px solid var(--hover-light);
-    transition: background-color var(--transition-fast);
-}
-
-#transactions-table tbody tr:hover {
-    background-color: var(--gray-250);
-}
-
-#transactions-table tbody tr:last-child {
-    border-bottom: none;
-}
-
 #transactions-table td {
-    padding: 1rem;
     vertical-align: middle;
-}
-
-#transactions-table td.align-right {
-    text-align: right;
-}
-
-/* Reversed Transaction Styling */
-#transactions-table tbody tr.reversed {
-    opacity: 0.6;
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 10px,
-        var(--bg-error-light) 10px,
-        var(--bg-error-light) 20px
-    );
-}
-
-/* Date Column */
-.transaction-date {
-    font-weight: 600;
-    color: var(--text-primary);
 }
 
 /* Type Column with Badges */
@@ -129,93 +64,6 @@
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
-}
-
-/* Type Badges - matching admin transactions page exactly */
-.type-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.type-badge.concession {
-    background: var(--badge-package-bg);
-    color: var(--purple-primary);
-}
-
-.type-badge.casual,
-.type-badge.casual-entry {
-    background: var(--badge-casual-bg);
-    color: var(--blue-primary);
-}
-
-.type-badge.casual-student {
-    background: var(--badge-info-bg);
-    color: var(--badge-info-text);
-}
-
-.type-badge.gift {
-    background: var(--badge-success-bg);
-    color: var(--badge-success-text);
-}
-
-.type-badge.online {
-    background: var(--badge-teal-bg);
-    color: var(--badge-teal-text);
-}
-
-.type-badge.reversed {
-    background: var(--badge-error-bg);
-    color: var(--badge-error-text);
-    margin-right: 0.5rem;
-}
-
-/* Payment Method Badges */
-.payment-method {
-    padding: 1rem;
-}
-
-.payment-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.payment-badge i {
-    font-size: 0.9rem;
-}
-
-.payment-badge.cash {
-    background: var(--badge-warning-bg);
-    color: var(--badge-warning-text);
-}
-
-.payment-badge.eftpos {
-    background: var(--badge-blue-bg);
-    color: var(--badge-blue-text);
-}
-
-.payment-badge.bank {
-    background: var(--badge-purple-bg);
-    color: var(--badge-purple-text);
-}
-
-.payment-badge.online {
-    background: var(--badge-teal-bg);
-    color: var(--badge-teal-text);
-}
-
-.payment-badge.unknown {
-    background: var(--badge-neutral-bg);
-    color: var(--badge-neutral-text);
 }
 
 /* Amount Column */
@@ -264,9 +112,13 @@
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
-.pagination-btn {
-    padding: 0.75rem 1.5rem;
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
 }
+
+/* Pagination styles now in /styles/base/buttons.css */
 
 .page-info {
     font-size: 1rem;

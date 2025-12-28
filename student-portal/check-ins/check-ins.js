@@ -165,7 +165,6 @@ async function loadCheckIns(studentId, student) {
             document.getElementById('checkins-list').style.display = 'block';
             document.getElementById('no-checkins').style.display = 'none';
             displayCheckInsPage();
-            setupPagination();
         }
         
         // Hide loading spinner
@@ -236,55 +235,88 @@ function displayCheckInsPage() {
  * Update pagination controls state
  */
 function updatePaginationControls(totalPages) {
-    const pageInfo = document.getElementById('page-info');
-    const prevBtn = document.getElementById('prev-page');
-    const nextBtn = document.getElementById('next-page');
     const paginationControls = document.getElementById('pagination-controls');
     
     // Show/hide pagination controls
     if (totalPages <= 1) {
         paginationControls.style.display = 'none';
         return;
-    } else {
-        paginationControls.style.display = 'flex';
     }
     
-    // Update page info
-    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    paginationControls.style.display = 'flex';
     
-    // Enable/disable buttons
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
+    // Build pagination HTML
+    let paginationHTML = '<div class="pagination">';
+    
+    // Previous button
+    if (currentPage > 1) {
+        paginationHTML += `<button class="pagination-btn" onclick="goToCheckInPage(${currentPage - 1})">
+            <i class="fas fa-chevron-left"></i> <span>Previous</span>
+        </button>`;
+    } else {
+        paginationHTML += `<button class="pagination-btn" disabled>
+            <i class="fas fa-chevron-left"></i> <span>Previous</span>
+        </button>`;
+    }
+    
+    // Page numbers
+    paginationHTML += '<div class="pagination-pages">';
+    
+    // Always show first page
+    if (currentPage > 3) {
+        paginationHTML += `<button class="pagination-number" onclick="goToCheckInPage(1)">1</button>`;
+        if (currentPage > 4) {
+            paginationHTML += '<span class="pagination-ellipsis">...</span>';
+        }
+    }
+    
+    // Show pages around current page
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            paginationHTML += `<button class="pagination-number active">${i}</button>`;
+        } else {
+            paginationHTML += `<button class="pagination-number" onclick="goToCheckInPage(${i})">${i}</button>`;
+        }
+    }
+    
+    // Always show last page
+    if (currentPage < totalPages - 2) {
+        if (currentPage < totalPages - 3) {
+            paginationHTML += '<span class="pagination-ellipsis">...</span>';
+        }
+        paginationHTML += `<button class="pagination-number" onclick="goToCheckInPage(${totalPages})">${totalPages}</button>`;
+    }
+    
+    paginationHTML += '</div>';
+    
+    // Next button
+    if (currentPage < totalPages) {
+        paginationHTML += `<button class="pagination-btn" onclick="goToCheckInPage(${currentPage + 1})">
+            <span>Next</span> <i class="fas fa-chevron-right"></i>
+        </button>`;
+    } else {
+        paginationHTML += `<button class="pagination-btn" disabled>
+            <span>Next</span> <i class="fas fa-chevron-right"></i>
+        </button>`;
+    }
+    
+    paginationHTML += '</div>';
+    
+    paginationControls.innerHTML = paginationHTML;
 }
 
 /**
- * Setup pagination button handlers
+ * Go to specific check-in page
  */
-function setupPagination() {
-    const prevBtn = document.getElementById('prev-page');
-    const nextBtn = document.getElementById('next-page');
-    
-    // Remove existing listeners by cloning
-    const newPrevBtn = prevBtn.cloneNode(true);
-    const newNextBtn = nextBtn.cloneNode(true);
-    prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
-    nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-    
-    // Add new listeners
-    newPrevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            displayCheckInsPage();
-        }
-    });
-    
-    newNextBtn.addEventListener('click', () => {
-        const totalPages = Math.ceil(allCheckIns.length / itemsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayCheckInsPage();
-        }
-    });
+function goToCheckInPage(page) {
+    const totalPages = Math.ceil(allCheckIns.length / itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        displayCheckInsPage();
+    }
 }
 
 /**

@@ -4,6 +4,7 @@
  */
 
 @import url('../../../../styles/base/design-tokens.css');
+@import url('../../../../styles/components/badges.css');
 
 /* Transaction History Modal */
 #transaction-history-modal .modal-content {
@@ -226,54 +227,6 @@
     margin-top: var(--space-xs);
 }
 
-/* Edit Transaction Button */
-.btn-edit-transaction {
-    padding: 6px 12px;
-    background: transparent;
-    border: 1px solid var(--purple-primary);
-    border-radius: var(--radius-xs);
-    color: var(--purple-primary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.85rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-edit-transaction:hover {
-    background: var(--purple-primary);
-    color: white;
-}
-
-.btn-edit-transaction i {
-    font-size: 0.9rem;
-}
-
-/* Delete Transaction Button */
-.btn-delete-transaction {
-    padding: 6px 12px;
-    background: transparent;
-    border: 1px solid var(--error);
-    border-radius: var(--radius-xs);
-    color: var(--error);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.85rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-delete-transaction:hover {
-    background: var(--error);
-    color: white;
-}
-
-.btn-delete-transaction i {
-    font-size: 0.9rem;
-}
-
 /* Concession Summary */
 .concession-summary {
     display: grid;
@@ -467,24 +420,6 @@
     align-items: center;
 }
 
-.badge-gifted {
-    background: var(--purple-primary);
-    color: white;
-    padding: 4px 10px;
-    border-radius: var(--radius-xs);
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.badge-gifted i {
-    font-size: 0.85rem;
-}
-
 .btn-lock-toggle {
     padding: 6px 14px;
     font-size: 0.85rem;
@@ -538,24 +473,6 @@
 
 .btn-delete-block i {
     margin-right: 6px;
-}
-
-.badge-locked {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 10px;
-    background: var(--badge-neutral-bg);
-    border: 1px solid var(--text-muted-alt);
-    border-radius: var(--radius-xs);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.badge-locked i {
-    margin-right: 4px;
 }
 
 /* Concession Notes */

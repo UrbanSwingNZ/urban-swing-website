@@ -1,5 +1,7 @@
 @import url('../../../styles/base/colors.css');
 @import url('../../../styles/base/design-tokens.css');
+@import url('../../../styles/components/badges.css');
+@import url('../../../styles/components/tables.css');
 
 /* ========================================
    MERCHANDISE ORDERS STYLES
@@ -56,57 +58,13 @@
    ORDERS TABLE
    ======================================== */
 
-.table-container {
-    background: var(--bg-white);
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px var(--shadow-medium);
-    overflow: hidden;
-    max-height: 70vh;
-    overflow-y: auto;
-    position: relative;
-}
-
 .orders-table {
-    width: 100%;
-    border-collapse: collapse;
+    /* Merch orders table uses centralized .data-table styles */
     color: var(--text-primary);
 }
 
-.orders-table thead {
-    background: var(--gradient-blue-purple);
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: calc(var(--z-base) + 9);
-}
-
-.orders-table th {
-    padding: var(--space-sm);
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.orders-table th.sortable {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-    padding-right: 30px;
-}
-
-.orders-table th.sortable:hover {
-    background-color: var(--header-overlay-light);
-}
-
+/* Sort icon - using centralized .sort-icon class from tables.css */
 .sort-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.8rem;
-    opacity: 0.5;
     transition: opacity 0.2s ease;
 }
 
@@ -156,36 +114,6 @@
 .orders-table td:nth-child(8) {
     width: 120px; /* Actions column */
     min-width: 120px;
-}
-
-/* Status Badges */
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: var(--radius-md);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.badge-pending {
-    background: var(--badge-warning-bg);
-    color: var(--badge-warning-text);
-}
-
-.badge-invoiced {
-    background: var(--badge-casual-bg);
-    color: var(--badge-casual-text);
-}
-
-.badge-complete {
-    background: var(--badge-success-bg);
-    color: var(--badge-success-text);
-}
-
-.badge-deleted {
-    background: var(--badge-error-bg);
-    color: var(--badge-error-text);
 }
 
 /* Items Summary */

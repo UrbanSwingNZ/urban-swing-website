@@ -735,6 +735,7 @@ input[type="text"]::placeholder {
     flex-shrink: 0;
 }
 
+/* Modal-specific button styles (local variants for modals only) */
 .modal-footer .btn-secondary {
     padding: var(--space-xs) 20px;
     background: transparent;
