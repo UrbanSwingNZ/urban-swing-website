@@ -196,7 +196,7 @@
 /* Pagination Controls */
 .pagination-controls {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: var(--space-lg) 32px;
     background: white;
@@ -205,9 +205,13 @@
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
-.pagination-btn {
-    padding: var(--space-xs) 20px;
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
 }
+
+/* Pagination styles now in /styles/base/buttons.css */
 
 .pagination-info {
     font-size: 0.95rem;

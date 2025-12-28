@@ -63,21 +63,7 @@ This document catalogs all UI patterns, components, and design standards current
 <button class="btn-danger">Remove</button>
 ```
 
-#### 4. Secondary Button (`.btn-secondary`)
-- **Purpose:** Alternative actions
-- **Style:** Outline style with colored border
-- **Usage:** Modal secondary actions, alternative options
-- **Locations:** 
-  - `/student-portal/css/registration-form.css` (lines 667-689)
-  - `/student-portal/purchase/purchase.css` (lines 442-461)
-  - `/student-portal/profile/profile.css` (lines 272-291)
-- **⚠️ NOTE:** Not in base buttons.css - defined locally in 3+ files
-- **Code:**
-```html
-<button class="btn-secondary">Go Back</button>
-```
-
-#### 5. Success Button (`.btn-success`)
+#### 4. Success Button (`.btn-success`)
 - **Purpose:** Confirm positive actions
 - **Style:** Success green background, white text
 - **Usage:** Confirm, Approve, Complete actions
@@ -87,7 +73,7 @@ This document catalogs all UI patterns, components, and design standards current
 <button class="btn-success">Confirm</button>
 ```
 
-#### 6. Tertiary/Ghost Button (`.btn-tertiary`)
+#### 5. Tertiary/Ghost Button (`.btn-tertiary`)
 - **Purpose:** Low-priority actions
 - **Style:** Subtle background, primary text color
 - **Usage:** View details, show more
@@ -97,17 +83,7 @@ This document catalogs all UI patterns, components, and design standards current
 <button class="btn-tertiary">View Details</button>
 ```
 
-#### 7. Link Button (`.btn-link`)
-- **Purpose:** Text-only buttons
-- **Style:** No background, purple text, underline on hover
-- **Location:** `/student-portal/css/registration-form.css` (lines 644-665)
-- **Usage:** Generate password, show/hide toggles
-- **Code:**
-```html
-<button class="btn-link">Generate Password</button>
-```
-
-#### 8. Icon Buttons (`.btn-icon`)
+#### 6. Icon Buttons (`.btn-icon`)
 - **Purpose:** Action buttons with just icons
 - **Style:** Subtle background, hover effects
 - **Locations:**
@@ -122,7 +98,7 @@ This document catalogs all UI patterns, components, and design standards current
 <button class="btn-icon btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
 ```
 
-#### 9. Logout Button (`.btn-logout`)
+#### 7. Logout Button (`.btn-logout`)
 - **Purpose:** User logout
 - **Style:** Specialized header button
 - **Locations:**
@@ -132,6 +108,41 @@ This document catalogs all UI patterns, components, and design standards current
 ```html
 <button class="btn-logout" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
 ```
+
+#### 8. Pagination Buttons
+- **Purpose:** Table pagination navigation
+- **Location:** `/styles/base/buttons.css`
+- **Classes:**
+  - `.pagination-btn` - Previous/Next navigation buttons
+  - `.pagination-number` - Individual page number buttons
+  - `.pagination-pages` - Container for page numbers
+  - `.pagination-ellipsis` - "..." separator for skipped pages
+- **Style:** Transparent background, bordered, purple hover, gradient active state
+- **Usage:** Student Database, Transactions, Check-Ins pagination
+- **Features:**
+  - Disabled state with reduced opacity (no purple background)
+  - Active page highlighted with gradient background
+  - Ellipsis for large page ranges
+  - Smart page number display (current ±2 pages)
+- **Code:**
+```html
+<div class="pagination">
+  <button class="pagination-btn" disabled>
+    <i class="fas fa-chevron-left"></i> <span>Previous</span>
+  </button>
+  <div class="pagination-pages">
+    <button class="pagination-number active">1</button>
+    <button class="pagination-number">2</button>
+    <button class="pagination-number">3</button>
+    <span class="pagination-ellipsis">...</span>
+    <button class="pagination-number">10</button>
+  </div>
+  <button class="pagination-btn">
+    <span>Next</span> <i class="fas fa-chevron-right"></i>
+  </button>
+</div>
+```
+- **⚠️ Consolidation:** Previously duplicated in 4 separate files (~240 lines total), now centralized in buttons.css
 
 ### Button Sizes
 
@@ -1078,10 +1089,8 @@ const result = await ConfirmationModal.confirm({
 | `.btn-primary` | Main actions, form submission, CTAs | Cancel, delete, low-priority |
 | `.btn-cancel` | Cancel forms, close dialogs (non-destructive) | Confirm actions, delete |
 | `.btn-delete` / `.btn-danger` | Delete records, irreversible destructive actions | Cancel, close |
-| `.btn-secondary` | Alternative actions, "Go Back" | Primary CTAs |
 | `.btn-success` | Confirm positive actions, approve | Delete, cancel |
 | `.btn-tertiary` | View details, show more, low-priority | Primary actions |
-| `.btn-link` | In-page actions, toggles, generate | Form submission |
 | `.btn-icon` | Icon-only actions in tables, space-constrained UI | Text buttons needed |
 
 ### When to Use Each Card Type
@@ -1149,18 +1158,7 @@ const result = await ConfirmationModal.confirm({
 - **Result:** ~70 lines of duplicate CSS removed
 - **Files Updated:** student-database.css, transactions.css, gift-concessions.css
 
-#### 2. ✅ Secondary Button Added to Base Styles
-- **Was:** `.btn-secondary` defined in 3+ student portal files
-- **Fixed:** Added to `/styles/base/buttons.css`
-- **Result:** Centralized with consistent styling
-- **Note:** Modal-specific `.btn-secondary` variants remain local (different styling)
-
-#### 3. ✅ Link Button Standardized
-- **Was:** `.btn-link` only in registration form CSS
-- **Fixed:** Added to base buttons.css
-- **Result:** Now available globally with consistent styling
-
-#### 4. ✅ Badge Component Documented
+#### 2. ✅ Badge Component Documented
 - **Was:** Multiple badge styles scattered across 10+ files
 - **Fixed:** Comprehensive documentation added to design system
 - **Result:** All badge types, variants, and color mappings cataloged
@@ -1168,20 +1166,20 @@ const result = await ConfirmationModal.confirm({
 
 ### 🟡 Medium Priority Issues
 
-#### 5. Card vs Tile Naming Confusion
+#### 3. Card vs Tile Naming Confusion
 - **Current:** `.card` and `.tile-gradient` serve similar purposes
 - **Impact:** Developers unsure which to use
 - **Recommendation:** Document clear use cases for each (cards for content, tiles for navigation)
 - **Effort:** Documentation only
 - **Note:** Already documented in Card & Tile Components section
 
-#### 6. Modal Implementations Vary
+#### 4. Modal Implementations Vary
 - **Current:** BaseModal, custom modals, inline modal HTML
 - **Impact:** Inconsistent behavior and styling
 - **Recommendation:** Standardize on BaseModal/ConfirmationModal classes
 - **Effort:** 4 hours (refactor existing modals)
 
-#### 7. Form Validation Patterns Inconsistent
+#### 5. Form Validation Patterns Inconsistent
 - **Current:** Multiple validation approaches (inline, modal, snackbar)
 - **Impact:** Confusing UX
 - **Recommendation:** Standardize on inline errors + success snackbar pattern
@@ -1189,23 +1187,23 @@ const result = await ConfirmationModal.confirm({
 
 ### 🟢 Nice-to-Have Improvements
 
-#### 8. Badge Component Not Centralized
+#### 6. Badge Component Not Centralized
 - **Current:** Badge styles defined in 10+ separate files (~200-300 lines duplicate)
 - **Recommendation:** Create `/styles/components/badges.css` with all badge types
 - **Effort:** 3 hours
 - **Priority:** High impact for maintenance
 
-#### 8. Table Styles Not Unified
+#### 7. Table Styles Not Unified
 - **Current:** Custom table styles in each admin section
 - **Recommendation:** Create base table component in `/styles/components/`
 - **Effort:** 4 hours
 
-#### 9. Loading States Vary
+#### 8. Loading States Vary
 - **Current:** `.loading` class on buttons, but also custom spinners
 - **Recommendation:** Document all loading patterns clearly
 - **Effort:** 1 hour (documentation only)
 
-#### 10. Mobile Responsive Patterns Unclear
+#### 9. Mobile Responsive Patterns Unclear
 - **Current:** Ad-hoc media queries throughout
 - **Recommendation:** Document mobile breakpoints and responsive utilities
 - **Effort:** 2 hours (audit + documentation)
@@ -1216,9 +1214,8 @@ const result = await ConfirmationModal.confirm({
 
 ### Immediate Actions (Week 1)
 
-1. **Create missing base button variants** (`.btn-icon`, `.btn-secondary`, `.btn-link`)
-2. **Document badge component system** (extract patterns, create guidelines)
-3. **Clarify card vs tile usage** (add usage examples to this doc)
+1. **Document badge component system** (extract patterns, create guidelines)
+2. **Clarify card vs tile usage** (add usage examples to this doc)
 
 ### Short-term Goals (Weeks 2-3)
 
