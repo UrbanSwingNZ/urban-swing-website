@@ -1,0 +1,29 @@
+/* ========================================
+   PUBLIC NAVIGATION CONTAINER
+   Desktop navigation container styles only
+   - Desktop nav buttons styled by /styles/base/buttons.css (.nav-menu)
+   - Mobile drawer styled by /styles/components/mobile-drawer.css
+   ======================================== */
+
+@import url('../../styles/base/design-tokens.css');
+
+/* Navigation Container */
+nav {
+  width: 100%;
+  max-width: var(--max-width-xl);
+  margin: var(--space-sm) auto 0;
+  position: relative;
+}
+
+/* Mobile responsiveness - hide desktop nav, show mobile drawer */
+@media (max-width: 768px) {
+  nav {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Hide desktop navigation menu on mobile */
+  #menu {
+    display: none;
+  }
+}

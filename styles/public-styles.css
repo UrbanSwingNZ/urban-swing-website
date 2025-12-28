@@ -1,6 +1,6 @@
 /* Import color system */
-@import url('../styles/base/colors.css');
-@import url('../styles/base/design-tokens.css');
+@import url('base/colors.css');
+@import url('base/design-tokens.css');
 
 /* Set light mode as the default */
 :root {
@@ -10,7 +10,7 @@
 }
 
 /* Import shared mobile drawer styles */
-@import url('/styles/components/mobile-drawer.css');
+@import url('components/mobile-drawer.css');
 
 /* Reset margin and padding for all elements */
 * {
