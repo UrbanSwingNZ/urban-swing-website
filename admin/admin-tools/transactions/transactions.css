@@ -522,39 +522,7 @@ select.filter-input:focus {
     align-items: center;
 }
 
-.btn-icon {
-    background: var(--bg-white);
-    border: 1px solid var(--bg-purple-medium);
-    padding: 0.5rem;
-    border-radius: var(--radius-xs);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.95rem;
-    color: var(--text-primary);
-}
-
-.btn-icon:hover {
-    border-color: var(--purple-primary);
-    color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
-
-.btn-icon.btn-delete:hover {
-    border-color: var(--error);
-    color: var(--error);
-}
-
-.btn-icon.btn-invoice.invoiced {
-    color: var(--purple-primary);
-    border-color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
-
-.btn-icon.btn-invoice:hover {
-    border-color: var(--purple-primary);
-    color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
+/* Icon button styles now in /styles/base/buttons.css */
 
 /* Buttons - using admin.css btn-primary-lg style */
 .btn-primary {

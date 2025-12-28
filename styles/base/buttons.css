@@ -343,6 +343,125 @@
   to { transform: rotate(360deg); }
 }
 
+/* ========================================
+   ICON BUTTONS
+   Small buttons with just icons, used in tables and action columns
+   ======================================== */
+
+.btn-icon {
+  padding: var(--space-xs) 12px;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.btn-icon:hover {
+  background: var(--purple-primary);
+  color: white;
+  border-color: var(--purple-primary);
+  transform: translateY(-2px);
+}
+
+.btn-icon i {
+  font-size: 0.9rem;
+}
+
+/* Icon Button Variants */
+.btn-icon.has-notes {
+  background: var(--purple-primary);
+  color: white;
+  border-color: var(--purple-primary);
+}
+
+.btn-icon.has-notes:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--bg-purple-strong);
+}
+
+.btn-icon.btn-delete {
+  background: var(--bg-error-light);
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.btn-icon.btn-delete:hover {
+  background: var(--error);
+  border-color: var(--error);
+  color: white;
+}
+
+.btn-icon.btn-restore {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.btn-icon.btn-restore:hover {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.btn-icon.btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-icon.btn-disabled:hover {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-light);
+  transform: none;
+}
+
+.btn-icon.btn-invoice {
+  color: var(--purple-primary);
+  border-color: var(--purple-primary);
+}
+
+.btn-icon.btn-invoice:hover {
+  background: var(--purple-primary);
+  color: white;
+}
+
+.btn-icon.btn-invoice.invoiced {
+  background: var(--purple-primary);
+  color: white;
+  border-color: var(--purple-primary);
+}
+
+.btn-icon.btn-invoice.invoiced:hover {
+  background: var(--purple-primary);
+  color: white;
+  border-color: var(--purple-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--bg-purple-strong);
+}
+
+.btn-icon.btn-complete {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.btn-icon.btn-complete:hover {
+  background: var(--success);
+  color: white;
+}
+
+.btn-icon.btn-complete.completed {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
 /* Mobile-specific styles for action buttons */
 @media (max-width: 768px) {
   /* On mobile, action buttons can be full-width within their container */

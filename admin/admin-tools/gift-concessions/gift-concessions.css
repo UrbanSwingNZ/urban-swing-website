@@ -511,28 +511,7 @@ input[type="date"].form-control::-webkit-calendar-picker-indicator {
 }
 
 /* Gift Item Button Styles */
-.btn-icon {
-    background: var(--bg-white);
-    border: 1px solid var(--bg-purple-medium);
-    padding: 0.4rem 0.5rem;
-    border-radius: var(--radius-xs);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-}
-
-.btn-icon:hover {
-    border-color: var(--purple-primary);
-    color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
-
-.btn-icon.btn-delete:hover {
-    background: var(--error);
-    border-color: var(--error);
-    color: var(--text-white);
-}
+/* Icon button styles now in /styles/base/buttons.css */
 
 .gift-item-details {
     color: var(--text-muted);

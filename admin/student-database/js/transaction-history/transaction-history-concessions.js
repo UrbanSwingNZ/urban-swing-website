@@ -156,23 +156,23 @@ function buildTransactionConcessionItem(block, status, studentId) {
     
     if (status === 'active') {
         // Active blocks cannot be locked/unlocked
-        lockButton = `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
+        lockButton = `<button class="btn-cancel" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
         // Active blocks can only be deleted if no entries have been used (and only by super admin)
         deleteButton = (!isSuperAdmin() || hasBeenUsed)
-            ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
-            : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
+            ? `<button class="btn-delete" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
+            : `<button class="btn-delete" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
     } else {
         // Expired and depleted blocks can be locked/unlocked (only by super admin)
         if (isSuperAdmin()) {
             lockButton = isLocked 
-                ? `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
-                : `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+                ? `<button class="btn-cancel" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
+                : `<button class="btn-cancel" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
         }
         
         // Expired/depleted blocks can only be deleted if no entries have been used (and only by super admin)
         deleteButton = (!isSuperAdmin() || hasBeenUsed)
-            ? `<button class="btn-delete-block" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
-            : `<button class="btn-delete-block" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
+            ? `<button class="btn-delete" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
+            : `<button class="btn-delete" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
     }
     
     // Set labels and icons based on status
@@ -270,7 +270,7 @@ function attachTransactionConcessionEventListeners(contentEl, studentId) {
     });
     
     // Lock/unlock buttons
-    contentEl.querySelectorAll('.btn-lock-toggle').forEach(btn => {
+    contentEl.querySelectorAll('.btn-cancel[data-locked]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
             const blockId = btn.dataset.blockId;
@@ -301,7 +301,7 @@ function attachTransactionConcessionEventListeners(contentEl, studentId) {
     });
     
     // Delete buttons
-    contentEl.querySelectorAll('.btn-delete-block').forEach(btn => {
+    contentEl.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const blockId = btn.dataset.blockId;

@@ -25,7 +25,7 @@ class ConfirmationModal extends BaseModal {
      * @param {string} options.confirmText - Text for confirm button (default: 'Confirm')
      * @param {string} options.confirmClass - CSS class for confirm button (default: 'btn-primary')
      * @param {string} options.cancelText - Text for cancel button (default: 'Cancel')
-     * @param {string} options.cancelClass - CSS class for cancel button (default: 'btn-secondary')
+     * @param {string} options.cancelClass - CSS class for cancel button (default: 'btn-cancel')
      * @param {Function} options.onConfirm - Callback when confirmed
      * @param {Function} options.onCancel - Callback when cancelled
      * @param {string} options.variant - Modal variant: 'danger' for delete actions (red header), others use default gradient
@@ -36,7 +36,7 @@ class ConfirmationModal extends BaseModal {
             confirmText: options.confirmText || 'Confirm',
             confirmClass: options.confirmClass || 'btn-primary',
             cancelText: options.cancelText || 'Cancel',
-            cancelClass: options.cancelClass || 'btn-secondary',
+            cancelClass: options.cancelClass || 'btn-cancel',
             icon: options.icon || null,
             message: options.message || '',
             variant: options.variant || null,
