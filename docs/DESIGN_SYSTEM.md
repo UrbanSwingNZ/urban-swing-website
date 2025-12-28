@@ -14,11 +14,14 @@ This document catalogs all UI patterns, components, and design standards current
 3. [Card & Tile Components](#card--tile-components)
 4. [Form Components](#form-components)
 5. [Modal System](#modal-system)
-6. [Color System](#color-system)
-7. [Typography](#typography)
-8. [Spacing & Layout](#spacing--layout)
-9. [Component Usage Guidelines](#component-usage-guidelines)
-10. [Inconsistencies & Recommendations](#inconsistencies--recommendations)
+6. [Table System](#table-system)
+7. [Loading States](#loading-states)
+8. [Mobile Responsive Patterns](#mobile-responsive-patterns)
+9. [Color System](#color-system)
+10. [Typography](#typography)
+11. [Spacing & Layout](#spacing--layout)
+12. [Component Usage Guidelines](#component-usage-guidelines)
+13. [Inconsistencies & Recommendations](#inconsistencies--recommendations)
 
 ---
 
@@ -1044,6 +1047,848 @@ All data tables across the application now use a centralized design system with 
 
 ---
 
+## Loading States ✅
+
+### Current Implementation
+
+**Status:** ✅ Centralized in `/components/loading-spinner/` and `/styles/components/loading-spinner.css`
+
+**Consolidation Complete:** December 22, 2025
+
+The application uses a unified loading spinner system with consistent styling, behavior, and API across all pages. Multiple loading patterns are supported for different contexts.
+
+### Loading Spinner Component
+
+**Primary Files:**
+- `/components/loading-spinner/loading-spinner.js` - JavaScript API
+- `/styles/components/loading-spinner.css` - Centralized styles
+
+**Color Variable:**
+- `--bg-overlay-spinner` - Semi-transparent overlay (rgba(0, 0, 0, 0.6))
+
+### Loading Patterns
+
+#### 1. Full-Page Overlay Spinner
+
+**Purpose:** Global loading state that dims the entire page  
+**Use Cases:** Page navigation, data fetching, form submission  
+**Appearance:** Centered spinner with optional message, dimmed overlay background
+
+**API:**
+```javascript
+import { LoadingSpinner } from '/components/loading-spinner/loading-spinner.js';
+
+// Show spinner
+LoadingSpinner.showGlobal('Loading...');
+
+// Hide spinner
+LoadingSpinner.hideGlobal();
+```
+
+**HTML (Auto-created or Manual):**
+```html
+<div id="loading-spinner" class="loading-spinner" style="display: none;">
+    <div class="spinner spinner-medium"></div>
+    <p>Loading...</p>
+</div>
+```
+
+**Styling:**
+- **Position:** Fixed, full viewport (z-index: var(--z-modal-high))
+- **Background:** Semi-transparent black overlay (60% opacity) with 2px blur
+- **Spinner:** Purple accent color (--purple-primary), 48px diameter
+- **Message:** White text, 1.1rem, 500 weight
+
+#### 2. Button Loading State
+
+**Purpose:** Show loading state on a specific button  
+**Use Cases:** Form submission buttons, action buttons  
+**Appearance:** Button text replaced with spinner icon + loading message, button disabled
+
+**API:**
+```javascript
+import { LoadingSpinner } from '/components/loading-spinner/loading-spinner.js';
+
+// Show loading on button
+LoadingSpinner.showButton('submit-btn', 'Processing...');
+
+// Hide loading, restore original text
+LoadingSpinner.hideButton('submit-btn');
+```
+
+**CSS Class (Alternative Pattern):**
+```html
+<button class="btn-primary loading">Submit</button>
+```
+
+**Button Loading Styles:**
+- **Visual:** Text hidden, centered spinner overlay
+- **Interaction:** Disabled, no pointer events
+- **Spinner:** 16px diameter, 2px border, 0.6s rotation
+- **Color:** Inherits from button type (white for primary/delete, error color for cancel)
+
+#### 3. Inline Container Spinner
+
+**Purpose:** Show loading within a specific container  
+**Use Cases:** Table loading, section refresh, lazy-loaded content  
+**Appearance:** Spinner without full-page overlay
+
+**API:**
+```javascript
+import { LoadingSpinner } from '/components/loading-spinner/loading-spinner.js';
+
+// Show in specific container
+LoadingSpinner.show({
+    containerId: 'data-table',
+    message: 'Loading data...',
+    size: 'medium'
+});
+
+// Hide from container
+LoadingSpinner.hide('data-table');
+```
+
+**HTML Pattern:**
+```html
+<div id="data-table">
+    <div class="loading-spinner inline">
+        <div class="spinner spinner-medium"></div>
+        <p>Loading data...</p>
+    </div>
+</div>
+```
+
+**Styling:**
+- **Position:** Relative (within container)
+- **Background:** Transparent (no overlay)
+- **Padding:** var(--space-md)
+- **Display:** Flex, centered content
+
+### Spinner Sizes
+
+**Size Classes:**
+- `.spinner-small` - 32px diameter, 3px border (compact spaces)
+- `.spinner-medium` - 48px diameter, 4px border (default/full-page)
+- `.spinner-large` - 56px diameter, 5px border (emphasis)
+- `.spinner-xlarge` - 64px diameter, 5px border (hero sections)
+
+**Button Spinner:** Fixed 16px diameter (automatically styled with .loading class)
+
+**Mobile Responsive:**
+- Medium spinner scales to 40px on mobile (< 768px)
+- Message text scales to 1rem on mobile
+
+### Loading State Patterns by Context
+
+#### Form Submission
+```javascript
+// Example: Registration form
+const submitBtn = document.getElementById('submit-btn');
+LoadingSpinner.showButton('submit-btn', 'Creating account...');
+
+try {
+    await registerUser(formData);
+    LoadingSpinner.hideButton('submit-btn');
+    // Show success message
+} catch (error) {
+    LoadingSpinner.hideButton('submit-btn');
+    // Show error message
+}
+```
+
+#### Page Navigation
+```javascript
+// Example: Loading transactions
+LoadingSpinner.showGlobal('Loading transactions...');
+
+try {
+    const transactions = await fetchTransactions();
+    displayTransactions(transactions);
+} finally {
+    LoadingSpinner.hideGlobal();
+}
+```
+
+#### Table Data Refresh
+```javascript
+// Example: Refreshing student list
+const tableContainer = document.getElementById('student-list');
+tableContainer.innerHTML = `
+    <div class="loading-spinner inline">
+        <div class="spinner spinner-medium"></div>
+        <p>Loading students...</p>
+    </div>
+`;
+
+const students = await fetchStudents();
+renderStudentTable(students);
+```
+
+#### Button State Toggle (CSS Only)
+```javascript
+// Alternative: Pure CSS approach
+const button = document.getElementById('submit-btn');
+button.classList.add('loading');
+button.disabled = true;
+
+try {
+    await saveData();
+} finally {
+    button.classList.remove('loading');
+    button.disabled = false;
+}
+```
+
+### Animation Specifications
+
+**Global Spinner Animation:**
+```css
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+```
+- **Duration:** 1s (full-page spinners)
+- **Timing:** Linear (constant speed)
+- **Iteration:** Infinite
+
+**Button Spinner Animation:**
+```css
+@keyframes button-spinner {
+    to { transform: rotate(360deg); }
+}
+```
+- **Duration:** 0.6s (faster for buttons)
+- **Timing:** Linear
+- **Iteration:** Infinite
+
+### Usage Guidelines
+
+#### When to Use Each Pattern
+
+| Pattern | Use When | Avoid When |
+|---------|----------|------------|
+| Full-Page Overlay | Page navigation, major data fetch, critical operations | Quick actions, inline updates |
+| Button Loading | Form submission, action confirmation, API calls | Read-only operations, navigation |
+| Inline Container | Section refresh, lazy loading, partial updates | Full page changes, critical flows |
+| CSS .loading Class | Simple button states, consistent with existing code | Complex loading logic needed |
+
+#### Loading Message Best Practices
+
+✅ **Good Messages:**
+- "Loading..." (default, generic)
+- "Processing payment..." (specific action)
+- "Creating account..." (clear outcome)
+- "Loading students..." (specific data)
+
+❌ **Avoid:**
+- "Please wait" (too generic, no context)
+- "Working..." (vague)
+- Long technical messages
+- Messages without ellipsis (use "..." to indicate ongoing)
+
+#### Accessibility Considerations
+
+**Screen Reader Support:**
+- Loading spinners should have `aria-live="polite"` region
+- Button loading states announce "Loading" or custom message
+- Provide alternative text for spinner icon
+
+**Keyboard Navigation:**
+- Buttons become non-focusable during loading (disabled state)
+- Full-page overlay traps focus (no interaction while loading)
+- Escape key should NOT close loading overlay (unlike modals)
+
+**Visual Indicators:**
+- Always combine spinner with text message
+- Ensure sufficient color contrast (purple on white/black)
+- Provide motion for users who can see it
+- Text provides context for users who can't see animation
+
+### Consolidation Results ✅
+
+**Completed:** December 22, 2025
+
+**Files Updated:**
+- Created: `/components/loading-spinner/loading-spinner.js` (155 lines)
+- Created: `/styles/components/loading-spinner.css` (85 lines)
+- Added: `--bg-overlay-spinner` color variable to colors.css
+- Updated: 15+ files to use centralized component
+
+**Lines Saved:** ~350-450 lines of duplicate CSS removed
+
+**Key Achievements:**
+- Single source of truth for all loading states
+- Consistent purple accent color across all spinners
+- Unified dimmed overlay (60% opacity) for better UX
+- Multiple patterns (global, button, inline) for different contexts
+- Icon constants integration (ICONS.LOADING)
+- Automatic button state management (disable, restore text)
+
+**Pattern Improvements:**
+- **Before:** Mix of fully blocking and non-blocking overlays
+- **After:** All overlays dim content (semi-transparent) so users see page behind spinner
+- **Before:** Inconsistent spinner sizes (48px vs 50px vs 56px)
+- **After:** Standardized sizes (small: 32px, medium: 48px, large: 56px, xlarge: 64px)
+- **Before:** Button loading implemented manually each time
+- **After:** Single API call handles disable, spinner, text replacement, and restore
+
+---
+
+## Mobile Responsive Patterns ✅
+
+### Current Implementation
+
+**Status:** ✅ Documented - December 29, 2025
+
+The application uses a mobile-first responsive design approach with consistent breakpoints and patterns across all pages. Components adapt seamlessly from desktop to tablet to mobile viewports.
+
+### Breakpoints
+
+**Standard Breakpoints:**
+- **Mobile:** `max-width: 480px` - Extra small phones
+- **Tablet/Mobile:** `max-width: 768px` - Phones and small tablets
+- **Tablet:** `min-width: 769px and max-width: 1024px` - Tablets
+- **Desktop:** `min-width: 1024px` - Desktop and large tablets
+- **Large Desktop:** `min-width: 1280px` - Wide screens
+
+**Primary Breakpoint:** `768px` is the most commonly used breakpoint for mobile/desktop split
+
+### Responsive Utilities
+
+**Location:** `/styles/utilities/public-utilities.css`
+
+**Display Utilities:**
+```css
+/* Show/hide on mobile (< 768px) */
+.mobile-hidden { display: none; }
+.mobile-block { display: block; }
+.mobile-flex { display: flex; }
+
+/* Show/hide on desktop (> 768px) */
+.desktop-hidden { display: none; }
+.desktop-block { display: block; }
+.desktop-flex { display: flex; }
+```
+
+**Full Width on Mobile:**
+```css
+.full-width-mobile {
+  width: 100%;
+  justify-content: center;
+}
+```
+
+### Mobile Navigation
+
+**Pattern:** Hamburger menu → slide-in drawer
+
+**Components:**
+- **JavaScript:** `/components/mobile-drawer.js` (342 lines)
+- **CSS:** `/styles/components/mobile-drawer.css` (246 lines)
+
+**Features:**
+- Hamburger toggle button (3-line icon)
+- Slide-in drawer from left (280px width)
+- Dark overlay backdrop
+- Close button in top-left
+- Logo in top-right
+- Menu items with icons
+- Smooth transitions (0.3s ease)
+
+**Usage:**
+```javascript
+import { MobileDrawer } from '/components/mobile-drawer.js';
+
+const drawer = new MobileDrawer({
+  toggleButtonId: 'mobile-nav-toggle',
+  drawerId: 'mobile-nav-drawer',
+  overlayId: 'mobile-nav-overlay',
+  menuItems: [
+    { href: '/dashboard', icon: 'fa-home', label: 'Dashboard' },
+    { href: '/profile', icon: 'fa-user', label: 'Profile' }
+  ],
+  logoSrc: '/images/logo.png',
+  onLogout: () => handleLogout()
+});
+drawer.initialize();
+```
+
+**HTML Structure:**
+```html
+<!-- Hamburger button (hidden on desktop) -->
+<button id="mobile-nav-toggle" class="mobile-nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- Drawer (auto-created by MobileDrawer.js) -->
+<div id="mobile-nav-drawer" class="mobile-nav-drawer">
+  <button class="mobile-nav-close">×</button>
+  <a class="drawer-logo"><img src="/images/logo.png"></a>
+  <nav class="drawer-menu">
+    <!-- Menu items -->
+  </nav>
+</div>
+
+<!-- Overlay (auto-created) -->
+<div id="mobile-nav-overlay" class="mobile-nav-overlay"></div>
+```
+
+**Behavior:**
+- **Open:** Drawer slides in from left, overlay dims page (40% black)
+- **Close Methods:** Close button, overlay click, menu item click
+- **Animation:** Transform translateX(-280px to 0), 0.3s ease
+
+### Table to Card Transformation
+
+**Pattern:** Desktop tables → Mobile card layout
+
+**Desktop (> 768px):**
+- Full data table with columns
+- Sticky headers (admin tables)
+- Sortable columns
+- Hover effects on rows
+
+**Mobile (< 768px):**
+- Table hidden with `display: none !important`
+- Card container shown with `display: block !important`
+- Each row becomes a vertical card
+- Labels shown inline with values
+
+**Implementation Example (Transactions):**
+```css
+/* Desktop: show table */
+.table-container {
+  display: block;
+}
+.cards-container {
+  display: none !important;
+}
+
+/* Mobile: show cards */
+@media (max-width: 768px) {
+  .table-container {
+    display: none !important;
+  }
+  .cards-container {
+    display: block !important;
+  }
+}
+```
+
+**Card Structure:**
+```html
+<div class="cards-container">
+  <div class="transaction-card">
+    <div class="card-header">
+      <span class="card-date">Dec 15, 2025</span>
+      <span class="card-amount">$50.00</span>
+    </div>
+    <div class="card-body">
+      <div class="card-row">
+        <span class="card-label">Type:</span>
+        <span class="card-value">
+          <span class="type-badge concession">Package</span>
+        </span>
+      </div>
+      <div class="card-row">
+        <span class="card-label">Payment:</span>
+        <span class="card-value">
+          <span class="payment-badge online">
+            <i class="fas fa-credit-card"></i> Online
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+**Card Styling:**
+- White background, rounded corners
+- Shadow with hover lift
+- 1.25rem padding
+- 1rem margin between cards
+- Flexbox for header (date left, amount right)
+- Vertical layout for body rows
+
+### Form Responsive Behavior
+
+**Form Rows → Single Column:**
+```css
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+**Checkbox Rows → Single Column:**
+```css
+.checkbox-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (max-width: 768px) {
+  .checkbox-row {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+### Button Responsive Behavior
+
+**Button Groups → Vertical Stack:**
+```css
+.btn-group {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group > * {
+    width: 100%;
+  }
+}
+```
+
+**Full Width Mobile Buttons:**
+```css
+@media (max-width: 768px) {
+  .btn-primary.full-width-mobile {
+    width: 100%;
+    justify-content: center;
+  }
+}
+```
+
+### Modal Responsive Behavior
+
+**Desktop Modals:**
+- Centered in viewport
+- Fixed width (400-800px depending on size)
+- Max-height with scroll
+
+**Mobile Modals (< 768px):**
+```css
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-width: none;
+    margin: var(--space-md);
+  }
+  
+  .modal-footer {
+    flex-direction: column-reverse;
+    gap: var(--space-sm);
+  }
+  
+  .modal-footer button {
+    width: 100%;
+  }
+}
+```
+
+**Changes:**
+- Modal takes 95% width
+- Footer buttons stack vertically (reverse order: primary on top)
+- All buttons full width
+- Reduced margins
+
+### Typography Responsive Scaling
+
+**Heading Sizes:**
+```css
+h1 {
+  font-size: 2.5rem; /* Desktop */
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem; /* Mobile: ~70% size */
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+```
+
+**Body Text:**
+- Generally stays 1rem (16px)
+- Line height may increase slightly for readability
+
+### Card Grid Responsive Behavior
+
+**Auto-Fit Grid:**
+```css
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+```
+
+**Tile Grid:**
+```css
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tile-gradient {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+```
+
+### Spacing Adjustments
+
+**Container Padding:**
+```css
+.portal-container {
+  padding: var(--space-2xl) var(--space-xl);
+}
+
+@media (max-width: 768px) {
+  .portal-container {
+    padding: var(--space-lg) var(--space-md);
+  }
+}
+```
+
+**Section Spacing:**
+- Desktop: 3-4rem between sections
+- Mobile: 1.5-2rem between sections
+
+### Pagination Responsive Behavior
+
+**Desktop:**
+- All pagination controls in one row
+- Page numbers visible (1 2 3 ... 10)
+- Previous/Next with text + icons
+
+**Mobile (< 768px):**
+```css
+@media (max-width: 768px) {
+  .pagination-controls {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .pagination-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .pagination-number {
+    min-width: 36px;
+    padding: 0.5rem;
+  }
+}
+```
+
+**Changes:**
+- Wrapping allowed
+- Slightly smaller buttons
+- Compact spacing
+
+### Snackbar Responsive Behavior
+
+**Desktop:**
+- Bottom-right corner
+- Fixed width (300-400px)
+- Stacks vertically
+
+**Mobile (< 768px):**
+```css
+@media (max-width: 768px) {
+  .snackbar {
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: calc(100% - 2rem);
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .snackbar {
+    bottom: 1rem;
+    width: calc(100% - 1rem);
+    font-size: 0.9rem;
+  }
+}
+```
+
+**Changes:**
+- Centered horizontally
+- Full width minus margins
+- Slightly smaller text on small phones
+
+### Loading Spinner Responsive Behavior
+
+**Desktop:**
+- Medium spinner (48px)
+- 1.1rem message text
+
+**Mobile (< 768px):**
+```css
+@media (max-width: 768px) {
+  .loading-spinner p {
+    font-size: 1rem;
+  }
+  
+  .spinner-medium {
+    width: 40px;
+    height: 40px;
+  }
+}
+```
+
+**Changes:**
+- Spinner slightly smaller (40px)
+- Message text reduced to 1rem
+
+### Touch Target Guidelines
+
+**Minimum Touch Target:** 44x44px (iOS/Android recommendation)
+
+**Implementation:**
+- All buttons minimum 36px height
+- Icon buttons minimum 40px x 40px
+- Padding added to meet touch targets
+- Increased spacing between interactive elements on mobile
+
+**Example:**
+```css
+.btn-icon {
+  padding: var(--space-xs) 12px;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+@media (max-width: 768px) {
+  .btn-icon {
+    padding: 12px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+```
+
+### Responsive Images
+
+**Fluid Images:**
+```css
+img {
+  max-width: 100%;
+  height: auto;
+}
+```
+
+**Logo Scaling:**
+```css
+.header-logo {
+  height: 60px;
+}
+
+@media (max-width: 768px) {
+  .header-logo {
+    height: 45px;
+  }
+}
+```
+
+### Best Practices
+
+#### Mobile-First Approach
+- Write base styles for mobile
+- Use `min-width` media queries to enhance for larger screens
+- Ensures mobile performance is prioritized
+
+#### Testing Breakpoints
+- 480px - Small phones (iPhone SE)
+- 768px - Tablets, large phones
+- 1024px - Small desktops, landscape tablets
+- 1280px - Standard desktops
+
+#### Performance Considerations
+- Avoid large background images on mobile
+- Use `loading="lazy"` for images below fold
+- Minimize JavaScript execution on mobile
+- Reduce animation complexity on mobile
+
+#### Accessibility on Mobile
+- Ensure text is at least 16px (prevents iOS zoom)
+- Maintain minimum 44px touch targets
+- Ensure sufficient color contrast
+- Test with screen readers (VoiceOver, TalkBack)
+
+### Common Patterns Summary
+
+| Pattern | Desktop | Mobile |
+|---------|---------|--------|
+| Navigation | Horizontal menu bar | Hamburger → drawer |
+| Tables | Full data table | Card-based layout |
+| Form Rows | 2-3 columns | Single column |
+| Button Groups | Horizontal | Vertical stack |
+| Modal Buttons | Horizontal | Vertical (reversed) |
+| Card Grids | Multi-column (auto-fit) | Single column |
+| Pagination | All in one row | Wrapped, compact |
+| Headers | Full-size text | 70% size |
+| Container Padding | 2-3rem | 1-1.5rem |
+
+### Files Reference
+
+**Core Responsive Files:**
+- `/styles/utilities/public-utilities.css` - Responsive utilities
+- `/components/mobile-drawer.js` - Mobile navigation
+- `/styles/components/mobile-drawer.css` - Mobile nav styles
+- `/styles/base/buttons.css` - Responsive button behavior
+- `/styles/components/forms.css` - Responsive form patterns
+- `/styles/modals/modal-base.css` - Responsive modal behavior
+
+**Implementation Examples:**
+- `/student-portal/transactions/transactions.css` - Table to card pattern
+- `/student-portal/purchase/purchase.css` - Mobile form stacking
+- `/styles/components/tiles.css` - Responsive tile grids
+
+---
+
 ## Color System
 
 ### Current Implementation
@@ -1441,20 +2286,34 @@ All data tables across the application now use a centralized design system with 
 - **Impact:** Medium - Reduces duplication but tables have legitimate differences
 - **Note:** Student portal check-ins uses card layout, not table - exclude from consolidation
 
-#### 7. Loading States Vary
-- **Current:** Custom table styles in each admin section
-- **Recommendation:** Create base table component in `/styles/components/`
-- **Effort:** 4 hours
+#### 7. Loading States ✅
+- **Status:** DOCUMENTED - December 29, 2025
+- **Was:** `.loading` class on buttons, custom spinners scattered across files
+- **Now:** Comprehensive documentation of all loading patterns
+- **Location:** Design System > Loading States section
+- **Patterns Documented:**
+  - Full-page overlay spinner (LoadingSpinner.showGlobal)
+  - Button loading state (LoadingSpinner.showButton)
+  - Inline container spinner (inline class)
+  - CSS .loading class for buttons
+- **Consolidation:** Already complete (Dec 22, 2025) - ~350-450 lines saved
+- **Note:** Centralized in `/components/loading-spinner/` and `/styles/components/loading-spinner.css`
 
-#### 8. Loading States Vary
-- **Current:** `.loading` class on buttons, but also custom spinners
-- **Recommendation:** Document all loading patterns clearly
-- **Effort:** 1 hour (documentation only)
-
-#### 9. Mobile Responsive Patterns Unclear
-- **Current:** Ad-hoc media queries throughout
-- **Recommendation:** Document mobile breakpoints and responsive utilities
-- **Effort:** 2 hours (audit + documentation)
+#### 8. Mobile Responsive Patterns ✅
+- **Status:** DOCUMENTED - December 29, 2025
+- **Was:** Ad-hoc media queries throughout, inconsistent breakpoints
+- **Now:** Comprehensive documentation of all responsive patterns
+- **Location:** Design System > Mobile Responsive Patterns section
+- **Key Documentation:**
+  - Standard breakpoints (480px, 768px, 1024px, 1280px)
+  - Responsive utilities (.mobile-hidden, .desktop-hidden, etc.)
+  - Mobile navigation pattern (hamburger → drawer)
+  - Table to card transformation pattern
+  - Form, button, modal responsive behavior
+  - Typography scaling, spacing adjustments
+  - Touch target guidelines (44px minimum)
+- **Components:** MobileDrawer already centralized in `/components/mobile-drawer.js`
+- **Note:** Mobile-first approach consistently used across application
 
 ---
 
@@ -1469,14 +2328,15 @@ All data tables across the application now use a centralized design system with 
 ### Short-term Goals (Weeks 2-3)
 
 4. ~~Standardize modal implementations~~ ✅ **NOT NEEDED** - Already optimized for use cases
-5. **Unify form validation approach** (inline errors + success feedback)
-6. **Create table component system** (extract common patterns)
+5. ~~Document loading states~~ ✅ **COMPLETE** - Loading States section added Dec 29
+6. ~~Document mobile responsive patterns~~ ✅ **COMPLETE** - Mobile Responsive Patterns section added Dec 29
+7. **Unify form validation approach** (inline errors + success feedback)
 
 ### Long-term Vision (Month 2+)
 
-7. **Build component demo page** (living style guide with live examples)
-8. **Create design system website** (searchable, interactive component library)
-9. **Implement design tokens** (further consolidate CSS variables)
+8. **Build component demo page** (living style guide with live examples)
+9. **Create design system website** (searchable, interactive component library)
+10. **Implement design tokens** (further consolidate CSS variables)
 
 ---
 
@@ -1485,6 +2345,7 @@ All data tables across the application now use a centralized design system with 
 ### Key Files
 
 - **Buttons:** `/styles/base/buttons.css`
+- **Badges:** `/styles/components/badges.css`
 - **Colors:** `/styles/base/colors.css`
 - **Typography:** `/styles/base/typography.css`
 - **Design Tokens:** `/styles/base/design-tokens.css`
@@ -1492,6 +2353,8 @@ All data tables across the application now use a centralized design system with 
 - **Cards:** `/styles/components/public-cards.css`
 - **Tiles:** `/styles/components/tiles.css`
 - **Modals:** `/styles/modals/modal-base.css`, `/styles/modals/confirmation-modal.css`
+- **Tables:** `/styles/components/tables.css`
+- **Loading Spinner:** `/components/loading-spinner/loading-spinner.js`, `/styles/components/loading-spinner.css`
 
 ### Related Documentation
 
@@ -1502,6 +2365,6 @@ All data tables across the application now use a centralized design system with 
 
 ---
 
-**Document Version:** 1.0 (Phase 1 Complete)  
-**Last Updated:** December 28, 2025  
-**Next Review:** After Phase 2 standardization work
+**Document Version:** 1.2  
+**Last Updated:** December 29, 2025  
+**Next Review:** After form validation standardization
