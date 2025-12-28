@@ -2,6 +2,8 @@
 @import url('../../../styles/base/design-tokens.css');
 @import url('../../../styles/components/snackbar.css');
 @import url('../../../styles/components/loading-spinner.css');
+@import url('../../../styles/components/badges.css');
+@import url('../../../styles/components/tables.css');
 
 /**
  * Transactions Page Styles
@@ -299,136 +301,16 @@ select.filter-input:focus {
     color: var(--text-primary);
 }
 
-/* Table Styles - matching student database table */
-.table-container {
-    background: var(--bg-white);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--bg-purple-medium);
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow-light);
-    max-height: 70vh;
-    overflow-y: auto;
-    position: relative;
-}
-
-#transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#transactions-table thead {
-    background: var(--gradient-blue-purple);
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: calc(var(--z-base) + 9);
-}
-
 #transactions-table th {
-    padding: var(--space-sm);
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+    white-space: nowrap; /* Transactions specific: prevent header wrapping */
 }
 
-#transactions-table th.sortable {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-    padding-right: 30px;
-}
-
-#transactions-table th.sortable:hover {
-    background-color: var(--header-overlay-light);
-}
-
-#transactions-table th.align-right {
-    text-align: right;
-}
-
-.sort-icon {
-    margin-left: 0.5rem;
-    opacity: 0.5;
-    font-size: 0.8rem;
-}
-
-.sort-icon.active {
-    opacity: 1;
-}
-
-#transactions-table tbody tr {
-    border-bottom: 1px solid var(--bg-purple-medium);
-    transition: background-color 0.2s;
-}
-
-#transactions-table tbody tr:hover {
-    background: var(--bg-purple-light);
-}
+/* Sort icon inline variant - using centralized .sort-icon-inline class */
 
 #transactions-table td {
     padding: 1rem;
     font-size: 0.95rem;
     color: var(--text-primary);
-}
-
-/* Type Badge */
-.type-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.type-badge.concession {
-    background: var(--bg-purple-medium);
-    color: var(--purple-primary);
-}
-
-.type-badge.casual,
-.type-badge.casual-entry {
-    background: var(--bg-blue-light);
-    color: var(--blue-primary);
-}
-
-.type-badge.casual-student {
-    background: var(--bg-teal-light);
-    color: var(--blue-accent);
-}
-
-.type-badge.gift {
-    background: var(--bg-success-light);
-    color: var(--success-dark);
-}
-
-.type-badge.cash {
-    background: var(--warning-lighter);
-    color: var(--warning-darker);
-}
-
-.type-badge.eftpos {
-    background: var(--info-light);
-    color: var(--blue-darker);
-}
-
-.type-badge.bank-transfer {
-    background: var(--bg-purple-pale);
-    color: var(--purple-darker);
-}
-
-.type-badge.other {
-    background: var(--gray-300);
-    color: var(--gray-750);
-}
-
-.type-badge.reversed {
-    background: var(--bg-error-pale);
-    color: var(--error-darker);
-    margin-right: 0.5rem;
 }
 
 /* Reversed Transaction Styling */
@@ -450,52 +332,6 @@ select.filter-input:focus {
     font-weight: 600;
     color: var(--success);
     text-align: right;
-}
-
-/* Payment badges */
-.payment-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.payment-badge i {
-    font-size: 0.9rem;
-}
-
-.payment-badge.cash {
-    background: var(--warning-lighter);
-    color: var(--warning-darker);
-}
-
-.payment-badge.eftpos {
-    background: var(--info-light);
-    color: var(--blue-darker);
-}
-
-.payment-badge.online {
-    background: var(--bg-teal-light);
-    color: var(--success-darker);
-}
-
-.payment-badge.bank {
-    background: var(--bg-purple-pale);
-    color: var(--purple-darker);
-}
-
-.payment-badge.na {
-    background: var(--gray-300);
-    color: var(--gray-750);
-}
-
-.payment-badge.unknown {
-    background: var(--gray-300);
-    color: var(--gray-750);
 }
 
 .na-text {
@@ -522,39 +358,7 @@ select.filter-input:focus {
     align-items: center;
 }
 
-.btn-icon {
-    background: var(--bg-white);
-    border: 1px solid var(--bg-purple-medium);
-    padding: 0.5rem;
-    border-radius: var(--radius-xs);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.95rem;
-    color: var(--text-primary);
-}
-
-.btn-icon:hover {
-    border-color: var(--purple-primary);
-    color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
-
-.btn-icon.btn-delete:hover {
-    border-color: var(--error);
-    color: var(--error);
-}
-
-.btn-icon.btn-invoice.invoiced {
-    color: var(--purple-primary);
-    border-color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
-
-.btn-icon.btn-invoice:hover {
-    border-color: var(--purple-primary);
-    color: var(--purple-primary);
-    background: var(--bg-purple-medium);
-}
+/* Icon button styles now in /styles/base/buttons.css */
 
 /* Buttons - using admin.css btn-primary-lg style */
 .btn-primary {
@@ -628,68 +432,7 @@ select.filter-input:focus {
     gap: var(--space-xs);
 }
 
-.pagination-btn {
-    padding: var(--space-xs) 16px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-.pagination-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.pagination-pages {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.pagination-number {
-    padding: var(--space-xs) 12px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.9rem;
-    font-weight: 500;
-    min-width: 40px;
-}
-
-.pagination-number:hover {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-.pagination-number.active {
-    background: var(--gradient-blue-purple);
-    color: white;
-    border-color: transparent;
-}
-
-.pagination-ellipsis {
-    padding: 0 8px;
-    color: var(--text-primary);
-    opacity: 0.5;
-}
+/* Pagination styles now in /styles/base/buttons.css */
 
 .pagination-info-wrapper {
     margin-top: var(--space-sm);

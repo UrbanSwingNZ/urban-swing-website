@@ -39,7 +39,7 @@ export async function showVersionHistory() {
                             ${isCurrent ? '<span class="version-badge">Current</span>' : ''}
                         </div>
                         <div class="version-actions">
-                            ${!isCurrent ? `<button class="btn-secondary" onclick="window.restoreVersion(${version.version})">
+                            ${!isCurrent ? `<button class="btn-cancel" onclick="window.restoreVersion(${version.version})">
                                 <i class="fas fa-undo"></i> Restore
                             </button>` : ''}
                         </div>

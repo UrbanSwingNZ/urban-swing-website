@@ -12,7 +12,7 @@ function initializeAccordions() {
     if (checkinsHeader) {
         checkinsHeader.addEventListener('click', (e) => {
             // Don't toggle if clicking on buttons or toggles
-            if (e.target.closest('.btn-secondary') || 
+            if (e.target.closest('.btn-cancel') || 
                 e.target.closest('.toggle-switch') || 
                 e.target.closest('.toggle-label')) {
                 return;

@@ -248,7 +248,7 @@ async function loadStudentConcessions(studentId, cellId) {
             }
             
             // Add click handler for purchase button (opens purchase modal)
-            const purchaseBtn = cell.querySelector('.btn-purchase-mini');
+            const purchaseBtn = cell.querySelector('.btn-primary.btn-primary-sm');
             if (purchaseBtn) {
                 purchaseBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();

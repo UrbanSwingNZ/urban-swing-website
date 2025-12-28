@@ -9,7 +9,7 @@
 function getConcessionBadgeHTML(stats) {
     // Show purchase button if no active or expired concessions (only depleted or nothing)
     if (stats.totalCount === 0) {
-        return '<button class="btn-purchase-mini" style="font-size: 0.75rem; padding: 4px 10px;">Purchase</button>';
+        return '<button class="btn-primary btn-primary-sm">Purchase</button>';
     }
     
     let badgeClass = '';
@@ -59,7 +59,7 @@ async function updateStudentConcessionBadge(studentId) {
         concessionsCell.innerHTML = getConcessionBadgeHTML(stats);
         
         // Re-attach click handler for the new badge/button
-        const badge = concessionsCell.querySelector('.concession-badge, .btn-purchase-mini');
+        const badge = concessionsCell.querySelector('.concession-badge, .btn-primary-sm');
         if (badge) {
             badge.addEventListener('click', () => {
                 showConcessionsDetail(studentId);

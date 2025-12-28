@@ -37,7 +37,7 @@ async function showConcessionsDetail(studentId) {
             if (hasUnlockedExpired) {
                 html += `
                     <div class="bulk-actions">
-                        <button class="btn-secondary btn-lock-all-expired" data-student-id="${studentId}">
+                        <button class="btn-cancel btn-lock-all-expired" data-student-id="${studentId}">
                             <i class="fas fa-lock"></i> Lock All Expired Concessions
                         </button>
                     </div>
@@ -197,7 +197,7 @@ function buildLockButton(block, status) {
     
     if (status === 'active') {
         // Active blocks cannot be locked/unlocked
-        return `<button class="btn-lock-toggle" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
+        return `<button class="btn-cancel" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
     }
     
     // Expired and depleted blocks can be locked/unlocked (only by super admin)
@@ -206,9 +206,9 @@ function buildLockButton(block, status) {
     }
     
     if (isLocked) {
-        return `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`;
+        return `<button class="btn-cancel" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`;
     } else {
-        return `<button class="btn-lock-toggle" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+        return `<button class="btn-cancel" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
     }
 }
 
@@ -220,10 +220,10 @@ function buildDeleteButton(block, hasBeenUsed) {
         const title = !isSuperAdmin() 
             ? 'Only super admin can delete' 
             : 'Cannot delete - concession has been used';
-        return `<button class="btn-delete-block" disabled title="${title}"><i class="fas fa-trash"></i> Delete</button>`;
+        return `<button class="btn-delete" disabled title="${title}"><i class="fas fa-trash"></i> Delete</button>`;
     }
     
-    return `<button class="btn-delete-block" data-block-id="${block.id}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
+    return `<button class="btn-delete" data-block-id="${block.id}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
 }
 
 /**
@@ -246,7 +246,7 @@ function attachConcessionDetailEventListeners(contentEl, studentId) {
     });
     
     // Lock/unlock buttons
-    contentEl.querySelectorAll('.btn-lock-toggle').forEach(btn => {
+    contentEl.querySelectorAll('.btn-cancel[data-locked]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
             const blockId = btn.dataset.blockId;
@@ -269,7 +269,7 @@ function attachConcessionDetailEventListeners(contentEl, studentId) {
     });
     
     // Delete buttons
-    contentEl.querySelectorAll('.btn-delete-block').forEach(btn => {
+    contentEl.querySelectorAll('.btn-delete').forEach(btn => {
         if (!btn.disabled) {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();

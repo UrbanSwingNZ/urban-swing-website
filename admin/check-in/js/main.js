@@ -130,7 +130,7 @@ function initializeModalListeners() {
         checkinCloseBtn.addEventListener('click', closeCheckinModal);
     }
     
-    const checkinCancelBtn = document.querySelector('#checkin-modal .btn-secondary');
+    const checkinCancelBtn = document.querySelector('#checkin-modal .btn-cancel');
     if (checkinCancelBtn) {
         checkinCancelBtn.addEventListener('click', closeCheckinModal);
     }
@@ -141,7 +141,7 @@ function initializeModalListeners() {
         purchaseCloseBtn.addEventListener('click', closePurchaseModal);
     }
     
-    const purchaseCancelBtn = document.querySelector('#purchase-modal .btn-secondary');
+    const purchaseCancelBtn = document.querySelector('#purchase-modal .btn-cancel');
     if (purchaseCancelBtn) {
         purchaseCancelBtn.addEventListener('click', closePurchaseModal);
     }

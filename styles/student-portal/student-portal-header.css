@@ -86,31 +86,6 @@
   white-space: nowrap;
 }
 
-/* Logout Button */
-.btn-logout {
-  background: var(--header-overlay-semi);
-  color: var(--text-white);
-  border: none;
-  padding: var(--space-xs) 20px;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  font-size: 0.9rem;
-}
-
-.btn-logout:hover {
-  background: var(--header-overlay-strong);
-  transform: translateY(-2px);
-}
-
-.btn-logout i {
-  font-size: 1rem;
-}
-
 /* Navigation Menu Container (Desktop)
    Navigation button styles imported from buttons.css */
 #student-portal-nav-desktop {

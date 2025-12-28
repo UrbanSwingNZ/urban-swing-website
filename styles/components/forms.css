@@ -36,6 +36,11 @@
   margin-right: 5px;
 }
 
+.form-group label button i {
+  color: inherit;
+  margin-right: 5px;
+}
+
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="tel"],
