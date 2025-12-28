@@ -1,0 +1,120 @@
+/* ========================================
+   CSS DESIGN TOKENS
+   Urban Swing Design System - Non-Color Tokens
+   
+   NOTE: All color definitions are in colors.css
+   This file contains spacing, typography, layout, transitions, and z-index tokens
+   
+   USAGE: Import this file alongside colors.css in your stylesheets
+   @import url('../styles/base/colors.css');
+   @import url('../styles/base/design-tokens.css');
+   ======================================== */
+
+:root {
+  /* ========================================
+     SPACING SCALE
+     Use these for padding, margin, and gap
+     ======================================== */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 96px;
+  
+  
+  /* ========================================
+     BORDER RADIUS
+     Use these for consistent corner rounding
+     ======================================== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-round: 50%;
+  
+  
+  /* ========================================
+     TRANSITIONS
+     Use these for consistent animation timing
+     ======================================== */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  
+  /* ========================================
+     TYPOGRAPHY SCALE
+     Font families, sizes, weights, and line heights
+     ======================================== */
+  
+  /* Font Family */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  --font-size-5xl: 3rem;      /* 48px */
+  
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  
+  /* ========================================
+     LAYOUT CONSTRAINTS
+     Maximum widths for content containers
+     ======================================== */
+  --max-width-sm: 640px;
+  --max-width-md: 768px;
+  --max-width-lg: 1024px;
+  --max-width-xl: 1200px;
+  --max-width-2xl: 1400px;
+  
+  
+  /* ========================================
+     Z-INDEX SCALE
+     Consistent layering system for managing element stacking order
+     
+     Usage:
+     - base (1): Small offsets for adjacent elements
+     - dropdown (100): Dropdown menus and navigation
+     - sticky (200): Sticky positioned elements
+     - fixed (300): Fixed position elements
+     - modal-backdrop (400): Modal overlay backgrounds
+     - modal (500): Standard modals
+     - popover (600): Popovers and tooltips
+     - tooltip (700): Tooltips
+     - nav-toggle (1001): Mobile navigation toggle button
+     - nav-overlay (1050): Mobile navigation overlays
+     - nav-drawer (1100): Mobile navigation drawer
+     - modal-high (9999): High-priority modals (confirmation, password reset)
+     - notification (10000): Notifications, snackbars, toasts (always on top)
+     ======================================== */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  --z-nav-toggle: 1001;
+  --z-nav-overlay: 1050;
+  --z-nav-drawer: 1100;
+  --z-modal-high: 9999;
+  --z-notification: 10000;
+}

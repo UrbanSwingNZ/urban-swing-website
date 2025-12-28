@@ -3,6 +3,8 @@
    Responsive mobile styles for student portal header
    ======================================== */
 
+@import url('../base/design-tokens.css');
+
 @media (max-width: 768px) {
   /* Show mobile nav toggle */
   .student-portal-header .student-mobile-nav-toggle {
@@ -11,12 +13,12 @@
 
   /* Header Content Adjustments */
   .student-portal-header {
-    padding: 12px 16px 0;
+    padding: var(--space-sm) 16px 0;
   }
 
   .student-portal-header-content {
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
   }
 
   /* Hide logo on very small screens */
@@ -58,7 +60,7 @@
 /* Tablet Adjustments */
 @media (min-width: 769px) and (max-width: 1024px) {
   .student-portal-header-content {
-    gap: 15px;
+    gap: var(--space-sm);
   }
 
   .student-portal-header h1 {
@@ -66,7 +68,7 @@
   }
 
   .nav-menu a {
-    padding: 12px 16px;
+    padding: var(--space-sm) 16px;
     font-size: 0.9rem;
   }
 }

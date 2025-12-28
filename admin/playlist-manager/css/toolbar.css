@@ -1,24 +1,26 @@
+@import url('../../../styles/base/design-tokens.css');
+
 /* ========================================
    TOOLBAR STYLES
    Tracks toolbar with search and actions
    ======================================== */
 
 .tracks-toolbar {
-  padding: 20px 30px;
+  padding: var(--space-md) 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--gray-450);
   flex-wrap: wrap;
-  gap: 15px;
+  gap: var(--space-sm);
 }
 
 @media (max-width: 768px) {
   .tracks-toolbar {
-    padding: 10px 15px;
+    padding: var(--space-xs) 15px;
     flex-direction: row;
     justify-content: flex-start;
-    gap: 8px;
+    gap: var(--space-xs);
   }
 }
 
@@ -34,8 +36,8 @@
   min-width: 200px;
   padding: 0;
   border: 1px solid var(--gray-450);
-  border-radius: 20px;
-  padding: 8px 15px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xs) 15px;
   background: var(--card-light);
 }
 
@@ -54,20 +56,20 @@
 
 .toolbar-buttons {
   display: flex;
-  gap: 10px;
+  gap: var(--space-xs);
   align-items: center;
   margin-left: auto;
 }
 
 @media (max-width: 768px) {
   .toolbar-buttons {
-    gap: 8px;
+    gap: var(--space-xs);
   }
 }
 
 .toolbar-actions {
   display: flex;
-  gap: 10px;
+  gap: var(--space-xs);
   flex-wrap: wrap;
   align-items: center;
 }
@@ -76,7 +78,7 @@
   .toolbar-actions {
     width: 100%;
     justify-content: flex-start;
-    gap: 8px;
+    gap: var(--space-xs);
   }
 }
 
@@ -105,7 +107,7 @@ button:not(.track-menu button):not(.playlist-menu button),
   vertical-align: top !important;
   line-height: 1 !important;
   margin: 0 !important;
-  padding: 8px 12px !important;
+  padding: var(--space-xs) 12px !important;
   font-size: 0.85rem !important;
   font-weight: 600 !important;
 }
@@ -120,7 +122,7 @@ button:not(.track-menu button):not(.playlist-menu button),
   vertical-align: top !important;
   line-height: 1 !important;
   margin: 0 !important;
-  padding: 8px 12px !important;
+  padding: var(--space-xs) 12px !important;
   font-size: 0.85rem !important;
   font-weight: 600 !important;
   width: auto !important;

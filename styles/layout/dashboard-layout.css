@@ -1,0 +1,94 @@
+/* ========================================
+   DASHBOARD LAYOUT
+   Shared dashboard structure for admin and student portal
+   ======================================== */
+
+/* Note: colors.css should be imported before this file */
+@import url('../base/design-tokens.css');
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+.dashboard-main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-lg) 20px;
+}
+
+.dashboard-welcome {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+.dashboard-welcome h2 {
+  font-size: 2rem;
+  margin-bottom: var(--space-xs);
+  background: var(--gradient-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-welcome p {
+  color: var(--gray-650);
+  font-size: 1.1rem;
+}
+
+.dashboard-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.dashboard-info {
+  background: var(--bg-blue-light);
+  border-left: 4px solid var(--blue-primary);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.dashboard-info i {
+  margin-right: var(--space-xs);
+  color: var(--blue-primary);
+}
+
+/* Footer */
+.admin-footer {
+  background: var(--white);
+  padding: var(--space-md);
+  text-align: center;
+  color: var(--gray-650);
+  border-top: 1px solid var(--border-light);
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .dashboard-tiles {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .dashboard-welcome h2 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-main {
+    padding: var(--space-xl) 15px;
+  }
+}

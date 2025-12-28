@@ -4,6 +4,8 @@
  * Extends modal-base.css
  */
 
+@import url('../base/design-tokens.css');
+
 /* ========================================
    CONFIRMATION CONTENT LAYOUT
    ======================================== */
@@ -14,7 +16,7 @@
 }
 
 .confirmation-message p {
-    margin: 0 0 12px 0;
+    margin: 0 0 var(--space-xs) 0;
 }
 
 .confirmation-message strong {
@@ -40,16 +42,16 @@
 .modal-body .text-muted {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin-top: 12px;
+    margin-top: var(--space-xs);
 }
 
 /* Student/item info display in confirmations */
 .student-info-delete {
     background: var(--bg-gray);
     border-left: 3px solid var(--error);
-    padding: 12px 16px;
-    margin: 16px 0;
-    border-radius: 4px;
+    padding: var(--space-xs) var(--space-sm);
+    margin: var(--space-sm) 0;
+    border-radius: var(--radius-xs);
 }
 
 .student-info-delete strong {

@@ -35,24 +35,28 @@ async function initializeProfile() {
         }
     });
     
-    // Check if viewing as admin or as student
-    isViewingAsAdmin = isAdminView();
-    window.isViewingAsAdmin = isViewingAsAdmin; // Expose for other modules
+    // Check if there's a selected student ID in sessionStorage
+    // If yes, we're in admin mode viewing a specific student
+    currentStudentId = sessionStorage.getItem('currentStudentId');
     
-    if (isViewingAsAdmin) {
-        // Admin view - check if there's a selected student from persistence
-        currentStudentId = sessionStorage.getItem('currentStudentId');
-        
-        if (currentStudentId) {
-            console.log('Loading student from session:', currentStudentId);
-            await loadStudentById(currentStudentId);
-        } else {
-            // No student selected - show empty state
-            console.log('Admin view - waiting for student selection');
-        }
+    if (currentStudentId) {
+        // Admin view with selected student - load that student's profile
+        console.log('Loading student from session:', currentStudentId);
+        isViewingAsAdmin = true;
+        window.isViewingAsAdmin = true;
+        await loadStudentById(currentStudentId);
     } else {
-        // Student view - load current user's profile
-        await loadCurrentStudentProfile();
+        // Check if we're an admin without a student selected, or a regular student
+        isViewingAsAdmin = isAdminView();
+        window.isViewingAsAdmin = isViewingAsAdmin;
+        
+        if (isViewingAsAdmin) {
+            // Admin view - no student selected, show empty state
+            console.log('Admin view - waiting for student selection');
+        } else {
+            // Student view - load current user's profile
+            await loadCurrentStudentProfile();
+        }
     }
     
     // Setup form handlers

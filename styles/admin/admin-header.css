@@ -4,6 +4,7 @@
    ======================================== */
 
 @import url('../base/colors.css');
+@import url('../base/design-tokens.css');
 @import url('../base/buttons.css');
 @import url('admin-header-mobile.css');
 
@@ -11,7 +12,7 @@
 .admin-header {
   background: var(--gradient-header);
   color: var(--text-white);
-  padding: 20px 20px 0;
+  padding: var(--space-md) 20px 0;
   box-shadow: 0 4px 12px var(--shadow-light);
 }
 
@@ -33,7 +34,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .admin-header-content a {
@@ -66,13 +67,19 @@
   display: flex;
   align-items: center;
   letter-spacing: 1px;
+  /* Override typography.css h1 gradient on gradient background */
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
+  text-align: left;
 }
 
 /* User Info Section */
 .admin-user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--space-sm);
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -87,9 +94,9 @@
 .student-selector-inline {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   margin-left: auto;
-  margin-right: 20px;
+  margin-right: var(--space-md);
   flex-shrink: 0;
 }
 
@@ -98,14 +105,14 @@
 }
 
 .student-selector-inline .student-dropdown {
-  padding: 8px 12px;
+  padding: var(--space-xs) 12px;
   border: 2px solid var(--border-overlay-medium);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   background: var(--bg-white);
   color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   min-width: 200px;
   max-width: 300px;
   font-weight: 500;
@@ -140,7 +147,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   text-decoration: none;
   font-size: 1.2rem;
   flex-shrink: 0;
@@ -149,6 +156,9 @@
 .back-button:hover {
   background: var(--header-overlay-strong);
   transform: scale(1.1);
+  /* Override typography.css link hover color */
+  color: var(--text-white);
+  text-decoration: none;
 }
 
 /* Logout Button */
@@ -156,11 +166,11 @@
   background: var(--header-overlay-semi);
   color: var(--text-white);
   border: 1px solid var(--border-overlay-medium);
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   font-weight: 500;
 }
 
