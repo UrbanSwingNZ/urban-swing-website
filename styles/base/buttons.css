@@ -187,11 +187,174 @@
   font-size: 1rem;
 }
 
+/* ========================================
+   ADDITIONAL BUTTON UTILITIES
+   ======================================== */
+
+/* Tertiary Button - Ghost */
+.btn-tertiary {
+  background: var(--hover-bg);
+  color: var(--text-color);
+  border: none;
+  padding: var(--space-xs) var(--space-xs);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 36px;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+.btn-tertiary:hover {
+  background: var(--border-color);
+  transform: translateY(-2px);
+}
+
+/* Success Button */
+.btn-success {
+  background: var(--success);
+  color: var(--white);
+  border: none;
+  padding: var(--space-xs) var(--space-xs);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 36px;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+.btn-success:hover {
+  background: var(--success-lighter);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-success:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--success) !important;
+}
+
+/* Button Size Variants */
+.btn-sm,
+.btn-primary-sm,
+.btn-cancel-sm,
+.btn-delete-sm,
+.btn-tertiary-sm,
+.btn-success-sm {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.75rem;
+  height: 28px;
+}
+
+.btn-xl,
+.btn-primary-xl,
+.btn-cancel-xl,
+.btn-delete-xl,
+.btn-tertiary-xl,
+.btn-success-xl {
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1.125rem;
+  height: 48px;
+}
+
+/* Full Width Button */
+.btn-block {
+  width: 100%;
+  display: flex;
+}
+
+/* Button Groups */
+.btn-group {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.btn-group-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Loading State */
+.btn-primary.loading,
+.btn-cancel.loading,
+.btn-delete.loading,
+.btn-tertiary.loading,
+.btn-success.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn-primary.loading::after,
+.btn-cancel.loading::after,
+.btn-delete.loading::after,
+.btn-tertiary.loading::after,
+.btn-success.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: button-spinner 0.6s linear infinite;
+}
+
+.btn-primary.loading::after {
+  border-color: white;
+  border-top-color: transparent;
+}
+
+.btn-cancel.loading::after {
+  border-color: var(--error);
+  border-top-color: transparent;
+}
+
+.btn-delete.loading::after {
+  border-color: white;
+  border-top-color: transparent;
+}
+
+@keyframes button-spinner {
+  to { transform: rotate(360deg); }
+}
+
 /* Mobile-specific styles for action buttons */
 @media (max-width: 768px) {
   /* On mobile, action buttons can be full-width within their container */
   .btn-primary.full-width-mobile {
     width: 100%;
     justify-content: center;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group > * {
+    width: 100%;
   }
 }
