@@ -1,6 +1,7 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/components/loading-spinner.css');
 @import url('../../styles/base/design-tokens.css');
+@import url('../../styles/components/badges.css');
 
 /* Check-In History Page Styles */
 
@@ -123,52 +124,6 @@
     display: flex;
     align-items: center;
     gap: var(--space-xs);
-}
-
-/* Type Badges - matching check-in screen */
-.type-badge {
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: var(--radius-xl);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.type-badge.concession {
-    background: var(--bg-purple-medium);
-    color: var(--purple-primary);
-}
-
-.type-badge.gift {
-    background: var(--badge-success-bg);
-    color: var(--success-dark);
-}
-
-.type-badge.casual,
-.type-badge.casual-entry {
-    background: var(--badge-casual-bg);
-    color: var(--blue-primary);
-}
-
-.type-badge.casual-student {
-    background: var(--badge-info-bg);
-    color: var(--blue-accent);
-}
-
-.type-badge.free {
-    background: var(--bg-success-light);
-    color: #28a745;
-}
-
-.type-badge.online {
-    background: var(--badge-teal-bg);
-    color: var(--success-darker);
-}
-
-.type-badge.reversed {
-    background: var(--error);
-    color: white;
 }
 
 /* No Data State */

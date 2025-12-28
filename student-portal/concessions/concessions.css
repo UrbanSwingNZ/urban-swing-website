@@ -1,5 +1,6 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/base/design-tokens.css');
+@import url('../../styles/components/badges.css');
 
 /* My Concessions Page Styles */
 
@@ -176,33 +177,6 @@
     text-align: center;
     color: var(--purple-primary);
     opacity: 0.7;
-}
-
-/* Badges */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.7rem;
-    border-radius: var(--radius-md);
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.badge-locked {
-    background: var(--badge-neutral-bg);
-    color: var(--text-muted-alt);
-}
-
-.badge-gifted {
-    background: var(--badge-success-bg);
-    color: var(--badge-success-text);
-    border: 1px solid var(--border-success);
-}
-
-.badge i {
-    font-size: 0.75rem;
 }
 
 /* Empty State */

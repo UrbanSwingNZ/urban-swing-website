@@ -1,5 +1,6 @@
 @import url('../../../styles/base/colors.css');
 @import url('../../../styles/base/design-tokens.css');
+@import url('../../../styles/components/badges.css');
 
 /* ========================================
    MERCHANDISE ORDERS STYLES
@@ -156,36 +157,6 @@
 .orders-table td:nth-child(8) {
     width: 120px; /* Actions column */
     min-width: 120px;
-}
-
-/* Status Badges */
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: var(--radius-md);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.badge-pending {
-    background: var(--badge-warning-bg);
-    color: var(--badge-warning-text);
-}
-
-.badge-invoiced {
-    background: var(--badge-casual-bg);
-    color: var(--badge-casual-text);
-}
-
-.badge-complete {
-    background: var(--badge-success-bg);
-    color: var(--badge-success-text);
-}
-
-.badge-deleted {
-    background: var(--badge-error-bg);
-    color: var(--badge-error-text);
 }
 
 /* Items Summary */
