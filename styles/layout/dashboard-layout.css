@@ -32,7 +32,7 @@
 
 .dashboard-welcome h2 {
   font-size: 2rem;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-xs);
   background: var(--gradient-header);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -55,7 +55,7 @@
   background: var(--bg-blue-light);
   border-left: 4px solid var(--blue-primary);
   padding: var(--space-md);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   text-align: center;
 }
 
@@ -89,6 +89,6 @@
   }
 
   .dashboard-main {
-    padding: 30px 15px;
+    padding: var(--space-xl) 15px;
   }
 }

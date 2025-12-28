@@ -57,7 +57,7 @@
 .auth-card .subtitle {
   color: var(--text-primary);
   opacity: 0.7;
-  margin-bottom: 30px;
+  margin-bottom: var(--space-xl);
   font-size: 0.95rem;
 }
 
@@ -76,7 +76,7 @@
 
 @media (max-width: 768px) {
   .auth-card {
-    padding: 30px 20px;
+    padding: var(--space-xl) 20px;
   }
 
   .auth-card h1 {
@@ -86,7 +86,7 @@
 
 @media (max-width: 480px) {
   .auth-card {
-    padding: 25px 15px;
+    padding: var(--space-lg) 15px;
   }
 
   .auth-card .logo {

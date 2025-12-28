@@ -18,7 +18,7 @@
    ======================================== */
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: var(--space-sm);
   text-align: left;
 }
 
@@ -44,13 +44,13 @@
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 12px 15px;
+  padding: var(--space-sm) 15px;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
   background: var(--white);
   color: var(--text-primary);
   font-size: 0.95rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--transition-fast), box-shadow 0.2s ease;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   box-sizing: border-box;
   min-width: 0; /* Allow inputs to shrink */
@@ -90,7 +90,7 @@
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: var(--space-sm);
   margin-bottom: 0;
 }
 
@@ -99,10 +99,10 @@
    ======================================== */
 
 .checkbox-row {
-  margin-bottom: 15px;
+  margin-bottom: var(--space-sm);
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 15px;
+  gap: var(--space-sm);
 }
 
 .checkbox-group {
@@ -138,7 +138,7 @@
    ======================================== */
 
 .error-message {
-  margin-top: 15px;
+  margin-top: var(--space-sm);
   padding: var(--space-xs);
   background: var(--bg-error-light);
   border: 1px solid var(--error);

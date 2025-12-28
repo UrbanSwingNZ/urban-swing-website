@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
     padding-bottom: 15px;
     border-bottom: 2px solid var(--border-light);
 }
@@ -30,17 +30,17 @@
 .casual-rates-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
 }
 
 .casual-rate-card {
     background: white;
     border: 1px solid var(--hover-light);
     border-radius: var(--radius-md);
-    padding: 25px 20px;
+    padding: var(--space-lg) 20px;
     position: relative;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     cursor: grab;
     display: flex;
     flex-direction: column;
@@ -111,14 +111,14 @@
     font-size: 2rem;
     font-weight: bold;
     color: var(--primary-color);
-    margin: 15px 0;
+    margin: var(--space-sm) 0;
     text-align: center;
 }
 
 .rate-description {
     color: var(--text-muted);
     font-size: 0.9rem;
-    margin: 10px 0;
+    margin: var(--space-xs) 0;
     min-height: 40px;
     text-align: center;
     flex-grow: 1;
@@ -128,7 +128,7 @@
     display: flex;
     gap: var(--space-xs);
     flex-wrap: wrap;
-    margin: 10px 0;
+    margin: var(--space-xs) 0;
 }
 
 .rate-badge {
@@ -150,13 +150,13 @@
 
 .rate-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
 }
 
 .rate-actions button {
     flex: 1;
-    padding: 10px 16px;
+    padding: var(--space-xs) 16px;
 }
 
 .btn-delete-rate {
@@ -174,7 +174,7 @@
 
 .add-rate-btn {
     width: 100%;
-    padding: 15px;
+    padding: var(--space-sm);
     background: var(--primary-color);
     color: white;
     border: none;
@@ -186,7 +186,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-xs);
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .add-rate-btn:hover {
@@ -201,12 +201,12 @@
 }
 
 .rate-form-group {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-sm);
 }
 
 .rate-form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-xs);
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -214,9 +214,9 @@
 .rate-form-group input,
 .rate-form-group textarea {
     width: 100%;
-    padding: 10px;
+    padding: var(--space-xs);
     border: 1px solid var(--gray-500);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-family: inherit;
     box-sizing: border-box;
@@ -287,11 +287,11 @@
 .empty-state-rates i {
     font-size: 3rem;
     color: var(--gray-550);
-    margin-bottom: 15px;
+    margin-bottom: var(--space-sm);
 }
 
 .empty-state-rates h3 {
-    margin: 15px 0 10px 0;
+    margin: var(--space-sm) 0 10px 0;
     color: var(--text-light);
 }
 

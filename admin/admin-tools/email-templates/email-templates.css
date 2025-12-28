@@ -49,7 +49,7 @@
     color: var(--text-light);
     cursor: pointer;
     padding: var(--space-xs);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     transition: all 0.2s;
 }
 
@@ -61,7 +61,7 @@
 .template-list {
     flex: 1;
     overflow-y: auto;
-    padding: 10px;
+    padding: var(--space-xs);
 }
 
 .loading-state {
@@ -72,36 +72,36 @@
 
 .loading-state i {
     font-size: 2rem;
-    margin-bottom: 10px;
+    margin-bottom: var(--space-xs);
     display: block;
 }
 
 .template-category {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
 }
 
 .category-header {
-    padding: 8px 12px;
+    padding: var(--space-xs) 12px;
     background: var(--bg-light);
     font-weight: 600;
     color: var(--text-light);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     margin-bottom: var(--space-xs);
 }
 
 .template-item {
-    padding: 12px 15px;
+    padding: var(--space-sm) 15px;
     margin-bottom: 6px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all 0.2s;
     border: 1px solid transparent;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .template-item:hover {
@@ -176,7 +176,7 @@
 
 .no-selection-state i {
     font-size: 4rem;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-md);
     opacity: 0.3;
 }
 
@@ -199,7 +199,7 @@
 }
 
 .editor-toolbar {
-    padding: 20px 24px;
+    padding: var(--space-md) 24px;
     border-bottom: 1px solid var(--gray-450);
     display: flex;
     align-items: center;
@@ -210,7 +210,7 @@
 .toolbar-left {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: var(--space-sm);
 }
 
 .toolbar-left h2 {
@@ -245,7 +245,7 @@
 
 .toolbar-button-row {
     display: flex;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .toolbar-button-row button {
@@ -307,19 +307,19 @@
     background: var(--bg-light);
     border-radius: var(--radius-sm);
     padding: 4px;
-    margin-bottom: 15px;
+    margin-bottom: var(--space-sm);
     width: fit-content;
 }
 
 .editor-mode-btn {
-    padding: 10px 20px;
+    padding: var(--space-xs) 20px;
     border: none;
     background: transparent;
     cursor: pointer;
     color: var(--text-light);
     font-size: 0.9rem;
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -385,9 +385,9 @@
 
 .form-control {
     width: 100%;
-    padding: 10px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--gray-500);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
     font-family: inherit;
     transition: border-color 0.2s;
@@ -401,7 +401,7 @@
 
 .editor-wrapper {
     border: 1px solid var(--gray-500);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
 }
 
@@ -412,9 +412,9 @@
 
 .text-editor {
     width: 100%;
-    padding: 12px;
+    padding: var(--space-sm);
     border: 1px solid var(--gray-500);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-family: 'Courier New', monospace;
     font-size: 0.9rem;
     resize: vertical;
@@ -432,7 +432,7 @@
     background: var(--bg-light);
     padding: var(--space-md);
     border-radius: var(--radius-sm);
-    margin-top: 24px;
+    margin-top: var(--space-lg);
 }
 
 .variables-panel h3 {
@@ -444,7 +444,7 @@
 .variables-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .variable-group {
@@ -463,7 +463,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-left: 20px;
+    margin-left: var(--space-md);
     padding-left: 12px;
     border-left: 2px solid var(--gray-450);
 }
@@ -478,8 +478,8 @@
 
 .variable-item {
     background: white;
-    padding: 10px 12px;
-    border-radius: 6px;
+    padding: var(--space-xs) 12px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--gray-450);
     cursor: pointer;
     transition: all 0.2s;
@@ -512,7 +512,7 @@
 
 /* ===== Settings Section ===== */
 .settings-section {
-    margin-bottom: 30px;
+    margin-bottom: var(--space-xl);
     padding-bottom: 30px;
     border-bottom: 1px solid var(--gray-450);
 }
@@ -557,7 +557,7 @@
 .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    gap: var(--space-md);
 }
 
 .info-item {
@@ -582,11 +582,11 @@
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-xs);
     cursor: pointer;
     padding: var(--space-sm);
     background: var(--bg-light);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     transition: background 0.2s;
 }
 
@@ -602,7 +602,7 @@
 
 /* Variables Table */
 .variables-table-container {
-    margin-top: 15px;
+    margin-top: var(--space-sm);
 }
 
 .variables-table {
@@ -610,7 +610,7 @@
     border-collapse: collapse;
     background: white;
     border: 1px solid var(--gray-450);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
 }
 
@@ -620,7 +620,7 @@
 }
 
 .variables-table th {
-    padding: 12px 15px;
+    padding: var(--space-sm) 15px;
     text-align: left;
     font-weight: 600;
     font-size: 0.9rem;
@@ -640,7 +640,7 @@
 }
 
 .variables-table td {
-    padding: 12px 15px;
+    padding: var(--space-sm) 15px;
     font-size: 0.9rem;
 }
 
@@ -668,7 +668,7 @@
 }
 
 .btn-sm {
-    padding: 8px 16px;
+    padding: var(--space-xs) 16px;
     font-size: 0.85rem;
 }
 
@@ -685,28 +685,28 @@
 
 /* ===== Buttons ===== */
 .btn-primary {
-    padding: 12px 24px;
+    padding: var(--space-sm) 24px;
 }
 
 .btn-sm {
-    padding: 8px 16px;
+    padding: var(--space-xs) 16px;
     font-size: 0.85rem;
 }
 
 .btn-primary-lg {
-    padding: 12px 24px;
+    padding: var(--space-sm) 24px;
 }
 
 .btn-danger-lg {
     background: var(--error);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
+    padding: var(--space-sm) 24px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -759,7 +759,7 @@
 }
 
 .modal-header {
-    padding: 25px 30px;
+    padding: var(--space-lg) 30px;
     border-bottom: 1px solid var(--border-light);
     display: flex;
     align-items: center;
@@ -799,7 +799,7 @@
 
 /* ===== Preview Modal ===== */
 .preview-controls {
-    margin-bottom: 30px;
+    margin-bottom: var(--space-xl);
     padding: var(--space-md);
     background: var(--bg-light);
     border-radius: var(--radius-sm);
@@ -817,11 +817,11 @@
 }
 
 .student-selection {
-    margin: 20px 0;
+    margin: var(--space-md) 0;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: end;
-    gap: 15px;
+    gap: var(--space-sm);
 }
 
 .student-selection label {
@@ -832,9 +832,9 @@
 }
 
 .student-selection select {
-    padding: 10px 12px;
+    padding: var(--space-xs) 12px;
     border: 1px solid var(--gray-500);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
     background: white;
     cursor: pointer;
@@ -849,8 +849,8 @@
 .preview-variables {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
+    gap: var(--space-sm);
+    margin: var(--space-md) 0;
 }
 
 .preview-variable-input {
@@ -866,9 +866,9 @@
 }
 
 .preview-variable-input input {
-    padding: 8px 10px;
+    padding: var(--space-xs) 10px;
     border: 1px solid var(--gray-500);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 0.9rem;
 }
 
@@ -880,20 +880,20 @@
 .preview-subject {
     padding: var(--space-sm);
     background: var(--bg-light);
-    border-radius: 6px;
-    margin-bottom: 15px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
     font-size: 0.95rem;
 }
 
 .preview-tabs {
     display: flex;
     gap: 5px;
-    margin-bottom: 15px;
+    margin-bottom: var(--space-sm);
     border-bottom: 1px solid var(--gray-450);
 }
 
 .preview-tab-btn {
-    padding: 10px 20px;
+    padding: var(--space-xs) 20px;
     border: none;
     background: none;
     cursor: pointer;
@@ -923,14 +923,14 @@
     width: 100%;
     height: 500px;
     border: 1px solid var(--gray-450);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: white;
 }
 
 #preview-text-content {
     background: var(--bg-light);
-    padding: 20px;
-    border-radius: 6px;
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
     font-family: 'Courier New', monospace;
     font-size: 0.85rem;
     white-space: pre-wrap;
@@ -992,11 +992,11 @@
 
 .version-actions {
     display: flex;
-    gap: 10px;
+    gap: var(--space-xs);
 }
 
 .version-preview {
-    margin-top: 15px;
+    margin-top: var(--space-sm);
     padding-top: 15px;
     border-top: 1px solid var(--gray-500);
 }
@@ -1010,7 +1010,7 @@
 .version-preview pre {
     background: white;
     padding: var(--space-sm);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.8rem;
     max-height: 150px;
     overflow-y: auto;
@@ -1020,8 +1020,8 @@
 .test-send-variables {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin: 20px 0;
+    gap: var(--space-sm);
+    margin: var(--space-md) 0;
 }
 
 .form-group {
@@ -1039,10 +1039,11 @@
 .form-group input,
 .form-group select,
 .form-group textarea {
-    padding: 10px 12px;
+    padding: 12px;
     border: 1px solid var(--gray-500);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
+    min-height: 42px;
 }
 
 .form-group input:focus,
@@ -1062,9 +1063,9 @@
 /* ===== Delete Modal ===== */
 .template-info-delete {
     background: var(--bg-light);
-    padding: 15px;
-    border-radius: 6px;
-    margin: 15px 0;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin: var(--space-sm) 0;
     border-left: 3px solid var(--error);
 }
 
@@ -1092,7 +1093,7 @@
     color: white;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-sm);
     margin: 0;
     font-size: 1.3rem;
     font-weight: 600;
@@ -1111,7 +1112,7 @@
     color: white;
     border: 1px solid var(--header-overlay-strong);
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 0.85rem;
     text-decoration: none;
     display: inline-flex;
@@ -1131,7 +1132,7 @@
     border: 1px solid var(--gray-450);
     border-radius: var(--radius-sm);
     padding: var(--space-sm);
-    margin-top: 20px;
+    margin-top: var(--space-md);
 }
 
 .variable-properties-preview h4 {
@@ -1156,8 +1157,8 @@
 .property-item {
     background: white;
     border: 1px solid var(--gray-450);
-    border-radius: 4px;
-    padding: 10px 12px;
+    border-radius: var(--radius-xs);
+    padding: var(--space-xs) 12px;
     font-size: 0.9rem;
 }
 
@@ -1277,8 +1278,8 @@
     border-radius: var(--radius-sm);
     border: 2px solid var(--gray-450);
     cursor: pointer;
-    transition: all 0.2s ease;
-    margin-bottom: 8px;
+    transition: all var(--transition-fast);
+    margin-bottom: var(--space-xs);
 }
 
 .insert-variables-list .variable-item:hover {
@@ -1300,7 +1301,7 @@
 }
 
 .insert-variables-list .variable-properties {
-    margin-left: 24px;
+    margin-left: var(--space-lg);
     padding-left: 16px;
     border-left: 3px solid var(--gray-450);
     margin-top: var(--space-xs);
@@ -1349,7 +1350,7 @@
 
 .insert-variables-empty i {
     font-size: 3rem;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-md);
     opacity: 0.5;
 }
 

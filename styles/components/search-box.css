@@ -30,7 +30,7 @@
   font-size: 0.95rem;
   background: var(--card-bg);
   color: var(--text-primary);
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   height: 36px;
   box-sizing: border-box;
 }
@@ -55,8 +55,8 @@
   color: var(--text-muted);
   cursor: pointer;
   padding: var(--space-xs);
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-xs);
+  transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
