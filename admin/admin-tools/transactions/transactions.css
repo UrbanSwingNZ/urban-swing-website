@@ -2,6 +2,7 @@
 @import url('../../../styles/base/design-tokens.css');
 @import url('../../../styles/components/snackbar.css');
 @import url('../../../styles/components/loading-spinner.css');
+@import url('../../../styles/components/badges.css');
 
 /**
  * Transactions Page Styles
@@ -374,63 +375,6 @@ select.filter-input:focus {
     color: var(--text-primary);
 }
 
-/* Type Badge */
-.type-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.type-badge.concession {
-    background: var(--bg-purple-medium);
-    color: var(--purple-primary);
-}
-
-.type-badge.casual,
-.type-badge.casual-entry {
-    background: var(--bg-blue-light);
-    color: var(--blue-primary);
-}
-
-.type-badge.casual-student {
-    background: var(--bg-teal-light);
-    color: var(--blue-accent);
-}
-
-.type-badge.gift {
-    background: var(--bg-success-light);
-    color: var(--success-dark);
-}
-
-.type-badge.cash {
-    background: var(--warning-lighter);
-    color: var(--warning-darker);
-}
-
-.type-badge.eftpos {
-    background: var(--info-light);
-    color: var(--blue-darker);
-}
-
-.type-badge.bank-transfer {
-    background: var(--bg-purple-pale);
-    color: var(--purple-darker);
-}
-
-.type-badge.other {
-    background: var(--gray-300);
-    color: var(--gray-750);
-}
-
-.type-badge.reversed {
-    background: var(--bg-error-pale);
-    color: var(--error-darker);
-    margin-right: 0.5rem;
-}
-
 /* Reversed Transaction Styling */
 .reversed-transaction {
     opacity: 0.6;
@@ -450,52 +394,6 @@ select.filter-input:focus {
     font-weight: 600;
     color: var(--success);
     text-align: right;
-}
-
-/* Payment badges */
-.payment-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.payment-badge i {
-    font-size: 0.9rem;
-}
-
-.payment-badge.cash {
-    background: var(--warning-lighter);
-    color: var(--warning-darker);
-}
-
-.payment-badge.eftpos {
-    background: var(--info-light);
-    color: var(--blue-darker);
-}
-
-.payment-badge.online {
-    background: var(--bg-teal-light);
-    color: var(--success-darker);
-}
-
-.payment-badge.bank {
-    background: var(--bg-purple-pale);
-    color: var(--purple-darker);
-}
-
-.payment-badge.na {
-    background: var(--gray-300);
-    color: var(--gray-750);
-}
-
-.payment-badge.unknown {
-    background: var(--gray-300);
-    color: var(--gray-750);
 }
 
 .na-text {

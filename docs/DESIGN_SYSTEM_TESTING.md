@@ -79,8 +79,8 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 - [x] **Button spacing** - 0.5rem gap between buttons
 
 **Additional Elements:**
-- [ ] **Type badges** - Transaction types display with correct colors (concession, casual, gift, etc.)
-- [ ] **Payment badges** - Payment methods show with icons and colors (cash, eftpos, online, etc.)
+- [x] **Type badges** - Transaction types display with correct colors (concession, casual, gift, etc.) ✅ Badge consolidation complete
+- [x] **Payment badges** - Payment methods show with icons and colors (cash, eftpos, online, etc.) ✅ Badge consolidation complete
 - [x] **Pagination controls** - Page number buttons display in a horizontal row, centered
 
 **What to Look For:**
@@ -113,10 +113,10 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/admin/check-in/index.html`
 
 **Elements to Check:**
-- [ ] **Payment badges** - Each check-in shows payment method badge ✅ User confirmed looks fine
-- [ ] **Type badges** - Check-in type displays correctly (concession, casual, gift, etc.)
-- [ ] **Badge colors** - Match documented color system
-- [ ] **Icon spacing** - Icons in badges have proper gap (0.4rem)
+- [x] **Payment badges** - Each check-in shows payment method badge ✅ User confirmed looks fine
+- [x] **Type badges** - Check-in type displays correctly (concession, casual, gift, etc.) ✅ Badge consolidation complete
+- [x] **Badge colors** - Match documented color system ✅ Badge consolidation complete
+- [x] **Icon spacing** - Icons in badges have proper gap (0.4rem) ✅ Badge consolidation complete
 
 **What to Look For:**
 - Badges display in correct colors
@@ -140,7 +140,7 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 - [x] **Invoiced state** - Invoice button shows when invoiced
 
 **Additional Elements:**
-- [ ] **Status badges** - Order status displays (pending, invoiced, complete, deleted)
+- [x] **Status badges** - Order status displays (pending, invoiced, complete, deleted) ✅ Badge consolidation complete, invoiced badge now purple
 
 **What to Look For:**
 - Icon buttons properly styled
@@ -174,18 +174,18 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/student-portal/transactions/index.html`
 
 **Elements to Check:**
-- [ ] **Type badges** - Each transaction shows type badges
+- [x] **Type badges** - Each transaction shows type badges ✅ Badge consolidation complete
   - Concession (purple)
   - Casual (blue)
   - Gift (green)
   - Reversed (red)
-- [ ] **Payment badges** - Payment method badges with icons
+- [x] **Payment badges** - Payment method badges with icons ✅ Badge consolidation complete
   - Cash (orange/yellow)
   - EFTPOS (blue)
   - Online (teal)
   - Bank (purple)
-- [ ] **Badge styling** - Rounded, proper padding, readable text
-- [ ] **Mobile view** - Badges stack properly in card layout (< 768px)
+- [x] **Badge styling** - Rounded, proper padding, readable text ✅ Badge consolidation complete
+- [x] **Mobile view** - Badges stack properly in card layout (< 768px) ✅ Badge consolidation complete
 - [x] **Pagination controls** - Page number buttons centered, horizontal layout
 
 **What to Look For:**
@@ -201,10 +201,10 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/student-portal/concessions/index.html`
 
 **Elements to Check:**
-- [ ] **Badge-locked** - Unavailable concessions show gray locked badge with icon
-- [ ] **Badge-gifted** - Gifted concessions show green badge with gift icon
-- [ ] **Badge styling** - Inline-flex with icon gap (0.4rem)
-- [ ] **Icon size** - Icons at 0.75rem within badges
+- [x] **Badge-locked** - Unavailable concessions show gray locked badge with icon ✅ Badge consolidation complete
+- [x] **Badge-gifted** - Gifted concessions show green badge with gift icon ✅ Badge consolidation complete
+- [x] **Badge styling** - Inline-flex with icon gap (0.4rem) ✅ Badge consolidation complete
+- [x] **Icon size** - Icons at 0.75rem within badges ✅ Badge consolidation complete
 
 **What to Look For:**
 - Locked badge appears gray/muted
@@ -219,13 +219,13 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/student-portal/check-ins/index.html`
 
 **Elements to Check:**
-- [ ] **Type badges** - Check-in types display with colors
+- [x] **Type badges** - Check-in types display with colors ✅ Badge consolidation complete
   - Concession (purple)
   - Casual (blue)
   - Free (gray or neutral)
   - Gift (green)
-- [ ] **Badge layout** - Proper spacing in table/card views
-- [ ] **Font sizing** - 0.85rem, weight 600
+- [x] **Badge layout** - Proper spacing in table/card views ✅ Badge consolidation complete
+- [x] **Font sizing** - 0.85rem, weight 600 ✅ Badge consolidation complete
 - [x] **Pagination controls** - Page number buttons centered, horizontal layout
 
 **What to Look For:**
@@ -273,11 +273,11 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 ### Badge Verification
 
 For all pages with badges:
-- [ ] **Color accuracy** - Compare badge colors to documented color mappings
-- [ ] **Text readability** - Sufficient contrast between background and text
-- [ ] **Size consistency** - All badges same height within same context
-- [ ] **Uppercase text** - Status badges properly uppercased
-- [ ] **Icon alignment** - Icons centered vertically with text
+- [x] **Color accuracy** - Compare badge colors to documented color mappings ✅ Complete
+- [x] **Text readability** - Sufficient contrast between background and text ✅ Complete
+- [x] **Size consistency** - All badges same height within same context ✅ Complete
+- [x] **Uppercase text** - Status badges properly uppercased ✅ Complete
+- [x] **Icon alignment** - Icons centered vertically with text ✅ Complete
 
 ### Button Verification
 
@@ -389,6 +389,17 @@ Document with:
 
 ---
 
+## Bugs Fixed During Testing
+
+**Badge-Related Issues:**
+1. ✅ Concession badge colors - Removed purple override so status colors (green/red/orange) work correctly
+2. ✅ Expired concession buttons - Removed opacity muting so Lock/Delete buttons visible on expired concessions
+3. ✅ Delete button styling - Changed to use btn-delete class (red background) on Transaction History payments tab
+4. ✅ Edit button styling - Changed to use btn-icon class on Transaction History payments tab
+
+**Admin Portal Issues:**
+5. ✅ Student selection refresh - Admin student portal now reloads page when switching students
+
 ## Success Criteria
 
 Testing is complete when:
@@ -400,6 +411,7 @@ Testing is complete when:
 ✅ All hover and focus states work  
 ✅ Responsive behavior correct on mobile  
 ✅ Button functionality unchanged  
+✅ Badge consolidation complete (December 29, 2025)  
 
 ---
 

@@ -1,6 +1,7 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/base/design-tokens.css');
 @import url('../../styles/components/snackbar.css');
+@import url('../../styles/components/badges.css');
 
 /* ========================================
    STUDENT DATABASE STYLES
@@ -1174,19 +1175,16 @@ textarea:focus {
 }
 
 .concession-item.expired {
-    opacity: 0.7;
     background: var(--bg-error-light);
     border-left: 4px solid var(--error);
 }
 
 .concession-item.depleted {
-    opacity: 0.7;
     background: var(--bg-yellow-light);
     border-left: 4px solid var(--warning);
 }
 
 .concession-item.locked {
-    opacity: 0.6;
     background: var(--shadow-light);
 }
 

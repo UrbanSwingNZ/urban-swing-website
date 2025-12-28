@@ -1,6 +1,7 @@
 @import url('../../styles/base/colors.css');
 @import url('../../styles/base/design-tokens.css');
 @import url('../../styles/components/snackbar.css');
+@import url('../../styles/components/badges.css');
 
 /* ========================================
    CHECK-IN PAGE STYLES
@@ -307,52 +308,6 @@
     text-align: right;
 }
 
-/* Payment badges */
-.payment-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.payment-badge i {
-    font-size: 0.9rem;
-}
-
-.payment-badge.cash {
-    background: var(--warning-lighter);
-    color: var(--warning-darker);
-}
-
-.payment-badge.eftpos {
-    background: var(--info-light);
-    color: var(--blue-darker);
-}
-
-.payment-badge.online {
-    background: var(--bg-success-light);
-    color: var(--success-darker);
-}
-
-.payment-badge.bank {
-    background: var(--bg-purple-pale);
-    color: var(--purple-darker);
-}
-
-.payment-badge.na {
-    background: var(--gray-300);
-    color: #757575;
-}
-
-.payment-badge.unknown {
-    background: var(--gray-300);
-    color: var(--gray-750);
-}
-
 #checkin-transactions-table .payment-amount {
     text-align: right;
     font-weight: 600;
@@ -361,48 +316,6 @@
 #checkin-transactions-table .payment-amount.empty {
     color: var(--text-muted);
     font-weight: normal;
-}
-
-/* Type Badge */
-.type-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: var(--radius-xl);
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.type-badge.concession {
-    background: var(--bg-purple-medium);
-    color: var(--purple-primary);
-}
-
-.type-badge.gift {
-    background: var(--bg-success-light);
-    color: var(--success-dark);
-}
-
-.type-badge.casual,
-.type-badge.casual-entry {
-    background: var(--bg-blue-light);
-    color: var(--blue-primary);
-}
-
-.type-badge.casual-student {
-    background: var(--bg-blue-light);
-    color: var(--blue-accent);
-}
-
-.type-badge.online {
-    background: var(--bg-success-light);
-    color: var(--success-darker);
-    margin-left: 5px;
-}
-
-.type-badge.reversed {
-    background: var(--error);
-    color: white;
-    margin-right: 5px;
 }
 
 /* Reversed Transaction Styling */
@@ -1873,36 +1786,3 @@ textarea.form-control {
     }
 }
 
-/* ========================================
-   BADGE STYLES
-   ======================================== */
-
-.badge {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: var(--radius-xs);
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.badge-yes {
-    background: var(--bg-success-light);
-    color: var(--success);
-}
-
-.badge-no {
-    background: var(--bg-error-light);
-    color: var(--error);
-}
-
-.badge-warning {
-    background: var(--warning-lighter);
-    color: #ff8800;
-}
-
-.badge-locked {
-    background: var(--bg-gray-medium);
-    color: var(--text-muted-alt);
-}

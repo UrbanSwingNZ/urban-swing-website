@@ -44,12 +44,12 @@ function renderPaymentItem(transaction) {
         : '';
     
     // Add edit and delete buttons - delete only for super admin
-    const editButton = `<button class="btn-icon btn-edit-transaction" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
+    const editButton = `<button class="btn-icon" onclick="editTransaction('${transaction.id}')" title="Edit transaction">
            <i class="fas fa-edit"></i>
        </button>`;
     
     const deleteButton = isSuperAdmin() 
-        ? `<button class="btn-icon btn-delete-transaction" onclick="confirmDeleteTransaction('${transaction.id}')" title="Delete transaction">
+        ? `<button class="btn-icon btn-delete" onclick="confirmDeleteTransaction('${transaction.id}')" title="Delete transaction">
            <i class="fas fa-trash-alt"></i>
        </button>`
         : '';

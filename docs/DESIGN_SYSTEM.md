@@ -197,7 +197,9 @@ This document catalogs all UI patterns, components, and design standards current
 
 ### Current Implementation
 
-**Status:** ⚠️ Not centralized - badges defined locally in 10+ files
+**Status:** ✅ Centralized in `/styles/components/badges.css`
+
+**Consolidation Complete:** December 29, 2025
 
 Badges are small labeled status indicators used throughout the application to display categories, status, payment methods, and other metadata.
 
@@ -292,10 +294,10 @@ Badges are small labeled status indicators used throughout the application to di
 
 #### 5. Order Status Badges
 - **Purpose:** Merchandise order status
-- **Location:** `/admin/admin-tools/merch-orders/merch-orders.css`
+- **Location:** `/styles/components/badges.css`
 - **Variants:**
   - `.badge-pending` - Yellow background (pending orders)
-  - `.badge-invoiced` - Blue background (invoiced)
+  - `.badge-invoiced` - Purple background (invoiced)
   - `.badge-complete` - Green background (completed)
   - `.badge-deleted` - Red background (deleted/cancelled)
 - **Code:**
@@ -381,37 +383,24 @@ Badges are small labeled status indicators used throughout the application to di
 - **Multiple badges:** Use flexbox with gap, allow wrapping
 - **Icons:** Place icon before text within the badge
 
-### Consistency Issues ⚠️
+### Consolidation Complete ✅
 
-**Current Problems:**
-1. **No centralized badge CSS** - Defined in 10+ separate files
-2. **Inconsistent styling** - Padding, border-radius, font-size varies
-3. **Color variable naming inconsistent** - Some use `--badge-*`, others hardcode
-4. **Duplicate definitions** - Type badges and payment badges defined 4+ times each
-5. **Missing base badge component** - No single source of truth
+**Completed:** December 29, 2025
 
-**Impact:**
-- ~200-300 lines of duplicate CSS
-- Difficult to maintain consistent styling
-- Changes require updating multiple files
-- No clear pattern for adding new badge types
+**Previously identified problems (NOW RESOLVED):**
+1. ~~No centralized badge CSS~~ - ✅ Now in `/styles/components/badges.css`
+2. ~~Inconsistent styling~~ - ✅ All badges use consistent padding, border-radius, font-size
+3. ~~Color variable naming inconsistent~~ - ✅ Unified color variable usage
+4. ~~Duplicate definitions~~ - ✅ ~250 lines of duplicate CSS removed
+5. ~~Missing base badge component~~ - ✅ Single source of truth established
+6. ~~Concession badge purple override~~ - ✅ Removed so status colors (green/red/orange) work correctly
+7. ~~Muted expired concession buttons~~ - ✅ Removed opacity so buttons are visible
 
-### Recommended Consolidation
+**Files Updated (8 total):**
+- Student Portal: transactions.css, check-ins.css, concessions.css
+- Admin: student-database.css, transactions.css, merch-orders.css, check-in.css, transaction-history.css
 
-**Create:** `/styles/components/badges.css`
-
-**Include:**
-- Base `.badge` styles
-- Status variants (`.badge-yes`, `.badge-no`, `.badge-warning`)
-- Semantic variants by category:
-  - Transaction types (`.badge-concession`, `.badge-casual`, `.badge-gift`)
-  - Payment methods (`.badge-payment-*`)
-  - Order status (`.badge-pending`, `.badge-complete`)
-  - Special states (`.badge-locked`, `.badge-gifted`, `.badge-reversed`)
-- Icon badge utilities
-- Size modifiers (`.badge-sm`, `.badge-lg`)
-
-**Benefit:** ~250 lines saved, single source of truth, easier maintenance
+**Result:** ~300 lines saved, single source of truth, consistent styling across entire application, all badge types working correctly
 
 ---
 
@@ -1150,7 +1139,7 @@ const result = await ConfirmationModal.confirm({
 
 ## Inconsistencies & Recommendations
 
-### ✅ Completed (Dec 28, 2025)
+### ✅ Completed (Dec 28-29, 2025)
 
 #### 1. ✅ Icon Button Styles Centralized
 - **Was:** `.btn-icon` defined locally in 3+ admin files
@@ -1158,11 +1147,19 @@ const result = await ConfirmationModal.confirm({
 - **Result:** ~70 lines of duplicate CSS removed
 - **Files Updated:** student-database.css, transactions.css, gift-concessions.css
 
-#### 2. ✅ Badge Component Documented
-- **Was:** Multiple badge styles scattered across 10+ files
-- **Fixed:** Comprehensive documentation added to design system
-- **Result:** All badge types, variants, and color mappings cataloged
-- **Next Step:** Consolidate into `/styles/components/badges.css` (future work)
+#### 2. ✅ Pagination Buttons Centralized
+- **Was:** Pagination button styles duplicated in 4 separate files
+- **Fixed:** Moved to `/styles/base/buttons.css`
+- **Result:** ~240 lines of duplicate CSS removed
+- **Files Updated:** student-database.css, admin/transactions.css, student-portal/transactions.css, student-portal/check-ins.css
+- **Improvements:** Student portal pagination now matches admin style with page number buttons
+
+#### 3. ✅ Badge System Centralized
+- **Was:** Badge styles scattered across 10+ files (~250 lines duplicate)
+- **Fixed:** Created `/styles/components/badges.css` with all badge types
+- **Result:** Single source of truth, consistent styling, ~250 lines saved
+- **Color Update:** `.badge-invoiced` changed from blue to purple
+- **Files Updated:** All admin/student portal pages using badges
 
 ### 🟡 Medium Priority Issues
 

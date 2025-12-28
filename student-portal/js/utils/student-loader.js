@@ -157,18 +157,8 @@ const StudentLoader = (function() {
                 sessionStorage.setItem('currentStudentId', studentId);
                 sessionStorage.setItem('currentStudent', JSON.stringify(student));
                 
-                // Set global variable for backward compatibility
-                window.selectedStudent = student;
-                
-                console.log('Student selected:', student.firstName, student.lastName);
-                
-                // Dispatch event
-                dispatchStudentSelectedEvent(student);
-                
-                // Call callback if provided
-                if (onStudentSelect) {
-                    onStudentSelect(student);
-                }
+                // Reload the page to refresh all data for the newly selected student
+                window.location.reload();
             }
         });
     }
