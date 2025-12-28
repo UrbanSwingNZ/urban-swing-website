@@ -462,6 +462,74 @@
   border-color: var(--success);
 }
 
+/* ========================================
+   PAGINATION BUTTONS
+   Navigation and page number buttons for tables
+   ======================================== */
+
+.pagination-btn {
+  padding: var(--space-xs) var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--purple-primary);
+  color: white;
+  border-color: var(--purple-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pagination-number {
+  padding: var(--space-xs) 12px;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.pagination-number:hover {
+  background: var(--purple-primary);
+  color: white;
+  border-color: var(--purple-primary);
+}
+
+.pagination-number.active {
+  background: var(--gradient-blue-purple);
+  color: white;
+  border-color: transparent;
+}
+
+.pagination-ellipsis {
+  padding: 0 8px;
+  color: var(--text-primary);
+  opacity: 0.5;
+}
+
 /* Mobile-specific styles for action buttons */
 @media (max-width: 768px) {
   /* On mobile, action buttons can be full-width within their container */

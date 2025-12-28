@@ -264,9 +264,13 @@
     box-shadow: 0 2px 8px var(--shadow-light);
 }
 
-.pagination-btn {
-    padding: 0.75rem 1.5rem;
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
 }
+
+/* Pagination styles now in /styles/base/buttons.css */
 
 .page-info {
     font-size: 1rem;

@@ -596,68 +596,7 @@ select.filter-input:focus {
     gap: var(--space-xs);
 }
 
-.pagination-btn {
-    padding: var(--space-xs) 16px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-.pagination-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.pagination-pages {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.pagination-number {
-    padding: var(--space-xs) 12px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.9rem;
-    font-weight: 500;
-    min-width: 40px;
-}
-
-.pagination-number:hover {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-.pagination-number.active {
-    background: var(--gradient-blue-purple);
-    color: white;
-    border-color: transparent;
-}
-
-.pagination-ellipsis {
-    padding: 0 8px;
-    color: var(--text-primary);
-    opacity: 0.5;
-}
+/* Pagination styles now in /styles/base/buttons.css */
 
 .pagination-info-wrapper {
     margin-top: var(--space-sm);

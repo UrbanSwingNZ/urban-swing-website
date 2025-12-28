@@ -1,15 +1,5 @@
 # Design System Standardization - Test Plan
 
-**Date:** December 28, 2025  
-**Changes Implemented:** Option 3 Quick Wins
-- Centralized icon, secondary, and link button styles
-- Removed duplicate button CSS from 7 files
-- Documented badge component system
-
-**Total Files Modified:** 8 files
-- **Added:** Button styles to `/styles/base/buttons.css`
-- **Updated:** 7 CSS files (removed duplicates, added comments)
-
 ---
 
 ## Testing Overview
@@ -32,6 +22,23 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 
 ---
 
+## Testing Summary
+
+**Key Areas to Test:**
+- Icon button styling and variants (delete, invoice, complete, restore)
+- Button size changes (Register New Student, Purchase buttons)
+- Confirmation modal cancel buttons (now use btn-cancel)
+- Lock/unlock buttons in concessions (now use btn-cancel)
+- Add Package button styling (now btn-primary-sm)
+- Invoice button colors (changed from blue to purple)
+- Generate password link (simplified styling)
+
+**Pages Requiring Testing:**
+- Admin Portal: Student Database, Transactions, Gift Concessions, Check-In, Merch Orders, Email Templates, Backup Database
+- Student Portal: Registration, Transactions, Concessions, Check-Ins, Purchase/Profile/Prepay modals
+
+---
+
 ## Test Cases by Section
 
 ### 🔹 Admin Portal - Student Database
@@ -39,15 +46,15 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/admin/student-database/index.html`
 
 **Icon Buttons to Check:**
-- [ ] **Action column** - Each student row has 5 icon buttons
+- [x] **Action column** - Each student row has 5 icon buttons
   - Edit (pencil icon)
   - View notes (note icon, purple if has notes)
   - View transactions (receipt icon)
-  - Delete (trash icon, turns red on hover)
+  - Delete (trash icon, turns red on hover) ✅ Fixed - now has red background
   - Restore (for deleted students, green)
-- [ ] **Hover states** - Icons turn purple on hover (except delete = red)
-- [ ] **Visual consistency** - All buttons same size, proper spacing
-- [ ] **Notes indicator** - Students with notes show purple filled button
+- [x] **Hover states** - Icons turn purple on hover (except delete = red)
+- [x] **Visual consistency** - All buttons same size, proper spacing
+- [x] **Notes indicator** - Students with notes show purple filled button
 
 **What to Look For:**
 - Button spacing in action column (gap between buttons)
@@ -63,17 +70,18 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/admin/admin-tools/transactions/index.html`
 
 **Icon Buttons to Check:**
-- [ ] **Action column** - Each transaction has 2-3 icon buttons
-  - Invoice toggle (document icon)
+- [x] **Action column** - Each transaction has 2-3 icon buttons
+  - Invoice toggle (document icon) ✅ Changed from blue to purple
   - Edit (pencil icon)
   - Delete (trash icon, super admin only)
-- [ ] **Invoice button** - Changes color when invoiced (purple background)
-- [ ] **Hover states** - Purple hover for invoice/edit, error color for delete
-- [ ] **Button spacing** - 0.5rem gap between buttons
+- [x] **Invoice button** - Changes color when invoiced (purple background) ✅ Fixed - now purple instead of green
+- [x] **Hover states** - Purple hover for invoice/edit, error color for delete
+- [x] **Button spacing** - 0.5rem gap between buttons
 
 **Additional Elements:**
 - [ ] **Type badges** - Transaction types display with correct colors (concession, casual, gift, etc.)
 - [ ] **Payment badges** - Payment methods show with icons and colors (cash, eftpos, online, etc.)
+- [x] **Pagination controls** - Page number buttons display in a horizontal row, centered
 
 **What to Look For:**
 - Icon button alignment in action column
@@ -105,7 +113,7 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/admin/check-in/index.html`
 
 **Elements to Check:**
-- [ ] **Payment badges** - Each check-in shows payment method badge
+- [ ] **Payment badges** - Each check-in shows payment method badge ✅ User confirmed looks fine
 - [ ] **Type badges** - Check-in type displays correctly (concession, casual, gift, etc.)
 - [ ] **Badge colors** - Match documented color system
 - [ ] **Icon spacing** - Icons in badges have proper gap (0.4rem)
@@ -122,14 +130,14 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/admin/admin-tools/merch-orders/index.html`
 
 **Icon Buttons to Check:**
-- [ ] **Action column** - Each order has 3-4 icon buttons
+- [x] **Action column** - Each order has 3-4 icon buttons
   - View details (eye icon)
   - Invoice toggle (document icon)
   - Complete toggle (checkmark icon)
   - Delete (trash icon)
-- [ ] **Hover states** - Purple hover for view/invoice/complete
-- [ ] **Completed state** - Complete button shows green when order completed
-- [ ] **Invoiced state** - Invoice button shows when invoiced
+- [x] **Hover states** - Purple hover for view/invoice/complete
+- [x] **Completed state** - Complete button shows green when order completed
+- [x] **Invoiced state** - Invoice button shows when invoiced
 
 **Additional Elements:**
 - [ ] **Status badges** - Order status displays (pending, invoiced, complete, deleted)
@@ -146,10 +154,10 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 **URL:** `/student-portal/register.html`
 
 **Link Button to Check:**
-- [ ] **Generate password button** - Shows as underlined link
-- [ ] **Hover state** - Changes to blue, removes underline
-- [ ] **Focus state** - Purple outline appears on keyboard focus
-- [ ] **Button functionality** - Still generates password when clicked
+- [x] **Generate password button** - Shows as underlined link ✅ Now purple with simpler styling
+- [x] **Hover state** - No hover effect (simplified)
+- [x] **Focus state** - Basic focus state maintained
+- [x] **Button functionality** - Still generates password when clicked
 
 **What to Look For:**
 - Link button styled correctly (no background, underlined)
@@ -178,6 +186,7 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
   - Bank (purple)
 - [ ] **Badge styling** - Rounded, proper padding, readable text
 - [ ] **Mobile view** - Badges stack properly in card layout (< 768px)
+- [x] **Pagination controls** - Page number buttons centered, horizontal layout
 
 **What to Look For:**
 - All badge colors match documentation
@@ -217,6 +226,7 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
   - Gift (green)
 - [ ] **Badge layout** - Proper spacing in table/card views
 - [ ] **Font sizing** - 0.85rem, weight 600
+- [x] **Pagination controls** - Page number buttons centered, horizontal layout
 
 **What to Look For:**
 - Type badges consistent with transactions page
@@ -233,10 +243,10 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 - `/student-portal/prepay/index.html` (date change modal)
 
 **Secondary Button to Check:**
-- [ ] **Modal footer** - "Cancel" or "Go Back" buttons
-- [ ] **Button style** - White background, purple border, purple text
-- [ ] **Hover state** - Purple background, white text, lift effect
-- [ ] **Button alignment** - Properly spaced from other modal buttons
+- [x] **Modal footer** - "Cancel" or "Go Back" buttons ✅ User confirmed via Purchase Concessions modal
+- [x] **Button style** - Now use btn-cancel (red styling) per confirmation modal defaults
+- [x] **Hover state** - Red hover effect, lift maintained
+- [x] **Button alignment** - Properly spaced from other modal buttons
 
 **What to Look For:**
 - Modal `.btn-secondary` is different from base (uses specific modal styling)
@@ -252,13 +262,13 @@ Since we **moved CSS** from local files to base styles, you need to verify that:
 
 ### Global Checks (All Pages)
 
-- [ ] **Button sizing** - All buttons maintain proper height (36px default, 42-48px for large)
-- [ ] **Font consistency** - All buttons use system font stack
-- [ ] **Hover transitions** - Smooth 0.15s-0.2s transitions
-- [ ] **Purple color** - Consistent purple (`--purple-primary`) across all components
-- [ ] **Border radius** - Consistent rounding (`--radius-sm` for buttons, `--radius-md` for badges)
-- [ ] **Icon sizing** - Icons properly sized within buttons and badges
-- [ ] **Spacing** - Consistent gaps between elements
+- [x] **Button sizing** - All buttons maintain proper height (36px default, 42-48px for large)
+- [x] **Font consistency** - All buttons use system font stack
+- [x] **Hover transitions** - Smooth 0.15s-0.2s transitions
+- [x] **Purple color** - Consistent purple (`--purple-primary`) across all components
+- [x] **Border radius** - Consistent rounding (`--radius-sm` for buttons, `--radius-md` for badges)
+- [x] **Icon sizing** - Icons properly sized within buttons and badges
+- [x] **Spacing** - Consistent gaps between elements
 
 ### Badge Verification
 
@@ -272,11 +282,22 @@ For all pages with badges:
 ### Button Verification
 
 For all pages with icon/secondary/link buttons:
-- [ ] **Icon centering** - Icons perfectly centered in icon buttons
-- [ ] **Hover lift** - Buttons translateY(-2px) on hover
-- [ ] **Active states** - Distinct visual feedback on click
-- [ ] **Disabled states** - Grayed out, no hover effects
-- [ ] **Focus states** - Visible focus ring for keyboard navigation
+- [x] **Icon centering** - Icons perfectly centered in icon buttons
+- [x] **Hover lift** - Buttons translateY(-2px) on hover
+- [x] **Active states** - Distinct visual feedback on click
+- [x] **Disabled states** - Grayed out, no hover effects
+- [x] **Focus states** - Visible focus ring for keyboard navigation
+
+### Pagination Verification
+
+For all pages with pagination (Student Database, Transactions, Check-Ins):
+- [x] **Horizontal layout** - All buttons display in a single row
+- [x] **Centered alignment** - Pagination controls centered in container
+- [x] **Page numbers** - Individual page buttons show numbers, not "Page X of Y" text
+- [x] **Active state** - Current page highlighted with gradient background
+- [x] **Disabled state** - Disabled buttons have white background, reduced opacity (not purple)
+- [x] **Ellipsis display** - "..." separator shows for large page ranges
+- [x] **Hover effects** - Page number buttons turn purple on hover
 
 ---
 
@@ -284,9 +305,9 @@ For all pages with icon/secondary/link buttons:
 
 Test in multiple browsers to ensure consistency:
 
-- [ ] **Chrome/Edge** (Chromium) - Primary testing browser
-- [ ] **Firefox** - Verify button and badge rendering
-- [ ] **Safari** (if available) - Check iOS/macOS compatibility
+- [x] **Chrome/Edge** (Chromium) - Primary testing browser
+- [x] **Firefox** - Verify button and badge rendering
+- [x] **Safari** (if available) - Check iOS/macOS compatibility
 
 ---
 
@@ -295,32 +316,39 @@ Test in multiple browsers to ensure consistency:
 Test button and badge behavior at different screen sizes:
 
 ### Desktop (> 1024px)
-- [ ] All buttons display inline with proper spacing
+- [x] All buttons display inline with proper spacing
 - [ ] Badges wrap gracefully when multiple
-- [ ] Table layouts show all icon buttons
+- [x] Table layouts show all icon buttons
+- [x] Pagination controls display properly
 
 ### Tablet (768px - 1024px)
-- [ ] Button sizes appropriate
+- [x] Button sizes appropriate
 - [ ] Badge spacing maintains readability
-- [ ] Icon buttons still accessible
+- [x] Icon buttons still accessible
+- [x] Pagination remains centered and readable
 
 ### Mobile (< 768px)
 - [ ] Transaction cards show badges properly stacked
-- [ ] Icon buttons remain touchable (minimum 44px touch target)
-- [ ] Link buttons maintain readability
-- [ ] Modal buttons stack vertically (`.btn-group` becomes column)
+- [x] Icon buttons remain touchable (minimum 44px touch target)
+- [x] Link buttons maintain readability
+- [x] Modal buttons stack vertically (`.btn-group` becomes column)
+- [x] Pagination buttons remain accessible with proper touch targets
 
 ---
 
 ## Functional Testing
 
 ### Button Interactions
-- [ ] **Icon buttons** - Click functionality unchanged
+- [x] **Icon buttons** - Click functionality unchanged
   - Edit modal opens
   - Delete confirmation appears
   - View actions navigate correctly
-- [ ] **Link buttons** - Generate/toggle functions work
-- [ ] **Secondary buttons** - Modal cancel/close actions work
+- [x] **Link buttons** - Generate/toggle functions work
+- [x] **Secondary buttons** - Modal cancel/close actions work
+- [x] **Pagination buttons** - Navigate between pages correctly
+  - Previous/Next buttons work
+  - Page number buttons jump to correct page
+  - Disabled state prevents navigation
 
 ### Badge Behavior
 - [ ] **Static badges** - Display only, no interaction

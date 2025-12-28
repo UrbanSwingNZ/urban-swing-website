@@ -10,38 +10,19 @@ class PaginationController {
     }
 
     /**
-     * Setup pagination button handlers
+     * Setup pagination button handlers (no longer needed with inline onclick)
      */
     setupEventListeners() {
-        const prevBtn = document.getElementById('prev-page');
-        const nextBtn = document.getElementById('next-page');
-        
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => this.previousPage());
-        }
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => this.nextPage());
-        }
+        // Event handlers are now inline in the rendered HTML
     }
 
     /**
-     * Go to previous page
+     * Go to specific page
      */
-    previousPage() {
-        if (this.currentPage > 1) {
-            this.currentPage--;
-            this.displayPage();
-        }
-    }
-
-    /**
-     * Go to next page
-     */
-    nextPage() {
+    goToPage(page) {
         const totalPages = this.transactionService.getTotalPages(this.itemsPerPage);
-        if (this.currentPage < totalPages) {
-            this.currentPage++;
+        if (page >= 1 && page <= totalPages) {
+            this.currentPage = page;
             this.displayPage();
         }
     }
@@ -110,25 +91,77 @@ class PaginationController {
      */
     updateControls() {
         const totalPages = this.transactionService.getTotalPages(this.itemsPerPage);
-        const pageInfo = document.getElementById('page-info');
-        const prevBtn = document.getElementById('prev-page');
-        const nextBtn = document.getElementById('next-page');
         const paginationControls = document.getElementById('pagination-controls');
         
         // Show/hide pagination controls
         if (totalPages <= 1) {
             paginationControls.style.display = 'none';
             return;
-        } else {
-            paginationControls.style.display = 'flex';
         }
         
-        // Update page info
-        pageInfo.textContent = `Page ${this.currentPage} of ${totalPages}`;
+        paginationControls.style.display = 'flex';
         
-        // Enable/disable buttons
-        prevBtn.disabled = this.currentPage === 1;
-        nextBtn.disabled = this.currentPage === totalPages;
+        // Build pagination HTML
+        let paginationHTML = '<div class="pagination">';
+        
+        // Previous button
+        if (this.currentPage > 1) {
+            paginationHTML += `<button class="pagination-btn" onclick="window.PaginationController.goToPage(${this.currentPage - 1})">
+                <i class="fas fa-chevron-left"></i> <span>Previous</span>
+            </button>`;
+        } else {
+            paginationHTML += `<button class="pagination-btn" disabled>
+                <i class="fas fa-chevron-left"></i> <span>Previous</span>
+            </button>`;
+        }
+        
+        // Page numbers
+        paginationHTML += '<div class="pagination-pages">';
+        
+        // Always show first page
+        if (this.currentPage > 3) {
+            paginationHTML += `<button class="pagination-number" onclick="window.PaginationController.goToPage(1)">1</button>`;
+            if (this.currentPage > 4) {
+                paginationHTML += '<span class="pagination-ellipsis">...</span>';
+            }
+        }
+        
+        // Show pages around current page
+        const startPage = Math.max(1, this.currentPage - 2);
+        const endPage = Math.min(totalPages, this.currentPage + 2);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === this.currentPage) {
+                paginationHTML += `<button class="pagination-number active">${i}</button>`;
+            } else {
+                paginationHTML += `<button class="pagination-number" onclick="window.PaginationController.goToPage(${i})">${i}</button>`;
+            }
+        }
+        
+        // Always show last page
+        if (this.currentPage < totalPages - 2) {
+            if (this.currentPage < totalPages - 3) {
+                paginationHTML += '<span class="pagination-ellipsis">...</span>';
+            }
+            paginationHTML += `<button class="pagination-number" onclick="window.PaginationController.goToPage(${totalPages})">${totalPages}</button>`;
+        }
+        
+        paginationHTML += '</div>';
+        
+        // Next button
+        if (this.currentPage < totalPages) {
+            paginationHTML += `<button class="pagination-btn" onclick="window.PaginationController.goToPage(${this.currentPage + 1})">
+                <span>Next</span> <i class="fas fa-chevron-right"></i>
+            </button>`;
+        } else {
+            paginationHTML += `<button class="pagination-btn" disabled>
+                <span>Next</span> <i class="fas fa-chevron-right"></i>
+            </button>`;
+        }
+        
+        paginationHTML += '</div>';
+        
+        paginationControls.innerHTML = paginationHTML;
     }
 }
 
