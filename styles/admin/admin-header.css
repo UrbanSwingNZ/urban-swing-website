@@ -135,49 +135,7 @@
   background: var(--bg-light-gray);
 }
 
-/* Back Button */
-.back-button {
-  background: var(--header-overlay-semi);
-  color: var(--text-white);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  text-decoration: none;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.back-button:hover {
-  background: var(--header-overlay-strong);
-  transform: scale(1.1);
-  /* Override typography.css link hover color */
-  color: var(--text-white);
-  text-decoration: none;
-}
-
-/* Logout Button */
-.btn-logout {
-  background: var(--header-overlay-semi);
-  color: var(--text-white);
-  border: 1px solid var(--border-overlay-medium);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  font-weight: 500;
-}
-
-.btn-logout:hover {
-  background: var(--header-overlay-strong);
-  transform: translateY(-2px);
-}
+/* Back button styles now in /styles/base/buttons.css */
 
 /* ========================================
    NAVIGATION LAYOUT
