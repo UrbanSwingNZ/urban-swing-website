@@ -7,6 +7,17 @@
  * Process admin registration
  */
 async function processAdminRegistration(formData) {
+    // Step 0: Check if email already exists
+    const emailCheck = await checkEmailExists(formData.email);
+    
+    if (emailCheck.status !== 'new') {
+        if (emailCheck.status === 'existing-complete') {
+            throw new Error('This email is already registered with a portal account.');
+        } else if (emailCheck.status === 'existing-incomplete') {
+            throw new Error('This email is already in the system as a student.');
+        }
+    }
+    
     const hasPayment = formData.rateType && formData.rateType !== '';
     
     // Generate student ID
@@ -107,6 +118,17 @@ async function processAdminRegistration(formData) {
  */
 async function processNewStudentRegistration(formData) {
     const hasPassword = formData.password && formData.password.trim() !== '';
+    
+    // Step 0: Check if email already exists
+    const emailCheck = await checkEmailExists(formData.email);
+    
+    if (emailCheck.status !== 'new') {
+        if (emailCheck.status === 'existing-complete') {
+            throw new Error('This email is already registered. Please login instead.');
+        } else if (emailCheck.status === 'existing-incomplete') {
+            throw new Error('You are already in our system. Please use "I\'m an existing student" to set up portal access.');
+        }
+    }
     
     // Step 1: Call backend Firebase Function to process payment and create student document
     const result = await processRegistrationWithPayment({

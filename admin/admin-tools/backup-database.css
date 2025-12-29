@@ -21,8 +21,8 @@
 }
 
 .info {
-    background: rgba(23, 162, 184, 0.1);
-    border-left: 4px solid var(--blue-accent);
+    background: var(--bg-info-pale);
+    border-left: 4px solid var(--purple-primary);
     padding: var(--space-md);
     margin: var(--space-md) 0;
     border-radius: var(--radius-sm);
@@ -31,7 +31,7 @@
 
 @media (prefers-color-scheme: dark) {
     .info {
-        background: rgba(23, 162, 184, 0.15);
+        background: var(--bg-info-medium);
     }
 }
 
@@ -45,7 +45,7 @@
 }
 
 .info h3 i {
-    color: var(--blue-accent);
+    color: var(--purple-primary);
 }
 
 .info p {
@@ -131,8 +131,8 @@
 
 .collection-card.selected {
     border-color: var(--purple-primary);
-    background: rgba(154, 22, 245, 0.05);
-    box-shadow: 0 4px 12px rgba(154, 22, 245, 0.2);
+    background: var(--bg-purple-pale);
+    box-shadow: 0 4px 12px var(--shadow-purple-light);
 }
 
 .collection-card input[type="checkbox"] {
@@ -230,8 +230,8 @@
 }
 
 .backup-btn.btn-secondary:hover:not(:disabled) {
-    background: #5a6268 !important;
-    box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+    background: var(--gray-700) !important;
+    box-shadow: 0 8px 20px var(--shadow-strong);
 }
 
 /* Status Messages */
@@ -248,25 +248,25 @@
 }
 
 #status.loading {
-    background: rgba(23, 162, 184, 0.1);
+    background: var(--bg-info-pale);
     border-color: var(--blue-accent);
     color: var(--text-primary);
 }
 
 #status.success {
-    background: rgba(40, 167, 69, 0.1);
+    background: var(--bg-success-pale);
     border-color: var(--success);
     color: var(--text-primary);
 }
 
 #status.warning {
-    background: #fff3cd;
-    border-color: #ffc107;
-    color: #856404;
+    background: var(--bg-warning-pale);
+    border-color: var(--warning);
+    color: var(--warning-darker);
 }
 
 #status.error {
-    background: rgba(220, 53, 69, 0.1);
+    background: var(--bg-error-pale);
     border-color: var(--error);
     color: var(--text-primary);
 }

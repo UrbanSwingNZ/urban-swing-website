@@ -225,7 +225,7 @@
 }
 
 .track-play-btn:hover {
-  background: rgba(29, 185, 84, 0.1);
+  background: var(--bg-spotify-light);
   transform: scale(1.1);
 }
 
@@ -253,7 +253,7 @@
 }
 
 .search-play-btn:hover {
-  background: rgba(29, 185, 84, 0.1);
+  background: var(--bg-spotify-light);
   transform: scale(1.1);
 }
 
@@ -412,7 +412,7 @@
   }
   
   .track-play-btn:hover {
-    background: rgba(29, 185, 84, 0.2);
+    background: var(--bg-spotify-medium);
   }
 }
 
@@ -592,7 +592,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #ff4444;
+  color: var(--error-light);
   font-size: 1.5rem;
   opacity: 0;
   pointer-events: none;
