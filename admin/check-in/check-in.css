@@ -864,9 +864,31 @@ textarea.form-control {
    HISTORY MODAL
    ======================================== */
 
+/* Allow calendar to escape modal boundaries */
+#history-modal .modal-content {
+    overflow: visible !important;
+}
+
 #history-modal .modal-body {
     overflow-y: auto;
     overflow-x: visible;
+}
+
+/* Custom date picker calendars in history modal need higher z-index and fixed positioning */
+#history-modal .custom-calendar {
+    position: fixed;
+    z-index: var(--z-modal-high) !important;
+}
+
+/* Break stacking contexts so calendar can escape */
+#history-modal .history-filters {
+    position: static !important;
+    z-index: auto !important;
+}
+
+#history-modal .filter-group {
+    position: static !important;
+    z-index: auto !important;
 }
 
 .history-filters {

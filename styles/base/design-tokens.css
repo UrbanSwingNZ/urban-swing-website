@@ -101,6 +101,7 @@
      - nav-toggle (1001): Mobile navigation toggle button
      - nav-overlay (1050): Mobile navigation overlays
      - nav-drawer (1100): Mobile navigation drawer
+     - calendar (5000): Date picker calendars (above modals but below high-priority)
      - modal-high (9999): High-priority modals (confirmation, password reset)
      - notification (10000): Notifications, snackbars, toasts (always on top)
      ======================================== */
@@ -115,6 +116,7 @@
   --z-nav-toggle: 1001;
   --z-nav-overlay: 1050;
   --z-nav-drawer: 1100;
+  --z-calendar: 5000;
   --z-modal-high: 9999;
   --z-notification: 10000;
 }

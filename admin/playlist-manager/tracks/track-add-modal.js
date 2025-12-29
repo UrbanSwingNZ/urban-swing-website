@@ -87,11 +87,9 @@ async function searchAndDisplayTracks(query) {
     const { getCurrentPlayingTrackUri } = await import('./track-audio.js');
     const currentlyPlayingUri = getCurrentPlayingTrackUri();
     
-    // Partition tracks: selected tracks first, then unselected
+    // Keep tracks in search result order (don't reorder)
     const selectedTrackIds = new Set(selectedTracks.map(t => t.id));
-    const selectedResults = tracks.filter(t => selectedTrackIds.has(t.id));
-    const unselectedResults = tracks.filter(t => !selectedTrackIds.has(t.id));
-    const orderedTracks = [...selectedResults, ...unselectedResults];
+    const orderedTracks = tracks;
     
     resultsContainer.innerHTML = orderedTracks.map(track => {
       const isSelected = selectedTrackIds.has(track.id);
@@ -182,12 +180,6 @@ async function handleTrackSelection(trackId, isSelected, allTracks) {
   State.setSelectedTracks(selectedTracks);
   console.log('Selected tracks count:', selectedTracks.length);
   updateAddTracksButton();
-  
-  // Re-render search results to move selected tracks to top
-  const searchInput = document.getElementById('search-tracks-input');
-  if (searchInput && searchInput.value.trim()) {
-    await searchAndDisplayTracks(searchInput.value.trim());
-  }
 }
 
 function updateAddTracksButton() {

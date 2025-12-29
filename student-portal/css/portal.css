@@ -326,6 +326,12 @@
         font-size: 0.9rem;
     }
     
+    .back-nav a,
+    .back-nav button {
+        width: 100%;
+        justify-content: center;
+    }
+    
     .portal-header {
         padding: var(--space-sm);
     }
