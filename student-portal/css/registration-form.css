@@ -446,7 +446,7 @@ h1 {
 }
 
 .back-link:hover {
-    color: #8512d6;
+    color: var(--purple-dark);
     gap: var(--space-sm);
 }
 
@@ -621,7 +621,7 @@ h1 {
 .password-generator-helper {
     margin-top: var(--space-sm);
     padding: var(--space-sm);
-    background: rgba(133, 18, 214, 0.05);
+    background: var(--bg-purple-light);
     border-radius: var(--radius-sm);
     border-left: 3px solid var(--purple-primary);
 }

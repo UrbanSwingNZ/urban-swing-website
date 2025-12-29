@@ -68,17 +68,17 @@
 }
 
 .track-delete-btn:hover {
-  color: #ff4444;
-  background: rgba(255, 68, 68, 0.1);
+  color: var(--error-light);
+  background: var(--bg-error-light);
 }
 
 .track-menu .menu-delete,
 .playlist-menu .menu-delete {
-  color: #ff4444;
+  color: var(--error-light);
 }
 
 .track-menu .menu-delete:hover,
 .playlist-menu .menu-delete:hover {
-  background: rgba(255, 68, 68, 0.1);
-  color: #ff4444;
+  background: var(--bg-error-light);
+  color: var(--error-light);
 }

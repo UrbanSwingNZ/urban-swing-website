@@ -52,3 +52,15 @@ export function isRequired(value) {
     if (typeof value === 'boolean') return true;
     return !!value;
 }
+
+/**
+ * Trim whitespace from string value
+ * @param {string} value - Value to trim
+ * @returns {string} Trimmed value or empty string
+ * @example
+ * trimValue('  hello  ') // Returns 'hello'
+ * trimValue(null) // Returns ''
+ */
+export function trimValue(value) {
+    return value ? value.trim() : '';
+}

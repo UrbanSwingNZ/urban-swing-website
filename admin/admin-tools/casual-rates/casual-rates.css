@@ -1,4 +1,5 @@
 @import url('../../../styles/base/design-tokens.css');
+@import url('../../../styles/components/badges.css');
 
 /* Casual Rates Manager Styles */
 
@@ -57,8 +58,8 @@
 }
 
 .casual-rate-card.promo {
-    border-color: #ff9800;
-    background: linear-gradient(135deg, #fff5e6 0%, var(--white) 100%);
+    border-color: var(--text-orange);
+    background: var(--gradient-warning);
 }
 
 .casual-rate-card:hover {
@@ -104,7 +105,7 @@
 }
 
 .rate-card.promo .rate-name {
-    color: #ff9800;
+    color: var(--text-orange);
 }
 
 .rate-price {
@@ -138,13 +139,8 @@
     font-weight: 500;
 }
 
-.rate-badge.promo {
-    background: #ff9800;
-    color: white;
-}
-
 .rate-badge.student {
-    background: #2196F3;
+    background: var(--blue-medium);
     color: white;
 }
 
@@ -160,7 +156,7 @@
 }
 
 .btn-delete-rate {
-    background: rgba(220, 53, 69, 0.1);
+    background: var(--bg-error-light);
     color: var(--error);
     border: 1px solid var(--error);
 }
@@ -169,7 +165,7 @@
     background: var(--error);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 4px 12px var(--bg-error-medium);
 }
 
 .add-rate-btn {
@@ -192,7 +188,7 @@
 .add-rate-btn:hover {
     background: var(--primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(154, 22, 245, 0.3);
+    box-shadow: 0 4px 8px var(--bg-purple-medium);
 }
 
 /* Rate Modal Styles */
@@ -244,6 +240,7 @@
     width: auto;
     margin: 0;
     cursor: pointer;
+    accent-color: var(--purple-primary);
 }
 
 .checkbox-group label {
@@ -279,7 +276,7 @@
 .empty-state-rates {
     text-align: center;
     padding: 60px 20px;
-    background: #f9f9f9;
+    background: var(--gray-100);
     border-radius: var(--radius-md);
     border: 2px dashed var(--gray-500);
 }

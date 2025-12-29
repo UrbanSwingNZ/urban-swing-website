@@ -380,7 +380,7 @@ label:has(+ textarea[required])::after {
     gap: var(--space-xs);
 }
 
-.modal-header i {
+.modal-header h3 i {
     color: var(--text-orange);
     font-size: 1.5rem;
 }

@@ -184,17 +184,16 @@
 
 /* Deleted Order Row Styling */
 .deleted-order {
-    color: var(--error-color);
-    font-style: italic;
-    opacity: 0.8;
+    opacity: 0.6;
+    background-color: var(--bg-error-light);
 }
 
 .deleted-order td {
-    color: var(--error-color);
+    color: var(--text-muted);
 }
 
 .deleted-order strong {
-    color: var(--error-color);
+    color: var(--text-muted);
 }
 
 /* Filter Controls */

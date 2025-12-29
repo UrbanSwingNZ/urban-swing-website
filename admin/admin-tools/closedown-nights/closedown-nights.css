@@ -221,7 +221,7 @@
     padding: 1rem;
     border: 1px solid var(--gray-450);
     border-radius: var(--radius-sm);
-    background: #f9f9f9;
+    background: var(--gray-100);
     transition: box-shadow 0.2s;
 }
 
@@ -271,13 +271,13 @@
 }
 
 .badge-display {
-    background: #d4edda;
-    color: #155724;
+    background: var(--bg-success-pale);
+    color: var(--text-success);
 }
 
 .badge-no-display {
-    background: #f8d7da;
-    color: #721c24;
+    background: var(--bg-error-pale);
+    color: var(--text-error);
 }
 
 .closedown-actions {
@@ -340,7 +340,7 @@
 }
 
 .btn-secondary:hover {
-    background: #5a6268;
+    background: var(--gray-750);
 }
 
 .btn-danger {
@@ -349,7 +349,7 @@
 }
 
 .btn-danger:hover {
-    background: #c82333;
+    background: var(--error-dark);
 }
 
 /* Messages */
@@ -364,15 +364,15 @@
 }
 
 .success-message {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background: var(--bg-success-pale);
+    color: var(--text-success);
+    border: 1px solid var(--border-success-light);
 }
 
 .error-message {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: var(--bg-error-pale);
+    color: var(--text-error);
+    border: 1px solid var(--border-error-light);
 }
 
 /* Modal Styles */
