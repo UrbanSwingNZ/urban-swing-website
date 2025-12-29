@@ -217,15 +217,16 @@ function handleFormChange() {
  * Update button states based on whether there are changes
  */
 function updateButtonStates(hasChanges) {
-    const saveButton = document.querySelector('.btn-primary');
+    const saveButton = document.getElementById('save-btn');
     const cancelButton = document.getElementById('cancel-btn');
     
     if (saveButton) {
         saveButton.disabled = !hasChanges;
     }
     
+    // Cancel button should always be enabled
     if (cancelButton) {
-        cancelButton.disabled = !hasChanges;
+        cancelButton.disabled = false;
     }
 }
 
