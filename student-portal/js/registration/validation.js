@@ -7,14 +7,45 @@
  * Validate form data
  */
 function validateFormData(formData) {
-    // Basic validation
-    if (!formData.firstName || !formData.lastName) {
-        showErrorMessage('Please enter your first and last name');
+    // Import validation helpers from global scope
+    const { 
+        showFieldError, 
+        clearAllFieldErrors,
+        validatePasswordStrength,
+        validatePasswordMatch 
+    } = window.FormValidationHelpers || {};
+    
+    // Fallback check
+    if (!showFieldError || !clearAllFieldErrors) {
+        console.error('Form validation helpers not loaded');
+        showErrorMessage('Validation system error. Please refresh the page.');
         return false;
     }
     
+    // Clear all previous errors
+    clearAllFieldErrors('registration-form');
+    
+    // Basic validation - First Name
+    if (!formData.firstName) {
+        showFieldError('firstName', 'Please enter your first name.');
+        return false;
+    }
+    
+    // Last Name
+    if (!formData.lastName) {
+        showFieldError('lastName', 'Please enter your last name.');
+        return false;
+    }
+    
+    // Email
     if (!formData.email) {
-        showErrorMessage('Please enter your email address');
+        showFieldError('email', 'Please enter your email address.');
+        return false;
+    }
+    
+    // Phone Number
+    if (!formData.phoneNumber) {
+        showFieldError('phoneNumber', 'Please enter your phone number.');
         return false;
     }
     
@@ -24,30 +55,37 @@ function validateFormData(formData) {
     
     if (hasPassword || hasConfirmPassword) {
         if (!hasPassword) {
-            showErrorMessage('Please enter a password');
+            showFieldError('password', 'Please enter a password.');
             return false;
         }
         
         if (!hasConfirmPassword) {
-            showErrorMessage('Please confirm your password');
+            showFieldError('confirmPassword', 'Please confirm your password.');
             return false;
         }
         
-        const passwordValidation = validatePassword(formData.password);
+        const passwordValidation = validatePasswordStrength(formData.password);
         if (!passwordValidation.isValid) {
-            showErrorMessage(passwordValidation.message);
+            showFieldError('password', passwordValidation.message);
             return false;
         }
         
-        if (!passwordsMatch(formData.password, formData.confirmPassword)) {
-            showErrorMessage('Passwords do not match');
+        const matchValidation = validatePasswordMatch(formData.password, formData.confirmPassword);
+        if (!matchValidation.isValid) {
+            showFieldError('confirmPassword', matchValidation.message);
             return false;
         }
     }
     
+    // Age confirmation
+    if (!formData.over16Confirmed) {
+        showFieldError('over16Confirmed', 'You must confirm you are 16 years or older.');
+        return false;
+    }
+    
     // Terms acceptance
     if (!formData.termsAccepted) {
-        showErrorMessage('You must accept the Terms and Conditions');
+        showFieldError('termsAccepted', 'You must accept the Terms and Conditions.');
         return false;
     }
     
@@ -69,16 +107,7 @@ function validateFormData(formData) {
  * Validate admin mode specific fields
  */
 function validateAdminMode(formData) {
-    if (!formData.phoneNumber) {
-        showErrorMessage('Please enter a phone number');
-        return false;
-    }
-    
-    if (!formData.over16Confirmed) {
-        showErrorMessage('You must confirm the student is 16 years or older');
-        return false;
-    }
-    
+    // Admin mode doesn't require payment option or first class date
     return true;
 }
 
@@ -86,23 +115,15 @@ function validateAdminMode(formData) {
  * Validate new student mode specific fields
  */
 function validateNewStudentMode(formData) {
-    if (!formData.phoneNumber) {
-        showErrorMessage('Please enter your phone number');
-        return false;
-    }
-    
-    if (!formData.over16Confirmed) {
-        showErrorMessage('You must confirm you are 16 years or older');
-        return false;
-    }
+    const { showFieldError } = window.FormValidationHelpers || {};
     
     if (!formData.rateType) {
-        showErrorMessage('Please select a payment option');
+        showFieldError('rateType', 'Please select a payment option.');
         return false;
     }
     
     if (!formData.firstClassDate) {
-        showErrorMessage('Please select the date of your first class');
+        showFieldError('first-class-date', 'Please select the date of your first class.');
         return false;
     }
     
