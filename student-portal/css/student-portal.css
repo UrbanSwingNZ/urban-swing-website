@@ -45,6 +45,12 @@ h1 {
     text-shadow: 0 2px 8px var(--shadow-text);
 }
 
+/* Back to Main Site Link - uses .btn-logout from buttons.css */
+.login-container .btn-logout {
+    margin-bottom: var(--space-lg);
+    text-decoration: none;
+}
+
 /* Button Group */
 .button-group {
     display: flex;
