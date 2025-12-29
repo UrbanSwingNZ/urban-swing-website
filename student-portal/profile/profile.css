@@ -258,6 +258,11 @@ label:has(+ textarea[required])::after {
         padding: var(--space-lg) 20px;
     }
     
+    #change-password-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
     .form-actions {
         flex-direction: column;
     }
