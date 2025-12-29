@@ -306,11 +306,10 @@
                                     From:
                                 </span>
                                 <div class="date-input-wrapper">
-                                    <input type="date" id="history-date-from" class="date-input">
-                                    <button class="calendar-button" type="button" aria-label="Open calendar">
-                                        <i class="fas fa-calendar-day"></i>
-                                    </button>
+                                    <input type="text" id="history-date-from" class="date-input" readonly placeholder="Select date">
+                                    <i class="fas fa-calendar-alt date-input-icon"></i>
                                 </div>
+                                <div id="history-calendar-from" class="custom-calendar" style="display: none;"></div>
                             </div>
                             <div class="date-picker-container">
                                 <span class="date-label">
@@ -318,11 +317,10 @@
                                     To:
                                 </span>
                                 <div class="date-input-wrapper">
-                                    <input type="date" id="history-date-to" class="date-input">
-                                    <button class="calendar-button" type="button" aria-label="Open calendar">
-                                        <i class="fas fa-calendar-day"></i>
-                                    </button>
+                                    <input type="text" id="history-date-to" class="date-input" readonly placeholder="Select date">
+                                    <i class="fas fa-calendar-alt date-input-icon"></i>
                                 </div>
+                                <div id="history-calendar-to" class="custom-calendar" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
@@ -542,7 +540,7 @@
     <!-- Transaction History Module (depends on concessions-data.js and concession-blocks) -->
     <script src="../student-database/js/transaction-history/transaction-history-modal.js"></script>
     <script src="../student-database/js/transaction-history/transaction-history-attendance.js"></script>
-    <script src="../student-database/js/transaction-history/transaction-history-payments.js"></script>
+    <script type="module" src="../student-database/js/transaction-history/transaction-history-payments.js"></script>
     <script type="module" src="../student-database/js/transaction-history/transaction-history-concessions.js"></script>
     
     <!-- Check-in modal modules (load in dependency order) -->

@@ -6,8 +6,9 @@
  * Load history based on filters
  */
 function loadHistory() {
-    const dateFrom = document.getElementById('history-date-from').value;
-    const dateTo = document.getElementById('history-date-to').value;
+    // Get dates from DatePicker instances
+    const dateFrom = historyDateFromPicker ? historyDateFromPicker.getSelectedDate() : null;
+    const dateTo = historyDateToPicker ? historyDateToPicker.getSelectedDate() : null;
     const studentId = getSelectedHistoryStudentId();
     
     // Validate date range
@@ -16,7 +17,7 @@ function loadHistory() {
         return;
     }
     
-    if (new Date(dateFrom) > new Date(dateTo)) {
+    if (dateFrom > dateTo) {
         showSnackbar('Start date must be before end date', 'warning');
         displayHistory([]);
         return;

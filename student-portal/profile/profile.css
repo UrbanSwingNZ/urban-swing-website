@@ -194,19 +194,19 @@ label:has(+ textarea[required])::after {
     align-items: center;
     gap: var(--space-sm);
     padding: var(--space-sm);
-    background: var(--info-light);
-    border-left: 4px solid var(--blue-dark);
+    background: var(--bg-purple-pale);
+    border-left: 4px solid var(--purple-primary);
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-md);
 }
 
 .security-info i {
-    color: var(--blue-dark);
+    color: var(--purple-primary);
     font-size: 1.2rem;
 }
 
 .security-info p {
-    color: var(--blue-darker);
+    color: var(--purple-darker);
     font-size: 0.95rem;
     margin: 0;
 }
@@ -256,6 +256,11 @@ label:has(+ textarea[required])::after {
     
     .profile-form {
         padding: var(--space-lg) 20px;
+    }
+    
+    #change-password-btn {
+        width: 100%;
+        justify-content: center;
     }
     
     .form-actions {

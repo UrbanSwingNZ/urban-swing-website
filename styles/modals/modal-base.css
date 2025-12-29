@@ -186,6 +186,11 @@
     line-height: 1;
 }
 
+/* Ensure btn-primary gradient shows in modals */
+.modal-footer button.btn-primary {
+    background: var(--gradient-blue-purple) !important;
+}
+
 /* ========================================
    DARK MODE SUPPORT
    ======================================== */
