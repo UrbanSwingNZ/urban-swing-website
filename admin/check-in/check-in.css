@@ -428,7 +428,7 @@
 }
 
 .crew-count {
-    background: #ff9800;
+    background: var(--text-orange);
     color: white;
     padding: 4px 12px;
     border-radius: var(--radius-xl);
@@ -595,7 +595,7 @@
 
 .checkin-type.crew {
     background: var(--warning-lighter);
-    color: #ff9800;
+    color: var(--text-orange);
 }
 
 /* Reversed Check-in Styling */
@@ -1077,7 +1077,7 @@ textarea.form-control {
 }
 
 .online-payment-message.warning i {
-    color: #ff9800;
+    color: var(--text-orange);
 }
 
 .online-payment-message.error {
@@ -1087,7 +1087,7 @@ textarea.form-control {
 }
 
 .online-payment-message.error i {
-    color: #f44336;
+    color: var(--error-light);
 }
 
 .online-payment-transaction {

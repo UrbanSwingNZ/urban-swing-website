@@ -8,7 +8,7 @@
 
 .playlist-header {
   padding: var(--space-xl);
-  background: linear-gradient(180deg, rgba(154, 22, 245, 0.1) 0%, transparent 100%);
+  background: var(--bg-purple-medium);
   border-bottom: 1px solid var(--gray-450);
   display: flex;
   justify-content: space-between;

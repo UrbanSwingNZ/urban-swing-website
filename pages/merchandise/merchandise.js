@@ -62,12 +62,17 @@ function showLoading(show) {
  */
 function showMessage(message, isError = false) {
     const messageDiv = document.createElement('div');
+    
+    // Get CSS variable values from root
+    const errorColor = getComputedStyle(document.documentElement).getPropertyValue('--error').trim();
+    const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success').trim();
+    
     messageDiv.style.cssText = `
         position: fixed;
         top: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: ${isError ? '#dc3545' : '#28a745'};
+        background: ${isError ? errorColor : successColor};
         color: white;
         padding: 16px 24px;
         border-radius: 8px;

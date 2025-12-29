@@ -294,7 +294,7 @@
 .btn-success:hover {
   background: var(--success-lighter);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 4px 12px var(--shadow-success);
 }
 
 .btn-success:disabled {

@@ -28,6 +28,8 @@
   --gold: #ffd700;               /* Gold accent */
   --cyan: #20c997;               /* Teal/cyan for gradients */
   
+  --spotify-green: #1db954;      /* Spotify brand green */
+  
   
   /* ========================================
      SEMANTIC COLORS - Status & feedback
@@ -146,6 +148,9 @@
   --bg-blue-light: rgba(53, 52, 250, 0.1);
   
   --bg-teal-light: rgba(0, 150, 136, 0.1);
+  
+  --bg-spotify-light: rgba(29, 185, 84, 0.1);
+  --bg-spotify-medium: rgba(29, 185, 84, 0.2);
   
   --bg-success-light: rgba(40, 167, 69, 0.1);
   --bg-success-pale: #efe;

@@ -32,9 +32,6 @@ html, body {
 @import url('../../styles/base/colors.css');
 
 /* Import parent styles if needed */
-:root {
-  --spotify-green: #1db954; /* Spotify green - keep custom */
-}
 
 @media (prefers-color-scheme: dark) {
   :root {

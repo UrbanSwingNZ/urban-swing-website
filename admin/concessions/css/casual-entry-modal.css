@@ -37,11 +37,10 @@
     border-radius: var(--radius-sm);
     padding: var(--space-xs) 12px;
     font-size: 0.95rem;
-    color: var(--purple-primary);
+    color: var(--text-primary);
     cursor: pointer;
     transition: all var(--transition-fast);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 500;
 }
 
 /* Style the calendar icon */
@@ -52,13 +51,13 @@
 
 #casual-entry-date-picker:hover {
     border-color: var(--purple-primary);
-    color: var(--purple-primary);
-    background: rgba(154, 22, 245, 0.05);
+    color: var(--text-primary);
+    background: var(--bg-purple-light);
 }
 
 #casual-entry-date-picker:focus {
     outline: none;
     border-color: var(--purple-primary);
-    box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
-    color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-light);
+    color: var(--text-primary);
 }

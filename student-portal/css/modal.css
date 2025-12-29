@@ -81,8 +81,8 @@
 }
 
 .existing-student-item {
-    background: rgba(255, 152, 0, 0.05);
-    border-left: 3px solid #ff9800;
+    background: var(--bg-warning-pale);
+    border-left: 3px solid var(--text-orange);
     padding: var(--space-sm);
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-sm);
