@@ -84,3 +84,60 @@ async function checkEmailExists(email) {
         throw new Error('Failed to check email address');
     }
 }
+
+/**
+ * Check if a student with the same first and last name exists
+ * @param {string} firstName - The first name to check
+ * @param {string} lastName - The last name to check
+ * @returns {Promise<Object>} Object with hasDuplicate and studentData
+ * 
+ * Return object structure:
+ * {
+ *   hasDuplicate: boolean,
+ *   studentData: Object | null - Student data if duplicate exists
+ * }
+ */
+async function checkDuplicateName(firstName, lastName) {
+    try {
+        if (!window.db) {
+            throw new Error('Database not initialized');
+        }
+        
+        // Normalize names for comparison
+        const normalizedFirst = firstName.trim();
+        const normalizedLast = lastName.trim();
+        
+        // Query for students with matching first and last name
+        const snapshot = await window.db.collection('students')
+            .where('firstName', '==', normalizedFirst)
+            .where('lastName', '==', normalizedLast)
+            .limit(1)
+            .get();
+        
+        const hasDuplicate = !snapshot.empty;
+        
+        let studentData = null;
+        if (hasDuplicate) {
+            const doc = snapshot.docs[0];
+            studentData = {
+                id: doc.id,
+                ...doc.data()
+            };
+        }
+        
+        console.log(`Name check for ${normalizedFirst} ${normalizedLast}:`, hasDuplicate);
+        
+        return {
+            hasDuplicate,
+            studentData
+        };
+        
+    } catch (error) {
+        console.error('Error checking duplicate name:', error);
+        // Don't throw - just log and return false to allow registration to continue
+        return {
+            hasDuplicate: false,
+            studentData: null
+        };
+    }
+}

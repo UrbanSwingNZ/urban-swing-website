@@ -18,6 +18,15 @@ async function processAdminRegistration(formData) {
         }
     }
     
+    // Step 1: Check for duplicate name
+    const nameCheck = await checkDuplicateName(formData.firstName, formData.lastName);
+    if (nameCheck.hasDuplicate) {
+        const userConfirmed = await showDuplicateNameWarning(formData.firstName, formData.lastName);
+        if (!userConfirmed) {
+            throw new Error('Registration cancelled by user.');
+        }
+    }
+    
     const hasPayment = formData.rateType && formData.rateType !== '';
     
     // Generate student ID
@@ -127,6 +136,15 @@ async function processNewStudentRegistration(formData) {
             throw new Error('This email is already registered. Please login instead.');
         } else if (emailCheck.status === 'existing-incomplete') {
             throw new Error('You are already in our system. Please use "I\'m an existing student" to set up portal access.');
+        }
+    }
+    
+    // Step 1: Check for duplicate name
+    const nameCheck = await checkDuplicateName(formData.firstName, formData.lastName);
+    if (nameCheck.hasDuplicate) {
+        const userConfirmed = await showDuplicateNameWarning(formData.firstName, formData.lastName);
+        if (!userConfirmed) {
+            throw new Error('Registration cancelled.');
         }
     }
     
@@ -253,4 +271,39 @@ function generateStudentId(firstName, lastName) {
     const randomSuffix = Math.random().toString(36).substring(2, 8);
     
     return `${cleanFirst}-${cleanLast}-${randomSuffix}`;
+}
+
+/**
+ * Show duplicate name warning modal and get user confirmation
+ * @param {string} firstName - First name
+ * @param {string} lastName - Last name
+ * @returns {Promise<boolean>} True if user confirms to continue, false otherwise
+ */
+async function showDuplicateNameWarning(firstName, lastName) {
+    // Import ConfirmationModal
+    const { ConfirmationModal } = await import('/components/modals/confirmation-modal.js');
+    
+    return new Promise((resolve) => {
+        const modal = new ConfirmationModal({
+            title: 'Duplicate Name Warning',
+            message: `
+                <p>A student with the name <strong>${firstName} ${lastName}</strong> already exists in our database.</p>
+                <p>If you are registering a different person who happens to have the same name, you can continue. Each student will have a unique student ID.</p>
+                <p>Do you wish to continue with this registration?</p>
+            `,
+            icon: 'fas fa-exclamation-triangle',
+            confirmText: 'Continue Registration',
+            confirmClass: 'btn-primary',
+            cancelText: 'Cancel',
+            cancelClass: 'btn-cancel',
+            onConfirm: () => {
+                resolve(true);
+            },
+            onCancel: () => {
+                resolve(false);
+            }
+        });
+        
+        modal.show();
+    });
 }
