@@ -1332,7 +1332,73 @@ emailInput.addEventListener('input', () => {
 - `.error-message` - Inline error styling
 - `.success-message` - Success message styling
 
-### Consolidation Recommendations
+### Consolidation Status
+
+**Completed:** December 29, 2025
+
+#### What Was Consolidated ✅
+
+**1. Form Validation Helpers** - `/js/utils/form-validation-helpers.js`
+- Created centralized validation utility module (334 lines)
+- Functions: `showFieldError()`, `clearFieldError()`, `clearAllFieldErrors()`
+- Password validators: `validatePasswordStrength()`, `validatePasswordMatch()`, `validatePasswordChange()`
+- Real-time validation: `setupFieldValidation()`
+- Features: ARIA attributes, focus management, hint text hiding
+
+**2. Registration Form** - `/student-portal/register.html`
+- Updated to use centralized validation helpers
+- Added error divs for all fields (firstName-error, lastName-error, email-error, etc.)
+- Inline field-specific error messages
+- Consistent error display pattern
+
+**3. Password Change Modal** - `/student-portal/profile/password/password-ui.js`
+- Migrated from old validation pattern to new helpers
+- Uses `validatePasswordChange()` for unified validation
+- Inline errors on password fields
+- Removed duplicate password validation code
+
+**4. Fixed Browser Alert Bug**
+- Changed `ui-utils.js` `showError()` from `alert()` to `console.error()`
+- Registration form Stripe errors now only show inline (no alert)
+- Better UX with consistent error display
+
+**Benefits Achieved:**
+- ~150 lines of duplicate validation code removed
+- Consistent error display across registration and password change
+- Better accessibility (ARIA attributes, focus management)
+- Single source of truth for validation logic
+- Fixed real UX bug (browser alerts)
+
+#### What Was NOT Consolidated ❌
+
+**1. Prepay Form Validation** - Reverted, not worth changing
+- **Reason:** Cannot test thoroughly (requires Stripe test mode)
+- **Reason:** Defensive validation prevents error states (disabled button, constrained date picker)
+- **Status:** Existing validation is sufficient, working code left as-is
+
+**2. Check-in Modal Validation** - Skipped
+- **Reason:** Admin-only, lower priority
+- **Reason:** Similar defensive validation issues as prepay
+- **Status:** Existing validation is sufficient
+
+**3. CSS Cleanup** - Skipped
+- **Reason:** `.validation-message` styles still used by prepay form
+- **Reason:** Not worth changing working code just to remove CSS
+- **Status:** Old styles remain in `/student-portal/prepay/prepay.css` (~25 lines)
+
+#### Remaining Opportunities (Not Prioritized)
+
+These were considered but deemed low value:
+
+1. **Create FormValidator Component** (~3 hours) - Low priority
+2. **Consolidate All Password Validation** (~2 hours) - Core cases already done
+3. **Complete CSS Cleanup** (~30 minutes) - Would require untestable prepay changes
+
+**Overall Assessment:** Core validation standardization complete for user-facing forms. Further consolidation has diminishing returns.
+
+---
+
+### Consolidation Recommendations (Legacy - Mostly Complete)
 
 **Future Work (not yet implemented):**
 
