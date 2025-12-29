@@ -4,12 +4,17 @@
  */
 
 import { BaseModal } from '../../../components/modals/modal-base.js';
-import { validatePasswords } from './password-validation.js';
 import { changePassword, getCurrentUserEmail } from './password-api.js';
+import { 
+    showFieldError, 
+    clearFieldError, 
+    clearAllFieldErrors,
+    validatePasswordChange 
+} from '../../../js/utils/form-validation-helpers.js';
 
 // Modal instance and form elements
 let changePasswordModal = null;
-let currentPasswordInput, newPasswordInput, confirmPasswordInput, messageEl, submitBtn;
+let currentPasswordInput, newPasswordInput, confirmPasswordInput, submitBtn;
 
 /**
  * HTML template for the password change form
@@ -19,58 +24,59 @@ const formHtml = `
     
     <form id="change-password-form" class="password-reset-form" novalidate style="display: flex; flex-direction: column; gap: 20px;">
         <div class="form-group">
-            <label for="current-password" style="display: block; margin-bottom: 8px; font-weight: 600;">Current Password</label>
+            <label for="currentPassword" style="display: block; margin-bottom: 8px; font-weight: 600;">Current Password</label>
             <div class="password-input-wrapper" style="position: relative;">
                 <input 
                     type="password" 
-                    id="current-password" 
+                    id="currentPassword" 
                     class="password-reset-input"
                     placeholder="Enter your current password"
                     autocomplete="current-password"
                     style="width: 100%; padding: 12px; padding-right: 45px; border: 1px solid var(--gray-450); border-radius: 8px; font-size: 1rem;"
                 >
-                <button type="button" class="toggle-password" data-target="current-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);">
+                <button type="button" class="toggle-password" data-target="currentPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);">
                     <i class="fas fa-eye"></i>
                 </button>
             </div>
+            <div id="currentPassword-error" class="error-message" style="display: none; color: var(--error); font-weight: 500;"></div>
         </div>
         
         <div class="form-group">
-            <label for="new-password" style="display: block; margin-bottom: 8px; font-weight: 600;">New Password</label>
+            <label for="newPassword" style="display: block; margin-bottom: 8px; font-weight: 600;">New Password</label>
             <div class="password-input-wrapper" style="position: relative;">
                 <input 
                     type="password" 
-                    id="new-password" 
+                    id="newPassword" 
                     class="password-reset-input"
                     placeholder="Enter your new password"
                     autocomplete="new-password"
                     style="width: 100%; padding: 12px; padding-right: 45px; border: 1px solid var(--gray-450); border-radius: 8px; font-size: 1rem;"
                 >
-                <button type="button" class="toggle-password" data-target="new-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);">
+                <button type="button" class="toggle-password" data-target="newPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);">
                     <i class="fas fa-eye"></i>
                 </button>
             </div>
             <small style="display: block; margin-top: 6px; color: var(--text-tertiary); font-size: 0.875rem;">Password must be at least 8 characters with uppercase and lowercase letters</small>
+            <div id="newPassword-error" class="error-message" style="display: none; color: var(--error); font-weight: 500;"></div>
         </div>
         
         <div class="form-group">
-            <label for="confirm-password" style="display: block; margin-bottom: 8px; font-weight: 600;">Confirm New Password</label>
+            <label for="confirmPassword" style="display: block; margin-bottom: 8px; font-weight: 600;">Confirm New Password</label>
             <div class="password-input-wrapper" style="position: relative;">
                 <input 
                     type="password" 
-                    id="confirm-password" 
+                    id="confirmPassword" 
                     class="password-reset-input"
                     placeholder="Confirm your new password"
                     autocomplete="new-password"
                     style="width: 100%; padding: 12px; padding-right: 45px; border: 1px solid var(--gray-450); border-radius: 8px; font-size: 1rem;"
                 >
-                <button type="button" class="toggle-password" data-target="confirm-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);">
+                <button type="button" class="toggle-password" data-target="confirmPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-tertiary);">
                     <i class="fas fa-eye"></i>
                 </button>
             </div>
+            <div id="confirmPassword-error" class="error-message" style="display: none; color: var(--error); font-weight: 500;"></div>
         </div>
-        
-        <div class="password-reset-message" id="change-password-message" style="display: none; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center;"></div>
         
         <!-- Hidden submit button to enable Enter key submission -->
         <button type="submit" style="display: none;" aria-hidden="true"></button>
@@ -80,43 +86,6 @@ const formHtml = `
         </div>
     </form>
 `;
-
-/**
- * Show message in the form
- * @param {string} message - Message text
- * @param {string} type - Message type: 'error', 'success', or 'info'
- */
-function showMessage(message, type = 'info') {
-    if (!messageEl) return;
-    
-    messageEl.textContent = message;
-    messageEl.style.display = 'block';
-    messageEl.style.textAlign = 'center';
-    messageEl.style.fontWeight = '600';
-    
-    // Apply styling based on type
-    if (type === 'error') {
-        messageEl.style.backgroundColor = 'var(--bg-error-light)';
-        messageEl.style.color = 'var(--error)';
-        messageEl.style.border = '1px solid var(--error)';
-    } else if (type === 'success') {
-        messageEl.style.backgroundColor = 'var(--bg-success-light)';
-        messageEl.style.color = 'var(--success)';
-        messageEl.style.border = '1px solid var(--success)';
-    } else {
-        messageEl.style.backgroundColor = 'var(--bg-info-light)';
-        messageEl.style.color = 'var(--info)';
-        messageEl.style.border = '1px solid var(--info)';
-    }
-}
-
-/**
- * Hide the message in the form
- */
-function hideMessage() {
-    if (!messageEl) return;
-    messageEl.style.display = 'none';
-}
 
 /**
  * Setup password visibility toggle buttons
@@ -176,21 +145,23 @@ function handleForgotPassword(e) {
  * Validates inputs, calls API, shows success/error messages
  */
 async function handlePasswordSubmit() {
-    const currentPassword = currentPasswordInput.value;
-    const newPassword = newPasswordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
+    const currentPassword = currentPasswordInput.value.trim();
+    const newPassword = newPasswordInput.value.trim();
+    const confirmPassword = confirmPasswordInput.value.trim();
     
-    // Validate inputs
-    const validation = validatePasswords(currentPassword, newPassword, confirmPassword);
-    if (!validation.valid) {
-        showMessage(validation.error, 'error');
+    // Clear any previous errors
+    clearAllFieldErrors('change-password-form');
+    
+    // Validate inputs using consolidated validation
+    const validation = validatePasswordChange(currentPassword, newPassword, confirmPassword);
+    if (!validation.isValid) {
+        showFieldError(validation.field, validation.message);
         return;
     }
 
-    // Disable submit button
+    // Disable submit button and show loading state
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing Password...';
-    hideMessage();
 
     try {
         await changePassword(currentPassword, newPassword);
@@ -204,7 +175,8 @@ async function handlePasswordSubmit() {
         }
         
     } catch (error) {
-        showMessage(error.message, 'error');
+        // Show API error as inline error on current password field
+        showFieldError('currentPassword', error.message || 'Failed to change password. Please try again.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Change Password';
     }
@@ -243,10 +215,9 @@ export function showChangePasswordModal() {
         ],
         onOpen: () => {
             // Get elements after modal is created
-            currentPasswordInput = document.getElementById('current-password');
-            newPasswordInput = document.getElementById('new-password');
-            confirmPasswordInput = document.getElementById('confirm-password');
-            messageEl = document.getElementById('change-password-message');
+            currentPasswordInput = document.getElementById('currentPassword');
+            newPasswordInput = document.getElementById('newPassword');
+            confirmPasswordInput = document.getElementById('confirmPassword');
             submitBtn = document.getElementById('submit-change-password');
             const form = document.getElementById('change-password-form');
             const forgotLink = document.getElementById('forgot-current-password');
@@ -272,8 +243,10 @@ export function showChangePasswordModal() {
         onClose: () => {
             // Reset form when closed
             const form = document.getElementById('change-password-form');
-            if (form) form.reset();
-            hideMessage();
+            if (form) {
+                form.reset();
+                clearAllFieldErrors('change-password-form');
+            }
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Change Password';

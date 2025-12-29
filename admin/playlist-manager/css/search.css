@@ -23,7 +23,7 @@
 
 .modal-body .search-box:focus-within {
   border-color: var(--purple-primary);
-  box-shadow: 0 0 0 3px rgba(154, 22, 245, 0.1);
+  box-shadow: 0 0 0 3px var(--bg-purple-light);
 }
 
 .modal-body .search-box input {

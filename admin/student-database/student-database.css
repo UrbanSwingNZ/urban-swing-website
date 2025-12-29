@@ -173,7 +173,7 @@
 
 .badge-warning {
     background: var(--bg-orange-light);
-    color: #ff8800;
+    color: var(--text-orange);
 }
 
 /* Deleted Student Row Styling */
@@ -968,7 +968,7 @@ textarea:focus {
     padding: var(--space-xs);
     background: var(--bg-orange-light);
     border-radius: var(--radius-sm);
-    border-left: 3px solid #ff8800;
+    border-left: 3px solid var(--text-orange);
 }
 
 /* ========================================
@@ -1277,19 +1277,19 @@ textarea:focus {
 }
 
 .snackbar-success {
-    background: linear-gradient(135deg, var(--success-light) 0%, #45a049 100%);
+    background: var(--status-active-gradient);
 }
 
 .snackbar-error {
-    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    background: var(--status-inactive-gradient);
 }
 
 .snackbar-warning {
-    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    background: var(--status-warning-gradient);
 }
 
 .snackbar-info {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    background: var(--status-info-gradient);
 }
 
 /* ========================================

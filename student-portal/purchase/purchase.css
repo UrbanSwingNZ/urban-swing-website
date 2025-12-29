@@ -302,7 +302,7 @@ input[type="text"]::placeholder {
     gap: 0.75rem;
     padding: 1rem 1.25rem;
     background: var(--gradient-warning);
-    border: 1px solid #ffc107;
+    border: 1px solid var(--warning);
     border-radius: var(--radius-sm);
     margin-bottom: 1.5rem;
 }

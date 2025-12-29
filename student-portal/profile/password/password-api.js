@@ -29,13 +29,13 @@ export async function reauthenticateUser(currentPassword) {
         
         // Provide user-friendly error messages
         if (error.code === 'auth/wrong-password') {
-            throw new Error('Current password is incorrect.');
+            throw new Error('Incorrect password.');
         } else if (error.code === 'auth/too-many-requests') {
             throw new Error('Too many failed attempts. Please try again later.');
         } else if (error.code === 'auth/network-request-failed') {
             throw new Error('Network error. Please check your connection.');
         } else {
-            throw new Error('Authentication failed. Please try again.');
+            throw new Error('Incorrect password.');
         }
     }
 }

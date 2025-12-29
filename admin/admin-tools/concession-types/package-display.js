@@ -70,16 +70,14 @@ async function loadPackages() {
 function createPackageCard(id, pkg) {
   const card = document.createElement('div');
   const isActive = pkg.isActive !== false; // Default to true if not specified
-  card.className = `package-card ${isActive ? 'active' : 'inactive'}`;
+  const isPromo = pkg.isPromo === true; // Check if this is a promo package
+  card.className = `package-card ${isActive ? 'active' : 'inactive'} ${isPromo ? 'promo' : ''}`;
   card.setAttribute('data-package-id', id);
   card.setAttribute('draggable', 'true');
   
   const numberOfClasses = pkg.numberOfClasses || 0;
   const price = pkg.price || 0;
   const pricePerClass = numberOfClasses > 0 ? (price / numberOfClasses).toFixed(2) : '0.00';
-  
-  // Check if this is a promo package
-  const isPromo = pkg.isPromo === true;
   
   // Check if this is shown on registration
   const showOnRegistration = pkg.showOnRegistration === true;

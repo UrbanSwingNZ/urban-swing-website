@@ -284,25 +284,25 @@ img.loaded {
 input.valid,
 textarea.valid,
 select.valid {
-  border-color: #10b981;
+  border-color: var(--success);
 }
 
 input.error,
 textarea.error,
 select.error {
-  border-color: #ef4444;
+  border-color: var(--error);
 }
 
 input.valid:focus,
 textarea.valid:focus,
 select.valid:focus {
-  outline-color: #10b981;
+  outline-color: var(--success);
 }
 
 input.error:focus,
 textarea.error:focus,
 select.error:focus {
-  outline-color: #ef4444;
+  outline-color: var(--error);
 }
 
 /* ============================================

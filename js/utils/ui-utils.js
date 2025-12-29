@@ -80,13 +80,14 @@ export function showLoadingButton(buttonId, show, loadingText = 'Loading...') {
 }
 
 /**
- * Show error message using alert
+ * Show error message in console only
  * @param {string} message - Error message to display
  * @example
- * showError('An error occurred') // Shows alert with error message
+ * showError('An error occurred') // Logs error to console
+ * @deprecated Use field-specific validation errors or showErrorMessage() instead
  */
 export function showError(message) {
-    alert('Error: ' + message);
+    console.error('Error:', message);
 }
 
 /**

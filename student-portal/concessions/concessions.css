@@ -135,7 +135,7 @@
 }
 
 .concession-item.gifted {
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.03) 0%, rgba(76, 175, 80, 0.08) 100%);
+    background: linear-gradient(135deg, var(--bg-success-light) 0%, var(--bg-success-pale) 100%);
 }
 
 /* Concession Content */

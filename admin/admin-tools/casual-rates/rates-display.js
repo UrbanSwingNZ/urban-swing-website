@@ -77,7 +77,7 @@ function createRateCard(id, rate) {
     
     let badges = '';
     if (isPromo) {
-        badges += '<span class="rate-badge promo">PROMO</span>';
+        badges += '<span class="promo-badge"><i class="fas fa-star"></i> PROMO <i class="fas fa-star"></i></span>';
     }
     
     card.innerHTML = `

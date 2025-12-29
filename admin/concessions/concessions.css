@@ -93,10 +93,10 @@
 }
 
 #add-concession-modal .checkbox-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: auto;
     cursor: pointer;
     flex-shrink: 0;
+    accent-color: var(--purple-primary);
 }
 
 #add-concession-modal .checkbox-label span {
