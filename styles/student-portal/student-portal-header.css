@@ -17,12 +17,6 @@
   box-shadow: 0 4px 12px var(--shadow-light);
 }
 
-@media (prefers-color-scheme: dark) {
-  .student-portal-header {
-    box-shadow: 0 4px 12px var(--shadow-strong);
-  }
-}
-
 /* Header Content Layout */
 .student-portal-header-content {
   max-width: 1200px;

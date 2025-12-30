@@ -4,6 +4,7 @@
  * Uses color variables from /styles/base/colors.css
  */
 
+@import url('../base/colors.css');
 @import url('../base/design-tokens.css');
 
 /* ========================================
@@ -189,24 +190,6 @@
 /* Ensure btn-primary gradient shows in modals */
 .modal-footer button.btn-primary {
     background: var(--gradient-blue-purple) !important;
-}
-
-/* ========================================
-   DARK MODE SUPPORT
-   ======================================== */
-
-@media (prefers-color-scheme: dark) {
-    .modal-content {
-        background: var(--bg-card-dark);
-    }
-
-    .modal-header {
-        background: var(--gradient-purple-pink);
-    }
-
-    .modal-body p {
-        color: var(--gray-300);
-    }
 }
 
 /* ========================================

@@ -16,25 +16,12 @@
   position: relative;
 }
 
-@media (prefers-color-scheme: dark) {
-  .pm-sidebar {
-    background: var(--bg-dark);
-    border-right-color: var(--hover-dark);
-  }
-}
-
 .sidebar-header {
   padding: var(--space-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--gray-450);
-}
-
-@media (prefers-color-scheme: dark) {
-  .sidebar-header {
-    border-bottom-color: var(--hover-dark);
-  }
 }
 
 .sidebar-header h3 {
@@ -64,12 +51,6 @@
 .btn-icon:hover {
   background: var(--hover-light);
   transform: rotate(180deg);
-}
-
-@media (prefers-color-scheme: dark) {
-  .btn-icon:hover {
-    background: var(--hover-dark);
-  }
 }
 
 /* Search Box */
@@ -119,22 +100,10 @@
   background: var(--hover-light);
 }
 
-@media (prefers-color-scheme: dark) {
-  .playlists-list li:hover {
-    background: var(--hover-dark);
-  }
-}
-
 .playlists-list li.active {
   background: var(--hover-light);
   border-left-color: var(--purple-primary);
   font-weight: 600;
-}
-
-@media (prefers-color-scheme: dark) {
-  .playlists-list li.active {
-    background: var(--hover-dark);
-  }
 }
 
 .playlist-item {
@@ -167,24 +136,12 @@
   background: var(--hover-light);
 }
 
-@media (prefers-color-scheme: dark) {
-  .playlists-list li.playlist-sortable-ghost {
-    background: var(--hover-dark);
-  }
-}
-
 .playlists-list li.playlist-sortable-drag {
   opacity: 1;
   background: var(--card-light);
   box-shadow: 0 5px 15px var(--shadow-text);
   border-left-color: var(--purple-primary);
   cursor: move;
-}
-
-@media (prefers-color-scheme: dark) {
-  .playlists-list li.playlist-sortable-drag {
-    background: var(--card-dark);
-  }
 }
 
 .playlists-list li.playlist-sortable-chosen {
@@ -265,13 +222,6 @@
 
 .playlist-menu button:hover {
   background: var(--hover-light);
-}
-
-@media (prefers-color-scheme: dark) {
-  .playlist-menu {
-    background: var(--card-dark);
-    border-color: var(--hover-dark);
-  }
 }
 
 /* ========================================
@@ -364,20 +314,6 @@
 .playlist-menu-item.menu-cancel:hover {
   background: var(--hover-light);
   color: var(--text-color);
-}
-
-@media (prefers-color-scheme: dark) {
-  .playlist-menu-mobile {
-    background: var(--card-dark);
-  }
-  
-  .playlist-menu-title {
-    border-bottom-color: var(--hover-dark);
-  }
-  
-  .playlist-menu-item.menu-cancel {
-    border-top-color: var(--hover-dark);
-  }
 }
 
 /* Mobile responsive styles */

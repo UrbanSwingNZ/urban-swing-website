@@ -129,9 +129,3 @@
     justify-content: flex-start;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .playlist-header {
-    border-bottom-color: var(--hover-dark);
-  }
-}

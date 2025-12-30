@@ -15,12 +15,6 @@
   padding: var(--space-sm) 15px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .modal-body .search-box {
-    background: var(--card-dark);
-  }
-}
-
 .modal-body .search-box:focus-within {
   border-color: var(--purple-primary);
   box-shadow: 0 0 0 3px var(--bg-purple-light);
