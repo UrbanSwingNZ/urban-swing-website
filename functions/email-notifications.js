@@ -10,6 +10,9 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const nodemailer = require("nodemailer");
 const {generateMerchOrderEmail} = require("./emails/merch-order-notification");
+const {generateAdminNotificationEmail, generateWelcomeEmail} = require("./emails/new-student-emails");
+const {generateAccountSetupEmail} = require("./emails/student-portal-setup-email");
+const {generateErrorNotificationEmail} = require("./emails/error-notification-email");
 
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
@@ -213,38 +216,33 @@ exports.sendNewStudentEmail = onDocumentCreated(
       const hasUserAccount = !userSnapshot.empty;
       logger.info(`User account exists for student ${studentId}: ${hasUserAccount}`);
 
-      // Generate email content using Firestore templates
-      const adminEmail = await renderEmailTemplate('admin-notification', {
-        'student.firstName': student.firstName,
-        'student.lastName': student.lastName,
-        'student.email': student.email,
-        'student.phoneNumber': student.phoneNumber || student.phone || 'N/A',
-        'student.pronouns': student.pronouns || 'Not specified',
-        'student.emailConsent': student.emailConsent,
-        studentId: studentId,
-        registeredAt: registeredAt,
-        casualRate: casualRate,
-        studentRate: studentRate,
-        fiveClassPrice: fiveClassPrice,
-        tenClassPrice: tenClassPrice
-      });
+      // Generate admin notification email using JavaScript generator
+      const adminEmail = generateAdminNotificationEmail(
+        student, 
+        studentId, 
+        registeredAt,
+        casualRate,
+        studentRate,
+        fiveClassPrice,
+        tenClassPrice
+      );
       
-      const welcomeEmail = await renderEmailTemplate('welcome-student', {
-        'student.firstName': student.firstName,
-        firstName: student.firstName,
-        casualRate: casualRate,
-        studentRate: studentRate,
-        fiveClassPrice: fiveClassPrice,
-        tenClassPrice: tenClassPrice,
-        portalAccess: hasUserAccount ? 'Yes - you can log in at urbanswing.co.nz/student-portal' : 'Not yet - you\'ll receive login details after your first payment'
-      });
+      // Generate welcome email using JavaScript generator
+      const welcomeEmail = generateWelcomeEmail(
+        student,
+        casualRate,
+        studentRate,
+        fiveClassPrice,
+        tenClassPrice,
+        hasUserAccount
+      );
 
       // Send admin notification email
       try {
         await transporter.sendMail({
           from: '"Urban Swing" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: adminEmail.subject,
+          subject: "New Student Registration",
           text: adminEmail.text,
           html: adminEmail.html,
         });
@@ -258,7 +256,7 @@ exports.sendNewStudentEmail = onDocumentCreated(
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
-        subject: welcomeEmail.subject,
+        subject: "Welcome to Urban Swing!",
         text: welcomeEmail.text,
         html: welcomeEmail.html,
       });
@@ -281,28 +279,20 @@ exports.sendNewStudentEmail = onDocumentCreated(
           },
         });
         
-        const errorEmail = await renderEmailTemplate('error-notification', {
-          'student.firstName': student.firstName,
-          'student.lastName': student.lastName,
-          'student.email': student.email,
-          firstName: student.firstName,
-          lastName: student.lastName,
-          email: student.email,
-          studentId: studentId,
-          errorType: 'Failed to send student welcome email',
-          errorMessage: error.message,
-          errorStack: error.stack || 'No stack trace available',
-          timestamp: new Date().toLocaleString('en-NZ', {
-            dateStyle: 'full',
-            timeStyle: 'long',
-            timeZone: 'Pacific/Auckland'
-          })
-        });
+        const errorEmail = generateErrorNotificationEmail(
+          student,
+          studentId,
+          {
+            type: 'Failed to send student welcome email',
+            message: error.message,
+            stack: error.stack || 'No stack trace available'
+          }
+        );
         
         await transporter.sendMail({
           from: '"Urban Swing System" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: errorEmail.subject,
+          subject: "Email Error Notification",
           text: errorEmail.text,
           html: errorEmail.html,
         });
@@ -374,21 +364,12 @@ exports.sendAccountSetupEmail = onDocumentCreated(
         minute: '2-digit'
       });
       
-      const accountSetupEmail = await renderEmailTemplate('account-setup', {
-        'student.firstName': student.firstName,
-        'student.lastName': student.lastName,
-        'user.email': user.email,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        email: user.email,
-        setupDate: setupDate,
-        portalUrl: 'https://urbanswing.co.nz/student-portal'
-      });
+      const accountSetupEmail = generateAccountSetupEmail(student, user, setupDate);
       
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: user.email,
-        subject: accountSetupEmail.subject,
+        subject: "Student Portal Account Setup",
         text: accountSetupEmail.text,
         html: accountSetupEmail.html,
       });
