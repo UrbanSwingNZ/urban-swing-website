@@ -43,13 +43,11 @@ exports.refreshSpotifyToken = refreshSpotifyToken;
 const { 
   sendNewStudentEmail, 
   sendAccountSetupEmail,
-  sendTestEmail,
   sendMerchOrderEmail
 } = require('./email-notifications');
 
 exports.sendNewStudentEmail = sendNewStudentEmail;
 exports.sendAccountSetupEmail = sendAccountSetupEmail;
-exports.sendTestEmail = sendTestEmail;
 exports.sendMerchOrderEmail = sendMerchOrderEmail;
 
 // ========================================
