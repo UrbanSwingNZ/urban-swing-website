@@ -17,7 +17,7 @@ Contains email templates for new student registrations:
   - Returns: `{ html, text }`
   - Used in: `sendNewStudentEmail` function
 
-### `account-setup-email.js`
+### `student-portal-setup-email.js`
 Contains email template for existing students setting up portal accounts:
 
 - **`generateAccountSetupEmail(student, user, setupDate)`**
@@ -39,7 +39,7 @@ Import the required email generators in `index.js`:
 
 ```javascript
 const { generateAdminNotificationEmail, generateWelcomeEmail } = require('./emails/new-student-emails');
-const { generateAccountSetupEmail } = require('./emails/account-setup-email');
+const { generateAccountSetupEmail } = require('./emails/student-portal-setup-email');
 const { generateErrorNotificationEmail } = require('./emails/error-notification-email');
 ```
 
