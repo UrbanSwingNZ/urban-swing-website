@@ -48,6 +48,7 @@ async function createStudent(formData) {
             email: formData.email.toLowerCase().trim(),
             phoneNumber: formData.phoneNumber,
             pronouns: formData.pronouns || '',
+            referral: formData.referral || '',
             over16Confirmed: formData.over16Confirmed,
             termsAccepted: formData.termsAccepted,
             emailConsent: formData.emailConsent,

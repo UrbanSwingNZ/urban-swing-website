@@ -332,6 +332,7 @@ async function processRegistrationWithPayment(formData) {
                 lastName: formData.lastName,
                 phoneNumber: formData.phoneNumber,
                 pronouns: formData.pronouns,
+                referral: formData.referral,
                 over16Confirmed: formData.over16Confirmed,
                 termsAccepted: formData.termsAccepted,
                 emailConsent: formData.emailConsent,
