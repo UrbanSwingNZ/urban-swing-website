@@ -10,6 +10,9 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const nodemailer = require("nodemailer");
 const {generateMerchOrderEmail} = require("./emails/merch-order-notification");
+const {generateAdminNotificationEmail, generateWelcomeEmail} = require("./emails/new-student-emails");
+const {generateAccountSetupEmail} = require("./emails/student-portal-setup-email");
+const {generateErrorNotificationEmail} = require("./emails/error-notification-email");
 
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
@@ -18,92 +21,6 @@ const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
 const getFirestore = () => {
   return admin.firestore();
 };
-
-/**
- * Fetches an email template from Firestore and renders it with variables
- * @param {string} templateId - The template document ID (e.g., 'admin-notification')
- * @param {Object} variables - Key-value pairs to replace in the template
- * @returns {Promise<{subject: string, text: string, html: string}>}
- */
-async function renderEmailTemplate(templateId, variables) {
-  const db = getFirestore();
-  const templateDoc = await db.collection('emailTemplates').doc(templateId).get();
-  
-  if (!templateDoc.exists) {
-    throw new Error(`Email template '${templateId}' not found`);
-  }
-  
-  const template = templateDoc.data();
-  let subject = template.subject || '';
-  let textContent = template.textTemplate || template.textContent || '';
-  let htmlContent = template.htmlTemplate || template.htmlContent || '';
-  
-  // Replace all variables - handles both {{var}} and ${var} formats
-  Object.entries(variables).forEach(([key, value]) => {
-    // Handle both placeholder formats
-    const doubleBracePlaceholder = `{{${key}}}`;
-    const dollarBracePlaceholder = `\${${key}}`;
-    
-    let stringValue;
-    if (typeof value === 'boolean') {
-      stringValue = value;
-    } else {
-      stringValue = value !== null && value !== undefined ? String(value) : '';
-    }
-    
-    // Replace simple placeholders
-    subject = subject.split(doubleBracePlaceholder).join(stringValue);
-    subject = subject.split(dollarBracePlaceholder).join(stringValue);
-    
-    textContent = textContent.split(doubleBracePlaceholder).join(stringValue);
-    textContent = textContent.split(dollarBracePlaceholder).join(stringValue);
-    
-    htmlContent = htmlContent.split(doubleBracePlaceholder).join(stringValue);
-    htmlContent = htmlContent.split(dollarBracePlaceholder).join(stringValue);
-  });
-  
-  // Handle conditional expressions ${var ? 'yes' : 'no'}
-  Object.entries(variables).forEach(([key, value]) => {
-    // Ternary with single quotes
-    const ternaryRegex = new RegExp(`\\$\\{${key.replace(/\./g, '\\.')}\\s*\\?\\s*'([^']*)'\\s*:\\s*'([^']*)'\\}`, 'g');
-    const ternaryReplacement = value ? '$1' : '$2';
-    htmlContent = htmlContent.replace(ternaryRegex, (match, trueVal, falseVal) => value ? trueVal : falseVal);
-    textContent = textContent.replace(ternaryRegex, (match, trueVal, falseVal) => value ? trueVal : falseVal);
-    
-    // OR operator with single quotes
-    const orRegex = new RegExp(`\\$\\{${key.replace(/\./g, '\\.')}\\s*\\|\\|\\s*'([^']*)'\\}`, 'g');
-    htmlContent = htmlContent.replace(orRegex, (match, defaultVal) => value || defaultVal);
-    textContent = textContent.replace(orRegex, (match, defaultVal) => value || defaultVal);
-  });
-  
-  // Handle math expressions like ${casualRate * 5 - fiveClassPrice}
-  const mathRegex = /\$\{([^}]+)\}/g;
-  htmlContent = htmlContent.replace(mathRegex, (match, expression) => {
-    try {
-      // Create a safe evaluation context with only the variables
-      const evalContext = {...variables};
-      // Replace variable names in the expression with their values
-      let evalExpression = expression;
-      Object.entries(variables).forEach(([key, value]) => {
-        // Use word boundaries to avoid partial matches
-        const regex = new RegExp(`\\b${key.replace(/\./g, '\\.')}\\b`, 'g');
-        evalExpression = evalExpression.replace(regex, JSON.stringify(value));
-      });
-      // Evaluate the expression
-      const result = eval(evalExpression);
-      return result;
-    } catch (e) {
-      // If evaluation fails, return the original match
-      return match;
-    }
-  });
-  
-  return {
-    subject,
-    text: textContent,
-    html: htmlContent
-  };
-}
 
 /**
  * Send email notification when a new student registers
@@ -213,38 +130,33 @@ exports.sendNewStudentEmail = onDocumentCreated(
       const hasUserAccount = !userSnapshot.empty;
       logger.info(`User account exists for student ${studentId}: ${hasUserAccount}`);
 
-      // Generate email content using Firestore templates
-      const adminEmail = await renderEmailTemplate('admin-notification', {
-        'student.firstName': student.firstName,
-        'student.lastName': student.lastName,
-        'student.email': student.email,
-        'student.phoneNumber': student.phoneNumber || student.phone || 'N/A',
-        'student.pronouns': student.pronouns || 'Not specified',
-        'student.emailConsent': student.emailConsent,
-        studentId: studentId,
-        registeredAt: registeredAt,
-        casualRate: casualRate,
-        studentRate: studentRate,
-        fiveClassPrice: fiveClassPrice,
-        tenClassPrice: tenClassPrice
-      });
+      // Generate admin notification email using JavaScript generator
+      const adminEmail = generateAdminNotificationEmail(
+        student, 
+        studentId, 
+        registeredAt,
+        casualRate,
+        studentRate,
+        fiveClassPrice,
+        tenClassPrice
+      );
       
-      const welcomeEmail = await renderEmailTemplate('welcome-student', {
-        'student.firstName': student.firstName,
-        firstName: student.firstName,
-        casualRate: casualRate,
-        studentRate: studentRate,
-        fiveClassPrice: fiveClassPrice,
-        tenClassPrice: tenClassPrice,
-        portalAccess: hasUserAccount ? 'Yes - you can log in at urbanswing.co.nz/student-portal' : 'Not yet - you\'ll receive login details after your first payment'
-      });
+      // Generate welcome email using JavaScript generator
+      const welcomeEmail = generateWelcomeEmail(
+        student,
+        casualRate,
+        studentRate,
+        fiveClassPrice,
+        tenClassPrice,
+        hasUserAccount
+      );
 
       // Send admin notification email
       try {
         await transporter.sendMail({
           from: '"Urban Swing" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: adminEmail.subject,
+          subject: "New Student Registration",
           text: adminEmail.text,
           html: adminEmail.html,
         });
@@ -258,7 +170,7 @@ exports.sendNewStudentEmail = onDocumentCreated(
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
-        subject: welcomeEmail.subject,
+        subject: "Welcome to Urban Swing!",
         text: welcomeEmail.text,
         html: welcomeEmail.html,
       });
@@ -281,28 +193,20 @@ exports.sendNewStudentEmail = onDocumentCreated(
           },
         });
         
-        const errorEmail = await renderEmailTemplate('error-notification', {
-          'student.firstName': student.firstName,
-          'student.lastName': student.lastName,
-          'student.email': student.email,
-          firstName: student.firstName,
-          lastName: student.lastName,
-          email: student.email,
-          studentId: studentId,
-          errorType: 'Failed to send student welcome email',
-          errorMessage: error.message,
-          errorStack: error.stack || 'No stack trace available',
-          timestamp: new Date().toLocaleString('en-NZ', {
-            dateStyle: 'full',
-            timeStyle: 'long',
-            timeZone: 'Pacific/Auckland'
-          })
-        });
+        const errorEmail = generateErrorNotificationEmail(
+          student,
+          studentId,
+          {
+            type: 'Failed to send student welcome email',
+            message: error.message,
+            stack: error.stack || 'No stack trace available'
+          }
+        );
         
         await transporter.sendMail({
           from: '"Urban Swing System" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: errorEmail.subject,
+          subject: "Email Error Notification",
           text: errorEmail.text,
           html: errorEmail.html,
         });
@@ -374,21 +278,12 @@ exports.sendAccountSetupEmail = onDocumentCreated(
         minute: '2-digit'
       });
       
-      const accountSetupEmail = await renderEmailTemplate('account-setup', {
-        'student.firstName': student.firstName,
-        'student.lastName': student.lastName,
-        'user.email': user.email,
-        firstName: student.firstName,
-        lastName: student.lastName,
-        email: user.email,
-        setupDate: setupDate,
-        portalUrl: 'https://urbanswing.co.nz/student-portal'
-      });
+      const accountSetupEmail = generateAccountSetupEmail(student, user, setupDate);
       
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: user.email,
-        subject: accountSetupEmail.subject,
+        subject: "Student Portal Account Setup",
         text: accountSetupEmail.text,
         html: accountSetupEmail.html,
       });
@@ -399,62 +294,6 @@ exports.sendAccountSetupEmail = onDocumentCreated(
     } catch (error) {
       logger.error("Error sending account setup email:", error);
       return null;
-    }
-  }
-);
-
-/**
- * Send test email from admin email template manager
- * Restricted to dance@urbanswing.co.nz only
- */
-exports.sendTestEmail = onCall(
-  { 
-    region: 'us-central1',
-    cors: true,
-    invoker: 'public',
-    secrets: [emailPassword]
-  },
-  async (request) => {
-    try {
-      if (!request.auth) {
-        throw new Error('Authentication required');
-      }
-
-      if (request.auth.token.email !== 'dance@urbanswing.co.nz') {
-        throw new Error('Unauthorized: This function is restricted to dance@urbanswing.co.nz');
-      }
-
-      const { to, subject, html, text, templateId } = request.data;
-
-      if (!to || !subject || !html) {
-        throw new Error('Missing required fields: to, subject, html');
-      }
-
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'dance@urbanswing.co.nz',
-          pass: emailPassword.value()
-        }
-      });
-
-      await transporter.sendMail({
-        from: 'Urban Swing <dance@urbanswing.co.nz>',
-        to: to,
-        subject: subject,
-        text: text || 'This is a test email from Urban Swing email template manager.',
-        html: html
-      });
-
-      logger.info(`Test email sent successfully for template: ${templateId}`);
-
-      return {
-        success: true,
-        message: 'Test email sent successfully'
-      };
-    } catch (error) {
-      logger.error('Error sending test email:', error);
-      throw new Error(`Failed to send test email: ${error.message}`);
     }
   }
 );
