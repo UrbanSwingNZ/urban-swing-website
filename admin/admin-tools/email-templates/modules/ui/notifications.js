@@ -32,5 +32,8 @@ export function showError(message) {
  * Show loading spinner
  */
 export function showLoading(show) {
-    document.getElementById('loading-spinner').style.display = show ? 'flex' : 'none';
+    const spinner = document.getElementById('loading-spinner');
+    if (spinner) {
+        spinner.style.display = show ? 'flex' : 'none';
+    }
 }
