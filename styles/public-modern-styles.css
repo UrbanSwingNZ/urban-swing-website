@@ -209,12 +209,6 @@ table {
   box-shadow: var(--shadow-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  .under-construction-logo {
-    content: url('/images/under-construction-dark-mode.jpg');
-  }
-}
-
 /* Mobile Responsive Adjustments for Legacy Components */
 @media (max-width: 768px) {
   /* Show and position mobile hamburger menu button */

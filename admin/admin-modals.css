@@ -93,18 +93,6 @@
     box-shadow: 0 5px 15px var(--bg-error-strong);
 }
 
-/* Dark mode button styles */
-@media (prefers-color-scheme: dark) {
-    .btn-secondary {
-        background: var(--card-dark);
-        border-color: var(--border-color);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--bg-card-dark);
-    }
-}
-
 /* ========================================
    MODAL STYLES
    ======================================== */
@@ -134,12 +122,6 @@
     box-shadow: 0 20px 60px var(--shadow-text);
     animation: modalSlideIn 0.3s ease;
     overflow: hidden; /* Prevent content overflow */
-}
-
-@media (prefers-color-scheme: dark) {
-    .modal-content {
-        background: var(--card-dark);
-    }
 }
 
 @keyframes modalSlideIn {
@@ -273,12 +255,6 @@
     background: var(--card-light);
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-xs);
-}
-
-@media (prefers-color-scheme: dark) {
-    .duplicate-student {
-        background: var(--card-dark);
-    }
 }
 
 .duplicate-student:last-child {
