@@ -963,12 +963,6 @@ textarea.form-control {
     box-shadow: 0 4px 6px var(--bg-overlay-dark);
 }
 
-@media (prefers-color-scheme: dark) {
-    .search-results-dropdown {
-        background: var(--card-dark);
-    }
-}
-
 .search-results-dropdown .student-result {
     padding: var(--space-sm) 16px;
     cursor: pointer;

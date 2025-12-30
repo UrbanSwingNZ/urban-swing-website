@@ -246,23 +246,6 @@
   --bg-stripe-purple: linear-gradient(135deg, rgba(139, 69, 255, 0.05), rgba(139, 69, 255, 0.1));
 }
 
-
-/* ========================================
-   DARK MODE OVERRIDES
-   Applied when system prefers dark color scheme
-   ======================================== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text: var(--text-dark);
-    --color-text-muted: var(--gray-650);
-    --color-background: var(--bg-card-dark);
-    --color-border: var(--border-dark);
-    --color-input-bg: var(--bg-dark);
-    --color-shadow: rgba(0, 0, 0, 0.4);
-  }
-}
-
-
 /* ========================================
    BADGE/PILL COLORS
    Pre-configured color combinations for badges
@@ -322,7 +305,6 @@
    4. For text, use --text-* variants
    5. For backgrounds, use --bg-* variants
    6. For borders, use --border-* variants
-   7. Theme-aware colors (--color-*) automatically adjust for dark mode
    
    Example:
      .my-element {

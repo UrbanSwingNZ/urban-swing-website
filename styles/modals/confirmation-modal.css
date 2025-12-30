@@ -64,25 +64,3 @@
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
-
-/* ========================================
-   DARK MODE SUPPORT
-   ======================================== */
-
-@media (prefers-color-scheme: dark) {
-    .modal-danger .modal-header {
-        background: var(--error-dark);
-    }
-
-    .student-info-delete {
-        background: var(--gray-800);
-    }
-
-    .confirmation-message {
-        color: var(--gray-300);
-    }
-
-    .confirmation-message strong {
-        color: var(--white);
-    }
-}

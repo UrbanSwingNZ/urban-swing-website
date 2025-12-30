@@ -31,15 +31,6 @@ html, body {
 /* Import colors from centralized system */
 @import url('../../styles/base/colors.css');
 
-/* Import parent styles if needed */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: var(--bg-dark);
-    --text-color: var(--gray-450);
-  }
-}
-
 /* ========================================
    LAYOUT
    ======================================== */
@@ -71,12 +62,6 @@ html, body {
   box-shadow: 0 10px 40px var(--shadow-light);
   text-align: center;
   max-width: 500px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .connect-card {
-    background: var(--card-dark);
-  }
 }
 
 .spotify-icon-large {

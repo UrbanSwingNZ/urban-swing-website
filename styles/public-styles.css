@@ -50,26 +50,11 @@
 }
 
 
-/* Dark Mode Styles (Automatically applied via media query) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: var(--bg-dark);
-    --text-color: var(--text-white);
-  }
-}
-
 /* Under construction logo */
 .under-construction-logo {
   content: url('/images/under-construction-light-mode.jpg');
   width: 300px;
   height: auto;
-}
-
-/* Dark mode under construction logo */
-@media (prefers-color-scheme: dark) {
-  .under-construction-logo {
-    content: url('/images/under-construction-dark-mode.jpg');
-  }
 }
 
 img {

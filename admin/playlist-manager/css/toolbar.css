@@ -24,12 +24,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .tracks-toolbar {
-    border-bottom-color: var(--hover-dark);
-  }
-}
-
 .tracks-toolbar .search-box {
   flex: 1 1 300px;
   max-width: 400px;
@@ -44,13 +38,6 @@
 @media (max-width: 768px) {
   .tracks-toolbar .search-box {
     display: none;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .tracks-toolbar .search-box {
-    border-color: var(--hover-dark);
-    background: var(--card-dark);
   }
 }
 
