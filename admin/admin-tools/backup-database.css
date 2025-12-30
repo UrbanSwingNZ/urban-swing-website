@@ -29,12 +29,6 @@
     color: var(--text-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-    .info {
-        background: var(--bg-info-medium);
-    }
-}
-
 .info h3 {
     margin-bottom: var(--space-sm);
     display: flex;
@@ -76,12 +70,6 @@
     transition: all var(--transition-base);
 }
 
-@media (prefers-color-scheme: dark) {
-    .select-all {
-        background: var(--card-dark);
-    }
-}
-
 .select-all:hover {
     border-color: var(--purple-primary);
 }
@@ -115,12 +103,6 @@
     padding: var(--space-md);
     transition: all var(--transition-base);
     cursor: pointer;
-}
-
-@media (prefers-color-scheme: dark) {
-    .collection-card {
-        background: var(--card-dark);
-    }
 }
 
 .collection-card:hover {
@@ -179,12 +161,6 @@
     text-align: center;
     border: 2px solid var(--border-light);
     transition: all var(--transition-base);
-}
-
-@media (prefers-color-scheme: dark) {
-    .stat-card {
-        background: var(--card-dark);
-    }
 }
 
 .stat-card:hover {
@@ -320,12 +296,6 @@
     padding: var(--space-lg);
     margin: var(--space-lg) 0;
     border: 2px solid var(--success);
-}
-
-@media (prefers-color-scheme: dark) {
-    .backup-info {
-        background: var(--card-dark);
-    }
 }
 
 .backup-info h3 {
