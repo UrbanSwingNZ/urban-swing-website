@@ -168,6 +168,7 @@ exports.createStudentWithPayment = onRequest(
           email: email,
           phoneNumber: data.phoneNumber?.trim() || null,
           pronouns: data.pronouns?.trim() || '',
+          referral: data.referral?.trim() || '',
           over16Confirmed: data.over16Confirmed || false,
           termsAccepted: data.termsAccepted || false,
           emailConsent: data.emailConsent !== undefined ? data.emailConsent : true,

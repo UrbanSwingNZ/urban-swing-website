@@ -100,12 +100,22 @@ async function handleFormSubmit(e) {
  * Get form data
  */
 function getFormData() {
+    const referralSource = document.querySelector('input[name="referralSource"]:checked')?.value || '';
+    let referralValue = referralSource;
+    
+    // If "Other" is selected, append the text from the other field
+    if (referralSource === 'Other') {
+        const referralOther = document.getElementById('referralOther').value.trim();
+        referralValue = referralOther ? `Other: ${referralOther}` : 'Other';
+    }
+    
     return {
         firstName: document.getElementById('firstName').value.trim(),
         lastName: document.getElementById('lastName').value.trim(),
         email: document.getElementById('email').value.trim(),
         phoneNumber: document.getElementById('phoneNumber').value.trim(),
         pronouns: document.getElementById('pronouns').value,
+        referral: referralValue,
         password: document.getElementById('password').value,
         confirmPassword: document.getElementById('confirmPassword').value,
         over16Confirmed: document.getElementById('over16Confirmed').checked,
@@ -148,4 +158,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
     }
+    
+    // Handle referral source "Other" option
+    const referralRadios = document.querySelectorAll('input[name="referralSource"]');
+    const referralOtherContainer = document.getElementById('referral-other-container');
+    const referralOtherInput = document.getElementById('referralOther');
+    
+    referralRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.value === 'Other') {
+                referralOtherContainer.style.display = 'block';
+            } else {
+                referralOtherContainer.style.display = 'none';
+                referralOtherInput.value = '';
+            }
+        });
+    });
 });

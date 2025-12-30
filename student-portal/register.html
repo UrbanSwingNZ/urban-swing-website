@@ -139,6 +139,70 @@
                     <small class="form-help">Optional - helps us address you correctly</small>
                 </div>
 
+                <!-- How did you hear about us -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-bullhorn"></i> How did you hear about us?
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input 
+                                type="radio" 
+                                id="referral-referral" 
+                                name="referralSource" 
+                                value="Referral"
+                            >
+                            <span>Referral</span>
+                        </label>
+                        <label class="radio-label">
+                            <input 
+                                type="radio" 
+                                id="referral-google" 
+                                name="referralSource" 
+                                value="Google Search"
+                            >
+                            <span>Google Search</span>
+                        </label>
+                        <label class="radio-label">
+                            <input 
+                                type="radio" 
+                                id="referral-social" 
+                                name="referralSource" 
+                                value="Social Media Advertising"
+                            >
+                            <span>Social Media Advertising</span>
+                        </label>
+                        <label class="radio-label">
+                            <input 
+                                type="radio" 
+                                id="referral-word-of-mouth" 
+                                name="referralSource" 
+                                value="Word of Mouth"
+                            >
+                            <span>Word of Mouth</span>
+                        </label>
+                        <label class="radio-label">
+                            <input 
+                                type="radio" 
+                                id="referral-other" 
+                                name="referralSource" 
+                                value="Other"
+                            >
+                            <span>Other</span>
+                        </label>
+                    </div>
+                    <div id="referral-other-container" class="form-group" style="display: none; margin-top: 10px;">
+                        <input 
+                            type="text" 
+                            id="referralOther" 
+                            name="referralOther" 
+                            placeholder="Please specify how you heard about us"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div id="referralSource-error" class="error-message" style="display: none;"></div>
+                </div>
+
                 <!-- Age Confirmation -->
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
