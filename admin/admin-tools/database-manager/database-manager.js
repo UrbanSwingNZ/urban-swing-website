@@ -11,6 +11,8 @@ let currentPage = 1;
 let documentsPerPage = 20;
 let allDocuments = [];
 let filteredDocuments = [];
+let authUsers = [];
+let filteredAuthUsers = [];
 
 // Field ordering configuration
 const fieldOrders = {
@@ -61,8 +63,11 @@ async function init() {
     // Wait for Firebase to be ready
     await waitForFirebase();
     
-    // Load collections
-    await loadCollections();
+    // Load auth users and collections
+    await Promise.all([
+        loadAuthUsers(),
+        loadCollections()
+    ]);
     
     // Set up event listeners
     setupEventListeners();
@@ -90,6 +95,10 @@ function waitForFirebase() {
  * Set up event listeners
  */
 function setupEventListeners() {
+    // Auth Users
+    document.getElementById('refresh-auth-users-btn').addEventListener('click', loadAuthUsers);
+    document.getElementById('auth-user-search').addEventListener('input', handleAuthUserSearch);
+    
     // Collections
     document.getElementById('refresh-collections-btn').addEventListener('click', loadCollections);
     
@@ -107,6 +116,198 @@ function setupEventListeners() {
     document.getElementById('cancel-edit-btn').addEventListener('click', hideDocumentEditor);
     document.getElementById('add-field-btn').addEventListener('click', addFieldRow);
 }
+
+// ========================================
+// AUTH USERS MANAGEMENT
+// ========================================
+
+/**
+ * Load authentication users from Firebase Auth
+ */
+async function loadAuthUsers() {
+    const container = document.getElementById('auth-users-container');
+    container.innerHTML = '<loading-spinner></loading-spinner>';
+    
+    try {
+        const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+        const result = await manageAuthUsers({ operation: 'list', maxResults: 1000 });
+        
+        if (result.data.users && result.data.users.length > 0) {
+            authUsers = result.data.users;
+            filteredAuthUsers = [...authUsers];
+            displayAuthUsers();
+        } else {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-user-shield"></i>
+                    <p>No authentication users found</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading auth users:', error);
+        container.innerHTML = `
+            <div class="error-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error loading authentication users: ${error.message}</p>
+            </div>
+        `;
+        showSnackbar('Error loading auth users: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Display authentication users
+ */
+function displayAuthUsers() {
+    const container = document.getElementById('auth-users-container');
+    
+    if (filteredAuthUsers.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>No users match your search</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filteredAuthUsers.map(user => {
+        const isActive = !user.disabled;
+        const statusText = isActive ? 'Active' : 'Inactive';
+        const lastSignIn = user.lastSignIn ? new Date(user.lastSignIn).toLocaleDateString() : 'Never';
+        
+        return `
+            <div class="auth-user-card">
+                <div class="auth-user-header">
+                    <div class="auth-user-info">
+                        <h4>${user.email || 'No email'}</h4>
+                        <p class="auth-user-uid">${user.uid}</p>
+                    </div>
+                    <div class="auth-user-status-toggle">
+                        <label class="toggle-switch" title="${isActive ? 'Click to disable' : 'Click to enable'}">
+                            <input type="checkbox" ${isActive ? 'checked' : ''} data-user-uid="${user.uid}" class="status-toggle-input" onchange="toggleAuthUserStatus('${user.uid}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="status-label ${isActive ? 'active' : 'inactive'}">${statusText}</span>
+                    </div>
+                </div>
+                <div class="auth-user-details">
+                    <div class="auth-user-detail">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Created: ${new Date(user.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div class="auth-user-detail">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Last Sign-In: ${lastSignIn}</span>
+                    </div>
+                    ${user.emailVerified ? '<div class="auth-user-detail"><i class="fas fa-check-circle" style="color: var(--success);"></i><span>Email Verified</span></div>' : ''}
+                </div>
+                <div class="auth-user-actions">
+                    <button class="btn-danger btn-sm" onclick="deleteAuthUser('${user.uid}', '${user.email}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Handle auth user search
+ */
+function handleAuthUserSearch(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    
+    if (searchTerm) {
+        filteredAuthUsers = authUsers.filter(user => {
+            return (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                   user.uid.toLowerCase().includes(searchTerm);
+        });
+    } else {
+        filteredAuthUsers = [...authUsers];
+    }
+    
+    displayAuthUsers();
+}
+
+/**
+ * Toggle authentication user status (enable/disable)
+ */
+window.toggleAuthUserStatus = async function(uid, isActive) {
+    try {
+        const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+        const operation = isActive ? 'enable' : 'disable';
+        await manageAuthUsers({ operation, uid });
+        
+        // Update local state
+        const user = authUsers.find(u => u.uid === uid);
+        if (user) {
+            user.disabled = !isActive;
+        }
+        const filteredUser = filteredAuthUsers.find(u => u.uid === uid);
+        if (filteredUser) {
+            filteredUser.disabled = !isActive;
+        }
+        
+        // Update UI - just update the status label
+        const card = document.querySelector(`[data-user-uid="${uid}"]`).closest('.auth-user-card');
+        if (card) {
+            const statusLabel = card.querySelector('.status-label');
+            if (statusLabel) {
+                statusLabel.textContent = isActive ? 'Active' : 'Inactive';
+                statusLabel.className = `status-label ${isActive ? 'active' : 'inactive'}`;
+            }
+        }
+        
+        showSnackbar(`User ${isActive ? 'enabled' : 'disabled'} successfully`, 'success');
+    } catch (error) {
+        console.error('Error toggling user status:', error);
+        showSnackbar('Error updating user status: ' + error.message, 'error');
+        
+        // Revert the toggle
+        const toggleInput = document.querySelector(`[data-user-uid="${uid}"]`);
+        if (toggleInput) {
+            toggleInput.checked = !isActive;
+        }
+    }
+};
+
+/**
+ * Delete an authentication user
+ */
+window.deleteAuthUser = async function(uid, email) {
+    const modal = new ConfirmationModal({
+        title: 'Delete Authentication User',
+        message: `
+            <p>Are you sure you want to delete this authentication user?</p>
+            <p style="margin-top: 1rem;"><strong>Email:</strong> ${email}</p>
+            <p style="margin-top: 0.5rem;"><strong>UID:</strong> <code>${uid}</code></p>
+            <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone. The user will no longer be able to sign in.</p>
+        `,
+        icon: 'fas fa-exclamation-triangle',
+        confirmText: 'Delete',
+        confirmClass: 'btn-danger',
+        variant: 'danger',
+        onConfirm: async () => {
+            try {
+                const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+                await manageAuthUsers({ operation: 'delete', uid });
+                
+                showSnackbar('Authentication user deleted successfully', 'success');
+                await loadAuthUsers();
+            } catch (error) {
+                console.error('Error deleting auth user:', error);
+                showSnackbar('Error deleting auth user: ' + error.message, 'error');
+            }
+        }
+    });
+    modal.show();
+};
+
+// ========================================
+// COLLECTIONS MANAGEMENT
+// ========================================
 
 /**
  * Load collections from Firestore via Cloud Function
@@ -356,6 +557,7 @@ window.deleteDocument = function(docId) {
             <p>Are you sure you want to delete this document?</p>
             <p style="margin-top: 1rem;"><strong>Document ID:</strong> <code>${docId}</code></p>
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone.</p>
+            ${currentCollection === 'users' ? '<p style="margin-top: 1rem; color: var(--warning);"><strong>Note:</strong> This will also delete the corresponding authentication user if one exists.</p>' : ''}
         `,
         icon: 'fas fa-exclamation-triangle',
         confirmText: 'Delete',
@@ -363,10 +565,26 @@ window.deleteDocument = function(docId) {
         variant: 'danger',
         onConfirm: async () => {
             try {
+                // Delete Firestore document
                 await window.db.collection(currentCollection).doc(docId).delete();
                 
-                // Show success message
-                showSnackbar('Document deleted successfully', 'success');
+                // If deleting from 'users' collection, also delete the Auth user (cascade delete)
+                if (currentCollection === 'users') {
+                    try {
+                        const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+                        await manageAuthUsers({ operation: 'delete', uid: docId });
+                        showSnackbar('Document and authentication user deleted successfully', 'success');
+                    } catch (authError) {
+                        // Auth user might not exist, which is fine
+                        console.warn('Auth user not found or already deleted:', authError);
+                        showSnackbar('Document deleted successfully (no auth user found)', 'success');
+                    }
+                    
+                    // Refresh auth users list
+                    await loadAuthUsers();
+                } else {
+                    showSnackbar('Document deleted successfully', 'success');
+                }
                 
                 // Reload documents
                 await loadDocuments(currentCollection);
