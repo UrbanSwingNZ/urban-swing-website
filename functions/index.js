@@ -82,3 +82,10 @@ exports.processConcessionPurchase = processConcessionPurchase;
 const { updateClassDate } = require('./update-class-date');
 
 exports.updateClassDate = updateClassDate;
+
+// ========================================
+// DATABASE MANAGEMENT
+// ========================================
+const { listCollections } = require('./list-collections');
+
+exports.listCollections = listCollections;
