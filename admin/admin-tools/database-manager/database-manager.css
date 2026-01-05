@@ -1,5 +1,6 @@
 @import url('../../../styles/base/colors.css');
 @import url('../../../styles/base/design-tokens.css');
+@import url('../../../styles/base/buttons.css');
 
 /* ========================================
    DATABASE MANAGER STYLES
@@ -185,35 +186,13 @@ section {
     font-family: 'Courier New', monospace;
 }
 
+/* Document Actions - uses .btn-icon from buttons.css */
 .document-actions {
     display: flex;
     gap: var(--space-xs);
 }
 
-.btn-icon {
-    background: none;
-    border: none;
-    padding: var(--space-xs) var(--space-sm);
-    cursor: pointer;
-    border-radius: var(--radius-sm);
-    transition: var(--transition-base);
-    color: var(--text-muted);
-}
-
-.btn-icon:hover {
-    background: var(--background-light);
-    color: var(--text-primary);
-}
-
-.btn-icon.btn-edit:hover {
-    color: var(--blue-primary);
-}
-
-.btn-icon.btn-delete:hover {
-    color: var(--error);
-    background: var(--error-light-bg);
-}
-
+/* Document Preview */
 .document-preview {
     color: var(--text-muted);
     font-size: 0.9rem;
