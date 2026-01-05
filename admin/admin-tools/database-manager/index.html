@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Database Manager - Urban Swing Admin Tools</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="database-manager.css">
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+</head>
+<body>
+    <!-- Database Manager Page -->
+    <div id="database-manager-container" class="dashboard-container">
+
+        <main class="dashboard-main">
+            <div class="page-intro">
+                <p>View, edit, and manage your Firestore database collections and documents</p>
+                <div class="warning-banner">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning:</strong> Changes made here directly affect your production database. Use with caution.
+                </div>
+            </div>
+
+            <!-- Collection Selector Section -->
+            <section class="collection-selector-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-database"></i> Collections</h2>
+                        <p class="section-description">Select a collection to manage</p>
+                    </div>
+                    <button id="refresh-collections-btn" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="collections-container" class="collections-container">
+                    <loading-spinner></loading-spinner>
+                </div>
+            </section>
+
+            <!-- Documents Section -->
+            <section id="documents-section" class="documents-section" style="display: none;">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-file-alt"></i> Documents in <span id="current-collection-name"></span></h2>
+                        <p class="section-description">Total: <span id="document-count">0</span> documents</p>
+                    </div>
+                    <div class="section-actions">
+                        <button id="add-document-btn" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Document
+                        </button>
+                        <button id="refresh-documents-btn" class="btn-secondary">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search & Filter -->
+                <div class="search-bar">
+                    <input type="text" id="document-search" placeholder="Search documents by ID..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+
+                <div id="documents-container" class="documents-container">
+                    <loading-spinner></loading-spinner>
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination-container" class="pagination-container" style="display: none;">
+                    <button id="prev-page-btn" class="btn-secondary" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span class="pagination-info">
+                        Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+                    </span>
+                    <button id="next-page-btn" class="btn-secondary" disabled>
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Document Editor Section -->
+            <section id="document-editor-section" class="document-editor-section" style="display: none;">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-edit"></i> <span id="editor-mode">Edit</span> Document</h2>
+                        <p class="section-description">
+                            Collection: <span id="editor-collection-name"></span> / 
+                            Document ID: <span id="editor-document-id"></span>
+                        </p>
+                    </div>
+                    <div class="section-actions">
+                        <button id="save-document-btn" class="btn-primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button id="cancel-edit-btn" class="btn-cancel">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <!-- Document ID Input (for new documents) -->
+                    <div id="document-id-input-container" class="form-group" style="display: none;">
+                        <label for="new-document-id">Document ID</label>
+                        <input type="text" id="new-document-id" class="form-input" placeholder="Leave empty for auto-generated ID">
+                        <small class="form-hint">Optional: Specify a custom ID or leave empty for Firestore to generate one</small>
+                    </div>
+
+                    <!-- Field Editor -->
+                    <div class="fields-container" id="fields-container">
+                        <!-- Fields will be dynamically added here -->
+                    </div>
+
+                    <!-- Add Field Button -->
+                    <button id="add-field-btn" class="btn-secondary btn-add-field">
+                        <i class="fas fa-plus-circle"></i> Add Field
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Database Manager v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Firebase Config & Database Manager Logic -->
+    <script src="../../../config/firebase-config.js"></script>
+    
+    <!-- Admin Header Dependencies -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../../js/header-config.js"></script>
+    <script src="../../js/header-configurator.js"></script>
+    <script src="../../js/mobile-nav.js"></script>
+    <script src="../../admin-header.js"></script>
+    
+    <!-- Modal Components -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    
+    <!-- Database Manager Logic -->
+    <script type="module" src="database-manager.js"></script>
+</body>
+</html>
