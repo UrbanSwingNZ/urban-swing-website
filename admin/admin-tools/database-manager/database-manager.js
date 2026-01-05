@@ -14,7 +14,11 @@ let filteredDocuments = [];
 
 // Field ordering configuration
 const fieldOrders = {
-    students: ['firstName', 'lastName', 'email', 'phoneNumber', 'pronouns', 'emailConsent', 'over16Confirmed', 'termsAccepted', 'referral', 'adminNotes']
+    students: ['firstName', 'lastName', 'email', 'phoneNumber', 'pronouns', 'emailConsent', 'over16Confirmed', 'termsAccepted', 'referral', 'adminNotes'],
+    checkins: ['studentId', 'studentName', 'checkinDate', 'entryType', 'paymentMethod', 'amountPaid'],
+    concessionBlocks: ['studentId', 'studentName', 'packageId', 'packageName', 'purchaseDate', 'price', 'paymentMethod', 'originalQuantity', 'remainingQuantity', 'status', 'expiryDate'],
+    transactions: ['studentId', 'transactionDate', 'type', 'amountPaid', 'paymentMethod', 'createdAt', 'invoiced'],
+    users: ['studentId', 'firstName', 'lastName', 'email', 'role']
 };
 
 /**
