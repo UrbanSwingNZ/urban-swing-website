@@ -626,6 +626,32 @@ window.deleteDocument = async function(docId) {
         }
     }
     
+    // If deleting from concessionBlocks collection, check for related transaction
+    let concessionBlockDoc = null;
+    if (currentCollection === 'concessionBlocks') {
+        try {
+            // Get the concessionBlock document to check for transactionId
+            const blockSnapshot = await window.db.collection('concessionBlocks').doc(docId).get();
+            if (blockSnapshot.exists) {
+                concessionBlockDoc = blockSnapshot.data();
+                studentId = concessionBlockDoc.studentId;
+                
+                // Get the related transaction if transactionId exists
+                if (concessionBlockDoc.transactionId) {
+                    const transactionDoc = await window.db.collection('transactions').doc(concessionBlockDoc.transactionId).get();
+                    if (transactionDoc.exists) {
+                        relatedTransactions = [{
+                            id: transactionDoc.id,
+                            ...transactionDoc.data()
+                        }];
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('Could not check for related transaction:', error);
+        }
+    }
+    
     const modal = new ConfirmationModal({
         title: 'Delete Document',
         message: `
@@ -633,7 +659,7 @@ window.deleteDocument = async function(docId) {
             <p style="margin-top: 1rem;"><strong>Collection:</strong> <code>${currentCollection}</code></p>
             <p style="margin-top: 0.5rem;"><strong>Document ID:</strong> <code>${docId}</code></p>
             ${currentCollection === 'users' && hasAuthUser ? '<div style="margin-top: 1rem; padding: 0.75rem 0;"><label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;"><input type="checkbox" id="delete-auth-user-checkbox" style="cursor: pointer; margin-top: 0.5rem;"><span>Also delete the corresponding authentication user (user will no longer be able to sign in)</span></label></div>' : ''}
-            ${currentCollection === 'checkins' && relatedTransactions.length > 0 ? `
+            ${(currentCollection === 'checkins' || currentCollection === 'concessionBlocks') && relatedTransactions.length > 0 ? `
                 <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
                     <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Related Transaction${relatedTransactions.length > 1 ? 's' : ''} Found</p>
                     <p style="margin: 0.5rem 0 0 0;">${relatedTransactions.length === 1 ? `Transaction ID: <code>${relatedTransactions[0].id}</code>` : `${relatedTransactions.length} transaction${relatedTransactions.length > 1 ? 's' : ''} with this checkin ID`}</p>
@@ -655,13 +681,19 @@ window.deleteDocument = async function(docId) {
                     </ul>
                 </div>
             ` : ''}
+            ${currentCollection === 'concessionBlocks' && concessionBlockDoc ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Concession Balance Warning</p>
+                    <p style="margin: 0.5rem 0 0 0;">Deleting this concession block may require updating the <code>concessionBalance</code> on student document ${studentId ? `<code>${studentId}</code>` : ''}.</p>
+                </div>
+            ` : ''}
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone.</p>
         `,
         icon: 'fas fa-exclamation-triangle',
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         variant: 'danger',
-        onConfirm: async () => {
+        onConfirm: async () => {(currentCollection === 'checkins' || currentCollection === 'concessionBlocks')
             try {
                 // Check if user wants to delete auth user
                 const deleteAuthUser = currentCollection === 'users' && hasAuthUser && document.getElementById('delete-auth-user-checkbox')?.checked;
