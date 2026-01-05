@@ -277,12 +277,22 @@ window.toggleAuthUserStatus = async function(uid, isActive) {
  * Delete an authentication user
  */
 window.deleteAuthUser = async function(uid, email) {
+    // Check if a corresponding users document exists
+    let hasUsersDoc = false;
+    try {
+        const userDoc = await window.db.collection('users').doc(uid).get();
+        hasUsersDoc = userDoc.exists;
+    } catch (error) {
+        console.warn('Could not check for users document:', error);
+    }
+    
     const modal = new ConfirmationModal({
         title: 'Delete Authentication User',
         message: `
             <p>Are you sure you want to delete this authentication user?</p>
             <p style="margin-top: 1rem;"><strong>Email:</strong> ${email}</p>
             <p style="margin-top: 0.5rem;"><strong>UID:</strong> <code>${uid}</code></p>
+            ${hasUsersDoc ? '<div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-exclamation-triangle" style="color: var(--warning-dark);"></i><span>This will also delete the corresponding document in the <code>users</code> collection.</span></div>' : ''}
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone. The user will no longer be able to sign in.</p>
         `,
         icon: 'fas fa-exclamation-triangle',
@@ -291,11 +301,26 @@ window.deleteAuthUser = async function(uid, email) {
         variant: 'danger',
         onConfirm: async () => {
             try {
+                // Delete authentication user
                 const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
                 await manageAuthUsers({ operation: 'delete', uid });
                 
-                showSnackbar('Authentication user deleted successfully', 'success');
+                // Also delete from users collection if it exists (cascade delete)
+                if (hasUsersDoc) {
+                    try {
+                        await window.db.collection('users').doc(uid).delete();
+                    } catch (firestoreError) {
+                        console.warn('Could not delete users document:', firestoreError);
+                    }
+                }
+                
+                showSnackbar(hasUsersDoc ? 'Authentication user and users document deleted successfully' : 'Authentication user deleted successfully', 'success');
+                
+                // Refresh both lists
                 await loadAuthUsers();
+                if (currentCollection === 'users') {
+                    await loadDocuments('users');
+                }
             } catch (error) {
                 console.error('Error deleting auth user:', error);
                 showSnackbar('Error deleting auth user: ' + error.message, 'error');
@@ -550,14 +575,27 @@ window.editDocument = function(docId) {
 /**
  * Delete document
  */
-window.deleteDocument = function(docId) {
+window.deleteDocument = async function(docId) {
+    // If deleting from users collection, check if Auth user exists
+    let hasAuthUser = false;
+    if (currentCollection === 'users') {
+        try {
+            const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+            const result = await manageAuthUsers({ operation: 'list', maxResults: 1000 });
+            hasAuthUser = result.data.users.some(user => user.uid === docId);
+        } catch (error) {
+            console.warn('Could not check for auth user:', error);
+        }
+    }
+    
     const modal = new ConfirmationModal({
         title: 'Delete Document',
         message: `
             <p>Are you sure you want to delete this document?</p>
-            <p style="margin-top: 1rem;"><strong>Document ID:</strong> <code>${docId}</code></p>
+            <p style="margin-top: 1rem;"><strong>Collection:</strong> <code>${currentCollection}</code></p>
+            <p style="margin-top: 0.5rem;"><strong>Document ID:</strong> <code>${docId}</code></p>
+            ${currentCollection === 'users' && hasAuthUser ? '<div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-exclamation-triangle" style="color: var(--warning-dark);"></i><span>This will also delete the corresponding authentication user. The user will no longer be able to sign in.</span></div>' : ''}
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone.</p>
-            ${currentCollection === 'users' ? '<p style="margin-top: 1rem; color: var(--warning);"><strong>Note:</strong> This will also delete the corresponding authentication user if one exists.</p>' : ''}
         `,
         icon: 'fas fa-exclamation-triangle',
         confirmText: 'Delete',
@@ -569,7 +607,7 @@ window.deleteDocument = function(docId) {
                 await window.db.collection(currentCollection).doc(docId).delete();
                 
                 // If deleting from 'users' collection, also delete the Auth user (cascade delete)
-                if (currentCollection === 'users') {
+                if (currentCollection === 'users' && hasAuthUser) {
                     try {
                         const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
                         await manageAuthUsers({ operation: 'delete', uid: docId });
