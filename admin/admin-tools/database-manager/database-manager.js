@@ -277,9 +277,28 @@ function handleSearch(event) {
     const searchTerm = event.target.value.toLowerCase();
     
     if (searchTerm) {
-        filteredDocuments = allDocuments.filter(doc => 
-            doc.id.toLowerCase().includes(searchTerm)
-        );
+        filteredDocuments = allDocuments.filter(doc => {
+            // Search in document ID
+            if (doc.id.toLowerCase().includes(searchTerm)) {
+                return true;
+            }
+            
+            // Search in field names and values
+            for (const [key, value] of Object.entries(doc.data)) {
+                // Search in field name
+                if (key.toLowerCase().includes(searchTerm)) {
+                    return true;
+                }
+                
+                // Search in field value (convert to string for searching)
+                const valueStr = String(value).toLowerCase();
+                if (valueStr.includes(searchTerm)) {
+                    return true;
+                }
+            }
+            
+            return false;
+        });
     } else {
         filteredDocuments = [...allDocuments];
     }
