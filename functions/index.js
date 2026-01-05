@@ -87,5 +87,7 @@ exports.updateClassDate = updateClassDate;
 // DATABASE MANAGEMENT
 // ========================================
 const { listCollections } = require('./list-collections');
+const { manageAuthUsers } = require('./manage-auth-users');
 
 exports.listCollections = listCollections;
+exports.manageAuthUsers = manageAuthUsers;
