@@ -12,6 +12,44 @@ let documentsPerPage = 20;
 let allDocuments = [];
 let filteredDocuments = [];
 
+// Field ordering configuration
+const fieldOrders = {
+    students: ['firstName', 'lastName', 'email', 'phoneNumber', 'pronouns', 'emailConsent', 'over16Confirmed', 'termsAccepted', 'referral', 'adminNotes']
+};
+
+/**
+ * Sort document fields by priority order, then alphabetically
+ */
+function sortFields(collectionName, fields) {
+    const priorityFields = fieldOrders[collectionName] || [];
+    const fieldEntries = Object.entries(fields);
+    
+    // Separate priority fields and other fields
+    const priority = [];
+    const other = [];
+    
+    fieldEntries.forEach(([key, value]) => {
+        const priorityIndex = priorityFields.indexOf(key);
+        if (priorityIndex !== -1) {
+            priority.push({ key, value, index: priorityIndex });
+        } else {
+            other.push([key, value]);
+        }
+    });
+    
+    // Sort priority fields by their defined order
+    priority.sort((a, b) => a.index - b.index);
+    
+    // Sort other fields alphabetically
+    other.sort(([a], [b]) => a.localeCompare(b));
+    
+    // Combine and return
+    return [
+        ...priority.map(({ key, value }) => [key, value]),
+        ...other
+    ];
+}
+
 /**
  * Initialize the Database Manager
  */
@@ -347,7 +385,8 @@ function showDocumentEditor(doc) {
     fieldsContainer.innerHTML = '';
     
     if (doc) {
-        Object.entries(doc.data).forEach(([key, value]) => {
+        const sortedFields = sortFields(currentCollection, doc.data);
+        sortedFields.forEach(([key, value]) => {
             addFieldRow(key, value);
         });
     } else {
@@ -434,13 +473,21 @@ function createValueInput(type, value) {
     if (type === 'boolean') {
         inputValue = value === true || value === 'true' ? 'true' : 'false';
     } else if (type === 'timestamp') {
+        let date;
         if (value && typeof value.toDate === 'function') {
-            inputValue = value.toDate().toISOString().slice(0, 16);
+            date = value.toDate();
         } else if (value instanceof Date) {
-            inputValue = value.toISOString().slice(0, 16);
+            date = value;
         } else {
-            inputValue = new Date().toISOString().slice(0, 16);
+            date = new Date();
         }
+        // Convert to local time for datetime-local input
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        inputValue = `${year}-${month}-${day}T${hours}:${minutes}`;
     } else if (type === 'array' || type === 'object') {
         inputValue = typeof value === 'object' ? JSON.stringify(value, null, 2) : value;
     } else {
