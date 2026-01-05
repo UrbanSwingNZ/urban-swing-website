@@ -292,7 +292,7 @@ window.deleteAuthUser = async function(uid, email) {
             <p>Are you sure you want to delete this authentication user?</p>
             <p style="margin-top: 1rem;"><strong>Email:</strong> ${email}</p>
             <p style="margin-top: 0.5rem;"><strong>UID:</strong> <code>${uid}</code></p>
-            ${hasUsersDoc ? '<div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-exclamation-triangle" style="color: var(--warning-dark);"></i><span>This will also delete the corresponding document in the <code>users</code> collection.</span></div>' : ''}
+            ${hasUsersDoc ? '<div style="margin-top: 1rem; padding: 0.75rem 0;"><label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;"><input type="checkbox" id="delete-users-doc-checkbox" style="cursor: pointer; margin-top: 0.5rem;"><span>Also delete the corresponding document in the <code>users</code> collection</span></label></div>' : ''}
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone. The user will no longer be able to sign in.</p>
         `,
         icon: 'fas fa-exclamation-triangle',
@@ -301,12 +301,15 @@ window.deleteAuthUser = async function(uid, email) {
         variant: 'danger',
         onConfirm: async () => {
             try {
+                // Check if user wants to delete users document
+                const deleteUsersDoc = hasUsersDoc && document.getElementById('delete-users-doc-checkbox')?.checked;
+                
                 // Delete authentication user
                 const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
                 await manageAuthUsers({ operation: 'delete', uid });
                 
-                // Also delete from users collection if it exists (cascade delete)
-                if (hasUsersDoc) {
+                // Also delete from users collection if checkbox was checked
+                if (deleteUsersDoc) {
                     try {
                         await window.db.collection('users').doc(uid).delete();
                     } catch (firestoreError) {
@@ -314,7 +317,7 @@ window.deleteAuthUser = async function(uid, email) {
                     }
                 }
                 
-                showSnackbar(hasUsersDoc ? 'Authentication user and users document deleted successfully' : 'Authentication user deleted successfully', 'success');
+                showSnackbar(deleteUsersDoc ? 'Authentication user and users document deleted successfully' : 'Authentication user deleted successfully', 'success');
                 
                 // Refresh both lists
                 await loadAuthUsers();
@@ -588,13 +591,70 @@ window.deleteDocument = async function(docId) {
         }
     }
     
+    // If deleting from checkins collection, check for related transactions
+    let relatedTransactions = [];
+    let checkinDoc = null;
+    let concessionBlockId = null;
+    let studentId = null;
+    if (currentCollection === 'checkins') {
+        try {
+            // Get the checkin document to check entryType and amountPaid
+            const checkinSnapshot = await window.db.collection('checkins').doc(docId).get();
+            if (checkinSnapshot.exists) {
+                checkinDoc = checkinSnapshot.data();
+                studentId = checkinDoc.studentId;
+                
+                // If it's a concession check-in, get the concessionBlockId
+                if (checkinDoc.entryType === 'concession' && checkinDoc.concessionBlockId) {
+                    concessionBlockId = checkinDoc.concessionBlockId;
+                }
+            }
+            
+            // Only query for transactions if amountPaid > 0 (casual check-ins)
+            if (checkinDoc && checkinDoc.amountPaid > 0) {
+                const transactionsSnapshot = await window.db.collection('transactions')
+                    .where('checkinId', '==', docId)
+                    .get();
+                
+                relatedTransactions = transactionsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+            }
+        } catch (error) {
+            console.warn('Could not check for related transactions:', error);
+        }
+    }
+    
     const modal = new ConfirmationModal({
         title: 'Delete Document',
         message: `
             <p>Are you sure you want to delete this document?</p>
             <p style="margin-top: 1rem;"><strong>Collection:</strong> <code>${currentCollection}</code></p>
             <p style="margin-top: 0.5rem;"><strong>Document ID:</strong> <code>${docId}</code></p>
-            ${currentCollection === 'users' && hasAuthUser ? '<div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-exclamation-triangle" style="color: var(--warning-dark);"></i><span>This will also delete the corresponding authentication user. The user will no longer be able to sign in.</span></div>' : ''}
+            ${currentCollection === 'users' && hasAuthUser ? '<div style="margin-top: 1rem; padding: 0.75rem 0;"><label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;"><input type="checkbox" id="delete-auth-user-checkbox" style="cursor: pointer; margin-top: 0.5rem;"><span>Also delete the corresponding authentication user (user will no longer be able to sign in)</span></label></div>' : ''}
+            ${currentCollection === 'checkins' && relatedTransactions.length > 0 ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Related Transaction${relatedTransactions.length > 1 ? 's' : ''} Found</p>
+                    <p style="margin: 0.5rem 0 0 0;">${relatedTransactions.length === 1 ? `Transaction ID: <code>${relatedTransactions[0].id}</code>` : `${relatedTransactions.length} transaction${relatedTransactions.length > 1 ? 's' : ''} with this checkin ID`}</p>
+                </div>
+                <div style="margin-top: 1rem; padding: 0.75rem 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="delete-transactions-checkbox" style="cursor: pointer; margin-top: 0.5rem;">
+                        <span>Also delete the related transaction${relatedTransactions.length > 1 ? 's' : ''} (payment record will be removed)</span>
+                    </label>
+                </div>
+            ` : ''}
+            ${currentCollection === 'checkins' && checkinDoc?.entryType === 'concession' ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Concession Check-In</p>
+                    <p style="margin: 0.5rem 0 0 0;">Deleting this concession check-in requires manual updates to:</p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+                        ${studentId ? `<li>Student document <code>${studentId}</code> - update <code>concessionBalance</code></li>` : '<li>Student document - update <code>concessionBalance</code></li>'}
+                        ${concessionBlockId ? `<li>Concession block <code>${concessionBlockId}</code> - update <code>remainingQuantity</code></li>` : '<li>Concession block - update <code>remainingQuantity</code></li>'}
+                    </ul>
+                </div>
+            ` : ''}
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone.</p>
         `,
         icon: 'fas fa-exclamation-triangle',
@@ -603,26 +663,51 @@ window.deleteDocument = async function(docId) {
         variant: 'danger',
         onConfirm: async () => {
             try {
+                // Check if user wants to delete auth user
+                const deleteAuthUser = currentCollection === 'users' && hasAuthUser && document.getElementById('delete-auth-user-checkbox')?.checked;
+                
+                // Check if user wants to delete related transactions
+                const deleteTransactions = currentCollection === 'checkins' && relatedTransactions.length > 0 && document.getElementById('delete-transactions-checkbox')?.checked;
+                
                 // Delete Firestore document
                 await window.db.collection(currentCollection).doc(docId).delete();
                 
-                // If deleting from 'users' collection, also delete the Auth user (cascade delete)
-                if (currentCollection === 'users' && hasAuthUser) {
+                // Also delete Auth user if checkbox was checked
+                if (deleteAuthUser) {
                     try {
                         const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
                         await manageAuthUsers({ operation: 'delete', uid: docId });
-                        showSnackbar('Document and authentication user deleted successfully', 'success');
+                        // Refresh auth users list
+                        await loadAuthUsers();
                     } catch (authError) {
-                        // Auth user might not exist, which is fine
                         console.warn('Auth user not found or already deleted:', authError);
-                        showSnackbar('Document deleted successfully (no auth user found)', 'success');
                     }
-                    
-                    // Refresh auth users list
-                    await loadAuthUsers();
-                } else {
-                    showSnackbar('Document deleted successfully', 'success');
                 }
+                
+                // Also delete related transactions if checkbox was checked
+                if (deleteTransactions) {
+                    try {
+                        const batch = window.db.batch();
+                        relatedTransactions.forEach(transaction => {
+                            const transactionRef = window.db.collection('transactions').doc(transaction.id);
+                            batch.delete(transactionRef);
+                        });
+                        await batch.commit();
+                    } catch (transactionError) {
+                        console.warn('Error deleting related transactions:', transactionError);
+                    }
+                }
+                
+                let successMessage = 'Document deleted successfully';
+                if (deleteAuthUser && deleteTransactions) {
+                    successMessage = 'Document, authentication user, and related transactions deleted successfully';
+                } else if (deleteAuthUser) {
+                    successMessage = 'Document and authentication user deleted successfully';
+                } else if (deleteTransactions) {
+                    successMessage = `Document and ${relatedTransactions.length} related transaction${relatedTransactions.length > 1 ? 's' : ''} deleted successfully`;
+                }
+                
+                showSnackbar(successMessage, 'success');
                 
                 // Reload documents
                 await loadDocuments(currentCollection);
