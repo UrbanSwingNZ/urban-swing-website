@@ -456,6 +456,26 @@ section {
     flex: 1;
 }
 
+.btn-copy-id {
+    background: none;
+    border: none;
+    color: var(--purple-primary);
+    cursor: pointer;
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    transition: var(--transition-base);
+    font-size: 0.9rem;
+}
+
+.btn-copy-id:hover {
+    background: var(--purple-lighter);
+    color: var(--purple-dark);
+}
+
+.btn-copy-id:active {
+    transform: scale(0.95);
+}
+
 .browser-document-content {
     max-height: 600px;
     overflow: hidden;
