@@ -35,25 +35,30 @@
             </div>
 
             <!-- Auth Users Section -->
-            <section class="auth-users-section">
-                <div class="section-header">
+            <section class="auth-users-section accordion">
+                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
                     <div>
                         <h2><i class="fas fa-user-shield"></i> Authentication Users</h2>
                         <p class="section-description">Manage Firebase Authentication user accounts</p>
                     </div>
-                    <button id="refresh-auth-users-btn" class="btn-secondary">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
+                    <div class="accordion-controls">
+                        <button id="refresh-auth-users-btn" class="btn-secondary" onclick="event.stopPropagation()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="search-bar">
-                    <input type="text" id="auth-user-search" placeholder="Search by email or UID..." class="search-input">
-                    <i class="fas fa-search search-icon"></i>
-                </div>
+                <div class="accordion-content">
+                    <!-- Search Bar -->
+                    <div class="search-bar">
+                        <input type="text" id="auth-user-search" placeholder="Search by email or UID..." class="search-input">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
 
-                <div id="auth-users-container" class="auth-users-container">
-                    <loading-spinner></loading-spinner>
+                    <div id="auth-users-container" class="auth-users-container">
+                        <loading-spinner></loading-spinner>
+                    </div>
                 </div>
             </section>
 
