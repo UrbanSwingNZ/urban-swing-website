@@ -12,6 +12,7 @@ const nodemailer = require("nodemailer");
 const {generateMerchOrderEmail} = require("./emails/merch-order-notification");
 const {generateAdminNotificationEmail, generateWelcomeEmail} = require("./emails/new-student-emails");
 const {generateAccountSetupEmail} = require("./emails/student-portal-setup-email");
+const {generatePortalInvitationEmail} = require("./emails/student-portal-invitation");
 const {generateErrorNotificationEmail} = require("./emails/error-notification-email");
 
 // Define secrets for email configuration
@@ -348,6 +349,129 @@ exports.sendMerchOrderEmail = onDocumentCreated(
         success: false,
         error: error.message
       };
+    }
+  }
+);
+
+/**
+ * Cloud Function: Send Student Portal Invitation Email
+ * Callable function to invite existing students to join the student portal
+ * @param {Object} data - Function parameters
+ * @param {string} data.studentId - Student ID to send invitation to
+ */
+exports.sendPortalInvitationEmail = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {studentId} = request.data;
+    
+    logger.info("Portal invitation requested for student:", studentId);
+
+    if (!studentId) {
+      logger.error("No student ID provided");
+      throw new Error("Student ID is required");
+    }
+
+    try {
+      const db = getFirestore();
+      
+      // Get student document
+      const studentDoc = await db.collection('students').doc(studentId).get();
+      
+      if (!studentDoc.exists) {
+        logger.error("Student not found:", studentId);
+        throw new Error("Student not found");
+      }
+      
+      const student = studentDoc.data();
+      logger.info("Student data retrieved:", {
+        id: studentId,
+        email: student.email,
+        firstName: student.firstName
+      });
+      
+      if (!student.email) {
+        logger.error("Student has no email:", studentId);
+        throw new Error("Student does not have an email address");
+      }
+      
+      // Check if student already has a users document
+      const usersSnapshot = await db.collection('users')
+        .where('studentId', '==', studentId)
+        .limit(1)
+        .get();
+      
+      if (!usersSnapshot.empty) {
+        logger.warn("Student already has users document:", studentId);
+        throw new Error("Student already has a portal account");
+      }
+      
+      logger.info("Student does not have users document, proceeding with invitation");
+      
+      // Check if auth user exists for this email
+      let authUserExists = false;
+      try {
+        await admin.auth().getUserByEmail(student.email.toLowerCase());
+        authUserExists = true;
+        logger.warn("Auth user already exists for email:", student.email);
+        throw new Error("An auth account already exists for this email");
+      } catch (authError) {
+        // If error is 'user not found', that's what we want - continue
+        if (authError.code === 'auth/user-not-found') {
+          logger.info("No auth user found for email (as expected):", student.email);
+        } else {
+          // Re-throw if it's a different error
+          logger.error("Error checking auth user:", authError);
+          throw authError;
+        }
+      }
+      
+      // Generate invitation email
+      logger.info("Generating invitation email for:", student.email);
+      const invitationEmail = generatePortalInvitationEmail(
+        student,
+        'https://urbanswing.co.nz/student-portal'
+      );
+      
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+      
+      // Send invitation email
+      logger.info("Sending invitation email to:", student.email);
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: student.email,
+        subject: "Join the Urban Swing Student Portal!",
+        text: invitationEmail.text,
+        html: invitationEmail.html,
+      });
+
+      logger.info("Portal invitation email sent successfully to:", student.email);
+      
+      return {
+        success: true,
+        message: "Invitation email sent successfully",
+        email: student.email
+      };
+    } catch (error) {
+      logger.error("Error sending portal invitation email:", {
+        studentId,
+        error: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      throw new Error(error.message || "Failed to send invitation email");
     }
   }
 );

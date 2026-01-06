@@ -43,12 +43,14 @@ exports.refreshSpotifyToken = refreshSpotifyToken;
 const { 
   sendNewStudentEmail, 
   sendAccountSetupEmail,
-  sendMerchOrderEmail
+  sendMerchOrderEmail,
+  sendPortalInvitationEmail
 } = require('./email-notifications');
 
 exports.sendNewStudentEmail = sendNewStudentEmail;
 exports.sendAccountSetupEmail = sendAccountSetupEmail;
 exports.sendMerchOrderEmail = sendMerchOrderEmail;
+exports.sendPortalInvitationEmail = sendPortalInvitationEmail;
 
 // ========================================
 // USER MANAGEMENT
