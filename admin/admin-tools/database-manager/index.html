@@ -62,6 +62,67 @@
                 </div>
             </section>
 
+            <!-- Global Search Section -->
+            <section class="global-search-section accordion">
+                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                    <div>
+                        <h2><i class="fas fa-search"></i> Global Search</h2>
+                        <p class="section-description">Search across multiple collections with custom filters</p>
+                    </div>
+                    <div class="accordion-controls">
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                </div>
+
+                <div class="accordion-content">
+                    <!-- Collection Selector -->
+                    <div class="filter-row">
+                        <label class="filter-label">Collections:</label>
+                        <div id="collection-checkboxes" class="collection-checkboxes">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Filter Logic Toggle -->
+                    <div class="filter-row">
+                        <label class="filter-label">Match:</label>
+                        <div class="logic-toggle">
+                            <label class="logic-option">
+                                <input type="radio" name="filter-logic" value="AND" checked>
+                                <span>AND (all filters must match)</span>
+                            </label>
+                            <label class="logic-option">
+                                <input type="radio" name="filter-logic" value="OR">
+                                <span>OR (any filter can match)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Filters Container -->
+                    <div id="global-filters-container" class="global-filters-container">
+                        <!-- Filter rows will be added here -->
+                    </div>
+
+                    <div class="filter-actions">
+                        <button id="add-global-filter-btn" class="btn-secondary">
+                            <i class="fas fa-plus"></i> Add Filter
+                        </button>
+                        <button id="global-search-btn" class="btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <button id="clear-global-search-btn" class="btn-secondary">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="global-search-results" class="global-search-results" style="display: none;">
+                        <h3 class="results-title">Search Results</h3>
+                        <div id="global-results-container"></div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Collection Selector Section -->
             <section class="collection-selector-section">
                 <div class="section-header">

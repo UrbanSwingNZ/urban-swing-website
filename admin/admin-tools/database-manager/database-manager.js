@@ -115,7 +115,286 @@ function setupEventListeners() {
     document.getElementById('save-document-btn').addEventListener('click', saveDocument);
     document.getElementById('cancel-edit-btn').addEventListener('click', hideDocumentEditor);
     document.getElementById('add-field-btn').addEventListener('click', addFieldRow);
+    
+    // Global Search
+    document.getElementById('add-global-filter-btn').addEventListener('click', addGlobalFilterRow);
+    document.getElementById('global-search-btn').addEventListener('click', executeGlobalSearch);
+    document.getElementById('clear-global-search-btn').addEventListener('click', clearGlobalSearch);
 }
+
+// ========================================
+// GLOBAL SEARCH
+// ========================================
+
+let availableCollections = [];
+let globalFilters = [];
+
+/**
+ * Initialize global search with available collections
+ */
+function initializeGlobalSearch(collections) {
+    availableCollections = collections;
+    const container = document.getElementById('collection-checkboxes');
+    
+    container.innerHTML = collections.map(collectionName => `
+        <label class="collection-checkbox-item">
+            <input type="checkbox" value="${collectionName}" class="collection-checkbox">
+            <span>${collectionName}</span>
+        </label>
+    `).join('');
+    
+    // Add one initial filter row
+    addGlobalFilterRow();
+}
+
+/**
+ * Add a filter row to global search
+ */
+function addGlobalFilterRow() {
+    const container = document.getElementById('global-filters-container');
+    const filterId = Date.now();
+    
+    const filterRow = document.createElement('div');
+    filterRow.className = 'global-filter-row';
+    filterRow.dataset.filterId = filterId;
+    
+    filterRow.innerHTML = `
+        <select class="filter-field">
+            <option value="">Select field...</option>
+        </select>
+        <select class="filter-operator">
+            <option value="contains">Contains</option>
+            <option value="startsWith">Starts with</option>
+            <option value="equals">Equals</option>
+        </select>
+        <input type="text" class="filter-value" placeholder="Enter value...">
+        <button class="btn-remove-filter" onclick="removeGlobalFilterRow(${filterId})" title="Remove filter">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    container.appendChild(filterRow);
+    updateGlobalSearchFields();
+}
+
+/**
+ * Remove a filter row
+ */
+window.removeGlobalFilterRow = function(filterId) {
+    const row = document.querySelector(`[data-filter-id="${filterId}"]`);
+    if (row) {
+        row.remove();
+    }
+};
+
+/**
+ * Update available fields based on selected collections
+ */
+function updateGlobalSearchFields() {
+    const selectedCollections = Array.from(document.querySelectorAll('.collection-checkbox:checked'))
+        .map(cb => cb.value);
+    
+    // Get all unique fields from selected collections
+    const allFields = new Set();
+    selectedCollections.forEach(collection => {
+        if (fieldOrders[collection]) {
+            fieldOrders[collection].forEach(field => allFields.add(field));
+        }
+        // Add common fields
+        ['createdAt', 'updatedAt', 'id'].forEach(field => allFields.add(field));
+    });
+    
+    // Update all filter field dropdowns
+    document.querySelectorAll('.filter-field').forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Select field...</option>' +
+            Array.from(allFields).sort().map(field => 
+                `<option value="${field}" ${field === currentValue ? 'selected' : ''}>${field}</option>`
+            ).join('');
+    });
+}
+
+/**
+ * Execute global search
+ */
+async function executeGlobalSearch() {
+    const selectedCollections = Array.from(document.querySelectorAll('.collection-checkbox:checked'))
+        .map(cb => cb.value);
+    
+    if (selectedCollections.length === 0) {
+        showSnackbar('Please select at least one collection', 'error');
+        return;
+    }
+    
+    // Get all filters
+    const filters = Array.from(document.querySelectorAll('.global-filter-row')).map(row => ({
+        field: row.querySelector('.filter-field').value,
+        operator: row.querySelector('.filter-operator').value,
+        value: row.querySelector('.filter-value').value.trim()
+    })).filter(f => f.field && f.value);
+    
+    if (filters.length === 0) {
+        showSnackbar('Please add at least one filter', 'error');
+        return;
+    }
+    
+    const logic = document.querySelector('input[name="filter-logic"]:checked').value;
+    
+    // Show loading
+    const resultsContainer = document.getElementById('global-results-container');
+    const resultsSection = document.getElementById('global-search-results');
+    resultsSection.style.display = 'block';
+    resultsContainer.innerHTML = '<loading-spinner></loading-spinner>';
+    
+    try {
+        const results = await searchCollections(selectedCollections, filters, logic);
+        displayGlobalSearchResults(results);
+    } catch (error) {
+        console.error('Error executing global search:', error);
+        showSnackbar('Error executing search: ' + error.message, 'error');
+        resultsContainer.innerHTML = `
+            <div class="empty-results">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error executing search</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Search across multiple collections
+ */
+async function searchCollections(collections, filters, logic) {
+    const results = {};
+    
+    // Search each collection
+    await Promise.all(collections.map(async (collectionName) => {
+        try {
+            const snapshot = await window.db.collection(collectionName).get();
+            const matches = [];
+            
+            snapshot.docs.forEach(doc => {
+                const data = { id: doc.id, ...doc.data() };
+                const matchesFilters = logic === 'AND' 
+                    ? filters.every(filter => matchesFilter(data, filter))
+                    : filters.some(filter => matchesFilter(data, filter));
+                
+                if (matchesFilters) {
+                    matches.push({ id: doc.id, data: doc.data() });
+                }
+            });
+            
+            if (matches.length > 0) {
+                results[collectionName] = matches;
+            }
+        } catch (error) {
+            console.warn(`Error searching ${collectionName}:`, error);
+        }
+    }));
+    
+    return results;
+}
+
+/**
+ * Check if document matches a filter
+ */
+function matchesFilter(data, filter) {
+    const value = String(data[filter.field] || '').toLowerCase();
+    const searchValue = filter.value.toLowerCase();
+    
+    switch (filter.operator) {
+        case 'contains':
+            return value.includes(searchValue);
+        case 'startsWith':
+            return value.startsWith(searchValue);
+        case 'equals':
+            return value === searchValue;
+        default:
+            return false;
+    }
+}
+
+/**
+ * Display global search results
+ */
+function displayGlobalSearchResults(results) {
+    const resultsContainer = document.getElementById('global-results-container');
+    
+    const collectionNames = Object.keys(results);
+    
+    if (collectionNames.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="empty-results">
+                <i class="fas fa-search"></i>
+                <p>No matching documents found</p>
+            </div>
+        `;
+        return;
+    }
+    
+    resultsContainer.innerHTML = collectionNames.map(collectionName => {
+        const documents = results[collectionName];
+        return `
+            <div class="collection-results">
+                <div class="collection-results-header">
+                    <h4><i class="fas fa-folder"></i> ${collectionName}</h4>
+                    <span class="collection-results-count">${documents.length}</span>
+                </div>
+                <div class="results-documents">
+                    ${documents.map(doc => {
+                        const preview = JSON.stringify(doc.data, null, 2);
+                        const truncatedPreview = preview.length > 150 ? preview.substring(0, 150) + '...' : preview;
+                        return `
+                            <div class="result-document-card" onclick="viewGlobalSearchResult('${collectionName}', '${doc.id}')">
+                                <div class="result-document-id">${doc.id}</div>
+                                <div class="result-document-preview">${escapeHtml(truncatedPreview)}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * View a document from global search results
+ */
+window.viewGlobalSearchResult = async function(collectionName, docId) {
+    // Load the collection and scroll to it
+    await selectCollection(collectionName);
+    
+    // Wait a bit for documents to load, then view the specific document
+    setTimeout(() => {
+        viewDocument(docId);
+    }, 500);
+};
+
+/**
+ * Clear global search
+ */
+function clearGlobalSearch() {
+    // Uncheck all collections
+    document.querySelectorAll('.collection-checkbox').forEach(cb => cb.checked = false);
+    
+    // Clear filters
+    document.getElementById('global-filters-container').innerHTML = '';
+    addGlobalFilterRow();
+    
+    // Hide results
+    document.getElementById('global-search-results').style.display = 'none';
+    document.getElementById('global-results-container').innerHTML = '';
+    
+    // Reset logic to AND
+    document.querySelector('input[name="filter-logic"][value="AND"]').checked = true;
+}
+
+// Listen for collection checkbox changes
+document.addEventListener('change', (e) => {
+    if (e.target.classList.contains('collection-checkbox')) {
+        updateGlobalSearchFields();
+    }
+});
 
 // ========================================
 // AUTH USERS MANAGEMENT
@@ -351,6 +630,9 @@ async function loadCollections() {
         
         if (result.data.success && result.data.collections.length > 0) {
             displayCollections(result.data.collections);
+            
+            // Initialize global search with collections
+            initializeGlobalSearch(result.data.collections);
         } else {
             container.innerHTML = `
                 <div class="empty-state">
