@@ -9,6 +9,8 @@ import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 let currentCollection = null;
 let authUsers = [];
 let filteredAuthUsers = [];
+let expandedCollections = new Set();
+let expandedDocuments = new Set();
 
 // Field ordering configuration
 const fieldOrders = {
@@ -138,6 +140,14 @@ function matchesFilter(data, filter) {
  * Load all collections with their documents into unified browser
  */
 async function loadCollectionsBrowser() {
+    // Save current expanded state before reload
+    document.querySelectorAll('.browser-collection:not(.collapsed)').forEach(el => {
+        expandedCollections.add(el.dataset.collection);
+    });
+    document.querySelectorAll('.browser-document:not(.collapsed)').forEach(el => {
+        expandedDocuments.add(el.dataset.documentId);
+    });
+    
     const container = document.getElementById('collections-browser-container');
     container.innerHTML = '<loading-spinner></loading-spinner>';
     
@@ -197,6 +207,22 @@ async function loadCollectionsBrowser() {
         // Initial display (no filters)
         filteredCollectionsData = JSON.parse(JSON.stringify(allCollectionsData));
         displayCollectionsBrowser();
+        
+        // Restore expanded state
+        setTimeout(() => {
+            expandedCollections.forEach(collectionName => {
+                const el = document.querySelector(`[data-collection="${collectionName}"]`);
+                if (el && el.classList.contains('collapsed')) {
+                    el.classList.remove('collapsed');
+                }
+            });
+            expandedDocuments.forEach(docId => {
+                const el = document.querySelector(`[data-document-id="${docId}"]`);
+                if (el && el.classList.contains('collapsed')) {
+                    el.classList.remove('collapsed');
+                }
+            });
+        }, 0);
         
     } catch (error) {
         console.error('Error loading collections:', error);
@@ -319,8 +345,6 @@ window.editBrowserDocument = function(collectionName, docId) {
 window.deleteBrowserDocument = async function(collectionName, docId) {
     currentCollection = collectionName;
     await deleteDocument(docId);
-    // Reload browser after deletion
-    await loadCollectionsBrowser();
 };
 
 /**
