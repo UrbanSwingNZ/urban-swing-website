@@ -47,6 +47,122 @@ section {
     box-shadow: 0 10px 30px var(--shadow-medium);
 }
 
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-overlay-spinner);
+    z-index: 1;
+}
+
+.modal-container {
+    position: relative;
+    background: var(--card-light);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 60px var(--shadow-heavy);
+    z-index: 2;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 800px;
+}
+
+.modal-large {
+    max-width: 900px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg) var(--space-xl);
+    border-bottom: 1px solid var(--border-light);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: 0;
+}
+
+.modal-header i {
+    color: var(--purple-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: var(--background-light);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: var(--space-xl);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-xl);
+    border-top: 1px solid var(--border-light);
+    flex-shrink: 0;
+}
+
+.editor-info {
+    background: var(--background-light);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.editor-info span {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.editor-info strong {
+    color: var(--text-primary);
+}
+
 /* Accordion Styles */
 .accordion {
     padding: 0;

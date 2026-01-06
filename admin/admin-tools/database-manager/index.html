@@ -128,51 +128,55 @@
                     <loading-spinner></loading-spinner>
                 </div>
             </section>
-
-            <!-- Document Editor Section -->
-            <section id="document-editor-section" class="document-editor-section" style="display: none;">
-                <div class="section-header">
-                    <div>
-                        <h2><i class="fas fa-edit"></i> <span id="editor-mode">Edit</span> Document</h2>
-                        <p class="section-description">
-                            Collection: <span id="editor-collection-name"></span> / 
-                            Document ID: <span id="editor-document-id"></span>
-                        </p>
-                    </div>
-                    <div class="section-actions">
-                        <button id="save-document-btn" class="btn-primary">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                        <button id="cancel-edit-btn" class="btn-cancel">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                    </div>
-                </div>
-
-                <div class="editor-container">
-                    <!-- Document ID Input (for new documents) -->
-                    <div id="document-id-input-container" class="form-group" style="display: none;">
-                        <label for="new-document-id">Document ID</label>
-                        <input type="text" id="new-document-id" class="form-input" placeholder="Leave empty for auto-generated ID">
-                        <small class="form-hint">Optional: Specify a custom ID or leave empty for Firestore to generate one</small>
-                    </div>
-
-                    <!-- Field Editor -->
-                    <div class="fields-container" id="fields-container">
-                        <!-- Fields will be dynamically added here -->
-                    </div>
-
-                    <!-- Add Field Button -->
-                    <button id="add-field-btn" class="btn-secondary btn-add-field">
-                        <i class="fas fa-plus-circle"></i> Add Field
-                    </button>
-                </div>
-            </section>
         </main>
 
         <footer class="admin-footer">
             <p>&copy; 2025 Urban Swing. Database Manager v1.0</p>
         </footer>
+    </div>
+
+    <!-- Document Editor Modal -->
+    <div id="document-editor-modal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="hideDocumentEditor()"></div>
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> <span id="editor-mode">Edit</span> Document</h2>
+                <button class="modal-close" onclick="hideDocumentEditor()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="editor-info">
+                    <span><strong>Collection:</strong> <span id="editor-collection-name"></span></span>
+                    <span><strong>Document ID:</strong> <span id="editor-document-id"></span></span>
+                </div>
+
+                <!-- Document ID Input (for new documents) -->
+                <div id="document-id-input-container" class="form-group" style="display: none;">
+                    <label for="new-document-id">Document ID</label>
+                    <input type="text" id="new-document-id" class="form-input" placeholder="Leave empty for auto-generated ID">
+                    <small class="form-hint">Optional: Specify a custom ID or leave empty for Firestore to generate one</small>
+                </div>
+
+                <!-- Field Editor -->
+                <div class="fields-container" id="fields-container">
+                    <!-- Fields will be dynamically added here -->
+                </div>
+
+                <!-- Add Field Button -->
+                <button id="add-field-btn" class="btn-primary btn-add-field">
+                    <i class="fas fa-plus-circle"></i> Add Field
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button id="save-document-btn" class="btn-primary">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="cancel-edit-btn" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase Config & Database Manager Logic -->
