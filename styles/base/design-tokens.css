@@ -68,6 +68,11 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   
+  /* Opacity Levels */
+  --opacity-subtle: 0.5;
+  --opacity-disabled: 0.6;
+  --opacity-hover: 0.8;
+  
   /* Line Heights */
   --line-height-tight: 1.25;
   --line-height-base: 1.5;
