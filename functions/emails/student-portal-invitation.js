@@ -13,7 +13,7 @@ function generatePortalInvitationEmail(student, registrationLink = 'https://urba
   // Email color mappings from styles/base/colors.css
   const colors = {
     purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#ed217c',      // Custom gradient color (similar to --pink-primary)
+    pinkPrimary: '#e800f2',      // --pink-primary
     white: '#ffffff',            // --white
     textPrimary: '#333',         // --text-primary
     textLight: '#666',           // --text-light
