@@ -27,13 +27,15 @@ try {
   
   db = firebase.firestore();
   
-  // Initialize Cloud Functions
-  functions = firebase.functions();
+  // Initialize Cloud Functions (only if SDK is loaded)
+  if (firebase.functions) {
+    functions = firebase.functions();
+    window.functions = functions;
+  }
   
   // Expose to window for global access
   window.db = db;
   window.auth = auth;
-  window.functions = functions;
   
   console.log('Firebase initialized successfully');
 } catch (error) {
