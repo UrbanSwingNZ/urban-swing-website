@@ -352,29 +352,6 @@
     background: var(--error-dark);
 }
 
-/* Messages */
-.success-message,
-.error-message {
-    padding: 1rem;
-    border-radius: var(--radius-xs);
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.success-message {
-    background: var(--bg-success-pale);
-    color: var(--text-success);
-    border: 1px solid var(--border-success-light);
-}
-
-.error-message {
-    background: var(--bg-error-pale);
-    color: var(--text-error);
-    border: 1px solid var(--border-error-light);
-}
-
 /* Modal Styles */
 .modal {
     position: fixed;
