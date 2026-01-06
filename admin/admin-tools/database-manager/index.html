@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Database Manager - Urban Swing Admin Tools</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="database-manager.css">
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+</head>
+<body>
+    <!-- Database Manager Page -->
+    <div id="database-manager-container" class="dashboard-container">
+
+        <main class="dashboard-main">
+            <div class="page-intro">
+                <p>View, edit, and manage your Firestore database collections and documents</p>
+                <div class="warning-banner">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning:</strong> Changes made here directly affect your production database. Use with caution.
+                </div>
+            </div>
+
+            <!-- Auth Users Section -->
+            <section class="auth-users-section accordion">
+                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                    <div>
+                        <h2><i class="fas fa-user-shield"></i> Authentication Users</h2>
+                        <p class="section-description">Manage Firebase Authentication user accounts</p>
+                    </div>
+                    <div class="accordion-controls">
+                        <button id="refresh-auth-users-btn" class="btn-secondary" onclick="event.stopPropagation()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                </div>
+
+                <div class="accordion-content">
+                    <!-- Search Bar -->
+                    <div class="search-bar">
+                        <input type="text" id="auth-user-search" placeholder="Search by email or UID..." class="search-input">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+
+                    <div id="auth-users-container" class="auth-users-container">
+                        <loading-spinner></loading-spinner>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Collections Browser Section (Unified View) -->
+            <section class="collections-browser-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-database"></i> Collections & Documents</h2>
+                        <p class="section-description">Browse and filter all collections and documents</p>
+                    </div>
+                    <button id="refresh-collections-browser-btn" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="filter-controls-container">
+                    <!-- Collection Filter -->
+                    <div class="filter-row">
+                        <label class="filter-label">Collections:</label>
+                        <div id="collection-filter-checkboxes" class="collection-checkboxes">
+                            <label class="collection-checkbox-item">
+                                <input type="checkbox" value="all" class="collection-filter-checkbox" id="filter-all-collections" checked>
+                                <span>All Collections</span>
+                            </label>
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Field Filters -->
+                    <div class="filter-row">
+                        <label class="filter-label">Field Filters:</label>
+                        <div class="filter-row-controls">
+                            <div class="logic-toggle">
+                                <label class="logic-option">
+                                    <input type="radio" name="filter-logic" value="AND" checked>
+                                    <span>AND</span>
+                                </label>
+                                <label class="logic-option">
+                                    <input type="radio" name="filter-logic" value="OR">
+                                    <span>OR</span>
+                                </label>
+                            </div>
+                            <button id="add-field-filter-btn" class="btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Add Field
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters Container -->
+                    <div id="field-filters-container" class="field-filters-container">
+                        <!-- Filter rows will be added here -->
+                    </div>
+
+                    <div class="filter-actions">
+                        <button id="apply-filters-btn" class="btn-primary">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button id="clear-filters-btn" class="btn-cancel">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Collections & Documents View -->
+                <div id="collections-browser-container" class="collections-browser-container">
+                    <loading-spinner></loading-spinner>
+                </div>
+            </section>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Database Manager v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Document Editor Modal -->
+    <div id="document-editor-modal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="hideDocumentEditor()"></div>
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> <span id="editor-mode">Edit</span> Document</h2>
+                <button class="modal-close" onclick="hideDocumentEditor()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="editor-info">
+                    <span><strong>Collection:</strong> <span id="editor-collection-name"></span></span>
+                    <span><strong>Document ID:</strong> <span id="editor-document-id"></span></span>
+                </div>
+
+                <!-- Document ID Input (for new documents) -->
+                <div id="document-id-input-container" class="form-group" style="display: none;">
+                    <label for="new-document-id">Document ID</label>
+                    <input type="text" id="new-document-id" class="form-input" placeholder="Leave empty for auto-generated ID">
+                    <small class="form-hint">Optional: Specify a custom ID or leave empty for Firestore to generate one</small>
+                </div>
+
+                <!-- Field Editor -->
+                <div class="fields-container" id="fields-container">
+                    <!-- Fields will be dynamically added here -->
+                </div>
+
+                <!-- Add Field Button -->
+                <button id="add-field-btn" class="btn-primary btn-add-field">
+                    <i class="fas fa-plus-circle"></i> Add Field
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button id="save-document-btn" class="btn-primary">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="cancel-edit-btn" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config & Database Manager Logic -->
+    <script src="../../../config/firebase-config.js"></script>
+    
+    <!-- Admin Header Dependencies -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../../js/header-config.js"></script>
+    <script src="../../js/header-configurator.js"></script>
+    <script src="../../js/mobile-nav.js"></script>
+    <script src="../../admin-header.js"></script>
+    
+    <!-- Modal Components -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    
+    <!-- Database Manager Logic -->
+    <script type="module" src="database-manager.js"></script>
+</body>
+</html>

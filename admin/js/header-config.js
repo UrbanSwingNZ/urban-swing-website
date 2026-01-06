@@ -111,6 +111,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../'
     },
+    '/admin/admin-tools/database-manager/': {
+        title: 'Database Manager',
+        activePage: 'database-manager',
+        navSection: 'admin-tools',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../'
+    },
     
     // Student Portal Pages (admin view)
     '/student-portal/dashboard/': {
