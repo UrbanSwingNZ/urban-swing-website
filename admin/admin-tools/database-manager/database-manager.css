@@ -47,6 +47,68 @@ section {
     box-shadow: 0 10px 30px var(--shadow-medium);
 }
 
+/* Accordion Styles */
+.accordion {
+    padding: 0;
+    overflow: hidden;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--space-xl);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    gap: var(--space-md);
+}
+
+.accordion-header:hover {
+    background: var(--background-light);
+}
+
+.accordion-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.accordion-header h2 i {
+    color: var(--purple-primary);
+}
+
+.accordion-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-shrink: 0;
+}
+
+.accordion-icon {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+
+.accordion.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 var(--space-xl);
+}
+
+.accordion.active .accordion-content {
+    max-height: 5000px;
+    padding: 0 var(--space-xl) var(--space-xl);
+}
+
 .section-header {
     display: flex;
     justify-content: space-between;
