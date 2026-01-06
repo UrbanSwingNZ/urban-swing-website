@@ -307,6 +307,43 @@
     font-size: 1.1rem;
 }
 
+/* Mobile Card Layout */
+.report-card {
+    display: none; /* Hidden on desktop */
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.report-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.report-card-row:last-child {
+    border-bottom: none;
+}
+
+.report-card-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-right: var(--space-sm);
+}
+
+.report-card-value {
+    color: var(--text-primary);
+    text-align: right;
+    word-break: break-word;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .report-header {
@@ -331,21 +368,12 @@
         width: 100%;
     }
 
+    /* Hide table on mobile, show cards */
     .report-table {
-        font-size: 0.85rem;
+        display: none;
     }
 
-    .report-table th,
-    .report-table td {
-        padding: 8px;
-    }
-
-    /* Make tables scrollable on mobile */
-    .report-results {
-        overflow-x: auto;
-    }
-
-    .report-table {
-        min-width: 600px;
+    .report-card {
+        display: block;
     }
 }

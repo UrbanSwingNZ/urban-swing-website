@@ -132,6 +132,47 @@ async function generateExpiredConcessionsReport() {
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add mobile cards
+            expiredConcessions.forEach(item => {
+                const lockedCell = item.isLocked 
+                    ? `<span class="badge badge-locked clickable" data-id="${item.concessionId}" title="Click to unlock">Locked</span>`
+                    : `<button class="btn-lock btn-lock-concession" data-id="${item.concessionId}"><i class="fas fa-lock"></i> Lock</button>`;
+                    
+                tableHTML += `
+                    <div class="report-card">
+                        <div class="report-card-row">
+                            <span class="report-card-label">Student:</span>
+                            <span class="report-card-value">${item.studentName}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Email:</span>
+                            <span class="report-card-value">${item.studentEmail}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Package Type:</span>
+                            <span class="report-card-value">${item.packageType}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Balance:</span>
+                            <span class="report-card-value">${item.balance}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Expiry Date:</span>
+                            <span class="report-card-value"><span class="badge badge-no">${formatDate(item.expiryDate)}</span></span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Purchase Date:</span>
+                            <span class="report-card-value">${item.purchaseDate ? formatDate(item.purchaseDate) : 'N/A'}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Locked:</span>
+                            <span class="report-card-value">${lockedCell}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
             tableDiv.innerHTML = tableHTML;
             
             // Add click handlers for lock/unlock
@@ -234,6 +275,39 @@ async function generateExpiringSoonReport() {
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add mobile cards
+            expiringSoonConcessions.forEach(item => {
+                tableHTML += `
+                    <div class="report-card">
+                        <div class="report-card-row">
+                            <span class="report-card-label">Student:</span>
+                            <span class="report-card-value">${item.studentName}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Email:</span>
+                            <span class="report-card-value">${item.studentEmail}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Package Type:</span>
+                            <span class="report-card-value">${item.packageType}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Balance:</span>
+                            <span class="report-card-value">${item.balance}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Expiry Date:</span>
+                            <span class="report-card-value"><span class="badge badge-warning">${formatDate(item.expiryDate)}</span></span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Days Until Expiry:</span>
+                            <span class="report-card-value"><strong>${item.daysUntilExpiry} days</strong></span>
+                        </div>
+                    </div>
+                `;
+            });
+            
             tableDiv.innerHTML = tableHTML;
         }
         
@@ -325,6 +399,35 @@ async function generateActiveConcessionsReport() {
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add mobile cards
+            activeConcessions.forEach(item => {
+                tableHTML += `
+                    <div class="report-card">
+                        <div class="report-card-row">
+                            <span class="report-card-label">Student:</span>
+                            <span class="report-card-value">${item.studentName}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Email:</span>
+                            <span class="report-card-value">${item.studentEmail}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Package Type:</span>
+                            <span class="report-card-value">${item.packageType}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Balance:</span>
+                            <span class="report-card-value"><strong>${item.balance}</strong></span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Expiry Date:</span>
+                            <span class="report-card-value"><span class="badge badge-yes">${formatDate(item.expiryDate)}</span></span>
+                        </div>
+                    </div>
+                `;
+            });
+            
             tableDiv.innerHTML = tableHTML;
         }
         
@@ -498,6 +601,31 @@ async function generatePortalAccountReport() {
             });
             
             tableHTML += '</tbody></table>';
+            
+            // Add mobile cards
+            filteredStudents.forEach(item => {
+                const accountStatus = item.hasAccount ? 
+                    '<span class="badge badge-yes">Yes</span>' : 
+                    '<span class="badge badge-no">No</span>';
+                    
+                tableHTML += `
+                    <div class="report-card">
+                        <div class="report-card-row">
+                            <span class="report-card-label">Student:</span>
+                            <span class="report-card-value">${item.studentName}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Email:</span>
+                            <span class="report-card-value">${item.studentEmail}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Has Portal Account:</span>
+                            <span class="report-card-value">${accountStatus}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
             tableDiv.innerHTML = tableHTML;
         }
         
