@@ -471,6 +471,11 @@ async function loadCollectionsBrowser() {
             checkboxContainer.appendChild(label);
         });
         
+        // Add event listeners to individual collection checkboxes
+        document.querySelectorAll('.collection-filter-checkbox:not(#filter-all-collections)').forEach(cb => {
+            cb.addEventListener('change', handleCollectionCheckboxChange);
+        });
+        
         // Load all documents from all collections
         allCollectionsData = {};
         
@@ -539,16 +544,22 @@ function displayCollectionsBrowser() {
                         '<div class="empty-collection-message">No documents in this collection</div>' :
                         documents.map(doc => {
                             const jsonString = JSON.stringify(doc.data, null, 2);
+                            const copyIconHtml = collectionName === 'students' 
+                                ? `<button class="btn-copy-id" onclick="event.stopPropagation(); copyToClipboard('${doc.id}')" title="Copy Student ID">
+                                       <i class="fas fa-copy"></i>
+                                   </button>` 
+                                : '';
                             return `
                                 <div class="browser-document collapsed" data-doc-id="${doc.id}">
                                     <div class="browser-document-header" onclick="event.stopPropagation(); toggleBrowserDocument('${collectionName}', '${doc.id}')">
                                         <i class="fas fa-chevron-down browser-document-toggle-icon"></i>
                                         <div class="browser-document-id">${doc.id}</div>
+                                        ${copyIconHtml}
                                     </div>
                                     <div class="browser-document-content">
                                         <div class="browser-document-json">${escapeHtml(jsonString)}</div>
                                         <div class="browser-document-actions">
-                                            <button class="btn-secondary btn-sm" onclick="event.stopPropagation(); editBrowserDocument('${collectionName}', '${doc.id}')">
+                                            <button class="btn-primary btn-sm" onclick="event.stopPropagation(); editBrowserDocument('${collectionName}', '${doc.id}')">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
                                             <button class="btn-danger btn-sm" onclick="event.stopPropagation(); deleteBrowserDocument('${collectionName}', '${doc.id}')">
@@ -750,6 +761,30 @@ function handleAllCollectionsToggle(event) {
         cb.checked = isChecked;
     });
 }
+
+/**
+ * Handle individual collection checkbox change
+ */
+function handleCollectionCheckboxChange() {
+    const allCheckboxes = document.querySelectorAll('.collection-filter-checkbox:not(#filter-all-collections)');
+    const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+    
+    // Update "All Collections" checkbox to match state
+    document.getElementById('filter-all-collections').checked = allChecked;
+}
+
+/**
+ * Copy text to clipboard
+ */
+window.copyToClipboard = async function(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        showSnackbar('Copied to clipboard: ' + text, 'success');
+    } catch (error) {
+        console.error('Failed to copy:', error);
+        showSnackbar('Failed to copy to clipboard', 'error');
+    }
+};
 
 // ========================================
 // AUTH USERS MANAGEMENT
