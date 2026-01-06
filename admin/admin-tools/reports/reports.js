@@ -559,6 +559,7 @@ async function generatePortalAccountReport() {
                 return true; // 'all'
             }
         }).map(student => ({
+            studentId: student.id,
             studentName: `${student.firstName} ${student.lastName}`,
             studentEmail: student.email,
             hasAccount: studentIdsWithAccounts.has(student.id)
@@ -581,6 +582,7 @@ async function generatePortalAccountReport() {
                             <th>Student Name</th>
                             <th>Email</th>
                             <th>Has Portal Account</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -591,11 +593,18 @@ async function generatePortalAccountReport() {
                     '<span class="badge badge-yes">Yes</span>' : 
                     '<span class="badge badge-no">No</span>';
                 
+                const inviteButton = !item.hasAccount ? 
+                    `<button class="btn btn-primary" onclick="inviteToPortal('${item.studentId}', '${item.studentName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${item.studentEmail}')" title="Send Portal Invitation">
+                        <i class="fas fa-envelope"></i> Send Invitation
+                    </button>` : 
+                    '';
+                
                 tableHTML += `
                     <tr>
                         <td>${item.studentName}</td>
                         <td>${item.studentEmail}</td>
                         <td>${accountStatus}</td>
+                        <td>${inviteButton}</td>
                     </tr>
                 `;
             });
@@ -607,6 +616,14 @@ async function generatePortalAccountReport() {
                 const accountStatus = item.hasAccount ? 
                     '<span class="badge badge-yes">Yes</span>' : 
                     '<span class="badge badge-no">No</span>';
+                
+                const inviteButton = !item.hasAccount ? 
+                    `<div class="report-card-row">
+                        <button class="btn btn-primary" onclick="inviteToPortal('${item.studentId}', '${item.studentName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${item.studentEmail}')" style="width: 100%;">
+                            <i class="fas fa-envelope"></i> Send Portal Invitation
+                        </button>
+                    </div>` : 
+                    '';
                     
                 tableHTML += `
                     <div class="report-card">
@@ -622,6 +639,7 @@ async function generatePortalAccountReport() {
                             <span class="report-card-label">Has Portal Account:</span>
                             <span class="report-card-value">${accountStatus}</span>
                         </div>
+                        ${inviteButton}
                     </div>
                 `;
             });
