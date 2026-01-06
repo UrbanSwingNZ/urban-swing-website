@@ -7,10 +7,6 @@ import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 
 // Global state
 let currentCollection = null;
-let currentPage = 1;
-let documentsPerPage = 20;
-let allDocuments = [];
-let filteredDocuments = [];
 let authUsers = [];
 let filteredAuthUsers = [];
 
@@ -120,172 +116,6 @@ let allCollectionsData = {}; // Stores all collections and their documents
 let filteredCollectionsData = {}; // Stores filtered data
 
 /**
- * Initialize global search with available collections
- */
-function initializeGlobalSearch(collections) {
-    availableCollections = collections;
-    const container = document.getElementById('collection-checkboxes');
-    
-    container.innerHTML = collections.map(collectionName => `
-        <label class="collection-checkbox-item">
-            <input type="checkbox" value="${collectionName}" class="collection-checkbox">
-            <span>${collectionName}</span>
-        </label>
-    `).join('');
-    
-    // Add one initial filter row
-    addGlobalFilterRow();
-}
-
-/**
- * Add a filter row to global search
- */
-function addGlobalFilterRow() {
-    const container = document.getElementById('global-filters-container');
-    const filterId = Date.now();
-    
-    const filterRow = document.createElement('div');
-    filterRow.className = 'global-filter-row';
-    filterRow.dataset.filterId = filterId;
-    
-    filterRow.innerHTML = `
-        <select class="filter-field">
-            <option value="">Select field...</option>
-        </select>
-        <select class="filter-operator">
-            <option value="contains">Contains</option>
-            <option value="startsWith">Starts with</option>
-            <option value="equals">Equals</option>
-        </select>
-        <input type="text" class="filter-value" placeholder="Enter value...">
-        <button class="btn-remove-filter" onclick="removeGlobalFilterRow(${filterId})" title="Remove filter">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-    
-    container.appendChild(filterRow);
-    updateGlobalSearchFields();
-}
-
-/**
- * Remove a filter row
- */
-window.removeGlobalFilterRow = function(filterId) {
-    const row = document.querySelector(`[data-filter-id="${filterId}"]`);
-    if (row) {
-        row.remove();
-    }
-};
-
-/**
- * Update available fields based on selected collections
- */
-function updateGlobalSearchFields() {
-    const selectedCollections = Array.from(document.querySelectorAll('.collection-checkbox:checked'))
-        .map(cb => cb.value);
-    
-    // Get all unique fields from selected collections
-    const allFields = new Set();
-    selectedCollections.forEach(collection => {
-        if (fieldOrders[collection]) {
-            fieldOrders[collection].forEach(field => allFields.add(field));
-        }
-        // Add common fields
-        ['createdAt', 'updatedAt', 'id'].forEach(field => allFields.add(field));
-    });
-    
-    // Update all filter field dropdowns
-    document.querySelectorAll('.filter-field').forEach(select => {
-        const currentValue = select.value;
-        select.innerHTML = '<option value="">Select field...</option>' +
-            Array.from(allFields).sort().map(field => 
-                `<option value="${field}" ${field === currentValue ? 'selected' : ''}>${field}</option>`
-            ).join('');
-    });
-}
-
-/**
- * Execute global search
- */
-async function executeGlobalSearch() {
-    const selectedCollections = Array.from(document.querySelectorAll('.collection-checkbox:checked'))
-        .map(cb => cb.value);
-    
-    if (selectedCollections.length === 0) {
-        showSnackbar('Please select at least one collection', 'error');
-        return;
-    }
-    
-    // Get all filters
-    const filters = Array.from(document.querySelectorAll('.global-filter-row')).map(row => ({
-        field: row.querySelector('.filter-field').value,
-        operator: row.querySelector('.filter-operator').value,
-        value: row.querySelector('.filter-value').value.trim()
-    })).filter(f => f.field && f.value);
-    
-    if (filters.length === 0) {
-        showSnackbar('Please add at least one filter', 'error');
-        return;
-    }
-    
-    const logic = document.querySelector('input[name="filter-logic"]:checked').value;
-    
-    // Show loading
-    const resultsContainer = document.getElementById('global-results-container');
-    const resultsSection = document.getElementById('global-search-results');
-    resultsSection.style.display = 'block';
-    resultsContainer.innerHTML = '<loading-spinner></loading-spinner>';
-    
-    try {
-        const results = await searchCollections(selectedCollections, filters, logic);
-        displayGlobalSearchResults(results);
-    } catch (error) {
-        console.error('Error executing global search:', error);
-        showSnackbar('Error executing search: ' + error.message, 'error');
-        resultsContainer.innerHTML = `
-            <div class="empty-results">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>Error executing search</p>
-            </div>
-        `;
-    }
-}
-
-/**
- * Search across multiple collections
- */
-async function searchCollections(collections, filters, logic) {
-    const results = {};
-    
-    // Search each collection
-    await Promise.all(collections.map(async (collectionName) => {
-        try {
-            const snapshot = await window.db.collection(collectionName).get();
-            const matches = [];
-            
-            snapshot.docs.forEach(doc => {
-                const data = { id: doc.id, ...doc.data() };
-                const matchesFilters = logic === 'AND' 
-                    ? filters.every(filter => matchesFilter(data, filter))
-                    : filters.some(filter => matchesFilter(data, filter));
-                
-                if (matchesFilters) {
-                    matches.push({ id: doc.id, data: doc.data() });
-                }
-            });
-            
-            if (matches.length > 0) {
-                results[collectionName] = matches;
-            }
-        } catch (error) {
-            console.warn(`Error searching ${collectionName}:`, error);
-        }
-    }));
-    
-    return results;
-}
-
-/**
  * Check if document matches a filter
  */
 function matchesFilter(data, filter) {
@@ -303,134 +133,6 @@ function matchesFilter(data, filter) {
             return false;
     }
 }
-
-/**
- * Display global search results
- */
-function displayGlobalSearchResults(results) {
-    const resultsContainer = document.getElementById('global-results-container');
-    
-    const collectionNames = Object.keys(results);
-    
-    if (collectionNames.length === 0) {
-        resultsContainer.innerHTML = `
-            <div class="empty-results">
-                <i class="fas fa-search"></i>
-                <p>No matching documents found</p>
-            </div>
-        `;
-        return;
-    }
-    
-    resultsContainer.innerHTML = collectionNames.map(collectionName => {
-        const documents = results[collectionName];
-        return `
-            <div class="collection-results" data-collection="${collectionName}">
-                <div class="collection-results-header" onclick="toggleCollectionResults('${collectionName}')">
-                    <h4>
-                        <i class="fas fa-chevron-down collection-toggle-icon"></i>
-                        <i class="fas fa-folder"></i>
-                        ${collectionName}
-                    </h4>
-                    <span class="collection-results-count">${documents.length}</span>
-                </div>
-                <div class="results-documents">
-                    ${documents.map(doc => {
-                        const jsonString = JSON.stringify(doc.data, null, 2);
-                        return `
-                            <div class="result-document-card collapsed" data-doc-id="${doc.id}">
-                                <div class="result-document-header" onclick="toggleDocumentResult('${collectionName}', '${doc.id}')">
-                                    <i class="fas fa-chevron-down result-document-toggle-icon"></i>
-                                    <div class="result-document-id">${doc.id}</div>
-                                </div>
-                                <div class="result-document-content">
-                                    <div class="result-document-json">${escapeHtml(jsonString)}</div>
-                                    <div class="result-document-actions">
-                                        <button class="btn-secondary btn-sm" onclick="event.stopPropagation(); viewGlobalSearchResult('${collectionName}', '${doc.id}')">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-/**
- * Toggle collection results accordion
- */
-window.toggleCollectionResults = function(collectionName) {
-    const collectionElement = document.querySelector(`.collection-results[data-collection="${collectionName}"]`);
-    if (collectionElement) {
-        collectionElement.classList.toggle('collapsed');
-    }
-};
-
-/**
- * Toggle collection results accordion
- */
-window.toggleCollectionResults = function(collectionName) {
-    const collectionElement = document.querySelector(`.collection-results[data-collection="${collectionName}"]`);
-    if (collectionElement) {
-        collectionElement.classList.toggle('collapsed');
-    }
-};
-
-/**
- * Toggle document result accordion
- */
-window.toggleDocumentResult = function(collectionName, docId) {
-    const collectionElement = document.querySelector(`.collection-results[data-collection="${collectionName}"]`);
-    if (collectionElement) {
-        const documentElement = collectionElement.querySelector(`.result-document-card[data-doc-id="${docId}"]`);
-        if (documentElement) {
-            documentElement.classList.toggle('collapsed');
-        }
-    }
-};
-
-/**
- * View a document from global search results
- */
-window.viewGlobalSearchResult = async function(collectionName, docId) {
-    // Load the collection and scroll to it
-    await selectCollection(collectionName);
-    
-    // Wait a bit for documents to load, then view the specific document
-    setTimeout(() => {
-        viewDocument(docId);
-    }, 500);
-};
-
-/**
- * Clear global search
- */
-function clearGlobalSearch() {
-    // Uncheck all collections
-    document.querySelectorAll('.collection-checkbox').forEach(cb => cb.checked = false);
-    
-    // Clear filters
-    document.getElementById('global-filters-container').innerHTML = '';
-    addGlobalFilterRow();
-    
-    // Hide results
-    document.getElementById('global-search-results').style.display = 'none';
-    document.getElementById('global-results-container').innerHTML = '';
-    
-    // Reset logic to AND
-    document.querySelector('input[name="filter-logic"][value="AND"]').checked = true;
-}
-
-// Listen for collection checkbox changes
-document.addEventListener('change', (e) => {
-    if (e.target.classList.contains('collection-checkbox')) {
-        updateGlobalSearchFields();
-    }
-});
 
 /**
  * Load all collections with their documents into unified browser
@@ -990,9 +692,7 @@ window.deleteAuthUser = async function(uid, email) {
                 
                 // Refresh both lists
                 await loadAuthUsers();
-                if (currentCollection === 'users') {
-                    await loadDocuments('users');
-                }
+                await loadCollectionsBrowser();
             } catch (error) {
                 console.error('Error deleting auth user:', error);
                 showSnackbar('Error deleting auth user: ' + error.message, 'error');
@@ -1003,249 +703,8 @@ window.deleteAuthUser = async function(uid, email) {
 };
 
 // ========================================
-// COLLECTIONS MANAGEMENT
+// DOCUMENT DELETION (WITH CASCADE LOGIC)
 // ========================================
-
-/**
- * Load collections from Firestore via Cloud Function
- */
-async function loadCollections() {
-    const container = document.getElementById('collections-container');
-    container.innerHTML = '<loading-spinner></loading-spinner>';
-    
-    try {
-        // Call the Cloud Function to list collections
-        const listCollections = window.functions.httpsCallable('listCollections');
-        const result = await listCollections();
-        
-        if (result.data.success && result.data.collections.length > 0) {
-            displayCollections(result.data.collections);
-            
-            // Initialize global search with collections
-            initializeGlobalSearch(result.data.collections);
-        } else {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-database"></i>
-                    <p>No collections found in your database</p>
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error('Error loading collections:', error);
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-circle"></i>
-                <p style="color: var(--error);">Error loading collections: ${error.message}</p>
-            </div>
-        `;
-    }
-}
-
-/**
- * Display collections
- */
-function displayCollections(collections) {
-    const container = document.getElementById('collections-container');
-    container.innerHTML = collections.map(collectionName => `
-        <div class="collection-card" onclick="selectCollection('${collectionName}')">
-            <i class="fas fa-folder"></i>
-            <div class="collection-name">${collectionName}</div>
-        </div>
-    `).join('');
-}
-
-/**
- * Select a collection and load its documents
- */
-window.selectCollection = async function(collectionName) {
-    currentCollection = collectionName;
-    currentPage = 1;
-    
-    // Show documents section
-    document.getElementById('documents-section').style.display = 'block';
-    document.getElementById('document-editor-section').style.display = 'none';
-    document.getElementById('current-collection-name').textContent = collectionName;
-    
-    // Scroll to documents section
-    document.getElementById('documents-section').scrollIntoView({ behavior: 'smooth' });
-    
-    // Load documents
-    await loadDocuments(collectionName);
-};
-
-/**
- * Load documents from a collection
- */
-async function loadDocuments(collectionName) {
-    const container = document.getElementById('documents-container');
-    container.innerHTML = '<loading-spinner></loading-spinner>';
-    
-    try {
-        const snapshot = await window.db.collection(collectionName).get();
-        
-        allDocuments = snapshot.docs.map(doc => ({
-            id: doc.id,
-            data: doc.data()
-        }));
-        
-        filteredDocuments = [...allDocuments];
-        
-        document.getElementById('document-count').textContent = allDocuments.length;
-        
-        if (allDocuments.length > 0) {
-            displayDocuments();
-        } else {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-file-alt"></i>
-                    <p>No documents found in this collection</p>
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error('Error loading documents:', error);
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-circle"></i>
-                <p style="color: var(--error);">Error loading documents: ${error.message}</p>
-            </div>
-        `;
-    }
-}
-
-/**
- * Display documents with pagination
- */
-function displayDocuments() {
-    const container = document.getElementById('documents-container');
-    const startIdx = (currentPage - 1) * documentsPerPage;
-    const endIdx = startIdx + documentsPerPage;
-    const documentsToShow = filteredDocuments.slice(startIdx, endIdx);
-    
-    container.innerHTML = documentsToShow.map(doc => {
-        const preview = JSON.stringify(doc.data, null, 2);
-        const truncatedPreview = preview.length > 200 ? preview.substring(0, 200) + '...' : preview;
-        
-        return `
-            <div class="document-card" onclick="event.stopPropagation(); viewDocument('${doc.id}')">
-                <div class="document-header">
-                    <div class="document-id">${doc.id}</div>
-                    <div class="document-actions">
-                        <button class="btn-icon btn-edit" onclick="event.stopPropagation(); editDocument('${doc.id}')" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deleteDocument('${doc.id}')" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="document-preview">${escapeHtml(truncatedPreview)}</div>
-            </div>
-        `;
-    }).join('');
-    
-    updatePagination();
-}
-
-/**
- * Update pagination controls
- */
-function updatePagination() {
-    const totalPages = Math.ceil(filteredDocuments.length / documentsPerPage);
-    
-    if (totalPages > 1) {
-        document.getElementById('pagination-container').style.display = 'flex';
-        document.getElementById('current-page').textContent = currentPage;
-        document.getElementById('total-pages').textContent = totalPages;
-        
-        document.getElementById('prev-page-btn').disabled = currentPage === 1;
-        document.getElementById('next-page-btn').disabled = currentPage === totalPages;
-    } else {
-        document.getElementById('pagination-container').style.display = 'none';
-    }
-}
-
-/**
- * Change page
- */
-function changePage(delta) {
-    currentPage += delta;
-    displayDocuments();
-    document.getElementById('documents-section').scrollIntoView({ behavior: 'smooth' });
-}
-
-/**
- * Handle search input
- */
-function handleSearch(event) {
-    const searchTerm = event.target.value.toLowerCase();
-    
-    if (searchTerm) {
-        filteredDocuments = allDocuments.filter(doc => {
-            // Search in document ID
-            if (doc.id.toLowerCase().includes(searchTerm)) {
-                return true;
-            }
-            
-            // Search in field names and values
-            for (const [key, value] of Object.entries(doc.data)) {
-                // Search in field name
-                if (key.toLowerCase().includes(searchTerm)) {
-                    return true;
-                }
-                
-                // Search in field value (convert to string for searching)
-                const valueStr = String(value).toLowerCase();
-                if (valueStr.includes(searchTerm)) {
-                    return true;
-                }
-            }
-            
-            return false;
-        });
-    } else {
-        filteredDocuments = [...allDocuments];
-    }
-    
-    currentPage = 1;
-    displayDocuments();
-}
-
-/**
- * View document (expand to show full data)
- */
-window.viewDocument = function(docId) {
-    const doc = allDocuments.find(d => d.id === docId);
-    if (!doc) return;
-    
-    const modal = new ConfirmationModal({
-        title: 'Document Data',
-        message: `
-            <div style="margin-bottom: 1rem;">
-                <strong>Document ID:</strong> <code>${docId}</code>
-            </div>
-            <div style="background: var(--background-light); padding: 1rem; border-radius: var(--radius-sm); max-height: 400px; overflow-y: auto;">
-                <pre style="margin: 0; font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(JSON.stringify(doc.data, null, 2))}</pre>
-            </div>
-        `,
-        confirmText: 'Edit',
-        cancelText: 'Close',
-        size: 'large',
-        onConfirm: () => editDocument(docId)
-    });
-    modal.show();
-};
-
-/**
- * Edit document
- */
-window.editDocument = function(docId) {
-    const doc = allDocuments.find(d => d.id === docId);
-    if (!doc) return;
-    
-    showDocumentEditor(doc);
-};
 
 /**
  * Delete document
@@ -1639,8 +1098,8 @@ window.deleteDocument = async function(docId) {
                 
                 showSnackbar(successMessage, 'success');
                 
-                // Reload documents
-                await loadDocuments(currentCollection);
+                // Reload collections browser
+                await loadCollectionsBrowser();
             } catch (error) {
                 console.error('Error deleting document:', error);
                 showSnackbar('Error deleting document: ' + error.message, 'error');
@@ -1654,7 +1113,7 @@ window.deleteDocument = async function(docId) {
  * Show document editor
  */
 function showDocumentEditor(doc) {
-    const editorSection = document.getElementById('document-editor-section');
+    const editorModal = document.getElementById('document-editor-modal');
     const editorMode = document.getElementById('editor-mode');
     const collectionName = document.getElementById('editor-collection-name');
     const documentId = document.getElementById('editor-document-id');
@@ -1688,17 +1147,15 @@ function showDocumentEditor(doc) {
         addFieldRow();
     }
     
-    // Show editor section
-    editorSection.style.display = 'block';
-    editorSection.scrollIntoView({ behavior: 'smooth' });
+    // Show editor modal
+    editorModal.style.display = 'flex';
 }
 
 /**
  * Hide document editor
  */
 function hideDocumentEditor() {
-    document.getElementById('document-editor-section').style.display = 'none';
-    document.getElementById('documents-section').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('document-editor-modal').style.display = 'none';
 }
 
 /**
@@ -1861,9 +1318,9 @@ async function saveDocument() {
             showSnackbar('Document updated successfully', 'success');
         }
         
-        // Reload documents and hide editor
-        await loadDocuments(currentCollection);
+        // Hide editor and reload collections browser
         hideDocumentEditor();
+        await loadCollectionsBrowser();
     } catch (error) {
         console.error('Error saving document:', error);
         showSnackbar('Error saving document: ' + error.message, 'error');
