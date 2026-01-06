@@ -436,14 +436,17 @@ async function generatePortalAccountReport() {
         
         // Get all users (portal accounts)
         const usersSnapshot = await window.db.collection('users').get();
-        const userIds = new Set();
+        const studentIdsWithAccounts = new Set();
         usersSnapshot.forEach(doc => {
-            userIds.add(doc.id);
+            const userData = doc.data();
+            if (userData.studentId) {
+                studentIdsWithAccounts.add(userData.studentId);
+            }
         });
         
         // Filter students based on account status
         const filteredStudents = students.filter(student => {
-            const hasAccount = userIds.has(student.id);
+            const hasAccount = studentIdsWithAccounts.has(student.id);
             
             if (filter === 'with') {
                 return hasAccount;
@@ -455,7 +458,7 @@ async function generatePortalAccountReport() {
         }).map(student => ({
             studentName: `${student.firstName} ${student.lastName}`,
             studentEmail: student.email,
-            hasAccount: userIds.has(student.id)
+            hasAccount: studentIdsWithAccounts.has(student.id)
         }));
         
         // Sort by student name
