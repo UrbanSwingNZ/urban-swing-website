@@ -63,10 +63,10 @@ async function init() {
     // Wait for Firebase to be ready
     await waitForFirebase();
     
-    // Load auth users and collections
+    // Load auth users and collections browser
     await Promise.all([
         loadAuthUsers(),
-        loadCollections()
+        loadCollectionsBrowser()
     ]);
     
     // Set up event listeners
@@ -99,35 +99,25 @@ function setupEventListeners() {
     document.getElementById('refresh-auth-users-btn').addEventListener('click', loadAuthUsers);
     document.getElementById('auth-user-search').addEventListener('input', handleAuthUserSearch);
     
-    // Collections
-    document.getElementById('refresh-collections-btn').addEventListener('click', loadCollections);
-    
-    // Documents
-    document.getElementById('add-document-btn').addEventListener('click', () => showDocumentEditor(null));
-    document.getElementById('refresh-documents-btn').addEventListener('click', () => loadDocuments(currentCollection));
-    document.getElementById('document-search').addEventListener('input', handleSearch);
-    
-    // Pagination
-    document.getElementById('prev-page-btn').addEventListener('click', () => changePage(-1));
-    document.getElementById('next-page-btn').addEventListener('click', () => changePage(1));
+    // Collections Browser
+    document.getElementById('refresh-collections-browser-btn').addEventListener('click', loadCollectionsBrowser);
+    document.getElementById('add-field-filter-btn').addEventListener('click', addFieldFilter);
+    document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);
+    document.getElementById('clear-filters-btn').addEventListener('click', clearFilters);
+    document.getElementById('filter-all-collections').addEventListener('change', handleAllCollectionsToggle);
     
     // Editor
     document.getElementById('save-document-btn').addEventListener('click', saveDocument);
     document.getElementById('cancel-edit-btn').addEventListener('click', hideDocumentEditor);
     document.getElementById('add-field-btn').addEventListener('click', addFieldRow);
-    
-    // Global Search
-    document.getElementById('add-global-filter-btn').addEventListener('click', addGlobalFilterRow);
-    document.getElementById('global-search-btn').addEventListener('click', executeGlobalSearch);
-    document.getElementById('clear-global-search-btn').addEventListener('click', clearGlobalSearch);
 }
 
 // ========================================
-// GLOBAL SEARCH
+// COLLECTIONS BROWSER (UNIFIED VIEW)
 // ========================================
 
-let availableCollections = [];
-let globalFilters = [];
+let allCollectionsData = {}; // Stores all collections and their documents
+let filteredCollectionsData = {}; // Stores filtered data
 
 /**
  * Initialize global search with available collections
@@ -441,6 +431,325 @@ document.addEventListener('change', (e) => {
         updateGlobalSearchFields();
     }
 });
+
+/**
+ * Load all collections with their documents into unified browser
+ */
+async function loadCollectionsBrowser() {
+    const container = document.getElementById('collections-browser-container');
+    container.innerHTML = '<loading-spinner></loading-spinner>';
+    
+    try {
+        // Get list of collections
+        const listCollections = window.functions.httpsCallable('listCollections');
+        const result = await listCollections();
+        
+        if (!result.data.success || result.data.collections.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-database"></i>
+                    <p>No collections found in your database</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const collectionNames = result.data.collections;
+        
+        // Populate collection filter checkboxes
+        const checkboxContainer = document.getElementById('collection-filter-checkboxes');
+        const existingCheckboxes = checkboxContainer.querySelectorAll('label:not(:first-child)');
+        existingCheckboxes.forEach(cb => cb.remove());
+        
+        collectionNames.forEach(collectionName => {
+            const label = document.createElement('label');
+            label.className = 'collection-checkbox-item';
+            label.innerHTML = `
+                <input type="checkbox" value="${collectionName}" class="collection-filter-checkbox" checked>
+                <span>${collectionName}</span>
+            `;
+            checkboxContainer.appendChild(label);
+        });
+        
+        // Load all documents from all collections
+        allCollectionsData = {};
+        
+        await Promise.all(collectionNames.map(async (collectionName) => {
+            try {
+                const snapshot = await window.db.collection(collectionName).get();
+                allCollectionsData[collectionName] = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    data: doc.data()
+                }));
+            } catch (error) {
+                console.warn(`Error loading ${collectionName}:`, error);
+                allCollectionsData[collectionName] = [];
+            }
+        }));
+        
+        // Initial display (no filters)
+        filteredCollectionsData = JSON.parse(JSON.stringify(allCollectionsData));
+        displayCollectionsBrowser();
+        
+    } catch (error) {
+        console.error('Error loading collections:', error);
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <p style="color: var(--error);">Error loading collections: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Display collections browser with current filtered data
+ */
+function displayCollectionsBrowser() {
+    const container = document.getElementById('collections-browser-container');
+    
+    const collectionNames = Object.keys(filteredCollectionsData);
+    
+    if (collectionNames.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-filter"></i>
+                <p>No collections match your filters</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = collectionNames.map(collectionName => {
+        const documents = filteredCollectionsData[collectionName];
+        const documentCount = documents.length;
+        
+        return `
+            <div class="browser-collection collapsed" data-collection="${collectionName}">
+                <div class="browser-collection-header" onclick="toggleBrowserCollection('${collectionName}')">
+                    <h3 class="browser-collection-title">
+                        <i class="fas fa-chevron-down browser-collection-toggle-icon"></i>
+                        <i class="fas fa-folder"></i>
+                        ${collectionName}
+                    </h3>
+                    <span class="browser-collection-count">${documentCount}</span>
+                </div>
+                <div class="browser-documents-container">
+                    ${documentCount === 0 ? 
+                        '<div class="empty-collection-message">No documents in this collection</div>' :
+                        documents.map(doc => {
+                            const jsonString = JSON.stringify(doc.data, null, 2);
+                            return `
+                                <div class="browser-document collapsed" data-doc-id="${doc.id}">
+                                    <div class="browser-document-header" onclick="event.stopPropagation(); toggleBrowserDocument('${collectionName}', '${doc.id}')">
+                                        <i class="fas fa-chevron-down browser-document-toggle-icon"></i>
+                                        <div class="browser-document-id">${doc.id}</div>
+                                    </div>
+                                    <div class="browser-document-content">
+                                        <div class="browser-document-json">${escapeHtml(jsonString)}</div>
+                                        <div class="browser-document-actions">
+                                            <button class="btn-secondary btn-sm" onclick="event.stopPropagation(); editBrowserDocument('${collectionName}', '${doc.id}')">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn-danger btn-sm" onclick="event.stopPropagation(); deleteBrowserDocument('${collectionName}', '${doc.id}')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')
+                    }
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Toggle collection accordion in browser
+ */
+window.toggleBrowserCollection = function(collectionName) {
+    const collectionElement = document.querySelector(`.browser-collection[data-collection="${collectionName}"]`);
+    if (collectionElement) {
+        collectionElement.classList.toggle('collapsed');
+    }
+};
+
+/**
+ * Toggle document accordion in browser
+ */
+window.toggleBrowserDocument = function(collectionName, docId) {
+    const collectionElement = document.querySelector(`.browser-collection[data-collection="${collectionName}"]`);
+    if (collectionElement) {
+        const documentElement = collectionElement.querySelector(`.browser-document[data-doc-id="${docId}"]`);
+        if (documentElement) {
+            documentElement.classList.toggle('collapsed');
+        }
+    }
+};
+
+/**
+ * Edit a document from browser
+ */
+window.editBrowserDocument = function(collectionName, docId) {
+    const doc = allCollectionsData[collectionName]?.find(d => d.id === docId);
+    if (!doc) return;
+    
+    currentCollection = collectionName;
+    showDocumentEditor(doc);
+};
+
+/**
+ * Delete a document from browser
+ */
+window.deleteBrowserDocument = async function(collectionName, docId) {
+    currentCollection = collectionName;
+    await deleteDocument(docId);
+    // Reload browser after deletion
+    await loadCollectionsBrowser();
+};
+
+/**
+ * Add a field filter row
+ */
+function addFieldFilter() {
+    const container = document.getElementById('field-filters-container');
+    const filterId = Date.now();
+    
+    const filterRow = document.createElement('div');
+    filterRow.className = 'field-filter-row';
+    filterRow.dataset.filterId = filterId;
+    
+    // Get all available fields from selected collections
+    const selectedCollections = Array.from(document.querySelectorAll('.collection-filter-checkbox:checked:not(#filter-all-collections)'))
+        .map(cb => cb.value);
+    
+    const allFields = new Set();
+    selectedCollections.forEach(collection => {
+        if (fieldOrders[collection]) {
+            fieldOrders[collection].forEach(field => allFields.add(field));
+        }
+        // Add common fields
+        ['createdAt', 'updatedAt', 'id'].forEach(field => allFields.add(field));
+    });
+    
+    filterRow.innerHTML = `
+        <select class="field-filter-field">
+            <option value="">Select field...</option>
+            ${Array.from(allFields).sort().map(field => 
+                `<option value="${field}">${field}</option>`
+            ).join('')}
+        </select>
+        <select class="field-filter-operator">
+            <option value="contains">Contains</option>
+            <option value="startsWith">Starts with</option>
+            <option value="equals">Equals</option>
+        </select>
+        <input type="text" class="field-filter-value" placeholder="Enter value...">
+        <button class="btn-remove-filter" onclick="removeFieldFilter(${filterId})" title="Remove filter">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    container.appendChild(filterRow);
+}
+
+/**
+ * Remove a field filter row
+ */
+window.removeFieldFilter = function(filterId) {
+    const row = document.querySelector(`[data-filter-id="${filterId}"]`);
+    if (row) {
+        row.remove();
+    }
+};
+
+/**
+ * Apply filters to collections data
+ */
+function applyFilters() {
+    // Get selected collections
+    const allCollectionsChecked = document.getElementById('filter-all-collections').checked;
+    let selectedCollections;
+    
+    if (allCollectionsChecked) {
+        selectedCollections = Object.keys(allCollectionsData);
+    } else {
+        selectedCollections = Array.from(document.querySelectorAll('.collection-filter-checkbox:checked:not(#filter-all-collections)'))
+            .map(cb => cb.value);
+    }
+    
+    // Get field filters
+    const filters = Array.from(document.querySelectorAll('.field-filter-row')).map(row => ({
+        field: row.querySelector('.field-filter-field').value,
+        operator: row.querySelector('.field-filter-operator').value,
+        value: row.querySelector('.field-filter-value').value.trim()
+    })).filter(f => f.field && f.value);
+    
+    const logic = document.querySelector('input[name="filter-logic"]:checked').value;
+    
+    // Filter collections
+    filteredCollectionsData = {};
+    
+    selectedCollections.forEach(collectionName => {
+        const documents = allCollectionsData[collectionName] || [];
+        
+        if (filters.length === 0) {
+            // No field filters, include all documents
+            filteredCollectionsData[collectionName] = documents;
+        } else {
+            // Apply field filters
+            const filteredDocs = documents.filter(doc => {
+                const data = { id: doc.id, ...doc.data };
+                const matchesFilters = logic === 'AND' 
+                    ? filters.every(filter => matchesFilter(data, filter))
+                    : filters.some(filter => matchesFilter(data, filter));
+                return matchesFilters;
+            });
+            
+            if (filteredDocs.length > 0) {
+                filteredCollectionsData[collectionName] = filteredDocs;
+            }
+        }
+    });
+    
+    displayCollectionsBrowser();
+    showSnackbar(`Filters applied. Showing ${Object.keys(filteredCollectionsData).length} collection(s)`, 'success');
+}
+
+/**
+ * Clear all filters and show all data
+ */
+function clearFilters() {
+    // Check all collections
+    document.getElementById('filter-all-collections').checked = true;
+    document.querySelectorAll('.collection-filter-checkbox:not(#filter-all-collections)').forEach(cb => {
+        cb.checked = true;
+    });
+    
+    // Clear field filters
+    document.getElementById('field-filters-container').innerHTML = '';
+    
+    // Reset logic to AND
+    document.querySelector('input[name="filter-logic"][value="AND"]').checked = true;
+    
+    // Reset filtered data
+    filteredCollectionsData = JSON.parse(JSON.stringify(allCollectionsData));
+    displayCollectionsBrowser();
+    
+    showSnackbar('Filters cleared', 'success');
+}
+
+/**
+ * Handle "All Collections" checkbox toggle
+ */
+function handleAllCollectionsToggle(event) {
+    const isChecked = event.target.checked;
+    document.querySelectorAll('.collection-filter-checkbox:not(#filter-all-collections)').forEach(cb => {
+        cb.checked = isChecked;
+    });
+}
 
 // ========================================
 // AUTH USERS MANAGEMENT
