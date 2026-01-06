@@ -178,7 +178,7 @@ async function generateExpiringSoonReport() {
             const concession = { id: doc.id, ...doc.data() };
             const expiryDate = concession.expiryDate?.toDate();
             
-            if (expiryDate && expiryDate > now && expiryDate <= futureDate) {
+            if (expiryDate && expiryDate > now && expiryDate <= futureDate && concession.remainingQuantity > 0) {
                 const student = students[concession.studentId];
                 if (student) {
                     const daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
