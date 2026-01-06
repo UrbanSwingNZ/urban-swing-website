@@ -62,121 +62,70 @@
                 </div>
             </section>
 
-            <!-- Global Search Section -->
-            <section class="global-search-section accordion">
-                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+            <!-- Collections Browser Section (Unified View) -->
+            <section class="collections-browser-section">
+                <div class="section-header">
                     <div>
-                        <h2><i class="fas fa-search"></i> Global Search</h2>
-                        <p class="section-description">Search across multiple collections with custom filters</p>
+                        <h2><i class="fas fa-database"></i> Collections & Documents</h2>
+                        <p class="section-description">Browse and filter all collections and documents</p>
                     </div>
-                    <div class="accordion-controls">
-                        <i class="fas fa-chevron-down accordion-icon"></i>
-                    </div>
+                    <button id="refresh-collections-browser-btn" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                 </div>
 
-                <div class="accordion-content">
-                    <!-- Collection Selector -->
+                <!-- Filter Controls -->
+                <div class="filter-controls-container">
+                    <!-- Collection Filter -->
                     <div class="filter-row">
                         <label class="filter-label">Collections:</label>
-                        <div id="collection-checkboxes" class="collection-checkboxes">
+                        <div id="collection-filter-checkboxes" class="collection-checkboxes">
+                            <label class="collection-checkbox-item">
+                                <input type="checkbox" value="all" class="collection-filter-checkbox" id="filter-all-collections" checked>
+                                <span>All Collections</span>
+                            </label>
                             <!-- Dynamically populated -->
                         </div>
                     </div>
 
-                    <!-- Filter Logic Toggle -->
+                    <!-- Field Filters -->
                     <div class="filter-row">
-                        <label class="filter-label">Match:</label>
-                        <div class="logic-toggle">
-                            <label class="logic-option">
-                                <input type="radio" name="filter-logic" value="AND" checked>
-                                <span>AND (all filters must match)</span>
-                            </label>
-                            <label class="logic-option">
-                                <input type="radio" name="filter-logic" value="OR">
-                                <span>OR (any filter can match)</span>
-                            </label>
+                        <label class="filter-label">Field Filters:</label>
+                        <div class="filter-row-controls">
+                            <div class="logic-toggle">
+                                <label class="logic-option">
+                                    <input type="radio" name="filter-logic" value="AND" checked>
+                                    <span>AND</span>
+                                </label>
+                                <label class="logic-option">
+                                    <input type="radio" name="filter-logic" value="OR">
+                                    <span>OR</span>
+                                </label>
+                            </div>
+                            <button id="add-field-filter-btn" class="btn-secondary btn-sm">
+                                <i class="fas fa-plus"></i> Add Filter
+                            </button>
                         </div>
                     </div>
 
                     <!-- Filters Container -->
-                    <div id="global-filters-container" class="global-filters-container">
+                    <div id="field-filters-container" class="field-filters-container">
                         <!-- Filter rows will be added here -->
                     </div>
 
                     <div class="filter-actions">
-                        <button id="add-global-filter-btn" class="btn-secondary">
-                            <i class="fas fa-plus"></i> Add Filter
+                        <button id="apply-filters-btn" class="btn-primary">
+                            <i class="fas fa-filter"></i> Apply Filters
                         </button>
-                        <button id="global-search-btn" class="btn-primary">
-                            <i class="fas fa-search"></i> Search
+                        <button id="clear-filters-btn" class="btn-secondary">
+                            <i class="fas fa-times"></i> Clear All
                         </button>
-                        <button id="clear-global-search-btn" class="btn-secondary">
-                            <i class="fas fa-times"></i> Clear
-                        </button>
-                    </div>
-
-                    <!-- Results Container -->
-                    <div id="global-search-results" class="global-search-results" style="display: none;">
-                        <h3 class="results-title">Search Results</h3>
-                        <div id="global-results-container"></div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Collection Selector Section -->
-            <section class="collection-selector-section">
-                <div class="section-header">
-                    <div>
-                        <h2><i class="fas fa-database"></i> Collections</h2>
-                        <p class="section-description">Select a collection to manage</p>
-                    </div>
-                    <button id="refresh-collections-btn" class="btn-secondary">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
-                </div>
-                <div id="collections-container" class="collections-container">
+                <!-- Collections & Documents View -->
+                <div id="collections-browser-container" class="collections-browser-container">
                     <loading-spinner></loading-spinner>
-                </div>
-            </section>
-
-            <!-- Documents Section -->
-            <section id="documents-section" class="documents-section" style="display: none;">
-                <div class="section-header">
-                    <div>
-                        <h2><i class="fas fa-file-alt"></i> Documents in <span id="current-collection-name"></span></h2>
-                        <p class="section-description">Total: <span id="document-count">0</span> documents</p>
-                    </div>
-                    <div class="section-actions">
-                        <button id="add-document-btn" class="btn-primary">
-                            <i class="fas fa-plus"></i> Add Document
-                        </button>
-                        <button id="refresh-documents-btn" class="btn-secondary">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Search & Filter -->
-                <div class="search-bar">
-                    <input type="text" id="document-search" placeholder="Search by ID, field name, or field value..." class="search-input">
-                    <i class="fas fa-search search-icon"></i>
-                </div>
-
-                <div id="documents-container" class="documents-container">
-                    <loading-spinner></loading-spinner>
-                </div>
-
-                <!-- Pagination -->
-                <div id="pagination-container" class="pagination-container" style="display: none;">
-                    <button id="prev-page-btn" class="btn-secondary" disabled>
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <span class="pagination-info">
-                        Page <span id="current-page">1</span> of <span id="total-pages">1</span>
-                    </span>
-                    <button id="next-page-btn" class="btn-secondary" disabled>
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
                 </div>
             </section>
 
