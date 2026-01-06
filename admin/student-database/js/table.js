@@ -156,8 +156,8 @@ function createStudentRow(student) {
         </td>
         <td>${registeredDate}</td>
         <td class="action-buttons">
-            ${!isDeleted ? `<button class="btn-icon btn-disabled" id="reset-password-${student.id}" onclick="resetStudentPassword('${student.id}')" title="Checking auth status...">
-                <i class="fas fa-key"></i>
+            ${!isDeleted ? `<button class="btn-icon btn-disabled" id="auth-action-${student.id}" data-auth-action="checking" title="Checking auth status...">
+                <i class="fas fa-spinner fa-spin"></i>
             </button>` : ''}
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
                 <i class="fas fa-sticky-note"></i>
@@ -277,11 +277,11 @@ async function loadStudentConcessions(studentId, cellId) {
 
 /**
  * Check if student has an auth user document
- * Updates the reset password button state accordingly
+ * Updates the button to show either password reset or invitation icon
  */
 async function checkStudentAuthStatus(studentId, email) {
-    const resetBtn = document.getElementById(`reset-password-${studentId}`);
-    if (!resetBtn || !email) return;
+    const authActionBtn = document.getElementById(`auth-action-${studentId}`);
+    if (!authActionBtn || !email) return;
     
     try {
         // Query users collection by email to check if auth user exists
@@ -291,17 +291,26 @@ async function checkStudentAuthStatus(studentId, email) {
             .get();
         
         if (!usersSnapshot.empty) {
-            // Student has auth user - enable button
-            resetBtn.classList.remove('btn-disabled');
-            resetBtn.title = 'Reset Password';
+            // Student has auth user - show password reset icon
+            authActionBtn.classList.remove('btn-disabled');
+            authActionBtn.dataset.authAction = 'reset-password';
+            authActionBtn.title = 'Reset Password';
+            authActionBtn.innerHTML = '<i class="fas fa-key"></i>';
+            authActionBtn.onclick = () => resetStudentPassword(studentId);
         } else {
-            // No auth user - keep disabled
-            resetBtn.title = 'No password to reset (student has not completed registration)';
+            // No auth user - show invitation icon
+            authActionBtn.classList.remove('btn-disabled');
+            authActionBtn.dataset.authAction = 'invite';
+            authActionBtn.title = 'Invite to Student Portal';
+            authActionBtn.innerHTML = '<i class="fas fa-user-plus"></i>';
+            authActionBtn.onclick = () => inviteStudentToPortal(studentId);
         }
     } catch (error) {
         console.error('Error checking auth status for student:', studentId, error);
         // On error, keep button disabled to be safe
-        resetBtn.title = 'Unable to verify auth status';
+        authActionBtn.classList.add('btn-disabled');
+        authActionBtn.title = 'Unable to verify auth status';
+        authActionBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
     }
 }
 
@@ -320,4 +329,24 @@ function resetStudentPassword(studentId) {
     showPasswordResetModal(student.email, () => {
         console.log('Password reset email sent to:', student.email);
     });
+}
+
+/**
+ * Invite student to join the student portal
+ * Shows confirmation modal and sends invitation email
+ */
+function inviteStudentToPortal(studentId) {
+    const student = findStudentById(studentId);
+    if (!student || !student.email) {
+        alert('Unable to find student email address.');
+        return;
+    }
+    
+    // Get student name for display
+    const firstName = toTitleCase(student.firstName || '');
+    const lastName = toTitleCase(student.lastName || '');
+    const fullName = `${firstName} ${lastName}`.trim();
+    
+    // Use the invitation modal
+    inviteToPortal(studentId, fullName, student.email);
 }
