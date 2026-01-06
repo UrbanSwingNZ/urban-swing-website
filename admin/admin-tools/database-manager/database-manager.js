@@ -335,19 +335,32 @@ function displayGlobalSearchResults(results) {
     resultsContainer.innerHTML = collectionNames.map(collectionName => {
         const documents = results[collectionName];
         return `
-            <div class="collection-results">
-                <div class="collection-results-header">
-                    <h4><i class="fas fa-folder"></i> ${collectionName}</h4>
+            <div class="collection-results" data-collection="${collectionName}">
+                <div class="collection-results-header" onclick="toggleCollectionResults('${collectionName}')">
+                    <h4>
+                        <i class="fas fa-chevron-down collection-toggle-icon"></i>
+                        <i class="fas fa-folder"></i>
+                        ${collectionName}
+                    </h4>
                     <span class="collection-results-count">${documents.length}</span>
                 </div>
                 <div class="results-documents">
                     ${documents.map(doc => {
-                        const preview = JSON.stringify(doc.data, null, 2);
-                        const truncatedPreview = preview.length > 150 ? preview.substring(0, 150) + '...' : preview;
+                        const jsonString = JSON.stringify(doc.data, null, 2);
                         return `
-                            <div class="result-document-card" onclick="viewGlobalSearchResult('${collectionName}', '${doc.id}')">
-                                <div class="result-document-id">${doc.id}</div>
-                                <div class="result-document-preview">${escapeHtml(truncatedPreview)}</div>
+                            <div class="result-document-card collapsed" data-doc-id="${doc.id}">
+                                <div class="result-document-header" onclick="toggleDocumentResult('${collectionName}', '${doc.id}')">
+                                    <i class="fas fa-chevron-down result-document-toggle-icon"></i>
+                                    <div class="result-document-id">${doc.id}</div>
+                                </div>
+                                <div class="result-document-content">
+                                    <div class="result-document-json">${escapeHtml(jsonString)}</div>
+                                    <div class="result-document-actions">
+                                        <button class="btn-secondary btn-sm" onclick="event.stopPropagation(); viewGlobalSearchResult('${collectionName}', '${doc.id}')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         `;
                     }).join('')}
@@ -356,6 +369,39 @@ function displayGlobalSearchResults(results) {
         `;
     }).join('');
 }
+
+/**
+ * Toggle collection results accordion
+ */
+window.toggleCollectionResults = function(collectionName) {
+    const collectionElement = document.querySelector(`.collection-results[data-collection="${collectionName}"]`);
+    if (collectionElement) {
+        collectionElement.classList.toggle('collapsed');
+    }
+};
+
+/**
+ * Toggle collection results accordion
+ */
+window.toggleCollectionResults = function(collectionName) {
+    const collectionElement = document.querySelector(`.collection-results[data-collection="${collectionName}"]`);
+    if (collectionElement) {
+        collectionElement.classList.toggle('collapsed');
+    }
+};
+
+/**
+ * Toggle document result accordion
+ */
+window.toggleDocumentResult = function(collectionName, docId) {
+    const collectionElement = document.querySelector(`.collection-results[data-collection="${collectionName}"]`);
+    if (collectionElement) {
+        const documentElement = collectionElement.querySelector(`.result-document-card[data-doc-id="${docId}"]`);
+        if (documentElement) {
+            documentElement.classList.toggle('collapsed');
+        }
+    }
+};
 
 /**
  * View a document from global search results
