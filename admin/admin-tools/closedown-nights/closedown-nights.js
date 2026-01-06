@@ -2,6 +2,7 @@
 // Firebase auth and db are already initialized in firebase-config.js
 
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+import { showSnackbar } from '/components/snackbar/snackbar.js';
 
 // State
 let currentUser = null;
@@ -375,29 +376,11 @@ function formatDate(date) {
 }
 
 function showSuccess(message) {
-    const successEl = document.getElementById('success-message');
-    const errorEl = document.getElementById('error-message');
-    
-    errorEl.style.display = 'none';
-    successEl.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    successEl.style.display = 'flex';
-    
-    setTimeout(() => {
-        successEl.style.display = 'none';
-    }, 5000);
+    showSnackbar(message, 'success', 5000);
 }
 
 function showError(message) {
-    const successEl = document.getElementById('success-message');
-    const errorEl = document.getElementById('error-message');
-    
-    successEl.style.display = 'none';
-    errorEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-    errorEl.style.display = 'flex';
-    
-    setTimeout(() => {
-        errorEl.style.display = 'none';
-    }, 5000);
+    showSnackbar(message, 'error', 5000);
 }
 
 // Expose functions globally for onclick handlers
