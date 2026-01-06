@@ -119,6 +119,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../'
     },
+    '/admin/admin-tools/reports/': {
+        title: 'Reports',
+        activePage: 'reports',
+        navSection: 'admin-tools',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../'
+    },
     
     // Student Portal Pages (admin view)
     '/student-portal/dashboard/': {

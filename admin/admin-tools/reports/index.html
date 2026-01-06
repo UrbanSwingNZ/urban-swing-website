@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Reports - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="reports.css">
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+</head>
+<body>
+    <div id="reports-container" class="dashboard-container">
+        <main class="dashboard-main">
+            <div class="reports-intro">
+                <h2>Student & Concession Reports</h2>
+                <p>Generate various reports from your Firestore database</p>
+            </div>
+
+            <!-- Report 1: Expired Concessions -->
+            <div class="report-section">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-clock"></i>
+                        <h3>Expired Concessions</h3>
+                    </div>
+                    <button class="btn-primary report-button" onclick="generateExpiredConcessionsReport()">
+                        <i class="fas fa-play"></i> Generate Report
+                    </button>
+                </div>
+                <div class="report-description">
+                    <p>Shows all concessions that have expired, including the student details.</p>
+                </div>
+                <div id="expired-concessions-results" class="report-results" style="display: none;">
+                    <div class="results-header">
+                        <span class="result-count">Found <strong id="expired-count">0</strong> expired concessions</span>
+                    </div>
+                    <div id="expired-concessions-table"></div>
+                </div>
+            </div>
+
+            <!-- Report 2: Expiring Soon Concessions -->
+            <div class="report-section">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Concessions Expiring Soon</h3>
+                    </div>
+                    <div class="report-controls">
+                        <label for="weeks-input">Expiring in next:</label>
+                        <input type="number" id="weeks-input" min="1" max="52" value="4" class="weeks-input">
+                        <span>weeks</span>
+                        <button class="btn-primary report-button" onclick="generateExpiringSoonReport()">
+                            <i class="fas fa-play"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+                <div class="report-description">
+                    <p>Shows all students with concessions expiring in the next X weeks.</p>
+                </div>
+                <div id="expiring-soon-results" class="report-results" style="display: none;">
+                    <div class="results-header">
+                        <span class="result-count">Found <strong id="expiring-count">0</strong> concessions expiring soon</span>
+                    </div>
+                    <div id="expiring-soon-table"></div>
+                </div>
+            </div>
+
+            <!-- Report 3: Active Concessions -->
+            <div class="report-section">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Active Concessions</h3>
+                    </div>
+                    <button class="btn-primary report-button" onclick="generateActiveConcessionsReport()">
+                        <i class="fas fa-play"></i> Generate Report
+                    </button>
+                </div>
+                <div class="report-description">
+                    <p>Shows all students with active concessions, including balance and expiry date.</p>
+                </div>
+                <div id="active-concessions-results" class="report-results" style="display: none;">
+                    <div class="results-header">
+                        <span class="result-count">Found <strong id="active-count">0</strong> active concessions</span>
+                    </div>
+                    <div id="active-concessions-table"></div>
+                </div>
+            </div>
+
+            <!-- Report 4: Email Addresses for Consent -->
+            <div class="report-section">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email Addresses (Consent Given)</h3>
+                    </div>
+                    <button class="btn-primary report-button" onclick="generateEmailConsentReport()">
+                        <i class="fas fa-play"></i> Generate Report
+                    </button>
+                </div>
+                <div class="report-description">
+                    <p>Extract email addresses from all students where emailConsent: true for easy copy/paste into BCC.</p>
+                </div>
+                <div id="email-consent-results" class="report-results" style="display: none;">
+                    <div class="results-header">
+                        <span class="result-count">Found <strong id="email-count">0</strong> email addresses</span>
+                        <button class="btn-secondary" onclick="copyEmailsToBCC()">
+                            <i class="fas fa-copy"></i> Copy All to Clipboard
+                        </button>
+                    </div>
+                    <div id="email-consent-display"></div>
+                </div>
+            </div>
+
+            <!-- Report 5: Student Portal Account Status -->
+            <div class="report-section">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-user-check"></i>
+                        <h3>Student Portal Account Status</h3>
+                    </div>
+                    <div class="report-controls">
+                        <label for="account-filter">Show students:</label>
+                        <select id="account-filter" class="account-filter">
+                            <option value="with">With portal accounts</option>
+                            <option value="without">Without portal accounts</option>
+                            <option value="all">All students</option>
+                        </select>
+                        <button class="btn-primary report-button" onclick="generatePortalAccountReport()">
+                            <i class="fas fa-play"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+                <div class="report-description">
+                    <p>Shows students who do or do not have a student portal account set up.</p>
+                </div>
+                <div id="portal-account-results" class="report-results" style="display: none;">
+                    <div class="results-header">
+                        <span class="result-count">Found <strong id="portal-count">0</strong> students</span>
+                    </div>
+                    <div id="portal-account-table"></div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Reports Tool v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="../../../config/firebase-config.js"></script>
+    
+    <!-- Admin Header Dependencies -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../../js/header-config.js"></script>
+    <script src="../../js/header-configurator.js"></script>
+    <script src="../../js/mobile-nav.js"></script>
+    <script src="../../admin-header.js"></script>
+    
+    <!-- Modals -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    
+    <!-- Reports Logic -->
+    <script type="module" src="reports.js"></script>
+</body>
+</html>
