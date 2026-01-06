@@ -581,6 +581,7 @@ window.editDocument = function(docId) {
 window.deleteDocument = async function(docId) {
     // If deleting from users collection, check if Auth user exists
     let hasAuthUser = false;
+    let hasUsersDoc = false;
     if (currentCollection === 'users') {
         try {
             const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
@@ -588,6 +589,59 @@ window.deleteDocument = async function(docId) {
             hasAuthUser = result.data.users.some(user => user.uid === docId);
         } catch (error) {
             console.warn('Could not check for auth user:', error);
+        }
+    }
+    
+    // If deleting from students collection, check for all related documents
+    let relatedCheckins = [];
+    let relatedConcessionBlocks = [];
+    let relatedTransactionsForStudent = [];
+    if (currentCollection === 'students') {
+        try {
+            // Check for related users document
+            const usersDoc = await window.db.collection('users').doc(docId).get();
+            hasUsersDoc = usersDoc.exists;
+            
+            // If users doc exists, check for auth user
+            if (hasUsersDoc) {
+                try {
+                    const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+                    const result = await manageAuthUsers({ operation: 'list', maxResults: 1000 });
+                    hasAuthUser = result.data.users.some(user => user.uid === docId);
+                } catch (error) {
+                    console.warn('Could not check for auth user:', error);
+                }
+            }
+            
+            // Check for checkins
+            const checkinsSnapshot = await window.db.collection('checkins')
+                .where('studentId', '==', docId)
+                .get();
+            relatedCheckins = checkinsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            
+            // Check for concessionBlocks
+            const blocksSnapshot = await window.db.collection('concessionBlocks')
+                .where('studentId', '==', docId)
+                .get();
+            relatedConcessionBlocks = blocksSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            
+            // Check for transactions
+            const transactionsSnapshot = await window.db.collection('transactions')
+                .where('studentId', '==', docId)
+                .get();
+            relatedTransactionsForStudent = transactionsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            
+        } catch (error) {
+            console.warn('Could not check for related student documents:', error);
         }
     }
     
@@ -652,6 +706,45 @@ window.deleteDocument = async function(docId) {
         }
     }
     
+    // If deleting from transactions collection, check for related concession block and checkin
+    let transactionDoc = null;
+    let relatedConcessionBlock = null;
+    let relatedCheckin = null;
+    if (currentCollection === 'transactions') {
+        try {
+            // Get the transaction document to check for concessionBlockId and checkinId
+            const transactionSnapshot = await window.db.collection('transactions').doc(docId).get();
+            if (transactionSnapshot.exists) {
+                transactionDoc = transactionSnapshot.data();
+                studentId = transactionDoc.studentId;
+                
+                // Get the related concession block if concessionBlockId exists
+                if (transactionDoc.concessionBlockId) {
+                    const blockDoc = await window.db.collection('concessionBlocks').doc(transactionDoc.concessionBlockId).get();
+                    if (blockDoc.exists) {
+                        relatedConcessionBlock = {
+                            id: blockDoc.id,
+                            ...blockDoc.data()
+                        };
+                    }
+                }
+                
+                // Get the related checkin if checkinId exists
+                if (transactionDoc.checkinId) {
+                    const checkinDoc = await window.db.collection('checkins').doc(transactionDoc.checkinId).get();
+                    if (checkinDoc.exists) {
+                        relatedCheckin = {
+                            id: checkinDoc.id,
+                            ...checkinDoc.data()
+                        };
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('Could not check for related documents:', error);
+        }
+    }
+    
     const modal = new ConfirmationModal({
         title: 'Delete Document',
         message: `
@@ -659,6 +752,24 @@ window.deleteDocument = async function(docId) {
             <p style="margin-top: 1rem;"><strong>Collection:</strong> <code>${currentCollection}</code></p>
             <p style="margin-top: 0.5rem;"><strong>Document ID:</strong> <code>${docId}</code></p>
             ${currentCollection === 'users' && hasAuthUser ? '<div style="margin-top: 1rem; padding: 0.75rem 0;"><label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;"><input type="checkbox" id="delete-auth-user-checkbox" style="cursor: pointer; margin-top: 0.5rem;"><span>Also delete the corresponding authentication user (user will no longer be able to sign in)</span></label></div>' : ''}
+            ${currentCollection === 'students' && (hasUsersDoc || hasAuthUser || relatedCheckins.length > 0 || relatedConcessionBlocks.length > 0 || relatedTransactionsForStudent.length > 0) ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Related Documents Found</p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+                        ${hasUsersDoc ? '<li>1 user document</li>' : ''}
+                        ${hasAuthUser ? '<li>1 authentication user</li>' : ''}
+                        ${relatedCheckins.length > 0 ? `<li>${relatedCheckins.length} check-in${relatedCheckins.length > 1 ? 's' : ''}</li>` : ''}
+                        ${relatedConcessionBlocks.length > 0 ? `<li>${relatedConcessionBlocks.length} concession block${relatedConcessionBlocks.length > 1 ? 's' : ''}</li>` : ''}
+                        ${relatedTransactionsForStudent.length > 0 ? `<li>${relatedTransactionsForStudent.length} transaction${relatedTransactionsForStudent.length > 1 ? 's' : ''}</li>` : ''}
+                    </ul>
+                </div>
+                <div style="margin-top: 1rem; padding: 0.75rem 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="delete-all-student-data-checkbox" style="cursor: pointer; margin-top: 0.5rem;">
+                        <span>Delete ALL related documents (user, auth user, check-ins, concession blocks, and transactions)</span>
+                    </label>
+                </div>
+            ` : ''}
             ${(currentCollection === 'checkins' || currentCollection === 'concessionBlocks') && relatedTransactions.length > 0 ? `
                 <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
                     <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Related Transaction${relatedTransactions.length > 1 ? 's' : ''} Found</p>
@@ -687,24 +798,110 @@ window.deleteDocument = async function(docId) {
                     <p style="margin: 0.5rem 0 0 0;">Deleting this concession block may require updating the <code>concessionBalance</code> on student document ${studentId ? `<code>${studentId}</code>` : ''}.</p>
                 </div>
             ` : ''}
+            ${currentCollection === 'transactions' && relatedConcessionBlock ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Related Concession Block Found</p>
+                    <p style="margin: 0.5rem 0 0 0;">Concession block ID: <code>${relatedConcessionBlock.id}</code></p>
+                </div>
+                <div style="margin-top: 1rem; padding: 0.75rem 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="delete-concession-block-checkbox" style="cursor: pointer; margin-top: 0.5rem;">
+                        <span>Also delete the related concession block</span>
+                    </label>
+                </div>
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Concession Balance Warning</p>
+                    <p style="margin: 0.5rem 0 0 0;">If you delete the concession block, you'll need to manually update the <code>concessionBalance</code> on student document ${studentId ? `<code>${studentId}</code>` : ''}.</p>
+                </div>
+            ` : ''}
+            ${currentCollection === 'transactions' && transactionDoc?.type === 'concession-purchase' && !relatedConcessionBlock ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Concession Purchase Transaction</p>
+                    <p style="margin: 0.5rem 0 0 0;">This is a concession purchase transaction. You may need to manually delete the related concession block from the <code>concessionBlocks</code> collection.</p>
+                </div>
+            ` : ''}
+            ${currentCollection === 'transactions' && relatedCheckin ? `
+                <div style="margin-top: 1rem; background: linear-gradient(135deg, var(--warning-lighter) 0%, var(--warning-lightest) 100%); border-left: 4px solid var(--warning-dark); color: var(--warning-darkest); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <p style="margin: 0; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Related Check-In Found</p>
+                    <p style="margin: 0.5rem 0 0 0;">Check-in ID: <code>${relatedCheckin.id}</code></p>
+                </div>
+                <div style="margin-top: 1rem; padding: 0.75rem 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="delete-checkin-checkbox" style="cursor: pointer; margin-top: 0.5rem;">
+                        <span>Also delete the related check-in</span>
+                    </label>
+                </div>
+            ` : ''}
             <p style="margin-top: 1rem; color: var(--error);"><strong>Warning:</strong> This action cannot be undone.</p>
         `,
         icon: 'fas fa-exclamation-triangle',
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         variant: 'danger',
-        onConfirm: async () => {(currentCollection === 'checkins' || currentCollection === 'concessionBlocks')
+        onConfirm: async () => {
             try {
                 // Check if user wants to delete auth user
                 const deleteAuthUser = currentCollection === 'users' && hasAuthUser && document.getElementById('delete-auth-user-checkbox')?.checked;
                 
+                // Check if user wants to delete all student-related data
+                const deleteAllStudentData = currentCollection === 'students' && document.getElementById('delete-all-student-data-checkbox')?.checked;
+                
                 // Check if user wants to delete related transactions
-                const deleteTransactions = currentCollection === 'checkins' && relatedTransactions.length > 0 && document.getElementById('delete-transactions-checkbox')?.checked;
+                const deleteTransactions = (currentCollection === 'checkins' || currentCollection === 'concessionBlocks') && relatedTransactions.length > 0 && document.getElementById('delete-transactions-checkbox')?.checked;
+                
+                // Check if user wants to delete related concession block
+                const deleteConcessionBlock = currentCollection === 'transactions' && relatedConcessionBlock && document.getElementById('delete-concession-block-checkbox')?.checked;
+                
+                // Check if user wants to delete related checkin
+                const deleteCheckin = currentCollection === 'transactions' && relatedCheckin && document.getElementById('delete-checkin-checkbox')?.checked;
+                
+                // Handle student cascade deletion
+                if (deleteAllStudentData) {
+                    try {
+                        // Use batch for Firestore documents
+                        const batch = window.db.batch();
+                        
+                        // Delete checkins
+                        relatedCheckins.forEach(checkin => {
+                            const checkinRef = window.db.collection('checkins').doc(checkin.id);
+                            batch.delete(checkinRef);
+                        });
+                        
+                        // Delete concession blocks
+                        relatedConcessionBlocks.forEach(block => {
+                            const blockRef = window.db.collection('concessionBlocks').doc(block.id);
+                            batch.delete(blockRef);
+                        });
+                        
+                        // Delete transactions
+                        relatedTransactionsForStudent.forEach(transaction => {
+                            const transactionRef = window.db.collection('transactions').doc(transaction.id);
+                            batch.delete(transactionRef);
+                        });
+                        
+                        // Delete users document
+                        if (hasUsersDoc) {
+                            const usersRef = window.db.collection('users').doc(docId);
+                            batch.delete(usersRef);
+                        }
+                        
+                        await batch.commit();
+                        
+                        // Delete auth user separately (not part of batch)
+                        if (hasAuthUser) {
+                            const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
+                            await manageAuthUsers({ operation: 'delete', uid: docId });
+                            await loadAuthUsers();
+                        }
+                    } catch (cascadeError) {
+                        console.warn('Error during cascade deletion:', cascadeError);
+                    }
+                }
                 
                 // Delete Firestore document
                 await window.db.collection(currentCollection).doc(docId).delete();
                 
-                // Also delete Auth user if checkbox was checked
+                // Also delete Auth user if checkbox was checked (for users collection)
                 if (deleteAuthUser) {
                     try {
                         const manageAuthUsers = window.functions.httpsCallable('manageAuthUsers');
@@ -730,13 +927,42 @@ window.deleteDocument = async function(docId) {
                     }
                 }
                 
+                // Also delete related concession block if checkbox was checked
+                if (deleteConcessionBlock) {
+                    try {
+                        await window.db.collection('concessionBlocks').doc(relatedConcessionBlock.id).delete();
+                    } catch (blockError) {
+                        console.warn('Error deleting related concession block:', blockError);
+                    }
+                }
+                
+                // Also delete related checkin if checkbox was checked
+                if (deleteCheckin) {
+                    try {
+                        await window.db.collection('checkins').doc(relatedCheckin.id).delete();
+                    } catch (checkinError) {
+                        console.warn('Error deleting related checkin:', checkinError);
+                    }
+                }
+                
                 let successMessage = 'Document deleted successfully';
-                if (deleteAuthUser && deleteTransactions) {
+                if (deleteAllStudentData) {
+                    const deletedCount = relatedCheckins.length + relatedConcessionBlocks.length + relatedTransactionsForStudent.length + (hasUsersDoc ? 1 : 0) + (hasAuthUser ? 1 : 0);
+                    successMessage = `Student and ${deletedCount} related document${deletedCount > 1 ? 's' : ''} deleted successfully`;
+                } else if (deleteAuthUser && deleteTransactions) {
                     successMessage = 'Document, authentication user, and related transactions deleted successfully';
+                } else if (deleteAuthUser && deleteConcessionBlock) {
+                    successMessage = 'Document, authentication user, and related concession block deleted successfully';
+                } else if (deleteAuthUser && deleteCheckin) {
+                    successMessage = 'Document, authentication user, and related check-in deleted successfully';
                 } else if (deleteAuthUser) {
                     successMessage = 'Document and authentication user deleted successfully';
                 } else if (deleteTransactions) {
                     successMessage = `Document and ${relatedTransactions.length} related transaction${relatedTransactions.length > 1 ? 's' : ''} deleted successfully`;
+                } else if (deleteConcessionBlock) {
+                    successMessage = 'Document and related concession block deleted successfully';
+                } else if (deleteCheckin) {
+                    successMessage = 'Document and related check-in deleted successfully';
                 }
                 
                 showSnackbar(successMessage, 'success');
