@@ -326,18 +326,83 @@
         padding: var(--space-md) 15px;
     }
     
-    .orders-table {
-        font-size: 0.85rem;
+    /* Hide table headers on mobile */
+    .orders-table thead {
+        display: none;
     }
     
-    .orders-table th,
+    /* Convert table to card layout */
+    .orders-table,
+    .orders-table tbody {
+        display: block;
+    }
+    
+    .orders-table tbody tr {
+        display: block;
+        margin-bottom: var(--space-md);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: var(--space-sm);
+        background: white;
+        box-shadow: 0 2px 4px var(--shadow-light);
+    }
+    
+    .orders-table tbody tr:hover {
+        box-shadow: 0 4px 8px var(--shadow-medium);
+    }
+    
     .orders-table td {
-        padding: var(--space-xs) 8px;
+        display: block;
+        padding: var(--space-xs) 0;
+        border: none;
+        text-align: left !important;
+    }
+    
+    /* Add labels before content */
+    .orders-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-muted);
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+    
+    /* Order date - make it prominent */
+    .orders-table td:nth-child(1) {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        padding-bottom: var(--space-sm);
+        border-bottom: 1px solid var(--border-light);
+        margin-bottom: var(--space-xs);
+    }
+    
+    /* Customer name - make it prominent */
+    .orders-table td:nth-child(2) strong {
+        font-size: 1.1rem;
+        color: var(--text-primary);
+    }
+    
+    /* Actions - make full width */
+    .orders-table td:nth-child(8) {
+        padding-top: var(--space-sm);
+        border-top: 1px solid var(--border-light);
+        margin-top: var(--space-xs);
+        width: 100% !important;
+        min-width: 100% !important;
     }
     
     .action-buttons {
-        flex-direction: column;
-        gap: 4px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-xs);
+        width: 100%;
+    }
+    
+    .action-buttons .btn-icon {
+        width: 100%;
+        justify-content: center;
     }
 }
 
