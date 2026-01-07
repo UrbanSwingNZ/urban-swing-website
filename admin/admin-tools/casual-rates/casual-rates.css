@@ -22,6 +22,10 @@
     font-size: 1.5rem;
 }
 
+.section-header h2 i {
+    color: var(--purple-primary);
+}
+
 .section-header .section-description {
     color: var(--text-muted);
     font-size: 0.95rem;
