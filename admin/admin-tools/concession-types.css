@@ -409,6 +409,22 @@
         font-size: 1rem;
     }
 
+    /* Stack section header on mobile */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
+
+    .section-header > div {
+        width: 100%;
+    }
+
+    .section-header button {
+        width: 100%;
+        margin-top: var(--space-xs);
+    }
+
     /* Fix header layout on mobile */
     .admin-header-content {
         display: flex !important;

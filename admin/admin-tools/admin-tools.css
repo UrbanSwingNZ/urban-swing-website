@@ -159,6 +159,20 @@
         color: var(--text-muted);
     }
 
+    /* Disable Database Manager Tool on mobile */
+    .tool-card:nth-child(7) {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .tool-card:nth-child(7) .tile-icon-content h3::after {
+        content: ' (Desktop Only)';
+        font-size: 0.85rem;
+        font-weight: normal;
+        color: var(--text-muted);
+    }
+
     .tool-card h3 {
         font-size: 1.3rem;
         word-wrap: break-word;

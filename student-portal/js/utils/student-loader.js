@@ -89,10 +89,6 @@ const StudentLoader = (function() {
                 option.value = student.id;
                 option.textContent = `${student.firstName} ${student.lastName}`;
                 
-                if (student.email) {
-                    option.textContent += ` (${student.email})`;
-                }
-                
                 dropdown.appendChild(option);
             });
 

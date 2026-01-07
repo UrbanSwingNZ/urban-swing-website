@@ -558,18 +558,14 @@
         max-width: 95%;
     }
     
-    .transaction-tabs {
-        flex-direction: column;
-    }
-    
     .transaction-tab {
-        border-bottom: 1px solid var(--border-light);
-        border-left: 3px solid transparent;
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 0.85rem;
+        border-bottom: 3px solid transparent;
     }
     
     .transaction-tab.active {
-        border-left-color: var(--purple-primary);
-        border-bottom-color: var(--border-light);
+        border-bottom-color: var(--purple-primary);
     }
     
     .payment-item,

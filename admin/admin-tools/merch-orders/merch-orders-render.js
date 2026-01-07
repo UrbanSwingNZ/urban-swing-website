@@ -37,14 +37,14 @@ export function renderOrders() {
         
         return `
             <tr class="${isDeleted ? 'deleted-order' : ''}" onclick="viewOrderDetails('${order.id}')">
-                <td>${formatDate(order.createdAt)}</td>
-                <td><strong>${escapeHtml(toTitleCase(order.fullName))}</strong></td>
-                <td>${escapeHtml(order.email)}</td>
-                <td>${escapeHtml(order.phoneNumber)}</td>
-                <td>${shippingLabel}</td>
-                <td class="items-summary">${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
-                <td><span class="badge badge-${badgeStatus}">${badgeLabel}</span></td>
-                <td onclick="event.stopPropagation()">
+                <td data-label="Order Date">${formatDate(order.createdAt)}</td>
+                <td data-label="Customer Name"><strong>${escapeHtml(toTitleCase(order.fullName))}</strong></td>
+                <td data-label="Email">${escapeHtml(order.email)}</td>
+                <td data-label="Phone">${escapeHtml(order.phoneNumber)}</td>
+                <td data-label="Shipping">${shippingLabel}</td>
+                <td data-label="Items" class="items-summary">${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
+                <td data-label="Status"><span class="badge badge-${badgeStatus}">${badgeLabel}</span></td>
+                <td data-label="Actions" onclick="event.stopPropagation()">
                     <div class="action-buttons">
                         <button class="btn-icon" onclick="viewOrderDetails('${order.id}')" title="View Details">
                             <i class="fas fa-eye"></i>
