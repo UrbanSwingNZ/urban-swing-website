@@ -101,6 +101,9 @@ function setupEventListeners() {
   document.getElementById('add-selected-tracks-btn')?.addEventListener('click', TrackOps.handleAddSelectedTracks);
   document.getElementById('search-tracks-input')?.addEventListener('input', TrackOps.handleTracksSearch);
   
+  // Copy playlist link button
+  document.getElementById('copy-playlist-link-btn')?.addEventListener('click', handleCopyPlaylistLink);
+  
   // Delete functionality
   document.getElementById('delete-playlist-btn')?.addEventListener('click', PlaylistOps.handleDeletePlaylist);
   
@@ -170,4 +173,24 @@ function setupEventListeners() {
       await PlaylistOps.selectPlaylist(playlist);
     }
   });
+}
+
+// ========================================
+// COPY PLAYLIST LINK HANDLER
+// ========================================
+
+function handleCopyPlaylistLink() {
+  const playlistId = State.getCurrentPlaylistId();
+  
+  if (!playlistId) {
+    UI.showSnackbar('No playlist selected', 'error');
+    return;
+  }
+  
+  const songdataUrl = `https://songdata.io/playlist/${playlistId}`;
+  
+  // Open songdata.io in new tab
+  window.open(songdataUrl, '_blank');
+  
+  UI.showSnackbar('Opening SongData.io - click "Extract BPMs to Firestore" when loaded', 'info');
 }
