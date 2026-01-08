@@ -35,6 +35,9 @@
   border-color: var(--spotify-green) !important;
   border-radius: var(--radius-sm);
   color: white !important;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .btn-spotify:hover {

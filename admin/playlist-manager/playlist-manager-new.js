@@ -187,15 +187,10 @@ function handleCopyPlaylistLink() {
     return;
   }
   
-  const spotifyUrl = `https://open.spotify.com/playlist/${playlistId}`;
+  const songdataUrl = `https://songdata.io/playlist/${playlistId}`;
   
-  // Copy to clipboard
-  navigator.clipboard.writeText(spotifyUrl)
-    .then(() => {
-      UI.showSnackbar('✓ Playlist link copied to clipboard!', 'success');
-    })
-    .catch((error) => {
-      console.error('Failed to copy link:', error);
-      UI.showSnackbar('Failed to copy link', 'error');
-    });
+  // Open songdata.io in new tab
+  window.open(songdataUrl, '_blank');
+  
+  UI.showSnackbar('Opening SongData.io - click "Extract BPMs to Firestore" when loaded', 'info');
 }
