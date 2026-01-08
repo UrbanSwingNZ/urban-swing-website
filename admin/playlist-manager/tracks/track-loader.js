@@ -7,6 +7,7 @@ import { displayTracks } from './track-renderer.js';
 import { initializeDragDrop } from './track-drag-drop.js';
 import { stopCurrentAudio } from './track-audio.js';
 import { formatTotalDuration } from './track-utils.js';
+import { loadAndMergeBPMData } from './bpm-service.js';
 
 // ========================================
 // PERFORMANCE CONFIGURATION
@@ -38,10 +39,13 @@ export async function loadTracks(playlistId) {
     // Get all tracks (fast - just metadata)
     const trackItems = await spotifyAPI.getAllPlaylistTracks(playlistId);
     
-    // Store tracks WITHOUT audio features first for immediate display
-    const currentTracks = trackItems.map(item => ({
+    // Load BPM data from Firestore and merge with tracks
+    const tracksWithBPM = await loadAndMergeBPMData(playlistId, trackItems);
+    
+    // Store tracks with BPM data for immediate display
+    const currentTracks = tracksWithBPM.map(item => ({
       ...item,
-      audioFeatures: null // Will be lazy-loaded
+      // audioFeatures already contains tempo/BPM from bpm-service if available
     }));
     
     State.setCurrentTracks(currentTracks);
@@ -87,16 +91,18 @@ export async function loadTracks(playlistId) {
     
     showLoading(false);
     
-    // Show performance mode notification
-    if (SKIP_BPM_LOADING && currentTracks.length > 100) {
-      showSnackbar('⚡ Performance mode: BPM data disabled for faster loading', 'success');
+    // Show notification about BPM data status
+    const bpmCount = currentTracks.filter(item => 
+      item.audioFeatures && item.audioFeatures.tempo
+    ).length;
+    
+    if (bpmCount > 0) {
+      showSnackbar(`✅ Loaded BPM data for ${bpmCount}/${currentTracks.length} tracks`, 'success');
+    } else if (currentTracks.length > 0) {
+      showSnackbar('ℹ️ No BPM data found. Use the songdata.io scraper to add BPM data.', 'info');
     }
     
-    // Lazy load audio features ONLY for rendered tracks (not all tracks)
-    // This prevents the 600+ request problem
-    if (!SKIP_BPM_LOADING) {
-      lazyLoadAudioFeaturesForRenderedTracks();
-    }
+    // Note: Old lazy loading of audio features removed - we now use Firestore BPM data
     
   } catch (error) {
     console.error('Error loading tracks:', error);
