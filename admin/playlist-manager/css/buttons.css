@@ -28,3 +28,17 @@
   border-color: var(--purple-primary);
   color: white;
 }
+
+/* Spotify-branded button */
+.btn-spotify {
+  background: var(--spotify-green) !important;
+  border-color: var(--spotify-green) !important;
+  border-radius: var(--radius-sm);
+  color: white !important;
+}
+
+.btn-spotify:hover {
+  background: var(--success-light) !important;
+  border-color: var(--success-light) !important;
+  box-shadow: 0 4px 12px var(--bg-spotify-medium);
+}

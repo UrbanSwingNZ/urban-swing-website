@@ -6,7 +6,6 @@ import { showTrackMenu } from './track-actions.js';
 import { handleTrackPlayPause, restorePlaybackState } from './track-audio.js';
 import { addSwipeToDelete, addLongPressMenu } from './track-mobile.js';
 import { initializeDragDrop } from './track-drag-drop.js';
-import { lazyLoadAudioFeaturesForRenderedTracks } from './track-loader.js';
 
 // ========================================
 // PROGRESSIVE RENDERING CONFIGURATION
@@ -16,7 +15,6 @@ import { lazyLoadAudioFeaturesForRenderedTracks } from './track-loader.js';
 let renderedTrackCount = 0;
 const INITIAL_RENDER_COUNT = 50; // First batch - renders in 1-2 seconds
 const LAZY_RENDER_BATCH_SIZE = 50; // Subsequent batches when scrolling
-const SKIP_BPM_LOADING = true; // Match loader config
 
 // ========================================
 // TRACK DISPLAY
@@ -227,11 +225,6 @@ function setupLazyTrackLoading(allTracks) {
       
       // Re-initialize drag-drop for new elements
       initializeDragDrop();
-      
-      // Load audio features for the newly rendered batch
-      if (!SKIP_BPM_LOADING) {
-        lazyLoadAudioFeaturesForRenderedTracks(renderedTrackCount);
-      }
       
       isLoading = false;
       
