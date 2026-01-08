@@ -101,6 +101,9 @@ function setupEventListeners() {
   document.getElementById('add-selected-tracks-btn')?.addEventListener('click', TrackOps.handleAddSelectedTracks);
   document.getElementById('search-tracks-input')?.addEventListener('input', TrackOps.handleTracksSearch);
   
+  // Copy playlist link button
+  document.getElementById('copy-playlist-link-btn')?.addEventListener('click', handleCopyPlaylistLink);
+  
   // Delete functionality
   document.getElementById('delete-playlist-btn')?.addEventListener('click', PlaylistOps.handleDeletePlaylist);
   
@@ -170,4 +173,29 @@ function setupEventListeners() {
       await PlaylistOps.selectPlaylist(playlist);
     }
   });
+}
+
+// ========================================
+// COPY PLAYLIST LINK HANDLER
+// ========================================
+
+function handleCopyPlaylistLink() {
+  const playlistId = State.getCurrentPlaylistId();
+  
+  if (!playlistId) {
+    UI.showSnackbar('No playlist selected', 'error');
+    return;
+  }
+  
+  const spotifyUrl = `https://open.spotify.com/playlist/${playlistId}`;
+  
+  // Copy to clipboard
+  navigator.clipboard.writeText(spotifyUrl)
+    .then(() => {
+      UI.showSnackbar('✓ Playlist link copied to clipboard!', 'success');
+    })
+    .catch((error) => {
+      console.error('Failed to copy link:', error);
+      UI.showSnackbar('Failed to copy link', 'error');
+    });
 }
