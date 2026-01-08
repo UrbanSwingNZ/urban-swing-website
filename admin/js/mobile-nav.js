@@ -51,25 +51,10 @@ const AdminMobileNav = {
      */
     getMenuItems(config) {
         const items = [];
-        let navMenu;
-
-        if (config.navSection === 'admin-tools') {
-            // Admin tools section - add Dashboard link first
-            items.push({
-                href: '/admin/',
-                icon: 'fas fa-home',
-                label: 'Dashboard',
-                dataPage: 'dashboard'
-            });
-
-            // Get admin tools menu
-            navMenu = document.querySelector('#admin-tools-nav .nav-menu');
-        } else {
-            // Main admin nav
-            navMenu = document.querySelector('#main-admin-nav .nav-menu');
-        }
-
-        // Extract menu items from the nav
+        
+        // Always use main admin nav, but make Admin Tools an accordion
+        const navMenu = document.querySelector('#main-admin-nav .nav-menu');
+        
         if (navMenu) {
             const links = navMenu.querySelectorAll('a');
             links.forEach(link => {
@@ -83,7 +68,54 @@ const AdminMobileNav = {
                 // Extract pathname from href for consistent matching
                 const url = new URL(link.href, window.location.origin);
                 
-                items.push({
+                // Check if this is the Admin Tools link
+                if (link.dataset.page === 'admin-tools') {
+                    // Create Admin Tools as an accordion with sub-items
+                    const adminToolsSubItems = this.getAdminToolsSubItems();
+                    
+                    items.push({
+                        href: url.pathname,
+                        icon: iconClass,
+                        label: text,
+                        dataPage: link.dataset.page || '',
+                        subItems: adminToolsSubItems
+                    });
+                } else {
+                    // Regular menu item
+                    items.push({
+                        href: url.pathname,
+                        icon: iconClass,
+                        label: text,
+                        dataPage: link.dataset.page || ''
+                    });
+                }
+            });
+        }
+
+        return items;
+    },
+
+    /**
+     * Get Admin Tools sub-items from the admin-tools-nav
+     */
+    getAdminToolsSubItems() {
+        const subItems = [];
+        const adminToolsNav = document.querySelector('#admin-tools-nav .nav-menu');
+        
+        if (adminToolsNav) {
+            const links = adminToolsNav.querySelectorAll('a');
+            links.forEach(link => {
+                // Extract icon class
+                const icon = link.querySelector('i');
+                const iconClass = icon ? icon.className : '';
+                
+                // Extract text (remove icon)
+                const text = link.textContent.trim();
+
+                // Extract pathname from href for consistent matching
+                const url = new URL(link.href, window.location.origin);
+                
+                subItems.push({
                     href: url.pathname,
                     icon: iconClass,
                     label: text,
@@ -91,8 +123,8 @@ const AdminMobileNav = {
                 });
             });
         }
-
-        return items;
+        
+        return subItems;
     },
 
     /**
