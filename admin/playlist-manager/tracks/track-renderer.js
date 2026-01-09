@@ -69,14 +69,21 @@ function renderTrackBatch(tracks, startIndex) {
     tr.dataset.trackId = track.id;
     tr.dataset.trackIndex = index;
     
-    // Check if track exists in other playlists
-    const currentPlaylistId = State.getCurrentPlaylistId();
-    const isDuplicate = isTrackDuplicate(track.id, currentPlaylistId);
-    const tooltipText = isDuplicate ? getDuplicateTooltip(track.id, currentPlaylistId) : '';
+    // Check if track exists in other playlists (only for playlists not owned by current user)
+    const currentPlaylist = State.getCurrentPlaylist();
+    const currentUserId = State.getCurrentUserId();
+    const currentPlaylistId = currentPlaylist?.id;
+    const isOwnPlaylist = currentPlaylist?.owner?.id === currentUserId;
     
-    if (isDuplicate) {
-      tr.classList.add('track-duplicate');
-      tr.title = tooltipText;
+    // Only apply duplicate detection to playlists NOT owned by the user
+    if (!isOwnPlaylist) {
+      const isDuplicate = isTrackDuplicate(track.id, currentPlaylistId);
+      const tooltipText = isDuplicate ? getDuplicateTooltip(track.id, currentPlaylistId) : '';
+      
+      if (isDuplicate) {
+        tr.classList.add('track-duplicate');
+        tr.title = tooltipText;
+      }
     }
     
     const albumArt = track.album.images && track.album.images.length > 0
