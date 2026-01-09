@@ -77,8 +77,8 @@ function renderTrackBatch(tracks, startIndex) {
     
     // Only apply duplicate detection to playlists NOT owned by the user
     if (!isOwnPlaylist) {
-      const isDuplicate = isTrackDuplicate(track.id, currentPlaylistId);
-      const tooltipText = isDuplicate ? getDuplicateTooltip(track.id, currentPlaylistId) : '';
+      const isDuplicate = isTrackDuplicate(track.id, currentPlaylistId, currentUserId);
+      const tooltipText = isDuplicate ? getDuplicateTooltip(track.id, currentPlaylistId, currentUserId) : '';
       
       if (isDuplicate) {
         tr.classList.add('track-duplicate');

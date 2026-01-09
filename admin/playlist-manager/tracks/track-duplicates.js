@@ -7,9 +7,10 @@ import * as State from '../playlist-state.js';
  * Find which other playlists contain this track
  * @param {string} trackId - Spotify track ID
  * @param {string} currentPlaylistId - Current playlist ID to exclude
- * @returns {Array<{id: string, name: string}>} Array of playlists containing this track
+ * @param {string} currentUserId - Current user ID to filter owned playlists
+ * @returns {Array<{id: string, name: string}>} Array of user-owned playlists containing this track
  */
-export function findTrackInOtherPlaylists(trackId, currentPlaylistId) {
+export function findTrackInOtherPlaylists(trackId, currentPlaylistId, currentUserId) {
   const allPlaylists = State.getAllPlaylists();
   const matchingPlaylists = [];
   
@@ -17,9 +18,8 @@ export function findTrackInOtherPlaylists(trackId, currentPlaylistId) {
     // Skip the current playlist
     if (playlist.id === currentPlaylistId) continue;
     
-    // Check if this playlist has been loaded (has tracks data cached)
-    // We'll need to check against State.getCurrentTracks() when viewing each playlist
-    // For now, we'll cache playlist track IDs in a Map when playlists are loaded
+    // Only check playlists owned by the current user
+    if (playlist.owner?.id !== currentUserId) continue;
     
     // Check if track exists in this playlist's cached tracks
     const cachedTracks = window._playlistTracksCache?.[playlist.id];
@@ -52,10 +52,11 @@ export function cachePlaylistTracks(playlistId, tracks) {
  * Check if a track exists in other playlists (using cache)
  * @param {string} trackId - Spotify track ID
  * @param {string} currentPlaylistId - Current playlist ID to exclude
- * @returns {boolean} True if track exists in at least one other playlist
+ * @param {string} currentUserId - Current user ID to filter owned playlists
+ * @returns {boolean} True if track exists in at least one user-owned playlist
  */
-export function isTrackDuplicate(trackId, currentPlaylistId) {
-  const playlists = findTrackInOtherPlaylists(trackId, currentPlaylistId);
+export function isTrackDuplicate(trackId, currentPlaylistId, currentUserId) {
+  const playlists = findTrackInOtherPlaylists(trackId, currentPlaylistId, currentUserId);
   return playlists.length > 0;
 }
 
@@ -63,10 +64,11 @@ export function isTrackDuplicate(trackId, currentPlaylistId) {
  * Get tooltip text for duplicate track
  * @param {string} trackId - Spotify track ID
  * @param {string} currentPlaylistId - Current playlist ID to exclude
- * @returns {string} Tooltip text listing other playlists
+ * @param {string} currentUserId - Current user ID to filter owned playlists
+ * @returns {string} Tooltip text listing other user-owned playlists
  */
-export function getDuplicateTooltip(trackId, currentPlaylistId) {
-  const playlists = findTrackInOtherPlaylists(trackId, currentPlaylistId);
+export function getDuplicateTooltip(trackId, currentPlaylistId, currentUserId) {
+  const playlists = findTrackInOtherPlaylists(trackId, currentPlaylistId, currentUserId);
   
   if (playlists.length === 0) return '';
   

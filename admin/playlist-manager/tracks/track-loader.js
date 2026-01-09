@@ -98,9 +98,9 @@ export async function loadTracks(playlistId) {
     ).length;
     
     if (bpmCount > 0) {
-      showSnackbar(`✅ Loaded BPM data for ${bpmCount}/${currentTracks.length} tracks`, 'success');
+      showSnackbar(`Loaded BPM data for ${bpmCount}/${currentTracks.length} tracks`, 'success');
     } else if (currentTracks.length > 0) {
-      showSnackbar('ℹ️ No BPM data found. Use the songdata.io scraper to add BPM data.', 'info');
+      showSnackbar('No BPM data found. Use the songdata.io scraper to add BPM data.', 'info');
     }
     
     // Note: Old lazy loading of audio features removed - we now use Firestore BPM data
