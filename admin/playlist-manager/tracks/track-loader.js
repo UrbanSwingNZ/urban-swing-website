@@ -8,6 +8,7 @@ import { initializeDragDrop } from './track-drag-drop.js';
 import { stopCurrentAudio } from './track-audio.js';
 import { formatTotalDuration } from './track-utils.js';
 import { loadAndMergeBPMData } from './bpm-service.js';
+import { cachePlaylistTracks } from './track-duplicates.js';
 
 // ========================================
 // PERFORMANCE CONFIGURATION
@@ -47,6 +48,9 @@ export async function loadTracks(playlistId) {
     
     State.setCurrentTracks(currentTracks);
     State.setFilteredTracks([...currentTracks]);
+    
+    // Cache track IDs for duplicate detection
+    cachePlaylistTracks(playlistId, currentTracks);
     
     // Calculate total duration
     const totalMs = currentTracks.reduce((sum, item) => {
@@ -94,9 +98,9 @@ export async function loadTracks(playlistId) {
     ).length;
     
     if (bpmCount > 0) {
-      showSnackbar(`✅ Loaded BPM data for ${bpmCount}/${currentTracks.length} tracks`, 'success');
+      showSnackbar(`Loaded BPM data for ${bpmCount}/${currentTracks.length} tracks`, 'success');
     } else if (currentTracks.length > 0) {
-      showSnackbar('ℹ️ No BPM data found. Use the songdata.io scraper to add BPM data.', 'info');
+      showSnackbar('No BPM data found. Use the songdata.io scraper to add BPM data.', 'info');
     }
     
     // Note: Old lazy loading of audio features removed - we now use Firestore BPM data

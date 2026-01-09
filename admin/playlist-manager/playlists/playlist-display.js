@@ -8,6 +8,7 @@ import { populateMobilePlaylistList, updateSelectedPlaylist } from '../mobile-pl
 import { showPlaylistMenu } from './playlist-ui-handlers.js';
 import { selectPlaylist } from './playlist-selection.js';
 import { formatTotalDuration } from '../tracks/track-utils.js';
+import { cachePlaylistTracks } from '../tracks/track-duplicates.js';
 
 /**
  * Calculate playlist duration by fetching first batch of tracks
@@ -31,6 +32,32 @@ async function calculatePlaylistDuration(playlistId) {
 }
 
 /**
+ * Pre-load track IDs from all playlists for duplicate detection
+ * Runs in background without blocking the UI
+ */
+async function preloadAllPlaylistTracks(playlists) {
+  console.log('Pre-loading track IDs for duplicate detection...');
+  
+  // Fetch track IDs for all playlists in parallel
+  const promises = playlists.map(async (playlist) => {
+    try {
+      // Fetch all tracks from this playlist
+      const tracks = await spotifyAPI.getAllPlaylistTracks(playlist.id);
+      
+      // Cache the track IDs
+      cachePlaylistTracks(playlist.id, tracks);
+      
+    } catch (error) {
+      console.warn(`Failed to preload tracks for playlist ${playlist.name}:`, error);
+    }
+  });
+  
+  await Promise.all(promises);
+  console.log('Track IDs preloaded for all playlists');
+}
+
+
+/**
  * Load all playlists from Spotify and display them
  */
 export async function loadPlaylists() {
@@ -42,6 +69,10 @@ export async function loadPlaylists() {
     State.setCurrentUserId(currentUser.id);
     
     const playlists = await spotifyAPI.getAllUserPlaylists();
+    
+    // Pre-load track IDs from all playlists for duplicate detection
+    // Do this in parallel but don't block the UI - it runs in background
+    preloadAllPlaylistTracks(playlists);
     
     // Calculate durations for all playlists (in parallel for speed)
     const playlistsWithDurations = await Promise.all(
@@ -56,6 +87,9 @@ export async function loadPlaylists() {
     
     State.setAllPlaylists(playlistsWithDurations);
     displayPlaylists(playlistsWithDurations);
+    
+    // Apply saved custom playlist order if it exists
+    restorePlaylistOrder();
     
     // After loading playlists, check if there's a saved playlist to restore
     // Only restore if coming from a page refresh (not navigation/disconnect)
@@ -240,19 +274,69 @@ function initializePlaylistDragDrop() {
       // Re-enable text selection after drag
       document.body.style.userSelect = '';
       
-      // Playlist reordering would require Spotify API support
-      // For now, we'll just keep the visual order
+      // Save custom playlist order to localStorage
       if (evt.oldIndex !== evt.newIndex) {
         console.log('Playlist moved from', evt.oldIndex, 'to', evt.newIndex);
+        savePlaylistOrder();
       }
     }
   });
 }
 
 /**
- * Update the track count display for a specific playlist
+ * Save current playlist order to localStorage
  */
-export async function updatePlaylistTrackCount(playlistId, delta) {
+function savePlaylistOrder() {
+  const listEl = document.getElementById('playlists-list');
+  const playlistIds = Array.from(listEl.querySelectorAll('[data-playlist-id]'))
+    .map(el => el.dataset.playlistId);
+  
+  localStorage.setItem('playlist_order', JSON.stringify(playlistIds));
+  console.log('Playlist order saved:', playlistIds);
+}
+
+/**
+ * Restore playlist order from localStorage
+ */
+function restorePlaylistOrder() {
+  const savedOrder = localStorage.getItem('playlist_order');
+  if (!savedOrder) return;
+  
+  try {
+    const playlistIds = JSON.parse(savedOrder);
+    const listEl = document.getElementById('playlists-list');
+    const allPlaylists = State.getAllPlaylists();
+    
+    // Reorder playlists in state to match saved order
+    const orderedPlaylists = [];
+    const playlistMap = new Map(allPlaylists.map(p => [p.id, p]));
+    
+    // Add playlists in saved order
+    playlistIds.forEach(id => {
+      const playlist = playlistMap.get(id);
+      if (playlist) {
+        orderedPlaylists.push(playlist);
+        playlistMap.delete(id);
+      }
+    });
+    
+    // Add any new playlists that weren't in saved order
+    playlistMap.forEach(playlist => orderedPlaylists.push(playlist));
+    
+    // Update state and re-display
+    State.setAllPlaylists(orderedPlaylists);
+    displayPlaylists(orderedPlaylists);
+    
+    console.log('Playlist order restored');
+  } catch (error) {
+    console.error('Failed to restore playlist order:', error);
+  }
+}
+
+/**
+ * Update the track count and duration display for a specific playlist
+ */
+export async function updatePlaylistTrackCount(playlistId, delta, trackDuration = 0) {
   // Update the track count in state
   const allPlaylists = State.getAllPlaylists();
   const playlist = allPlaylists.find(p => p.id === playlistId);
@@ -261,12 +345,31 @@ export async function updatePlaylistTrackCount(playlistId, delta) {
     // Update the count
     playlist.tracks.total += delta;
     
-    // Update the UI element in sidebar if it exists
-    const playlistItem = document.querySelector(`[data-playlist-id="${playlistId}"]`);
+    // Update the duration if provided
+    if (trackDuration) {
+      playlist.calculatedDuration = (playlist.calculatedDuration || 0) + (delta * trackDuration);
+    }
+    
+    // Format duration
+    const formattedDuration = playlist.calculatedDuration 
+      ? formatTotalDuration(playlist.calculatedDuration)
+      : '0 min';
+    
+    // Update the UI element in sidebar (desktop)
+    const playlistItem = document.querySelector(`.playlists-list [data-playlist-id="${playlistId}"]`);
     if (playlistItem) {
       const countEl = playlistItem.querySelector('.playlist-item-count');
       if (countEl) {
-        countEl.textContent = `${playlist.tracks.total} tracks`;
+        countEl.innerHTML = `${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
+      }
+    }
+    
+    // Update mobile playlist list
+    const mobilePlaylistItem = document.querySelector(`.mobile-playlists-list [data-playlist-id="${playlistId}"]`);
+    if (mobilePlaylistItem) {
+      const mobileCountEl = mobilePlaylistItem.querySelector('.playlist-tracks');
+      if (mobileCountEl) {
+        mobileCountEl.innerHTML = `${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
       }
     }
   }

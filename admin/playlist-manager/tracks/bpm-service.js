@@ -103,3 +103,72 @@ export async function loadAndMergeBPMData(playlistId, trackItems) {
     return trackItems; // Return original tracks if BPM loading fails
   }
 }
+
+/**
+ * Copy BPM data for a track from one playlist to another
+ * @param {string} trackId - Spotify track ID
+ * @param {string} sourcePlaylistId - Source playlist ID
+ * @param {string} destPlaylistId - Destination playlist ID
+ * @returns {Promise<boolean>} True if BPM data was copied
+ */
+export async function copyBPMData(trackId, sourcePlaylistId, destPlaylistId) {
+  try {
+    // Fetch BPM data from source playlist
+    const sourceBPMMap = await fetchBPMData(sourcePlaylistId);
+    const trackBPMData = sourceBPMMap.get(trackId);
+    
+    if (!trackBPMData || !trackBPMData.bpm) {
+      console.log(`No BPM data found for track ${trackId} in source playlist`);
+      return false;
+    }
+    
+    // Get destination playlist's songData document
+    const destDocRef = db.collection('songData').doc(destPlaylistId);
+    const destDocSnap = await destDocRef.get();
+    
+    if (!destDocSnap.exists) {
+      console.log(`Destination playlist ${destPlaylistId} has no songData document yet`);
+      return false;
+    }
+    
+    const destData = destDocSnap.data();
+    const destTracks = destData.tracks || [];
+    
+    // Check if track already exists in destination
+    const existingTrackIndex = destTracks.findIndex(t => t.spotifyTrackId === trackId);
+    
+    if (existingTrackIndex >= 0) {
+      // Update existing track's BPM data
+      destTracks[existingTrackIndex] = {
+        ...destTracks[existingTrackIndex],
+        bpm: trackBPMData.bpm,
+        key: trackBPMData.key
+      };
+    } else {
+      // Add new track with BPM data
+      destTracks.push({
+        spotifyTrackId: trackId,
+        trackName: trackBPMData.trackName,
+        artistName: trackBPMData.artistName,
+        bpm: trackBPMData.bpm,
+        key: trackBPMData.key,
+        position: destTracks.length + 1
+      });
+    }
+    
+    // Update destination playlist's songData
+    await destDocRef.update({
+      tracks: destTracks,
+      totalTracks: destTracks.length,
+      scrapedAt: new Date().toISOString(),
+      scrapedBy: 'copy-track-action'
+    });
+    
+    console.log(`Copied BPM data for track ${trackId} from ${sourcePlaylistId} to ${destPlaylistId}`);
+    return true;
+    
+  } catch (error) {
+    console.error('Error copying BPM data:', error);
+    return false;
+  }
+}
