@@ -250,9 +250,9 @@ function initializePlaylistDragDrop() {
 }
 
 /**
- * Update the track count display for a specific playlist
+ * Update the track count and duration display for a specific playlist
  */
-export async function updatePlaylistTrackCount(playlistId, delta) {
+export async function updatePlaylistTrackCount(playlistId, delta, trackDuration = 0) {
   // Update the track count in state
   const allPlaylists = State.getAllPlaylists();
   const playlist = allPlaylists.find(p => p.id === playlistId);
@@ -261,12 +261,31 @@ export async function updatePlaylistTrackCount(playlistId, delta) {
     // Update the count
     playlist.tracks.total += delta;
     
-    // Update the UI element in sidebar if it exists
-    const playlistItem = document.querySelector(`[data-playlist-id="${playlistId}"]`);
+    // Update the duration if provided
+    if (trackDuration) {
+      playlist.calculatedDuration = (playlist.calculatedDuration || 0) + (delta * trackDuration);
+    }
+    
+    // Format duration
+    const formattedDuration = playlist.calculatedDuration 
+      ? formatTotalDuration(playlist.calculatedDuration)
+      : '0 min';
+    
+    // Update the UI element in sidebar (desktop)
+    const playlistItem = document.querySelector(`.playlists-list [data-playlist-id="${playlistId}"]`);
     if (playlistItem) {
       const countEl = playlistItem.querySelector('.playlist-item-count');
       if (countEl) {
-        countEl.textContent = `${playlist.tracks.total} tracks`;
+        countEl.innerHTML = `${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
+      }
+    }
+    
+    // Update mobile playlist list
+    const mobilePlaylistItem = document.querySelector(`.mobile-playlists-list [data-playlist-id="${playlistId}"]`);
+    if (mobilePlaylistItem) {
+      const mobileCountEl = mobilePlaylistItem.querySelector('.playlist-tracks');
+      if (mobileCountEl) {
+        mobileCountEl.innerHTML = `${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
       }
     }
   }
