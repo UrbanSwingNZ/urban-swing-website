@@ -5,6 +5,7 @@ import * as State from '../playlist-state.js';
 import { showLoading, showError, showSuccess } from '../playlist-ui.js';
 import { updatePlaylistTrackCount } from '../playlist-operations.js';
 import { loadTracks } from './track-loader.js';
+import { copyBPMData } from './bpm-service.js';
 
 // ========================================
 // TRACK ACTIONS MENU
@@ -146,6 +147,9 @@ export async function handleConfirmAction() {
     
     if (action === 'copy') {
       await spotifyAPI.copyTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
+      
+      // Copy BPM data if available
+      await copyBPMData(track.id, fromPlaylistId, destinationId);
       
       // Update destination playlist track count (+1)
       await updatePlaylistTrackCount(destinationId, 1);
