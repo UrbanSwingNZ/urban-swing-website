@@ -8,6 +8,7 @@ import { populateMobilePlaylistList, updateSelectedPlaylist } from '../mobile-pl
 import { showPlaylistMenu } from './playlist-ui-handlers.js';
 import { selectPlaylist } from './playlist-selection.js';
 import { formatTotalDuration } from '../tracks/track-utils.js';
+import { cachePlaylistTracks } from '../tracks/track-duplicates.js';
 
 /**
  * Calculate playlist duration by fetching first batch of tracks
@@ -31,6 +32,32 @@ async function calculatePlaylistDuration(playlistId) {
 }
 
 /**
+ * Pre-load track IDs from all playlists for duplicate detection
+ * Runs in background without blocking the UI
+ */
+async function preloadAllPlaylistTracks(playlists) {
+  console.log('Pre-loading track IDs for duplicate detection...');
+  
+  // Fetch track IDs for all playlists in parallel
+  const promises = playlists.map(async (playlist) => {
+    try {
+      // Fetch all tracks from this playlist
+      const tracks = await spotifyAPI.getAllPlaylistTracks(playlist.id);
+      
+      // Cache the track IDs
+      cachePlaylistTracks(playlist.id, tracks);
+      
+    } catch (error) {
+      console.warn(`Failed to preload tracks for playlist ${playlist.name}:`, error);
+    }
+  });
+  
+  await Promise.all(promises);
+  console.log('Track IDs preloaded for all playlists');
+}
+
+
+/**
  * Load all playlists from Spotify and display them
  */
 export async function loadPlaylists() {
@@ -42,6 +69,10 @@ export async function loadPlaylists() {
     State.setCurrentUserId(currentUser.id);
     
     const playlists = await spotifyAPI.getAllUserPlaylists();
+    
+    // Pre-load track IDs from all playlists for duplicate detection
+    // Do this in parallel but don't block the UI - it runs in background
+    preloadAllPlaylistTracks(playlists);
     
     // Calculate durations for all playlists (in parallel for speed)
     const playlistsWithDurations = await Promise.all(
