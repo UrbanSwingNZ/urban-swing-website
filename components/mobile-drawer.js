@@ -140,48 +140,159 @@ class MobileDrawer {
         this.config.menuItems.forEach(item => {
             const li = document.createElement('li');
             
-            const link = document.createElement('a');
-            link.href = item.href;
-            
-            if (item.dataPage) {
-                link.dataset.page = item.dataPage;
-            }
-            
-            // Check if this is the current page
-            // Handle both exact matches and directory matches
-            const normalizedItemHref = item.href.replace(/\/$/, ''); // Remove trailing slash
-            const normalizedCurrentPath = currentPath.replace(/\/$/, '');
-            
-            let isCurrentPage = false;
-            
-            // Special case for home page - only match if both are home
-            if (normalizedItemHref === '' || normalizedItemHref === '/') {
-                isCurrentPage = normalizedCurrentPath === '' || normalizedCurrentPath === '/' || normalizedCurrentPath === '/index.html';
+            // Check if item has sub-items (accordion)
+            if (item.subItems && item.subItems.length > 0) {
+                this.createAccordionItem(li, item, currentPath);
             } else {
-                // For other pages - use exact matching only, no startsWith to avoid parent path false positives
-                isCurrentPage = normalizedCurrentPath === normalizedItemHref || 
-                                normalizedCurrentPath === normalizedItemHref + '/index.html' ||
-                                normalizedItemHref === normalizedCurrentPath + '/index.html';
+                this.createRegularItem(li, item, currentPath);
             }
             
-            if (isCurrentPage) {
-                link.classList.add('active');
-            }
-            
-            if (item.icon) {
-                link.innerHTML = `<i class="${item.icon}"></i> ${item.label}`;
-            } else {
-                link.textContent = item.label;
-            }
-            
-            // Close drawer when menu item is clicked
-            link.addEventListener('click', () => this.close());
-            
-            li.appendChild(link);
             menu.appendChild(li);
         });
 
         this.drawer.appendChild(menu);
+    }
+
+    /**
+     * Create a regular menu item (not an accordion)
+     */
+    createRegularItem(li, item, currentPath) {
+        const link = document.createElement('a');
+        link.href = item.href;
+        
+        if (item.dataPage) {
+            link.dataset.page = item.dataPage;
+        }
+        
+        // Check if this is the current page
+        const isCurrentPage = this.isCurrentPage(item.href, currentPath);
+        
+        if (isCurrentPage) {
+            link.classList.add('active');
+        }
+        
+        if (item.icon) {
+            link.innerHTML = `<i class="${item.icon}"></i> ${item.label}`;
+        } else {
+            link.textContent = item.label;
+        }
+        
+        // Close drawer when menu item is clicked
+        link.addEventListener('click', () => this.close());
+        
+        li.appendChild(link);
+    }
+
+    /**
+     * Create an accordion menu item with sub-items
+     */
+    createAccordionItem(li, item, currentPath) {
+        li.classList.add('accordion-item');
+        
+        // Create accordion header/toggle button
+        const accordionButton = document.createElement('button');
+        accordionButton.className = 'accordion-toggle';
+        accordionButton.setAttribute('aria-expanded', 'false');
+        
+        if (item.icon) {
+            accordionButton.innerHTML = `
+                <span class="accordion-label">
+                    <i class="${item.icon}"></i> ${item.label}
+                </span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            `;
+        } else {
+            accordionButton.innerHTML = `
+                <span class="accordion-label">${item.label}</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            `;
+        }
+        
+        // Create sub-menu container
+        const subMenu = document.createElement('ul');
+        subMenu.className = 'accordion-submenu';
+        subMenu.style.display = 'none';
+        
+        // Check if any sub-item is the current page
+        let hasActivePage = false;
+        
+        item.subItems.forEach(subItem => {
+            const subLi = document.createElement('li');
+            const subLink = document.createElement('a');
+            subLink.href = subItem.href;
+            
+            if (subItem.dataPage) {
+                subLink.dataset.page = subItem.dataPage;
+            }
+            
+            const isCurrentPage = this.isCurrentPage(subItem.href, currentPath);
+            
+            if (isCurrentPage) {
+                subLink.classList.add('active');
+                hasActivePage = true;
+            }
+            
+            if (subItem.icon) {
+                subLink.innerHTML = `<i class="${subItem.icon}"></i> ${subItem.label}`;
+            } else {
+                subLink.textContent = subItem.label;
+            }
+            
+            // Close drawer when sub-item is clicked
+            subLink.addEventListener('click', () => this.close());
+            
+            subLi.appendChild(subLink);
+            subMenu.appendChild(subLi);
+        });
+        
+        // If a sub-item is active, expand the accordion by default
+        if (hasActivePage) {
+            accordionButton.classList.add('expanded');
+            accordionButton.setAttribute('aria-expanded', 'true');
+            subMenu.style.display = 'block';
+        }
+        
+        // Toggle accordion on click
+        accordionButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isExpanded = accordionButton.classList.contains('expanded');
+            
+            if (isExpanded) {
+                accordionButton.classList.remove('expanded');
+                accordionButton.setAttribute('aria-expanded', 'false');
+                subMenu.style.display = 'none';
+            } else {
+                accordionButton.classList.add('expanded');
+                accordionButton.setAttribute('aria-expanded', 'true');
+                subMenu.style.display = 'block';
+            }
+        });
+        
+        li.appendChild(accordionButton);
+        li.appendChild(subMenu);
+    }
+
+    /**
+     * Check if a URL is the current page
+     */
+    isCurrentPage(href, currentPath) {
+        // Handle both exact matches and directory matches
+        const normalizedItemHref = href.replace(/\/$/, ''); // Remove trailing slash
+        const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+        
+        let isCurrentPage = false;
+        
+        // Special case for home page - only match if both are home
+        if (normalizedItemHref === '' || normalizedItemHref === '/') {
+            isCurrentPage = normalizedCurrentPath === '' || normalizedCurrentPath === '/' || normalizedCurrentPath === '/index.html';
+        } else {
+            // For other pages - use exact matching only, no startsWith to avoid parent path false positives
+            isCurrentPage = normalizedCurrentPath === normalizedItemHref || 
+                            normalizedCurrentPath === normalizedItemHref + '/index.html' ||
+                            normalizedItemHref === normalizedCurrentPath + '/index.html';
+        }
+        
+        return isCurrentPage;
     }
 
     /**
