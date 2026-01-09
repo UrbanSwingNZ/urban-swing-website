@@ -88,6 +88,9 @@ export async function loadPlaylists() {
     State.setAllPlaylists(playlistsWithDurations);
     displayPlaylists(playlistsWithDurations);
     
+    // Apply saved custom playlist order if it exists
+    restorePlaylistOrder();
+    
     // After loading playlists, check if there's a saved playlist to restore
     // Only restore if coming from a page refresh (not navigation/disconnect)
     const savedPlaylistId = localStorage.getItem('last_viewed_playlist');
@@ -271,13 +274,63 @@ function initializePlaylistDragDrop() {
       // Re-enable text selection after drag
       document.body.style.userSelect = '';
       
-      // Playlist reordering would require Spotify API support
-      // For now, we'll just keep the visual order
+      // Save custom playlist order to localStorage
       if (evt.oldIndex !== evt.newIndex) {
         console.log('Playlist moved from', evt.oldIndex, 'to', evt.newIndex);
+        savePlaylistOrder();
       }
     }
   });
+}
+
+/**
+ * Save current playlist order to localStorage
+ */
+function savePlaylistOrder() {
+  const listEl = document.getElementById('playlists-list');
+  const playlistIds = Array.from(listEl.querySelectorAll('[data-playlist-id]'))
+    .map(el => el.dataset.playlistId);
+  
+  localStorage.setItem('playlist_order', JSON.stringify(playlistIds));
+  console.log('Playlist order saved:', playlistIds);
+}
+
+/**
+ * Restore playlist order from localStorage
+ */
+function restorePlaylistOrder() {
+  const savedOrder = localStorage.getItem('playlist_order');
+  if (!savedOrder) return;
+  
+  try {
+    const playlistIds = JSON.parse(savedOrder);
+    const listEl = document.getElementById('playlists-list');
+    const allPlaylists = State.getAllPlaylists();
+    
+    // Reorder playlists in state to match saved order
+    const orderedPlaylists = [];
+    const playlistMap = new Map(allPlaylists.map(p => [p.id, p]));
+    
+    // Add playlists in saved order
+    playlistIds.forEach(id => {
+      const playlist = playlistMap.get(id);
+      if (playlist) {
+        orderedPlaylists.push(playlist);
+        playlistMap.delete(id);
+      }
+    });
+    
+    // Add any new playlists that weren't in saved order
+    playlistMap.forEach(playlist => orderedPlaylists.push(playlist));
+    
+    // Update state and re-display
+    State.setAllPlaylists(orderedPlaylists);
+    displayPlaylists(orderedPlaylists);
+    
+    console.log('Playlist order restored');
+  } catch (error) {
+    console.error('Failed to restore playlist order:', error);
+  }
 }
 
 /**
