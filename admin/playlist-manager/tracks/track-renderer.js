@@ -6,6 +6,7 @@ import { showTrackMenu } from './track-actions.js';
 import { handleTrackPlayPause, restorePlaybackState } from './track-audio.js';
 import { addSwipeToDelete, addLongPressMenu } from './track-mobile.js';
 import { initializeDragDrop } from './track-drag-drop.js';
+import { getDuplicateTooltip, isTrackDuplicate } from './track-duplicates.js';
 
 // ========================================
 // PROGRESSIVE RENDERING CONFIGURATION
@@ -67,6 +68,16 @@ function renderTrackBatch(tracks, startIndex) {
     tr.dataset.trackUri = track.uri;
     tr.dataset.trackId = track.id;
     tr.dataset.trackIndex = index;
+    
+    // Check if track exists in other playlists
+    const currentPlaylistId = State.getCurrentPlaylistId();
+    const isDuplicate = isTrackDuplicate(track.id, currentPlaylistId);
+    const tooltipText = isDuplicate ? getDuplicateTooltip(track.id, currentPlaylistId) : '';
+    
+    if (isDuplicate) {
+      tr.classList.add('track-duplicate');
+      tr.title = tooltipText;
+    }
     
     const albumArt = track.album.images && track.album.images.length > 0
       ? track.album.images[track.album.images.length - 1].url

@@ -8,6 +8,7 @@ import { initializeDragDrop } from './track-drag-drop.js';
 import { stopCurrentAudio } from './track-audio.js';
 import { formatTotalDuration } from './track-utils.js';
 import { loadAndMergeBPMData } from './bpm-service.js';
+import { cachePlaylistTracks } from './track-duplicates.js';
 
 // ========================================
 // PERFORMANCE CONFIGURATION
@@ -47,6 +48,9 @@ export async function loadTracks(playlistId) {
     
     State.setCurrentTracks(currentTracks);
     State.setFilteredTracks([...currentTracks]);
+    
+    // Cache track IDs for duplicate detection
+    cachePlaylistTracks(playlistId, currentTracks);
     
     // Calculate total duration
     const totalMs = currentTracks.reduce((sum, item) => {

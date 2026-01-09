@@ -43,6 +43,17 @@
   background: var(--hover-light);
 }
 
+/* Duplicate track styling (desktop only) */
+@media (min-width: 769px) {
+  .tracks-table tbody tr.track-duplicate {
+    background: var(--bg-warning-pale);
+  }
+  
+  .tracks-table tbody tr.track-duplicate:hover {
+    background: var(--bg-warning-light);
+  }
+}
+
 .tracks-table tbody tr.sortable-ghost {
   opacity: 0.4;
 }
