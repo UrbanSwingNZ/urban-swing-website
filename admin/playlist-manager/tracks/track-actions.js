@@ -151,18 +151,18 @@ export async function handleConfirmAction() {
       // Copy BPM data if available
       await copyBPMData(track.id, fromPlaylistId, destinationId);
       
-      // Update destination playlist track count (+1)
-      await updatePlaylistTrackCount(destinationId, 1);
+      // Update destination playlist track count and duration (+1)
+      await updatePlaylistTrackCount(destinationId, 1, track.duration_ms);
       
       showSuccess(`Track copied successfully!`);
     } else if (action === 'move') {
       await spotifyAPI.moveTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
       
-      // Update destination playlist track count (+1)
-      await updatePlaylistTrackCount(destinationId, 1);
+      // Update destination playlist track count and duration (+1)
+      await updatePlaylistTrackCount(destinationId, 1, track.duration_ms);
       
-      // Update source playlist track count (-1)
-      await updatePlaylistTrackCount(fromPlaylistId, -1);
+      // Update source playlist track count and duration (-1)
+      await updatePlaylistTrackCount(fromPlaylistId, -1, track.duration_ms);
       
       showSuccess(`Track moved successfully!`);
       
