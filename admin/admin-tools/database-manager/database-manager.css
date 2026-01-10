@@ -520,8 +520,9 @@ section {
 
 .browser-documents-container {
     background: var(--background-light);
-    max-height: 2000px;
-    overflow: hidden;
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
     transition: max-height 0.3s ease, padding 0.3s ease;
     padding: var(--space-md);
 }
@@ -529,6 +530,7 @@ section {
 .browser-collection.collapsed .browser-documents-container {
     max-height: 0;
     padding: 0 var(--space-md);
+    overflow: hidden;
 }
 
 /* Document accordion in browser */
