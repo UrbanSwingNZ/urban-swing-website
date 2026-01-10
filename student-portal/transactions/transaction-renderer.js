@@ -46,11 +46,11 @@ class TransactionRenderer {
         
         row.appendChild(typeCell);
         
-        // Class Date column (for casual transactions with online payment)
+        // Class Date column (for prepaid classes)
         const classDateCell = document.createElement('td');
         classDateCell.className = 'class-date';
         
-        if (this.transactionService.isCasualOnline(transaction) && transaction.classDate) {
+        if (transaction.classDate) {
             const classDate = transaction.classDate?.toDate() || new Date();
             classDateCell.textContent = this.formatDate(classDate);
         } else {
@@ -103,9 +103,9 @@ class TransactionRenderer {
         // Get payment method badge
         const paymentBadgeHTML = this.getPaymentBadgeHTML(transaction);
         
-        // Get class date for casual online purchases
+        // Get class date for prepaid classes
         let classDateRow = '';
-        if (this.transactionService.isCasualOnline(transaction) && transaction.classDate) {
+        if (transaction.classDate) {
             const classDate = transaction.classDate?.toDate() || new Date();
             const formattedClassDate = this.formatDate(classDate);
             classDateRow = `

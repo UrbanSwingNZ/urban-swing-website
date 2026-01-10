@@ -785,8 +785,18 @@ select.filter-input:focus {
             justify-self: start;
         }
 
-        /* Date of Prepaid Class - Hide on mobile */
+        /* Date of Prepaid Class - Bottom Left */
         #transactions-table td:nth-child(4) {
+            grid-column: 1;
+            grid-row: 4;
+            text-align: left;
+            justify-self: start;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        /* Hide class date cell entirely when it contains N/A */
+        #transactions-table td:nth-child(4):has(.na-text) {
             display: none;
         }
 
@@ -806,11 +816,12 @@ select.filter-input:focus {
             justify-self: end;
         }
 
-        /* Action Buttons - Row 4 spanning both columns */
+        /* Action Buttons - Bottom Right */
         #transactions-table td:nth-child(7) {
-            grid-column: 1 / -1;
+            grid-column: 2;
             grid-row: 4;
             align-self: start;
+            justify-self: end;
         }
 
         /* Add labels before values on mobile */
@@ -820,6 +831,16 @@ select.filter-input:focus {
             font-size: 0.75rem;
             color: var(--text-muted);
             font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        #transactions-table td:nth-child(4)::before {
+            content: 'Class Date';
+            display: block;
+            font-size: 0.75rem;
+            color: var(--purple-primary);
+            font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 2px;
         }
