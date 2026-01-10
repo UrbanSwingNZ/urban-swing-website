@@ -131,6 +131,26 @@ exports.sendNewStudentEmail = onDocumentCreated(
       const hasUserAccount = !userSnapshot.empty;
       logger.info(`User account exists for student ${studentId}: ${hasUserAccount}`);
 
+      // Fetch transaction data if student made a purchase (to get firstClassDate for casual entries)
+      let purchaseData = null;
+      if (student.initialPayment) {
+        const transactionSnapshot = await db.collection('transactions')
+          .where('studentId', '==', studentId)
+          .limit(1)
+          .get();
+        
+        if (!transactionSnapshot.empty) {
+          const txData = transactionSnapshot.docs[0].data();
+          purchaseData = {
+            amount: student.initialPayment.amount / 100, // Convert from cents to dollars
+            packageType: student.initialPayment.packageType,
+            packageName: student.initialPayment.packageName,
+            firstClassDate: txData.classDate ? txData.classDate.toDate() : null
+          };
+          logger.info(`Purchase data found for student ${studentId}:`, purchaseData);
+        }
+      }
+
       // Generate admin notification email using JavaScript generator
       const adminEmail = generateAdminNotificationEmail(
         student, 
@@ -139,7 +159,8 @@ exports.sendNewStudentEmail = onDocumentCreated(
         casualRate,
         studentRate,
         fiveClassPrice,
-        tenClassPrice
+        tenClassPrice,
+        purchaseData
       );
       
       // Generate welcome email using JavaScript generator
