@@ -44,16 +44,26 @@ Clicking the Refund button opens a modal with:
      - Must be ≤ available amount
      - Cannot exceed original transaction amount minus any previous refunds
 
-3. **Refund Type** (auto-calculated, displayed)
+3. **Payment Method** (dropdown, required)
+   - Options:
+     - Cash
+     - EFTPOS
+     - Online
+     - Bank Transfer
+   - **IMPORTANT:** This is the payment method used to process the refund, NOT copied from the original transaction
+   - This value will be displayed in the "Payment Method" column on the Transactions table
+   - Default: Pre-select based on original transaction's payment method (convenience), but user can change
+
+4. **Refund Type** (auto-calculated, displayed)
    - Shows "Full Refund" or "Partial Refund" based on amount entered
    - Updates dynamically as user types
 
-4. **Reason** (textarea, optional)
+5. **Reason** (textarea, optional)
    - Max 500 characters
    - Placeholder: "Optional: Note the reason for this refund..."
    - Stored with refund transaction
 
-5. **Stripe Status** (read-only, conditional)
+6. **Stripe Status** (read-only, conditional)
    - Only displayed if transaction has `stripeCustomerId` or `paymentMethod: 'stripe'`
    - Shows: "This refund will be processed through Stripe"
    - If not Stripe: "Database-only refund (no payment processor action)"
@@ -102,6 +112,8 @@ Example: `STU123-refund-1704985200000`
   refundDate: <timestamp>,  // When refund was processed
   createdAt: <timestamp>,
   transactionDate: <timestamp>,  // Same as refundDate for sorting
+  paymentMethod: <string>,  // How the refund was issued (cash, eftpos, online, bank-transfer)
+                            // IMPORTANT: This is the refund payment method, NOT copied from original
   
   // Original transaction reference
   parentTransactionId: <string>,  // Original transaction ID
@@ -521,8 +533,9 @@ For transactions without Stripe:
 #### `/admin/admin-tools/transactions/refund-handler.js`
 Main refund logic module in the transactions folder containing:
 - `openRefundModal(transaction)` - Modal display and form handling
-- `processRefund(refundData)` - Core refund processing
+- `processRefund(refundData)` - Core refund processing (includes refund payment method)
 - `validateRefundAmount(amount, maxRefundable)` - Validation
+- `validateRefundPaymentMethod(paymentMethod)` - Ensure payment method is selected
 - `calculateRefundStatus(originalAmount, totalRefunded)` - Helper function
 
 #### `/admin/admin-tools/transactions/refunds/` (NEW FOLDER)
@@ -777,6 +790,9 @@ Ask Business Analyst to evaluate:
 - [ ] Refunded transaction rows have correct styling
 - [ ] Partial refund status badge appears
 - [ ] Full refund status badge appears
+- [ ] Refund payment method displays in Payment Method column
+- [ ] Payment method selector shows all options in refund modal
+- [ ] Default payment method is pre-selected but can be changed
 - [ ] Modal shows previous refunds correctly
 
 ---
@@ -856,6 +872,7 @@ Ask Business Analyst to evaluate:
 | **Stripe Refund Reversals** | Disabled/prevented - cannot re-charge customer |
 | **Email Notifications** | Future enhancement, not in initial version |
 | **Permissions** | Super admin only (already enforced by page access) |
+| **Refund Payment Method** | Required field in modal; records how refund was issued (not copied from original) |
 | **Concession-Gift Support** | No refund support (non-financial transaction) |
 | **CSS Approach** | Use design tokens from `/styles` folder, no hardcoded values |
 | **File Organization** | Main handler in `/transactions`, supporting files in `/transactions/refunds` |
@@ -864,23 +881,23 @@ Ask Business Analyst to evaluate:
 
 ## Questions for Business Analyst
 
-1. **Refund History Array:** Should we implement Option B (array) or stick with Option A (individual fields)?
+1. **Refund History Array:** Should we implement Option B (array) or stick with Option A (individual fields)? **Option B.**
 
-2. **Email Notifications:** Priority level for implementation? Should this be included in initial release?
+2. **Email Notifications:** Priority level for implementation? Should this be included in initial release? **No.**
 
 3. **Stripe Payment Intent Storage:** Current transactions may not have `stripePaymentIntentId`. How should we handle:
    - Legacy Stripe transactions without Payment Intent ID?
    - Manual Stripe refunds required for these?
 
-4. **Concession Block Lock Visibility:** Should locked blocks from refunds have special UI indication vs. manually locked blocks?
+4. **Concession Block Lock Visibility:** Should locked blocks from refunds have special UI indication vs. manually locked blocks? **No - we have notes included already for reference.**
 
-5. **Refund Reason Requirement:** Should reason field be required or truly optional?
+5. **Refund Reason Requirement:** Should reason field be required or truly optional? **Required.**
 
-6. **Maximum Refund Amount:** Any business rules for maximum refundable amounts or time limits?
+6. **Maximum Refund Amount:** Any business rules for maximum refundable amounts or time limits? **If trying to refund a transaction that has a check in in the past, this can't be refunded.**
 
-7. **Stripe Refund Reversals:** Should we completely prevent reversal of Stripe refunds, or allow database-only reversal with strong warnings? (Recommendation: prevent entirely)
+7. **Stripe Refund Reversals:** Should we completely prevent reversal of Stripe refunds, or allow database-only reversal with strong warnings? (Recommendation: prevent entirely) **Prevent entirely - we would need our usual processes to be followed in order to record the new transaction accurately anyway.**
 
-8. **Modal Component:** Can we use the shared ConfirmationModal with custom HTML, or do we need to create a custom RefundModal component?
+8. **Modal Component:** Can we use the shared ConfirmationModal with custom HTML, or do we need to create a custom RefundModal component? **This isn't a BA question - it's a question for the AI agent. The AI agent should investment the ConfirmationModal and make a recommendation as to whether it can be reused.**
 
 ---
 
