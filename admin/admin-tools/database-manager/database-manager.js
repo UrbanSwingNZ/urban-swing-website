@@ -570,7 +570,7 @@ function displayAuthUsers() {
     container.innerHTML = filteredAuthUsers.map(user => {
         const isActive = !user.disabled;
         const statusText = isActive ? 'Active' : 'Inactive';
-        const lastSignIn = user.lastSignIn ? new Date(user.lastSignIn).toLocaleDateString() : 'Never';
+        const lastSignIn = user.lastSignIn ? new Date(user.lastSignIn).toLocaleDateString('en-NZ') : 'Never';
         
         return `
             <div class="auth-user-card">
@@ -587,21 +587,23 @@ function displayAuthUsers() {
                         <span class="status-label ${isActive ? 'active' : 'inactive'}">${statusText}</span>
                     </div>
                 </div>
-                <div class="auth-user-details">
-                    <div class="auth-user-detail">
-                        <i class="fas fa-calendar-plus"></i>
-                        <span>Created: ${new Date(user.createdAt).toLocaleDateString()}</span>
+                <div style="display: flex; align-items: flex-start;">
+                    <div class="auth-user-details">
+                        <div class="auth-user-detail">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Created: ${new Date(user.createdAt).toLocaleDateString('en-NZ')}</span>
+                        </div>
+                        <div class="auth-user-detail">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Last Sign-In: ${lastSignIn}</span>
+                        </div>
+                        ${user.emailVerified ? '<div class="auth-user-detail"><i class="fas fa-check-circle" style="color: var(--success);"></i><span>Email Verified</span></div>' : ''}
                     </div>
-                    <div class="auth-user-detail">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Last Sign-In: ${lastSignIn}</span>
+                    <div class="auth-user-actions">
+                        <button class="btn-danger btn-sm" onclick="deleteAuthUser('${user.uid}', '${user.email}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
                     </div>
-                    ${user.emailVerified ? '<div class="auth-user-detail"><i class="fas fa-check-circle" style="color: var(--success);"></i><span>Email Verified</span></div>' : ''}
-                </div>
-                <div class="auth-user-actions">
-                    <button class="btn-danger btn-sm" onclick="deleteAuthUser('${user.uid}', '${user.email}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
                 </div>
             </div>
         `;
