@@ -12,9 +12,14 @@
  * @param {number} studentRate - Student casual entry price
  * @param {number} fiveClassPrice - 5-class concession price
  * @param {number} tenClassPrice - 10-class concession price
+ * @param {Object|null} purchaseData - Purchase information if student paid online
+ * @param {number} purchaseData.amount - Amount paid
+ * @param {string} purchaseData.packageType - Type of package ('casual-rate' or 'concession-package')
+ * @param {string} purchaseData.packageName - Name of the package
+ * @param {Date|null} purchaseData.firstClassDate - Date of first class (for casual purchases)
  * @returns {Object} Object with html and text versions
  */
-function generateAdminNotificationEmail(student, studentId, registeredAt, casualRate, studentRate, fiveClassPrice, tenClassPrice) {
+function generateAdminNotificationEmail(student, studentId, registeredAt, casualRate, studentRate, fiveClassPrice, tenClassPrice, purchaseData = null) {
   // Email color mappings from styles/base/colors.css
   const colors = {
     bluePrimary: '#3534fa',      // --blue-primary
@@ -80,6 +85,34 @@ function generateAdminNotificationEmail(student, studentId, registeredAt, casual
           </tr>
         </table>
         
+        ${purchaseData ? `
+        <div style="margin-top: 20px; padding: 15px; background: ${colors.white}; border: 2px solid ${colors.success}; border-radius: 8px;">
+          <h3 style="color: ${colors.success}; margin-top: 0; margin-bottom: 15px;">💳 Online Purchase</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px; border-bottom: 1px solid ${colors.borderLighter};"><strong>Amount Paid:</strong></td>
+              <td style="padding: 8px; border-bottom: 1px solid ${colors.borderLighter}; color: ${colors.success}; font-weight: bold;">$${purchaseData.amount.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border-bottom: 1px solid ${colors.borderLighter};"><strong>Package:</strong></td>
+              <td style="padding: 8px; border-bottom: 1px solid ${colors.borderLighter};">${purchaseData.packageName}</td>
+            </tr>
+            ${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `
+            <tr>
+              <td style="padding: 8px;"><strong>Date of First Class:</strong></td>
+              <td style="padding: 8px; color: ${colors.purplePrimary}; font-weight: bold;">${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td>
+            </tr>
+            ` : ''}
+            ${purchaseData.packageType === 'concession-package' ? `
+            <tr>
+              <td style="padding: 8px;"><strong>Purchase Type:</strong></td>
+              <td style="padding: 8px;">Concession Package</td>
+            </tr>
+            ` : ''}
+          </table>
+        </div>
+        ` : ''}
+        
         ${student.adminNotes ? `
         <div style="margin-top: 20px; padding: 15px; background: ${colors.white}; border-left: 4px solid ${colors.purplePrimary};">
           <strong>Admin Notes:</strong><br>
@@ -134,7 +167,7 @@ Phone: ${student.phoneNumber || 'N/A'}
 ${student.pronouns ? `Pronouns: ${student.pronouns}\n` : ''}${student.referral ? `Referral: ${student.referral}\n` : ''}Registered: ${registeredAt}
 Email Consent: ${student.emailConsent ? 'Yes' : 'No'}
 Student ID: ${studentId}
-${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}\n` : ''}
+${purchaseData ? `\nONLINE PURCHASE:\nAmount Paid: $${purchaseData.amount.toFixed(2)}\nPackage: ${purchaseData.packageName}${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `\nDate of First Class: ${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : ''}${purchaseData.packageType === 'concession-package' ? `\nPurchase Type: Concession Package` : ''}\n` : ''}${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}\n` : ''}
 Pricing:
 - Single Class: $${casualRate}
 - Single Class (Student): $${studentRate}
