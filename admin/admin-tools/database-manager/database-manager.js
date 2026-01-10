@@ -570,7 +570,7 @@ function displayAuthUsers() {
     container.innerHTML = filteredAuthUsers.map(user => {
         const isActive = !user.disabled;
         const statusText = isActive ? 'Active' : 'Inactive';
-        const lastSignIn = user.lastSignIn ? new Date(user.lastSignIn).toLocaleDateString() : 'Never';
+        const lastSignIn = user.lastSignIn ? new Date(user.lastSignIn).toLocaleDateString('en-NZ') : 'Never';
         
         return `
             <div class="auth-user-card">
@@ -590,7 +590,7 @@ function displayAuthUsers() {
                 <div class="auth-user-details">
                     <div class="auth-user-detail">
                         <i class="fas fa-calendar-plus"></i>
-                        <span>Created: ${new Date(user.createdAt).toLocaleDateString()}</span>
+                        <span>Created: ${new Date(user.createdAt).toLocaleDateString('en-NZ')}</span>
                     </div>
                     <div class="auth-user-detail">
                         <i class="fas fa-sign-in-alt"></i>
