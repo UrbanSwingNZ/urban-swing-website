@@ -5,6 +5,7 @@
 
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {onCall} = require("firebase-functions/v2/https");
+const {onSchedule} = require("firebase-functions/v2/scheduler");
 const {defineSecret} = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
@@ -14,6 +15,7 @@ const {generateAdminNotificationEmail, generateWelcomeEmail} = require("./emails
 const {generateAccountSetupEmail} = require("./emails/student-portal-setup-email");
 const {generatePortalInvitationEmail} = require("./emails/student-portal-invitation");
 const {generateErrorNotificationEmail} = require("./emails/error-notification-email");
+const {generateLowBalanceEmail, generateExpiringConcessionsEmail} = require("./emails/concession-notifications");
 
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
@@ -493,6 +495,287 @@ exports.sendPortalInvitationEmail = onCall(
         stack: error.stack
       });
       throw new Error(error.message || "Failed to send invitation email");
+    }
+  }
+);
+
+/**
+ * Send low balance email when student has 1 concession remaining
+ * Callable function to be invoked from client-side when balance drops to 1
+ */
+exports.sendLowBalanceEmail = onCall(
+  {
+    secrets: [emailPassword],
+  },
+  async (request) => {
+    const {studentId} = request.data;
+
+    if (!studentId) {
+      throw new Error("studentId is required");
+    }
+
+    logger.info("Low balance email requested for student:", studentId);
+
+    try {
+      const db = getFirestore();
+
+      // Get student document
+      const studentDoc = await db.collection('students').doc(studentId).get();
+
+      if (!studentDoc.exists) {
+        logger.error("Student not found:", studentId);
+        throw new Error("Student not found");
+      }
+
+      const student = studentDoc.data();
+
+      // Check email consent (send if true, null, undefined, or missing)
+      if (student.emailConsent === false) {
+        logger.info("Student has opted out of emails, skipping:", studentId);
+        return {
+          success: false,
+          message: "Student has opted out of emails",
+          skipped: true
+        };
+      }
+
+      if (!student.email) {
+        logger.error("Student has no email:", studentId);
+        throw new Error("Student does not have an email address");
+      }
+
+      // Query active concession blocks to verify balance is actually 1
+      const blocksSnapshot = await db.collection('concessionBlocks')
+        .where('studentId', '==', studentId)
+        .where('status', '==', 'active')
+        .where('remainingQuantity', '>', 0)
+        .get();
+
+      const totalBalance = blocksSnapshot.docs.reduce((sum, doc) => {
+        return sum + doc.data().remainingQuantity;
+      }, 0);
+
+      logger.info(`Student ${studentId} active balance: ${totalBalance}`);
+
+      if (totalBalance !== 1) {
+        logger.warn(`Balance is not 1 (actual: ${totalBalance}), skipping email`);
+        return {
+          success: false,
+          message: `Balance is ${totalBalance}, not 1`,
+          skipped: true
+        };
+      }
+
+      // Generate email
+      const emailContent = generateLowBalanceEmail(student, totalBalance);
+
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+
+      // Send email
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: student.email,
+        bcc: 'dance@urbanswing.co.nz',
+        subject: "🎫 Your Concessions Are Running Low",
+        text: emailContent.text,
+        html: emailContent.html,
+      });
+
+      logger.info("Low balance email sent successfully to:", student.email);
+
+      return {
+        success: true,
+        message: "Low balance email sent successfully",
+        email: student.email
+      };
+    } catch (error) {
+      logger.error("Error sending low balance email:", {
+        studentId,
+        error: error.message,
+        stack: error.stack
+      });
+      throw new Error(error.message || "Failed to send low balance email");
+    }
+  }
+);
+
+/**
+ * Scheduled function to send expiry warning emails
+ * Runs every Thursday at 10:00 AM NZ time
+ * Checks for concessions expiring within 4 weeks and sends notification emails
+ */
+exports.sendExpiryWarningEmails = onSchedule(
+  {
+    schedule: "0 10 * * 4", // Every Thursday at 10 AM (server time - need to adjust for NZ timezone)
+    timeZone: "Pacific/Auckland", // NZ timezone
+    secrets: [emailPassword],
+  },
+  async (event) => {
+    logger.info("Starting expiry warning email job");
+
+    try {
+      const db = getFirestore();
+
+      // Calculate date range: 4 weeks from now (28 days) to 5 weeks from now (35 days)
+      const now = new Date();
+      const fourWeeksFromNow = new Date(now.getTime() + (28 * 24 * 60 * 60 * 1000));
+      const fiveWeeksFromNow = new Date(now.getTime() + (35 * 24 * 60 * 60 * 1000));
+
+      logger.info(`Checking for blocks expiring between ${fourWeeksFromNow.toISOString()} and ${fiveWeeksFromNow.toISOString()}`);
+
+      // Query blocks that:
+      // 1. Are active
+      // 2. Have remaining quantity > 0
+      // 3. Have expiry date within the 4-5 week window
+      // 4. Haven't been notified yet (expiryWarningEmailSent is not true)
+      const blocksSnapshot = await db.collection('concessionBlocks')
+        .where('status', '==', 'active')
+        .where('remainingQuantity', '>', 0)
+        .where('expiryDate', '>=', admin.firestore.Timestamp.fromDate(fourWeeksFromNow))
+        .where('expiryDate', '<=', admin.firestore.Timestamp.fromDate(fiveWeeksFromNow))
+        .get();
+
+      logger.info(`Found ${blocksSnapshot.size} blocks in expiry window`);
+
+      // Filter out blocks that have already been notified
+      const blocksToNotify = blocksSnapshot.docs.filter(doc => {
+        const data = doc.data();
+        return !data.expiryWarningEmailSent;
+      });
+
+      logger.info(`${blocksToNotify.length} blocks need notification`);
+
+      if (blocksToNotify.length === 0) {
+        logger.info("No blocks to notify, job complete");
+        return {success: true, emailsSent: 0};
+      }
+
+      // Group blocks by student
+      const blocksByStudent = {};
+      blocksToNotify.forEach(doc => {
+        const data = doc.data();
+        if (!blocksByStudent[data.studentId]) {
+          blocksByStudent[data.studentId] = [];
+        }
+        blocksByStudent[data.studentId].push({
+          id: doc.id,
+          ...data
+        });
+      });
+
+      logger.info(`Grouped into ${Object.keys(blocksByStudent).length} students`);
+
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+
+      let emailsSent = 0;
+      let emailsSkipped = 0;
+      const errors = [];
+
+      // Process each student
+      for (const [studentId, blocks] of Object.entries(blocksByStudent)) {
+        try {
+          // Get student document
+          const studentDoc = await db.collection('students').doc(studentId).get();
+
+          if (!studentDoc.exists) {
+            logger.error(`Student not found: ${studentId}`);
+            errors.push({studentId, error: "Student not found"});
+            continue;
+          }
+
+          const student = studentDoc.data();
+
+          // Check email consent (send if true, null, undefined, or missing)
+          if (student.emailConsent === false) {
+            logger.info(`Student ${studentId} has opted out of emails, skipping`);
+            emailsSkipped++;
+            // Still mark blocks as notified so we don't keep trying
+            for (const block of blocks) {
+              await db.collection('concessionBlocks').doc(block.id).update({
+                expiryWarningEmailSent: true,
+                expiryWarningEmailSkipped: true,
+                expiryWarningEmailDate: admin.firestore.FieldValue.serverTimestamp()
+              });
+            }
+            continue;
+          }
+
+          if (!student.email) {
+            logger.error(`Student ${studentId} has no email`);
+            errors.push({studentId, error: "No email address"});
+            continue;
+          }
+
+          // Prepare block data for email
+          const expiringBlocks = blocks.map(block => ({
+            remainingQuantity: block.remainingQuantity,
+            expiryDate: block.expiryDate.toDate(),
+            packageName: block.packageName
+          }));
+
+          // Generate email
+          const emailContent = generateExpiringConcessionsEmail(student, expiringBlocks);
+
+          // Send email
+          await transporter.sendMail({
+            from: '"Urban Swing" <dance@urbanswing.co.nz>',
+            to: student.email,
+            bcc: 'dance@urbanswing.co.nz',
+            subject: "⏰ Your Concessions Are Expiring Soon",
+            text: emailContent.text,
+            html: emailContent.html,
+          });
+
+          logger.info(`Expiry warning email sent to ${student.email} for ${blocks.length} block(s)`);
+          emailsSent++;
+
+          // Mark blocks as notified
+          for (const block of blocks) {
+            await db.collection('concessionBlocks').doc(block.id).update({
+              expiryWarningEmailSent: true,
+              expiryWarningEmailDate: admin.firestore.FieldValue.serverTimestamp()
+            });
+          }
+
+        } catch (error) {
+          logger.error(`Error processing student ${studentId}:`, error);
+          errors.push({studentId, error: error.message});
+        }
+      }
+
+      logger.info(`Expiry warning job complete: ${emailsSent} sent, ${emailsSkipped} skipped, ${errors.length} errors`);
+
+      return {
+        success: true,
+        emailsSent,
+        emailsSkipped,
+        errors: errors.length > 0 ? errors : undefined
+      };
+
+    } catch (error) {
+      logger.error("Error in expiry warning job:", {
+        error: error.message,
+        stack: error.stack
+      });
+      throw error;
     }
   }
 );
