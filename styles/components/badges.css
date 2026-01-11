@@ -110,6 +110,22 @@
     color: var(--gray-750);
 }
 
+.type-badge.refund {
+    background: var(--purple-primary);
+    color: var(--white);
+    font-weight: var(--font-weight-semibold);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.type-badge.refund i {
+    font-size: var(--font-size-sm);
+}
+
 /* ========================================
    PAYMENT BADGES (with icons)
    ======================================== */
