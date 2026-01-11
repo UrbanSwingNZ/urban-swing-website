@@ -8,12 +8,15 @@
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../../../styles/base/colors.css">
+    <link rel="stylesheet" href="../../../styles/base/design-tokens.css">
+    <link rel="stylesheet" href="../../../styles/components/badges.css">
     <link rel="stylesheet" href="../../admin.css">
     <link rel="stylesheet" href="../../concessions/concessions.css">
     <link rel="stylesheet" href="../../concessions/css/casual-entry-modal.css">
     <link rel="stylesheet" href="../../../styles/date-picker/date-picker.css">
     <link rel="stylesheet" href="../../../styles/modals/modal-base.css">
     <link rel="stylesheet" href="../../../styles/modals/confirmation-modal.css">
+    <link rel="stylesheet" href="refunds/refund-modal.css">
     <link rel="stylesheet" href="transactions.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
@@ -22,6 +25,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     
     <!-- Loading Spinner Component -->
     <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
@@ -193,11 +197,53 @@
     
     <script src="../../check-in/js/auth.js"></script>
     
+    <!-- Modal Base (loaded as module, then made global) -->
+    <script type="module">
+        import { BaseModal } from '/components/modals/modal-base.js';
+        window.BaseModal = BaseModal;
+        // Dispatch event when BaseModal is ready
+        window.dispatchEvent(new CustomEvent('baseModalReady'));
+    </script>
+    
     <!-- Concessions Modules -->
     <script src="../../concessions/js/concessions-data.js?v=2"></script>
     <script src="../../concessions/js/concessions-admin.js?v=2"></script>
     <script src="../../concessions/js/concessions-modal.js?v=2"></script>
     <script src="../../concessions/js/casual-entry-modal.js?v=1"></script>
+    
+    <!-- Refund Modules (must load after BaseModal is ready) -->
+    <script>
+        // Wait for BaseModal to be available before loading refund modules
+        if (typeof BaseModal !== 'undefined') {
+            // BaseModal already loaded
+            loadRefundScripts();
+        } else {
+            // Wait for BaseModal
+            window.addEventListener('baseModalReady', loadRefundScripts);
+        }
+        
+        function loadRefundScripts() {
+            const scripts = [
+                'refunds/refund-data.js',
+                'refunds/refund-reversal.js',
+                'refunds/refund-display.js',
+                'refunds/refund-modal.js',
+                'refund-handler.js'
+            ];
+            
+            scripts.forEach((src, index) => {
+                const script = document.createElement('script');
+                script.src = src;
+                if (index === scripts.length - 1) {
+                    // Last script
+                    script.onload = () => {
+                        console.log('All refund modules loaded');
+                    };
+                }
+                document.body.appendChild(script);
+            });
+        }
+    </script>
     
     <!-- Transaction Modules -->
     <script type="module" src="/js/utils/index.js"></script>

@@ -1,0 +1,282 @@
+/**
+ * refund-modal.css
+ * Styles specific to refund modal and indicators
+ */
+
+/* ========================================
+   REFUND MODAL
+   ======================================== */
+
+.refund-modal .modal-body {
+    padding: var(--space-md);
+}
+
+/* Transaction Summary Section */
+.refund-summary {
+    background: color-mix(in srgb, var(--info) 5%, transparent);
+    border-left: 4px solid var(--info);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
+}
+
+.refund-summary h4 {
+    margin: 0 0 var(--space-xs) 0;
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+}
+
+.refund-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    font-size: var(--font-size-sm);
+}
+
+.refund-summary-label {
+    color: var(--text-secondary);
+}
+
+.refund-summary-value {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.refund-summary-value.highlight {
+    color: var(--success);
+    font-size: var(--font-size-base);
+}
+
+/* Refund Info Banner (for partial refunds) */
+.refund-info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+}
+
+.refund-info-banner.partial {
+    background: color-mix(in srgb, var(--warning) 10%, transparent);
+    border: 1px solid var(--warning);
+    color: var(--warning-darker);
+}
+
+.refund-info-banner i {
+    font-size: var(--font-size-base);
+    margin-top: 2px;
+}
+
+/* Form Fields */
+.refund-form-group {
+    margin-bottom: var(--space-md);
+}
+
+.refund-form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.refund-form-group label.required::after {
+    content: ' *';
+    color: var(--error);
+}
+
+.refund-form-group input,
+.refund-form-group select,
+.refund-form-group textarea {
+    width: 100%;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--gray-400);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    transition: border-color var(--transition-fast);
+}
+
+.refund-form-group input:focus,
+.refund-form-group select:focus,
+.refund-form-group textarea:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple-primary) 10%, transparent);
+}
+
+.refund-form-group input.error,
+.refund-form-group select.error {
+    border-color: var(--error);
+}
+
+.refund-form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.refund-form-group .help-text {
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+.refund-form-group .error-message {
+    font-size: var(--font-size-xs);
+    color: var(--error);
+    margin-top: 0.25rem;
+    display: none;
+}
+
+.refund-form-group .error-message.visible {
+    display: block;
+}
+
+/* Currency Input */
+.currency-input-wrapper {
+    position: relative;
+}
+
+.currency-input-wrapper::before {
+    content: '$';
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-600);
+    font-weight: var(--font-weight-semibold);
+    pointer-events: none;
+    font-size: var(--font-size-base);
+}
+
+.currency-input-wrapper input {
+    padding-left: 28px !important;
+}
+
+/* Refund Type Indicator */
+.refund-type-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-md);
+}
+
+.refund-type-indicator.full {
+    background: color-mix(in srgb, var(--purple-primary) 10%, transparent);
+    color: var(--purple-primary);
+    border: 1px solid var(--purple-primary);
+}
+
+.refund-type-indicator.partial {
+    background: color-mix(in srgb, var(--info) 10%, transparent);
+    color: var(--info);
+    border: var(--border-width-thin) solid var(--info);
+}
+
+.refund-type-indicator i {
+    font-size: var(--font-size-base);
+}
+
+/* Stripe Status Message */
+.stripe-status-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background: color-mix(in srgb, var(--success) 8%, transparent);
+    border-left: 4px solid var(--success);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-md);
+}
+
+.stripe-status-message.manual {
+    background: color-mix(in srgb, var(--warning) 8%, transparent);
+    border-left-color: var(--warning);
+}
+
+.stripe-status-message i {
+    font-size: var(--font-size-base);
+}
+
+/* Warning Banner */
+.warning-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: color-mix(in srgb, var(--error) 10%, transparent);
+    border: 1px solid var(--error);
+    border-radius: var(--radius-sm);
+    color: var(--error-darker);
+    margin-bottom: var(--space-md);
+}
+
+.warning-banner i {
+    font-size: var(--font-size-lg);
+    color: var(--error);
+}
+
+/* ========================================
+   REFUND STATUS BADGES
+   ======================================== */
+
+.refund-status-badge {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    padding: 0.25rem var(--space-xs);
+    border-radius: var(--radius-sm);
+    margin-left: var(--space-xs);
+    font-weight: var(--font-weight-semibold);
+    vertical-align: middle;
+}
+
+.refund-status-badge.partial {
+    background: color-mix(in srgb, var(--warning) 20%, transparent);
+    color: var(--warning-darker);
+    border: 1px solid var(--warning);
+}
+
+.refund-status-badge.full {
+    background: color-mix(in srgb, var(--purple-primary) 20%, transparent);
+    color: var(--purple-primary);
+    border: 1px solid var(--purple-primary);
+}
+
+/* ========================================
+   REFUNDED TRANSACTION ROW STYLING
+   ======================================== */
+
+/* Partially refunded */
+.partially-refunded-transaction {
+    background: color-mix(in srgb, var(--warning) 8%, transparent) !important;
+    border-left: 4px solid var(--warning);
+}
+
+/* Fully refunded */
+.fully-refunded-transaction {
+    background: color-mix(in srgb, var(--purple-primary) 8%, transparent) !important;
+    border-left: 4px solid var(--purple-primary);
+}
+
+/* Refund button states */
+.btn-icon.btn-refund:not(:disabled) {
+    color: var(--info);
+}
+
+.btn-icon.btn-refund:not(:disabled):hover {
+    background: var(--info);
+    color: var(--white);
+}
+
+.btn-icon.btn-refund:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
