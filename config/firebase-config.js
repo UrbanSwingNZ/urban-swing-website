@@ -29,7 +29,7 @@ try {
   
   // Initialize Cloud Functions (only if SDK is loaded)
   if (firebase.functions) {
-    functions = firebase.functions();
+    functions = firebase.app().functions('us-central1');
     window.functions = functions;
   }
   

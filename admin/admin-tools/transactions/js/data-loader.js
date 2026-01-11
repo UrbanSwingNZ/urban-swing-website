@@ -33,7 +33,10 @@ async function loadAllTransactions() {
 async function normalizeTransaction(transaction) {
     const date = transaction.transactionDate?.toDate ? transaction.transactionDate.toDate() : new Date(transaction.transactionDate);
     const paymentMethod = (transaction.paymentMethod || '').toLowerCase();
-    const amount = transaction.amountPaid || 0;
+    
+    // Handle refund transactions differently
+    const isRefund = transaction.type === 'refund';
+    const amount = isRefund ? (transaction.amountRefunded || 0) : (transaction.amountPaid || 0);
     
     // Fetch student name from students collection if we have a studentId
     let studentName = transaction.studentName || 'Unknown';
@@ -54,11 +57,15 @@ async function normalizeTransaction(transaction) {
     }
     
     // Determine transaction type and display name
-    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual', 'casual-student', 'concession-gift', etc.
+    let transactionType = transaction.type || 'concession-purchase'; // 'concession-purchase', 'casual', 'casual-student', 'concession-gift', 'refund', etc.
     let typeName;
     
+    // Handle refund transactions
+    if (transactionType === 'refund') {
+        typeName = 'Refund';
+    }
     // Handle both old and new type names for concession purchases
-    if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
+    else if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
         transactionType = 'concession-purchase'; // Normalize to new name
         typeName = 'Concession Purchase';
     } else if (transactionType === 'concession-gift') {
@@ -91,7 +98,18 @@ async function normalizeTransaction(transaction) {
         paymentMethod: paymentMethod,
         invoiced: transaction.invoiced || false,
         reversed: transaction.reversed || false,
+        refunded: transaction.refunded || 'none', // 'none', 'partial', 'full'
+        totalRefunded: transaction.totalRefunded || 0,
+        refundCount: transaction.refundCount || 0,
+        refundHistory: transaction.refundHistory || [],
         stripeCustomerId: transaction.stripeCustomerId || null,
+        checkinId: transaction.checkinId || null,
+        // Refund-specific fields
+        amountRefunded: transaction.amountRefunded || null,
+        parentTransactionId: transaction.parentTransactionId || null,
+        refundMethod: transaction.refundMethod || null,
+        refundedBy: transaction.refundedBy || null,
+        reason: transaction.reason || null,
         collection: 'transactions',
         rawData: transaction
     };
