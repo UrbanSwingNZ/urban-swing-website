@@ -82,8 +82,10 @@ exports.processConcessionPurchase = processConcessionPurchase;
 // TRANSACTION MANAGEMENT
 // ========================================
 const { updateClassDate } = require('./update-class-date');
+const { processRefund } = require('./process-refund');
 
 exports.updateClassDate = updateClassDate;
+exports.processRefund = processRefund;
 
 // ========================================
 // DATABASE MANAGEMENT
