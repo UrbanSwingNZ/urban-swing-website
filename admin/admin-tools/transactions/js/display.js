@@ -43,27 +43,11 @@ function displayTransactions(transactions, currentSort) {
 function createTransactionRow(transaction) {
     const row = document.createElement('tr');
     
-    // Add reversed class if transaction is reversed
-    if (transaction.reversed) {
-        row.classList.add('reversed-transaction');
-    }
+    // Apply row styling for refunded transactions
+    applyRefundRowStyling(row, transaction);
     
-    // Determine badge class based on transaction type
-    let typeBadgeClass;
-    if (transaction.type === 'concession-purchase') {
-        typeBadgeClass = 'concession';
-    } else if (transaction.type === 'concession-gift') {
-        typeBadgeClass = 'gift';
-    } else if (transaction.type === 'casual') {
-        typeBadgeClass = 'casual';
-    } else if (transaction.type === 'casual-student') {
-        typeBadgeClass = 'casual-student';
-    } else {
-        typeBadgeClass = 'other';
-    }
-    
-    // Add reversed badge if transaction is reversed
-    const reversedBadge = transaction.reversed ? '<span class="type-badge reversed">REVERSED</span> ' : '';
+    // Get type badge with refund status
+    const typeBadgeHTML = getTypeBadgeWithRefundStatus(transaction);
     
     // Get payment badge HTML
     const paymentBadgeHTML = getPaymentBadgeHTML(transaction);
@@ -71,15 +55,32 @@ function createTransactionRow(transaction) {
     // Get class date for casual online purchases
     const classDateHTML = getClassDateHTML(transaction);
     
+    // Get refund button HTML
+    const refundButtonHTML = getRefundButtonHTML(transaction);
+    
+    // Format amount - accounting format with parentheses for refunds
+    const isRefund = transaction.type === 'refund';
+    let amountDisplay;
+    if (isRefund) {
+        // Format as ($5.00) for refunds
+        const positiveAmount = Math.abs(transaction.amount);
+        const formatted = formatCurrency(positiveAmount);
+        amountDisplay = `(${formatted})`;
+    } else {
+        amountDisplay = formatCurrency(transaction.amount);
+    }
+    const amountClass = isRefund ? 'amount-cell refund-amount' : 'amount-cell';
+    
     row.innerHTML = `
         <td>${formatDate(transaction.date)}</td>
         <td><strong>${escapeHtml(transaction.studentName)}</strong></td>
-        <td>${reversedBadge}<span class="type-badge ${typeBadgeClass}">${transaction.typeName}</span></td>
+        <td>${typeBadgeHTML}</td>
         <td>${classDateHTML}</td>
-        <td class="amount-cell">${formatCurrency(transaction.amount)}</td>
+        <td class="${amountClass}">${amountDisplay}</td>
         <td>${paymentBadgeHTML}</td>
         <td>
             <div class="action-buttons">
+                ${refundButtonHTML}
                 ${isSuperAdmin() ? `<button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
                         title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
                         data-id="${transaction.id}"
@@ -88,8 +89,8 @@ function createTransactionRow(transaction) {
                     <i class="fas fa-file-invoice"></i>
                 </button>` : ''}
                 <button class="btn-icon btn-edit" 
-                        title="${transaction.type === 'concession-gift' ? 'Gifts cannot be edited' : 'Edit Transaction'}"
-                        ${transaction.reversed || transaction.type === 'concession-gift' ? 'disabled style="opacity: 0.3;"' : ''}>
+                        title="${transaction.type === 'refund' ? 'Refunds cannot be edited' : transaction.type === 'concession-gift' ? 'Gifts cannot be edited' : transaction.refunded === 'full' ? 'Fully refunded transactions cannot be edited' : 'Edit Transaction'}"
+                        ${transaction.reversed || transaction.type === 'concession-gift' || transaction.type === 'refund' || transaction.refunded === 'full' ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-edit"></i>
                 </button>
                 ${isSuperAdmin() ? `<button class="btn-icon btn-delete" 
@@ -106,6 +107,11 @@ function createTransactionRow(transaction) {
     `;
     
     // Add event listeners
+    const refundBtn = row.querySelector('.btn-refund');
+    if (refundBtn && !refundBtn.disabled) {
+        refundBtn.addEventListener('click', () => openRefundModal(transaction));
+    }
+    
     const invoiceBtn = row.querySelector('.btn-invoice');
     if (invoiceBtn) {
         invoiceBtn.addEventListener('click', () => window.toggleInvoiced(transaction));

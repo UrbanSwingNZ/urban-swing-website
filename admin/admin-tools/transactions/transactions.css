@@ -313,6 +313,18 @@ select.filter-input:focus {
     color: var(--text-primary);
 }
 
+/* Allow badges in Type column to wrap naturally */
+#transactions-table td:nth-child(3) {
+    white-space: normal;
+    line-height: 1.8;
+}
+
+#transactions-table td:nth-child(3) .type-badge,
+#transactions-table td:nth-child(3) .refund-status-badge {
+    display: inline-block;
+    margin: 0.125rem 0.25rem 0.125rem 0;
+}
+
 /* Reversed Transaction Styling */
 .reversed-transaction {
     opacity: 0.6;
@@ -332,6 +344,10 @@ select.filter-input:focus {
     font-weight: 600;
     color: var(--success);
     text-align: right;
+}
+
+.amount-cell.refund-amount {
+    color: var(--error) !important;
 }
 
 .na-text {
