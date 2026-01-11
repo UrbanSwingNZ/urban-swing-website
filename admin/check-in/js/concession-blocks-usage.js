@@ -3,6 +3,44 @@
  */
 
 /**
+ * Check if student has exactly 1 active concession remaining and trigger low balance email
+ * @param {string} studentId - Student document ID
+ */
+async function checkAndSendLowBalanceEmail(studentId) {
+    try {
+        // Query active concession blocks
+        const blocksSnapshot = await firebase.firestore()
+            .collection('concessionBlocks')
+            .where('studentId', '==', studentId)
+            .where('status', '==', 'active')
+            .where('remainingQuantity', '>', 0)
+            .get();
+
+        // Calculate total active balance
+        let totalBalance = 0;
+        blocksSnapshot.forEach(doc => {
+            totalBalance += doc.data().remainingQuantity;
+        });
+
+        console.log(`Student ${studentId} active balance: ${totalBalance}`);
+
+        // If balance is exactly 1, trigger the email
+        if (totalBalance === 1) {
+            console.log('Balance is 1, triggering low balance email');
+            
+            // Call the Cloud Function
+            const sendLowBalanceEmail = firebase.functions().httpsCallable('sendLowBalanceEmail');
+            const result = await sendLowBalanceEmail({ studentId });
+            
+            console.log('Low balance email result:', result.data);
+        }
+    } catch (error) {
+        console.error('Error checking/sending low balance email:', error);
+        // Don't throw - this is a non-critical operation that shouldn't block check-in
+    }
+}
+
+/**
  * Use one entry from a concession block
  * @param {string} blockId - Block document ID
  * @returns {Promise<boolean>} - Success status
@@ -32,6 +70,9 @@ async function useBlockEntry(blockId) {
         
         // Update student balance
         await updateStudentBalance(blockData.studentId);
+        
+        // Check if we need to send low balance email (after balance is updated)
+        await checkAndSendLowBalanceEmail(blockData.studentId);
         
         return true;
     } catch (error) {
