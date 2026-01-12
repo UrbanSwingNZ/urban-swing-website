@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/styles/base/buttons.css">
     <link rel="stylesheet" href="/styles/base/design-tokens.css">
     <link rel="stylesheet" href="../admin-tools.css">
-    <link rel="stylesheet" href="/admin/admin-tools/merge-records/merge-records.css?v=18">
+    <link rel="stylesheet" href="/admin/admin-tools/merge-records/merge-records.css?v=21">
     
     <!-- Modal System -->
     <link rel="stylesheet" href="/styles/modals/modal-base.css">
@@ -172,10 +172,12 @@
                     <div class="progress-spinner">
                         <i class="fas fa-spinner fa-spin fa-3x"></i>
                     </div>
-                    <div id="progress-status" class="progress-status">
+                    <div class="progress-status">
                         Preparing to merge records...
                     </div>
-                    <div id="progress-steps" class="progress-steps"></div>
+                    <div id="progress-steps" class="progress-steps">
+                        <!-- Progress steps will be dynamically generated -->
+                    </div>
                 </div>
             </div>
 
@@ -217,8 +219,8 @@
     <script src="../../admin-header.js"></script>
     
     <!-- Merge Scripts -->
-    <script src="merge-records.js?v=2"></script>
-    <script src="merge-service.js?v=2"></script>
+    <script src="merge-records.js?v=3"></script>
+    <script src="merge-service.js?v=3"></script>
     <script src="merge-ui.js?v=2"></script>
 </body>
 </html>

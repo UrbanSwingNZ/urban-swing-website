@@ -6,20 +6,47 @@
     margin: 0 auto;
 }
 
+/* Danger Button (for confirmation modal) */
+.btn-danger {
+    padding: 12px 24px;
+    background: var(--error);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: var(--error-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Header */
 .merge-header {
     margin-bottom: var(--space-lg);
 }
 
 .merge-title h2 {
-    font-size: 1.75rem;
+    font-size: var(--font-size-3xl);
     color: var(--text-primary);
     margin-bottom: var(--space-xs);
 }
 
 .merge-subtitle {
     color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: var(--font-size-base);
 }
 
 /* Warning Banner */
@@ -36,7 +63,7 @@
 
 .warning-banner i {
     color: var(--text-orange);
-    font-size: 1.25rem;
+    font-size: var(--font-size-xl);
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -76,14 +103,14 @@
     height: 48px;
     background: linear-gradient(135deg, var(--purple-primary) 0%, var(--purple-dark) 100%);
     color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border-radius: 50%;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    border-radius: var(--radius-round);
     flex-shrink: 0;
 }
 
 .step-header h3 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-2xl);
     color: var(--text-primary);
     margin: 0;
 }
@@ -128,7 +155,7 @@
     justify-content: center;
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: var(--radius-round);
     flex-shrink: 0;
 }
 
@@ -143,17 +170,17 @@
 }
 
 .panel-icon i {
-    font-size: 1.25rem;
+    font-size: var(--font-size-xl);
 }
 
 .panel-header h4 {
-    font-size: 1.125rem;
+    font-size: var(--font-size-lg);
     margin: 0;
     color: var(--text-primary);
 }
 
 .panel-header p {
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     margin: 0;
     color: var(--text-secondary);
 }
@@ -181,8 +208,8 @@
     padding: 12px 44px 12px 44px;
     border: 2px solid var(--border-light);
     border-radius: var(--radius-md);
-    font-size: 1rem;
-    transition: all 0.2s ease;
+    font-size: var(--font-size-base);
+    transition: all var(--transition-fast);
 }
 
 .search-input:focus {
@@ -201,10 +228,10 @@
     justify-content: center;
     background: var(--bg-light);
     border: none;
-    border-radius: 50%;
+    border-radius: var(--radius-round);
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .clear-search:hover {
@@ -232,7 +259,7 @@
     padding: 12px 16px;
     cursor: pointer;
     border-bottom: 1px solid var(--border-light);
-    transition: background 0.2s ease;
+    transition: background var(--transition-fast);
 }
 
 .search-result-item:last-child {
@@ -250,13 +277,13 @@
 }
 
 .result-name {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
     margin-bottom: 4px;
 }
 
 .result-details {
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     color: var(--text-secondary);
 }
 
@@ -281,7 +308,7 @@
 }
 
 .student-card-placeholder i {
-    font-size: 3rem;
+    font-size: var(--font-size-5xl);
     color: var(--text-muted);
     margin-bottom: var(--space-md);
 }
@@ -307,8 +334,8 @@
 }
 
 .student-name {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
 }
 
@@ -322,8 +349,8 @@
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 1rem;
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-base);
     padding: 0;
     line-height: 1;
 }
@@ -334,7 +361,7 @@
 }
 
 .remove-btn i {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
 }
 
 .card-info {
@@ -348,17 +375,17 @@
     grid-template-columns: 24px 85px 1fr;
     gap: 12px;
     align-items: center;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
 }
 
 .student-card .info-row i {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     color: var(--purple-primary) !important;
     margin-top: 2px;
 }
 
 .student-card .info-row .info-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
     text-align: left;
 }
@@ -383,14 +410,14 @@
 
 .stat-value {
     display: block;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
     color: var(--purple-primary);
 }
 
 .stat-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     color: var(--text-secondary);
     margin-top: 4px;
 }
@@ -416,7 +443,7 @@
 .comparison-table th {
     padding: 16px;
     text-align: left;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 }
 
 .comparison-table tbody tr {
@@ -433,7 +460,7 @@
 }
 
 .field-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
 }
 
@@ -482,9 +509,9 @@
 }
 
 .progress-status {
-    font-size: 1.125rem;
+    font-size: var(--font-size-lg);
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     margin-bottom: var(--space-lg);
 }
 
@@ -534,12 +561,12 @@
 }
 
 .success-icon i {
-    font-size: 4rem;
+    font-size: var(--font-size-5xl);
     color: var(--success);
 }
 
 .success-container h4 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-3xl);
     color: var(--text-primary);
     margin-bottom: var(--space-xl);
 }
@@ -565,7 +592,7 @@
 }
 
 .summary-label {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
 }
 
