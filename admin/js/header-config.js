@@ -127,6 +127,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../'
     },
+    '/admin/admin-tools/merge-records/': {
+        title: 'Merge Student Records',
+        activePage: 'merge-records',
+        navSection: 'admin-tools',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../'
+    },
     
     // Student Portal Pages (admin view)
     '/student-portal/dashboard/': {

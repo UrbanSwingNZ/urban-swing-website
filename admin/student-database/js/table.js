@@ -112,6 +112,11 @@ function createStudentRow(student) {
     const lastName = toTitleCase(student.lastName || '');
     const fullName = `${firstName} ${lastName}`.trim();
     
+    // Check if student was merged into another record
+    const mergedBadge = (isDeleted && student.mergedInto) 
+        ? `<span class="badge-merged" title="Merged into ${student.mergedInto}"><i class="fas fa-compress-arrows-alt"></i> Merged</span>`
+        : '';
+    
     // Format registration date
     let registeredDate = 'N/A';
     if (student.registeredAt) {
@@ -146,7 +151,7 @@ function createStudentRow(student) {
             </button>` : ''}`;
 
     row.innerHTML = `
-        <td><strong>${escapeHtml(fullName)}</strong>${notesIcon}</td>
+        <td><strong>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}</td>
         <td>${escapeHtml(student.email || 'N/A')}</td>
         <td>${escapeHtml(student.phoneNumber || 'N/A')}</td>
         <td>${escapeHtml(student.pronouns || '-')}</td>
