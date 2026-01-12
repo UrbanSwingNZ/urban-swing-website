@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Merge Student Records - Urban Swing Admin</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="/styles/base/colors.css">
+    <link rel="stylesheet" href="/styles/base/buttons.css">
+    <link rel="stylesheet" href="/styles/base/design-tokens.css">
+    <link rel="stylesheet" href="../admin-tools.css">
+    <link rel="stylesheet" href="/admin/admin-tools/merge-records/merge-records.css?v=18">
+    
+    <!-- Modal System -->
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    
+    <!-- Modal & Loading Components -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+    <script type="module" src="/components/snackbar/snackbar.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div id="main-container" class="dashboard-container">
+        <!-- Header loaded by admin-header.js -->
+
+        <!-- Main Content -->
+        <main class="merge-main">
+            <div class="merge-header">
+                <div class="merge-title">
+                    <h2>Merge Student Records</h2>
+                    <p class="merge-subtitle">Combine duplicate student accounts into a single record</p>
+                </div>
+            </div>
+
+            <!-- Warning Banner -->
+            <div class="warning-banner">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Important:</strong> Merging student records is permanent and cannot be undone. 
+                    All transactions, check-ins, and concessions from the deprecated record will be transferred to the active record.
+                </div>
+            </div>
+
+            <!-- Step 1: Student Selection -->
+            <div id="step-selection" class="merge-step active">
+                <div class="step-header">
+                    <span class="step-number">1</span>
+                    <h3>Select Students to Merge</h3>
+                </div>
+
+                <div class="selection-grid">
+                    <!-- Left Panel - Primary Student -->
+                    <div class="student-panel primary-panel">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div>
+                                <h4>Primary Student</h4>
+                                <p>This record will remain active</p>
+                            </div>
+                        </div>
+
+                        <div class="search-wrapper">
+                            <div class="search-box">
+                                <i class="fas fa-search search-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="primary-search" 
+                                    class="search-input" 
+                                    placeholder="Search by name..." 
+                                    autocomplete="off"
+                                >
+                                <button id="clear-primary" class="clear-search" style="display: none;" title="Clear search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div id="primary-results" class="search-results" style="display: none;"></div>
+                        </div>
+
+                        <div id="primary-card" class="student-card-placeholder">
+                            <i class="fas fa-user"></i>
+                            <p>Search for a student to select</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel - Deprecated Student -->
+                    <div class="student-panel deprecated-panel">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <i class="fas fa-user-times"></i>
+                            </div>
+                            <div>
+                                <h4>Deprecated Student</h4>
+                                <p>This record will be marked as deleted</p>
+                            </div>
+                        </div>
+
+                        <div class="search-wrapper">
+                            <div class="search-box">
+                                <i class="fas fa-search search-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="deprecated-search" 
+                                    class="search-input" 
+                                    placeholder="Search by name..." 
+                                    autocomplete="off"
+                                >
+                                <button id="clear-deprecated" class="clear-search" style="display: none;" title="Clear search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div id="deprecated-results" class="search-results" style="display: none;"></div>
+                        </div>
+
+                        <div id="deprecated-card" class="student-card-placeholder">
+                            <i class="fas fa-user"></i>
+                            <p>Search for a student to select</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <button id="btn-continue-review" class="btn-primary btn-primary-lg" disabled>
+                        <i class="fas fa-arrow-right"></i> Continue to Review
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Field Selection & Review -->
+            <div id="step-review" class="merge-step">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <h3>Review & Select Fields</h3>
+                </div>
+
+                <div id="field-comparison" class="field-comparison">
+                    <!-- Field comparison table will be generated here -->
+                </div>
+
+                <div class="step-actions">
+                    <button id="btn-back-selection" class="btn-cancel btn-cancel-lg">
+                        <i class="fas fa-arrow-left"></i> Back to Selection
+                    </button>
+                    <button id="btn-continue-confirm" class="btn-primary btn-primary-lg">
+                        <i class="fas fa-check"></i> Review & Confirm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Progress & Results (initially hidden) -->
+            <div id="step-progress" class="merge-step" style="display: none;">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h3>Merge in Progress</h3>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-spinner">
+                        <i class="fas fa-spinner fa-spin fa-3x"></i>
+                    </div>
+                    <div id="progress-status" class="progress-status">
+                        Preparing to merge records...
+                    </div>
+                    <div id="progress-steps" class="progress-steps"></div>
+                </div>
+            </div>
+
+            <!-- Step 4: Success Results (initially hidden) -->
+            <div id="step-success" class="merge-step" style="display: none;">
+                <div class="step-header">
+                    <span class="step-number">✓</span>
+                    <h3>Merge Complete</h3>
+                </div>
+
+                <div class="success-container">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4>Student records have been successfully merged</h4>
+                    <div id="merge-summary" class="merge-summary"></div>
+                    
+                    <div class="success-actions">
+                        <a href="../../student-database/index.html" class="btn-primary btn-primary-lg">
+                            <i class="fas fa-users"></i> View Student Database
+                        </a>
+                        <button id="btn-merge-another" class="btn-cancel btn-cancel-lg">
+                            <i class="fas fa-redo"></i> Merge Another Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="/config/firebase-config.js"></script>
+    
+    <!-- Admin Header Dependencies (must load in order) -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../../js/header-config.js"></script>
+    <script src="../../js/header-configurator.js"></script>
+    <script src="../../js/mobile-nav.js"></script>
+    <script src="../../admin-header.js"></script>
+    
+    <!-- Merge Scripts -->
+    <script src="merge-records.js?v=2"></script>
+    <script src="merge-service.js?v=2"></script>
+    <script src="merge-ui.js?v=2"></script>
+</body>
+</html>
