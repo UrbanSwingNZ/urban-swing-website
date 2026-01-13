@@ -132,7 +132,8 @@ exports.processConcessionPurchase = onRequest(
           customerId: customerId,
           paymentMethodId: data.paymentMethodId,
           packageId: data.packageId,
-          studentData: studentData
+          studentData: studentData,
+          returnUrl: data.returnUrl
         });
         
         // Step 5: Check payment result
