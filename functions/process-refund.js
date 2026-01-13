@@ -70,20 +70,35 @@ exports.processRefund = onCall(
         const timestamp = Date.now();
         const refundTransactionId = `${transaction.studentId}-refund-${timestamp}`;
         
+        // Fetch the full transaction from Firestore to get payment intent ID
+        const transactionDoc = await db.collection('transactions').doc(transactionId).get();
+        if (!transactionDoc.exists) {
+            throw new functions.https.HttpsError(
+                'not-found',
+                'Transaction not found'
+            );
+        }
+        const fullTransaction = transactionDoc.data();
+        
         let stripeRefundId = null;
         let refundMethod = 'manual';
         
         // Check if this is a Stripe transaction
-        const isStripeTransaction = transaction.stripeCustomerId || 
-                                   transaction.paymentMethod === 'stripe' || 
-                                   transaction.paymentMethod === 'online';
+        const isStripeTransaction = fullTransaction.stripeCustomerId || 
+                                   fullTransaction.paymentMethod === 'stripe' || 
+                                   fullTransaction.paymentMethod === 'online';
+        
+        // Get payment intent ID from Firestore (can be stored as either field name)
+        const paymentIntentId = fullTransaction.paymentIntentId || fullTransaction.stripePaymentIntentId;
+        
+        // ...removed verbose refund details log for security...
         
         // Process Stripe refund if applicable
-        if (isStripeTransaction && transaction.stripePaymentIntentId) {
-            console.log(`Processing Stripe refund for payment intent: ${transaction.stripePaymentIntentId}`);
+        if (isStripeTransaction && paymentIntentId) {
+            console.log(`Processing Stripe refund for payment intent: ${paymentIntentId}`);
             
             const stripeResult = await refundPayment(
-                transaction.stripePaymentIntentId,
+                paymentIntentId,
                 'requested_by_customer'
             );
             
