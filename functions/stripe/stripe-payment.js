@@ -40,7 +40,7 @@ async function createCustomer(studentData) {
  * @returns {Promise<Object>} Payment Intent result
  */
 async function processPayment(paymentData) {
-  const { customerId, paymentMethodId, packageId, studentData } = paymentData;
+  const { customerId, paymentMethodId, packageId, studentData, returnUrl } = paymentData;
   
   // Fetch current pricing from Firestore
   const packages = await fetchPricing();
@@ -84,7 +84,8 @@ async function processPayment(paymentData) {
         packageType: packageInfo.type,
         source: 'student-portal-registration'
       },
-      receipt_email: studentData.email
+      receipt_email: studentData.email,
+      ...(returnUrl ? { return_url: returnUrl } : {})
     });
     
     console.log('Payment Intent created:', paymentIntent.id, 'Status:', paymentIntent.status);
