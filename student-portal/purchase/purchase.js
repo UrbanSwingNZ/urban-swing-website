@@ -6,7 +6,7 @@
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
 import { showLoadingButton, showLoading } from '/js/utils/index.js';
 
-console.log('Purchase page loaded');
+
 
 // Services
 let paymentService = null;
@@ -22,7 +22,7 @@ let cancelModal = null;
  * Page Initialization
  */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Purchase page DOM loaded');
+
     initializePage();
 });
 
@@ -181,7 +181,7 @@ function handlePackageSelection(event) {
     const pkg = JSON.parse(selectedOption.dataset.package);
     packageService.selectPackage(pkg.id);
     
-    console.log('Package selected:', pkg.name);
+
     
     // Show package details
     const detailsDiv = document.getElementById('package-details');
@@ -271,7 +271,7 @@ async function handleFormSubmit(event) {
  * Process the purchase
  */
 async function processPurchase(pkg) {
-    console.log('Processing purchase...');
+
     
     const submitBtn = document.getElementById('submit-btn');
     const submitText = document.getElementById('submit-text');
