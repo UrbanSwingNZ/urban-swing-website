@@ -35,7 +35,8 @@ class DatePicker {
             highlightToday: options.highlightToday !== undefined ? options.highlightToday : true,
             excludeDateRanges: options.excludeDateRanges || [], // Array of {start: Date, end: Date}
             minMonth: options.minMonth || null, // Minimum allowed month (Date object)
-            maxMonth: options.maxMonth || null  // Maximum allowed month (Date object)
+            maxMonth: options.maxMonth || null,  // Maximum allowed month (Date object)
+            ignoreClosedown: options.ignoreClosedown || false // Admin override to ignore closedown periods
         };
         
         // State
@@ -197,7 +198,7 @@ class DatePicker {
             const dayOfWeek = date.getDay();
             const isAllowedDay = this.options.allowedDays.includes(dayOfWeek);
             const isPast = this.options.disablePastDates && date < today;
-            const isClosedown = this.isDateInClosedownPeriod(date);
+            const isClosedown = !this.options.ignoreClosedown && this.isDateInClosedownPeriod(date);
             const isToday = this.options.highlightToday && date.toDateString() === today.toDateString();
             const isSelected = this.selectedDate && date.toDateString() === this.selectedDate.toDateString();
             
