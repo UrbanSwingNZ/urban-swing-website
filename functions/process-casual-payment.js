@@ -176,7 +176,8 @@ exports.processCasualPayment = onRequest(
           customerId: customerId,
           paymentMethodId: data.paymentMethodId,
           packageId: data.rateId,
-          studentData: studentData
+          studentData: studentData,
+          returnUrl: data.returnUrl
         });
         
         // Step 5: Check payment result

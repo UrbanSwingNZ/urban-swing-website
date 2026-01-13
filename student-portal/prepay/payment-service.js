@@ -162,7 +162,8 @@ class PaymentService {
                     studentId: studentId,
                     rateId: rateId,
                     classDate: classDate.toISOString(),
-                    paymentMethodId: paymentMethodResult.paymentMethod.id
+                    paymentMethodId: paymentMethodResult.paymentMethod.id,
+                    returnUrl: window.location.href
                 })
             });
             
@@ -225,7 +226,8 @@ class PaymentService {
                 body: JSON.stringify({
                     studentId: studentId,
                     packageId: packageId,
-                    paymentMethodId: paymentMethodResult.paymentMethod.id
+                    paymentMethodId: paymentMethodResult.paymentMethod.id,
+                    returnUrl: window.location.href
                 })
             });
             
