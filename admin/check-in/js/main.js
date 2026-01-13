@@ -44,6 +44,12 @@ async function initializeApp() {
         // Load students data
         await loadStudents();
         
+        // Load pending check-ins (prepaid transactions)
+        const todaysDate = new Date();
+        if (typeof window.loadPendingCheckins === 'function') {
+            await window.loadPendingCheckins(todaysDate);
+        }
+        
         // Load today's check-ins
         await loadTodaysCheckins();
         
