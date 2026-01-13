@@ -30,6 +30,7 @@ export function initializeForm() {
     const giftDatePicker = new DatePicker('gift-date', 'gift-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
         disablePastDates: false, // Allow past dates
+        ignoreClosedown: true, // Admin can select any date including closedown periods
         onDateSelected: (date, formattedDate) => {
             updateSummary();
         }
@@ -40,6 +41,7 @@ export function initializeForm() {
     const expiryDatePicker = new DatePicker('gift-expiry', 'gift-expiry-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
         disablePastDates: true, // Only future dates
+        ignoreClosedown: true, // Admin can select any date including closedown periods
         onDateSelected: (date, formattedDate) => {
             updateSummary();
         }

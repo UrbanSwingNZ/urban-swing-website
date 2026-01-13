@@ -86,6 +86,7 @@ function initializePurchaseConcessionsModal() {
     purchaseDatePicker = new DatePicker('purchase-date-picker', 'purchase-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
         disablePastDates: false, // Allow backdating and future dating
+        ignoreClosedown: true, // Admin can select any date including closedown periods
         onDateSelected: () => {
             // Update button state when date changes (important for edit mode)
             updatePurchaseButton();
