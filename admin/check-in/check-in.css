@@ -1882,5 +1882,37 @@ textarea.form-control {
     .checkin-actions {
         justify-content: flex-end;
     }
+
+    /* Pending Check-Ins - Mobile */
+    .pending-checkin-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-sm);
+    }
+
+    .pending-student-info {
+        min-width: 0;
+    }
+
+    .pending-student-info .student-email {
+        margin-left: 0;
+        word-break: break-word;
+    }
+
+    .pending-transaction-info {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .pending-actions {
+        width: 100%;
+    }
+
+    .btn-complete-checkin {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
