@@ -80,6 +80,11 @@ function initializeDatePicker() {
                 }
             }
             
+            // Reload pending check-ins for the new date
+            if (typeof window.loadPendingCheckins === 'function') {
+                window.loadPendingCheckins(date);
+            }
+            
             // Reload check-ins for the new date
             loadTodaysCheckins();
             
