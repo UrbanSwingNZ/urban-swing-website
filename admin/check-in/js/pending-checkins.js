@@ -274,4 +274,5 @@ async function createCheckinFromTransaction(student, transactionData, transactio
 }
 
 // Export functions
+window.setupPendingCheckinsListener = setupPendingCheckinsListener;
 window.loadPendingCheckins = loadPendingCheckins;

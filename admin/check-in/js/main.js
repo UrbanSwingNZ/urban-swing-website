@@ -44,10 +44,10 @@ async function initializeApp() {
         // Load students data
         await loadStudents();
         
-        // Load pending check-ins (prepaid transactions)
-        const todaysDate = new Date();
+        // Load pending check-ins (prepaid transactions) - use the selected check-in date
+        const selectedDate = window.getSelectedCheckinDate ? window.getSelectedCheckinDate() : new Date();
         if (typeof window.loadPendingCheckins === 'function') {
-            await window.loadPendingCheckins(todaysDate);
+            await window.loadPendingCheckins(selectedDate);
         }
         
         // Load today's check-ins
