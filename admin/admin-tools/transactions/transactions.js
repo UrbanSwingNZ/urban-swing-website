@@ -91,6 +91,7 @@ function initializeDatePickers() {
     dateFromPicker = new DatePicker('date-from', 'date-from-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
         disablePastDates: false, // Allow past dates
+        ignoreClosedown: true, // Admin can select any date including closedown periods
         onDateSelected: (date, formattedDate) => {
             applyFilters();
         }
@@ -100,6 +101,7 @@ function initializeDatePickers() {
     dateToPicker = new DatePicker('date-to', 'date-to-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
         disablePastDates: false, // Allow past dates
+        ignoreClosedown: true, // Admin can select any date including closedown periods
         onDateSelected: (date, formattedDate) => {
             applyFilters();
         }
