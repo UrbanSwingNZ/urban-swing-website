@@ -219,7 +219,7 @@ function updateSubmitButtonState() {
     
     // Check if all required fields are filled
     const hasPackage = selectedPackage !== null;
-    const hasValidCard = paymentService && paymentService.cardElement && paymentService.isCardComplete;
+    const hasValidCard = paymentService && paymentService.isCardComplete === true;
     const hasAcceptedTerms = termsCheckbox && termsCheckbox.checked;
     
     // Enable button only if all conditions are met
@@ -229,6 +229,9 @@ function updateSubmitButtonState() {
         submitBtn.disabled = true;
     }
 }
+
+// Make updateSubmitButtonState available globally for payment service
+window.updateSubmitButtonState = updateSubmitButtonState;
 
 /**
  * Setup form event handlers
