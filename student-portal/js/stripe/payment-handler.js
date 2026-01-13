@@ -338,7 +338,8 @@ async function processRegistrationWithPayment(formData) {
                 emailConsent: formData.emailConsent,
                 packageId: selectedPackageId,
                 paymentMethodId: paymentMethodId,
-                firstClassDate: formData.firstClassDate ? formData.firstClassDate.toISOString() : null
+                firstClassDate: formData.firstClassDate ? formData.firstClassDate.toISOString() : null,
+                returnUrl: window.location.href
             })
         });
         
