@@ -55,6 +55,18 @@ async function processPayment(paymentData) {
   const packageName = packageInfo.name;
   
   try {
+    // First, attach the payment method to the customer
+    await stripe.paymentMethods.attach(paymentMethodId, {
+      customer: customerId
+    });
+    
+    // Set as default payment method
+    await stripe.customers.update(customerId, {
+      invoice_settings: {
+        default_payment_method: paymentMethodId
+      }
+    });
+    
     // Create Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
@@ -62,10 +74,7 @@ async function processPayment(paymentData) {
       customer: customerId,
       payment_method: paymentMethodId,
       confirm: true, // Automatically confirm the payment
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: 'never' // Don't allow redirect-based payment methods
-      },
+      off_session: true, // Indicate this is not in an active session
       description: `Urban Swing - ${packageName}`,
       metadata: {
         studentName: `${studentData.firstName} ${studentData.lastName}`,
@@ -105,13 +114,20 @@ async function processPayment(paymentData) {
     }
   } catch (error) {
     console.error('Error processing payment:', error);
+    console.error('Stripe error details:', {
+      type: error.type,
+      message: error.message,
+      code: error.code,
+      param: error.param,
+      raw: error.raw
+    });
     
     // Parse Stripe error for user-friendly message
     let errorMessage = 'Payment processing failed';
     if (error.type === 'StripeCardError') {
       errorMessage = error.message; // e.g., "Your card was declined"
     } else if (error.type === 'StripeInvalidRequestError') {
-      errorMessage = 'Invalid payment information';
+      errorMessage = `Invalid payment information: ${error.message}`;
     }
     
     return {

@@ -68,8 +68,8 @@ class PaymentService {
                 }
                 
                 // Trigger update of submit button state if function exists
-                if (typeof updateSubmitButtonState === 'function') {
-                    updateSubmitButtonState();
+                if (typeof window.updateSubmitButtonState === 'function') {
+                    window.updateSubmitButtonState();
                 }
             });
             
@@ -99,7 +99,10 @@ class PaymentService {
         try {
             const { paymentMethod, error } = await this.stripe.createPaymentMethod({
                 type: 'card',
-                card: this.cardElement
+                card: this.cardElement,
+                billing_details: {
+                    name: 'Cardholder Name'
+                }
             });
             
             if (error) {
