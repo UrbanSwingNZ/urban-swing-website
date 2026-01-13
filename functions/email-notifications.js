@@ -144,9 +144,9 @@ exports.sendNewStudentEmail = onDocumentCreated(
         if (!transactionSnapshot.empty) {
           const txData = transactionSnapshot.docs[0].data();
           purchaseData = {
-            amount: student.initialPayment.amount / 100, // Convert from cents to dollars
-            packageType: student.initialPayment.packageType,
-            packageName: student.initialPayment.packageName,
+            amount: txData.amountPaid, // Use transaction's amountPaid field
+            packageType: txData.packageType,
+            packageName: txData.packageName,
             firstClassDate: txData.classDate ? txData.classDate.toDate() : null
           };
           logger.info(`Purchase data found for student ${studentId}:`, purchaseData);
