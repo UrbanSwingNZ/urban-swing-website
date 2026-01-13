@@ -194,7 +194,8 @@ exports.createStudentWithPayment = onRequest(
           customerId: customer.id,
           paymentMethodId: data.paymentMethodId,
           packageId: data.packageId,
-          studentData: studentData
+          studentData: studentData,
+          returnUrl: data.returnUrl
         });
         
         // Step 5: Check payment result
