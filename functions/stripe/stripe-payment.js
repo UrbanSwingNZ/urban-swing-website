@@ -62,10 +62,6 @@ async function processPayment(paymentData) {
       customer: customerId,
       payment_method: paymentMethodId,
       confirm: true, // Automatically confirm the payment
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: 'never' // Don't allow redirect-based payment methods
-      },
       description: `Urban Swing - ${packageName}`,
       metadata: {
         studentName: `${studentData.firstName} ${studentData.lastName}`,
