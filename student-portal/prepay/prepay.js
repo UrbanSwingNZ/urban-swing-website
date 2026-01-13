@@ -26,7 +26,7 @@ let currentStudentId = null;
  * Page Initialization
  */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Pre-pay page DOM loaded');
+
     initializePage();
     
     // Calculate min and max months (current month and next month only)
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minMonth: minMonth,
         maxMonth: maxMonth,
         onDateSelected: async (date, formattedDate) => {
-            console.log('Date selected:', date);
+
             await handleDateSelection(date);
         }
     });
@@ -268,7 +268,7 @@ async function handleFormSubmit(event) {
  * Process the payment
  */
 async function processPayment(rate, classDate) {
-    console.log('Processing payment...');
+
     
     const submitBtn = document.getElementById('submit-btn');
     const submitText = document.getElementById('submit-text');
