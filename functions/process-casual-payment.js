@@ -136,6 +136,18 @@ exports.processCasualPayment = onRequest(
         // Step 3: Get or create Stripe customer
         let customerId = studentData.stripeCustomerId;
         
+        // Verify the customer exists in Stripe (it might be from test mode or deleted)
+        if (customerId) {
+          try {
+            const { stripe } = require('./stripe/stripe-config');
+            await stripe.customers.retrieve(customerId);
+            console.log('Using existing Stripe customer:', customerId);
+          } catch (error) {
+            console.log('Existing customer ID invalid, will create new:', error.message);
+            customerId = null;
+          }
+        }
+        
         if (!customerId) {
           console.log('Creating Stripe customer for student:', data.studentId);
           const customer = await createCustomer({
