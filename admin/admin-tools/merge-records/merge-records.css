@@ -55,8 +55,8 @@
     align-items: flex-start;
     gap: var(--space-md);
     padding: var(--space-md);
-    background: var(--bg-orange-light);
-    border: 1px solid var(--border-orange);
+    background: var(--bg-warning-pale);
+    border: 1px solid var(--warning);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-lg);
 }
