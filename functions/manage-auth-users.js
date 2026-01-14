@@ -6,6 +6,7 @@
  * - disable: Disable a user account
  * - enable: Enable a user account
  * - delete: Delete a user account
+ * - updateEmail: Update a user's email address
  * - sendPasswordReset: Send password reset email
  * 
  * Security: Restricted to dance@urbanswing.co.nz
@@ -22,7 +23,7 @@ exports.manageAuthUsers = onCall(
         invoker: 'public'
     },
     async (request) => {
-        const { operation, uid, pageToken, maxResults = 100 } = request.data;
+        const { operation, uid, email, pageToken, maxResults = 100 } = request.data;
 
         // Security: Only allow dance@urbanswing.co.nz
         if (!request.auth || request.auth.token.email !== 'dance@urbanswing.co.nz') {
@@ -54,6 +55,13 @@ exports.manageAuthUsers = onCall(
                     await admin.auth().deleteUser(uid);
                     logger.info('User deleted', { uid, by: request.auth.token.email });
                     return { success: true, message: 'User deleted successfully' };
+                
+                case 'updateEmail':
+                    if (!uid) throw new Error('UID is required for updateEmail operation');
+                    if (!email) throw new Error('Email is required for updateEmail operation');
+                    await admin.auth().updateUser(uid, { email: email });
+                    logger.info('User email updated', { uid, newEmail: email, by: request.auth.token.email });
+                    return { success: true, message: 'User email updated successfully' };
                 
                 case 'sendPasswordReset':
                     if (!uid) throw new Error('UID is required for sendPasswordReset operation');
