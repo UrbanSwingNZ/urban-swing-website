@@ -81,8 +81,10 @@ async function performMerge(primaryId, deprecatedId, fieldSelections) {
         const primaryData = primaryDoc.data();
         const deprecatedData = deprecatedDoc.data();
 
-        // Step 2: Determine Stripe customer ID (keep primary's if exists, else use deprecated's)
-        const stripeCustomerId = primaryData.stripeCustomerId || deprecatedData.stripeCustomerId || null;
+        // Step 2: Determine Stripe customer ID based on field selection (or primary if not specified)
+        const stripeCustomerId = fieldSelections.stripeCustomerId === 'deprecated' 
+            ? (deprecatedData.stripeCustomerId || primaryData.stripeCustomerId)
+            : (primaryData.stripeCustomerId || deprecatedData.stripeCustomerId);
 
         // Step 3: Update transactions in batches
         console.log('Updating transactions...');
@@ -191,7 +193,7 @@ async function performMerge(primaryId, deprecatedId, fieldSelections) {
 
         console.log(`Updated ${summary.concessionBlocksUpdated} concession blocks`);
 
-        // Step 6: Update primary student record (add mergedFrom array, update stripeCustomerId if needed)
+        // Step 6: Update primary student record with selected field values
         console.log('Updating primary student record...');
         const primaryUpdate = {
             mergedFrom: firebase.firestore.FieldValue.arrayUnion(deprecatedId),
@@ -199,10 +201,15 @@ async function performMerge(primaryId, deprecatedId, fieldSelections) {
             updatedBy: currentUser.email
         };
 
-        // Only update stripeCustomerId if we're using the deprecated one
-        if (stripeCustomerId && stripeCustomerId !== primaryData.stripeCustomerId) {
-            primaryUpdate.stripeCustomerId = stripeCustomerId;
-        }
+        // Apply field selections - use deprecated values where selected
+        const fieldsToMerge = ['email', 'firstName', 'lastName', 'phoneNumber', 'pronouns', 'stripeCustomerId'];
+        fieldsToMerge.forEach(field => {
+            if (fieldSelections[field] === 'deprecated' && deprecatedData[field]) {
+                // User chose to use the deprecated value for this field
+                primaryUpdate[field] = deprecatedData[field];
+            }
+            // If 'primary' or no selection, keep existing primary value (no update needed)
+        });
 
         await db.collection('students').doc(primaryId).update(primaryUpdate);
 
