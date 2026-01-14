@@ -106,10 +106,11 @@ function buildFieldComparison() {
         <table class="comparison-table">
             <thead>
                 <tr>
-                    <th>Field</th>
-                    <th>Primary (Keep)</th>
-                    <th>Deprecated</th>
-                    <th style="text-align: center;">Use</th>
+                    <th style="width: 15%;">Field</th>
+                    <th style="width: 32%; text-align: left;">Primary (Keep)</th>
+                    <th style="width: 6%; text-align: center;"></th>
+                    <th style="width: 32%; text-align: left;">Deprecated (Discard)</th>
+                    <th style="width: 6%; text-align: center;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -126,20 +127,31 @@ function buildFieldComparison() {
 
         tableHTML += `
             <tr ${hasDifference ? 'style="background: var(--bg-orange-light);"' : ''}>
-                <td class="field-label">${field.label}</td>
+                <td class="field-label" style="font-weight: var(--font-weight-semibold);">${field.label}</td>
                 <td>
                     <span class="field-value ${!primaryValue ? 'empty' : ''}">${primaryValue || 'Not set'}</span>
                 </td>
-                <td>
-                    <span class="field-value ${!deprecatedValue ? 'empty' : ''}">${deprecatedValue || 'Not set'}</span>
-                </td>
-                <td class="field-radio">
+                <td style="text-align: center;">
                     <input 
                         type="radio" 
                         name="field-${field.key}" 
                         value="primary" 
                         ${primaryChecked}
                         ${!hasDifference ? 'disabled' : ''}
+                        style="width: 20px; height: 20px; cursor: ${hasDifference ? 'pointer' : 'not-allowed'};"
+                    >
+                </td>
+                <td>
+                    <span class="field-value ${!deprecatedValue ? 'empty' : ''}">${deprecatedValue || 'Not set'}</span>
+                </td>
+                <td style="text-align: center;">
+                    <input 
+                        type="radio" 
+                        name="field-${field.key}" 
+                        value="deprecated" 
+                        ${deprecatedChecked}
+                        ${!hasDifference ? 'disabled' : ''}
+                        style="width: 20px; height: 20px; cursor: ${hasDifference ? 'pointer' : 'not-allowed'};"
                     >
                 </td>
             </tr>
@@ -286,6 +298,17 @@ function showConfirmationModal() {
  * Execute the merge operation
  */
 async function executeMerge() {
+    // Collect field selections
+    const fieldSelections = {};
+    const fields = ['email', 'firstName', 'lastName', 'phoneNumber', 'pronouns', 'stripeCustomerId'];
+    
+    fields.forEach(field => {
+        const selected = document.querySelector(`input[name="field-${field}"]:checked`);
+        if (selected) {
+            fieldSelections[field] = selected.value; // 'primary' or 'deprecated'
+        }
+    });
+
     // Switch to progress step
     document.getElementById('step-review').classList.remove('active');
     document.getElementById('step-progress').classList.add('active');
@@ -342,8 +365,8 @@ async function executeMerge() {
         updateProgressStep('progress-students', 'complete');
         updateProgressStep('progress-users', 'active');
 
-        // Perform the actual merge
-        const result = await performMerge(primaryStudent.id, deprecatedStudent.id, {});
+        // Perform the actual merge with field selections
+        const result = await performMerge(primaryStudent.id, deprecatedStudent.id, fieldSelections);
 
         updateProgressStep('progress-users', 'complete');
 

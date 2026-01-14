@@ -245,17 +245,3 @@ function removeStudent(panelType) {
     // Disable continue button
     document.getElementById('btn-continue-review').disabled = true;
 }
-
-/**
- * Build field comparison table
- */
-function buildFieldComparison() {
-    const comparisonDiv = document.getElementById('field-comparison');
-    
-    // TODO: Implement full field comparison in Phase 4
-    comparisonDiv.innerHTML = `
-        <p>Field comparison will be implemented in the next phase.</p>
-        <p><strong>Primary Student:</strong> ${primaryStudent.firstName} ${primaryStudent.lastName}</p>
-        <p><strong>Deprecated Student:</strong> ${deprecatedStudent.firstName} ${deprecatedStudent.lastName}</p>
-    `;
-}
