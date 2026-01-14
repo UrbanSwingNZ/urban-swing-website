@@ -226,34 +226,57 @@ async function performMerge(primaryId, deprecatedId, fieldSelections) {
 
         console.log('Deprecated student record soft deleted');
 
-        // Step 8: Delete users collection document for deprecated student
-        console.log('Deleting users collection document...');
-        const usersSnapshot = await db.collection('users')
-            .where('studentId', '==', deprecatedId)
-            .get();
+        // Step 8: Delete users collection document for deprecated student and handle auth
+        console.log('Managing user access and authentication...');
+        
+        // Get both users documents
+        const [primaryUsersSnapshot, deprecatedUsersSnapshot] = await Promise.all([
+            db.collection('users').where('studentId', '==', primaryId).get(),
+            db.collection('users').where('studentId', '==', deprecatedId).get()
+        ]);
 
-        if (!usersSnapshot.empty) {
+        let primaryAuthUid = null;
+        if (!primaryUsersSnapshot.empty) {
+            primaryAuthUid = primaryUsersSnapshot.docs[0].data().authUid;
+        }
+
+        if (!deprecatedUsersSnapshot.empty) {
             // Should only be one user document per student
-            const userDoc = usersSnapshot.docs[0];
+            const userDoc = deprecatedUsersSnapshot.docs[0];
             const userData = userDoc.data();
             
             await userDoc.ref.delete();
-            console.log('Users collection document deleted');
+            console.log('Deprecated users collection document deleted');
 
-            // Step 9: Delete Firebase Auth user
+            // Step 9: Delete deprecated Firebase Auth user
             if (userData.authUid) {
-                console.log('Deleting Firebase Auth user...');
+                console.log('Deleting deprecated Firebase Auth user...');
                 try {
-                    const deleteAuthUser = firebase.functions().httpsCallable('manageAuthUsers');
-                    await deleteAuthUser({
+                    const manageAuthUsers = firebase.functions().httpsCallable('manageAuthUsers');
+                    await manageAuthUsers({
                         operation: 'delete',
                         uid: userData.authUid
                     });
-                    console.log('Firebase Auth user deleted');
+                    console.log('Deprecated Firebase Auth user deleted');
+                    
+                    // Step 10: Update primary auth user's email if deprecated email was selected
+                    if (fieldSelections.email === 'deprecated' && deprecatedData.email && primaryAuthUid) {
+                        console.log('Updating primary auth user email to selected email...');
+                        try {
+                            await manageAuthUsers({
+                                operation: 'updateEmail',
+                                uid: primaryAuthUid,
+                                email: deprecatedData.email
+                            });
+                            console.log('Primary auth user email updated to:', deprecatedData.email);
+                        } catch (emailUpdateError) {
+                            console.error('Error updating primary auth user email:', emailUpdateError);
+                            throw new Error(`Failed to update auth email: ${emailUpdateError.message}`);
+                        }
+                    }
                 } catch (authError) {
-                    console.error('Error deleting Firebase Auth user:', authError);
-                    // Don't fail the entire merge if auth deletion fails
-                    // The user document is already deleted so they can't log in
+                    console.error('Error managing Firebase Auth users:', authError);
+                    throw new Error(`Failed to manage authentication: ${authError.message}`);
                 }
             }
         } else {
