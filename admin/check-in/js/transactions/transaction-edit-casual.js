@@ -39,6 +39,7 @@ export async function editCasualTransaction(transaction) {
                 await window.loadCheckinTransactions();
             }
         },
-        null                               // parentModalId
+        null,                              // parentModalId
+        transactionData.classDate?.toDate ? transactionData.classDate.toDate() : null  // classDate (convert Timestamp to Date)
     );
 }
