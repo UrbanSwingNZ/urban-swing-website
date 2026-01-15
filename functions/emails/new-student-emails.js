@@ -100,7 +100,7 @@ function generateAdminNotificationEmail(student, studentId, registeredAt, casual
             ${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `
             <tr>
               <td style="padding: 8px;"><strong>Date of First Class:</strong></td>
-              <td style="padding: 8px; color: ${colors.purplePrimary}; font-weight: bold;">${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td>
+              <td style="padding: 8px; color: ${colors.purplePrimary}; font-weight: bold;">${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Pacific/Auckland' })}</td>
             </tr>
             ` : ''}
             ${purchaseData.packageType === 'concession-package' ? `
@@ -167,7 +167,7 @@ Phone: ${student.phoneNumber || 'N/A'}
 ${student.pronouns ? `Pronouns: ${student.pronouns}\n` : ''}${student.referral ? `Referral: ${student.referral}\n` : ''}Registered: ${registeredAt}
 Email Consent: ${student.emailConsent ? 'Yes' : 'No'}
 Student ID: ${studentId}
-${purchaseData ? `\nONLINE PURCHASE:\nAmount Paid: $${purchaseData.amount.toFixed(2)}\nPackage: ${purchaseData.packageName}${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `\nDate of First Class: ${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : ''}${purchaseData.packageType === 'concession-package' ? `\nPurchase Type: Concession Package` : ''}\n` : ''}${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}\n` : ''}
+${purchaseData ? `\nONLINE PURCHASE:\nAmount Paid: $${purchaseData.amount.toFixed(2)}\nPackage: ${purchaseData.packageName}${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `\nDate of First Class: ${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Pacific/Auckland' })}` : ''}${purchaseData.packageType === 'concession-package' ? `\nPurchase Type: Concession Package` : ''}\n` : ''}${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}\n` : ''}
 Pricing:
 - Single Class: $${casualRate}
 - Single Class (Student): $${studentRate}
