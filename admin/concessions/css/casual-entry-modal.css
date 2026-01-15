@@ -78,3 +78,30 @@
     box-shadow: 0 0 0 3px var(--bg-purple-light);
     color: var(--text-primary);
 }
+
+/* Clear Date Button */
+.clear-date-btn {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--gray-600);
+    cursor: pointer;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+    z-index: 1;
+}
+
+.clear-date-btn:hover {
+    color: var(--red-primary);
+}
+
+.clear-date-btn:focus {
+    outline: none;
+}
