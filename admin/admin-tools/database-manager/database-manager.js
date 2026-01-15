@@ -1389,7 +1389,8 @@ function showSnackbar(message, type = 'info') {
     snackbar.style.cssText = `
         position: fixed;
         bottom: 20px;
-        right: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         background: ${type === 'error' ? 'var(--error)' : type === 'success' ? 'var(--success)' : 'var(--blue-primary)'};
         color: var(--white);
         padding: 1rem 1.5rem;
