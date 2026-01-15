@@ -52,6 +52,9 @@ function initializeCasualEntryModal() {
                     <div class="date-input-wrapper">
                         <input type="text" id="casual-entry-class-date-picker" class="form-control" readonly placeholder="Select class date" title="Class date (optional)">
                         <i class="fas fa-calendar-alt date-input-icon"></i>
+                        <button type="button" class="clear-date-btn" id="clear-class-date-btn" title="Clear class date" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div id="casual-entry-class-date-calendar" class="custom-calendar" style="display: none;"></div>
                 </div>
@@ -101,11 +104,32 @@ function initializeCasualEntryModal() {
     casualEntryClassDatePicker = new DatePicker('casual-entry-class-date-picker', 'casual-entry-class-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
         disablePastDates: false, // Allow past dates
-        maxDate: null // Allow future dates (closedown periods will be excluded)
+        maxDate: null, // Allow future dates (closedown periods will be excluded)
+        onDateSelected: () => {
+            toggleClassDateClearButton();
+        }
+    });
+    
+    // Add clear button event listener
+    document.getElementById('clear-class-date-btn').addEventListener('click', () => {
+        casualEntryClassDatePicker.clearDate();
+        toggleClassDateClearButton();
     });
     
     // Initialize event listeners
     setupCasualEntryModalListeners();
+}
+
+/**
+ * Toggle clear button visibility for class date
+ */
+function toggleClassDateClearButton() {
+    const classDateInput = document.getElementById('casual-entry-class-date-picker');
+    const clearBtn = document.getElementById('clear-class-date-btn');
+    
+    if (classDateInput && clearBtn) {
+        clearBtn.style.display = classDateInput.value ? 'flex' : 'none';
+    }
 }
 
 /**
@@ -182,6 +206,9 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
         // Clear the class date picker if no date provided
         casualEntryClassDatePicker.clearDate();
     }
+    
+    // Update clear button visibility based on class date
+    toggleClassDateClearButton();
     
     // Set payment method
     const paymentSelect = document.getElementById('casual-entry-payment-select');
