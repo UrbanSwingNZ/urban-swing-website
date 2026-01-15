@@ -86,21 +86,22 @@ function initializeCasualEntryModal() {
     // Append to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     
-    // Initialize custom date picker (allow backdating, prevent future dates)
+    // Initialize custom date picker for transaction date (allow any date including closedown periods)
     casualEntryDatePicker = new DatePicker('casual-entry-date-picker', 'casual-entry-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
-        disablePastDates: false, // Allow backdating
-        maxDate: new Date(), // Prevent future dates
+        disablePastDates: false, // Allow past dates
+        maxDate: null, // Allow future dates
+        ignoreClosedown: true, // Allow selecting dates during closedown periods (transactions can occur anytime)
         onDateSelected: () => {
             updateCasualEntryButton();
         }
     });
     
-    // Initialize custom date picker for class date (optional, allow backdating, no future dates)
+    // Initialize custom date picker for class date (allow past and future dates, exclude closedown periods)
     casualEntryClassDatePicker = new DatePicker('casual-entry-class-date-picker', 'casual-entry-class-date-calendar', {
         allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
-        disablePastDates: false, // Allow backdating
-        maxDate: new Date() // Prevent future dates
+        disablePastDates: false, // Allow past dates
+        maxDate: null // Allow future dates (closedown periods will be excluded)
     });
     
     // Initialize event listeners
