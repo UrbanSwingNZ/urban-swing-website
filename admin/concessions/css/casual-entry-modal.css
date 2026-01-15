@@ -11,6 +11,23 @@
     max-width: 500px;
 }
 
+/* Ensure modal body can scroll to accommodate date pickers */
+#edit-casual-entry-modal .modal-body {
+    overflow-y: auto;
+    max-height: calc(90vh - 180px); /* Account for header and footer */
+}
+
+/* Ensure form groups with date pickers are positioned relatively */
+#edit-casual-entry-modal .form-group {
+    position: relative;
+}
+
+/* Ensure custom calendars stay within view and can be scrolled to */
+#edit-casual-entry-modal .custom-calendar {
+    position: absolute;
+    margin-bottom: var(--space-md);
+}
+
 /* Student Info Card */
 .student-info-card {
     padding: var(--space-sm);

@@ -13,6 +13,7 @@ let casualEntryModalData = {
 };
 
 let casualEntryDatePicker = null; // DatePicker instance
+let casualEntryClassDatePicker = null; // DatePicker instance for class date
 
 /**
  * Initialize the casual entry edit modal HTML (call once on page load)
@@ -38,12 +39,21 @@ function initializeCasualEntryModal() {
                 </div>
                 
                 <div class="form-group">
-                    <label><i class="fas fa-calendar"></i> Entry Date</label>
+                    <label><i class="fas fa-calendar"></i> Transaction Date</label>
                     <div class="date-input-wrapper">
-                        <input type="text" id="casual-entry-date-picker" class="form-control" readonly placeholder="Select date" title="Entry date">
+                        <input type="text" id="casual-entry-date-picker" class="form-control" readonly placeholder="Select date" title="Transaction date">
                         <i class="fas fa-calendar-alt date-input-icon"></i>
                     </div>
                     <div id="casual-entry-date-calendar" class="custom-calendar" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-check"></i> Class Date <span class="text-muted">(Optional)</span></label>
+                    <div class="date-input-wrapper">
+                        <input type="text" id="casual-entry-class-date-picker" class="form-control" readonly placeholder="Select class date" title="Class date (optional)">
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
+                    </div>
+                    <div id="casual-entry-class-date-calendar" class="custom-calendar" style="display: none;"></div>
                 </div>
 
                 <div class="form-group">
@@ -86,6 +96,13 @@ function initializeCasualEntryModal() {
         }
     });
     
+    // Initialize custom date picker for class date (optional, allow backdating, no future dates)
+    casualEntryClassDatePicker = new DatePicker('casual-entry-class-date-picker', 'casual-entry-class-date-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: false, // Allow backdating
+        maxDate: new Date() // Prevent future dates
+    });
+    
     // Initialize event listeners
     setupCasualEntryModalListeners();
 }
@@ -96,13 +113,14 @@ function initializeCasualEntryModal() {
  * @param {string} checkinId - Check-in document ID
  * @param {string} studentId - Student ID
  * @param {string} studentName - Student full name
- * @param {Date} entryDate - Entry date
+ * @param {Date} entryDate - Transaction date
  * @param {string} paymentMethod - Payment method
  * @param {number} amount - Amount paid
  * @param {function} callback - Optional callback after successful update
  * @param {string} parentModalId - Optional parent modal ID to return to on cancel
+ * @param {Date} classDate - Optional class date
  */
-async function openCasualEntryModal(transactionId, checkinId, studentId, studentName, entryDate, paymentMethod, amount, callback = null, parentModalId = null) {
+async function openCasualEntryModal(transactionId, checkinId, studentId, studentName, entryDate, paymentMethod, amount, callback = null, parentModalId = null, classDate = null) {
     // Store modal data
     casualEntryModalData = {
         transactionId,
@@ -154,6 +172,14 @@ async function openCasualEntryModal(transactionId, checkinId, studentId, student
     // Set date using custom DatePicker
     if (entryDate && casualEntryDatePicker) {
         casualEntryDatePicker.setDate(entryDate);
+    }
+    
+    // Set class date using custom DatePicker (optional)
+    if (classDate && casualEntryClassDatePicker) {
+        casualEntryClassDatePicker.setDate(classDate);
+    } else if (casualEntryClassDatePicker) {
+        // Clear the class date picker if no date provided
+        casualEntryClassDatePicker.clearDate();
     }
     
     // Set payment method
@@ -248,10 +274,11 @@ function updateCasualEntryButton() {
 async function handleCasualEntryUpdate() {
     const entryDate = document.getElementById('casual-entry-date-picker').value;
     const paymentMethod = document.getElementById('casual-entry-payment-select').value;
+    const classDateValue = document.getElementById('casual-entry-class-date-picker').value;
     
     if (!entryDate || !paymentMethod) {
         if (typeof showSnackbar === 'function') {
-            showSnackbar('Please fill in all fields', 'error');
+            showSnackbar('Please fill in all required fields', 'error');
         }
         return;
     }
@@ -273,18 +300,39 @@ async function handleCasualEntryUpdate() {
         const parsedDate = new Date(year, month - 1, day, 12, 0, 0);
         
         if (isNaN(parsedDate.getTime())) {
-            throw new Error('Invalid date selected');
+            throw new Error('Invalid transaction date selected');
+        }
+        
+        // Parse class date if provided (optional)
+        let parsedClassDate = null;
+        if (classDateValue) {
+            const [classDay, classMonth, classYear] = classDateValue.split('/').map(Number);
+            parsedClassDate = new Date(classYear, classMonth - 1, classDay, 12, 0, 0);
+            
+            if (isNaN(parsedClassDate.getTime())) {
+                throw new Error('Invalid class date selected');
+            }
+        }
+        
+        // Prepare transaction update object
+        const transactionUpdate = {
+            transactionDate: firebase.firestore.Timestamp.fromDate(parsedDate),
+            paymentMethod: paymentMethod,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        // Add classDate if provided, otherwise remove it
+        if (parsedClassDate) {
+            transactionUpdate.classDate = firebase.firestore.Timestamp.fromDate(parsedClassDate);
+        } else {
+            transactionUpdate.classDate = firebase.firestore.FieldValue.delete();
         }
         
         // Update the transaction in Firestore
         await firebase.firestore()
             .collection('transactions')
             .doc(casualEntryModalData.transactionId)
-            .update({
-                transactionDate: firebase.firestore.Timestamp.fromDate(parsedDate),
-                paymentMethod: paymentMethod,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            .update(transactionUpdate);
         
         // Update the associated check-in record
         await firebase.firestore()
