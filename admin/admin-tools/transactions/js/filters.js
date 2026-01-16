@@ -110,6 +110,6 @@ function calculateSummary(transactions) {
         totalCash: transactions.reduce((sum, t) => sum + t.cash, 0),
         totalEftpos: transactions.reduce((sum, t) => sum + t.eftpos, 0),
         totalBank: transactions.reduce((sum, t) => sum + t.bankTransfer, 0),
-        totalOnline: transactions.reduce((sum, t) => sum + (t.paymentMethod === 'stripe' ? t.amount : 0), 0)
+        totalOnline: transactions.reduce((sum, t) => sum + (t.paymentMethod === 'stripe' || t.paymentMethod === 'online' ? t.amount : 0), 0)
     };
 }
