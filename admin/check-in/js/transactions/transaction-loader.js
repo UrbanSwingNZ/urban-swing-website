@@ -51,7 +51,11 @@ async function processTransactionsSnapshot(snapshot) {
             const data = doc.data();
             const date = data.transactionDate?.toDate ? data.transactionDate.toDate() : new Date(data.transactionDate);
             const paymentMethod = (data.paymentMethod || '').toLowerCase();
-            const amount = data.amountPaid || 0;
+            const transactionType = data.type || 'concession-purchase';
+            const isRefund = transactionType === 'refund';
+            const rawAmount = isRefund ? (data.amountRefunded || 0) : (data.amountPaid || 0);
+            // Make refund amounts negative so they subtract from totals
+            const amount = isRefund ? -rawAmount : rawAmount;
             
             // Fetch student name
             let studentName = data.studentName || 'Unknown';
@@ -72,7 +76,6 @@ async function processTransactionsSnapshot(snapshot) {
             }
             
             // Determine transaction type and display name
-            let transactionType = data.type || 'concession-purchase';
             let typeName;
             
             if (transactionType === 'concession-purchase' || transactionType === 'purchase') {
@@ -105,7 +108,7 @@ async function processTransactionsSnapshot(snapshot) {
                 cash: paymentMethod === 'cash' ? amount : 0,
                 eftpos: paymentMethod === 'eftpos' ? amount : 0,
                 bankTransfer: (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') ? amount : 0,
-                online: paymentMethod === 'stripe' ? amount : 0,
+                online: (paymentMethod === 'stripe' || paymentMethod === 'online') ? amount : 0,
                 paymentMethod: paymentMethod,
                 invoiced: data.invoiced || false,
                 reversed: data.reversed || false,
