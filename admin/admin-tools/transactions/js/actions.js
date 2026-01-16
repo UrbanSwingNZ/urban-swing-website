@@ -127,11 +127,37 @@ function confirmCasualTransactionDeletion(transaction) {
 async function confirmConcessionPurchaseDeletion(transaction) {
     try {
         // Check if there's an associated concession block
-        const blocksSnapshot = await db.collection('concessionBlocks')
-            .where('transactionId', '==', transaction.id)
-            .get();
+        let blockDoc = null;
+        let blockId = null;
+        let blockData = null;
         
-        if (blocksSnapshot.empty) {
+        // First try to get block ID directly from transaction
+        if (transaction.concessionBlockId) {
+            try {
+                blockDoc = await db.collection('concessionBlocks').doc(transaction.concessionBlockId).get();
+                if (blockDoc.exists) {
+                    blockId = blockDoc.id;
+                    blockData = blockDoc.data();
+                }
+            } catch (error) {
+                console.log('Block not found by concessionBlockId, trying transactionId query');
+            }
+        }
+        
+        // If not found by ID, try querying by transactionId
+        if (!blockDoc || !blockDoc.exists) {
+            const blocksSnapshot = await db.collection('concessionBlocks')
+                .where('transactionId', '==', transaction.id)
+                .get();
+            
+            if (!blocksSnapshot.empty) {
+                blockDoc = blocksSnapshot.docs[0];
+                blockId = blockDoc.id;
+                blockData = blockDoc.data();
+            }
+        }
+        
+        if (!blockId) {
             // No block found - standard deletion
             const modal = new ConfirmationModal({
                 title: 'Delete Transaction',
@@ -156,9 +182,6 @@ async function confirmConcessionPurchaseDeletion(transaction) {
             return;
         }
         
-        const blockDoc = blocksSnapshot.docs[0];
-        const blockData = blockDoc.data();
-        const blockId = blockDoc.id;
         const hasBeenUsed = blockData.remainingQuantity < blockData.originalQuantity;
         
         if (hasBeenUsed) {
