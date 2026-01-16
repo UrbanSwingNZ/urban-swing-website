@@ -48,8 +48,8 @@ async function processPendingCheckinsSnapshot(snapshot) {
                 continue;
             }
             
-            // Skip if not a casual-rate package type (only prepaid casual entries)
-            if (data.packageType !== 'casual-rate') {
+            // Skip if it's a concession package (show casual entries with or without packageType)
+            if (data.packageType === 'concession-package') {
                 continue;
             }
             

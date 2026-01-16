@@ -1382,8 +1382,7 @@ loading-spinner {
 
     /* Buttons */
     .btn-primary,
-    .btn-secondary,
-    .btn-danger {
+    .btn-secondary {
         padding: var(--space-sm) var(--space-md);
         font-size: 0.9rem;
     }

@@ -11,6 +11,23 @@
     max-width: 500px;
 }
 
+/* Ensure modal body can scroll to accommodate date pickers */
+#edit-casual-entry-modal .modal-body {
+    overflow-y: auto;
+    max-height: calc(90vh - 180px); /* Account for header and footer */
+}
+
+/* Ensure form groups with date pickers are positioned relatively */
+#edit-casual-entry-modal .form-group {
+    position: relative;
+}
+
+/* Ensure custom calendars stay within view and can be scrolled to */
+#edit-casual-entry-modal .custom-calendar {
+    position: absolute;
+    margin-bottom: var(--space-md);
+}
+
 /* Student Info Card */
 .student-info-card {
     padding: var(--space-sm);
@@ -60,4 +77,31 @@
     border-color: var(--purple-primary);
     box-shadow: 0 0 0 3px var(--bg-purple-light);
     color: var(--text-primary);
+}
+
+/* Clear Date Button */
+.clear-date-btn {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--gray-600);
+    cursor: pointer;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+    z-index: 1;
+}
+
+.clear-date-btn:hover {
+    color: var(--red-primary);
+}
+
+.clear-date-btn:focus {
+    outline: none;
 }

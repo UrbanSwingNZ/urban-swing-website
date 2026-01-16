@@ -107,7 +107,8 @@ async function editCasualEntryTransaction(transaction) {
                 // Reload the payments tab after update
                 await loadTransactionHistoryPayments(transaction.studentId);
             },
-            'transaction-history-modal'        // parentModalId
+            'transaction-history-modal',       // parentModalId
+            transactionData.classDate?.toDate ? transactionData.classDate.toDate() : null  // classDate (convert Timestamp to Date)
         );
     }
 }
