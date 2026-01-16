@@ -131,13 +131,23 @@ async function performMerge(primaryId, deprecatedId, fieldSelections) {
 
         summary.checkinsUpdated = checkinsSnapshot.size;
 
+        // Determine the student name to use (based on field selections)
+        const studentName = fieldSelections.firstName === 'deprecated' && fieldSelections.lastName === 'deprecated'
+            ? `${deprecatedData.firstName} ${deprecatedData.lastName}`
+            : fieldSelections.firstName === 'deprecated'
+            ? `${deprecatedData.firstName} ${primaryData.lastName}`
+            : fieldSelections.lastName === 'deprecated'
+            ? `${primaryData.firstName} ${deprecatedData.lastName}`
+            : `${primaryData.firstName} ${primaryData.lastName}`;
+
         const checkinBatches = [];
         currentBatch = db.batch();
         operationCount = 0;
 
         checkinsSnapshot.forEach((doc) => {
             currentBatch.update(doc.ref, {
-                studentId: primaryId
+                studentId: primaryId,
+                studentName: studentName
             });
             operationCount++;
 
