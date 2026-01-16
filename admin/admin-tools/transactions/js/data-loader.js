@@ -36,7 +36,9 @@ async function normalizeTransaction(transaction) {
     
     // Handle refund transactions differently
     const isRefund = transaction.type === 'refund';
-    const amount = isRefund ? (transaction.amountRefunded || 0) : (transaction.amountPaid || 0);
+    const rawAmount = isRefund ? (transaction.amountRefunded || 0) : (transaction.amountPaid || 0);
+    // Make refund amounts negative so they subtract from totals
+    const amount = isRefund ? -rawAmount : rawAmount;
     
     // Fetch student name from students collection if we have a studentId
     let studentName = transaction.studentName || 'Unknown';
@@ -95,6 +97,7 @@ async function normalizeTransaction(transaction) {
         cash: paymentMethod === 'cash' ? amount : 0,
         eftpos: paymentMethod === 'eftpos' ? amount : 0,
         bankTransfer: (paymentMethod === 'bank-transfer' || paymentMethod === 'bank transfer') ? amount : 0,
+        online: (paymentMethod === 'stripe' || paymentMethod === 'online') ? amount : 0,
         paymentMethod: paymentMethod,
         invoiced: transaction.invoiced || false,
         reversed: transaction.reversed || false,
