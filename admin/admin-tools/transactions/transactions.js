@@ -319,7 +319,8 @@ async function editCasualEntryTransaction(transaction, transactionData) {
                 await loadTransactions();
                 showSnackbar('Transaction updated successfully', 'success');
             },
-            null                               // parentModalId
+            null,                              // parentModalId
+            transactionData.classDate?.toDate ? transactionData.classDate.toDate() : null  // classDate (convert Timestamp to Date)
         );
     }
 }

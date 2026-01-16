@@ -167,14 +167,11 @@ function getPaymentBadgeHTML(transaction) {
 }
 
 /**
- * Get class date HTML for casual online purchases
+ * Get class date HTML for transactions
  */
 function getClassDateHTML(transaction) {
-    // Only show class date for casual transactions with online payment
-    const isCasual = ['casual', 'casual-student', 'casual-entry'].includes(transaction.type);
-    const isOnline = transaction.stripeCustomerId || transaction.paymentMethod === 'online';
-    
-    if (isCasual && isOnline && transaction.rawData && transaction.rawData.classDate) {
+    // Show class date if it exists, regardless of transaction type or payment method
+    if (transaction.rawData && transaction.rawData.classDate) {
         const classDate = transaction.rawData.classDate?.toDate ? transaction.rawData.classDate.toDate() : new Date();
         return formatDate(classDate);
     } else {

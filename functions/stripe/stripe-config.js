@@ -48,8 +48,9 @@ async function fetchPricing() {
       const pkg = doc.data();
       const docId = doc.id;
       
-      // Include all active, non-promo concession packages
-      if (pkg.isActive && !pkg.isPromo) {
+      // Include all active packages (not explicitly inactive)
+      // Frontend handles filtering for specific contexts (registration form, student portal, admin)
+      if (pkg.isActive !== false) {
         packages[docId] = {
           price: Math.round(pkg.price * 100), // Convert to cents
           name: pkg.name || `${pkg.numberOfClasses}-Class Package`,
