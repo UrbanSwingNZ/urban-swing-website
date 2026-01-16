@@ -188,8 +188,8 @@ exports.processRefund = onCall(
         await db.collection('transactions').doc(transactionId).update(updateData);
         console.log(`Updated original transaction: ${transactionId}`);
         
-        // Handle concession block locking if this is a concession-purchase refund
-        if (transaction.type === 'concession-purchase') {
+        // Handle concession block locking/deletion only if this is a FULL refund of a concession-purchase
+        if (transaction.type === 'concession-purchase' && isFullRefund) {
             await handleConcessionBlockRefund(db, transactionId, amount, reason);
         }
         
