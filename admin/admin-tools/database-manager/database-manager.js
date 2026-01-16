@@ -4,6 +4,7 @@
  */
 
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+import { showSnackbar } from '/components/snackbar/snackbar.js';
 
 // Global state
 let currentCollection = null;
@@ -11,6 +12,9 @@ let authUsers = [];
 let filteredAuthUsers = [];
 let expandedCollections = new Set();
 let expandedDocuments = new Set();
+let allCollectionsData = {};
+let filteredCollectionsData = {};
+let filtersActive = false;
 
 // Field ordering configuration
 const fieldOrders = {
@@ -114,9 +118,6 @@ function setupEventListeners() {
 // COLLECTIONS BROWSER (UNIFIED VIEW)
 // ========================================
 
-let allCollectionsData = {}; // Stores all collections and their documents
-let filteredCollectionsData = {}; // Stores filtered data
-
 /**
  * Check if document matches a filter
  */
@@ -204,9 +205,13 @@ async function loadCollectionsBrowser() {
             }
         }));
         
-        // Initial display (no filters)
-        filteredCollectionsData = JSON.parse(JSON.stringify(allCollectionsData));
-        displayCollectionsBrowser();
+        // Reapply filters if they were active, otherwise show all data
+        if (filtersActive) {
+            applyFilters();
+        } else {
+            filteredCollectionsData = JSON.parse(JSON.stringify(allCollectionsData));
+            displayCollectionsBrowser();
+        }
         
         // Restore expanded state
         setTimeout(() => {
@@ -233,9 +238,7 @@ async function loadCollectionsBrowser() {
             </div>
         `;
     }
-}
-
-/**
+}/**
  * Display collections browser with current filtered data
  */
 function displayCollectionsBrowser() {
@@ -453,6 +456,9 @@ function applyFilters() {
     
     const logic = document.querySelector('input[name="filter-logic"]:checked').value;
     
+    // Mark filters as active
+    filtersActive = filters.length > 0 || !allCollectionsChecked;
+    
     // Filter collections
     filteredCollectionsData = {};
     
@@ -497,6 +503,9 @@ function clearFilters() {
     
     // Reset logic to AND
     document.querySelector('input[name="filter-logic"][value="AND"]').checked = true;
+    
+    // Mark filters as inactive
+    filtersActive = false;
     
     // Reset filtered data
     filteredCollectionsData = JSON.parse(JSON.stringify(allCollectionsData));
@@ -1402,38 +1411,6 @@ function parseFieldValue(type, value) {
         default:
             return value;
     }
-}
-
-/**
- * Show snackbar notification
- */
-function showSnackbar(message, type = 'info') {
-    // You can implement a snackbar component or use a simple alert for now
-    console.log(`[${type.toUpperCase()}] ${message}`);
-    
-    // Create a simple notification element
-    const snackbar = document.createElement('div');
-    snackbar.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${type === 'error' ? 'var(--error)' : type === 'success' ? 'var(--success)' : 'var(--blue-primary)'};
-        color: var(--white);
-        padding: 1rem 1.5rem;
-        border-radius: var(--radius-md);
-        box-shadow: 0 10px 30px var(--shadow-medium);
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-    `;
-    snackbar.textContent = message;
-    
-    document.body.appendChild(snackbar);
-    
-    setTimeout(() => {
-        snackbar.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => snackbar.remove(), 300);
-    }, 3000);
 }
 
 /**
