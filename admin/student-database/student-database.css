@@ -191,6 +191,25 @@
     color: var(--error);
 }
 
+/* Merged Student Badge */
+.badge-merged {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--bg-purple-light);
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-left: 8px;
+    text-transform: uppercase;
+}
+
+.badge-merged i {
+    font-size: 0.75rem;
+}
+
 .concession-badge {
     cursor: pointer;
     transition: transform 0.2s ease;
