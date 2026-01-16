@@ -311,7 +311,9 @@ async function executeMerge() {
 
     // Switch to progress step
     document.getElementById('step-review').classList.remove('active');
-    document.getElementById('step-progress').classList.add('active');
+    const progressStep = document.getElementById('step-progress');
+    progressStep.style.display = '';
+    progressStep.classList.add('active');
 
     // Build progress steps
     const progressSteps = document.getElementById('progress-steps');
@@ -421,7 +423,9 @@ function updateProgressStep(stepId, status) {
 function showSuccess(summary) {
     // Switch to success step
     document.getElementById('step-progress').classList.remove('active');
-    document.getElementById('step-success').classList.add('active');
+    const successStep = document.getElementById('step-success');
+    successStep.style.display = '';
+    successStep.classList.add('active');
 
     // Build enhanced success screen
     const successContainer = document.querySelector('#step-success .success-container');
@@ -494,10 +498,15 @@ function resetMerge() {
     `;
 
     // Hide all steps
-    document.querySelectorAll('.merge-step').forEach(step => step.classList.remove('active'));
+    document.querySelectorAll('.merge-step').forEach(step => {
+        step.classList.remove('active');
+        step.style.display = 'none';
+    });
     
     // Show selection step
-    document.getElementById('step-selection').classList.add('active');
+    const selectionStep = document.getElementById('step-selection');
+    selectionStep.style.display = '';
+    selectionStep.classList.add('active');
 
     // Disable continue button
     document.getElementById('btn-continue-review').disabled = true;
