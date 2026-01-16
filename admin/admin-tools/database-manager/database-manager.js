@@ -290,7 +290,10 @@ function displayCollectionsBrowser() {
                                             <button class="btn-primary btn-sm" onclick="event.stopPropagation(); editBrowserDocument('${collectionName}', '${doc.id}')">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
-                                            <button class="btn-danger btn-sm" onclick="event.stopPropagation(); deleteBrowserDocument('${collectionName}', '${doc.id}')">
+                                            <button class="btn-success btn-sm" onclick="event.stopPropagation(); copyBrowserDocumentJSON('${collectionName}', '${doc.id}')">
+                                                <i class="fas fa-copy"></i> Copy JSON
+                                            </button>
+                                            <button class="btn-delete btn-sm" onclick="event.stopPropagation(); deleteBrowserDocument('${collectionName}', '${doc.id}')">
                                                 <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </div>
@@ -345,6 +348,30 @@ window.editBrowserDocument = function(collectionName, docId) {
 window.deleteBrowserDocument = async function(collectionName, docId) {
     currentCollection = collectionName;
     await deleteDocument(docId);
+};
+
+/**
+ * Copy document JSON to clipboard from browser
+ */
+window.copyBrowserDocumentJSON = async function(collectionName, docId) {
+    try {
+        // Get the document data
+        const doc = await window.db.collection(collectionName).doc(docId).get();
+        if (!doc.exists) {
+            showSnackbar('Document not found', 'error');
+            return;
+        }
+        
+        // Convert to JSON with formatting
+        const jsonString = JSON.stringify(doc.data(), null, 2);
+        
+        // Copy to clipboard
+        await navigator.clipboard.writeText(jsonString);
+        showSnackbar('JSON copied to clipboard', 'success');
+    } catch (error) {
+        console.error('Error copying JSON:', error);
+        showSnackbar('Failed to copy JSON: ' + error.message, 'error');
+    }
 };
 
 /**
@@ -600,7 +627,7 @@ function displayAuthUsers() {
                         ${user.emailVerified ? '<div class="auth-user-detail"><i class="fas fa-check-circle" style="color: var(--success);"></i><span>Email Verified</span></div>' : ''}
                     </div>
                     <div class="auth-user-actions">
-                        <button class="btn-danger btn-sm" onclick="deleteAuthUser('${user.uid}', '${user.email}')">
+                        <button class="btn-delete btn-sm" onclick="deleteAuthUser('${user.uid}', '${user.email}')">
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     </div>
@@ -694,7 +721,7 @@ window.deleteAuthUser = async function(uid, email) {
         `,
         icon: 'fas fa-exclamation-triangle',
         confirmText: 'Delete',
-        confirmClass: 'btn-danger',
+        confirmClass: 'btn-delete',
         variant: 'danger',
         onConfirm: async () => {
             try {
@@ -993,7 +1020,7 @@ window.deleteDocument = async function(docId) {
         `,
         icon: 'fas fa-exclamation-triangle',
         confirmText: 'Delete',
-        confirmClass: 'btn-danger',
+        confirmClass: 'btn-delete',
         variant: 'danger',
         onConfirm: async () => {
             try {
@@ -1389,7 +1416,8 @@ function showSnackbar(message, type = 'info') {
     snackbar.style.cssText = `
         position: fixed;
         bottom: 20px;
-        right: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         background: ${type === 'error' ? 'var(--error)' : type === 'success' ? 'var(--success)' : 'var(--blue-primary)'};
         color: var(--white);
         padding: 1rem 1.5rem;

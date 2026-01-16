@@ -37,7 +37,7 @@ function initializeAuth() {
         if (!userDoc.exists) {
           // No user document - deny access
           console.error('User document not found');
-          showError('Access denied: Invalid user account');
+          showLoginError('Access denied: Invalid user account');
           await auth.signOut();
           showLogin();
           return;
@@ -49,7 +49,7 @@ function initializeAuth() {
         if (role !== 'admin' && role !== 'front-desk') {
           // Not an admin or front-desk user - deny access
           console.error('Access denied: User role is', role);
-          showError('Access denied: You do not have permission to access the admin area');
+          showLoginError('Access denied: You do not have permission to access the admin area');
           await auth.signOut();
           showLogin();
           return;
@@ -59,7 +59,7 @@ function initializeAuth() {
         showDashboard(user);
       } catch (error) {
         console.error('Error checking user role:', error);
-        showError('Error verifying access permissions');
+        showLoginError('Error verifying access permissions');
         await auth.signOut();
         showLogin();
       }
@@ -140,11 +140,12 @@ async function handleLogin(event) {
         errorMessage = 'Network error. Please check your internet connection.';
         break;
       case 'auth/invalid-credential':
+      case 'auth/invalid-login-credentials':
         errorMessage = 'Invalid email or password.';
         break;
     }
     
-    showError(errorMessage, errorDiv);
+    showLoginError(errorMessage, errorDiv);
     
   } finally {
     // Re-enable button
@@ -213,7 +214,7 @@ function showLoading(show) {
   spinner.style.display = show ? 'flex' : 'none';
 }
 
-function showError(message, element = null) {
+function showLoginError(message, element = null) {
   if (element) {
     element.textContent = message;
     element.classList.add('show');
