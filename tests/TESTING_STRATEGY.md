@@ -1,7 +1,7 @@
 # Urban Swing Testing Strategy
 
 **Created:** January 23, 2026  
-**Last Updated:** January 23, 2026  
+**Last Updated:** January 24, 2026  
 **Status:** Phase 1 Complete - Unit Tests Implemented ✅
 
 ---
@@ -86,9 +86,49 @@ The Urban Swing website requires a comprehensive multi-layered testing approach 
    - Payment status handling (requires_action, failed)
    - Refund creation errors
 
-5. ⏳ **Data integrity** - PARTIALLY COMPLETE
+5. ⏳ **Data integrity** - REQUIRES INTEGRATION TESTS
    - ✅ Stripe operations mocked and tested
-   - ⏳ Transaction records (requires integration tests)
+   - ⏳ Transaction records (requires integration tests with Firebase Emulator)
+   - ⏳ Student document creation (requires integration tests)
+   - ⏳ Concession block creation (requires integration tests)
+
+#### ⚠️ CRITICAL LESSON LEARNED - Unit Test Scope
+
+**What Happened (January 24, 2026):**
+- Attempted to write unit tests that verified database state changes (transaction creation, student document updates, concession blocks)
+- Tests failed because mock Firebase Admin SDK doesn't persist writes to the mock database
+- Root cause: Unit test mocks are designed to verify behavior (function calls, return values), not state changes
+
+**The Correct Approach:**
+
+**UNIT TESTS** (Mock Firebase, Mock Stripe):
+- ✅ **Input validation** - Required fields, data types, valid ranges
+- ✅ **Business logic** - Calculations, duplicate detection, conditional logic
+- ✅ **API interactions** - Verify correct calls to Stripe API with correct parameters
+- ✅ **Error handling** - Error messages, status codes, error propagation
+- ✅ **Return values** - Response format, success indicators
+- ❌ **Database state** - Do NOT verify documents created/updated/deleted in unit tests
+
+**INTEGRATION TESTS** (Firebase Emulator, Mock Stripe):
+- ✅ **Database state** - Verify transactions, students, concessions created correctly
+- ✅ **Firestore queries** - Test actual query behavior
+- ✅ **Security rules** - Test permissions and access control
+- ✅ **End-to-end flows** - Complete function execution with real local database
+
+**When Writing Unit Tests:**
+1. Mock Firebase Admin SDK (read-only mocks are fine)
+2. Mock all external APIs (Stripe, email, etc.)
+3. Test the function's logic and behavior
+4. Verify function calls with `expect(mockFunction).toHaveBeenCalledWith(...)`
+5. Verify return values and response formats
+6. DO NOT try to read from mock database to verify writes occurred
+
+**When Writing Integration Tests:**
+1. Use Firebase Emulator Suite (real local Firestore)
+2. Mock external APIs only (Stripe, email) to avoid real charges
+3. Test complete flows including database reads/writes
+4. Verify actual database state after operations
+5. Clean up test data in `afterEach` hooks
    - Implemented Framework
 
 **Jest + firebase-functions-test** ✅
@@ -704,20 +744,32 @@ npm test -- --watch
 
 ### General Principles
 
-1. **Test behavior, not implementation** - Focus on inputs/outputs
-2. **One assertion per test** (when possible) - Easier to debug
-3. **Arrange-Act-Assert pattern** - Clear test structure
-4. **Descriptive test names** - `it('should reject duplicate casual payment on same date')`
-5. **Independent tests** - No shared state between tests
-6. **Fast tests** - Mock external services, use emulators
+1. **Test behavior, not implementation** - Focus on inputs/outputs, not internal details
+2. **Test behavior, not state (in unit tests)** - Mock databases don't persist writes
+3. **One assertion per test** (when possible) - Easier to debug
+4. **Arrange-Act-Assert pattern** - Clear test structure
+5. **Descriptive test names** - `it('should reject duplicate casual payment on same date')`
+6. **Independent tests** - No shared state between tests
+7. **Fast tests** - Mock external services, use emulators for integration tests
+
+### Unit Test Guidelines
+
+1. **Mock all external dependencies** - Firebase, Stripe, email services
+2. **Focus on function behavior** - Validation logic, calculations, error handling
+3. **Verify function calls** - Use `expect(mockFn).toHaveBeenCalledWith(...)` to verify API calls
+4. **Test return values** - Check response format, success/error states
+5. **DO NOT verify database state** - Mock databases don't persist writes; use integration tests for state verification
+6. **Keep tests fast** - No real network calls, no real database operations
 
 ### Firebase-Specific
 
-1. **Use emulators** - Don't test against production
-2. **Mock external API calls** - Email, Stripe (in unit tests)
-3. **Test security rules** - Separately from application logic
-4. **Clean up test data** - Use `afterEach` hooks
-5. **Test offline scenarios** - Network failures, timeouts
+1. **Unit tests: Mock Firebase Admin SDK** - Use read-only mocks for database queries
+2. **Integration tests: Use Firebase Emulator** - Test actual database operations
+3. **Never test against production** - Always use test environment or emulator
+4. **Mock external API calls in unit tests** - Email, Stripe
+5. **Test security rules separately** - Use Emulator Suite with rules testing
+6. **Clean up test data** - Use `afterEach` hooks in integration tests
+7. **Test offline scenarios** - Network failures, timeouts
 
 ### Stripe-Specific
 
