@@ -51,7 +51,7 @@ async function processTransactionsSnapshot(snapshot) {
             const data = doc.data();
             const date = data.transactionDate?.toDate ? data.transactionDate.toDate() : new Date(data.transactionDate);
             const paymentMethod = (data.paymentMethod || '').toLowerCase();
-            const transactionType = data.type || 'concession-purchase';
+            let transactionType = data.type || 'concession-purchase';
             const isRefund = transactionType === 'refund';
             const rawAmount = isRefund ? (data.amountRefunded || 0) : (data.amountPaid || 0);
             // Make refund amounts negative so they subtract from totals
