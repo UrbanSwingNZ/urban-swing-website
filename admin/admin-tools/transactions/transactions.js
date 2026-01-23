@@ -118,6 +118,7 @@ function setupEventListeners() {
     document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);
     document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
     document.getElementById('show-reversed-toggle').addEventListener('change', applyFilters);
+    document.getElementById('show-only-non-invoiced-toggle').addEventListener('change', applyFilters);
     
     // Sort
     document.querySelectorAll('.sortable').forEach(th => {
@@ -179,9 +180,10 @@ function applyFilters() {
     const typeFilter = document.getElementById('transaction-type').value;
     const paymentMethodFilter = document.getElementById('payment-method-filter').value;
     const showReversed = document.getElementById('show-reversed-toggle').checked;
+    const showOnlyNonInvoiced = document.getElementById('show-only-non-invoiced-toggle').checked;
     const studentId = typeof getSelectedStudentId === 'function' ? getSelectedStudentId() : null;
     
-    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, paymentMethodFilter, showReversed, studentId);
+    filteredTransactions = applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, paymentMethodFilter, showReversed, studentId, showOnlyNonInvoiced);
     
     // Reset to first page when filters change
     setCurrentPage(1);
@@ -199,6 +201,7 @@ function resetFilters() {
     document.getElementById('transaction-type').value = 'all';
     document.getElementById('payment-method-filter').value = 'all';
     document.getElementById('show-reversed-toggle').checked = false;
+    document.getElementById('show-only-non-invoiced-toggle').checked = false;
     
     // Clear student filter
     if (typeof clearStudentFilter === 'function') {
