@@ -58,10 +58,10 @@ const AdminHeaderConfig = {
     '/admin/admin-tools/backup-database.html': {
         title: 'Database Backup',
         activePage: 'backup',
-        navSection: 'admin-tools',
+        navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: './'
+        backUrl: './database-tools/'
     },
     '/admin/admin-tools/concession-types.html': {
         title: 'Concession Types',
@@ -114,23 +114,33 @@ const AdminHeaderConfig = {
     '/admin/admin-tools/database-manager/': {
         title: 'Database Manager',
         activePage: 'database-manager',
-        navSection: 'admin-tools',
+        navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: '../'
+        backUrl: '../database-tools/'
     },
     '/admin/admin-tools/reports/': {
         title: 'Reports',
         activePage: 'reports',
-        navSection: 'admin-tools',
+        navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: '../'
+        backUrl: '../database-tools/'
     },
     '/admin/admin-tools/merge-records/': {
         title: 'Merge Student Records',
         activePage: 'merge-records',
-        navSection: 'admin-tools',
+        navSection: 'database-tools',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../database-tools/'
+    },
+    
+    // Database Tools Pages
+    '/admin/admin-tools/database-tools/': {
+        title: 'Database Tools',
+        activePage: 'database-tools',
+        navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
         backUrl: '../'
