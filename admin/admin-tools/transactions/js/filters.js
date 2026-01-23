@@ -6,10 +6,15 @@
 /**
  * Apply filters to transactions
  */
-function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, paymentMethodFilter, showReversed = false, studentId = null) {
+function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, paymentMethodFilter, showReversed = false, studentId = null, showOnlyNonInvoiced = false) {
     return allTransactions.filter(transaction => {
         // Filter out reversed transactions unless showReversed is true
         if (!showReversed && transaction.reversed) {
+            return false;
+        }
+        
+        // Filter by invoice status if toggle is on
+        if (showOnlyNonInvoiced && transaction.invoiced === true) {
             return false;
         }
         
