@@ -82,3 +82,12 @@ function appendAuditLog(existingNotes, auditEntries) {
         return auditEntries.join('\n');
     }
 }
+
+// Export for testing (Node.js only, doesn't affect browser usage)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        getNZDate,
+        generateAuditLog,
+        appendAuditLog
+    };
+}

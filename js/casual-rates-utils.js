@@ -155,3 +155,17 @@ async function getAllCasualRates() {
         throw error;
     }
 }
+
+// Export for testing (Node.js environment)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        getCasualRates,
+        getCasualRateByName,
+        getStandardCasualRate,
+        getStudentCasualRate,
+        getCasualRatePrice,
+        clearCasualRatesCache,
+        formatCasualRateDisplay,
+        getAllCasualRates
+    };
+}
