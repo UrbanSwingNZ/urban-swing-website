@@ -1,0 +1,14 @@
+{
+  "name": "urban-swing-website",
+  "version": "1.0.0",
+  "description": "Urban Swing Dance Studio Website",
+  "private": true,
+  "scripts": {
+    "test": "cd functions && npm test",
+    "test:watch": "cd functions && npm run test:watch",
+    "test:coverage": "cd functions && npm run test:coverage"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
