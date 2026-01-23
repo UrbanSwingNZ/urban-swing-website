@@ -70,18 +70,27 @@ const AdminHeaderConfigurator = {
     configureNavigation(config) {
         const mainNav = document.getElementById('main-admin-nav');
         const toolsNav = document.getElementById('admin-tools-nav');
+        const databaseToolsNav = document.getElementById('database-tools-nav');
         const studentSelectorInline = document.getElementById('student-selector-inline');
         const adminHeader = document.querySelector('.admin-header');
         
         if (config.navSection === 'admin-tools') {
             if (mainNav) mainNav.style.display = 'none';
             if (toolsNav) toolsNav.style.display = 'block';
+            if (databaseToolsNav) databaseToolsNav.style.display = 'none';
+            if (studentSelectorInline) studentSelectorInline.style.display = 'none';
+            if (adminHeader) adminHeader.classList.remove('no-nav');
+        } else if (config.navSection === 'database-tools') {
+            if (mainNav) mainNav.style.display = 'none';
+            if (toolsNav) toolsNav.style.display = 'none';
+            if (databaseToolsNav) databaseToolsNav.style.display = 'block';
             if (studentSelectorInline) studentSelectorInline.style.display = 'none';
             if (adminHeader) adminHeader.classList.remove('no-nav');
         } else if (config.navSection === 'none') {
             // Student portal pages - hide nav, show student selector inline
             if (mainNav) mainNav.style.display = 'none';
             if (toolsNav) toolsNav.style.display = 'none';
+            if (databaseToolsNav) databaseToolsNav.style.display = 'none';
             if (studentSelectorInline) studentSelectorInline.style.display = 'flex';
             if (adminHeader) adminHeader.classList.add('no-nav');
             
@@ -92,6 +101,7 @@ const AdminHeaderConfigurator = {
         } else {
             if (mainNav) mainNav.style.display = 'block';
             if (toolsNav) toolsNav.style.display = 'none';
+            if (databaseToolsNav) databaseToolsNav.style.display = 'none';
             if (studentSelectorInline) studentSelectorInline.style.display = 'none';
             if (adminHeader) adminHeader.classList.remove('no-nav');
         }
