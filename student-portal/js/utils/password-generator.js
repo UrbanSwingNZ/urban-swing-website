@@ -84,3 +84,14 @@ function validatePassword(password) {
 function passwordsMatch(password, confirmPassword) {
     return password === confirmPassword;
 }
+
+// Export for testing (Node.js only, doesn't affect browser usage)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        generatePassword,
+        getRandomWord,
+        validatePassword,
+        passwordsMatch,
+        WORD_LIST
+    };
+}
