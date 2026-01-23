@@ -218,30 +218,45 @@ class MobileDrawer {
         
         item.subItems.forEach(subItem => {
             const subLi = document.createElement('li');
-            const subLink = document.createElement('a');
-            subLink.href = subItem.href;
             
-            if (subItem.dataPage) {
-                subLink.dataset.page = subItem.dataPage;
-            }
-            
-            const isCurrentPage = this.isCurrentPage(subItem.href, currentPath);
-            
-            if (isCurrentPage) {
-                subLink.classList.add('active');
-                hasActivePage = true;
-            }
-            
-            if (subItem.icon) {
-                subLink.innerHTML = `<i class="${subItem.icon}"></i> ${subItem.label}`;
+            // Check if this sub-item also has nested sub-items (nested accordion)
+            if (subItem.subItems && subItem.subItems.length > 0) {
+                this.createNestedAccordionItem(subLi, subItem, currentPath);
+                // Check if any nested item is active
+                const hasNestedActive = subItem.subItems.some(nestedItem => 
+                    this.isCurrentPage(nestedItem.href, currentPath)
+                );
+                if (hasNestedActive) {
+                    hasActivePage = true;
+                }
             } else {
-                subLink.textContent = subItem.label;
+                // Regular sub-item link
+                const subLink = document.createElement('a');
+                subLink.href = subItem.href;
+                
+                if (subItem.dataPage) {
+                    subLink.dataset.page = subItem.dataPage;
+                }
+                
+                const isCurrentPage = this.isCurrentPage(subItem.href, currentPath);
+                
+                if (isCurrentPage) {
+                    subLink.classList.add('active');
+                    hasActivePage = true;
+                }
+                
+                if (subItem.icon) {
+                    subLink.innerHTML = `<i class="${subItem.icon}"></i> ${subItem.label}`;
+                } else {
+                    subLink.textContent = subItem.label;
+                }
+                
+                // Close drawer when sub-item is clicked
+                subLink.addEventListener('click', () => this.close());
+                
+                subLi.appendChild(subLink);
             }
             
-            // Close drawer when sub-item is clicked
-            subLink.addEventListener('click', () => this.close());
-            
-            subLi.appendChild(subLink);
             subMenu.appendChild(subLi);
         });
         
@@ -270,6 +285,106 @@ class MobileDrawer {
         
         li.appendChild(accordionButton);
         li.appendChild(subMenu);
+    }
+
+    /**
+     * Create a nested accordion menu item (sub-accordion within an accordion)
+     */
+    createNestedAccordionItem(li, item, currentPath) {
+        li.classList.add('nested-accordion-item');
+        
+        // Create nested accordion header/toggle button
+        const accordionButton = document.createElement('button');
+        accordionButton.className = 'accordion-toggle nested-accordion-toggle';
+        accordionButton.setAttribute('aria-expanded', 'false');
+        
+        if (item.icon) {
+            accordionButton.innerHTML = `
+                <span class="accordion-label">
+                    <i class="${item.icon}"></i> ${item.label}
+                </span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            `;
+        } else {
+            accordionButton.innerHTML = `
+                <span class="accordion-label">${item.label}</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            `;
+        }
+        
+        // Create nested sub-menu container
+        const nestedSubMenu = document.createElement('ul');
+        nestedSubMenu.className = 'accordion-submenu nested-submenu';
+        nestedSubMenu.style.display = 'none';
+        
+        // Check if any nested sub-item is the current page
+        let hasActivePage = false;
+        
+        item.subItems.forEach(nestedItem => {
+            // Skip desktop-only items on mobile
+            if (nestedItem.desktopOnly) {
+                return;
+            }
+            
+            const nestedLi = document.createElement('li');
+            const nestedLink = document.createElement('a');
+            nestedLink.href = nestedItem.href;
+            
+            if (nestedItem.dataPage) {
+                nestedLink.dataset.page = nestedItem.dataPage;
+            }
+            
+            const isCurrentPage = this.isCurrentPage(nestedItem.href, currentPath);
+            
+            if (isCurrentPage) {
+                nestedLink.classList.add('active');
+                hasActivePage = true;
+            }
+            
+            if (nestedItem.icon) {
+                nestedLink.innerHTML = `<i class="${nestedItem.icon}"></i> ${nestedItem.label}`;
+            } else {
+                nestedLink.textContent = nestedItem.label;
+            }
+            
+            // Close drawer when nested item is clicked
+            nestedLink.addEventListener('click', () => this.close());
+            
+            nestedLi.appendChild(nestedLink);
+            nestedSubMenu.appendChild(nestedLi);
+        });
+        
+        // If no items were added (all were desktop-only), don't show this accordion at all
+        if (nestedSubMenu.children.length === 0) {
+            return;
+        }
+        
+        // If a nested sub-item is active, expand the nested accordion by default
+        if (hasActivePage) {
+            accordionButton.classList.add('expanded');
+            accordionButton.setAttribute('aria-expanded', 'true');
+            nestedSubMenu.style.display = 'block';
+        }
+        
+        // Toggle nested accordion on click
+        accordionButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent parent accordion from toggling
+            const isExpanded = accordionButton.classList.contains('expanded');
+            
+            if (isExpanded) {
+                accordionButton.classList.remove('expanded');
+                accordionButton.setAttribute('aria-expanded', 'false');
+                nestedSubMenu.style.display = 'none';
+            } else {
+                accordionButton.classList.add('expanded');
+                accordionButton.setAttribute('aria-expanded', 'true');
+                nestedSubMenu.style.display = 'block';
+            }
+        });
+        
+        li.appendChild(accordionButton);
+        li.appendChild(nestedSubMenu);
     }
 
     /**
