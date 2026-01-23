@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Database Tools - Urban Swing</title>
+    <link rel="stylesheet" href="../../admin.css">
+    <link rel="stylesheet" href="../admin-tools.css">
+    <link rel="stylesheet" href="database-tools.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+</head>
+<body>
+    <!-- Database Tools Page -->
+    <div id="database-tools-container" class="dashboard-container">
+
+        <main class="dashboard-main">
+            <div class="tools-intro">
+                <p>Database management and maintenance tools for your Urban Swing Firestore database</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Database Backup Tool -->
+                <a href="../backup-database.html" class="tool-card tile-gradient">
+                    <div class="tile-icon tile-icon-centered">
+                        <div class="tile-icon-image">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="tile-icon-content">
+                            <h3>Database Backup</h3>
+                            <p>Export your Firestore database to JSON files for backup and archival purposes</p>
+                            <ul class="tool-features">
+                                <li><i class="fas fa-check"></i> Select specific collections</li>
+                                <li><i class="fas fa-check"></i> Creates timestamped ZIP files</li>
+                                <li><i class="fas fa-check"></i> Includes all document data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Merge Records -->
+                <a href="../merge-records/index.html" class="tool-card tile-gradient">
+                    <div class="tile-icon tile-icon-centered">
+                        <div class="tile-icon-image">
+                            <i class="fas fa-compress-arrows-alt"></i>
+                        </div>
+                        <div class="tile-icon-content">
+                            <h3>Merge Student Records</h3>
+                            <p>Combine duplicate student accounts into a single record</p>
+                            <ul class="tool-features">
+                                <li><i class="fas fa-check"></i> Merge duplicate accounts</li>
+                                <li><i class="fas fa-check"></i> Choose which data to keep</li>
+                                <li><i class="fas fa-check"></i> Transfer all history</li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Database Manager -->
+                <a href="../database-manager/index.html" class="tool-card tile-gradient">
+                    <div class="tile-icon tile-icon-centered">
+                        <div class="tile-icon-image">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="tile-icon-content">
+                            <h3>Database Manager</h3>
+                            <p>View, edit, and manage Firestore collections and documents</p>
+                            <ul class="tool-features">
+                                <li><i class="fas fa-check"></i> Browse all collections</li>
+                                <li><i class="fas fa-check"></i> Edit document fields</li>
+                                <li><i class="fas fa-check"></i> Create and delete records</li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Reports -->
+                <a href="../reports/index.html" class="tool-card tile-gradient">
+                    <div class="tile-icon tile-icon-centered">
+                        <div class="tile-icon-image">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="tile-icon-content">
+                            <h3>Reports</h3>
+                            <p>Generate various reports from your Firestore database</p>
+                            <ul class="tool-features">
+                                <li><i class="fas fa-check"></i> Expired concessions</li>
+                                <li><i class="fas fa-check"></i> Active concessions</li>
+                                <li><i class="fas fa-check"></i> Email consent list</li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; 2025 Urban Swing. Database Tools v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Firebase Config & Database Tools Logic -->
+    <script src="../../../config/firebase-config.js"></script>
+    
+    <!-- Admin Header Dependencies -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../../js/header-config.js"></script>
+    <script src="../../js/header-configurator.js"></script>
+    <script src="../../js/mobile-nav.js"></script>
+    <script src="../../admin-header.js"></script>
+    
+    <script src="database-tools.js"></script>
+</body>
+</html>
