@@ -7,6 +7,8 @@
     <title>Database Backup - Urban Swing Admin Tools</title>
     <link rel="stylesheet" href="../admin.css">
     <link rel="stylesheet" href="backup-database.css">
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -23,6 +25,11 @@
     <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
 </head>
 <body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
     <!-- Database Backup Page -->
     <div id="backup-container" class="dashboard-container">
 
@@ -106,13 +113,32 @@
         </footer>
     </div>
 
+    <!-- Backup Everything Confirmation Modal -->
+    <div id="backup-all-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Backup All Collections</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>This will backup ALL collections. Continue?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="backup-all-cancel-btn">Cancel</button>
+                <button class="btn-primary" id="backup-all-confirm-btn">Continue</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Logic -->
     <script src="../../config/firebase-config.js"></script>
     
     <!-- JSZip for creating ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-    <script>
+    <script type="module">
+        import { BaseModal } from '/components/modals/modal-base.js';
+        
         // Function definitions first
         function convertToCSV(data, collectionName) {
             if (data.length === 0) {
@@ -239,6 +265,7 @@
             { name: 'concessionPackages', label: 'Concession Packages', icon: 'fa-box', type: 'firestore' },
             { name: 'casualRates', label: 'Casual Rates', icon: 'fa-money-bill-wave', type: 'firestore' },
             { name: 'closedownNights', label: 'Closedown Nights (incl Settings)', icon: 'fa-calendar-times', type: 'firestore', includesCollections: ['closedownNights', 'settings'] },
+            { name: 'classPlans', label: 'Class Plans', icon: 'fa-list-check', type: 'firestore' },
             { name: 'songData', label: 'Song Data', icon: 'fa-music', type: 'firestore' },
             { name: 'playlistPreferences', label: 'Playlist Preferences', icon: 'fa-list-ol', type: 'firestore' },
             { name: 'users', label: 'Users (Firestore)', icon: 'fa-user-shield', type: 'firestore' },
@@ -249,6 +276,7 @@
         let selectedCollections = new Set();
         let currentUser = null;
         let isSelectingAll = false; // Flag to prevent interference during select-all
+        let backupAllModal = null; // Will be initialized after DOM loads
 
         /**
          * Expand collection names that include multiple collections
@@ -275,6 +303,11 @@
 
         function initializeAuth() {
             showLoading(true);
+            
+            // Initialize BaseModal after DOM is loaded
+            backupAllModal = new BaseModal({
+                element: document.getElementById('backup-all-modal')
+            });
             
             // Setup select-all checkbox once
             setupSelectAllCheckbox();
@@ -416,7 +449,44 @@
         });
 
         document.getElementById('backup-all-btn').addEventListener('click', async () => {
-            if (!confirm('This will backup ALL collections. Continue?')) {
+            // Wait for user confirmation
+            const confirmed = await new Promise((resolve) => {
+                const confirmBtn = document.getElementById('backup-all-confirm-btn');
+                const cancelBtn = document.getElementById('backup-all-cancel-btn');
+                
+                // Handle modal close via BaseModal (X button or overlay click)
+                const handleModalClose = () => {
+                    cleanup();
+                    resolve(false);
+                };
+                
+                const handleConfirm = () => {
+                    cleanup();
+                    resolve(true);
+                };
+                
+                const handleCancel = () => {
+                    cleanup();
+                    resolve(false);
+                };
+                
+                const cleanup = () => {
+                    confirmBtn.removeEventListener('click', handleConfirm);
+                    cancelBtn.removeEventListener('click', handleCancel);
+                    backupAllModal.element.removeEventListener('modal-closed', handleModalClose);
+                    backupAllModal.hide();
+                };
+                
+                // Listen for BaseModal's close event
+                backupAllModal.element.addEventListener('modal-closed', handleModalClose, { once: true });
+                confirmBtn.addEventListener('click', handleConfirm);
+                cancelBtn.addEventListener('click', handleCancel);
+                
+                // Show the modal
+                backupAllModal.show();
+            });
+            
+            if (!confirmed) {
                 return;
             }
 
