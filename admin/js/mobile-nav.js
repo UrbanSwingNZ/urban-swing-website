@@ -105,6 +105,11 @@ const AdminMobileNav = {
         if (adminToolsNav) {
             const links = adminToolsNav.querySelectorAll('a');
             links.forEach(link => {
+                // Skip Dashboard and Tools Home from the sub-items
+                if (link.dataset.page === 'dashboard' || link.dataset.page === 'admin-tools') {
+                    return;
+                }
+                
                 // Extract icon class
                 const icon = link.querySelector('i');
                 const iconClass = icon ? icon.className : '';
@@ -115,12 +120,72 @@ const AdminMobileNav = {
                 // Extract pathname from href for consistent matching
                 const url = new URL(link.href, window.location.origin);
                 
-                subItems.push({
+                // Check if this is the Database Tools link
+                if (link.dataset.page === 'database-tools') {
+                    // Create Database Tools as a nested accordion with sub-items
+                    const databaseToolsSubItems = this.getDatabaseToolsSubItems();
+                    
+                    subItems.push({
+                        href: url.pathname,
+                        icon: iconClass,
+                        label: text,
+                        dataPage: link.dataset.page || '',
+                        subItems: databaseToolsSubItems
+                    });
+                } else {
+                    subItems.push({
+                        href: url.pathname,
+                        icon: iconClass,
+                        label: text,
+                        dataPage: link.dataset.page || ''
+                    });
+                }
+            });
+        }
+        
+        return subItems;
+    },
+
+    /**
+     * Get Database Tools sub-items from the database-tools-nav
+     */
+    getDatabaseToolsSubItems() {
+        const subItems = [];
+        const databaseToolsNav = document.querySelector('#database-tools-nav .nav-menu');
+        
+        if (databaseToolsNav) {
+            const links = databaseToolsNav.querySelectorAll('a');
+            links.forEach(link => {
+                // Skip Dashboard and Tools Home from the sub-items
+                if (link.dataset.page === 'dashboard' || link.dataset.page === 'admin-tools') {
+                    return;
+                }
+                
+                // Extract icon class
+                const icon = link.querySelector('i');
+                const iconClass = icon ? icon.className : '';
+                
+                // Extract text (remove icon)
+                const text = link.textContent.trim();
+
+                // Extract pathname from href for consistent matching
+                const url = new URL(link.href, window.location.origin);
+                
+                const item = {
                     href: url.pathname,
                     icon: iconClass,
                     label: text,
                     dataPage: link.dataset.page || ''
-                });
+                };
+                
+                // Mark Backup, Merge Records, and Database Manager as desktop-only
+                if (link.dataset.page === 'backup' || 
+                    link.dataset.page === 'merge-records' || 
+                    link.dataset.page === 'database-manager') {
+                    item.desktopOnly = true;
+                }
+                
+                subItems.push(item);
             });
         }
         
