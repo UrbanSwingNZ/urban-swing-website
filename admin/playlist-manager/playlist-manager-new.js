@@ -8,10 +8,14 @@ import * as UI from './playlist-ui.js';
 import * as Player from './spotify-player.js';
 import * as State from './playlist-state.js';
 import { initMobilePlaylistSelector } from './mobile-playlist-selector.js';
+import { BaseModal } from '/components/modals/modal-base.js';
 
 // ========================================
 // INITIALIZATION
 // ========================================
+
+// Token expiry warning modal instance
+let tokenExpiryModal = null;
 
 // Wait for page to load
 window.addEventListener('load', async () => {
@@ -42,6 +46,9 @@ async function initializeApp() {
   
   // Initialize button states to prevent both from showing
   Auth.initializeButtonStates();
+  
+  // Initialize token expiry monitoring
+  initializeTokenExpiryMonitoring();
   
   // Check if we have an authorization code in the URL (authorization code flow)
   const authCode = Auth.getAuthCodeFromUrl();
@@ -193,4 +200,115 @@ function handleCopyPlaylistLink() {
   window.open(songdataUrl, '_blank');
   
   UI.showSnackbar('Opening SongData.io - click "Extract BPMs to Firestore" when loaded', 'info');
+}
+
+// ========================================
+// TOKEN EXPIRY MONITORING
+// ========================================
+
+let tokenExpiryCheckInterval = null;
+
+function initializeTokenExpiryMonitoring() {
+  // Create the token expiry modal using BaseModal
+  if (!tokenExpiryModal) {
+    tokenExpiryModal = new BaseModal({
+      id: 'token-expiry-warning-modal',
+      title: '<i class="fas fa-exclamation-triangle"></i> Spotify Token Expiring Soon',
+      content: `
+        <p style="margin-bottom: 20px; font-size: 15px; line-height: 1.6;">
+          Your Spotify access token will expire in less than 5 minutes. Click below to get a fresh token and continue working without interruption.
+        </p>
+      `,
+      buttons: [
+        {
+          text: '<i class="fas fa-sync-alt"></i> Get Fresh Token',
+          class: 'btn-primary',
+          onClick: () => handleRefreshToken()
+        }
+      ],
+      size: 'small',
+      closeOnEscape: false,
+      closeOnOverlay: false,
+      showCloseButton: false
+    });
+    
+    // Add warning styling to the modal
+    const modalElement = tokenExpiryModal.element;
+    modalElement.classList.add('modal-warning');
+    const header = modalElement.querySelector('.modal-header');
+    if (header) {
+      header.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+      header.style.color = 'white';
+    }
+    const headerTitle = header?.querySelector('h3');
+    if (headerTitle) {
+      headerTitle.style.color = 'white';
+    }
+  }
+  
+  // Clear any existing interval
+  if (tokenExpiryCheckInterval) {
+    clearInterval(tokenExpiryCheckInterval);
+  }
+  
+  // Check token expiry immediately if authenticated
+  if (spotifyAPI.isAuthenticated()) {
+    checkTokenExpiry();
+  }
+  
+  // Check every minute
+  tokenExpiryCheckInterval = setInterval(() => {
+    if (spotifyAPI.accessToken) {
+      checkTokenExpiry();
+    }
+  }, 60 * 1000);
+  
+  // Listen for token updates
+  window.addEventListener('spotify-token-updated', () => {
+    checkTokenExpiry();
+  });
+}
+
+function checkTokenExpiry() {
+  const timeUntilExpiry = spotifyAPI.getTimeUntilExpiry();
+  const fiftyFiveMinutes = 55 * 60 * 1000; // 55 minutes in milliseconds
+  
+  if (!tokenExpiryModal) return;
+  
+  // Show warning if less than 5 minutes remaining (token expires in 60 min, show at 55 min mark)
+  if (timeUntilExpiry > 0 && timeUntilExpiry <= (60 * 60 * 1000 - fiftyFiveMinutes)) {
+    tokenExpiryModal.show();
+  } else if (timeUntilExpiry <= 0) {
+    // Token has expired, disconnect
+    tokenExpiryModal.hide();
+    Auth.handleSpotifyDisconnect();
+    UI.showError('Your Spotify session has expired. Please reconnect.');
+  } else {
+    tokenExpiryModal.hide();
+  }
+}
+
+async function handleRefreshToken() {
+  tokenExpiryModal.hide();
+  UI.showLoading(true);
+  
+  try {
+    const success = await spotifyAPI.refreshAccessToken();
+    if (success) {
+      UI.showSnackbar('Token refreshed successfully!', 'success');
+      // Trigger token updated event
+      window.dispatchEvent(new CustomEvent('spotify-token-updated', {
+        detail: { expiresAt: spotifyAPI.tokenExpiry }
+      }));
+    } else {
+      UI.showError('Failed to refresh token. Please reconnect to Spotify.');
+      Auth.handleSpotifyDisconnect();
+    }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    UI.showError('Failed to refresh token. Please reconnect to Spotify.');
+    Auth.handleSpotifyDisconnect();
+  } finally {
+    UI.showLoading(false);
+  }
 }
