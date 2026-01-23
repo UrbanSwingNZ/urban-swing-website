@@ -15,10 +15,16 @@ class SpotifyAPI {
   setTokens(accessToken, refreshToken, expiresIn) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+    // Store absolute timestamp for expiration
     this.tokenExpiry = Date.now() + (expiresIn * 1000);
     
     // Store tokens in localStorage only
     this.saveTokensToStorage();
+    
+    // Dispatch event for token update (for monitoring)
+    window.dispatchEvent(new CustomEvent('spotify-token-updated', {
+      detail: { expiresAt: this.tokenExpiry }
+    }));
   }
 
   saveTokensToStorage() {
@@ -50,6 +56,11 @@ class SpotifyAPI {
 
   isTokenExpired() {
     return !this.tokenExpiry || Date.now() >= this.tokenExpiry - 60000; // Refresh 1 min early
+  }
+
+  getTimeUntilExpiry() {
+    if (!this.tokenExpiry) return 0;
+    return this.tokenExpiry - Date.now();
   }
 
   async refreshAccessToken() {
