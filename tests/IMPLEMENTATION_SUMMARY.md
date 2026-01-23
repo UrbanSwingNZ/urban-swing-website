@@ -2,7 +2,7 @@
 
 **Date:** January 24, 2026  
 **Branch:** unit-tests  
-**Status:** ✅ Phase 1 Extended (151 tests)
+**Status:** ✅ Phase 1 Complete (243 tests)
 
 ## What Was Implemented
 
@@ -54,7 +54,7 @@
    - Backwards compatibility (classDate vs transactionDate)
    - Edge cases: reversed transactions, malformed data, Firestore errors
 
-6. **`__tests__/frontend/audit-logger.test.js`** (44 tests) ✨ NEW
+6. **`__tests__/frontend/audit-logger.test.js`** (44 tests)
    - Date formatting (getNZDate) with NZ timezone, zero padding
    - Audit log generation (generateAuditLog) for string and boolean fields
    - Multiple field change tracking with admin/student attribution
@@ -62,12 +62,28 @@
    - Integration tests for full workflow and audit trail building
    - Edge cases: empty values, null handling, special characters, whitespace
 
+7. **`__tests__/frontend/password-generator.test.js`** (47 tests) ✨ NEW
+   - Password generation (generatePassword) with WordWord1234 format
+   - Word selection (getRandomWord) from 88-word list with capitalization
+   - Password validation (validatePassword) with length and character requirements
+   - Password matching (passwordsMatch) with case sensitivity and null handling
+   - Integration tests for generate->validate->match workflows
+   - Edge cases: randomness validation, unicode, very long passwords, whitespace
+
+8. **`__tests__/frontend/package-service.test.js`** (45 tests) ✨ NEW
+   - Constructor initialization with empty state
+   - Package loading (loadPackages) from Firestore with filtering and sorting
+   - Selection management (getPackageById, selectPackage, clearSelection)
+   - Package description formatting with pluralization and currency
+   - Integration tests for full service lifecycle
+   - Edge cases: missing data, Firestore errors, invalid inputs
+
 ### Test Results
 
 ```
-Test Suites: 6 passed, 6 total
-Tests:       151 passed, 151 total
-Time:        ~1.4s
+Test Suites: 8 passed, 8 total
+Tests:       243 passed, 243 total
+Time:        ~1.3s
 ```
 
 ## Test Coverage
@@ -78,7 +94,9 @@ Time:        ~1.4s
 - ✅ `stripe/stripe-payment.js` - ~85% coverage
 - ✅ `js/casual-rates-utils.js` - ~95% coverage
 - ✅ `student-portal/prepay/validation-service.js` - ~95% coverage
-- ✅ `student-portal/js/audit-logger.js` - ~100% coverage ✨ NEW
+- ✅ `student-portal/js/audit-logger.js` - ~100% coverage
+- ✅ `student-portal/js/utils/password-generator.js` - ~100% coverage ✨ NEW
+- ✅ `student-portal/purchase/package-service.js` - ~100% coverage ✨ NEW
 
 ### Deferred to Phase 2 (Integration Tests)
 - 🔄 `process-casual-payment.js` - onRequest function (requires Firebase Emulator)
@@ -86,9 +104,9 @@ Time:        ~1.4s
 - 🔄 `create-student-payment.js` - onRequest function (requires Firebase Emulator)
 - 🔄 `process-refund.js` - onCall function (requires Firebase Emulator)
 
-### Not Yet Tested (Next Phase)
-- ⏳ `email-notifications.js` - Unit + integration tests
-- ⏳ Frontend business logic files (validation-service, audit-logger, etc.)
+### Not Yet Tested
+- ⏳ `email-notifications.js` - Unit + integration tests (Phase 2)
+- ⏳ Other frontend business logic files as needed
 
 ## How to Run Tests
 
@@ -187,16 +205,8 @@ it('should process a successful payment', async () => {
 
 ## Next Steps (Phase 2)
 
-### Immediate Priorities (Frontend Unit Tests)
-1. **Test more frontend business logic** ⭐ HIGH VALUE
-   - `admin/admin-tools/casual-rates/rates-actions.js` - Rate CRUD operations (NEXT RECOMMENDED)
-   - `admin/admin-tools/concession-types/modal-handlers.js` - Package CRUD
-   - `student-portal/components/validation-helpers.js` - Form validation utilities
-   - Pattern: Add conditional `module.exports` like already tested files
-
-### Medium Term (Integration Tests)
-2. Add integration tests for HTTP Cloud Functions
-   - Set up Firebase Emulator Suite
+### Integration Tests with Firebase Emulator
+1. Set up Firebase Emulator Suite for integration tests
    - Test with real HTTP requests to emulated functions
    - Test onRequest functions: process-casual-payment, process-concession-purchase, create-student-payment
    - Test onCall functions: process-refund
@@ -204,17 +214,17 @@ it('should process a successful payment', async () => {
    - Test duplicate detection logic
    - Verify database state changes
 
-3. Add tests for email notifications
+2. Add tests for email notifications
    - Template rendering
    - Recipient logic
    - Error handling
 
-4. Set up test coverage reporting
+3. Set up test coverage reporting
    - Integrate with CI/CD
    - Set minimum coverage thresholds
 
 ### Long Term
-5. Set up E2E tests with Playwright
+4. Set up E2E tests with Playwright
    - Student registration flow
    - Payment flows
    - Admin check-in process
