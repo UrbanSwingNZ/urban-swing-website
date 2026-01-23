@@ -156,6 +156,11 @@ service cloud.firestore {
       allow write: if isAdminOrFrontDesk();
     }
     
+    // Class Plans - admins can read and write
+    match /classPlans/{planId} {
+      allow read, write: if isAdminOrFrontDesk();
+    }
+    
     // Settings collection - public can read, admins can write
     match /settings/{settingId} {
       allow read: if true;  // Public read access for configuration

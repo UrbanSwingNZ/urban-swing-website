@@ -1,0 +1,410 @@
+/* ========================================
+   CLASS PLAN PAGE STYLES
+   Styles for the admin class plan feature
+   Uses design tokens from /styles/base/
+   ======================================== */
+
+@import url('/styles/base/colors.css');
+@import url('/styles/base/design-tokens.css');
+
+/* ========================================
+   MAIN CONTAINER
+   ======================================== */
+.class-plan-main {
+    padding: var(--space-lg);
+    max-width: var(--max-width-xl);
+    margin: 0 auto;
+}
+
+/* ========================================
+   PAGE HEADER
+   ======================================== */
+.class-plan-header {
+    margin-bottom: var(--space-lg);
+}
+
+.class-plan-header h2 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--purple-primary);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.class-plan-header h2 i {
+    font-size: var(--font-size-2xl);
+}
+
+.class-plan-header .subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.header-actions .btn-primary-lg {
+    width: 100%;
+}
+
+/* ========================================
+   CLASS PLANS CONTAINER
+   ======================================== */
+.class-plans-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+}
+
+@media (min-width: 769px) {
+    .class-plans-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--space-2xl);
+    background: var(--bg-light);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: var(--font-size-5xl);
+    margin-bottom: var(--space-md);
+    color: var(--gray-450);
+}
+
+.empty-state p {
+    font-size: var(--font-size-lg);
+    margin: 0;
+}
+
+/* ========================================
+   CLASS PLAN CARD
+   ======================================== */
+.class-plan-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-md);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.class-plan-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.class-plan-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--purple-primary);
+}
+
+.class-plan-date {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.class-plan-date i {
+    color: var(--purple-primary);
+    font-size: var(--font-size-xl);
+}
+
+.class-plan-date h3 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.class-plan-actions {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+    font-size: var(--font-size-lg);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: var(--bg-light);
+}
+
+.btn-icon.btn-edit {
+    color: var(--purple-primary);
+}
+
+.btn-icon.btn-edit:hover {
+    background: var(--bg-purple-light);
+}
+
+.btn-icon.btn-delete {
+    color: var(--error);
+}
+
+.btn-icon.btn-delete:hover {
+    background: var(--bg-error-pale);
+}
+
+/* Card Body */
+.class-plan-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.move-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+}
+
+.move-item i {
+    color: var(--purple-primary);
+    font-size: var(--font-size-base);
+    margin-top: 2px;
+}
+
+.move-content {
+    flex: 1;
+}
+
+.move-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.move-text {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.notes-section {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--warning-lightest);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--warning);
+}
+
+.notes-section i {
+    color: var(--warning-dark);
+    margin-right: var(--space-xs);
+}
+
+.notes-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+}
+
+.notes-text {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* ========================================
+   FORM STYLES (Modal forms use BaseModal's built-in styles)
+   ======================================== */
+.form-group {
+    margin-bottom: var(--space-md);
+}
+
+.form-label {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.form-label i {
+    color: var(--purple-primary);
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: var(--space-sm);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-light);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Date Input Wrapper */
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.date-input {
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.date-input-icon {
+    position: absolute;
+    right: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--purple-primary);
+    pointer-events: none;
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-primary-lg {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--font-size-lg);
+}
+
+.btn-primary {
+    background: var(--purple-primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--purple-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--gray-450);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-550);
+}
+
+.btn-danger {
+    background: var(--error);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: var(--error-dark);
+}
+
+/* ========================================
+   FLOATING ADD BUTTON
+   ======================================== */
+.floating-add-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient-blue-purple);
+    color: var(--white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    z-index: var(--z-fixed);
+    transition: all var(--transition-base);
+    opacity: 0;
+    transform: scale(0);
+}
+
+.floating-add-btn.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.floating-add-btn:hover {
+    background: var(--gradient-blue-purple);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-xl);
+    filter: brightness(1.1);
+}
+
+.floating-add-btn:active {
+    transform: scale(0.95);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+    .class-plan-main {
+        padding: var(--space-md);
+    }
+    
+    .class-plan-header h2 {
+        font-size: var(--font-size-2xl);
+    }
+}
