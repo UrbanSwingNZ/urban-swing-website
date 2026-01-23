@@ -61,7 +61,7 @@ const AdminHeaderConfig = {
         navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: './'
+        backUrl: './database-tools/'
     },
     '/admin/admin-tools/concession-types.html': {
         title: 'Concession Types',
@@ -117,7 +117,7 @@ const AdminHeaderConfig = {
         navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: '../'
+        backUrl: '../database-tools/'
     },
     '/admin/admin-tools/reports/': {
         title: 'Reports',
@@ -125,7 +125,7 @@ const AdminHeaderConfig = {
         navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: '../'
+        backUrl: '../database-tools/'
     },
     '/admin/admin-tools/merge-records/': {
         title: 'Merge Student Records',
@@ -133,7 +133,7 @@ const AdminHeaderConfig = {
         navSection: 'database-tools',
         showBackButton: true,
         showLogout: true,
-        backUrl: '../'
+        backUrl: '../database-tools/'
     },
     
     // Database Tools Pages
