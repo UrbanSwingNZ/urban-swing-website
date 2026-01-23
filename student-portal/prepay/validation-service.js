@@ -183,3 +183,8 @@ class ValidationService {
         // Don't directly control submit button - let updateSubmitButtonState handle it
     }
 }
+
+// Export for testing (Node.js only, doesn't affect browser usage)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ValidationService;
+}
