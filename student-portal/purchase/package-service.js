@@ -112,3 +112,8 @@ class PackageService {
         return description;
     }
 }
+
+// Export for testing (Node.js only, doesn't affect browser usage)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = PackageService;
+}
