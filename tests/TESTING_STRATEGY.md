@@ -9,17 +9,22 @@
 ## Implementation Status
 
 ### ✅ Phase 1: Unit Tests - COMPLETE
-- **39 unit tests** implemented and passing
-- **3 test suites** covering critical payment functions
+- **39 unit tests** implemented and passing ✅
+- **3 test suites** covering critical payment utilities
 - Located in `functions/__tests__/`
 - Run via `npm test` from root or functions directory
 - Test coverage includes:
   - Transaction type determination (8 tests)
   - Stripe configuration and pricing (10 tests)
   - Payment processing and refunds (21 tests)
+- **Note**: Complex HTTP/Callable Cloud Functions deferred to Phase 2 (Integration Tests)
 
-### 🔄 Phase 2-4: In Progress
-- Integration tests with Firebase emulators - Planned
+### 🔄 Phase 2: Integration Tests - PLANNED
+- Integration tests with Firebase Emulator - Planned
+- Will test: process-casual-payment, process-concession-purchase, create-student-payment, process-refund
+- Real HTTP calls to local functions with emulated Firestore
+
+### 🔄 Phase 3-4: E2E & Security - PLANNED
 - E2E tests with Playwright - Planned
 - Firestore security rules tests - Planned
 
@@ -49,15 +54,16 @@ The Urban Swing website requires a comprehensive multi-layered testing approach 
   - Customer creation (4 tests)
   - Payment processing (13 tests)
   - Refund operations (4 tests)
-- ⏳ `functions/process-casual-payment.js` - Casual entry payment logic (TODO)
-- ⏳ `functions/process-concession-purchase.js` - Concession package purchases (TODO)
-- ⏳ `functions/create-student-payment.js` - New student registration with payment (TODO)
-- ⏳ `functions/process-refund.js` - Refund processing (TODO)
+- 🔄 `functions/process-casual-payment.js` - **Integration tests only** (onRequest function)
+- 🔄 `functions/process-concession-purchase.js` - **Integration tests only** (onRequest function)
+- 🔄 `functions/create-student-payment.js` - **Integration tests only** (onRequest function)
+- 🔄 `functions/process-refund.js` - **Integration tests only** (onCall function)
 
 **Configuration & Utilities:**
 - ✅ `functions/stripe/stripe-config.js` - Pricing fetch logic from Firestore (**10 tests**)
 - ✅ `functions/utils/transaction-utils.js` - Transaction type determination (**8 tests**)
-- ⏳ `functions/email-notifications.js` - Email notification logic (TODO)
+- ⏳ `functions/email-notifications.js` - Email notification logic (TODO - callable function)
+- ⏳ `functions/user-management.js` - User CRUD operations (TODO - callable function)
 
 #### Testing Priorities
 
@@ -129,7 +135,28 @@ The Urban Swing website requires a comprehensive multi-layered testing approach 
 3. Test complete flows including database reads/writes
 4. Verify actual database state after operations
 5. Clean up test data in `afterEach` hooks
-   - Implemented Framework
+
+#### ⚠️ Testing onRequest HTTP Functions
+
+**Challenge Identified (January 24, 2026):**
+- `onRequest` functions (HTTP endpoints) with CORS middleware are complex to unit test
+- They require proper HTTP request/response objects with many properties
+- The CORS middleware wraps the handler, making direct testing difficult
+
+**Solution:**
+- **Unit tests**: Test the underlying utilities (stripe-payment.js, stripe-config.js) ✅
+- **Integration tests**: Test onRequest functions via Firebase Emulator with real HTTP calls
+- This provides better test coverage and is closer to production behavior
+
+**Functions Deferred to Integration Tests:**
+- `process-casual-payment.js` - onRequest with CORS
+- `process-concession-purchase.js` - onRequest with CORS  
+- `create-student-payment.js` - onRequest with CORS
+- `process-refund.js` - onCall (also complex to mock properly)
+
+These functions will be fully tested when Phase 2 (Integration Tests) is implemented.
+
+#### Implemented Framework
 
 **Jest + firebase-functions-test** ✅
 
