@@ -45,6 +45,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../index.html'
     },
+    '/admin/class-plan/': {
+        title: 'Class Plan',
+        activePage: 'class-plan',
+        navSection: 'main-admin',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../index.html'
+    },
     
     // Admin Tools Pages
     '/admin/admin-tools/': {
