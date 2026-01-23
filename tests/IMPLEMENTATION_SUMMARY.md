@@ -2,7 +2,7 @@
 
 **Date:** January 24, 2026  
 **Branch:** unit-tests  
-**Status:** ✅ Phase 1 Extended (107 tests)
+**Status:** ✅ Phase 1 Extended (151 tests)
 
 ## What Was Implemented
 
@@ -46,7 +46,7 @@
    - Error handling with fallback to expired cache
    - Null/undefined edge cases
 
-5. **`__tests__/frontend/validation-service.test.js`** (31 tests) ✨ NEW
+5. **`__tests__/frontend/validation-service.test.js`** (31 tests)
    - Date validation (isThursday, isPastDate with time normalization)
    - Comprehensive prepay date validation (validateClassDate)
    - Duplicate detection (checkForDuplicateClass) with Firestore queries
@@ -54,12 +54,20 @@
    - Backwards compatibility (classDate vs transactionDate)
    - Edge cases: reversed transactions, malformed data, Firestore errors
 
+6. **`__tests__/frontend/audit-logger.test.js`** (44 tests) ✨ NEW
+   - Date formatting (getNZDate) with NZ timezone, zero padding
+   - Audit log generation (generateAuditLog) for string and boolean fields
+   - Multiple field change tracking with admin/student attribution
+   - Audit log appending (appendAuditLog) to existing notes
+   - Integration tests for full workflow and audit trail building
+   - Edge cases: empty values, null handling, special characters, whitespace
+
 ### Test Results
 
 ```
-Test Suites: 5 passed, 5 total
-Tests:       107 passed, 107 total
-Time:        ~1.2s
+Test Suites: 6 passed, 6 total
+Tests:       151 passed, 151 total
+Time:        ~1.4s
 ```
 
 ## Test Coverage
@@ -69,7 +77,8 @@ Time:        ~1.2s
 - ✅ `stripe/stripe-config.js` - ~90% coverage
 - ✅ `stripe/stripe-payment.js` - ~85% coverage
 - ✅ `js/casual-rates-utils.js` - ~95% coverage
-- ✅ `student-portal/prepay/validation-service.js` - ~95% coverage ✨ NEW
+- ✅ `student-portal/prepay/validation-service.js` - ~95% coverage
+- ✅ `student-portal/js/audit-logger.js` - ~100% coverage ✨ NEW
 
 ### Deferred to Phase 2 (Integration Tests)
 - 🔄 `process-casual-payment.js` - onRequest function (requires Firebase Emulator)
@@ -180,10 +189,10 @@ it('should process a successful payment', async () => {
 
 ### Immediate Priorities (Frontend Unit Tests)
 1. **Test more frontend business logic** ⭐ HIGH VALUE
-   - `student-portal/js/audit-logger.js` - Audit log generation (NEXT RECOMMENDED)
-   - `admin/admin-tools/casual-rates/rates-actions.js` - Rate CRUD operations
+   - `admin/admin-tools/casual-rates/rates-actions.js` - Rate CRUD operations (NEXT RECOMMENDED)
    - `admin/admin-tools/concession-types/modal-handlers.js` - Package CRUD
-   - Pattern: Add conditional `module.exports` like casual-rates-utils.js
+   - `student-portal/components/validation-helpers.js` - Form validation utilities
+   - Pattern: Add conditional `module.exports` like already tested files
 
 ### Medium Term (Integration Tests)
 2. Add integration tests for HTTP Cloud Functions
@@ -227,7 +236,8 @@ it('should process a successful payment', async () => {
 - `functions/__tests__/stripe/stripe-config.test.js` (10 tests)
 - `functions/__tests__/stripe/stripe-payment.test.js` (21 tests)
 - `functions/__tests__/frontend/casual-rates-utils.test.js` (37 tests)
-- `functions/__tests__/frontend/validation-service.test.js` (31 tests) ✨ NEW
+- `functions/__tests__/frontend/validation-service.test.js` (31 tests)
+- `functions/__tests__/frontend/audit-logger.test.js` (44 tests) ✨ NEW
 
 ### Documentation
 - `tests/TESTING_STRATEGY.md` - Overall testing strategy
@@ -248,14 +258,14 @@ it('should process a successful payment', async () => {
 
 ## Success Metrics
 
-- ✅ **107 tests passing** (up from 76)
+- ✅ **151 tests passing** (up from 107)
 - ✅ 0 failing tests
-- ✅ ~1.2 second execution time (fast!)
+- ✅ ~1.4 second execution time (fast!)
 - ✅ High-priority payment functions covered
 - ✅ **Frontend business logic pattern established**
 - ✅ Comprehensive error handling tested
 - ✅ Mocking infrastructure in place for future tests
-- ✅ **5 test suites** (backend utilities + frontend business logic)
+- ✅ **6 test suites** (backend utilities + frontend business logic)
 
 ## Lessons Learned
 
@@ -281,7 +291,7 @@ it('should process a successful payment', async () => {
   }
   ```
 - Remains browser-compatible while enabling Jest testing
-- Successfully applied to: casual-rates-utils.js, validation-service.js
+- Successfully applied to: casual-rates-utils.js, validation-service.js, audit-logger.js
 - Additional requirement for classes: Mock `window` object in tests (`global.window = {}`)
 
 ### Unit Tests Should Focus on Behavior, Not State
