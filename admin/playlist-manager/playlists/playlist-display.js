@@ -9,6 +9,7 @@ import { showPlaylistMenu } from './playlist-ui-handlers.js';
 import { selectPlaylist } from './playlist-selection.js';
 import { formatTotalDuration } from '../tracks/track-utils.js';
 import { cachePlaylistTracks } from '../tracks/track-duplicates.js';
+import { savePlaylistOrderToFirestore, loadPlaylistOrderFromFirestore } from '../firestore-utils.js';
 
 /**
  * Calculate playlist duration by fetching first batch of tracks
@@ -86,10 +87,12 @@ export async function loadPlaylists() {
     );
     
     State.setAllPlaylists(playlistsWithDurations);
-    displayPlaylists(playlistsWithDurations);
     
-    // Apply saved custom playlist order if it exists
-    restorePlaylistOrder();
+    // Apply saved custom playlist order if it exists (before displaying)
+    await restorePlaylistOrder(playlistsWithDurations);
+    
+    // Display playlists with restored order
+    displayPlaylists(State.getAllPlaylists());
     
     // After loading playlists, check if there's a saved playlist to restore
     // Only restore if coming from a page refresh (not navigation/disconnect)
@@ -270,42 +273,55 @@ function initializePlaylistDragDrop() {
       // Prevent text selection during drag
       document.body.style.userSelect = 'none';
     },
-    onEnd: function(evt) {
+    onEnd: async function(evt) {
       // Re-enable text selection after drag
       document.body.style.userSelect = '';
       
-      // Save custom playlist order to localStorage
+      // Save custom playlist order to Firestore
       if (evt.oldIndex !== evt.newIndex) {
         console.log('Playlist moved from', evt.oldIndex, 'to', evt.newIndex);
-        savePlaylistOrder();
+        await savePlaylistOrder();
       }
     }
   });
 }
 
 /**
- * Save current playlist order to localStorage
+ * Save current playlist order to Firestore
  */
-function savePlaylistOrder() {
+async function savePlaylistOrder() {
   const listEl = document.getElementById('playlists-list');
   const playlistIds = Array.from(listEl.querySelectorAll('[data-playlist-id]'))
     .map(el => el.dataset.playlistId);
   
-  localStorage.setItem('playlist_order', JSON.stringify(playlistIds));
+  const spotifyUserId = State.getCurrentUserId();
+  if (spotifyUserId) {
+    await savePlaylistOrderToFirestore(spotifyUserId, playlistIds);
+  } else {
+    console.warn('No Spotify user ID available, saving to localStorage only');
+    localStorage.setItem('playlist_order', JSON.stringify(playlistIds));
+  }
   console.log('Playlist order saved:', playlistIds);
 }
 
 /**
- * Restore playlist order from localStorage
+ * Restore playlist order from Firestore
  */
-function restorePlaylistOrder() {
-  const savedOrder = localStorage.getItem('playlist_order');
-  if (!savedOrder) return;
+async function restorePlaylistOrder(playlists) {
+  const spotifyUserId = State.getCurrentUserId();
+  if (!spotifyUserId) {
+    console.warn('No Spotify user ID available, cannot restore playlist order');
+    return;
+  }
   
   try {
-    const playlistIds = JSON.parse(savedOrder);
-    const listEl = document.getElementById('playlists-list');
-    const allPlaylists = State.getAllPlaylists();
+    const playlistIds = await loadPlaylistOrderFromFirestore(spotifyUserId);
+    if (!playlistIds || playlistIds.length === 0) {
+      console.log('No saved playlist order found');
+      return;
+    }
+    
+    const allPlaylists = playlists || State.getAllPlaylists();
     
     // Reorder playlists in state to match saved order
     const orderedPlaylists = [];
@@ -323,11 +339,10 @@ function restorePlaylistOrder() {
     // Add any new playlists that weren't in saved order
     playlistMap.forEach(playlist => orderedPlaylists.push(playlist));
     
-    // Update state and re-display
+    // Update state only (caller will handle display)
     State.setAllPlaylists(orderedPlaylists);
-    displayPlaylists(orderedPlaylists);
     
-    console.log('Playlist order restored');
+    console.log('Playlist order restored from Firestore');
   } catch (error) {
     console.error('Failed to restore playlist order:', error);
   }
