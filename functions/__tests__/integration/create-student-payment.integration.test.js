@@ -138,12 +138,8 @@ describe('create-student-payment Integration Tests', () => {
         paymentMethodId: 'pm_test_123',
       });
       
-      // May be 400 (validation) or 500 (fetchPricing error)
-      expect([400, 500]).toContain(response.status);
-      if (response.status === 400) {
-        // Could be "class date" or "Invalid package ID" depending on execution order
-        expect(response.data.error).toMatch(/class date|Invalid package ID/i);
-      }
+      expect(response.status).toBe(400);
+      expect(response.data.error).toContain('class date');
     });
 
     test('should reject casual-rate with null firstClassDate', async () => {
@@ -156,11 +152,8 @@ describe('create-student-payment Integration Tests', () => {
         paymentMethodId: 'pm_test_123',
       });
       
-      // May be 400 (validation) or 500 (fetchPricing error)
-      expect([400, 500]).toContain(response.status);
-      if (response.status === 400) {
-        expect(response.data.error).toContain('class date');
-      }
+      expect(response.status).toBe(400);
+      expect(response.data.error).toContain('class date');
     });
   });
 
@@ -219,11 +212,8 @@ describe('create-student-payment Integration Tests', () => {
         paymentMethodId: 'pm_test_123',
       });
       
-      // Function returns 409 Conflict for duplicate, or 500 from fetchPricing
-      expect([409, 500]).toContain(response.status);
-      if (response.status === 409) {
-        expect(response.data.error).toContain('already exists');
-      }
+      expect(response.status).toBe(409);
+      expect(response.data.error).toContain('already exists');
     });
 
     test('should normalize email to lowercase', async () => {

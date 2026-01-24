@@ -79,7 +79,22 @@ exports.createStudentWithPayment = onRequest(
           return;
         }
         
-        // Fetch current pricing to validate package ID
+        // Normalize email
+        const email = data.email.toLowerCase().trim();
+        
+        // Step 1: Check if student already exists (BEFORE calling Stripe)
+        const db = admin.firestore();
+        const studentSnapshot = await db.collection('students')
+          .where('email', '==', email)
+          .limit(1)
+          .get();
+        
+        if (!studentSnapshot.empty) {
+          response.status(409).json({ error: 'A student with this email already exists' });
+          return;
+        }
+        
+        // Step 2: Fetch current pricing to validate package ID
         let packages;
         try {
           packages = await fetchPricing();
@@ -104,56 +119,6 @@ exports.createStudentWithPayment = onRequest(
         
         if (!data.paymentMethodId) {
           response.status(400).json({ error: 'Missing payment method' });
-          return;
-        }
-        
-        // Normalize email
-        const email = data.email.toLowerCase().trim();
-        
-        // Step 1: Check if student already exists
-        const db = admin.firestore();
-        const studentSnapshot = await db.collection('students')
-          .where('email', '==', email)
-          .limit(1)
-          .get();
-        
-        if (!studentSnapshot.empty) {
-          // Student exists - check for duplicate casual class purchase if this is a casual rate
-          if (packageInfo.type === 'casual-rate' && data.firstClassDate) {
-            const existingStudent = studentSnapshot.docs[0];
-            const existingStudentId = existingStudent.id;
-            
-            const classDateObj = new Date(data.firstClassDate);
-            const startOfDay = new Date(classDateObj);
-            startOfDay.setHours(0, 0, 0, 0);
-            
-            const endOfDay = new Date(classDateObj);
-            endOfDay.setHours(23, 59, 59, 999);
-            
-            // Query for existing casual transactions for this student on this date
-            const existingTransactions = await db.collection('transactions')
-              .where('studentId', '==', existingStudentId)
-              .where('classDate', '>=', admin.firestore.Timestamp.fromDate(startOfDay))
-              .where('classDate', '<=', admin.firestore.Timestamp.fromDate(endOfDay))
-              .get();
-            
-            // Check if any non-reversed casual/casual-student transactions exist
-            const hasCasualClass = existingTransactions.docs.some(doc => {
-              const txData = doc.data();
-              return (txData.type === 'casual' || txData.type === 'casual-student') && 
-                     !txData.reversed;
-            });
-            
-            if (hasCasualClass) {
-              console.log('Duplicate casual class purchase prevented for existing student:', existingStudentId, 'on', data.firstClassDate);
-              response.status(409).json({ 
-                error: 'You already have a class booked for this date. Please select a different date.' 
-              });
-              return;
-            }
-          }
-          
-          response.status(409).json({ error: 'A student with this email already exists' });
           return;
         }
         
