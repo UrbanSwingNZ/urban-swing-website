@@ -158,9 +158,17 @@ describe('process-casual-payment Integration Tests', () => {
 
   describe('Duplicate detection', () => {
     test('should detect duplicate casual payment for same date', async () => {
-      // Create first transaction with proper Timestamp
+      // First create the student
       const classDate = new Date('2026-01-23T00:00:00Z');
       await seedFirestore({
+        students: {
+          'test-student-456': {
+            firstName: 'Jane',
+            lastName: 'Student',
+            email: 'jane@example.com',
+            studentId: 'test-student-456',
+          },
+        },
         transactions: {
           'trans-1': {
             studentId: 'test-student-456',

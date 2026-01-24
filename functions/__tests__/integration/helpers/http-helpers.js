@@ -73,24 +73,50 @@ async function callFunctionGet(functionName, params = {}, options = {}) {
 
 /**
  * Call a Callable Cloud Function (onCall)
+ * @param {string} functionName - Name of the function
+ * @param {object} data - Data to send to the function
+ * @param {object|null} auth - Auth context { uid: 'user-id' } or null for unauthenticated
+ * @param {object} options - Options like { throwOnError: false }
  */
-async function callCallableFunction(functionName, data = {}, auth = null) {
+async function callCallableFunction(functionName, data = {}, auth = null, options = {}) {
   const url = `${FUNCTIONS_BASE_URL}/${functionName}`;
+  const { throwOnError = false } = options;
   
   const headers = {
     'Content-Type': 'application/json',
   };
   
-  // Add auth header if provided
-  if (auth) {
-    headers['Authorization'] = `Bearer ${auth.token}`;
+  // For Firebase Callable functions in the emulator, we simulate auth
+  // The emulator doesn't support real auth, so we need to structure the request differently
+  // We'll pass auth data in the request body under a special __auth key
+  let requestData = { data };
+  
+  if (auth && auth.uid) {
+    // Pass auth context in the request - emulator will use this
+    requestData = {
+      data,
+      context: {
+        auth: {
+          uid: auth.uid,
+          token: {}
+        }
+      }
+    };
   }
   
   try {
-    const response = await axios.post(url, { data }, {
+    const response = await axios.post(url, requestData, {
       headers,
       validateStatus: () => true,
     });
+    
+    // If throwOnError is true and the function threw an error, throw it here
+    if (throwOnError && response.data?.error) {
+      const error = new Error(response.data.error.message || 'Function error');
+      error.code = response.data.error.status || response.data.error.code;
+      error.details = response.data.error.details;
+      throw error;
+    }
     
     return {
       status: response.status,
@@ -98,6 +124,32 @@ async function callCallableFunction(functionName, data = {}, auth = null) {
       headers: response.headers,
     };
   } catch (error) {
+    // If it's our formatted error and throwOnError is true, rethrow it
+    if (throwOnError && error.code) {
+      throw error;
+    }
+    
+    // Handle network/axios errors
+    if (error.response?.data?.error) {
+      if (throwOnError) {
+        const funcError = new Error(error.response.data.error.message || 'Function error');
+        funcError.code = error.response.data.error.status || error.response.data.error.code;
+        funcError.details = error.response.data.error.details;
+        throw funcError;
+      }
+      
+      return {
+        status: error.response?.status || 500,
+        data: error.response?.data || { error: error.message },
+        headers: error.response?.headers || {},
+        error: error.message,
+      };
+    }
+    
+    if (throwOnError) {
+      throw error;
+    }
+    
     return {
       status: error.response?.status || 500,
       data: error.response?.data || { error: error.message },

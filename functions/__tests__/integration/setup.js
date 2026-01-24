@@ -10,7 +10,10 @@ const {
   assertFails,
 } = require('@firebase/rules-unit-testing');
 
+const admin = require('firebase-admin');
+
 let testEnv;
+let adminInitialized = false;
 
 /**
  * Initialize the Firebase Test Environment before all tests
@@ -18,6 +21,18 @@ let testEnv;
 async function setupTestEnvironment() {
   if (testEnv) {
     return testEnv;
+  }
+
+  // Initialize firebase-admin for direct Firestore access
+  if (!adminInitialized && !admin.apps.length) {
+    admin.initializeApp({
+      projectId: 'directed-curve-447204-j4',
+    });
+    admin.firestore().settings({
+      host: 'localhost:8080',
+      ssl: false,
+    });
+    adminInitialized = true;
   }
 
   testEnv = await initializeTestEnvironment({
@@ -71,6 +86,18 @@ function getUnauthenticatedFirestore() {
 }
 
 /**
+ * Get an admin Firestore instance (bypasses security rules)
+ * Use this for test setup that needs to write data without security rule checks
+ */
+function getAdminFirestore() {
+  if (!testEnv) {
+    throw new Error('Test environment not initialized');
+  }
+  // Return the admin Firestore instance
+  return admin.firestore();
+}
+
+/**
  * Seed test data into Firestore
  */
 async function seedFirestore(collections) {
@@ -91,6 +118,7 @@ module.exports = {
   cleanupTestEnvironment,
   getAuthenticatedFirestore,
   getUnauthenticatedFirestore,
+  getAdminFirestore,
   seedFirestore,
   assertSucceeds,
   assertFails,
