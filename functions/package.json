@@ -10,14 +10,17 @@
     "logs": "firebase functions:log",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathIgnorePatterns=integration",
+    "test:integration": "jest --testPathPatterns=integration",
+    "emulators": "firebase emulators:start --only functions,firestore",
+    "test:integration:emulator": "firebase emulators:exec --only functions,firestore 'npm run test:integration'"
   },
   "engines": {
     "node": "22"
   },
   "main": "index.js",
   "dependencies": {
-    "axios": "^1.12.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "firebase-admin": "^12.6.0",
@@ -26,7 +29,9 @@
     "stripe": "^19.2.0"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
     "@types/jest": "^30.0.0",
+    "axios": "^1.13.2",
     "eslint": "^8.15.0",
     "eslint-config-google": "^0.14.0",
     "firebase-functions-test": "^3.1.0",
