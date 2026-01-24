@@ -180,12 +180,8 @@ describe('process-casual-payment Integration Tests', () => {
         paymentMethodId: 'pm_test_123',
       });
       
-      // May be 400 (duplicate), 404 (rate not found), or 500 (Stripe error)
-      // All indicate the function is working
-      expect([400, 404, 500]).toContain(response.status);
-      if (response.status === 400) {
-        expect(response.data.error).toContain('already paid');
-      }
+      expect(response.status).toBe(409);
+      expect(response.data.error).toContain('already');
     });
 
     test('should allow casual payment for different dates', async () => {
