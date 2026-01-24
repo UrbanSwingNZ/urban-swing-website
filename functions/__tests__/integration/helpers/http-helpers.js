@@ -7,7 +7,7 @@
 const axios = require('axios');
 
 // Cloud Functions emulator URL
-const FUNCTIONS_BASE_URL = 'http://localhost:5001/urban-swing-test/us-central1';
+const FUNCTIONS_BASE_URL = 'http://localhost:5001/directed-curve-447204-j4/us-central1';
 
 /**
  * Make a POST request to a Cloud Function

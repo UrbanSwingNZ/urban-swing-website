@@ -21,7 +21,7 @@ async function setupTestEnvironment() {
   }
 
   testEnv = await initializeTestEnvironment({
-    projectId: 'urban-swing-test',
+    projectId: 'directed-curve-447204-j4',
     firestore: {
       host: 'localhost',
       port: 8080,
@@ -74,13 +74,15 @@ function getUnauthenticatedFirestore() {
  * Seed test data into Firestore
  */
 async function seedFirestore(collections) {
-  const db = testEnv.withSecurityRulesDisabled((context) => context.firestore());
-  
-  for (const [collectionName, documents] of Object.entries(collections)) {
-    for (const [docId, data] of Object.entries(documents)) {
-      await db.collection(collectionName).doc(docId).set(data);
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore();
+    
+    for (const [collectionName, documents] of Object.entries(collections)) {
+      for (const [docId, data] of Object.entries(documents)) {
+        await db.collection(collectionName).doc(docId).set(data);
+      }
     }
-  }
+  });
 }
 
 module.exports = {
