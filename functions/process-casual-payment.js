@@ -96,7 +96,8 @@ exports.processCasualPayment = onRequest(
           
           // Check if classDate is on the same day
           if (txData.classDate) {
-            const txDate = txData.classDate.toDate();
+            // Handle both Firestore Timestamp and ISO string formats
+            const txDate = txData.classDate.toDate ? txData.classDate.toDate() : new Date(txData.classDate);
             const txStartOfDay = new Date(txDate);
             txStartOfDay.setHours(0, 0, 0, 0);
             
