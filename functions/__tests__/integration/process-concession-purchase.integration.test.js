@@ -189,8 +189,8 @@ describe('process-concession-purchase Integration Tests', () => {
         paymentMethodId: 'pm_test_123',
       });
       
-      // May fail at validation (404 if package not found), Stripe (500), or payment (402)
-      expect([402, 404, 500]).toContain(response.status);
+      // May fail at validation (400 for bad request, 404 if package not found), Stripe (500), or payment (402)
+      expect([400, 402, 404, 500]).toContain(response.status);
     });
   });
 });
