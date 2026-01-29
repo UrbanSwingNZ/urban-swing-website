@@ -298,6 +298,24 @@
   font-weight: 700;
 }
 
+/* Duration wrapper for mobile BPM display */
+.duration-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.duration-time {
+  /* Default: show only duration time */
+}
+
+.duration-bpm-mobile {
+  display: none; /* Hidden by default on desktop */
+  font-size: 0.75rem;
+  color: var(--gray-600);
+  margin-top: 2px;
+}
+
 /* Mobile Tracks */
 @media (max-width: 768px) {
   .tracks-container {
@@ -347,6 +365,11 @@
   .tracks-table thead th:nth-child(8),
   .tracks-table tbody td:nth-child(8) {
     display: none;
+  }
+  
+  /* Show BPM as text under duration on mobile */
+  .duration-bpm-mobile {
+    display: block !important;
   }
   
   /* Show artist under track name on mobile */
