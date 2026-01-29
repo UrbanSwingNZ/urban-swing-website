@@ -122,7 +122,12 @@ function renderTrackBatch(tracks, startIndex) {
       <td class="col-artist">
         <div class="track-artist">${artistNames}</div>
       </td>
-      <td class="col-duration">${duration}</td>
+      <td class="col-duration">
+        <div class="duration-wrapper">
+          <div class="duration-time">${duration}</div>
+          <div class="duration-bpm-mobile">${bpm} BPM</div>
+        </div>
+      </td>
       <td class="col-bpm">
         <span class="bpm-badge">${bpm}</span>
       </td>
