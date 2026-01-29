@@ -140,4 +140,9 @@ button:not(.track-menu button):not(.playlist-menu button),
     font-size: 0.8rem !important;
     height: 32px !important;
   }
+
+  /* Hide "Get BPM Data" button on mobile */
+  #copy-playlist-link-btn {
+    display: none !important;
+  }
 }
