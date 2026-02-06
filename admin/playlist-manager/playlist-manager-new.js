@@ -301,12 +301,12 @@ async function handleRefreshToken() {
         detail: { expiresAt: spotifyAPI.tokenExpiry }
       }));
     } else {
-      UI.showError('Failed to refresh token. Please reconnect to Spotify.');
+      UI.showError('Token refresh failed. The refresh service may not be deployed yet. Please reconnect to Spotify to continue.');
       Auth.handleSpotifyDisconnect();
     }
   } catch (error) {
     console.error('Error refreshing token:', error);
-    UI.showError('Failed to refresh token. Please reconnect to Spotify.');
+    UI.showError('Token refresh failed. The refresh service may not be deployed yet. Please reconnect to Spotify to continue.');
     Auth.handleSpotifyDisconnect();
   } finally {
     UI.showLoading(false);
