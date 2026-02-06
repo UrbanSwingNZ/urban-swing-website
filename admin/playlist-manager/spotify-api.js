@@ -70,8 +70,8 @@ class SpotifyAPI {
       // Get Spotify user ID from localStorage
       const userId = localStorage.getItem('spotify_user_id');
       if (!userId) {
-        console.error('No Spotify user ID found');
-        return false;
+        console.error('No Spotify user ID found - need to re-authenticate');
+        throw new Error('NO_USER_ID');
       }
       
       // Call Cloudflare Worker
@@ -86,9 +86,23 @@ class SpotifyAPI {
       });
       
       if (!response.ok) {
-        const error = await response.json();
-        console.error('Refresh failed:', error.error);
-        return false;
+        // If we get a 404, the worker isn't deployed or the endpoint doesn't exist
+        if (response.status === 404) {
+          console.error('Refresh endpoint not found - Cloudflare Worker may not be deployed');
+          throw new Error('WORKER_NOT_DEPLOYED');
+        }
+        
+        // Try to get error details
+        let errorMessage = 'Unknown error';
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+        } catch (e) {
+          // Response wasn't JSON
+        }
+        
+        console.error('Refresh failed:', errorMessage);
+        throw new Error(errorMessage);
       }
       
       const tokens = await response.json();
@@ -100,7 +114,9 @@ class SpotifyAPI {
       return true;
       
     } catch (error) {
-      console.error('Token refresh error:', error);
+      console.error('Token refresh error:', error.message || error);
+      
+      // Return false for expected errors that require re-authentication
       return false;
     }
   }

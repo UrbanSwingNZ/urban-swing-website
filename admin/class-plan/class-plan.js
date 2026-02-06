@@ -281,7 +281,7 @@ async function loadClassPlans() {
     
     try {
         const snapshot = await window.db.collection('classPlans')
-            .orderBy('date', 'asc')
+            .orderBy('date', 'desc')
             .get();
         
         const container = document.getElementById('class-plans-container');
