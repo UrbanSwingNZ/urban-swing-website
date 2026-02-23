@@ -343,9 +343,16 @@ async function confirmRemovePlaylistFromLibrary(playlist) {
       State.setCurrentPlaylistId(null);
       State.setCurrentTracks([]);
       State.setFilteredTracks([]);
-      document.getElementById('playlist-tracks').innerHTML = '';
-      document.getElementById('playlist-name').textContent = 'Select a playlist';
-      document.getElementById('track-search').value = '';
+      
+      // Clear UI elements if they exist
+      const playlistTracksEl = document.getElementById('playlist-tracks');
+      const playlistNameEl = document.getElementById('playlist-name');
+      const trackSearchEl = document.getElementById('track-search');
+      
+      if (playlistTracksEl) playlistTracksEl.innerHTML = '';
+      if (playlistNameEl) playlistNameEl.textContent = 'Select a playlist';
+      if (trackSearchEl) trackSearchEl.value = '';
+      
       updateSaveOrderButton();
     }
     
