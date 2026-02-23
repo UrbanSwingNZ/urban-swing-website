@@ -12,12 +12,11 @@ const corsHeaders = {
 
 // Firestore REST API helper
 async function firestoreRequest(method, path, data, env) {
-  const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents${path}`;
+  const url = `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/databases/(default)/documents${path}?key=${env.FIREBASE_API_KEY}`;
   
   const options = {
     method: method,
     headers: {
-      'Authorization': `Bearer ${env.FIREBASE_API_KEY}`,
       'Content-Type': 'application/json',
     },
   };
