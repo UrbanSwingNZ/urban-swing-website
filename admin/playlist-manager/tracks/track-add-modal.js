@@ -5,6 +5,7 @@ import * as State from '../playlist-state.js';
 import { showError } from '../playlist-ui.js';
 import { loadTracks } from './track-loader.js';
 import { handleTrackPlayPause, stopCurrentAudio } from './track-audio.js';
+import { addTracksToCache, refreshTrackHighlighting } from './track-duplicates.js';
 
 // ========================================
 // ADD TRACKS MODAL
@@ -226,6 +227,10 @@ export async function handleAddSelectedTracks() {
     const result = await spotifyAPI.addTracksToPlaylist(currentPlaylistId, trackUris);
     console.log('Add tracks result:', result);
     
+    // Update cache for the current playlist
+    const trackIds = selectedTracks.map(track => track.id);
+    addTracksToCache(currentPlaylistId, trackIds);
+    
     // Stop any playing audio
     await stopCurrentAudio();
     
@@ -239,6 +244,9 @@ export async function handleAddSelectedTracks() {
     if (currentPlaylist) {
       await loadTracks(currentPlaylistId);
     }
+    
+    // Refresh highlighting in case we're viewing a different playlist
+    refreshTrackHighlighting();
     
   } catch (error) {
     console.error('Error adding tracks:', error);

@@ -6,6 +6,7 @@ import { showLoading, showError, showSuccess } from '../playlist-ui.js';
 import { updatePlaylistTrackCount } from '../playlist-operations.js';
 import { loadTracks } from './track-loader.js';
 import { copyBPMData } from './bpm-service.js';
+import { addTracksToCache, removeTrackFromCache, refreshTrackHighlighting } from './track-duplicates.js';
 
 // ========================================
 // TRACK ACTIONS MENU
@@ -154,6 +155,12 @@ export async function handleConfirmAction() {
       // Update destination playlist track count and duration (+1)
       await updatePlaylistTrackCount(destinationId, 1, track.duration_ms);
       
+      // Update cache for destination playlist
+      addTracksToCache(destinationId, [track.id]);
+      
+      // Refresh highlighting on current view
+      refreshTrackHighlighting();
+      
       showSuccess(`Track copied successfully!`);
     } else if (action === 'move') {
       await spotifyAPI.moveTrackToPlaylist(track.uri, fromPlaylistId, destinationId);
@@ -163,6 +170,10 @@ export async function handleConfirmAction() {
       
       // Update source playlist track count and duration (-1)
       await updatePlaylistTrackCount(fromPlaylistId, -1, track.duration_ms);
+      
+      // Update cache: add to destination, remove from source
+      addTracksToCache(destinationId, [track.id]);
+      removeTrackFromCache(fromPlaylistId, track.id);
       
       showSuccess(`Track moved successfully!`);
       
@@ -215,6 +226,12 @@ async function removeTrackFromPlaylist(trackUri, trackName) {
       await stopCurrentAudio();
     }
     
+    // Extract track ID from URI (format: spotify:track:TRACK_ID)
+    const trackId = trackUri.split(':')[2];
+    
+    // Remove from cache
+    removeTrackFromCache(currentPlaylistId, trackId);
+    
     // Update playlist track count (-1)
     await updatePlaylistTrackCount(currentPlaylistId, -1);
     
@@ -223,6 +240,9 @@ async function removeTrackFromPlaylist(trackUri, trackName) {
     if (currentPlaylist) {
       await loadTracks(currentPlaylistId);
     }
+    
+    // Refresh highlighting in other views
+    refreshTrackHighlighting();
     
   } catch (error) {
     console.error('Error removing track:', error);
