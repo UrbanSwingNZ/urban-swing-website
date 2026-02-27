@@ -88,7 +88,7 @@ async function processAdminRegistration(formData) {
                 emailConsent: formData.emailConsent,
                 packageId: selectedPackageId,
                 paymentMethodId: paymentMethodId,
-                firstClassDate: formData.firstClassDate ? formData.firstClassDate.toISOString() : null
+                firstClassDate: formData.firstClassDate
             })
         });
         
