@@ -7,7 +7,7 @@ const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
 const { createCustomer, processPayment } = require('./stripe/stripe-payment');
 const { fetchPricing } = require('./stripe/stripe-config');
-const { determineTransactionType } = require('./utils/transaction-utils');
+const { determineTransactionType, parseDateAsNZ } = require('./utils/transaction-utils');
 const cors = require('cors')({ origin: true });
 
 /**
@@ -91,7 +91,8 @@ exports.processCasualPayment = onRequest(
         
         // Step 2.5: Check for duplicate casual class purchase on same date (casual-rate only)
         if (rateInfo.type === 'casual-rate') {
-          const classDateObj = new Date(data.classDate);
+          // Parse date string as NZ timezone
+          const classDateObj = parseDateAsNZ(data.classDate);
           const startOfDay = new Date(classDateObj);
           startOfDay.setHours(0, 0, 0, 0);
           
@@ -219,7 +220,7 @@ exports.processCasualPayment = onRequest(
           packageId: data.rateId,
           packageName: rateInfo.name,
           packageType: rateInfo.type,
-          classDate: admin.firestore.Timestamp.fromDate(new Date(data.classDate)),
+          classDate: admin.firestore.Timestamp.fromDate(parseDateAsNZ(data.classDate)),
           amountPaid: paymentResult.amount / 100, // Convert from cents to dollars
           paymentMethod: 'online',
           paymentIntentId: paymentResult.paymentIntentId,

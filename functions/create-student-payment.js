@@ -7,7 +7,7 @@ const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
 const { createCustomer, processPayment } = require('./stripe/stripe-payment');
 const { fetchPricing } = require('./stripe/stripe-config');
-const { determineTransactionType } = require('./utils/transaction-utils');
+const { determineTransactionType, parseDateAsNZ } = require('./utils/transaction-utils');
 const cors = require('cors')({ origin: true });
 
 /**
@@ -123,7 +123,8 @@ exports.createStudentWithPayment = onRequest(
             const existingStudent = studentSnapshot.docs[0];
             const existingStudentId = existingStudent.id;
             
-            const classDateObj = new Date(data.firstClassDate);
+            // Parse date string as NZ timezone
+            const classDateObj = parseDateAsNZ(data.firstClassDate);
             const startOfDay = new Date(classDateObj);
             startOfDay.setHours(0, 0, 0, 0);
             
@@ -269,7 +270,10 @@ exports.createStudentWithPayment = onRequest(
         
         // Add classDate for casual-rate purchases
         if (packageInfo.type === 'casual-rate' && data.firstClassDate && data.firstClassDate !== 'null') {
-          transactionData.classDate = admin.firestore.Timestamp.fromDate(new Date(data.firstClassDate));
+          // Parse date string (YYYY-MM-DD) as NZ timezone at noon
+          const classDate = parseDateAsNZ(data.firstClassDate);
+          transactionData.classDate = admin.firestore.Timestamp.fromDate(classDate);
+          console.log('Class date stored as:', classDate.toISOString(), '(NZ:', classDate.toLocaleString('en-NZ', {timeZone: 'Pacific/Auckland'}), ')');
         }
         
         await db.collection('transactions').doc(transactionId).set(transactionData);

@@ -306,6 +306,8 @@ class DatePicker {
         const [year, month, day] = dateStr.split('-').map(Number);
         // Create date at noon local time to avoid timezone boundary issues
         this.selectedDate = new Date(year, month - 1, day, 12, 0, 0, 0);
+        // Store the date string to avoid timezone issues when sending to server
+        this.selectedDateString = dateStr;
         
         // Format date for display (d/mm/yyyy)
         const displayDay = this.selectedDate.getDate();
@@ -316,7 +318,7 @@ class DatePicker {
         this.dateInput.value = formattedDate;
         this.calendar.style.display = 'none';
         
-        console.log('Date selected:', this.selectedDate);
+        console.log('Date selected:', dateStr);
         
         // Call callback if provided
         if (this.options.onDateSelected && typeof this.options.onDateSelected === 'function') {
@@ -330,6 +332,15 @@ class DatePicker {
      */
     getSelectedDate() {
         return this.selectedDate;
+    }
+    
+    /**
+     * Public method to get the selected date as YYYY-MM-DD string
+     * Use this instead of getSelectedDate().toISOString() to avoid browser timezone issues
+     * @returns {string|null} The selected date string (YYYY-MM-DD) or null if no date is selected
+     */
+    getSelectedDateString() {
+        return this.selectedDateString;
     }
     
     /**
@@ -356,6 +367,7 @@ class DatePicker {
      */
     clearDate() {
         this.selectedDate = null;
+        this.selectedDateString = null;
         this.dateInput.value = '';
     }
     
@@ -380,6 +392,7 @@ class DatePicker {
         this.calendar.style.display = 'none';
         this.dateInput.value = '';
         this.selectedDate = null;
+        this.selectedDateString = null;
     }
 }
 
