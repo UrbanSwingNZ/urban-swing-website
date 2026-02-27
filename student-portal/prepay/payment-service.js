@@ -161,7 +161,7 @@ class PaymentService {
                 body: JSON.stringify({
                     studentId: studentId,
                     rateId: rateId,
-                    classDate: classDate.toISOString(),
+                    classDate: classDate,
                     paymentMethodId: paymentMethodResult.paymentMethod.id,
                     returnUrl: window.location.href
                 })
