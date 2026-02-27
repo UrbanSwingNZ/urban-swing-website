@@ -246,6 +246,7 @@ async function handleFormSubmit(event) {
     }
     
     const selectedDate = datePicker.getSelectedDate();
+    const selectedDateString = datePicker.getSelectedDateString();
     const classDate = document.getElementById('class-date').value;
     
     if (!classDate || !selectedDate) {
@@ -261,7 +262,7 @@ async function handleFormSubmit(event) {
     }
     
     // Process payment
-    await processPayment(selectedRate, selectedDate);
+    await processPayment(selectedRate, selectedDateString);
 }
 
 /**

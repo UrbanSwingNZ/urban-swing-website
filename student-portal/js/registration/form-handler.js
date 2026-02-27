@@ -122,7 +122,7 @@ function getFormData() {
         termsAccepted: document.getElementById('termsAccepted').checked,
         emailConsent: document.getElementById('emailConsent').checked,
         rateType: document.querySelector('input[name="rateType"]:checked')?.value || '',
-        firstClassDate: getDatePicker() ? getDatePicker().getSelectedDate() : null,
+        firstClassDate: getDatePicker() ? getDatePicker().getSelectedDateString() : null,
         adminNotes: isAdminUser() ? (document.getElementById('adminNotes')?.value.trim() || '') : ''
     };
 }
