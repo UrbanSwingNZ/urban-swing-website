@@ -121,7 +121,7 @@ export function populateMobilePlaylistList(playlists, selectedPlaylistId) {
         <img src="${imageUrl}" alt="${playlist.name}">
         <div class="playlist-info">
           <p class="playlist-name">${playlist.name}</p>
-          <p class="playlist-tracks">${playlist.tracks?.total || 0} tracks • ${formattedDuration}</p>
+          <p class="playlist-tracks">${playlist.items?.total || 0} tracks • ${formattedDuration}</p>
         </div>
       </a>
     `;

@@ -229,10 +229,9 @@ class SpotifyAPI {
   }
 
   async createPlaylist(name, description = '', isPublic = false, isCollaborative = false) {
-    // First get current user ID
-    const user = await this.getCurrentUser();
-    
-    return await this.makeRequest(`/users/${user.id}/playlists`, {
+    // POST /me/playlists — creates playlist for the authenticated user
+    // (Migrated from POST /users/{id}/playlists, removed March 2026)
+    return await this.makeRequest(`/me/playlists`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -255,8 +254,8 @@ class SpotifyAPI {
   // ========================================
 
   async getPlaylistTracks(playlistId, limit = 100, offset = 0) {
-    // Use the direct tracks endpoint - it's simpler and more reliable
-    return await this.makeRequest(`/playlists/${playlistId}/tracks?limit=${limit}&offset=${offset}`);
+    // Migrated from /tracks to /items (March 2026 API change)
+    return await this.makeRequest(`/playlists/${playlistId}/items?limit=${limit}&offset=${offset}`);
   }
 
   async getAllPlaylistTracks(playlistId) {
@@ -344,7 +343,8 @@ class SpotifyAPI {
   // ========================================
 
   async reorderPlaylistTracks(playlistId, rangeStart, insertBefore, rangeLength = 1) {
-    return await this.makeRequest(`/playlists/${playlistId}/tracks`, {
+    // Migrated from /tracks to /items (March 2026 API change)
+    return await this.makeRequest(`/playlists/${playlistId}/items`, {
       method: 'PUT',
       body: JSON.stringify({
         range_start: rangeStart,
@@ -360,18 +360,20 @@ class SpotifyAPI {
       body.position = position;
     }
 
-    return await this.makeRequest(`/playlists/${playlistId}/tracks`, {
+    // Migrated from /tracks to /items (March 2026 API change)
+    return await this.makeRequest(`/playlists/${playlistId}/items`, {
       method: 'POST',
       body: JSON.stringify(body)
     });
   }
 
   async removeTracksFromPlaylist(playlistId, trackUris) {
-    const tracks = trackUris.map(uri => ({ uri }));
+    // Body key renamed from 'tracks' to 'items' (March 2026 API change)
+    const items = trackUris.map(uri => ({ uri }));
     
-    return await this.makeRequest(`/playlists/${playlistId}/tracks`, {
+    return await this.makeRequest(`/playlists/${playlistId}/items`, {
       method: 'DELETE',
-      body: JSON.stringify({ tracks })
+      body: JSON.stringify({ items })
     });
   }
 
@@ -421,7 +423,8 @@ class SpotifyAPI {
   // Search
   // ========================================
 
-  async searchTracks(query, limit = 20) {
+  async searchTracks(query, limit = 10) {
+    // Note: Search limit max reduced from 50 to 10 (March 2026 API change)
     if (!query || query.trim().length === 0) {
       return [];
     }
@@ -453,8 +456,10 @@ class SpotifyAPI {
 
   async deletePlaylist(playlistId) {
     // Note: Spotify API doesn't allow deleting playlists directly
-    // But we can "unfollow" a playlist, which removes it from the user's library
-    return await this.makeRequest(`/playlists/${playlistId}/followers`, {
+    // We remove it from the user's library using DELETE /me/library
+    // uris is a query parameter, not a JSON body (March 2026 API change)
+    const uris = encodeURIComponent(`spotify:playlist:${playlistId}`);
+    return await this.makeRequest(`/me/library?uris=${uris}`, {
       method: 'DELETE'
     });
   }

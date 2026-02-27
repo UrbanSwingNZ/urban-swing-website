@@ -62,7 +62,7 @@ export async function performPlaylistSelection(playlist) {
   document.getElementById('playlist-image').src = imageUrl;
   document.getElementById('playlist-name').textContent = playlist.name;
   document.getElementById('playlist-description').textContent = playlist.description || 'No description';
-  document.getElementById('playlist-track-count').textContent = playlist.tracks.total;
+  document.getElementById('playlist-track-count').textContent = playlist.items.total;
   
   // Load tracks (will be imported from track-operations)
   await loadTracks(playlist.id);

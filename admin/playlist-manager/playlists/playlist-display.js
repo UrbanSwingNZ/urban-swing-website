@@ -161,7 +161,7 @@ export function displayPlaylists(playlists) {
         <img src="${imageUrl}" alt="${playlist.name}">
         <div class="playlist-item-info">
           <div class="playlist-item-name">${playlist.name}</div>
-          <div class="playlist-item-count">${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span></div>
+          <div class="playlist-item-count">${playlist.items.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span></div>
         </div>
         <div class="playlist-item-actions">
           <button class="playlist-menu-btn" data-playlist-id="${playlist.id}">
@@ -358,7 +358,7 @@ export async function updatePlaylistTrackCount(playlistId, delta, trackDuration 
   
   if (playlist) {
     // Update the count
-    playlist.tracks.total += delta;
+    playlist.items.total += delta;
     
     // Update the duration if provided
     if (trackDuration) {
@@ -375,7 +375,7 @@ export async function updatePlaylistTrackCount(playlistId, delta, trackDuration 
     if (playlistItem) {
       const countEl = playlistItem.querySelector('.playlist-item-count');
       if (countEl) {
-        countEl.innerHTML = `${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
+        countEl.innerHTML = `${playlist.items.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
       }
     }
     
@@ -384,7 +384,7 @@ export async function updatePlaylistTrackCount(playlistId, delta, trackDuration 
     if (mobilePlaylistItem) {
       const mobileCountEl = mobilePlaylistItem.querySelector('.playlist-tracks');
       if (mobileCountEl) {
-        mobileCountEl.innerHTML = `${playlist.tracks.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
+        mobileCountEl.innerHTML = `${playlist.items.total} tracks • <span class="playlist-item-duration">${formattedDuration}</span>`;
       }
     }
   }
