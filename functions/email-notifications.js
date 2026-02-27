@@ -180,7 +180,7 @@ exports.sendNewStudentEmail = onDocumentCreated(
         await transporter.sendMail({
           from: '"Urban Swing" <dance@urbanswing.co.nz>',
           to: "dance@urbanswing.co.nz",
-          subject: "New Student Registration",
+          subject: `New Student Registration - ${student.firstName} ${student.lastName}`,
           text: adminEmail.text,
           html: adminEmail.html,
         });
