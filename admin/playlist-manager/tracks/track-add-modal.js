@@ -73,7 +73,7 @@ async function searchAndDisplayTracks(query) {
   try {
     resultsContainer.innerHTML = '<div class="loading-pulse" style="padding: 20px; text-align: center;">Searching...</div>';
     
-    const tracks = await spotifyAPI.searchTracks(query, 20);
+    const tracks = await spotifyAPI.searchTracks(query, 10);
     console.log('Search results:', tracks);
     console.log('🎵 Enhanced search rendering active - play buttons and selected tracks reordering');
     
