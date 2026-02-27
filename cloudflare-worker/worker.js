@@ -81,7 +81,9 @@ async function exchangeToken(request, env) {
       fields: {
         refreshToken: { stringValue: tokens.refresh_token },
         spotifyUserId: { stringValue: userId },
-        spotifyEmail: { stringValue: spotifyUser.email || '' },
+        // Note: spotifyUser.email removed from Spotify API (March 2026)
+        // Display name is still available as a fallback identifier
+        spotifyDisplayName: { stringValue: spotifyUser.display_name || '' },
         lastUpdated: { timestampValue: new Date().toISOString() },
       },
     };
