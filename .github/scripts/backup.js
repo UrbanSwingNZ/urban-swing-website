@@ -4,26 +4,33 @@
  */
 
 const admin = require('firebase-admin');
-const { GoogleAuth } = require('google-auth-library');
 const fs = require('fs').promises;
 const path = require('path');
 
 let db, auth;
 
-// Initialize Firebase Admin with Google Auth Library for Workload Identity Federation
+// Initialize Firebase Admin with access token from Workload Identity Federation
 async function initializeFirebase() {
-  const googleAuth = new GoogleAuth({
-    scopes: [
-      'https://www.googleapis.com/auth/cloud-platform',
-      'https://www.googleapis.com/auth/firebase'
-    ]
-  });
+  const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
+  const projectId = process.env.PROJECT_ID;
   
-  const client = await googleAuth.getClient();
+  if (!accessToken) {
+    throw new Error('GOOGLE_ACCESS_TOKEN environment variable not set');
+  }
+  
+  // Create a custom credential using the access token
+  const credential = {
+    getAccessToken: () => {
+      return Promise.resolve({
+        access_token: accessToken,
+        expires_in: 3600
+      });
+    }
+  };
   
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    projectId: 'directed-curve-447204-j4'
+    credential: admin.credential.refreshToken(credential),
+    projectId: projectId
   });
   
   db = admin.firestore();
