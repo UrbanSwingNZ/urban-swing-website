@@ -82,10 +82,10 @@ function createTransactionRow(transaction) {
             <div class="action-buttons">
                 ${refundButtonHTML}
                 ${isSuperAdmin() ? `<button class="btn-icon btn-invoice ${transaction.invoiced ? 'invoiced' : ''}" 
-                        title="${transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced'}"
+                        title="${transaction.type === 'concession-gift' ? 'Gifts cannot be invoiced (non-financial)' : transaction.reversed ? 'Cannot invoice reversed transaction' : (transaction.invoiced ? 'Mark as Not Invoiced' : 'Mark as Invoiced')}"
                         data-id="${transaction.id}"
                         data-collection="${transaction.collection}"
-                        ${transaction.reversed ? 'disabled style="opacity: 0.3;"' : ''}>
+                        ${transaction.reversed || transaction.type === 'concession-gift' ? 'disabled style="opacity: 0.3;"' : ''}>
                     <i class="fas fa-file-invoice"></i>
                 </button>` : ''}
                 <button class="btn-icon btn-edit" 
@@ -113,7 +113,7 @@ function createTransactionRow(transaction) {
     }
     
     const invoiceBtn = row.querySelector('.btn-invoice');
-    if (invoiceBtn) {
+    if (invoiceBtn && !invoiceBtn.disabled) {
         invoiceBtn.addEventListener('click', () => window.toggleInvoiced(transaction));
     }
     

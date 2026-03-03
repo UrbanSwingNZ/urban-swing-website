@@ -14,7 +14,8 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, 
         }
         
         // Filter by invoice status if toggle is on
-        if (showOnlyNonInvoiced && transaction.invoiced === true) {
+        // Also exclude gifted concessions as they cannot be invoiced
+        if (showOnlyNonInvoiced && (transaction.invoiced === true || transaction.type === 'concession-gift')) {
             return false;
         }
         
