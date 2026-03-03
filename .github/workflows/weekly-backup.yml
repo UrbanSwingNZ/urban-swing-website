@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd .github/scripts
-          npm install firebase-admin
+          npm install
       
       - name: Run backup script
         env:
