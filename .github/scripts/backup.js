@@ -4,10 +4,15 @@
  * Uses Google Cloud APIs directly with Workload Identity Federation
  */
 
-const { Firestore } = require('@google-cloud/firestore');
-const { google } = require('googleapis');
 const fs = require('fs').promises;
 const path = require('path');
+
+// IMPORTANT: Clear credentials env var BEFORE loading Google libraries
+delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
+const { Firestore } = require('@google-cloud/firestore');
+const { google } = require('googleapis');
+const { OAuth2Client } = require('google-auth-library');
 
 let db, auth;
 
@@ -25,22 +30,12 @@ async function initializeFirebase() {
     throw new Error('GOOGLE_ACCESS_TOKEN environment variable not set');
   }
   
-  // Explicitly set credentials to avoid loading from file
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = '';
-  process.env.GCLOUD_PROJECT = projectId;
-  
-  // Initialize Firestore with OAuth2 client
-  const { GoogleAuth } = require('google-auth-library');
-  const googleAuth = new GoogleAuth({
-    projectId: projectId
-  });
-  
-  // Create a client with our access token
-  const authClient = await googleAuth.getClient();
-  authClient.credentials = {
+  // Create OAuth2 client with our access token
+  const authClient = new OAuth2Client();
+  authClient.setCredentials({
     access_token: accessToken,
     token_type: 'Bearer'
-  };
+  });
   
   console.log('Creating Firestore client...');
   db = new Firestore({
@@ -50,12 +45,9 @@ async function initializeFirebase() {
   
   console.log('Creating Auth API client...');
   // Initialize Firebase Auth using Identity Toolkit API
-  const oauth2Client = new google.auth.OAuth2();
-  oauth2Client.setCredentials({ access_token: accessToken });
-  
   auth = google.identitytoolkit({
     version: 'v1',
-    auth: oauth2Client
+    auth: authClient
   });
   
   console.log('✓ Initialized Firestore and Auth clients successfully');

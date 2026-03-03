@@ -40,6 +40,8 @@ jobs:
         env:
           GOOGLE_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
           PROJECT_ID: directed-curve-447204-j4
+          GOOGLE_APPLICATION_CREDENTIALS: ''
+          GCLOUD_PROJECT: directed-curve-447204-j4
         run: |
           cd .github/scripts
           node backup.js
