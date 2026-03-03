@@ -110,7 +110,7 @@ async function exportAuthUsers() {
       if (data.users) {
         for (const user of data.users) {
           users.push({
-            uid: user.local Id,
+            uid: user.localId,
             email: user.email,
             displayName: user.displayName,
             emailVerified: user.emailVerified || false,
