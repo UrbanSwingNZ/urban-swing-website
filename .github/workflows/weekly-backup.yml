@@ -1,0 +1,47 @@
+name: Weekly Database Backup
+
+on:
+  schedule:
+    # Run at 1pm UTC every Saturday (2am NZDT Sunday)
+    - cron: '0 13 * * 6'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity Federation
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: |
+          cd .github/scripts
+          npm install firebase-admin
+      
+      - name: Run backup script
+        run: |
+          cd .github/scripts
+          node backup.js
+      
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firestore-backup-${{ github.run_number }}
+          path: .github/scripts/backup-*.json
+          retention-days: 90
