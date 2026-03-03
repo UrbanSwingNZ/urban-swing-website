@@ -16,30 +16,49 @@ async function initializeFirebase() {
   const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
   const projectId = process.env.PROJECT_ID;
   
+  console.log('Starting Firebase initialization...');
+  console.log(`Project ID: ${projectId}`);
+  console.log(`Access token present: ${!!accessToken}`);
+  console.log(`Access token length: ${accessToken ? accessToken.length : 0}`);
+  
   if (!accessToken) {
     throw new Error('GOOGLE_ACCESS_TOKEN environment variable not set');
   }
   
-  // Initialize Firestore with custom auth
-  db = new Firestore({
-    projectId: projectId,
-    auth: {
-      getAccessToken: async () => {
-        return { access_token: accessToken };
-      }
-    }
+  // Explicitly set credentials to avoid loading from file
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = '';
+  process.env.GCLOUD_PROJECT = projectId;
+  
+  // Initialize Firestore with OAuth2 client
+  const { GoogleAuth } = require('google-auth-library');
+  const googleAuth = new GoogleAuth({
+    projectId: projectId
   });
   
-  // Initialize Firebase Auth using Identity Toolkit API
-  const authClient = new google.auth.OAuth2();
-  authClient.setCredentials({ access_token: accessToken });
+  // Create a client with our access token
+  const authClient = await googleAuth.getClient();
+  authClient.credentials = {
+    access_token: accessToken,
+    token_type: 'Bearer'
+  };
   
-  auth = google.identitytoolkit({
-    version: 'v1',
+  console.log('Creating Firestore client...');
+  db = new Firestore({
+    projectId: projectId,
     auth: authClient
   });
   
-  console.log('Initialized Firestore and Auth clients');
+  console.log('Creating Auth API client...');
+  // Initialize Firebase Auth using Identity Toolkit API
+  const oauth2Client = new google.auth.OAuth2();
+  oauth2Client.setCredentials({ access_token: accessToken });
+  
+  auth = google.identitytoolkit({
+    version: 'v1',
+    auth: oauth2Client
+  });
+  
+  console.log('✓ Initialized Firestore and Auth clients successfully');
 }
 
 /**
