@@ -4,18 +4,31 @@
  */
 
 const admin = require('firebase-admin');
+const { GoogleAuth } = require('google-auth-library');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Initialize Firebase Admin with Application Default Credentials
-// This works with Workload Identity Federation (no keys needed!)
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  projectId: 'directed-curve-447204-j4'
-});
+let db, auth;
 
-const db = admin.firestore();
-const auth = admin.auth();
+// Initialize Firebase Admin with Google Auth Library for Workload Identity Federation
+async function initializeFirebase() {
+  const googleAuth = new GoogleAuth({
+    scopes: [
+      'https://www.googleapis.com/auth/cloud-platform',
+      'https://www.googleapis.com/auth/firebase'
+    ]
+  });
+  
+  const client = await googleAuth.getClient();
+  
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    projectId: 'directed-curve-447204-j4'
+  });
+  
+  db = admin.firestore();
+  auth = admin.auth();
+}
 
 /**
  * Export all documents from a collection
@@ -83,6 +96,9 @@ async function getAllCollections() {
  * Main backup function
  */
 async function runBackup() {
+  // Initialize Firebase first
+  await initializeFirebase();
+  
   console.log('='.repeat(50));
   console.log('Starting Firebase Backup');
   console.log('='.repeat(50));
