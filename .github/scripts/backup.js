@@ -1,15 +1,17 @@
 /**
  * Firebase Backup Script
  * Exports all Firestore collections and Auth users to JSON
+ * Uses Google Cloud APIs directly with Workload Identity Federation
  */
 
-const admin = require('firebase-admin');
+const { Firestore } = require('@google-cloud/firestore');
+const { google } = require('googleapis');
 const fs = require('fs').promises;
 const path = require('path');
 
 let db, auth;
 
-// Initialize Firebase Admin with access token from Workload Identity Federation
+// Initialize Firestore and Auth clients with access token
 async function initializeFirebase() {
   const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
   const projectId = process.env.PROJECT_ID;
@@ -18,23 +20,26 @@ async function initializeFirebase() {
     throw new Error('GOOGLE_ACCESS_TOKEN environment variable not set');
   }
   
-  // Create a custom credential using the access token
-  const credential = {
-    getAccessToken: () => {
-      return Promise.resolve({
-        access_token: accessToken,
-        expires_in: 3600
-      });
+  // Initialize Firestore with custom auth
+  db = new Firestore({
+    projectId: projectId,
+    auth: {
+      getAccessToken: async () => {
+        return { access_token: accessToken };
+      }
     }
-  };
-  
-  admin.initializeApp({
-    credential: admin.credential.refreshToken(credential),
-    projectId: projectId
   });
   
-  db = admin.firestore();
-  auth = admin.auth();
+  // Initialize Firebase Auth using Identity Toolkit API
+  const authClient = new google.auth.OAuth2();
+  authClient.setCredentials({ access_token: accessToken });
+  
+  auth = google.identitytoolkit({
+    version: 'v1',
+    auth: authClient
+  });
+  
+  console.log('Initialized Firestore and Auth clients');
 }
 
 /**
@@ -57,37 +62,48 @@ async function exportCollection(collectionName) {
 }
 
 /**
- * Export all Firebase Auth users
+ * Export Firebase Auth users using Identity Toolkit API
  */
 async function exportAuthUsers() {
   console.log('Exporting Auth users');
   const users = [];
+  const projectId = process.env.PROJECT_ID;
   
-  const listUsers = async (nextPageToken) => {
-    const result = await auth.listUsers(1000, nextPageToken);
+  try {
+    let nextPageToken = undefined;
     
-    result.users.forEach(user => {
-      users.push({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        emailVerified: user.emailVerified,
-        disabled: user.disabled,
-        metadata: {
-          creationTime: user.metadata.creationTime,
-          lastSignInTime: user.metadata.lastSignInTime
-        },
-        customClaims: user.customClaims || {}
+    do {
+      const response = await auth.projects.accounts.batchGet({
+        targetProjectId: `projects/${projectId}`,
+        maxResults: 1000,
+        nextPageToken: nextPageToken
       });
-    });
+      
+      if (response.data.users) {
+        response.data.users.forEach(user => {
+          users.push({
+            uid: user.localId,
+            email: user.email,
+            displayName: user.displayName,
+            emailVerified: user.emailVerified || false,
+            disabled: user.disabled || false,
+            metadata: {
+              creationTime: user.createdAt,
+              lastSignInTime: user.lastLoginAt
+            },
+            customClaims: user.customAttributes ? JSON.parse(user.customAttributes) : {}
+          });
+        });
+      }
+      
+      nextPageToken = response.data.nextPageToken;
+    } while (nextPageToken);
     
-    if (result.pageToken) {
-      await listUsers(result.pageToken);
-    }
-  };
+    console.log(`  ✓ Exported ${users.length} users`);
+  } catch (error) {
+    console.error('Error exporting users:', error.message);
+  }
   
-  await listUsers();
-  console.log(`  ✓ Exported ${users.length} users`);
   return users;
 }
 
