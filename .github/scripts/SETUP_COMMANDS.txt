@@ -1,0 +1,50 @@
+WORKLOAD IDENTITY FEDERATION SETUP COMMANDS
+==============================================
+Copy and paste these commands into Google Cloud Shell or your terminal.
+
+IMPORTANT: Replace YOUR-GITHUB-USERNAME with your actual GitHub username/org name!
+
+---
+
+# Step 1: Set project
+gcloud config set project directed-curve-447204-j4
+
+# Step 2: Enable APIs
+gcloud services enable iamcredentials.googleapis.com
+gcloud services enable sts.googleapis.com
+
+# Step 3: Create service account
+gcloud iam service-accounts create github-actions-backup --display-name="GitHub Actions Backup Service Account"
+
+# Step 4: Grant Firestore read access
+gcloud projects add-iam-policy-binding directed-curve-447204-j4 --member="serviceAccount:github-actions-backup@directed-curve-447204-j4.iam.gserviceaccount.com" --role="roles/datastore.viewer"
+
+# Step 5: Grant Firebase Auth read access
+gcloud projects add-iam-policy-binding directed-curve-447204-j4 --member="serviceAccount:github-actions-backup@directed-curve-447204-j4.iam.gserviceaccount.com" --role="roles/firebaseauth.viewer"
+
+# Step 6: Create Workload Identity Pool
+gcloud iam workload-identity-pools create "github-actions-pool" --location="global" --display-name="GitHub Actions Pool"
+
+# Step 7: Create Workload Identity Provider
+gcloud iam workload-identity-pools providers create-oidc "github-provider" --location="global" --workload-identity-pool="github-actions-pool" --display-name="GitHub Provider" --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner" --issuer-uri="https://token.actions.githubusercontent.com" --attribute-condition="assertion.repository_owner=='UrbanSwingNZ'"
+
+# Step 8: Allow GitHub to impersonate service account
+# REPLACE YOUR-GITHUB-USERNAME BELOW!
+gcloud iam service-accounts add-iam-policy-binding github-actions-backup@directed-curve-447204-j4.iam.gserviceaccount.com --role="roles/iam.workloadIdentityUser" --member="principalSet://iam.googleapis.com/projects/575294080266/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/UrbanSwingNZ/urban-swing-website"
+
+# Step 9: Get the Workload Identity Provider name (copy the output!)
+gcloud iam workload-identity-pools providers describe "github-provider" --location="global" --workload-identity-pool="github-actions-pool" --format="value(name)"
+
+---
+
+AFTER RUNNING THESE COMMANDS:
+
+Add two secrets to GitHub (Settings → Secrets and variables → Actions):
+
+1. WIF_PROVIDER
+   Value: projects/575294080266/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
+   
+2. WIF_SERVICE_ACCOUNT
+   Value: github-actions-backup@directed-curve-447204-j4.iam.gserviceaccount.com
+
+Then test by running the workflow manually in the Actions tab!
