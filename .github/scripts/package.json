@@ -1,0 +1,9 @@
+{
+  "name": "firebase-backup-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for Firebase backup automation",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
