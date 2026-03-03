@@ -10,6 +10,7 @@ const path = require('path');
 // Initialize Firebase Admin with Application Default Credentials
 // This works with Workload Identity Federation (no keys needed!)
 admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
   projectId: 'directed-curve-447204-j4'
 });
 
