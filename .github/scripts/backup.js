@@ -1,99 +1,116 @@
 /**
  * Firebase Backup Script
  * Exports all Firestore collections and Auth users to JSON
- * Uses Google Cloud APIs directly with Workload Identity Federation
+ * Uses REST APIs directly with Workload Identity Federation access token
  */
 
+const fetch = require('node-fetch');
 const fs = require('fs').promises;
 const path = require('path');
 
-// IMPORTANT: Clear credentials env var BEFORE loading Google libraries
-delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const ACCESS_TOKEN = process.env.GOOGLE_ACCESS_TOKEN;
+const PROJECT_ID = process.env.PROJECT_ID;
 
-const { Firestore } = require('@google-cloud/firestore');
-const { google } = require('googleapis');
-const { OAuth2Client } = require('google-auth-library');
+console.log('='.repeat(50));
+console.log('Firebase Backup - REST API Approach');
+console.log('='.repeat(50));
+console.log(`Project ID: ${PROJECT_ID}`);
+console.log(`Access token present: ${!!ACCESS_TOKEN}`);
+console.log('');
 
-let db, auth;
-
-// Initialize Firestore and Auth clients with access token
-async function initializeFirebase() {
-  const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
-  const projectId = process.env.PROJECT_ID;
+/**
+ * Make authenticated request to Firebase REST API
+ */
+async function firebaseRequest(url, options = {}) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Authorization': `Bearer ${ACCESS_TOKEN}`,
+      'Content-Type': 'application/json',
+      ...options.headers
+    }
+  });
   
-  console.log('Starting Firebase initialization...');
-  console.log(`Project ID: ${projectId}`);
-  console.log(`Access token present: ${!!accessToken}`);
-  console.log(`Access token length: ${accessToken ? accessToken.length : 0}`);
-  
-  if (!accessToken) {
-    throw new Error('GOOGLE_ACCESS_TOKEN environment variable not set');
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`HTTP ${response.status}: ${error}`);
   }
   
-  // Create OAuth2 client with our access token
-  const authClient = new OAuth2Client();
-  authClient.setCredentials({
-    access_token: accessToken,
-    token_type: 'Bearer'
-  });
-  
-  console.log('Creating Firestore client...');
-  db = new Firestore({
-    projectId: projectId,
-    auth: authClient
-  });
-  
-  console.log('Creating Auth API client...');
-  // Initialize Firebase Auth using Identity Toolkit API
-  auth = google.identitytoolkit({
-    version: 'v1',
-    auth: authClient
-  });
-  
-  console.log('✓ Initialized Firestore and Auth clients successfully');
+  return response.json();
 }
 
 /**
- * Export all documents from a collection
+ * Export all documents from a collection using Firestore REST API
  */
 async function exportCollection(collectionName) {
   console.log(`Exporting collection: ${collectionName}`);
-  const snapshot = await db.collection(collectionName).get();
   const documents = [];
   
-  snapshot.forEach(doc => {
-    documents.push({
-      id: doc.id,
-      data: doc.data()
-    });
-  });
+  try {
+    const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${collectionName}`;
+    const data = await firebaseRequest(url);
+    
+    if (data.documents) {
+      for (const doc of data.documents) {
+        const docId = doc.name.split('/').pop();
+        documents.push({
+          id: docId,
+          data: parseFirestoreFields(doc.fields || {})
+        });
+      }
+    }
+    
+    console.log(`  ✓ Exported ${documents.length} documents`);
+  } catch (error) {
+    console.error(`  ✗ Error: ${error.message}`);
+  }
   
-  console.log(`  ✓ Exported ${documents.length} documents`);
   return documents;
 }
 
 /**
- * Export Firebase Auth users using Identity Toolkit API
+ * Convert Firestore REST API field format to simple objects
+ */
+function parseFirestoreFields(fields) {
+  const result = {};
+  
+  for (const [key, value] of Object.entries(fields)) {
+    if (value.stringValue !== undefined) result[key] = value.stringValue;
+    else if (value.integerValue !== undefined) result[key] = parseInt(value.integerValue);
+    else if (value.doubleValue !== undefined) result[key] = value.doubleValue;
+    else if (value.booleanValue !== undefined) result[key] = value.booleanValue;
+    else if (value.timestampValue !== undefined) result[key] = value.timestampValue;
+    else if (value.nullValue !== undefined) result[key] = null;
+    else if (value.arrayValue !== undefined) {
+      result[key] = value.arrayValue.values ? value.arrayValue.values.map(v => parseFirestoreFields({ temp: v }).temp) : [];
+    }
+    else if (value.mapValue !== undefined) {
+      result[key] = parseFirestoreFields(value.mapValue.fields || {});
+    }
+    else result[key] = value;
+  }
+  
+  return result;
+}
+
+/**
+ * Export Firebase Auth users using Identity Toolkit REST API
  */
 async function exportAuthUsers() {
   console.log('Exporting Auth users');
   const users = [];
-  const projectId = process.env.PROJECT_ID;
   
   try {
     let nextPageToken = undefined;
     
     do {
-      const response = await auth.projects.accounts.batchGet({
-        targetProjectId: `projects/${projectId}`,
-        maxResults: 1000,
-        nextPageToken: nextPageToken
-      });
+      const url = `https://identitytoolkit.googleapis.com/v1/projects/${PROJECT_ID}/accounts:batchGet?maxResults=1000${nextPageToken ? `&nextPageToken=${nextPageToken}` : ''}`;
+      const data = await firebaseRequest(url, { method: 'POST', body: JSON.stringify({}) });
       
-      if (response.data.users) {
-        response.data.users.forEach(user => {
+      if (data.users) {
+        for (const user of data.users) {
           users.push({
-            uid: user.localId,
+            uid: user.local Id,
             email: user.email,
             displayName: user.displayName,
             emailVerified: user.emailVerified || false,
@@ -104,37 +121,39 @@ async function exportAuthUsers() {
             },
             customClaims: user.customAttributes ? JSON.parse(user.customAttributes) : {}
           });
-        });
+        }
       }
       
-      nextPageToken = response.data.nextPageToken;
+      nextPageToken = data.nextPageToken;
     } while (nextPageToken);
     
     console.log(`  ✓ Exported ${users.length} users`);
   } catch (error) {
-    console.error('Error exporting users:', error.message);
+    console.error(`  ✗ Error: ${error.message}`);
   }
   
   return users;
 }
 
 /**
- * Get all collection names
+ * Get all collection IDs
  */
 async function getAllCollections() {
-  const collections = await db.listCollections();
-  return collections.map(col => col.id);
+  console.log('Discovering collections...');
+  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents:listCollectionIds`;
+  const data = await firebaseRequest(url, { 
+    method: 'POST',
+    body: JSON.stringify({})
+  });
+  
+  return data.collectionIds || [];
 }
 
 /**
  * Main backup function
  */
 async function runBackup() {
-  // Initialize Firebase first
-  await initializeFirebase();
-  
-  console.log('='.repeat(50));
-  console.log('Starting Firebase Backup');
+  console.log('\nStarting backup process');
   console.log('='.repeat(50));
   
   const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
@@ -146,7 +165,7 @@ async function runBackup() {
   
   // Export all Firestore collections
   const collectionNames = await getAllCollections();
-  console.log(`\nFound ${collectionNames.length} collections\n`);
+  console.log(`Found ${collectionNames.length} collections\n`);
   
   for (const collectionName of collectionNames) {
     try {
@@ -186,6 +205,8 @@ async function runBackup() {
 runBackup()
   .then(() => process.exit(0))
   .catch(error => {
-    console.error('Backup failed:', error);
+    console.error('\nBackup failed!');
+    console.error('Error:', error.message);
+    console.error(error.stack);
     process.exit(1);
   });
