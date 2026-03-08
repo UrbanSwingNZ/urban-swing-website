@@ -54,6 +54,124 @@
 }
 
 /* ========================================
+   BLOCK SETTINGS SECTION
+   ======================================== */
+.block-settings-section {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--space-lg);
+    overflow: hidden;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    background: var(--gradient-blue-purple);
+    color: var(--white);
+    cursor: pointer;
+    user-select: none;
+}
+
+.settings-header h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.settings-header .btn-link {
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    font-size: var(--font-size-lg);
+    padding: var(--space-xs);
+    transition: transform var(--transition-fast);
+}
+
+.settings-header .btn-link i {
+    transition: transform var(--transition-fast);
+}
+
+.settings-header .btn-link.collapsed i {
+    transform: rotate(-90deg);
+}
+
+.settings-content {
+    padding: var(--space-md);
+    transition: max-height var(--transition-base);
+}
+
+.settings-content.hidden {
+    display: none;
+}
+
+.settings-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.setting-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.setting-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    min-width: 120px;
+}
+
+.setting-input-group {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.setting-input {
+    padding: var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    width: 80px;
+}
+
+.setting-info {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--purple-primary);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.setting-info i {
+    color: var(--purple-primary);
+}
+
+.setting-info strong {
+    color: var(--purple-primary);
+}
+
+@media (min-width: 769px) {
+    .settings-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+/* ========================================
    CLASS PLANS CONTAINER
    ======================================== */
 .class-plans-container {
@@ -114,6 +232,21 @@
 }
 
 .class-plan-date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.class-plan-week {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.class-plan-date-main {
     display: flex;
     align-items: center;
     gap: var(--space-xs);
@@ -237,6 +370,25 @@
     color: var(--text-primary);
     margin: 0;
     white-space: pre-wrap;
+}
+
+/* ========================================
+   WEEK INFO BANNER (in modal)
+   ======================================== */
+.week-info-banner {
+    background: var(--gradient-blue-purple);
+    color: var(--white);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: var(--font-weight-semibold);
+}
+
+.week-info-banner i {
+    font-size: var(--font-size-lg);
 }
 
 /* ========================================

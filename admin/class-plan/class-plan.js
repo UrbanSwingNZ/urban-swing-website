@@ -11,6 +11,8 @@ let currentUser = null;
 let editingPlanId = null;
 let formModal = null;
 let deleteModal = null;
+let currentBlockSize = 12; // Default block size
+let nextWeekNumber = 1;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
@@ -87,6 +89,9 @@ function initializePage() {
     // Setup event listeners
     setupEventListeners();
     
+    // Load block size settings
+    loadBlockSettings();
+    
     // Load class plans
     loadClassPlans();
 }
@@ -162,6 +167,13 @@ function setupEventListeners() {
     document.getElementById('delete-modal-close-btn').addEventListener('click', () => deleteModal.hide());
     document.getElementById('delete-cancel-btn').addEventListener('click', () => deleteModal.hide());
     document.getElementById('delete-confirm-btn').addEventListener('click', handleDeleteConfirm);
+    
+    // Block settings
+    const settingsHeader = document.getElementById('settings-header');
+    if (settingsHeader) {
+        settingsHeader.addEventListener('click', toggleSettingsSection);
+    }
+    document.getElementById('save-block-size-btn').addEventListener('click', saveBlockSize);
 }
 
 /**
@@ -173,11 +185,117 @@ function handleDateSelected(date) {
 }
 
 /**
+ * Toggle settings section visibility
+ */
+function toggleSettingsSection() {
+    const content = document.getElementById('settings-content');
+    const btn = document.getElementById('toggle-settings-btn');
+    
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        btn.classList.remove('collapsed');
+    } else {
+        content.classList.add('hidden');
+        btn.classList.add('collapsed');
+    }
+}
+
+/**
+ * Load block settings from Firestore
+ */
+async function loadBlockSettings() {
+    try {
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        
+        if (settingsDoc.exists) {
+            const settings = settingsDoc.data();
+            currentBlockSize = settings.blockSize || 12;
+        } else {
+            // Create default settings
+            currentBlockSize = 12;
+            await window.db.collection('settings').doc('classPlans').set({
+                blockSize: currentBlockSize,
+                updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        
+        // Update UI
+        document.getElementById('block-size-input').value = currentBlockSize;
+        
+        // Calculate next week number
+        await updateNextWeekInfo();
+    } catch (error) {
+        console.error('Error loading block settings:', error);
+        showSnackbar('Error loading block settings: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Save block size to Firestore
+ */
+async function saveBlockSize() {
+    const input = document.getElementById('block-size-input');
+    const newBlockSize = parseInt(input.value);
+    
+    if (isNaN(newBlockSize) || newBlockSize < 1 || newBlockSize > 52) {
+        showSnackbar('Please enter a valid block size between 1 and 52', 'error');
+        return;
+    }
+    
+    showLoadingSpinner('Saving block size...');
+    
+    try {
+        await window.db.collection('settings').doc('classPlans').set({
+            blockSize: newBlockSize,
+            updatedAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: currentUser.uid
+        });
+        
+        currentBlockSize = newBlockSize;
+        await updateNextWeekInfo();
+        
+        showSnackbar('Block size updated successfully', 'success');
+    } catch (error) {
+        console.error('Error saving block size:', error);
+        showSnackbar('Error saving block size: ' + error.message, 'error');
+    } finally {
+        hideLoadingSpinner();
+    }
+}
+
+/**
+ * Calculate and update the next week number info
+ */
+async function updateNextWeekInfo() {
+    try {
+        // Get all class plans with the current block size
+        const snapshot = await window.db.collection('classPlans')
+            .where('blockSize', '==', currentBlockSize)
+            .get();
+        
+        const count = snapshot.size;
+        nextWeekNumber = (count % currentBlockSize) + 1;
+        
+        // Update the UI
+        const infoElement = document.getElementById('next-week-info');
+        if (infoElement) {
+            infoElement.innerHTML = `<i class="fas fa-info-circle"></i> Next class will be <strong>Week ${nextWeekNumber} of ${currentBlockSize}</strong>`;
+        }
+    } catch (error) {
+        console.error('Error calculating next week number:', error);
+        // Default to week 1 if there's an error
+        nextWeekNumber = 1;
+    }
+}
+
+/**
  * Open the add/edit modal
  */
 function openModal(planData = null) {
     const modalTitle = document.getElementById('modal-title');
     const form = document.getElementById('class-plan-form');
+    const weekInfoBanner = document.getElementById('week-info-banner');
+    const weekInfoText = document.getElementById('week-info-text');
     
     // Reset form
     form.reset();
@@ -188,6 +306,14 @@ function openModal(planData = null) {
         modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Class Plan';
         editingPlanId = planData.id;
         
+        // Show week info as read-only
+        if (planData.weekNumber && planData.blockSize) {
+            weekInfoText.textContent = `Week ${planData.weekNumber} of ${planData.blockSize}`;
+            weekInfoBanner.style.display = 'flex';
+        } else {
+            weekInfoBanner.style.display = 'none';
+        }
+        
         // Populate form
         document.getElementById('class-date').value = formatDateForDisplay(planData.date);
         datePicker.selectedDate = planData.date;
@@ -197,8 +323,10 @@ function openModal(planData = null) {
         document.getElementById('move-3').value = planData.move3 || '';
         document.getElementById('notes').value = planData.notes || '';
     } else {
-        // Adding new plan
+        // Adding new plan - show next week number
         modalTitle.innerHTML = '<i class="fas fa-plus"></i> Add Class Plan';
+        weekInfoText.textContent = `Week ${nextWeekNumber} of ${currentBlockSize}`;
+        weekInfoBanner.style.display = 'flex';
     }
     
     formModal.show();
@@ -252,15 +380,20 @@ async function handleFormSubmit(e) {
         };
         
         if (editingPlanId) {
-            // Update existing plan
+            // Update existing plan (don't update weekNumber or blockSize)
             await window.db.collection('classPlans').doc(editingPlanId).update(planData);
             showSnackbar('Class plan updated successfully', 'success');
         } else {
-            // Create new plan
+            // Create new plan - add week number and block size
+            planData.weekNumber = nextWeekNumber;
+            planData.blockSize = currentBlockSize;
             planData.createdAt = window.firebase.firestore.FieldValue.serverTimestamp();
             planData.createdBy = currentUser.uid;
             await window.db.collection('classPlans').add(planData);
             showSnackbar('Class plan created successfully', 'success');
+            
+            // Recalculate next week number
+            await updateNextWeekInfo();
         }
         
         closeModal();
@@ -373,11 +506,20 @@ function createClassPlanCard(planData) {
         `;
     }
     
+    // Build week number display
+    let weekHTML = '';
+    if (planData.weekNumber && planData.blockSize) {
+        weekHTML = `<div class="class-plan-week">Week ${planData.weekNumber} of ${planData.blockSize}</div>`;
+    }
+    
     card.innerHTML = `
         <div class="class-plan-card-header">
             <div class="class-plan-date">
-                <i class="fas fa-calendar-alt"></i>
-                <h3>${formattedDate}</h3>
+                ${weekHTML}
+                <div class="class-plan-date-main">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>${formattedDate}</h3>
+                </div>
             </div>
             <div class="class-plan-actions">
                 <button class="btn-icon btn-edit" onclick="editClassPlan('${planData.id}')" title="Edit">
