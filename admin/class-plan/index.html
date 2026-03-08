@@ -32,10 +32,21 @@
             <div class="class-plan-header">
                 <h2><i class="fas fa-list-check"></i> Class Plan</h2>
                 <p class="subtitle">Plan and track dance moves taught each week</p>
+            </div>
+
+            <!-- Actions and Settings Row -->
+            <div class="actions-settings-container">
+                <button class="btn-primary btn-primary-lg" id="add-class-btn">
+                    <i class="fas fa-plus"></i> Add Class Plan
+                </button>
                 
-                <div class="header-actions">
-                    <button class="btn-primary btn-primary-lg" id="add-class-btn">
-                        <i class="fas fa-plus"></i> Add Class Plan
+                <div class="settings-inline">
+                    <label for="block-size-input" class="setting-label">
+                        Weeks per Block:
+                    </label>
+                    <input type="number" id="block-size-input" min="1" max="52" value="12" class="setting-input" />
+                    <button class="btn-primary btn-sm" id="save-block-size-btn">
+                        <i class="fas fa-save"></i> Save
                     </button>
                 </div>
             </div>
@@ -67,6 +78,11 @@
             
             <div class="modal-body">
                 <form id="class-plan-form">
+                    <!-- Week Info (shown when adding) -->
+                    <div class="week-info-banner" id="week-info-banner" style="display: none;">
+                        <span id="week-info-text">Week 1 of 12</span>
+                    </div>
+
                     <!-- Date Selection -->
                     <div class="form-group">
                         <label for="class-date" class="form-label">
