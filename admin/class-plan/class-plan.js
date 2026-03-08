@@ -170,6 +170,85 @@ function setupEventListeners() {
     
     // Block settings
     document.getElementById('save-block-size-btn').addEventListener('click', saveBlockSize);
+    
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+    
+    searchInput.addEventListener('input', handleSearch);
+    clearSearchBtn.addEventListener('click', clearSearch);
+}
+
+/**
+ * Handle search input
+ */
+function handleSearch(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    const clearBtn = document.getElementById('clear-search');
+    const cards = document.querySelectorAll('.class-plan-card');
+    const emptyState = document.getElementById('empty-state');
+    
+    // Show/hide clear button
+    clearBtn.style.display = searchTerm ? 'block' : 'none';
+    
+    if (!searchTerm) {
+        // Show all cards if search is empty
+        cards.forEach(card => card.style.display = 'block');
+        // Show empty state if there are no cards at all
+        if (cards.length === 0 && emptyState) {
+            emptyState.style.display = 'block';
+        }
+        return;
+    }
+    
+    // Hide empty state during search
+    if (emptyState) {
+        emptyState.style.display = 'none';
+    }
+    
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+        const cardText = card.textContent.toLowerCase();
+        if (cardText.includes(searchTerm)) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show a message if no cards match
+    if (visibleCount === 0 && cards.length > 0) {
+        // Create or update "no results" message
+        let noResultsMsg = document.getElementById('no-search-results');
+        if (!noResultsMsg) {
+            noResultsMsg = document.createElement('div');
+            noResultsMsg.id = 'no-search-results';
+            noResultsMsg.className = 'empty-state';
+            noResultsMsg.innerHTML = `
+                <i class="fas fa-search"></i>
+                <p>No class plans match your search</p>
+            `;
+            document.getElementById('class-plans-container').appendChild(noResultsMsg);
+        }
+        noResultsMsg.style.display = 'block';
+    } else {
+        const noResultsMsg = document.getElementById('no-search-results');
+        if (noResultsMsg) {
+            noResultsMsg.style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Clear search input
+ */
+function clearSearch() {
+    const searchInput = document.getElementById('search-input');
+    searchInput.value = '';
+    handleSearch({ target: searchInput });
+    searchInput.focus();
 }
 
 /**
