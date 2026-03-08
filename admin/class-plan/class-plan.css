@@ -321,8 +321,8 @@
    WEEK INFO BANNER (in modal)
    ======================================== */
 .week-info-banner {
-    background: var(--gradient-blue-purple);
-    color: var(--white);
+    background: var(--bg-light);
+    color: var(--text-primary);
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-md);
@@ -330,10 +330,7 @@
     align-items: center;
     gap: var(--space-sm);
     font-weight: var(--font-weight-semibold);
-}
-
-.week-info-banner i {
-    font-size: var(--font-size-lg);
+    border-left: 3px solid var(--purple-primary);
 }
 
 /* ========================================
