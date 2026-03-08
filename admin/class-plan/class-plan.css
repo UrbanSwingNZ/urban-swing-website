@@ -60,7 +60,59 @@
 }
 
 .actions-settings-container .btn-primary-lg {
+    flex: 0 0 auto;
+}
+
+/* ========================================
+   SEARCH BOX (inside container)
+   ======================================== */
+.search-box {
+    position: relative;
     flex: 1;
+    min-width: 200px;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    left: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-box .search-input {
+    width: 100%;
+    padding: var(--space-xs) var(--space-sm) var(--space-xs) 36px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    box-sizing: border-box;
+    transition: border-color var(--transition-fast);
+}
+
+.search-box .search-input:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+}
+
+.search-box .clear-search-btn {
+    position: absolute;
+    right: var(--space-xs);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.search-box .clear-search-btn:hover {
+    color: var(--error);
+    background-color: var(--bg-light);
 }
 
 @media (max-width: 768px) {
