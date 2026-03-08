@@ -169,10 +169,6 @@ function setupEventListeners() {
     document.getElementById('delete-confirm-btn').addEventListener('click', handleDeleteConfirm);
     
     // Block settings
-    const settingsHeader = document.getElementById('settings-header');
-    if (settingsHeader) {
-        settingsHeader.addEventListener('click', toggleSettingsSection);
-    }
     document.getElementById('save-block-size-btn').addEventListener('click', saveBlockSize);
 }
 
@@ -182,22 +178,6 @@ function setupEventListeners() {
 function handleDateSelected(date) {
     // Date is already set by the date picker
     console.log('Date selected:', date);
-}
-
-/**
- * Toggle settings section visibility
- */
-function toggleSettingsSection() {
-    const content = document.getElementById('settings-content');
-    const btn = document.getElementById('toggle-settings-btn');
-    
-    if (content.classList.contains('hidden')) {
-        content.classList.remove('hidden');
-        btn.classList.remove('collapsed');
-    } else {
-        content.classList.add('hidden');
-        btn.classList.add('collapsed');
-    }
 }
 
 /**
@@ -275,12 +255,6 @@ async function updateNextWeekInfo() {
         
         const count = snapshot.size;
         nextWeekNumber = (count % currentBlockSize) + 1;
-        
-        // Update the UI
-        const infoElement = document.getElementById('next-week-info');
-        if (infoElement) {
-            infoElement.innerHTML = `<i class="fas fa-info-circle"></i> Next class will be <strong>Week ${nextWeekNumber} of ${currentBlockSize}</strong>`;
-        }
     } catch (error) {
         console.error('Error calculating next week number:', error);
         // Default to week 1 if there's an error
