@@ -43,14 +43,77 @@
     margin-bottom: var(--space-md);
 }
 
-.header-actions {
+/* ========================================
+   ACTIONS AND SETTINGS CONTAINER
+   ======================================== */
+.actions-settings-container {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
     display: flex;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    box-sizing: border-box;
+    width: 100%;
 }
 
-.header-actions .btn-primary-lg {
-    width: 100%;
+.actions-settings-container .btn-primary-lg {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .actions-settings-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.settings-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: nowrap;
+    width: auto;
+    margin-left: auto;
+}
+
+.settings-inline .setting-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    white-space: nowrap;
+}
+
+.settings-inline .setting-label i {
+    color: var(--purple-primary);
+}
+
+.settings-inline .setting-input {
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    width: 70px;
+    height: 32px;
+    box-sizing: border-box;
+}
+
+.settings-inline .btn-sm {
+    white-space: nowrap;
+    height: 32px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .settings-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
 }
 
 /* ========================================
@@ -114,6 +177,21 @@
 }
 
 .class-plan-date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.class-plan-week {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.class-plan-date-main {
     display: flex;
     align-items: center;
     gap: var(--space-xs);
@@ -237,6 +315,22 @@
     color: var(--text-primary);
     margin: 0;
     white-space: pre-wrap;
+}
+
+/* ========================================
+   WEEK INFO BANNER (in modal)
+   ======================================== */
+.week-info-banner {
+    background: var(--bg-light);
+    color: var(--text-primary);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: var(--font-weight-semibold);
+    border-left: 3px solid var(--purple-primary);
 }
 
 /* ========================================
