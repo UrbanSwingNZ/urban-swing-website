@@ -70,6 +70,7 @@ function createRateCard(id, rate) {
     const card = document.createElement('div');
     const isActive = rate.isActive !== false;
     const isPromo = rate.isPromo === true;
+    const showOnRegistration = rate.showOnRegistration === true;
     
     card.className = `casual-rate-card ${isActive ? 'active' : 'inactive'} ${isPromo ? 'promo' : ''}`;
     card.setAttribute('data-rate-id', id);
@@ -78,6 +79,11 @@ function createRateCard(id, rate) {
     let badges = '';
     if (isPromo) {
         badges += '<span class="promo-badge"><i class="fas fa-star"></i> PROMO <i class="fas fa-star"></i></span>';
+    }
+    
+    let registrationBadge = '';
+    if (showOnRegistration) {
+        registrationBadge = '<span class="registration-badge"><i class="fas fa-user-plus"></i> AVAILABLE ON REGISTRATION FORM</span>';
     }
     
     card.innerHTML = `
@@ -100,6 +106,8 @@ function createRateCard(id, rate) {
         ${badges ? `<div class="rate-badges">${badges}</div>` : ''}
         
         ${rate.description ? `<div class="rate-description">${escapeHtml(rate.description)}</div>` : ''}
+        
+        ${registrationBadge ? `<div class="rate-registration-indicator">${registrationBadge}</div>` : ''}
         
         <div class="rate-actions">
             <button class="btn-primary btn-edit-rate" data-rate-id="${id}">
