@@ -129,6 +129,14 @@
     flex-grow: 1;
 }
 
+.rate-registration-indicator {
+    margin-top: var(--space-sm);
+    padding-top: 15px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: center;
+}
+
 .rate-badges {
     display: flex;
     gap: var(--space-xs);

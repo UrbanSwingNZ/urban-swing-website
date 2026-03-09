@@ -34,6 +34,7 @@ export function openRateModal(rateId = null) {
             document.getElementById('rate-price').value = rate.data.price || '';
             document.getElementById('rate-description').value = rate.data.description || '';
             document.getElementById('rate-is-promo').checked = rate.data.isPromo || false;
+            document.getElementById('rate-show-registration').checked = rate.data.showOnRegistration || false;
             document.getElementById('rate-is-active').checked = rate.data.isActive !== false;
         }
         form.setAttribute('data-rate-id', rateId);
@@ -43,6 +44,7 @@ export function openRateModal(rateId = null) {
         document.getElementById('rate-price').value = '';
         document.getElementById('rate-description').value = '';
         document.getElementById('rate-is-promo').checked = false;
+        document.getElementById('rate-show-registration').checked = false;
         document.getElementById('rate-is-active').checked = true;
         form.removeAttribute('data-rate-id');
     }
@@ -73,6 +75,7 @@ export async function saveCasualRate(e) {
     const priceStr = document.getElementById('rate-price').value.trim();
     const description = document.getElementById('rate-description').value.trim();
     const isPromo = document.getElementById('rate-is-promo').checked;
+    const showOnRegistration = document.getElementById('rate-show-registration').checked;
     const isActive = document.getElementById('rate-is-active').checked;
     
     if (!name || !priceStr) {
@@ -95,6 +98,7 @@ export async function saveCasualRate(e) {
         price,
         description,
         isPromo,
+        showOnRegistration,
         isActive,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
