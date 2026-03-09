@@ -196,10 +196,15 @@
         
         casualRatesSnapshot.forEach(doc => {
           const rate = doc.data();
-          if (rate.name && rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+          const rateName = rate.name ? rate.name.toLowerCase() : '';
+          
+          // Look for student rate (must contain 'student')
+          if (rateName.includes('student') && !rate.isPromo) {
             document.getElementById('student-rate-price').textContent = `$ ${rate.price.toFixed(0)}`;
             studentRateFound = true;
-          } else if (rate.name && !rate.name.toLowerCase().includes('student') && !rate.isPromo) {
+          } 
+          // Look for standard casual entry rate (must contain 'casual entry' or just be 'casual', but NOT 'student')
+          else if ((rateName.includes('casual entry') || rateName === 'casual') && !rateName.includes('student') && !rate.isPromo) {
             document.getElementById('casual-rate-price').textContent = `$ ${rate.price.toFixed(0)}`;
             casualRateFound = true;
           }

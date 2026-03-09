@@ -74,11 +74,14 @@ async function getCasualRateByName(name) {
  */
 async function getStandardCasualRate() {
     const rates = await getCasualRates();
-    // Look for rates that don't contain "student" in the name
-    return rates.find(rate => 
-        !rate.name.toLowerCase().includes('student') && 
-        !rate.isPromo
-    ) || rates[0] || null;
+    // Look for a rate specifically named "Casual Entry" or similar
+    const rateName = (name) => name ? name.toLowerCase() : '';
+    return rates.find(rate => {
+        const name = rateName(rate.name);
+        return (name.includes('casual entry') || name === 'casual') && 
+               !name.includes('student') && 
+               !rate.isPromo;
+    }) || rates.find(rate => !rate.name.toLowerCase().includes('student') && !rate.isPromo) || rates[0] || null;
 }
 
 /**
@@ -87,10 +90,11 @@ async function getStandardCasualRate() {
  */
 async function getStudentCasualRate() {
     const rates = await getCasualRates();
-    return rates.find(rate => 
-        rate.name.toLowerCase().includes('student') && 
-        !rate.isPromo
-    ) || null;
+    return rates.find(rate => {
+        const name = rate.name ? rate.name.toLowerCase() : '';
+        // Find rates with 'student' in the name
+        return name.includes('student') && !rate.isPromo;
+    }) || null;
 }
 
 /**
