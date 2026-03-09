@@ -83,7 +83,7 @@ function createRateCard(id, rate) {
     
     let registrationBadge = '';
     if (showOnRegistration) {
-        registrationBadge = '<span class="registration-badge"><i class="fas fa-clipboard-list"></i> REGISTRATION</span>';
+        registrationBadge = '<span class="registration-badge"><i class="fas fa-user-plus"></i> AVAILABLE ON REGISTRATION FORM</span>';
     }
     
     card.innerHTML = `

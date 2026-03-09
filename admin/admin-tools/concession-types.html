@@ -111,32 +111,26 @@
 
                     <div class="rate-form-group">
                         <div class="checkbox-group">
-                            <input type="checkbox" id="rate-is-promo">
-                            <label for="rate-is-promo">
-                                <i class="fas fa-star"></i> Promotional Rate
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="rate-is-promo">
+                                <span>Mark as promotional rate</span>
                             </label>
                         </div>
-                    </div>
-
-                    <div class="rate-form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="rate-show-registration">
-                            <label for="rate-show-registration">
-                                <i class="fas fa-clipboard-list"></i> Offer on registration form
-                            </label>
-                        </div>
-                        <small class="form-hint" style="margin-left: 26px; display: block; margin-top: 4px; color: var(--text-muted); font-size: 0.85rem;">
-                            Display this rate as an option when new students register
+                        <small class="form-hint" style="display: block; margin-top: 4px; color: var(--text-muted); font-size: 0.85rem; font-style: italic;">
+                            Promotional rates can be highlighted or shown separately
                         </small>
                     </div>
 
                     <div class="rate-form-group">
                         <div class="checkbox-group">
-                            <input type="checkbox" id="rate-is-active" checked>
-                            <label for="rate-is-active">
-                                <i class="fas fa-check-circle"></i> Active
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="rate-show-registration">
+                                <span>Offer on registration form</span>
                             </label>
                         </div>
+                        <small class="form-hint" style="display: block; margin-top: 4px; color: var(--text-muted); font-size: 0.85rem; font-style: italic;">
+                            Display this rate as an option when new students register
+                        </small>
                     </div>
                 </div>
             </form>

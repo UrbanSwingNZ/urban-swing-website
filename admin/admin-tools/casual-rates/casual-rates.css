@@ -248,6 +248,26 @@
     padding: 4px 0;
 }
 
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    cursor: pointer;
+    margin: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: var(--purple-primary);
+}
+
+.checkbox-label span {
+    flex: 1;
+}
+
 .checkbox-group input[type="checkbox"] {
     width: auto;
     margin: 0;

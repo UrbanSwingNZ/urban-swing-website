@@ -35,7 +35,6 @@ export function openRateModal(rateId = null) {
             document.getElementById('rate-description').value = rate.data.description || '';
             document.getElementById('rate-is-promo').checked = rate.data.isPromo || false;
             document.getElementById('rate-show-registration').checked = rate.data.showOnRegistration || false;
-            document.getElementById('rate-is-active').checked = rate.data.isActive !== false;
         }
         form.setAttribute('data-rate-id', rateId);
     } else {
@@ -45,7 +44,6 @@ export function openRateModal(rateId = null) {
         document.getElementById('rate-description').value = '';
         document.getElementById('rate-is-promo').checked = false;
         document.getElementById('rate-show-registration').checked = false;
-        document.getElementById('rate-is-active').checked = true;
         form.removeAttribute('data-rate-id');
     }
     
@@ -76,7 +74,6 @@ export async function saveCasualRate(e) {
     const description = document.getElementById('rate-description').value.trim();
     const isPromo = document.getElementById('rate-is-promo').checked;
     const showOnRegistration = document.getElementById('rate-show-registration').checked;
-    const isActive = document.getElementById('rate-is-active').checked;
     
     if (!name || !priceStr) {
         if (typeof showSnackbar === 'function') {
@@ -99,7 +96,6 @@ export async function saveCasualRate(e) {
         description,
         isPromo,
         showOnRegistration,
-        isActive,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
@@ -118,6 +114,7 @@ export async function saveCasualRate(e) {
             // Create new rate with custom document ID: name-price format
             const snapshot = await db.collection('casualRates').get();
             rateData.displayOrder = snapshot.size + 1;
+            rateData.isActive = true; // New rates are active by default
             rateData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             
             // Generate document ID from name and price
