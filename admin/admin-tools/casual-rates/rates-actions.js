@@ -34,7 +34,7 @@ export function openRateModal(rateId = null) {
             document.getElementById('rate-price').value = rate.data.price || '';
             document.getElementById('rate-description').value = rate.data.description || '';
             document.getElementById('rate-is-promo').checked = rate.data.isPromo || false;
-            document.getElementById('rate-is-active').checked = rate.data.isActive !== false;
+            document.getElementById('rate-show-registration').checked = rate.data.showOnRegistration || false;
         }
         form.setAttribute('data-rate-id', rateId);
     } else {
@@ -43,7 +43,7 @@ export function openRateModal(rateId = null) {
         document.getElementById('rate-price').value = '';
         document.getElementById('rate-description').value = '';
         document.getElementById('rate-is-promo').checked = false;
-        document.getElementById('rate-is-active').checked = true;
+        document.getElementById('rate-show-registration').checked = false;
         form.removeAttribute('data-rate-id');
     }
     
@@ -73,7 +73,7 @@ export async function saveCasualRate(e) {
     const priceStr = document.getElementById('rate-price').value.trim();
     const description = document.getElementById('rate-description').value.trim();
     const isPromo = document.getElementById('rate-is-promo').checked;
-    const isActive = document.getElementById('rate-is-active').checked;
+    const showOnRegistration = document.getElementById('rate-show-registration').checked;
     
     if (!name || !priceStr) {
         if (typeof showSnackbar === 'function') {
@@ -95,7 +95,7 @@ export async function saveCasualRate(e) {
         price,
         description,
         isPromo,
-        isActive,
+        showOnRegistration,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
     
@@ -114,6 +114,7 @@ export async function saveCasualRate(e) {
             // Create new rate with custom document ID: name-price format
             const snapshot = await db.collection('casualRates').get();
             rateData.displayOrder = snapshot.size + 1;
+            rateData.isActive = true; // New rates are active by default
             rateData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             
             // Generate document ID from name and price
