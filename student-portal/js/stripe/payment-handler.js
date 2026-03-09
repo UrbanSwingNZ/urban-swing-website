@@ -87,10 +87,10 @@ async function loadCasualRates() {
     const rateOptionsContainer = document.getElementById('rate-options');
     
     try {
-        // Query casualRates collection for active, non-promo rates
+        // Query casualRates collection for active rates that are available on registration
+        // Note: We fetch all active rates and filter in JavaScript to avoid compound index requirements
         const casualRatesSnapshot = await db.collection('casualRates')
             .where('isActive', '==', true)
-            .where('isPromo', '==', false)
             .get();
         
         // Try to fetch concession packages marked for registration
@@ -127,17 +127,22 @@ async function loadCasualRates() {
         // Build packages object and sort by price
         const packages = [];
         
-        // Add casual rates
+        // Add casual rates that are marked for registration
         casualRatesSnapshot.forEach(doc => {
             const data = doc.data();
-            availablePackages[doc.id] = {
-                id: doc.id,
-                name: data.name,
-                price: data.price,
-                description: data.description || null,
-                type: 'casual'
-            };
-            packages.push(availablePackages[doc.id]);
+            // Only include rates that are:
+            // 1. Not promo rates
+            // 2. Marked for registration (showOnRegistration === true)
+            if (data.isPromo !== true && data.showOnRegistration === true) {
+                availablePackages[doc.id] = {
+                    id: doc.id,
+                    name: data.name,
+                    price: data.price,
+                    description: data.description || null,
+                    type: 'casual'
+                };
+                packages.push(availablePackages[doc.id]);
+            }
         });
         
         // Add registration concession packages (if any were found)
