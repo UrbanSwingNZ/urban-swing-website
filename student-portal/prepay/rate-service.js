@@ -29,8 +29,8 @@ class RateService {
             snapshot.forEach(doc => {
                 const data = doc.data();
                 
-                // Filter: only include active rates
-                if (data.isActive !== false) {
+                // Filter: only include active, non-promo rates
+                if (data.isActive !== false && data.isPromo !== true) {
                     this.rates.push({
                         id: doc.id,
                         name: data.name,
