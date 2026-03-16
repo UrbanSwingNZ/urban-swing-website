@@ -141,6 +141,12 @@
         const navLinks = document.querySelectorAll('.student-portal-header .nav-menu a');
         
         navLinks.forEach(link => {
+            // Skip hidden menu items
+            const parentLi = link.closest('li');
+            if (parentLi && parentLi.style.display === 'none') {
+                return;
+            }
+            
             const icon = link.querySelector('i');
             const iconClass = icon ? icon.className : '';
             const text = link.textContent.trim();
