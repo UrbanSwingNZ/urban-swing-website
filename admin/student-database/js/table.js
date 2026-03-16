@@ -150,10 +150,31 @@ function createStudentRow(student) {
                 <i class="fas fa-trash-alt"></i>
             </button>` : ''}`;
 
+    // Email and phone with copy buttons
+    const email = student.email || 'N/A';
+    const emailDisplay = email !== 'N/A' 
+        ? `<span class="contact-field-wrapper">
+                <span class="contact-text">${escapeHtml(email)}</span>
+                <button class="btn-copy-contact" data-copy-value="${escapeHtml(email)}" data-copy-label="Email" title="Copy email">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </span>`
+        : 'N/A';
+    
+    const phone = student.phoneNumber || 'N/A';
+    const phoneDisplay = phone !== 'N/A'
+        ? `<span class="contact-field-wrapper">
+                <span class="contact-text">${escapeHtml(phone)}</span>
+                <button class="btn-copy-contact" data-copy-value="${escapeHtml(phone)}" data-copy-label="Phone" title="Copy phone">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </span>`
+        : 'N/A';
+
     row.innerHTML = `
         <td><strong>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}</td>
-        <td>${escapeHtml(student.email || 'N/A')}</td>
-        <td>${escapeHtml(student.phoneNumber || 'N/A')}</td>
+        <td>${emailDisplay}</td>
+        <td>${phoneDisplay}</td>
         <td>${escapeHtml(student.pronouns || '-')}</td>
         <td>${emailConsentBadge}</td>
         <td id="${concessionsCellId}" class="concessions-cell">
@@ -190,6 +211,20 @@ function createStudentRow(student) {
             // Desktop: open detail modal
             viewStudent(student.id);
         }
+    });
+    
+    // Add click handlers for copy buttons
+    const copyButtons = row.querySelectorAll('.btn-copy-contact');
+    copyButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const value = button.getAttribute('data-copy-value');
+            const label = button.getAttribute('data-copy-label');
+            if (value) {
+                copyToClipboard(value, label);
+            }
+        });
     });
     
     // Check if student has auth user after row is in DOM
