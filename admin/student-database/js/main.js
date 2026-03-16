@@ -62,3 +62,18 @@ function initializeFilterControls() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeNavigation();
 });
+
+/**
+ * Copy text to clipboard with user feedback
+ * @param {string} text - Text to copy
+ * @param {string} label - Label for the snackbar message (e.g., 'Email', 'Phone')
+ */
+window.copyToClipboard = async function(text, label = 'Text') {
+    try {
+        await navigator.clipboard.writeText(text);
+        showSnackbar(`${label} copied to clipboard`, 'success');
+    } catch (error) {
+        console.error('Failed to copy to clipboard:', error);
+        showSnackbar(`Failed to copy ${label.toLowerCase()}`, 'error');
+    }
+};
