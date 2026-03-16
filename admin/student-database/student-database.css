@@ -477,6 +477,54 @@ textarea:focus {
    ======================================== */
 
 /* ========================================
+   CONTACT FIELD COPY BUTTONS
+   ======================================== */
+
+/* Contact field wrapper with copy button */
+.contact-field-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-text {
+    word-break: break-word;
+}
+
+/* Copy button styling */
+.btn-copy-contact {
+    flex-shrink: 0;
+    padding: 0.25rem 0.4rem;
+    background: transparent;
+    color: var(--purple-primary);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    opacity: 0.6;
+}
+
+.btn-copy-contact:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+.btn-copy-contact:active {
+    transform: scale(0.9);
+}
+
+/* Hide copy buttons on desktop table view */
+@media (min-width: 769px) {
+    .students-table tbody td .btn-copy-contact {
+        display: none;
+    }
+}
+
+/* ========================================
    RESPONSIVE DESIGN
    ======================================== */
 
@@ -603,11 +651,6 @@ textarea:focus {
         padding-bottom: 1rem;
     }
 
-    .students-table tbody tr td:nth-child(4)::before {
-        content: '🏷️ ';
-        opacity: 0.7;
-    }
-
     /* Accordion content - hidden by default */
     .students-table tbody tr td:nth-child(2),
     .students-table tbody tr td:nth-child(3),
@@ -640,15 +683,22 @@ textarea:focus {
         opacity: 0.8;
     }
 
-    .students-table tbody tr.expanded td:nth-child(2)::before {
-        content: '📧 ';
-        opacity: 0.7;
+    /* Contact field wrappers with copy buttons */
+    .students-table tbody tr.expanded td:nth-child(2) .contact-field-wrapper,
+    .students-table tbody tr.expanded td:nth-child(3) .contact-field-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
     }
 
-    .students-table tbody tr.expanded td:nth-child(3)::before {
-        content: '📱 ';
-        opacity: 0.7;
+    .students-table tbody tr.expanded td:nth-child(2) .contact-text,
+    .students-table tbody tr.expanded td:nth-child(3) .contact-text {
+        flex: 1;
+        word-break: break-word;
     }
+
+
 
     .students-table tbody tr.expanded td:nth-child(5)::before {
         content: 'Email Consent: ';
