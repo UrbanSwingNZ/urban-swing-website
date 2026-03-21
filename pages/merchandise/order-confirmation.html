@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - Urban Swing</title>
+    <link rel="stylesheet" href="../../styles/base/design-tokens.css">
+    <link rel="stylesheet" href="../../styles/base/colors.css">
+    <link rel="stylesheet" href="../../styles/base/reset.css">
+    <link rel="stylesheet" href="../../styles/base/typography.css">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            min-height: 100vh;
+            background: var(--gradient-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl);
+        }
+
+        .confirmation-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 60px var(--shadow-strong);
+            max-width: 600px;
+            width: 100%;
+            padding: var(--space-lg);
+            text-align: center;
+        }
+
+        .logo {
+            display: block;
+            width: 200px;
+            max-width: 80%;
+            height: auto;
+            margin: 0 auto var(--space-lg);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-lg);
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--white);
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            background: var(--gradient-header);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .confirmation-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--gray-850);
+            margin-bottom: var(--space-lg);
+        }
+
+        .info-box {
+            background: var(--gray-100);
+            border-left: 4px solid var(--purple-primary);
+            padding: var(--space-lg);
+            border-radius: var(--radius-xs);
+            margin-bottom: var(--space-lg);
+            text-align: left;
+        }
+
+        .info-box p {
+            margin: 0 0 var(--space-sm) 0;
+            color: var(--gray-850);
+            line-height: 1.6;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .redirect-info {
+            font-size: 0.95rem;
+            color: var(--gray-700);
+            margin-bottom: var(--space-md);
+        }
+
+        .redirect-countdown {
+            font-weight: 600;
+            color: var(--purple-primary);
+        }
+
+        .manual-link {
+            display: inline-block;
+            color: var(--purple-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: var(--space-sm) var(--space-md);
+            border: 2px solid var(--purple-primary);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .manual-link:hover {
+            background: var(--purple-primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--bg-purple-medium);
+        }
+
+        @media (max-width: 768px) {
+            .confirmation-container {
+                padding: var(--space-md);
+            }
+
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: var(--space-sm);
+            }
+
+            .logo {
+                width: 160px;
+                margin-bottom: var(--space-sm);
+            }
+
+            .success-icon {
+                width: 64px;
+                height: 64px;
+                margin-bottom: var(--space-sm);
+            }
+
+            .success-icon svg {
+                width: 36px;
+                height: 36px;
+            }
+
+            .confirmation-message {
+                margin-bottom: var(--space-md);
+            }
+
+            .info-box {
+                padding: var(--space-md);
+                margin-bottom: var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <a href="/">
+            <img src="/images/urban-swing-logo.png" alt="Urban Swing Logo" class="logo">
+        </a>
+
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+
+        <h1>Order Confirmed!</h1>
+
+        <p class="confirmation-message">
+            Thank you for your merchandise order! We've received your request and will be in touch shortly with an invoice.
+        </p>
+
+        <div class="info-box">
+            <p><strong>What happens next?</strong></p>
+            <p>• We'll send you an invoice for payment</p>
+            <p>• Once payment is received, we'll begin processing your order</p>
+            <p>• We'll keep you updated throughout the process</p>
+        </div>
+
+        <p class="redirect-info">
+            Redirecting to the homepage in <span id="countdown" class="redirect-countdown">10</span> seconds...
+        </p>
+
+        <a href="/" class="manual-link">Return to Homepage Now</a>
+    </div>
+
+    <script>
+        // Countdown timer for auto-redirect
+        let secondsLeft = 10;
+        const countdownElement = document.getElementById('countdown');
+
+        const countdown = setInterval(() => {
+            secondsLeft--;
+            countdownElement.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdown);
+                window.location.href = '/';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
