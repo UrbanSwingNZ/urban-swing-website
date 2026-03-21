@@ -239,13 +239,33 @@ table {
   .class-details-wrapper,
   .pricing-wrapper {
     width: 100%;
-    padding: 0 var(--space-md);
+    padding: 0;
   }
   
   .class-details-table,
   .pricing-table {
-    display: block;
+    display: table;
     width: 100%;
+    table-layout: fixed;
+  }
+  
+  .pricing-table td {
+    padding: var(--space-sm);
+    word-wrap: break-word;
+  }
+  
+  .pricing-table td[colspan="2"] {
+    width: 100%;
+  }
+  
+  .pricing-table td:first-child:not([colspan]) {
+    width: 65%;
+  }
+  
+  .pricing-table td:nth-child(2):not([colspan]) {
+    width: 35%;
+    min-width: 60px;
+    white-space: nowrap;
   }
   
   .class-details-table td:nth-child(2) {

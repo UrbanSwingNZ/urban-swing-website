@@ -143,6 +143,15 @@ a.card:hover {
     border-radius: var(--radius-lg);
   }
   
+  .card-header {
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-sm);
+  }
+  
+  .card-body {
+    margin-bottom: 0;
+  }
+  
   .card-feature {
     padding: var(--space-lg);
   }
