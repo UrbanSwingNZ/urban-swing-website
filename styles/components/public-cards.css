@@ -139,7 +139,7 @@ a.card:hover {
 /* Mobile Adjustments */
 @media (max-width: 768px) {
   .card {
-    padding: var(--space-sm);
+    padding: var(--space-md);
     border-radius: var(--radius-lg);
   }
   
