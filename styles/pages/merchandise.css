@@ -423,7 +423,7 @@ h1 {
 .quantity-selector {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0;
     width: 100%;
     max-height: 0;
     opacity: 0;
@@ -441,18 +441,18 @@ h1 {
     font-weight: 600;
     color: var(--gray-700);
     font-size: 1rem;
-    margin-right: 4px;
+    margin-right: 8px;
 }
 
 .qty-btn {
     width: 42px;
     height: 42px;
-    border: 1px solid var(--gray-550);
-    background: var(--white);
-    color: var(--gray-700);
-    border-radius: var(--radius-sm);
+    border: 2px solid var(--purple-primary);
+    background: var(--purple-primary);
+    color: var(--white);
+    border-radius: 0;
     font-size: 1.1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-fast);
     display: flex;
@@ -463,14 +463,23 @@ h1 {
     font-family: Arial, sans-serif;
 }
 
+.qty-btn.minus {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    border-right: none;
+}
+
+.qty-btn.plus {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    border-left: none;
+}
+
 .qty-btn:hover {
-    background: var(--gray-200);
-    border-color: var(--gray-700);
-    color: var(--gray-850);
+    background: var(--purple-dark);
+    border-color: var(--purple-dark);
 }
 
 .qty-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
 .quantity-selector input[type="number"] {
@@ -478,16 +487,18 @@ h1 {
     height: 42px;
     text-align: center;
     border: 2px solid var(--gray-500);
-    border-radius: var(--radius-sm);
+    border-radius: 0;
     font-weight: 600;
     font-size: 1rem;
-    background: var(--gray-100);
+    background: var(--white);
     color: var(--gray-700);
     padding: 0;
     line-height: 42px;
     -moz-appearance: textfield;
     -webkit-appearance: none;
     appearance: none;
+    border-left: none;
+    border-right: none;
 }
 
 .quantity-selector input[type="number"]::-webkit-inner-spin-button,
@@ -637,7 +648,7 @@ h1 {
     
     .qty-label {
         font-size: 0.9rem;
-        margin-right: 2px;
+        margin-right: 6px;
     }
     
     .quantity-selector input[type="number"] {
