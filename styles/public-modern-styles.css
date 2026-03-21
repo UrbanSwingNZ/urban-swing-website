@@ -254,11 +254,15 @@ table {
     word-wrap: break-word;
   }
   
-  .pricing-table td:first-child {
+  .pricing-table td[colspan="2"] {
+    width: 100%;
+  }
+  
+  .pricing-table td:first-child:not([colspan]) {
     width: 65%;
   }
   
-  .pricing-table td:nth-child(2) {
+  .pricing-table td:nth-child(2):not([colspan]) {
     width: 35%;
     min-width: 60px;
     white-space: nowrap;
