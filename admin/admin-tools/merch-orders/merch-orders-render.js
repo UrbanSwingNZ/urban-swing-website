@@ -123,14 +123,34 @@ export function viewOrderDetails(orderId) {
         <div class="order-detail-section">
             <h3>Ordered Items</h3>
             <ul class="items-list">
-                ${Object.entries(order.items).map(([key, item]) => `
-                    <li>
-                        <div>
-                            <span class="item-name">${formatItemName(key)}</span>
-                            <span class="item-details">Size: ${item.size || 'N/A'} | Qty: ${item.quantity}</span>
-                        </div>
-                    </li>
-                `).join('')}
+                ${Object.entries(order.items).map(([key, item]) => {
+                    // Handle tees with color quantities
+                    if (item.blackQty !== undefined || item.whiteQty !== undefined) {
+                        const colors = [];
+                        if (item.blackQty > 0) colors.push(`Black: ${item.blackQty}`);
+                        if (item.whiteQty > 0) colors.push(`White: ${item.whiteQty}`);
+                        const colorStr = colors.length > 0 ? colors.join(', ') : 'N/A';
+                        return `
+                            <li>
+                                <div>
+                                    <span class="item-name">${formatItemName(key)}</span>
+                                    <span class="item-details">Size: ${item.size || 'N/A'} | ${colorStr}</span>
+                                </div>
+                            </li>
+                        `;
+                    }
+                    // Handle hoodies/sweatshirts with single quantity
+                    else {
+                        return `
+                            <li>
+                                <div>
+                                    <span class="item-name">${formatItemName(key)}</span>
+                                    <span class="item-details">Size: ${item.size || 'N/A'} | Qty: ${item.quantity}</span>
+                                </div>
+                            </li>
+                        `;
+                    }
+                }).join('')}
             </ul>
         </div>
         ` : ''}
