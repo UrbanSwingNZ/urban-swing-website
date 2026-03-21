@@ -145,14 +145,21 @@ async function handleFormSubmit(event) {
         // Save to Firestore
         await saveMerchOrder(orderData);
         
-        // Hide loading and show success
-        showLoading(false);
-        showMessage('Thank you! Your order has been submitted successfully. We will send you an invoice shortly.');
+        // Reset form before redirecting
+        document.getElementById('merchandise-form').reset();
         
-        // Reset form after short delay
-        setTimeout(() => {
-            document.getElementById('merchandise-form').reset();
-        }, 1500);
+        // Reset all quantity selectors to 0
+        document.querySelectorAll('.quantity-selector input').forEach(input => {
+            input.value = 0;
+        });
+        
+        // Hide all color quantity containers
+        document.querySelectorAll('.color-quantity-container').forEach(container => {
+            container.style.display = 'none';
+        });
+        
+        // Redirect to confirmation page
+        window.location.href = '/pages/merchandise/order-confirmation.html';
         
     } catch (error) {
         console.error('Error submitting order:', error);
