@@ -10,15 +10,15 @@
  * @returns {Object} Object with subject, html and text versions
  */
 function generateMerchOrderEmail(order, orderId) {
-  // Product name mapping
+  // Product name mapping with stock codes
   const productNames = {
-    'maliTee': 'Mali Tee',
-    'cropTee': 'Crop Tee',
-    'stapleTee': 'Staple Tee',
-    'womensZipHood': "Women's Relax Zip Hood",
-    'mensZipHood': "Men's Relax Zip Hood",
-    'womensCrew': "Women's Relax Crew",
-    'mensCrew': "Men's Relax Crew"
+    'maliTee': 'Mali Tee (4008)',
+    'cropTee': 'Crop Tee (4062)',
+    'stapleTee': 'Staple Tee (5001)',
+    'womensZipHood': "Women's Relax Zip Hood (4162)",
+    'mensZipHood': "Men's Relax Zip Hood (5162)",
+    'womensCrew': "Women's Relax Crew (4160)",
+    'mensCrew': "Men's Relax Crew (5160)"
   };
 
   // Format items list
