@@ -110,15 +110,18 @@ async function handleFormSubmit(event) {
             items: {
                 maliTee: {
                     size: document.querySelector('input[name="maliTeeSize"]:checked')?.value || null,
-                    quantity: parseInt(document.getElementById('maliTeeQty').value) || 0
+                    blackQty: parseInt(document.getElementById('maliTeeBlackQty').value) || 0,
+                    whiteQty: parseInt(document.getElementById('maliTeeWhiteQty').value) || 0
                 },
                 cropTee: {
                     size: document.querySelector('input[name="cropTeeSize"]:checked')?.value || null,
-                    quantity: parseInt(document.getElementById('cropTeeQty').value) || 0
+                    blackQty: parseInt(document.getElementById('cropTeeBlackQty').value) || 0,
+                    whiteQty: parseInt(document.getElementById('cropTeeWhiteQty').value) || 0
                 },
                 stapleTee: {
                     size: document.querySelector('input[name="stapleTeeSize"]:checked')?.value || null,
-                    quantity: parseInt(document.getElementById('stapleTeeQty').value) || 0
+                    blackQty: parseInt(document.getElementById('stapleTeeBlackQty').value) || 0,
+                    whiteQty: parseInt(document.getElementById('stapleTeeWhiteQty').value) || 0
                 },
                 womensZipHood: {
                     size: document.querySelector('input[name="womensZipHoodSize"]:checked')?.value || null,

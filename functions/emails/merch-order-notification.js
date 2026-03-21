@@ -24,22 +24,55 @@ function generateMerchOrderEmail(order, orderId) {
   // Format items list
   const items = order.items || {};
   const itemsList = Object.entries(items).map(([key, item]) => {
-    return {
-      name: item.productName || productNames[key] || key,
-      size: item.size || 'N/A',
-      quantity: item.quantity || 0
-    };
+    const name = item.productName || productNames[key] || key;
+    const size = item.size || 'N/A';
+    
+    // Handle tee items with color quantities
+    if (item.blackQty !== undefined || item.whiteQty !== undefined) {
+      const blackQty = item.blackQty || 0;
+      const whiteQty = item.whiteQty || 0;
+      
+      // Build color string showing only non-zero quantities
+      const colors = [];
+      if (blackQty > 0) colors.push(`Black: ${blackQty}`);
+      if (whiteQty > 0) colors.push(`White: ${whiteQty}`);
+      const colorStr = colors.length > 0 ? colors.join(', ') : 'N/A';
+      
+      return {
+        name,
+        size,
+        colorStr,
+        hasColors: true
+      };
+    } 
+    // Handle single quantity items (hoodies, etc.)
+    else {
+      return {
+        name,
+        size,
+        quantity: item.quantity || 0,
+        hasColors: false
+      };
+    }
   });
 
   // Build HTML items list
-  const itemsHtml = itemsList.map(item => 
-    `<li style="margin-bottom: 8px;">${item.name} - Size: ${item.size} - Quantity: ${item.quantity}</li>`
-  ).join('');
+  const itemsHtml = itemsList.map(item => {
+    if (item.hasColors) {
+      return `<li style="margin-bottom: 8px;">${item.name} - Size: ${item.size} - ${item.colorStr}</li>`;
+    } else {
+      return `<li style="margin-bottom: 8px;">${item.name} - Size: ${item.size} - Quantity: ${item.quantity}</li>`;
+    }
+  }).join('');
 
   // Build text items list
-  const itemsText = itemsList.map(item => 
-    `  - ${item.name} - Size: ${item.size} - Quantity: ${item.quantity}`
-  ).join('\n');
+  const itemsText = itemsList.map(item => {
+    if (item.hasColors) {
+      return `  - ${item.name} - Size: ${item.size} - ${item.colorStr}`;
+    } else {
+      return `  - ${item.name} - Size: ${item.size} - Quantity: ${item.quantity}`;
+    }
+  }).join('\n');
 
   // Shipping method display
   const shippingLabels = {
