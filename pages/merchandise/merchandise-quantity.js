@@ -10,7 +10,6 @@ function initializeQuantityHandlers() {
         button.addEventListener('click', function() {
             const targetId = this.getAttribute('data-target');
             const input = document.getElementById(targetId);
-            const qtySelector = input?.closest('.quantity-selector');
             let currentValue = parseInt(input.value) || 0;
             
             if (this.classList.contains('plus')) {
@@ -21,37 +20,57 @@ function initializeQuantityHandlers() {
             
             input.value = currentValue;
             
-            // Deselect size and hide controls if quantity is 0
-            if (currentValue === 0) {
-                deselectSizeForItem(targetId);
-                if (qtySelector) {
-                    qtySelector.classList.remove('visible');
+            // Check if this is a color quantity (part of color-quantity-container)
+            const colorQtyContainer = input.closest('.color-quantity-container');
+            if (colorQtyContainer) {
+                // Get both black and white quantities
+                const allInputs = colorQtyContainer.querySelectorAll('input[type="number"]');
+                const totalQty = Array.from(allInputs).reduce((sum, inp) => sum + (parseInt(inp.value) || 0), 0);
+                
+                // If both are 0, deselect size and hide container
+                if (totalQty === 0) {
+                    deselectSizeForColorContainer(colorQtyContainer);
+                    colorQtyContainer.classList.remove('visible');
+                }
+            } else {
+                // Handle single quantity selector (hoodies, etc.)
+                const qtySelector = input?.closest('.quantity-selector');
+                if (currentValue === 0) {
+                    deselectSizeForItem(targetId);
+                    if (qtySelector) {
+                        qtySelector.classList.remove('visible');
+                    }
                 }
             }
         });
     });
     
-    // Auto-set quantity to 1 when size is selected and show qty controls
+    // Auto-show color quantity controls when size is selected
     const sizeRadios = document.querySelectorAll('.size-radio input[type="radio"]');
     sizeRadios.forEach(radio => {
         // Allow deselection by clicking the same radio button
         radio.addEventListener('click', function() {
             const radioName = this.name;
-            const qtyInputId = getQuantityInputIdFromRadioName(radioName);
-            const qtyInput = qtyInputId ? document.getElementById(qtyInputId) : null;
-            const qtySelector = qtyInput?.closest('.quantity-selector');
+            const merchItem = this.closest('.merch-item');
+            const colorQtyContainer = merchItem?.querySelector('.color-quantity-container');
+            const singleQtySelector = merchItem?.querySelector('.quantity-selector:not(.color-quantity-container .quantity-selector)');
             
             // If this radio was already checked, deselect it
             if (this.dataset.checked === 'true') {
                 this.checked = false;
                 this.dataset.checked = 'false';
                 
-                // Reset quantity to 0 and hide controls
-                if (qtyInput) {
-                    qtyInput.value = 0;
-                }
-                if (qtySelector) {
-                    qtySelector.classList.remove('visible');
+                // Reset quantities and hide controls
+                if (colorQtyContainer) {
+                    // Reset all color quantities to 0
+                    const allInputs = colorQtyContainer.querySelectorAll('input[type="number"]');
+                    allInputs.forEach(inp => inp.value = 0);
+                    colorQtyContainer.classList.remove('visible');
+                } else if (singleQtySelector) {
+                    // Reset single quantity to 0
+                    const qtyInput = singleQtySelector.querySelector('input[type="number"]');
+                    if (qtyInput) qtyInput.value = 0;
+                    singleQtySelector.classList.remove('visible');
                 }
             } else {
                 // Mark this radio as checked and unmark others in the same group
@@ -59,13 +78,21 @@ function initializeQuantityHandlers() {
                 radiosInGroup.forEach(r => r.dataset.checked = 'false');
                 this.dataset.checked = 'true';
                 
-                // Set quantity to 1 if currently 0 and show controls
-                if (qtyInput) {
-                    if (parseInt(qtyInput.value) === 0) {
+                // Show controls and set default quantities if needed
+                if (colorQtyContainer) {
+                    // Show the color quantity container (both controls visible)
+                    if (!colorQtyContainer.classList.contains('visible')) {
+                        colorQtyContainer.classList.add('visible');
+                    }
+                    // Don't auto-set quantities - user must choose
+                } else if (singleQtySelector) {
+                    // Set quantity to 1 if currently 0 and show controls
+                    const qtyInput = singleQtySelector.querySelector('input[type="number"]');
+                    if (qtyInput && parseInt(qtyInput.value) === 0) {
                         qtyInput.value = 1;
                     }
-                    if (qtySelector && !qtySelector.classList.contains('visible')) {
-                        qtySelector.classList.add('visible');
+                    if (!singleQtySelector.classList.contains('visible')) {
+                        singleQtySelector.classList.add('visible');
                     }
                 }
             }
@@ -74,7 +101,21 @@ function initializeQuantityHandlers() {
 }
 
 /**
- * Deselect size radio buttons for a given quantity input
+ * Deselect size for items with color-quantity-container
+ */
+function deselectSizeForColorContainer(colorQtyContainer) {
+    const merchItem = colorQtyContainer.closest('.merch-item');
+    if (merchItem) {
+        const sizeRadios = merchItem.querySelectorAll('.size-radio input[type="radio"]');
+        sizeRadios.forEach(radio => {
+            radio.checked = false;
+            radio.dataset.checked = 'false';
+        });
+    }
+}
+
+/**
+ * Deselect size radio buttons for a given quantity input (for single quantity items)
  */
 function deselectSizeForItem(qtyInputId) {
     const radioName = getRadioNameFromQuantityInputId(qtyInputId);
@@ -89,13 +130,10 @@ function deselectSizeForItem(qtyInputId) {
 }
 
 /**
- * Map quantity input ID to radio button name
+ * Map quantity input ID to radio button name (for single quantity items only)
  */
 function getRadioNameFromQuantityInputId(qtyInputId) {
     const mapping = {
-        'maliTeeQty': 'maliTeeSize',
-        'cropTeeQty': 'cropTeeSize',
-        'stapleTeeQty': 'stapleTeeSize',
         'womensZipHoodQty': 'womensZipHoodSize',
         'mensZipHoodQty': 'mensZipHoodSize',
         'womensCrewQty': 'womensCrewSize',
@@ -103,21 +141,4 @@ function getRadioNameFromQuantityInputId(qtyInputId) {
     };
     
     return mapping[qtyInputId] || null;
-}
-
-/**
- * Map radio button name to quantity input ID
- */
-function getQuantityInputIdFromRadioName(radioName) {
-    const mapping = {
-        'maliTeeSize': 'maliTeeQty',
-        'cropTeeSize': 'cropTeeQty',
-        'stapleTeeSize': 'stapleTeeQty',
-        'womensZipHoodSize': 'womensZipHoodQty',
-        'mensZipHoodSize': 'mensZipHoodQty',
-        'womensCrewSize': 'womensCrewQty',
-        'mensCrewSize': 'mensCrewQty'
-    };
-    
-    return mapping[radioName] || null;
 }

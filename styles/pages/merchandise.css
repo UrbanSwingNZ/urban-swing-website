@@ -373,6 +373,7 @@ h1 {
 /* Size Selector */
 .size-selector {
     display: flex;
+    justify-content: space-between;
     gap: var(--space-xs);
     width: 100%;
 }
@@ -396,13 +397,13 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    height: 38px;
+    width: 60px;
+    height: 46px;
     border: 2px solid var(--gray-500);
     border-radius: var(--radius-sm);
     background: var(--white);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--gray-700);
     transition: all var(--transition-fast);
 }
@@ -422,7 +423,7 @@ h1 {
 .quantity-selector {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0;
     width: 100%;
     max-height: 0;
     opacity: 0;
@@ -431,7 +432,7 @@ h1 {
 }
 
 .quantity-selector.visible {
-    max-height: 50px;
+    max-height: 60px;
     opacity: 1;
     margin-top: var(--space-xs);
 }
@@ -439,19 +440,19 @@ h1 {
 .qty-label {
     font-weight: 600;
     color: var(--gray-700);
-    font-size: 0.9rem;
-    margin-right: 2px;
+    font-size: 1rem;
+    margin-right: 8px;
 }
 
 .qty-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--gray-550);
-    background: var(--white);
-    color: var(--gray-700);
-    border-radius: var(--radius-sm);
-    font-size: 1rem;
-    font-weight: 500;
+    width: 42px;
+    height: 42px;
+    border: 2px solid var(--purple-primary);
+    background: var(--purple-primary);
+    color: var(--white);
+    border-radius: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-fast);
     display: flex;
@@ -462,37 +463,80 @@ h1 {
     font-family: Arial, sans-serif;
 }
 
+.qty-btn.minus {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    border-right: none;
+}
+
+.qty-btn.plus {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    border-left: none;
+}
+
 .qty-btn:hover {
-    background: var(--gray-200);
-    border-color: var(--gray-700);
-    color: var(--gray-850);
+    background: var(--purple-dark);
+    border-color: var(--purple-dark);
 }
 
 .qty-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
 .quantity-selector input[type="number"] {
-    width: 45px;
-    height: 32px;
+    width: 55px;
+    height: 42px;
     text-align: center;
     border: 2px solid var(--gray-500);
-    border-radius: var(--radius-sm);
+    border-radius: 0;
     font-weight: 600;
-    font-size: 0.9rem;
-    background: var(--gray-100);
+    font-size: 1rem;
+    background: var(--white);
     color: var(--gray-700);
     padding: 0;
-    line-height: 32px;
+    line-height: 42px;
     -moz-appearance: textfield;
     -webkit-appearance: none;
     appearance: none;
+    border-left: none;
+    border-right: none;
 }
 
 .quantity-selector input[type="number"]::-webkit-inner-spin-button,
 .quantity-selector input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+/* Color Quantity Container - Wrapper for Black and White quantity controls */
+.color-quantity-container {
+    display: flex;
+    gap: var(--space-md);
+    width: 100%;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.color-quantity-container.visible {
+    max-height: 120px;
+    opacity: 1;
+    margin-top: var(--space-xs);
+}
+
+/* When inside color-quantity-container, quantity-selector is always visible */
+.color-quantity-container .quantity-selector {
+    max-height: none !important;
+    opacity: 1 !important;
+    margin-top: 0;
+    overflow: visible;
+    flex: 0 0 auto;
+    width: auto;
+}
+
+/* Push the second quantity selector (White) to the right on desktop */
+.color-quantity-container .quantity-selector:last-child {
+    margin-left: auto;
 }
 
 /* Terms & Conditions Section */
@@ -584,15 +628,61 @@ h1 {
         padding: var(--space-sm);
     }
     
-    /* Smaller size buttons on mobile */
+    /* Size buttons on mobile */
     .size-selector {
         gap: 6px;
     }
     
     .size-radio span {
-        width: 40px;
-        height: 36px;
-        font-size: 0.85rem;
+        width: 48px;
+        height: 44px;
+        font-size: 0.9rem;
+    }
+    
+    /* Quantity controls on mobile - keep original size */
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .qty-label {
+        font-size: 0.9rem;
+        margin-right: 6px;
+    }
+    
+    .quantity-selector input[type="number"] {
+        width: 45px;
+        height: 32px;
+        font-size: 0.9rem;
+        line-height: 32px;
+    }
+    
+    .quantity-selector.visible {
+        max-height: 50px;
+    }
+    
+    /* Stack color quantity controls on mobile */
+    .color-quantity-container {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+    
+    .color-quantity-container.visible {
+        max-height: 100px;
+    }
+    
+    .color-quantity-container .quantity-selector {
+        justify-content: space-between;
+    }
+    
+    .color-quantity-container .quantity-selector:last-child {
+        margin-left: 0;
+    }
+    
+    .color-quantity-container .qty-label {
+        flex: 0 0 auto;
+        margin-right: auto;
     }
 }
 
@@ -609,14 +699,14 @@ h1 {
         width: 150px;
     }
     
-    /* Even smaller on very small screens */
+    /* Size buttons on very small screens */
     .size-selector {
         gap: 4px;
     }
     
     .size-radio span {
-        width: 38px;
-        height: 34px;
-        font-size: 0.8rem;
+        width: 44px;
+        height: 40px;
+        font-size: 0.85rem;
     }
 }

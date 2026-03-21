@@ -110,15 +110,18 @@ async function handleFormSubmit(event) {
             items: {
                 maliTee: {
                     size: document.querySelector('input[name="maliTeeSize"]:checked')?.value || null,
-                    quantity: parseInt(document.getElementById('maliTeeQty').value) || 0
+                    blackQty: parseInt(document.getElementById('maliTeeBlackQty').value) || 0,
+                    whiteQty: parseInt(document.getElementById('maliTeeWhiteQty').value) || 0
                 },
                 cropTee: {
                     size: document.querySelector('input[name="cropTeeSize"]:checked')?.value || null,
-                    quantity: parseInt(document.getElementById('cropTeeQty').value) || 0
+                    blackQty: parseInt(document.getElementById('cropTeeBlackQty').value) || 0,
+                    whiteQty: parseInt(document.getElementById('cropTeeWhiteQty').value) || 0
                 },
                 stapleTee: {
                     size: document.querySelector('input[name="stapleTeeSize"]:checked')?.value || null,
-                    quantity: parseInt(document.getElementById('stapleTeeQty').value) || 0
+                    blackQty: parseInt(document.getElementById('stapleTeeBlackQty').value) || 0,
+                    whiteQty: parseInt(document.getElementById('stapleTeeWhiteQty').value) || 0
                 },
                 womensZipHood: {
                     size: document.querySelector('input[name="womensZipHoodSize"]:checked')?.value || null,
@@ -142,14 +145,21 @@ async function handleFormSubmit(event) {
         // Save to Firestore
         await saveMerchOrder(orderData);
         
-        // Hide loading and show success
-        showLoading(false);
-        showMessage('Thank you! Your order has been submitted successfully. We will send you an invoice shortly.');
+        // Reset form before redirecting
+        document.getElementById('merchandise-form').reset();
         
-        // Reset form after short delay
-        setTimeout(() => {
-            document.getElementById('merchandise-form').reset();
-        }, 1500);
+        // Reset all quantity selectors to 0
+        document.querySelectorAll('.quantity-selector input').forEach(input => {
+            input.value = 0;
+        });
+        
+        // Hide all color quantity containers
+        document.querySelectorAll('.color-quantity-container').forEach(container => {
+            container.style.display = 'none';
+        });
+        
+        // Redirect to confirmation page
+        window.location.href = '/pages/merchandise/order-confirmation.html';
         
     } catch (error) {
         console.error('Error submitting order:', error);
