@@ -22,7 +22,18 @@ function filterItems(items) {
     const filtered = {};
     
     for (const [itemName, itemData] of Object.entries(items)) {
-        if (itemData.quantity > 0) {
+        // For tee items with color quantities
+        if (itemData.blackQty !== undefined || itemData.whiteQty !== undefined) {
+            const blackQty = itemData.blackQty || 0;
+            const whiteQty = itemData.whiteQty || 0;
+            
+            // Only include if at least one color has quantity > 0
+            if (blackQty > 0 || whiteQty > 0) {
+                filtered[itemName] = itemData;
+            }
+        } 
+        // For single quantity items (hoodies, etc.)
+        else if (itemData.quantity > 0) {
             filtered[itemName] = itemData;
         }
     }
