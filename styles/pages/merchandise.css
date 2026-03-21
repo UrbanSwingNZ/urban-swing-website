@@ -373,6 +373,7 @@ h1 {
 /* Size Selector */
 .size-selector {
     display: flex;
+    justify-content: space-between;
     gap: var(--space-xs);
     width: 100%;
 }
@@ -514,11 +515,17 @@ h1 {
 
 /* When inside color-quantity-container, quantity-selector is always visible */
 .color-quantity-container .quantity-selector {
-    max-height: none;
-    opacity: 1;
+    max-height: none !important;
+    opacity: 1 !important;
     margin-top: 0;
     overflow: visible;
-    flex: 1;
+    flex: 0 0 auto;
+    width: auto;
+}
+
+/* Push the second quantity selector (White) to the right on desktop */
+.color-quantity-container .quantity-selector:last-child {
+    margin-left: auto;
 }
 
 /* Terms & Conditions Section */
@@ -633,6 +640,10 @@ h1 {
     
     .color-quantity-container .quantity-selector {
         justify-content: space-between;
+    }
+    
+    .color-quantity-container .quantity-selector:last-child {
+        margin-left: 0;
     }
     
     .color-quantity-container .qty-label {
