@@ -76,11 +76,13 @@ const { createStudentWithPayment } = require('./create-student-payment');
 const { getAvailablePackages } = require('./get-available-packages');
 const { processCasualPayment } = require('./process-casual-payment');
 const { processConcessionPurchase } = require('./process-concession-purchase');
+const { processWorkshopPayment } = require('./process-workshop-payment');
 
 exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;
 exports.processCasualPayment = processCasualPayment;
 exports.processConcessionPurchase = processConcessionPurchase;
+exports.processWorkshopPayment = processWorkshopPayment;
 
 // ========================================
 // TRANSACTION MANAGEMENT

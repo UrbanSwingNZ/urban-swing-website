@@ -295,144 +295,190 @@ await assertFails(
 
 ---
 
-## Phase 2: Cloud Functions & Backend
+## Phase 2: Cloud Functions & Backend ✅ COMPLETED
 
-### 2.1 Update transaction-utils.js
+### What Was Implemented
 
-**File**: `/functions/utils/transaction-utils.js`
+**File**: `/functions/process-workshop-payment.js` (234 lines)
 
-Add workshop-entry type recognition to `determineTransactionType()`:
+Created HTTP Cloud Function (onRequest v2) for processing workshop registration payments:
 
-```javascript
-// Add this case to the determineTransactionType function
-function determineTransactionType(transactionData) {
-  // Existing cases...
-  
-  // Workshop entry
-  if (transactionData.workshopId) {
-    return 'workshop-entry';
-  }
-  
-  // ... rest of function
-}
-```
-
-### 2.2 Create process-workshop-payment.js
-
-**File**: `/functions/process-workshop-payment.js`
-
-Create new Cloud Function for processing workshop Stripe payments:
-
-```javascript
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const { processStripePayment } = require('./stripe/stripe-payment');
-
-exports.processWorkshopPayment = functions.https.onCall(async (data, context) => {
-  try {
-    // Verify authentication
-    if (!context.auth) {
-      throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
-    }
-
-    const { studentId, workshopId, paymentMethodId } = data;
-
-    // Validate inputs
-    if (!studentId || !workshopId || !paymentMethodId) {
-      throw new functions.https.HttpsError('invalid-argument', 'Missing required parameters');
-    }
-
-    const db = admin.firestore();
-
-    // Get workshop details
-    const workshopDoc = await db.collection('workshops').doc(workshopId).get();
-    if (!workshopDoc.exists) {
-      throw new functions.https.HttpsError('not-found', 'Workshop not found');
-    }
-
-    const workshop = workshopDoc.data();
-
-    // Get student details
-    const studentDoc = await db.collection('students').doc(studentId).get();
-    if (!studentDoc.exists) {
-      throw new functions.https.HttpsError('not-found', 'Student not found');
-    }
-
-    const student = studentDoc.data();
-    const studentName = `${student.firstName} ${student.lastName}`;
-
-    // Process Stripe payment
-    const paymentResult = await processStripePayment({
-      amount: workshop.cost,
-      currency: 'nzd',
-      customerId: student.stripeCustomerId,
-      paymentMethodId: paymentMethodId,
-      description: `Workshop: ${workshop.name}`,
-      metadata: {
-        studentId: studentId,
-        workshopId: workshopId,
-        type: 'workshop-entry'
-      }
-    });
-
-    // Create transaction record
-    const transactionRef = await db.collection('transactions').add({
-      type: 'workshop-entry',
-      workshopId: workshopId,
-      workshopName: workshop.name,
-      studentId: studentId,
-      studentName: studentName,
-      amount: workshop.cost,
-      paymentMethod: 'online',
-      classDate: workshop.date,
-      date: admin.firestore.FieldValue.serverTimestamp(),
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      createdBy: context.auth.uid,
-      reversed: false,
-      refunded: null,
-      stripePaymentIntentId: paymentResult.paymentIntentId
-    });
-
-    // Add student to registeredStudents array
-    await db.collection('workshops').doc(workshopId).update({
-      registeredStudents: admin.firestore.FieldValue.arrayUnion({
-        studentId: studentId,
-        studentName: studentName,
-        registeredAt: admin.firestore.FieldValue.serverTimestamp(),
-        paidOnline: true
-      })
-    });
-
-    return {
-      success: true,
-      transactionId: transactionRef.id,
-      paymentIntentId: paymentResult.paymentIntentId
-    };
-
-  } catch (error) {
-    console.error('Workshop payment error:', error);
-    throw new functions.https.HttpsError('internal', error.message);
-  }
-});
-```
-
-### 2.3 Export Cloud Function
+**Key Features**:
+- CORS-enabled public endpoint for student portal
+- Validates studentId, workshopId, and paymentMethodId
+- Retrieves and validates student and workshop documents
+- Checks workshop status (must be 'published')
+- Prevents duplicate registrations
+- Validates invitation requirements (openToAll or in invitedStudents[])
+- Gets existing Stripe customer or creates new one
+- Processes Stripe payment via existing `processPayment()` helper
+- Creates transaction record with type 'workshop-entry'
+- Updates workshop by adding to both registeredStudents[] AND invitedStudents[]
+- Returns success with transactionId, paymentIntentId, receiptUrl
 
 **File**: `/functions/index.js`
 
-Add the new function to exports:
-
+Added export for the new function:
 ```javascript
 const { processWorkshopPayment } = require('./process-workshop-payment');
-
 exports.processWorkshopPayment = processWorkshopPayment;
 ```
 
-### 2.4 Deploy Cloud Functions
+### Deployment Instructions
+
+The function has been deployed to Firebase:
 
 ```bash
 firebase deploy --only functions:processWorkshopPayment
 ```
+
+**Function URL**: `https://us-central1-directed-curve-447204-j4.cloudfunctions.net/processWorkshopPayment`
+
+**⚠️ Important**: The IAM policy for public access needs to be set manually. Follow these steps:
+
+#### Option 1: Using Firebase Console
+1. Go to Firebase Console → Functions
+2. Find `processWorkshopPayment` in the list
+3. Click the three-dot menu → Permissions
+4. Add principal: `allUsers`
+5. Assign role: `Cloud Functions Invoker`
+
+#### Option 2: Using gcloud CLI
+```bash
+gcloud functions add-invoker-policy-binding processWorkshopPayment \
+  --region="us-central1" \
+  --member="allUsers"
+```
+
+### Testing Instructions
+
+#### Option 1: Postman/HTTP Client Testing
+
+**Endpoint**: `https://us-central1-directed-curve-447204-j4.cloudfunctions.net/processWorkshopPayment`
+
+**Method**: POST
+
+**Headers**:
+```
+Content-Type: application/json
+```
+
+**Test Case 1: Successful Payment**
+```json
+{
+  "studentId": "valid-student-id",
+  "workshopId": "valid-workshop-id",
+  "paymentMethodId": "pm_card_visa"
+}
+```
+
+**Expected Response** (200):
+```json
+{
+  "success": true,
+  "transactionId": "transaction-doc-id",
+  "paymentIntentId": "pi_...",
+  "receiptUrl": "https://stripe.com/..."
+}
+```
+
+**Test Case 2: Missing Parameters**
+```json
+{
+  "studentId": "valid-student-id"
+}
+```
+
+**Expected Response** (400):
+```json
+{
+  "error": "Missing required parameters"
+}
+```
+
+**Test Case 3: Workshop Not Found**
+```json
+{
+  "studentId": "valid-student-id",
+  "workshopId": "invalid-workshop-id",
+  "paymentMethodId": "pm_card_visa"
+}
+```
+
+**Expected Response** (404):
+```json
+{
+  "error": "Workshop not found"
+}
+```
+
+**Test Case 4: Already Registered**
+```json
+{
+  "studentId": "already-registered-student-id",
+  "workshopId": "workshop-they-registered-for",
+  "paymentMethodId": "pm_card_visa"
+}
+```
+
+**Expected Response** (409):
+```json
+{
+  "error": "Student already registered for this workshop"
+}
+```
+
+**Test Case 5: Not Invited (When openToAll = false)**
+```json
+{
+  "studentId": "not-invited-student-id",
+  "workshopId": "private-workshop-id",
+  "paymentMethodId": "pm_card_visa"
+}
+```
+
+**Expected Response** (403):
+```json
+{
+  "error": "Student not invited to this workshop"
+}
+```
+
+#### Option 2: Firebase Console Testing
+
+1. Go to Firebase Console → Functions
+2. Find `processWorkshopPayment` and click "View logs"
+3. Trigger the function via the student portal UI (Phase 6)
+4. Verify logs show successful execution
+
+#### Option 3: Firestore Verification
+
+After a successful payment:
+
+1. **Check transactions collection**:
+   - Document should exist with type: 'workshop-entry'
+   - Should have workshopId, studentId, amount, stripePaymentIntentId
+   - paymentMethod should be 'online'
+
+2. **Check workshops collection**:
+   - Workshop document should have student added to registeredStudents[]
+   - Student should also be added to invitedStudents[]
+   - registeredStudents entry should have: studentId, studentName, registeredAt, paidOnline: true, transactionId
+
+3. **Check Stripe Dashboard**:
+   - Payment Intent should exist
+   - Status should be 'succeeded'
+   - Metadata should contain studentId, workshopId, type
+
+#### Option 4: UI Testing (Preferred)
+
+Testing via the student portal UI (implemented in Phase 6) will provide the most realistic test coverage, as it will:
+- Test the full user flow
+- Validate Stripe Elements integration
+- Test error message display
+- Verify redirect/success states
+
+**Note**: The function follows the same payment pattern as `processCasualPayment`, so much of the payment logic is already battle-tested in production.
 
 ---
 
