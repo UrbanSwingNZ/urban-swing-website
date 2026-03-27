@@ -169,45 +169,40 @@ function getStudentId() {
 
 ---
 
-## Phase 1: Firestore Data Model & Security Rules
+## Phase 1: Firestore Data Model & Security Rules ✅ COMPLETED
 
-**CRITICAL: This phase must be completed first before any UI development.**
+**Status**: Phase 1 implementation is complete. Security rules have been added to `/config/firestore.rules`.
 
-### 1.1 Add Firestore Security Rules
+### What Was Implemented
 
 **File**: `/config/firestore.rules`
 
-Add the following rules to enable workshop collection access:
+Added workshop collection security rules (lines 133-145):
 
 ```javascript
-// Workshop collection rules
+// Workshops
 match /workshops/{workshopId} {
-  // Anyone authenticated can read their applicable workshops
-  allow read: if request.auth != null && (
-    // Open to all workshops
-    resource.data.openToAll == true ||
-    // Invited students
-    resource.data.invitedStudents.hasAny([getStudentId()]) ||
-    // Registered students
-    resource.data.registeredStudents.hasAny([getStudentId()]) ||
-    // Admins and front desk
-    isAdminOrFrontDesk()
-  );
+  // Admins and front-desk can read and write everything
+  allow read, write: if isAdminOrFrontDesk();
   
-  // Only admins can create/update/delete
-  allow write: if isAdminOrFrontDesk();
+  // Students can read workshops that are:
+  // 1. Open to all (openToAll = true)
+  // 2. They're invited to (their studentId is in invitedStudents array)
+  // Note: Registered students remain in invitedStudents, so no separate check needed
+  allow read: if isStudent() && (
+    resource.data.openToAll == true ||
+    getStudentId() in resource.data.invitedStudents
+  );
 }
 ```
 
-**Note**: The `getStudentId()` helper function should already exist in your firestore.rules file. If not, add it:
+**Security Model Note**: Students who register for a workshop remain in the `invitedStudents` array, so the rules don't need to separately check `registeredStudents`. This keeps the security rules simple and avoids Firestore rules limitations with nested object arrays.
 
-```javascript
-function getStudentId() {
-  return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentId;
-}
-```
+**Note**: The `getStudentId()`, `isStudent()`, and `isAdminOrFrontDesk()` helper functions already exist in the rules file.
 
-### 1.2 Deploy Firestore Rules
+**Note about `determineTransactionType()`**: This function in `/functions/utils/transaction-utils.js` is only used for package purchases (concessions/casual rates). Workshop transactions are created directly by the `processWorkshopPayment` Cloud Function in Phase 2, so no changes to `determineTransactionType()` are needed.
+
+### Deployment Instructions
 
 Deploy the updated security rules to Firebase:
 
@@ -215,14 +210,88 @@ Deploy the updated security rules to Firebase:
 firebase deploy --only firestore:rules
 ```
 
-### 1.3 Test Security Rules (Optional)
+**Expected output**:
+```
+✔  Deploy complete!
+```
 
-Use Firebase Console's Rules Playground to test:
-- Admin can read/write any workshop
-- Student can read workshop where openToAll=true
-- Student can read workshop where they're in invitedStudents[]
-- Student cannot read workshop where they're not invited
-- Student cannot write to any workshop
+### Testing Instructions
+
+You can test the security rules in multiple ways:
+
+#### Option 1: Firebase Console Rules Playground
+
+1. Go to Firebase Console → Firestore Database → Rules tab
+2. Click "Rules Playground" button
+3. Test these scenarios:
+
+**Admin Access**:
+- **Operation**: `get` on `/databases/(default)/documents/workshops/workshop-test-123`
+- **Authentication**: Signed in as admin user
+- **Expected**: ✅ Allow
+
+**Student - Open Workshop**:
+- **Operation**: `get` on `/databases/(default)/documents/workshops/workshop-test-123`
+- **Simulated data**: `{ openToAll: true }`
+- **Authentication**: Signed in as student user
+- **Expected**: ✅ Allow
+
+**Student - Invited Workshop**:
+- **Operation**: `get` on `/databases/(default)/documents/workshops/workshop-test-123`
+- **Simulated data**: `{ openToAll: false, invitedStudents: ["student-abc-123"] }`
+- **Authentication**: Signed in as student with `studentId: "student-abc-123"`
+- **Expected**: ✅ Allow
+
+**Student - Not Invited**:
+- **Operation**: `get` on `/databases/(default)/documents/workshops/workshop-test-123`
+- **Simulated data**: `{ openToAll: false, invitedStudents: ["student-other-456"] }`
+- **Authentication**: Signed in as student with `studentId: "student-abc-123"`
+- **Expected**: ❌ Deny
+
+**Student Write Attempt**:
+- **Operation**: `create` on `/databases/(default)/documents/workshops/workshop-test-456`
+- **Authentication**: Signed in as student user
+- **Expected**: ❌ Deny
+
+#### Option 2: Manual Test with Real Documents
+
+After deploying rules, create a test workshop document manually:
+
+1. Go to Firestore Console
+2. Create a new document in `workshops` collection:
+   ```
+   Document ID: workshop-test-2026
+   Fields:
+     name: "Test Workshop"
+     openToAll: true
+     status: "draft"
+     invitedStudents: []
+     registeredStudents: []
+   ```
+
+3. Try accessing it from the student portal while logged in as a student
+4. Verify you can read it (should work since `openToAll: true`)
+5. Try accessing a workshop with `openToAll: false` and empty `invitedStudents`
+6. Verify access is denied
+
+#### Option 3: Automated Testing (Advanced)
+
+If you have Firebase Emulator setup, you can write automated tests:
+
+```javascript
+// test/security-rules.test.js
+const { assertSucceeds, assertFails } = require('@firebase/rules-unit-testing');
+
+// Test that students can read open workshops
+await assertSucceeds(
+  db.collection('workshops').doc('test').get()
+);
+
+// Test that students cannot write workshops
+await assertFails(
+  db.collection('workshops').doc('test').set({ name: 'Hack' })
+);
+```
 
 ---
 
