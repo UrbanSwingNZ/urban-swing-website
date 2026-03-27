@@ -69,6 +69,7 @@ admin/workshops/
       paidOnline: boolean          // true if paid via Stripe, false if "Pay Later"
     }
   ],
+  checkedInStudents: string[],     // Array of studentIds who actually attended (populated at checkin time)
   
   // Content
   videos: [                        // Array of video objects
@@ -166,6 +167,10 @@ function getStudentId() {
   return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentId;
 }
 ```
+
+**Note on Video Access Control**: Firestore rules operate at the document level and cannot selectively hide the `videos` array field. Since the rules above allow invited students to read the workshop document, they technically have access to video URLs even before checking in. However, the **student portal UI** (Phase 6, not yet implemented) will be responsible for filtering videos and only displaying them if the student's `studentId` is in the `checkedInStudents` array. This is "security by UI" rather than "security by rules" - acceptable since video URLs are just YouTube links and the primary goal is UX (don't show videos to students who didn't attend) rather than hardcore security.
+
+**Alternative Approach**: If stricter security is needed, videos could be stored in a sub-collection (`workshops/{workshopId}/videos/{videoId}`) with separate rules that check the `checkedInStudents` array. This would be implemented if videos contained sensitive content beyond YouTube URLs.
 
 ---
 
@@ -1173,6 +1178,7 @@ async function createWorkshop(workshopData) {
             openToAll: workshopData.openToAll || false,
             invitedStudents: [],
             registeredStudents: [],
+            checkedInStudents: [],
             videos: [],
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -1732,6 +1738,11 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: currentUser.uid
         });
+        // Add student to checkedInStudents array (for video access control)
+        await db.collection('workshops').doc(workshopId).update({
+            checkedInStudents: firebase.firestore.FieldValue.arrayUnion(studentId)
+        });
+        
         
         showSnackbar(`${studentName} checked in successfully`, 'success');
         LoadingSpinner.hideGlobal();
@@ -1859,6 +1870,8 @@ Add workshop check-in styling (after the existing `.checkin-type.crew` rule, aro
 - All styles use existing color variables from `/styles/base/colors.css`
 - All modals extend `BaseModal` or `ConfirmationModal`
 - All async operations show `LoadingSpinner`
+- **Video Access Control**: Students can only see workshop videos if their `studentId` is in the `checkedInStudents` array (populated when admin checks them in). The student portal UI (Phase 6) must check this before displaying videos. Firestore rules allow read access to invited students, but videos should be filtered client-side.
+- **Checkin Flow**: Registration (online payment) → Check-in (admin clicks "Check In" button on workshop day) → Update `checkedInStudents` array → Videos become visible in student portal
 - All success/error states use `showSnackbar()`
 - Workshop dates use NZ timezone formatting
 - "Open Workshop" checkbox disables invite management
