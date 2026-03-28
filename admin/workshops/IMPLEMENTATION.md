@@ -610,365 +610,64 @@ After verifying the HTML/CSS structure:
 
 ---
 
-## Phase 4: Core Business Logic
+## Phase 4: Core Business Logic ✅ COMPLETED
 
-**File**: `admin/workshops/index.html`
+### What Was Implemented
 
-**Structure**:
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Management | Urban Swing</title>
-    
-    <!-- Global Styles -->
-    <link rel="stylesheet" href="/styles/base/colors.css">
-    <link rel="stylesheet" href="/styles/base/buttons.css">
-    <link rel="stylesheet" href="/styles/base/typography.css">
-    <link rel="stylesheet" href="/admin/admin.css">
-    
-    <!-- Workshop-specific Styles -->
-    <link rel="stylesheet" href="workshops.css">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Header will be injected by admin-header.js -->
-    <div id="admin-header-container"></div>
+**File**: `/admin/workshops/workshop-manager.js` (544 lines)
 
-    <div class="admin-container">
-        <div class="page-header">
-            <h1><i class="fas fa-chalkboard-teacher"></i> Workshop Management</h1>
-            <button id="create-workshop-btn" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Create Workshop
-            </button>
-        </div>
+Created the core business logic module for workshop management:
 
-        <!-- Filter/Search Section -->
-        <div class="filter-section">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="workshop-search" placeholder="Search workshops...">
-            </div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="draft">Draft</button>
-                <button class="filter-btn" data-filter="published">Published</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
-            </div>
-        </div>
+**Key Features**:
+- State management (currentUser, workshops, filteredWorkshops, selectedWorkshop)
+- Authentication checking with role validation (admin/front-desk only)
+- Complete CRUD operations for workshops (create, read, update, delete)
+- Invited students management (add/remove from invitedStudents array)
+- Video management (add/remove workshop videos)
+- Student search functionality for invite/check-in modals
+- Search and filter event handlers (by workshop name, topic, description, status)
+- Helper functions for date formatting and data retrieval
 
-        <!-- Workshops Table -->
-        <div class="workshops-container">
-            <div id="loading-state" class="loading-state">
-                <i class="fas fa-spinner fa-spin"></i> Loading workshops...
-            </div>
-            
-            <div id="empty-state" class="empty-state" style="display: none;">
-                <i class="fas fa-chalkboard-teacher"></i>
-                <p>No workshops yet</p>
-                <button class="btn btn-primary" onclick="document.getElementById('create-workshop-btn').click()">
-                    Create Your First Workshop
-                </button>
-            </div>
-            
-            <div id="workshops-table-container" style="display: none;">
-                <table class="workshops-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Visibility</th>
-                            <th>Registrations</th>
-                            <th>Videos</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="workshops-tbody">
-                        <!-- Rows populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+**Functions Implemented**:
+- `initWorkshopManager()` - Initializes page, checks auth, loads workshops
+- `checkAuth()` - Firebase auth state listener with role fetching
+- `isAdminOrFrontDesk()` - Authorization check helper
+- `loadWorkshops()` - Fetches all workshops ordered by date
+- `createWorkshop(workshopData)` - Creates new workshop with validation
+- `updateWorkshop(workshopId, updates)` - Updates existing workshop
+- `deleteWorkshop(workshopId)` - Deletes workshop from Firestore
+- `updateWorkshopStatus(workshopId, newStatus)` - Shortcut for status updates
+- `addInvitedStudent(workshopId, studentId)` - Adds student to invitedStudents[]
+- `removeInvitedStudent(workshopId, studentId)` - Removes from invitedStudents[]
+- `addVideo(workshopId, videoData)` - Adds video object to videos[]
+- `removeVideo(workshopId, videoUrl)` - Removes video from videos[]
+- `searchStudents(query)` - Searches students collection with client-side filtering
+- `setupEventListeners()` - Attaches event listeners to UI elements
+- `handleSearch(e)` - Filters workshops by search query
+- `handleFilter(e)` - Filters workshops by status
+- `getWorkshopById(workshopId)` - Retrieves workshop from state
+- `formatDate(timestamp)` - Formats Firestore Timestamp to NZ locale
+- `formatCost(cost)` - Formats number to currency string
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    
-    <!-- Firebase Config -->
-    <script src="/config/firebase-config.js"></script>
-    
-    <!-- Components -->
-    <script src="/components/modals/modal-base.js"></script>
-    <script src="/components/modals/confirmation-modal.js"></script>
-    <script src="/components/loading-spinner/loading-spinner.js"></script>
-    <script src="/components/snackbar/snackbar.js"></script>
-    
-    <!-- Admin Header -->
-    <script src="/admin/admin-header.js"></script>
-    
-    <!-- Workshop Scripts -->
-    <script src="workshop-manager.js"></script>
-    <script src="workshop-modals.js"></script>
-    <script src="workshop-display.js"></script>
-</body>
-</html>
-```
+**Design Patterns**:
+- Async/await for all Firestore operations
+- LoadingSpinner for all async operations
+- showSnackbar for success/error feedback
+- firebase.firestore.FieldValue.serverTimestamp() for timestamps
+- firebase.firestore.FieldValue.arrayUnion/arrayRemove for array updates
+- Proper error handling with try/catch blocks
 
----
+### Testing Notes
 
-## Phase 4: Core Business Logic
+Phase 4 implements the data layer without UI components. Testing will occur naturally in subsequent phases:
+- **Phase 5** (modals): Test create/update/delete operations through modal forms
+- **Phase 6** (display): Test loadWorkshops, filtering, and search through table rendering
+- **Phase 7** (check-in): Test student search and array updates through check-in flow
 
-### 4.1 Create workshop-manager.js
-
-**File**: `admin/workshops/workshop-manager.js`
-
-**Responsibilities**:
-- Firestore CRUD operations
-- Workshop data transformation
-- State management
-- API calls to Cloud Functions
-
-**Key Functions**:
-
-```javascript
-// State
-let currentUser = null;
-let workshops = [];
-let filteredWorkshops = [];
-let selectedWorkshop = null;
-
-// Initialize
-async function initWorkshopManager() {
-    try {
-        LoadingSpinner.showGlobal('Loading workshops...');
-        
-        // Check auth
-        currentUser = await checkAuth();
-        if (!currentUser || !isAdminOrFrontDesk()) {
-            window.location.href = '/';
-            return;
-        }
-        
-        // Load workshops
-        await loadWorkshops();
-        
-        // Setup listeners
-        setupEventListeners();
-        
-        LoadingSpinner.hideGlobal();
-    } catch (error) {
-        console.error('Initialization error:', error);
-        showSnackbar('Failed to load workshops', 'error');
-        LoadingSpinner.hideGlobal();
-    }
-}
-
-// Load all workshops
-async function loadWorkshops() {
-    const snapshot = await db.collection('workshops')
-        .orderBy('date', 'desc')
-        .get();
-    
-    workshops = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-    
-    filteredWorkshops = [...workshops];
-    renderWorkshops();
-}
-
-// Create workshop
-async function createWorkshop(workshopData) {
-    try {
-        LoadingSpinner.showGlobal('Creating workshop...');
-        
-        const docRef = await db.collection('workshops').add({
-            name: workshopData.name,
-            date: workshopData.date,
-            description: workshopData.description,
-            topic: workshopData.topic,
-            cost: parseFloat(workshopData.cost),
-            status: 'draft',
-            openToAll: workshopData.openToAll || false,
-            invitedStudents: [],
-            registeredStudents: [],
-            checkedInStudents: [],
-            videos: [],
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            createdBy: currentUser.uid
-        });
-        
-        showSnackbar('Workshop created successfully', 'success');
-        await loadWorkshops();
-        LoadingSpinner.hideGlobal();
-        return docRef.id;
-    } catch (error) {
-        console.error('Create workshop error:', error);
-        showSnackbar('Failed to create workshop', 'error');
-        LoadingSpinner.hideGlobal();
-        throw error;
-    }
-}
-
-// Update workshop
-async function updateWorkshop(workshopId, updates) {
-    try {
-        LoadingSpinner.showGlobal('Updating workshop...');
-        
-        await db.collection('workshops').doc(workshopId).update({
-            ...updates,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        showSnackbar('Workshop updated successfully', 'success');
-        await loadWorkshops();
-        LoadingSpinner.hideGlobal();
-    } catch (error) {
-        console.error('Update workshop error:', error);
-        showSnackbar('Failed to update workshop', 'error');
-        LoadingSpinner.hideGlobal();
-        throw error;
-    }
-}
-
-// Delete workshop
-async function deleteWorkshop(workshopId) {
-    try {
-        LoadingSpinner.showGlobal('Deleting workshop...');
-        
-        await db.collection('workshops').doc(workshopId).delete();
-        
-        showSnackbar('Workshop deleted successfully', 'success');
-        await loadWorkshops();
-        LoadingSpinner.hideGlobal();
-    } catch (error) {
-        console.error('Delete workshop error:', error);
-        showSnackbar('Failed to delete workshop', 'error');
-        LoadingSpinner.hideGlobal();
-        throw error;
-    }
-}
-
-// Add invited student
-async function addInvitedStudent(workshopId, studentId) {
-    await db.collection('workshops').doc(workshopId).update({
-        invitedStudents: firebase.firestore.FieldValue.arrayUnion(studentId)
-    });
-}
-
-// Remove invited student
-async function removeInvitedStudent(workshopId, studentId) {
-    await db.collection('workshops').doc(workshopId).update({
-        invitedStudents: firebase.firestore.FieldValue.arrayRemove(studentId)
-    });
-}
-
-// Add video
-async function addVideo(workshopId, videoData) {
-    const video = {
-        title: videoData.title,
-        url: videoData.url,
-        addedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    
-    await db.collection('workshops').doc(workshopId).update({
-        videos: firebase.firestore.FieldValue.arrayUnion(video)
-    });
-}
-
-// Remove video
-async function removeVideo(workshopId, videoUrl) {
-    const workshop = workshops.find(w => w.id === workshopId);
-    const updatedVideos = workshop.videos.filter(v => v.url !== videoUrl);
-    
-    await db.collection('workshops').doc(workshopId).update({
-        videos: updatedVideos
-    });
-}
-
-// Update workshop status
-async function updateWorkshopStatus(workshopId, newStatus) {
-    await updateWorkshop(workshopId, { status: newStatus });
-}
-
-// Search students (for invite modal)
-async function searchStudents(query) {
-    const snapshot = await db.collection('students')
-        .orderBy('firstName')
-        .limit(20)
-        .get();
-    
-    const students = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-    
-    // Client-side filtering (Firestore doesn't support LIKE queries)
-    return students.filter(student => {
-        const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-        return fullName.includes(query.toLowerCase());
-    });
-}
-
-// Helpers
-function isAdminOrFrontDesk() {
-    return currentUser && (currentUser.role === 'admin' || currentUser.role === 'front-desk');
-}
-
-// Event listeners
-function setupEventListeners() {
-    // Search
-    document.getElementById('workshop-search').addEventListener('input', handleSearch);
-    
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', handleFilter);
-    });
-    
-    // Create button
-    document.getElementById('create-workshop-btn').addEventListener('click', () => {
-        openCreateWorkshopModal();
-    });
-}
-
-function handleSearch(e) {
-    const query = e.target.value.toLowerCase();
-    filteredWorkshops = workshops.filter(workshop => 
-        workshop.name.toLowerCase().includes(query) ||
-        workshop.topic.toLowerCase().includes(query)
-    );
-    renderWorkshops();
-}
-
-function handleFilter(e) {
-    const filter = e.target.dataset.filter;
-    
-    // Update active button
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    e.target.classList.add('active');
-    
-    // Filter workshops
-    if (filter === 'all') {
-        filteredWorkshops = [...workshops];
-    } else {
-        filteredWorkshops = workshops.filter(w => w.status === filter);
-    }
-    
-    renderWorkshops();
-}
-
-// Initialize on DOM load
-document.addEventListener('DOMContentLoaded', initWorkshopManager);
-```
+Console verification available:
+- Check script loads without errors
+- Verify functions are defined: `typeof createWorkshop`, `typeof loadWorkshops`
+- State inspection: `console.log(workshops)` (after page load)
 
 ---
 
