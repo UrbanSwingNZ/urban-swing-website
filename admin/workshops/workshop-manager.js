@@ -43,8 +43,8 @@ async function initWorkshopManager() {
             return;
         }
         
-        // Load workshops from Firestore
-        await loadWorkshops();
+        // Subscribe to real-time workshop updates
+        loadWorkshops();
         
         // Setup event listeners
         setupEventListeners();
@@ -105,32 +105,35 @@ function isAdminOrFrontDesk() {
 // WORKSHOP CRUD OPERATIONS
 // ============================================
 
+// Active Firestore listener — unsubscribe before re-subscribing
+let workshopsUnsubscribe = null;
+
 /**
- * Load all workshops from Firestore
+ * Subscribe to real-time workshop updates via onSnapshot
  */
-async function loadWorkshops() {
-    try {
-        const snapshot = await db.collection('workshops')
-            .orderBy('date', 'desc')
-            .get();
-        
-        workshops = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-        
-        filteredWorkshops = [...workshops];
-        
-        // Render workshops (Phase 6 - workshop-display.js)
-        if (window.renderWorkshops) {
-            window.renderWorkshops();
-        }
-        
-    } catch (error) {
-        console.error('Error loading workshops:', error);
-        showSnackbar('Failed to load workshops', 'error');
-        throw error;
-    }
+function loadWorkshops() {
+    if (workshopsUnsubscribe) workshopsUnsubscribe();
+
+    const loadingState = document.getElementById('loading-state');
+    if (loadingState) loadingState.style.display = 'block';
+
+    workshopsUnsubscribe = db.collection('workshops')
+        .orderBy('date', 'desc')
+        .onSnapshot((snapshot) => {
+            workshops = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            filteredWorkshops = [...workshops];
+
+            if (window.renderWorkshops) {
+                window.renderWorkshops();
+            }
+        }, (error) => {
+            console.error('Error loading workshops:', error);
+            showSnackbar('Failed to load workshops', 'error');
+        });
 }
 
 /**
@@ -169,7 +172,6 @@ async function createWorkshop(workshopData) {
         });
         
         showSnackbar('Workshop created successfully', 'success');
-        await loadWorkshops();
         LoadingSpinner.hideGlobal();
         
         return docRef.id;
@@ -204,7 +206,6 @@ async function updateWorkshop(workshopId, updates) {
         });
         
         showSnackbar('Workshop updated successfully', 'success');
-        await loadWorkshops();
         LoadingSpinner.hideGlobal();
         
     } catch (error) {
@@ -225,7 +226,6 @@ async function deleteWorkshop(workshopId) {
         await db.collection('workshops').doc(workshopId).delete();
         
         showSnackbar('Workshop deleted successfully', 'success');
-        await loadWorkshops();
         LoadingSpinner.hideGlobal();
         
     } catch (error) {
@@ -257,7 +257,6 @@ async function addInvitedStudent(workshopId, studentId) {
         });
         
         showSnackbar('Student added to invited list', 'success');
-        await loadWorkshops();
         
     } catch (error) {
         console.error('Error adding invited student:', error);
@@ -276,7 +275,6 @@ async function removeInvitedStudent(workshopId, studentId) {
         });
         
         showSnackbar('Student removed from invited list', 'success');
-        await loadWorkshops();
         
     } catch (error) {
         console.error('Error removing invited student:', error);
@@ -309,7 +307,6 @@ async function addVideo(workshopId, videoData) {
         });
         
         showSnackbar('Video added successfully', 'success');
-        await loadWorkshops();
         
     } catch (error) {
         console.error('Error adding video:', error);
@@ -335,7 +332,6 @@ async function removeVideo(workshopId, videoUrl) {
         });
         
         showSnackbar('Video removed successfully', 'success');
-        await loadWorkshops();
         
     } catch (error) {
         console.error('Error removing video:', error);

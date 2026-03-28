@@ -16,6 +16,13 @@ import {
 // Firestore reference
 const db = firebase.firestore();
 
+// AbortControllers so we can cleanly remove old listeners before adding new ones
+let checkinListenerController = null;
+let walkinListenerController = null;
+
+// Guard against concurrent/duplicate check-in writes
+let checkinInProgress = false;
+
 /**
  * Opens the workshop check-in modal
  * @param {string} workshopId - The workshop document ID
@@ -61,10 +68,19 @@ function openWorkshopCheckinModal(workshopId) {
 function generateCheckinContent(workshop) {
     const registeredStudents = workshop.registeredStudents || [];
     const checkedInIds = new Set(workshop.checkedInStudents || []);
-    
+
+    // Deduplicate registeredStudents by studentId (arrayUnion on objects can produce duplicates
+    // if the objects differ slightly, e.g. different registeredAt timestamps)
+    const seen = new Set();
+    const uniqueRegistered = registeredStudents.filter(r => {
+        if (seen.has(r.studentId)) return false;
+        seen.add(r.studentId);
+        return true;
+    });
+
     // Separate checked-in from not-checked-in
-    const notCheckedIn = registeredStudents.filter(r => !checkedInIds.has(r.studentId));
-    const alreadyCheckedIn = registeredStudents.filter(r => checkedInIds.has(r.studentId));
+    const notCheckedIn = uniqueRegistered.filter(r => !checkedInIds.has(r.studentId));
+    const alreadyCheckedIn = uniqueRegistered.filter(r => checkedInIds.has(r.studentId));
     
     return `
         <div class="workshop-info">
@@ -175,17 +191,20 @@ function renderCheckedInStudent(registration) {
  * @param {BaseModal} modal - Modal instance
  */
 function attachCheckinListeners(workshop, modal) {
-    // Check-in button handlers
+    if (checkinListenerController) checkinListenerController.abort();
+    checkinListenerController = new AbortController();
+    const { signal } = checkinListenerController;
+
     document.addEventListener('click', async (e) => {
         const checkinBtn = e.target.closest('.btn-checkin');
         if (!checkinBtn) return;
-        
+
         const studentId = checkinBtn.dataset.studentId;
         const paidOnline = checkinBtn.dataset.paidOnline === 'true';
         const isWalkIn = checkinBtn.dataset.walkIn === 'true';
-        
+
         await handleWorkshopCheckin(workshop.id, studentId, paidOnline, isWalkIn, modal);
-    });
+    }, { signal });
 }
 
 /**
@@ -215,6 +234,8 @@ function selectWalkInStudent(student, workshop, container) {
  * @param {BaseModal} modal - Modal instance to refresh
  */
 async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn, modal) {
+    if (checkinInProgress) return;
+    checkinInProgress = true;
     try {
         LoadingSpinner.showGlobal('Checking in student...');
         
@@ -240,8 +261,16 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
             const paymentMethodSelect = document.querySelector(`.payment-method-select[data-student-id="${studentId}"]`);
             paymentMethod = paymentMethodSelect ? paymentMethodSelect.value : 'cash';
             
-            // Create transaction document
-            const transactionRef = await db.collection('transactions').add({
+            // Create transaction document with deterministic ID
+            const workshopDate = workshop.date.toDate();
+            const txYear = workshopDate.getFullYear();
+            const txMonth = String(workshopDate.getMonth() + 1).padStart(2, '0');
+            const txDay = String(workshopDate.getDate()).padStart(2, '0');
+            const txDateStr = `${txYear}-${txMonth}-${txDay}`;
+            const transactionDocId = `${student.firstName.toLowerCase()}-${student.lastName.toLowerCase()}-workshop-entry-${txDateStr}`;
+
+            const transactionRef = db.collection('transactions').doc(transactionDocId);
+            await transactionRef.set({
                 type: 'workshop-entry',
                 workshopId: workshopId,
                 workshopName: workshop.name,
@@ -306,13 +335,18 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         // Add walk-ins to both invitedStudents (for portal access) and updatedAt
         if (isWalkIn) {
             updates.invitedStudents = firebase.firestore.FieldValue.arrayUnion(studentId);
-            updates.registeredStudents = firebase.firestore.FieldValue.arrayUnion({
-                studentId: studentId,
-                studentName: studentName,
-                registeredAt: new Date(),
-                paidOnline: false,
-                transactionId: transactionId
-            });
+            // Only add to registeredStudents if not already present (arrayUnion on objects
+            // is NOT idempotent when the object contains new Date() — use a guard)
+            const alreadyRegistered = (workshop.registeredStudents || []).some(r => r.studentId === studentId);
+            if (!alreadyRegistered) {
+                updates.registeredStudents = firebase.firestore.FieldValue.arrayUnion({
+                    studentId: studentId,
+                    studentName: studentName,
+                    registeredAt: new Date(),
+                    paidOnline: false,
+                    transactionId: transactionId
+                });
+            }
         }
         
         updates.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -331,18 +365,23 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
                 if (!workshops[workshopIndex].invitedStudents) {
                     workshops[workshopIndex].invitedStudents = [];
                 }
-                workshops[workshopIndex].invitedStudents.push(studentId);
-                
+                if (!workshops[workshopIndex].invitedStudents.includes(studentId)) {
+                    workshops[workshopIndex].invitedStudents.push(studentId);
+                }
+
                 if (!workshops[workshopIndex].registeredStudents) {
                     workshops[workshopIndex].registeredStudents = [];
                 }
-                workshops[workshopIndex].registeredStudents.push({
-                    studentId: studentId,
-                    studentName: studentName,
-                    registeredAt: new Date(),
-                    paidOnline: false,
-                    transactionId: transactionId
-                });
+                const alreadyInLocal = workshops[workshopIndex].registeredStudents.some(r => r.studentId === studentId);
+                if (!alreadyInLocal) {
+                    workshops[workshopIndex].registeredStudents.push({
+                        studentId: studentId,
+                        studentName: studentName,
+                        registeredAt: new Date(),
+                        paidOnline: false,
+                        transactionId: transactionId
+                    });
+                }
             }
         }
         
@@ -353,6 +392,12 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         if (modal.id === 'walkin-checkin-modal') {
             modal.setContent(generateWalkInContent(workshops[workshopIndex]));
             attachWalkInListeners(workshops[workshopIndex], modal);
+            // Change Back button to Close — no point returning to check-in modal after completing a walk-in
+            const backBtn = modal.element.querySelector('[data-button-index="0"]');
+            if (backBtn) {
+                backBtn.textContent = 'Close';
+                modal.options.buttons[0].onClick = (m) => m.hide();
+            }
         } else {
             modal.setContent(generateCheckinContent(workshops[workshopIndex]));
             attachCheckinListeners(workshops[workshopIndex], modal);
@@ -367,6 +412,8 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         console.error('Check-in error:', error);
         showSnackbar(`Failed to check in student: ${error.message}`, 'error');
         LoadingSpinner.hideGlobal();
+    } finally {
+        checkinInProgress = false;
     }
 }
 
@@ -446,10 +493,14 @@ function generateWalkInContent(workshop) {
  * @param {BaseModal} modal - Modal instance
  */
 function attachWalkInListeners(workshop, modal) {
+    if (walkinListenerController) walkinListenerController.abort();
+    walkinListenerController = new AbortController();
+    const { signal } = walkinListenerController;
+
     const searchInput = document.getElementById('walkin-search');
     const searchResults = document.getElementById('walkin-search-results');
     const selectedContainer = document.getElementById('walkin-selected-student');
-    
+
     let searchTimeout;
     
     // Walk-in student search
@@ -510,19 +561,19 @@ function attachWalkInListeners(workshop, modal) {
         if (!e.target.closest('.student-search')) {
             searchResults.style.display = 'none';
         }
-    });
-    
+    }, { signal });
+
     // Check-in button handlers
     document.addEventListener('click', async (e) => {
         const checkinBtn = e.target.closest('.btn-checkin');
         if (!checkinBtn) return;
-        
+
         const studentId = checkinBtn.dataset.studentId;
         const paidOnline = checkinBtn.dataset.paidOnline === 'true';
         const isWalkIn = checkinBtn.dataset.walkIn === 'true';
-        
+
         await handleWorkshopCheckin(workshop.id, studentId, paidOnline, isWalkIn, modal);
-    });
+    }, { signal });
 }
 
 // Export functions for use in other modules
