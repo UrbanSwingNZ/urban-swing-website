@@ -425,8 +425,9 @@
 }
 
 .btn-pay-now {
-    padding: var(--space-sm) var(--space-md);
-    font-size: 1rem;
+    height: auto;
+    padding: var(--space-md) var(--space-md);
+    font-size: 1.1rem;
     font-weight: 700;
     width: 100%;
 }
@@ -435,7 +436,8 @@
     background: white;
     color: var(--text-secondary);
     border: 2px solid var(--border-medium, #ccc);
-    padding: var(--space-sm) var(--space-md);
+    padding: 0 var(--space-md);
+    height: 36px;
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
