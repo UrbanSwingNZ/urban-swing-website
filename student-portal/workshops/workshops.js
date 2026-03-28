@@ -223,6 +223,21 @@ function renderWorkshops(workshops) {
     list.querySelectorAll('[data-action="videos"]').forEach(btn => {
         btn.addEventListener('click', () => openWorkshopVideosModal(btn.dataset.workshopId));
     });
+    list.querySelectorAll('[data-action="desc-toggle"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const wrapper = btn.parentElement;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            if (expanded) {
+                wrapper.classList.remove('expanded');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.textContent = 'See more...';
+            } else {
+                wrapper.classList.add('expanded');
+                btn.setAttribute('aria-expanded', 'true');
+                btn.textContent = 'See less';
+            }
+        });
+    });
 }
 
 /**
@@ -299,7 +314,10 @@ function renderWorkshopCard(workshop) {
                         <strong>${cost}</strong>
                     </div>
                     ${workshop.description ? `
-                        <div class="workshop-description">${escapeHtml(workshop.description)}</div>
+                        <div class="description-wrapper">
+                            <div class="workshop-description">${escapeHtml(workshop.description)}</div>
+                            <button class="desc-toggle" data-action="desc-toggle" aria-expanded="false">See more...</button>
+                        </div>
                     ` : ''}
                 </div>
                 <div class="workshop-card-actions">
