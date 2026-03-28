@@ -98,11 +98,47 @@ function openCreateWorkshopModal() {
                     }
                     
                     // Combine date and time into a single Date object
+                    // DatePicker format can be: "Sat, 12 Apr 2026" or "12/04/2026"
                     const dateParts = dateInput.value.split(', ');
-                    const dateStr = dateParts[dateParts.length - 1]; // Get "15 Mar 2026" part
-                    const timeStr = timeInput.value;
-                    const dateTimeStr = `${dateStr} ${timeStr}`;
-                    const workshopDateTime = new Date(dateTimeStr);
+                    const dateStr = dateParts[dateParts.length - 1]; // Get "12 Apr 2026" or "12/04/2026" part
+                    
+                    let day, month, year;
+                    
+                    // Check if it's DD/MM/YYYY format (from DatePicker selection)
+                    if (dateStr.includes('/')) {
+                        const [d, m, y] = dateStr.split('/');
+                        day = d;
+                        month = parseInt(m) - 1; // Convert to 0-indexed month
+                        year = y;
+                    } else {
+                        // Parse "12 Apr 2026" format
+                        const [d, monthStr, y] = dateStr.split(' ');
+                        const monthMap = {
+                            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+                            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+                        };
+                        day = d;
+                        month = monthMap[monthStr];
+                        year = y;
+                    }
+                    
+                    // Validate parsed values
+                    if (!day || month === undefined || !year) {
+                        showSnackbar('Invalid date format. Please select a date from the calendar.', 'error');
+                        return;
+                    }
+                    
+                    // Parse time
+                    const [hours, minutes] = timeInput.value.split(':');
+                    
+                    // Create Date object with explicit components (always unambiguous)
+                    const workshopDateTime = new Date(parseInt(year), month, parseInt(day), parseInt(hours), parseInt(minutes));
+                    
+                    // Validate the resulting Date object
+                    if (isNaN(workshopDateTime.getTime())) {
+                        showSnackbar('Invalid date or time. Please check your selections.', 'error');
+                        return;
+                    }
                     
                     const workshopData = {
                         name: document.getElementById('workshop-name').value.trim(),
@@ -152,7 +188,8 @@ function openEditWorkshopModal(workshopId) {
     let formattedTime = '';
     if (workshop.date && workshop.date.toDate) {
         const date = workshop.date.toDate();
-        formattedDateDisplay = date.toLocaleDateString('en-NZ', { 
+        // Use 'en-US' locale to get "Sat, Apr 12, 2026" format which DatePicker expects
+        formattedDateDisplay = date.toLocaleDateString('en-US', { 
             weekday: 'short', 
             year: 'numeric', 
             month: 'short', 
@@ -199,15 +236,6 @@ function openEditWorkshopModal(workshopId) {
                     <textarea id="edit-workshop-description" rows="4">${workshop.description || ''}</textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label for="edit-workshop-status">Status *</label>
-                    <select id="edit-workshop-status" required>
-                        <option value="draft" ${workshop.status === 'draft' ? 'selected' : ''}>Draft</option>
-                        <option value="published" ${workshop.status === 'published' ? 'selected' : ''}>Published</option>
-                        <option value="completed" ${workshop.status === 'completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </div>
-                
                 <div class="checkbox-group">
                     <input type="checkbox" id="edit-workshop-open-to-all" ${workshop.openToAll ? 'checked' : ''}>
                     <label for="edit-workshop-open-to-all">Open to All</label>
@@ -240,11 +268,47 @@ function openEditWorkshopModal(workshopId) {
                     }
                     
                     // Combine date and time into a single Date object
+                    // DatePicker format can be: "Sat, 12 Apr 2026" (initial) or "12/04/2026" (selected)
                     const dateParts = dateInput.value.split(', ');
-                    const dateStr = dateParts[dateParts.length - 1]; // Get "15 Mar 2026" part
-                    const timeStr = timeInput.value;
-                    const dateTimeStr = `${dateStr} ${timeStr}`;
-                    const workshopDateTime = new Date(dateTimeStr);
+                    const dateStr = dateParts[dateParts.length - 1]; // Get "12 Apr 2026" or "12/04/2026" part
+                    
+                    let day, month, year;
+                    
+                    // Check if it's DD/MM/YYYY format (from DatePicker selection)
+                    if (dateStr.includes('/')) {
+                        const [d, m, y] = dateStr.split('/');
+                        day = d;
+                        month = parseInt(m) - 1; // Convert to 0-indexed month
+                        year = y;
+                    } else {
+                        // Parse "12 Apr 2026" format (initial display)
+                        const [d, monthStr, y] = dateStr.split(' ');
+                        const monthMap = {
+                            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+                            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+                        };
+                        day = d;
+                        month = monthMap[monthStr];
+                        year = y;
+                    }
+                    
+                    // Validate parsed values
+                    if (!day || month === undefined || !year) {
+                        showSnackbar('Invalid date format. Please select a date from the calendar.', 'error');
+                        return;
+                    }
+                    
+                    // Parse time
+                    const [hours, minutes] = timeInput.value.split(':');
+                    
+                    // Create Date object with explicit components (always unambiguous)
+                    const workshopDateTime = new Date(parseInt(year), month, parseInt(day), parseInt(hours), parseInt(minutes));
+                    
+                    // Validate the resulting Date object
+                    if (isNaN(workshopDateTime.getTime())) {
+                        showSnackbar('Invalid date or time. Please check your selections.', 'error');
+                        return;
+                    }
                     
                     const updates = {
                         name: document.getElementById('edit-workshop-name').value.trim(),
@@ -252,7 +316,6 @@ function openEditWorkshopModal(workshopId) {
                         topic: document.getElementById('edit-workshop-topic').value.trim(),
                         description: document.getElementById('edit-workshop-description').value.trim(),
                         cost: document.getElementById('edit-workshop-cost').value,
-                        status: document.getElementById('edit-workshop-status').value,
                         openToAll: document.getElementById('edit-workshop-open-to-all').checked
                     };
                     
@@ -269,13 +332,23 @@ function openEditWorkshopModal(workshopId) {
     
     modal.show();
     
-    // Initialize date picker after modal opens
+    // Initialize date picker and set values after modal opens
     setTimeout(() => {
         const datePicker = new DatePicker('edit-workshop-date', 'edit-workshop-calendar', {
             allowedDays: [0, 1, 2, 3, 4, 5, 6], // Allow all days
             disablePastDates: false, // Allow editing past workshops
             dateFormat: { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
         });
+        
+        // Set the initial date value if available
+        if (formattedDateDisplay) {
+            document.getElementById('edit-workshop-date').value = formattedDateDisplay;
+        }
+        
+        // Set the initial time value if available
+        if (formattedTime) {
+            document.getElementById('edit-workshop-time').value = formattedTime;
+        }
     }, 100);
 }
 
@@ -283,7 +356,7 @@ function openEditWorkshopModal(workshopId) {
 // MANAGE INVITES MODAL
 // ============================================
 
-function openManageInvitesModal(workshopId) {
+async function openManageInvitesModal(workshopId) {
     const workshop = getWorkshopById(workshopId);
     if (!workshop) {
         showSnackbar('Workshop not found', 'error');
@@ -295,10 +368,13 @@ function openManageInvitesModal(workshopId) {
         return;
     }
     
+    // Fetch and sort student names before creating modal
+    const invitedStudentsData = await fetchAndSortInvitedStudents(workshop);
+    
     const modal = new BaseModal({
         id: 'manage-invites-modal',
         title: `Manage Invites: ${workshop.name}`,
-        content: generateInvitesContent(workshop),
+        content: generateInvitesContent(workshop, invitedStudentsData),
         buttons: [
             {
                 text: 'Close',
@@ -312,15 +388,37 @@ function openManageInvitesModal(workshopId) {
     attachInviteListeners(workshop, modal);
 }
 
-function generateInvitesContent(workshop) {
-    const invitedStudents = workshop.invitedStudents || [];
+async function fetchAndSortInvitedStudents(workshop) {
+    const studentsData = [];
+    for (const studentId of workshop.invitedStudents || []) {
+        try {
+            const studentDoc = await db.collection('students').doc(studentId).get();
+            if (studentDoc.exists) {
+                const student = studentDoc.data();
+                studentsData.push({
+                    id: studentId,
+                    firstName: student.firstName,
+                    lastName: student.lastName,
+                    fullName: `${student.firstName} ${student.lastName}`
+                });
+            }
+        } catch (error) {
+            console.error(`Error loading student ${studentId}:`, error);
+        }
+    }
     
+    // Sort alphabetically by full name
+    studentsData.sort((a, b) => a.fullName.localeCompare(b.fullName));
+    return studentsData;
+}
+
+function generateInvitesContent(workshop, invitedStudentsData = []) {
     return `
         <div class="invite-management">
             <!-- Student Search -->
             <div class="student-search" style="margin-bottom: 30px;">
                 <label for="invite-search" style="display: block; margin-bottom: 8px; font-weight: 600;">
-                    <i class="fas fa-search"></i> Search and add students:
+                    <i class="fas fa-search" style="color: var(--purple-primary);"></i> Search and add students:
                 </label>
                 <input type="text" 
                        id="invite-search" 
@@ -332,17 +430,17 @@ function generateInvitesContent(workshop) {
             <!-- Invited Students List -->
             <div class="invited-students-section">
                 <h3 style="margin-bottom: 15px; color: var(--text-primary);">
-                    <i class="fas fa-users"></i> Invited Students (${invitedStudents.length})
+                    <i class="fas fa-users" style="color: var(--purple-primary);"></i> Invited Students (${invitedStudentsData.length})
                 </h3>
                 
                 <div id="invited-students-list">
-                    ${invitedStudents.length === 0 ? `
+                    ${invitedStudentsData.length === 0 ? `
                         <div style="padding: 20px; background: var(--hover-background); border-radius: 6px; text-align: center; color: var(--text-secondary);">
                             <i class="fas fa-info-circle"></i> No students invited yet. Search above to add students.
                         </div>
                     ` : `
                         <div class="invited-list">
-                            ${invitedStudents.map(studentId => renderInvitedStudent(studentId, workshop)).join('')}
+                            ${invitedStudentsData.map(student => renderInvitedStudentWithName(student.id, student.fullName, workshop)).join('')}
                         </div>
                     `}
                 </div>
@@ -351,35 +449,35 @@ function generateInvitesContent(workshop) {
     `;
 }
 
-function renderInvitedStudent(studentId, workshop) {
+function renderInvitedStudentWithName(studentId, studentName, workshop) {
     // Check if student is registered
     const registered = workshop.registeredStudents?.find(r => r.studentId === studentId);
     
     return `
         <div class="invited-student-item" data-student-id="${studentId}">
             <div class="student-info">
-                <span class="student-name" id="student-name-${studentId}">Loading...</span>
+                <span class="student-name">${studentName}</span>
                 ${registered ? `
                     <span class="registration-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--success-light); color: var(--success); border-radius: 4px; font-size: 12px;">
                         <i class="fas fa-check-circle"></i> Registered
                     </span>
                 ` : ''}
             </div>
-            <button class="action-btn btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered ? 'disabled title="Cannot remove registered students"' : ''}>
-                <i class="fas fa-times"></i> Remove
+            <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered ? 'disabled title="Cannot remove registered students"' : ''}>
+                <i class="fas fa-trash-alt"></i>
             </button>
         </div>
     `;
 }
+
+// Store the document click handler so we can remove it
+let inviteDocumentClickHandler = null;
 
 function attachInviteListeners(workshop, modal) {
     const searchInput = document.getElementById('invite-search');
     const searchResults = document.getElementById('invite-search-results');
     
     let searchTimeout;
-    
-    // Load student names for already invited students
-    loadInvitedStudentNames(workshop);
     
     searchInput.addEventListener('input', async (e) => {
         const query = e.target.value.trim();
@@ -419,9 +517,10 @@ function attachInviteListeners(workshop, modal) {
                     try {
                         await addInvitedStudent(workshop.id, studentId);
                         
-                        // Refresh modal content
+                        // Refresh modal content with updated student list
                         const updatedWorkshop = getWorkshopById(workshop.id);
-                        modal.updateContent(generateInvitesContent(updatedWorkshop));
+                        const invitedStudentsData = await fetchAndSortInvitedStudents(updatedWorkshop);
+                        modal.setContent(generateInvitesContent(updatedWorkshop, invitedStudentsData));
                         attachInviteListeners(updatedWorkshop, modal);
                         
                         searchInput.value = '';
@@ -434,29 +533,18 @@ function attachInviteListeners(workshop, modal) {
         }, 300);
     });
     
+    // Remove previous document click handler if it exists
+    if (inviteDocumentClickHandler) {
+        document.removeEventListener('click', inviteDocumentClickHandler);
+    }
+    
     // Hide results when clicking outside
-    document.addEventListener('click', (e) => {
+    inviteDocumentClickHandler = (e) => {
         if (!e.target.closest('.student-search')) {
             searchResults.style.display = 'none';
         }
-    });
-}
-
-async function loadInvitedStudentNames(workshop) {
-    for (const studentId of workshop.invitedStudents || []) {
-        try {
-            const studentDoc = await db.collection('students').doc(studentId).get();
-            if (studentDoc.exists) {
-                const student = studentDoc.data();
-                const nameElement = document.getElementById(`student-name-${studentId}`);
-                if (nameElement) {
-                    nameElement.textContent = `${student.firstName} ${student.lastName}`;
-                }
-            }
-        } catch (error) {
-            console.error(`Error loading student ${studentId}:`, error);
-        }
-    }
+    };
+    document.addEventListener('click', inviteDocumentClickHandler);
 }
 
 async function handleRemoveInvite(workshopId, studentId) {
@@ -472,31 +560,33 @@ async function handleRemoveInvite(workshopId, studentId) {
         console.error('Error fetching student:', error);
     }
     
-    const confirmed = await ConfirmationModal.show({
+    const modal = new ConfirmationModal({
         title: 'Remove Student',
         message: `Are you sure you want to remove ${studentName} from the invited list?`,
         confirmText: 'Remove',
-        confirmClass: 'btn-danger'
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+            try {
+                await removeInvitedStudent(workshopId, studentId);
+                
+                // Refresh the modal if it's still open
+                const existingModal = document.getElementById('manage-invites-modal');
+                if (existingModal) {
+                    const workshop = getWorkshopById(workshopId);
+                    const invitedStudentsData = await fetchAndSortInvitedStudents(workshop);
+                    const inviteModal = BaseModal.getInstance('manage-invites-modal');
+                    if (inviteModal) {
+                        inviteModal.setContent(generateInvitesContent(workshop, invitedStudentsData));
+                        attachInviteListeners(workshop, inviteModal);
+                    }
+                }
+            } catch (error) {
+                // Error handling in removeInvitedStudent()
+            }
+        }
     });
     
-    if (confirmed) {
-        try {
-            await removeInvitedStudent(workshopId, studentId);
-            
-            // Refresh the modal if it's still open
-            const existingModal = document.getElementById('manage-invites-modal');
-            if (existingModal) {
-                const workshop = getWorkshopById(workshopId);
-                const modal = BaseModal.getInstance('manage-invites-modal');
-                if (modal) {
-                    modal.updateContent(generateInvitesContent(workshop));
-                    attachInviteListeners(workshop, modal);
-                }
-            }
-        } catch (error) {
-            // Error handling in removeInvitedStudent()
-        }
-    }
+    modal.show();
 }
 
 // ============================================
@@ -535,32 +625,29 @@ function generateVideosContent(workshop) {
             <!-- Add Video Form -->
             <div class="add-video-section" style="margin-bottom: 30px; padding: 20px; background: var(--hover-background); border-radius: 8px;">
                 <h3 style="margin-bottom: 15px; color: var(--text-primary);">
-                    <i class="fas fa-plus-circle"></i> Add Video
+                    <i class="fas fa-plus-circle" style="color: var(--purple-primary);"></i> Add Video
                 </h3>
-                <form id="add-video-form" style="display: grid; gap: 15px;">
-                    <div class="form-group">
-                        <label for="video-title">Video Title *</label>
+                <form id="add-video-form" style="display: grid; gap: 8px;">
+                    <div class="form-group" style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 15px;">
+                        <label for="video-title" style="margin: 0;">Video Title *</label>
                         <input type="text" id="video-title" required placeholder="e.g., Drill 1: Connection">
                     </div>
                     
-                    <div class="form-group">
-                        <label for="video-url">YouTube URL *</label>
-                        <input type="url" id="video-url" required placeholder="https://www.youtube.com/watch?v=...">
-                        <small style="color: var(--text-secondary); font-size: 12px;">
-                            Paste the full YouTube video URL
-                        </small>
+                    <div class="form-group" style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 15px;">
+                        <label for="video-url" style="margin: 0;">YouTube URL *</label>
+                        <input type="text" id="video-url" required placeholder="https://www.youtube.com/watch?v=...">
                     </div>
                     
-                    <button type="submit" class="btn-primary" style="justify-self: start;">
+                    <button type="submit" class="btn-primary" style="justify-self: start; margin-left: 135px; margin-top: 7px;">
                         <i class="fas fa-plus"></i> Add Video
                     </button>
                 </form>
             </div>
             
             <!-- Videos List -->
-            <div class="videos-list-section">
+            <div class="videos-list-section" style="padding-left: 20px;">
                 <h3 style="margin-bottom: 15px; color: var(--text-primary);">
-                    <i class="fas fa-video"></i> Workshop Videos (${videos.length})
+                    <i class="fas fa-video" style="color: var(--purple-primary);"></i> Workshop Videos (${videos.length})
                 </h3>
                 
                 <div id="videos-list">
@@ -631,7 +718,7 @@ function attachVideoListeners(workshop, modal) {
             
             // Refresh modal content
             const updatedWorkshop = getWorkshopById(workshop.id);
-            modal.updateContent(generateVideosContent(updatedWorkshop));
+            modal.setContent(generateVideosContent(updatedWorkshop));
             attachVideoListeners(updatedWorkshop, modal);
         } catch (error) {
             // Error handling in addVideo()
@@ -640,31 +727,32 @@ function attachVideoListeners(workshop, modal) {
 }
 
 async function handleRemoveVideo(workshopId, videoUrl) {
-    const confirmed = await ConfirmationModal.show({
+    const modal = new ConfirmationModal({
         title: 'Remove Video',
         message: 'Are you sure you want to remove this video from the workshop?',
         confirmText: 'Remove',
-        confirmClass: 'btn-danger'
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+            try {
+                await removeVideo(workshopId, videoUrl);
+                
+                // Refresh the modal if it's still open
+                const existingModal = document.getElementById('manage-videos-modal');
+                if (existingModal) {
+                    const workshop = getWorkshopById(workshopId);
+                    const videoModal = BaseModal.getInstance('manage-videos-modal');
+                    if (videoModal) {
+                        videoModal.setContent(generateVideosContent(workshop));
+                        attachVideoListeners(workshop, videoModal);
+                    }
+                }
+            } catch (error) {
+                // Error handling in removeVideo()
+            }
+        }
     });
     
-    if (confirmed) {
-        try {
-            await removeVideo(workshopId, videoUrl);
-            
-            // Refresh the modal if it's still open
-            const existingModal = document.getElementById('manage-videos-modal');
-            if (existingModal) {
-                const workshop = getWorkshopById(workshopId);
-                const modal = BaseModal.getInstance('manage-videos-modal');
-                if (modal) {
-                    modal.updateContent(generateVideosContent(workshop));
-                    attachVideoListeners(workshop, modal);
-                }
-            }
-        } catch (error) {
-            // Error handling in removeVideo()
-        }
-    }
+    modal.show();
 }
 
 // ============================================
@@ -684,20 +772,21 @@ async function confirmDeleteWorkshop(workshopId) {
         return;
     }
     
-    const confirmed = await ConfirmationModal.show({
+    const modal = new ConfirmationModal({
         title: 'Delete Workshop',
         message: `Are you sure you want to delete "${workshop.name}"? This action cannot be undone.`,
         confirmText: 'Delete Workshop',
-        confirmClass: 'btn-danger'
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+            try {
+                await deleteWorkshop(workshopId);
+            } catch (error) {
+                // Error handling in deleteWorkshop()
+            }
+        }
     });
     
-    if (confirmed) {
-        try {
-            await deleteWorkshop(workshopId);
-        } catch (error) {
-            // Error handling in deleteWorkshop()
-        }
-    }
+    modal.show();
 }
 
 // ============================================

@@ -514,6 +514,17 @@
   border-color: var(--success);
 }
 
+.btn-icon.btn-video {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.btn-icon.btn-video:hover {
+  background: var(--cyan);
+  color: white;
+  border-color: var(--cyan);
+}
+
 /* ========================================
    PAGINATION BUTTONS
    Navigation and page number buttons for tables

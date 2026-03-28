@@ -50,14 +50,6 @@
     display: block;
 }
 
-.filter-section .filter-buttons {
-    display: flex;
-    gap: 8px;
-    order: 3;
-    flex-shrink: 0;
-    flex-wrap: nowrap;
-}
-
 .search-box i {
     position: absolute;
     left: 12px;
@@ -74,49 +66,13 @@
     font-size: 14px;
 }
 
-.filter-btn {
-    padding: 8px 16px;
-    border: 1px solid var(--border-color);
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.filter-btn:hover {
-    background: var(--hover-background);
-}
-
-.filter-btn.active {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-/* Workshops Table */
-.workshops-table {
-    width: 100%;
-    background: var(--card-background);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.workshops-table thead {
-    background: var(--purple-primary);
-    color: white;
-}
-
-.workshops-table th {
+/* Workshop-specific table overrides */
+.workshops-table th,
+.workshops-table td {
     padding: 16px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 14px;
 }
 
 .workshops-table td {
-    padding: 16px;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -128,29 +84,15 @@
     border-bottom: none;
 }
 
-/* Status Badges */
-.status-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
+.text-center {
+    text-align: center;
 }
 
-.status-badge.draft {
-    background: var(--warning-light);
-    color: var(--warning-darker);
-}
-
-.status-badge.published {
-    background: var(--success-light);
-    color: var(--success-dark);
-}
-
-.status-badge.completed {
-    background: var(--info-light);
-    color: var(--info);
+/* Action buttons alignment */
+.workshops-table .action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 /* Visibility Badge */
@@ -183,51 +125,6 @@
     background: var(--hover-background);
     border-radius: 6px;
     font-size: 13px;
-}
-
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-}
-
-.action-btn.btn-view {
-    background: var(--info-light);
-    color: var(--info);
-}
-
-.action-btn.btn-edit {
-    background: var(--warning-light);
-    color: var(--warning-darker);
-}
-
-.action-btn.btn-delete {
-    background: var(--error-light);
-    color: var(--error);
-}
-
-.action-btn:hover {
-    opacity: 0.8;
-    transform: translateY(-1px);
-}
-
-.action-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
 }
 
 /* Loading & Empty States */
@@ -535,6 +432,36 @@
     border-bottom: none;
 }
 
+/* Invited Students List */
+.invited-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.invited-student-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.invited-student-item:last-child {
+    border-bottom: none;
+}
+
+.invited-student-item .student-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.invited-student-item .btn-icon {
+    flex-shrink: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .page-header {
@@ -561,20 +488,6 @@
         order: 2;
     }
     
-    .filter-section .filter-buttons {
-        width: 100%;
-        order: 3;
-        justify-content: center;
-        flex-wrap: nowrap;
-    }
-    
-    .filter-section .filter-btn {
-        flex: 1 1 auto;
-        min-width: 60px;
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-    
     .workshops-table {
         display: block;
         overflow-x: auto;
@@ -582,5 +495,20 @@
     
     .action-buttons {
         flex-direction: column;
+    }
+    
+    /* Video form responsive layout */
+    #add-video-form .form-group {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    
+    #add-video-form .form-group label {
+        padding-top: 0 !important;
+    }
+    
+    #add-video-form .btn-primary {
+        margin-left: 0 !important;
+        width: 100%;
     }
 }
