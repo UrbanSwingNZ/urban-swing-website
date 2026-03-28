@@ -606,3 +606,186 @@
         width: 100%;
     }
 }
+
+/* ==================== Workshop Check-In Modal Styles ==================== */
+
+.checkin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checkin-item:hover {
+    border-color: var(--purple-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.checkin-item.checked-in {
+    background: var(--hover-background);
+    border-color: var(--success-color);
+}
+
+.student-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.student-name {
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.student-details {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+.payment-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.payment-indicator.paid-online {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.payment-indicator.pay-later {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+}
+
+.payment-method-selector {
+    margin: 10px 0;
+}
+
+.payment-method-selector label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.payment-method-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: white;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.payment-method-select:hover {
+    border-color: var(--purple-primary);
+}
+
+.payment-method-select:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+}
+
+.btn-checkin {
+    padding: 10px 20px;
+    background: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-checkin:hover:not(:disabled) {
+    background: var(--success-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 128, 0, 0.2);
+}
+
+.btn-checkin:disabled {
+    background: var(--border-color);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-top: 4px;
+}
+
+.search-result-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: var(--hover-background);
+    color: var(--purple-primary);
+}
+
+.walkin-students-section h3 {
+    color: var(--text-primary);
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+/* Responsive adjustments for check-in modal */
+@media (max-width: 768px) {
+    .checkin-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .payment-method-selector {
+        width: 100%;
+    }
+    
+    .payment-method-select {
+        width: 100%;
+    }
+    
+    .btn-checkin {
+        width: 100%;
+        justify-content: center;
+    }
+}

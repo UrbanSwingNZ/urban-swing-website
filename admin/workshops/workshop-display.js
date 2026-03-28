@@ -80,6 +80,9 @@ function renderWorkshopRow(workshop) {
                         <i class="fas fa-user-plus"></i>
                     </button>
                 ` : ''}
+                <button class="btn-icon" onclick="window.openWorkshopCheckinModal('${workshop.id}')" title="Check-In Students">
+                    <i class="fas fa-clipboard-check"></i>
+                </button>
                 <button class="btn-icon btn-video" onclick="window.openManageVideosModal('${workshop.id}')" title="Manage Videos">
                     <i class="fas fa-video"></i>
                 </button>
@@ -129,6 +132,9 @@ function renderWorkshopCard(workshop) {
                         <i class="fas fa-user-plus"></i>
                     </button>
                 ` : ''}
+                <button class="btn-icon" onclick="window.openWorkshopCheckinModal('${workshop.id}')" title="Check-In Students">
+                    <i class="fas fa-clipboard-check"></i>
+                </button>
                 <button class="btn-icon btn-video" onclick="window.openManageVideosModal('${workshop.id}')" title="Manage Videos">
                     <i class="fas fa-video"></i>
                 </button>
