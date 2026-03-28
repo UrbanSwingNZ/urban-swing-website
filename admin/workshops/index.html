@@ -17,6 +17,9 @@
     <!-- Date Picker Styles -->
     <link rel="stylesheet" href="/styles/date-picker/date-picker.css">
     
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="/styles/components/tables.css">
+    
     <!-- Workshop-specific Styles -->
     <link rel="stylesheet" href="workshops.css?v=7">
     
@@ -37,12 +40,6 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="workshop-search" placeholder="Search workshops...">
             </div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="draft">Draft</button>
-                <button class="filter-btn" data-filter="published">Published</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
-            </div>
         </div>
 
         <!-- Workshops Table -->
@@ -59,13 +56,12 @@
                 </button>
             </div>
             
-            <div id="workshops-table-container" style="display: none;">
-                <table class="workshops-table">
-                    <thead>
+            <div id="workshops-table-container" class="table-container" style="display: none;">
+                <table class="data-table workshops-table">
+                    <thead class="table-header-gradient">
                         <tr>
                             <th>Name</th>
                             <th>Date</th>
-                            <th>Status</th>
                             <th>Visibility</th>
                             <th>Registrations</th>
                             <th>Videos</th>
@@ -106,7 +102,8 @@
     <!-- Workshop Scripts -->
     <script type="module" src="workshop-manager.js"></script>
     <script type="module" src="workshop-modals.js"></script>
-    <!-- Phase 6: <script type="module" src="workshop-display.js"></script> -->
+    <script type="module" src="workshop-display.js"></script>
+    <!-- Phase 7: <script type="module" src="workshop-checkin-modal.js"></script> -->
     <!-- Phase 7: <script type="module" src="workshop-checkin-modal.js"></script> -->
 </body>
 </html>

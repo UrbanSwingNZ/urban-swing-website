@@ -355,7 +355,6 @@ async function searchStudents(query) {
     try {
         const snapshot = await db.collection('students')
             .orderBy('firstName')
-            .limit(50)
             .get();
         
         const students = snapshot.docs.map(doc => ({
@@ -386,12 +385,6 @@ function setupEventListeners() {
     if (searchInput) {
         searchInput.addEventListener('input', handleSearch);
     }
-    
-    // Filter buttons
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', handleFilter);
-    });
     
     // Create workshop button
     const createBtn = document.getElementById('create-workshop-btn');
@@ -426,31 +419,6 @@ function handleSearch(e) {
     }
 }
 
-/**
- * Handle filter button clicks
- */
-function handleFilter(e) {
-    const filter = e.target.dataset.filter;
-    
-    // Update active button
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    e.target.classList.add('active');
-    
-    // Filter workshops by status
-    if (filter === 'all') {
-        filteredWorkshops = [...workshops];
-    } else {
-        filteredWorkshops = workshops.filter(w => w.status === filter);
-    }
-    
-    // Render workshops (Phase 6 - workshop-display.js)
-    if (window.renderWorkshops) {
-        window.renderWorkshops();
-    }
-}
-
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
@@ -477,14 +445,17 @@ function formatDate(timestamp) {
         return 'Invalid Date';
     }
     
-    return date.toLocaleDateString('en-NZ', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    // Format as DD/MM/YYYY HH:MMam/pm
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}${ampm}`;
 }
 
 /**
