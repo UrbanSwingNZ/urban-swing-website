@@ -53,6 +53,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../index.html'
     },
+    '/admin/workshops/': {
+        title: 'Workshop Management',
+        activePage: 'workshops',
+        navSection: 'main-admin',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../index.html'
+    },
     
     // Admin Tools Pages
     '/admin/admin-tools/': {

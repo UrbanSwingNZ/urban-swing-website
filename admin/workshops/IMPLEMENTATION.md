@@ -487,9 +487,130 @@ Testing via the student portal UI (implemented in Phase 6) will provide the most
 
 ---
 
-## Phase 3: Admin Page Structure
+## Phase 3: Admin Page Structure ✅ COMPLETED
 
-### 3.1 Create index.html
+### What Was Implemented
+
+**File**: `/admin/workshops/index.html` (109 lines)
+
+Created the main workshop management page with:
+
+**HTML Structure**:
+- Admin header container (injected by admin-header.js)
+- Page header with title and "Create Workshop" button
+- Filter section with search box and status filter buttons (All, Draft, Published, Completed)
+- Workshops table container with three states:
+  - Loading state (spinner)
+  - Empty state (no workshops message with CTA button)
+  - Table view (7 columns: Name, Date, Status, Visibility, Registrations, Videos, Actions)
+
+**Script Dependencies**:
+- Firebase SDK (App, Firestore, Auth)
+- Firebase Config
+- Reusable components (BaseModal, ConfirmationModal, LoadingSpinner, Snackbar)
+- Admin Header
+- Workshop-specific scripts (manager, modals, display, checkin-modal)
+
+**File**: `/admin/workshops/workshops.css` (479 lines)
+
+Created comprehensive workshop-specific styles:
+
+**Key Style Sections**:
+- Page layout and header (responsive container, flex header)
+- Filter section (search box with icon, filter button states)
+- Workshops table (purple header, hover states, rounded corners)
+- Status badges (draft=yellow, published=green, completed=blue)
+- Visibility badges (open-to-all=green, invite-only=purple)
+- Count badges (registrations, videos)
+- Action buttons (view, edit, delete with hover effects)
+- Loading and empty states (centered with large icons)
+- Workshop details expandable row (with tabs)
+- Registration, invited, and video lists
+- Modal form overrides (workshop forms, checkbox groups)
+- Student search autocomplete (dropdown with hover)
+- Responsive design (mobile breakpoints)
+
+**Design Compliance**:
+- Uses ONLY existing color variables from `/styles/base/colors.css`
+- No new color definitions added (as required)
+- Consistent spacing and border radius (8px, 6px)
+- Smooth transitions (0.2s ease)
+
+### Testing Instructions
+
+Since the JavaScript files (Phases 4-7) haven't been created yet, the page will show errors. However, you can still test the static HTML/CSS structure:
+
+#### Test 1: Page Load & Structure
+
+1. Navigate to `http://localhost:5000/admin/workshops/` (or your Firebase hosting URL)
+2. **Expected Behavior**:
+   - ✅ Page loads with admin header
+   - ✅ "Workshop Management" title visible with icon
+   - ✅ "Create Workshop" button in top-right
+   - ✅ Filter section with search box and 4 filter buttons
+   - ✅ Loading spinner visible initially
+   - ❌ Console errors about missing JS files (expected at this stage)
+
+#### Test 2: CSS Styling Verification
+
+**Check Filter Section**:
+1. Inspect the filter section
+2. **Expected**:
+   - ✅ Light background card
+   - ✅ Search box has magnifying glass icon on left
+   - ✅ "All" button is purple (active state)
+   - ✅ Other buttons are white with border
+
+**Check Color Variables**:
+1. Open DevTools → Elements tab
+2. Inspect any colored element (status badge, button, etc.)
+3. **Expected**:
+   - ✅ All colors use `var(--color-name)` format
+   - ✅ No hardcoded color values like `#RRGGBB`
+
+#### Test 3: Responsive Design
+
+1. Open DevTools → Toggle device toolbar (Ctrl+Shift+M)
+2. Set viewport to mobile (375px width)
+3. **Expected**:
+   - ✅ Page header stacks vertically
+   - ✅ Filter section stacks vertically
+   - ✅ Search box takes full width
+   - ✅ Filter buttons remain visible
+
+#### Test 4: Browser Compatibility
+
+Test in multiple browsers:
+- Chrome/Edge: Should work perfectly
+- Firefox: Check filter button hover states
+- Safari (if available): Check border-radius rendering
+
+#### Test 5: Icon Loading
+
+1. Check if Font Awesome icons load
+2. **Expected**:
+   - ✅ Chalkboard icon next to title
+   - ✅ Plus icon in "Create Workshop" button
+   - ✅ Search icon in search box
+
+### Known Issues (Expected at this stage)
+
+1. **Console Errors**: `workshop-manager.js`, `workshop-modals.js`, `workshop-display.js`, and `workshop-checkin-modal.js` are not found (they'll be created in Phases 4-7)
+2. **Loading State**: Page will show spinner indefinitely since JavaScript isn't implemented
+3. **Button Clicks**: Buttons won't respond since event listeners aren't attached yet
+4. **Empty State**: Won't display since JavaScript logic isn't implemented
+
+### Next Steps
+
+After verifying the HTML/CSS structure:
+- Phase 4: Implement `workshop-manager.js` (core business logic)
+- Phase 5: Implement `workshop-modals.js` (modal handlers)
+- Phase 6: Implement `workshop-display.js` (rendering logic)
+- Phase 7: Implement `workshop-checkin-modal.js` (check-in functionality)
+
+---
+
+## Phase 4: Core Business Logic
 
 **File**: `admin/workshops/index.html`
 
@@ -596,507 +717,8 @@ Testing via the student portal UI (implemented in Phase 6) will provide the most
     <script src="workshop-manager.js"></script>
     <script src="workshop-modals.js"></script>
     <script src="workshop-display.js"></script>
-    <script src="workshop-checkin-modal.js"></script>
 </body>
 </html>
-```
-
----
-
-### 1.2 Create workshops.css
-
-**File**: `admin/workshops/workshops.css`
-
-**Design Tokens** (use existing colors only):
-
-```css
-@import url('../../styles/base/colors.css');
-
-/* Page Layout */
-.admin-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.page-header h1 {
-    font-size: 28px;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* Filter Section */
-.filter-section {
-    background: var(--card-background);
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.search-box {
-    position: relative;
-    flex: 1;
-    min-width: 250px;
-}
-
-.search-box i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-}
-
-.search-box input {
-    width: 100%;
-    padding: 10px 10px 10px 40px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.filter-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.filter-btn {
-    padding: 8px 16px;
-    border: 1px solid var(--border-color);
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.filter-btn:hover {
-    background: var(--hover-background);
-}
-
-.filter-btn.active {
-    background: var(--purple-primary);
-    color: white;
-    border-color: var(--purple-primary);
-}
-
-/* Workshops Table */
-.workshops-table {
-    width: 100%;
-    background: var(--card-background);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.workshops-table thead {
-    background: var(--purple-primary);
-    color: white;
-}
-
-.workshops-table th {
-    padding: 16px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.workshops-table td {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.workshops-table tbody tr:hover {
-    background: var(--hover-background);
-}
-
-.workshops-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Status Badges */
-.status-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-badge.draft {
-    background: var(--warning-light);
-    color: var(--warning-darker);
-}
-
-.status-badge.published {
-    background: var(--success-light);
-    color: var(--success-dark);
-}
-
-.status-badge.completed {
-    background: var(--info-light);
-    color: var(--info);
-}
-
-/* Visibility Badge */
-.visibility-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
-.visibility-badge i {
-    font-size: 14px;
-}
-
-.visibility-badge.open-to-all {
-    color: var(--success);
-}
-
-.visibility-badge.invite-only {
-    color: var(--purple-primary);
-}
-
-/* Count Badges */
-.count-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    background: var(--hover-background);
-    border-radius: 6px;
-    font-size: 13px;
-}
-
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-}
-
-.action-btn.btn-view {
-    background: var(--info-light);
-    color: var(--info);
-}
-
-.action-btn.btn-edit {
-    background: var(--warning-light);
-    color: var(--warning-darker);
-}
-
-.action-btn.btn-delete {
-    background: var(--error-light);
-    color: var(--error);
-}
-
-.action-btn:hover {
-    opacity: 0.8;
-    transform: translateY(-1px);
-}
-
-.action-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Loading & Empty States */
-.loading-state,
-.empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-secondary);
-}
-
-.loading-state i,
-.empty-state i {
-    font-size: 48px;
-    margin-bottom: 20px;
-    color: var(--purple-primary);
-}
-
-.empty-state p {
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-/* Workshop Details Expandable Row */
-.workshop-details-row {
-    background: var(--hover-background);
-}
-
-.workshop-details-content {
-    padding: 20px;
-}
-
-.workshop-tabs {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.tab-btn {
-    padding: 10px 20px;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-}
-
-.tab-btn:hover {
-    color: var(--purple-primary);
-}
-
-.tab-btn.active {
-    color: var(--purple-primary);
-    border-bottom-color: var(--purple-primary);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Registrations List */
-.registrations-list {
-    display: grid;
-    gap: 12px;
-}
-
-.registration-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-}
-
-.student-info {
-    flex: 1;
-}
-
-.student-name {
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.registration-meta {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 4px;
-}
-
-.payment-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.payment-indicator.paid-online {
-    background: var(--success-light);
-    color: var(--success-dark);
-}
-
-.payment-indicator.pay-later {
-    background: var(--warning-light);
-    color: var(--warning-darker);
-}
-
-/* Invited Students List */
-.invited-list {
-    display: grid;
-    gap: 8px;
-}
-
-.invited-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-}
-
-/* Videos List */
-.videos-list {
-    display: grid;
-    gap: 12px;
-}
-
-.video-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-}
-
-.video-info {
-    flex: 1;
-}
-
-.video-title {
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.video-url {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 4px;
-}
-
-/* Modal Overrides for Workshop Forms */
-.workshop-form {
-    display: grid;
-    gap: 16px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group label {
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--text-primary);
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.form-group textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.checkbox-group input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.checkbox-group label {
-    cursor: pointer;
-    font-weight: 500;
-}
-
-/* Student Search Autocomplete */
-.student-search {
-    position: relative;
-}
-
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 10;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.search-result-item {
-    padding: 10px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.search-result-item:hover {
-    background: var(--hover-background);
-}
-
-.search-result-item:last-child {
-    border-bottom: none;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-    
-    .filter-section {
-        flex-direction: column;
-    }
-    
-    .workshops-table {
-        display: block;
-        overflow-x: auto;
-    }
-    
-    .action-buttons {
-        flex-direction: column;
-    }
-}
 ```
 
 ---
@@ -1569,11 +1191,13 @@ function formatDate(timestamp) {
 Lightweight check-in modal for workshop attendees.
 
 **Features**:
-- Display registered students
+- Display registered students (sorted alphabetically)
 - Show payment status (paid online vs pay later)
+- Allow walk-in students to be checked in via search
+- Walk-ins are automatically added to invitedStudents[] for portal access
 - Handle check-in with appropriate payment method
 - Create checkin document
-- Create transaction document (if pay later)
+- Create transaction document (if pay later or walk-in)
 
 **Structure**:
 
@@ -1595,21 +1219,16 @@ function openWorkshopCheckinModal(workshopId) {
         ]
     });
     
-    modal.show();
+ 
+
+// Note: The attachCheckinListeners() function handles the walk-in student search,
+// separating students into "Already Registered" and "Walk-Ins" sections,
+// and allowing selection from both groups for check-in.   modal.show();
     attachCheckinListeners(workshop);
 }
 
 function generateCheckinContent(workshop) {
     const registeredStudents = workshop.registeredStudents || [];
-    
-    if (registeredStudents.length === 0) {
-        return `
-            <div class="empty-state">
-                <i class="fas fa-user-slash"></i>
-                <p>No students registered yet</p>
-            </div>
-        `;
-    }
     
     return `
         <div class="workshop-info">
@@ -1619,23 +1238,60 @@ function generateCheckinContent(workshop) {
             </div>
         </div>
         
-        <div class="registrations-list">
-            ${registeredStudents.map(reg => renderCheckinStudent(reg, workshop)).join('')}
+        <!-- Registered Students Section -->
+        ${registeredStudents.length > 0 ? `
+            <div class="registered-students-section" style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px; color: var(--text-primary);">
+                    <i class="fas fa-user-check"></i> Registered Students
+                </h3>
+                <div class="registrations-list">
+                    ${registeredStudents.map(reg => renderCheckinStudent(reg, workshop, false)).join('')}
+                </div>
+            </div>
+        ` : `
+            <div style="margin-bottom: 30px; padding: 15px; background: var(--hover-background); border-radius: 6px; text-align: center;">
+                <i class="fas fa-info-circle"></i> No pre-registered students yet
+            </div>
+        `}
+        
+        <!-- Walk-In Student Section -->
+        <div class="walkin-students-section">
+            <h3 style="margin-bottom: 15px; color: var(--text-primary);">
+                <i class="fas fa-user-plus"></i> Check In Walk-In Student
+            </h3>
+            
+            <div class="student-search" style="margin-bottom: 15px;">
+                <label for="walkin-search" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                    Search for student:
+                </label>
+                <input type="text" 
+                       id="walkin-search" 
+                       placeholder="Type student name..."
+                       style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                <div id="walkin-search-results" class="search-results" style="display: none;"></div>
+            </div>
+            
+            <div id="walkin-selected-student" style="display: none;">
+                <!-- Selected student will be rendered here -->
+            </div>
         </div>
     `;
 }
 
-function renderCheckinStudent(registration, workshop) {
+function renderCheckinStudent(registration, workshop, isWalkIn = false) {
     const paidBadge = registration.paidOnline
         ? `<span class="payment-indicator paid-online"><i class="fas fa-check-circle"></i> Paid Online</span>`
         : `<span class="payment-indicator pay-later"><i class="fas fa-clock"></i> Pay Later</span>`;
     
+    const studentName = registration.studentName || `${registration.firstName} ${registration.lastName}` || registration.studentId;
+    const registrationInfo = !isWalkIn ? `Registered: ${formatDate(registration.registeredAt)} | ${paidBadge}` : `<strong>Walk-In</strong> (requires payment)`;
+    
     return `
         <div class="checkin-item" data-student-id="${registration.studentId}">
             <div class="student-info">
-                <div class="student-name">${registration.studentName || registration.studentId}</div>
+                <div class="student-name">${studentName}</div>
                 <div class="registration-meta">
-                    Registered: ${formatDate(registration.registeredAt)} | ${paidBadge}
+                    ${registrationInfo}
                 </div>
             </div>
             
@@ -1652,20 +1308,132 @@ function renderCheckinStudent(registration, workshop) {
             
             <button class="action-btn btn-checkin" 
                     data-student-id="${registration.studentId}" 
-                    data-paid-online="${registration.paidOnline}"
-                    onclick="handleWorkshopCheckin('${workshop.id}', '${registration.studentId}', ${registration.paidOnline})">
+                    data-paid-online="${registration.paidOnline || false}"
+                    onclick="handleWorkshopCheckin('${workshop.id}', '${registration.studentId}', ${registration.paidOnline || false}, ${isWalkIn})">
                 <i class="fas fa-check"></i> Check In
             </button>
         </div>
     `;
 }
 
-async function handleWorkshopCheckin(workshopId, studentId, paidOnline) {
+function attachCheckinListeners(workshop) {
+    const searchInput = document.getElementById('walkin-search');
+    const searchResults = document.getElementById('walkin-search-results');
+    const selectedContainer = document.getElementById('walkin-selected-student');
+    
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', async (e) => {
+        const query = e.target.value.trim();
+        
+        if (query.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        // Debounce search
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(async () => {
+            const students = await searchStudents(query);
+            
+            // Filter out students who are already registered
+            const registeredIds = new Set((workshop.registeredStudents || []).map(r => r.studentId));
+            
+            // Separate into registered and non-registered
+            const alreadyRegistered = students.filter(s => registeredIds.has(s.id));
+            const notRegistered = students.filter(s => !registeredIds.has(s.id));
+            
+            // Sort alphabetically
+            const sortByName = (a, b) => {
+                const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
+                const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+                return nameA.localeCompare(nameB);
+            };
+            
+            alreadyRegistered.sort(sortByName);
+            notRegistered.sort(sortByName);
+            
+            // Render results
+            if (alreadyRegistered.length === 0 && notRegistered.length === 0) {
+                searchResults.innerHTML = '<div style="padding: 10px; color: var(--text-secondary);">No students found</div>';
+            } else {
+                let html = '';
+                
+                if (alreadyRegistered.length > 0) {
+                    html += '<div style="padding: 8px 10px; background: var(--hover-background); font-weight: 600; font-size: 12px;">Already Registered</div>';
+                    alreadyRegistered.forEach(student => {
+                        html += `
+                            <div class="search-result-item" data-student-id="${student.id}">
+                                ${student.firstName} ${student.lastName}
+                                <span style="color: var(--success); margin-left: 8px;">
+                                    <i class="fas fa-check-circle"></i> Registered
+                                </span>
+                            </div>
+                        `;
+                    });
+                }
+                
+                if (notRegistered.length > 0) {
+                    html += '<div style="padding: 8px 10px; background: var(--hover-background); font-weight: 600; font-size: 12px; margin-top: 4px;">Walk-Ins</div>';
+                    notRegistered.forEach(student => {
+                        html += `
+                            <div class="search-result-item" data-student-id="${student.id}">
+                                ${student.firstName} ${student.lastName}
+                            </div>
+                        `;
+                    });
+                }
+                
+                searchResults.innerHTML = html;
+            }
+            
+            searchResults.style.display = 'block';
+            
+            // Attach click listeners to results
+            searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', async () => {
+                    const studentId = item.dataset.studentId;
+                    const student = students.find(s => s.id === studentId);
+                    
+                    // Check if already registered
+                    const isRegistered = registeredIds.has(studentId);
+                    
+                    if (isRegistered) {
+                        showSnackbar('This student is already registered. Check them in from the "Registered Students" section above.', 'info');
+                        searchResults.style.display = 'none';
+                        searchInput.value = '';
+                        return;
+                    }
+                    
+                    // Render selected walk-in student
+                    selectedContainer.innerHTML = renderCheckinStudent({
+                        studentId: student.id,
+                        firstName: student.firstName,
+                        lastName: student.lastName,
+                        paidOnline: false
+                    }, workshop, true);
+                    
+                    selectedContainer.style.display = 'block';
+                    searchResults.style.display = 'none';
+                    searchInput.value = '';
+                });
+            });
+        }, 300);
+    });
+    
+    // Hide results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.student-search')) {
+            searchResults.style.display = 'none';
+        }
+    });
+}
+
+async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn = false) {
     try {
         LoadingSpinner.showGlobal('Checking in student...');
         
         const workshop = workshops.find(w => w.id === workshopId);
-        const registration = workshop.registeredStudents.find(r => r.studentId === studentId);
         
         // Get student details
         const studentDoc = await db.collection('students').doc(studentId).get();
@@ -1675,7 +1443,7 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline) {
         let paymentMethod = 'online';
         let transactionId = null;
         
-        // If pay later, create transaction first
+        // If pay later (or walk-in, which is always pay later), create transaction first
         if (!paidOnline) {
             const paymentMethodSelect = document.querySelector(`.payment-method-select[data-student-id="${studentId}"]`);
             paymentMethod = paymentMethodSelect.value;
@@ -1740,10 +1508,16 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline) {
         });
         // Add student to checkedInStudents array (for video access control)
         await db.collection('workshops').doc(workshopId).update({
+        // Also add walk-ins to invitedStudents array so they can access workshop in portal
+        const updates = {
             checkedInStudents: firebase.firestore.FieldValue.arrayUnion(studentId)
-        });
+        };
         
+        if (isWalkIn) {
+            updates.invitedStudents = firebase.firestore.FieldValue.arrayUnion(studentId);
+        }
         
+        await db.collection('workshops').doc(workshopId).update(updates);
         showSnackbar(`${studentName} checked in successfully`, 'success');
         LoadingSpinner.hideGlobal();
         
@@ -1764,33 +1538,38 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline) {
 
 ## Phase 8: Admin Navigation Integration
 
-### 8.1 Update admin header
+### 8.1 Update admin header ✅ COMPLETED
 
-**File**: `admin/components/admin-header.html`
+**What Was Implemented:**
 
-Add workshops link to main navigation:
+1. **Header Config** (`admin/js/header-config.js`):
+   - Added `/admin/workshops/` configuration entry
+   - Set `activePage: 'workshops'` for proper highlighting
+   - Configured back button and navigation section
 
-```html
-<li>
-    <a href="/admin/workshops/" data-page="workshops">
-        <i class="fas fa-chalkboard-teacher"></i> Workshops
-    </a>
-</li>
-```
+2. **Admin Navigation Bar** (`admin/components/admin-header.html`):
+   - Added Workshops link between Class Plan and Student Portal
+   - Icon: `fas fa-chalkboard-teacher`
+   - Link points to `/admin/workshops/`
+   - Mobile drawer automatically includes this link
 
-**File**: `admin/js/header-config.js`
+3. **Admin Dashboard Tile** (`admin/index.html`):
+   - Added Workshops tile between Class Plan and Student Portal
+   - Tile description: "Manage workshop registrations, invitations, and video access"
+   - Link points to `workshops/index.html`
 
-Add configuration:
+**Testing Phase 8.1:**
 
-```javascript
-'/admin/workshops/': {
-    title: 'Workshop Management',
-    activePage: 'workshops',
-    navSection: 'main-admin',
-    showBackButton: false,
-    showLogout: true
-}
-```
+1. Navigate to `/admin/` (Admin Dashboard)
+2. Verify Workshops tile appears between Class Plan and Student Portal
+3. Click Workshops tile - should navigate to workshops page
+4. Check navigation bar - Workshops button should appear and be highlighted
+5. Test mobile view (< 768px width):
+   - Open mobile drawer (hamburger menu)
+   - Verify Workshops appears in mobile menu between Class Plan and Student Portal
+6. Navigate to other admin pages - Workshops button should remain in navigation bar
+
+---
 
 ### 8.2 Defensive Updates for Existing Admin Pages
 
@@ -1863,8 +1642,9 @@ Add workshop check-in styling (after the existing `.checkin-type.crew` rule, aro
 - **Check-in History**: Workshop check-ins will appear on regular check-in page with correct "Workshop" label instead of "Free Entry"
 - **Check-in Styling**: Ensures workshop check-ins have distinct visual appearance matching workshop theme
 
----
-
+---for "Pay Later" registrations AND walk-ins (who always pay on arrival)
+- Students who paid online have read-only "Online Payment" indicator
+- **Walk-In Students**: Students who didn't pre-register can be checked in via the search function. They are added to both `invitedStudents[]` (for portal access) and `checkedInStudents[]` (for video access) at check-in time. Walk-ins always require payment at check-in.
 ## Implementation Notes
 
 - All styles use existing color variables from `/styles/base/colors.css`
