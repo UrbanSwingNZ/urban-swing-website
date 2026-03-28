@@ -16,7 +16,6 @@ let currentStudentName = null;
 let allWorkshops = [];
 let currentFilter = 'upcoming';
 let registrationModal = null;
-let detailsModal = null;
 let paymentService = null;
 
 const db = window.db || firebase.firestore();
@@ -174,13 +173,10 @@ function applyFilter(filter) {
             const date = w.date?.toDate ? w.date.toDate() : new Date(0);
             return date >= now;
         }).reverse(); // Upcoming: ascending order
-    } else if (filter === 'past') {
+    } else { // 'past'
         filtered = allWorkshops.filter(w => {
             const date = w.date?.toDate ? w.date.toDate() : new Date(0);
-            return date < now;
-        });
-    } else { // 'registered'
-        filtered = allWorkshops.filter(w => {
+            if (date >= now) return false;
             const status = getStudentStatus(w, currentStudentId);
             return status === 'registered' || status === 'attended';
         });
@@ -203,16 +199,14 @@ function renderWorkshops(workshops) {
 
         const titles = {
             upcoming: 'No Upcoming Workshops',
-            past: 'No Past Workshops',
-            registered: 'No Registered Workshops'
+            past: 'No Past Workshops'
         };
         const messages = {
             upcoming: 'There are no upcoming workshops at this time. Check back soon!',
-            past: 'You have no past workshop history.',
-            registered: 'You have not registered for any workshops yet.'
+            past: 'You have not attended or registered for any past workshops.'
         };
-        document.getElementById('no-workshops-title').textContent = titles[currentFilter];
-        document.getElementById('no-workshops-message').textContent = messages[currentFilter];
+        document.getElementById('no-workshops-title').textContent = titles[currentFilter] || 'No Workshops';
+        document.getElementById('no-workshops-message').textContent = messages[currentFilter] || '';
         return;
     }
 
@@ -223,8 +217,11 @@ function renderWorkshops(workshops) {
     list.querySelectorAll('[data-action="register"]').forEach(btn => {
         btn.addEventListener('click', () => openWorkshopRegistrationModal(btn.dataset.workshopId));
     });
-    list.querySelectorAll('[data-action="details"]').forEach(btn => {
-        btn.addEventListener('click', () => openWorkshopDetailsModal(btn.dataset.workshopId));
+    list.querySelectorAll('[data-action="deregister"]').forEach(btn => {
+        btn.addEventListener('click', () => handleDeregister(btn.dataset.workshopId));
+    });
+    list.querySelectorAll('[data-action="videos"]').forEach(btn => {
+        btn.addEventListener('click', () => openWorkshopVideosModal(btn.dataset.workshopId));
     });
 }
 
@@ -239,6 +236,7 @@ function renderWorkshopCard(workshop) {
     const formattedDate = date ? formatWorkshopDate(date) : 'Date TBC';
     const cost = workshop.cost != null ? `$${workshop.cost}` : 'Free';
     const isCheckedIn = status === 'attended';
+    const isPast = date && date < new Date();
     const videoCount = (workshop.videos || []).length;
 
     const statusLabels = {
@@ -248,26 +246,37 @@ function renderWorkshopCard(workshop) {
     };
 
     const actionButtons = (() => {
+        if (isPast) {
+            const disabledBtn = (status === 'registered' || status === 'attended') ? `
+                <button class="btn-deregister" disabled>
+                    <i class="fas fa-times-circle"></i> De-register
+                </button>
+            ` : '';
+            const videosBtn = isCheckedIn && videoCount > 0 ? `
+                <button class="btn-videos" data-action="videos" data-workshop-id="${workshop.id}">
+                    <i class="fas fa-video"></i> Videos (${videoCount})
+                </button>
+            ` : '';
+            return disabledBtn + videosBtn;
+        }
+
         if (status === 'not-registered') {
             return `
                 <button class="btn-register" data-action="register" data-workshop-id="${workshop.id}">
                     <i class="fas fa-ticket-alt"></i> Register
                 </button>
-                <button class="btn-view-details" data-action="details" data-workshop-id="${workshop.id}">
-                    <i class="fas fa-info-circle"></i> Details
+            `;
+        }
+
+        if (status === 'registered') {
+            return `
+                <button class="btn-deregister" data-action="deregister" data-workshop-id="${workshop.id}">
+                    <i class="fas fa-times-circle"></i> De-register
                 </button>
             `;
         }
-        return `
-            <button class="btn-view-details btn-primary" data-action="details" data-workshop-id="${workshop.id}">
-                <i class="fas fa-info-circle"></i> View Details
-            </button>
-            ${isCheckedIn && videoCount > 0 ? `
-                <div class="video-count-indicator">
-                    <i class="fas fa-video"></i> ${videoCount} video${videoCount !== 1 ? 's' : ''} available
-                </div>
-            ` : ''}
-        `;
+
+        return ''; // attended on upcoming (edge case)
     })();
 
     return `
@@ -302,126 +311,51 @@ function renderWorkshopCard(workshop) {
 }
 
 // ============================================
-// DETAILS MODAL
+// DE-REGISTRATION
 // ============================================
 
 /**
- * Open the workshop details modal
+ * Cancel a student's registration for a workshop
  * @param {string} workshopId
  */
-function openWorkshopDetailsModal(workshopId) {
+async function handleDeregister(workshopId) {
     const workshop = allWorkshops.find(w => w.id === workshopId);
-    if (!workshop) {
-        showSnackbar('Workshop not found.', 'error');
-        return;
+    if (!workshop) return;
+
+    try {
+        LoadingSpinner.showGlobal('Cancelling registration...');
+
+        const workshopRef = db.collection('workshops').doc(workshopId);
+        const snap = await workshopRef.get();
+        if (!snap.exists) throw new Error('Workshop not found.');
+
+        const registeredStudents = (snap.data().registeredStudents || []).filter(
+            r => r.studentId !== currentStudentId
+        );
+
+        await workshopRef.update({ registeredStudents });
+
+        showSnackbar('Registration cancelled.', 'success');
+        await loadWorkshops(currentStudentId);
+
+    } catch (error) {
+        console.error('De-register error:', error);
+        showSnackbar(error.message || 'Failed to cancel registration. Please try again.', 'error');
+    } finally {
+        LoadingSpinner.hideGlobal();
     }
-
-    const isCheckedIn = (workshop.checkedInStudents || []).includes(currentStudentId);
-
-    detailsModal = new BaseModal({
-        id: 'workshop-details-modal',
-        title: escapeHtml(workshop.name || 'Workshop Details'),
-        size: 'large',
-        content: generateDetailsContent(workshop, isCheckedIn),
-        buttons: [
-            {
-                text: '<i class="fas fa-times"></i> Close',
-                class: 'btn-cancel',
-                onClick: (modal) => modal.hide()
-            }
-        ]
-    });
-
-    detailsModal.show();
 }
 
-/**
- * Generate the HTML content for the details modal
- * @param {Object} workshop
- * @param {boolean} isCheckedIn
- * @returns {string}
- */
-function generateDetailsContent(workshop, isCheckedIn) {
-    const date = workshop.date?.toDate ? workshop.date.toDate() : null;
-    const formattedDate = date ? formatWorkshopDate(date) : 'Date TBC';
-    const cost = workshop.cost != null ? `$${workshop.cost}` : 'Free';
-
-    const videosHtml = (() => {
-        const videos = workshop.videos || [];
-
-        if (!isCheckedIn) {
-            return `
-                <div class="videos-locked-message">
-                    <i class="fas fa-lock"></i>
-                    Videos will be available after you attend this workshop.
-                </div>
-            `;
-        }
-
-        if (videos.length === 0) {
-            return `<p class="no-videos-message">No videos have been added to this workshop yet.</p>`;
-        }
-
-        return `
-            <div class="video-list">
-                ${videos.map(v => renderVideoItem(v)).join('')}
-            </div>
-        `;
-    })();
-
-    return `
-        <div class="workshop-details-content">
-            <div class="workshop-info-grid">
-                <div class="workshop-info-item">
-                    <span class="workshop-info-label"><i class="fas fa-calendar-alt"></i> Date & Time</span>
-                    <span class="workshop-info-value">${formattedDate}</span>
-                </div>
-                ${workshop.topic ? `
-                    <div class="workshop-info-item">
-                        <span class="workshop-info-label"><i class="fas fa-tag"></i> Topic</span>
-                        <span class="workshop-info-value">${escapeHtml(workshop.topic)}</span>
-                    </div>
-                ` : ''}
-                <div class="workshop-info-item">
-                    <span class="workshop-info-label"><i class="fas fa-dollar-sign"></i> Cost</span>
-                    <span class="workshop-info-value">${cost}</span>
-                </div>
-            </div>
-
-            ${workshop.description ? `
-                <div class="workshop-full-description">
-                    <h4>About This Workshop</h4>
-                    <p>${escapeHtml(workshop.description)}</p>
-                </div>
-            ` : ''}
-
-            <div class="videos-section">
-                <h4><i class="fas fa-video"></i> Workshop Videos</h4>
-                ${videosHtml}
-            </div>
-        </div>
-    `;
-}
+// ============================================
+// VIDEOS MODAL (stub — implemented separately)
+// ============================================
 
 /**
- * Render a single video item
- * @param {Object} video - {title, url, addedAt}
- * @returns {string}
+ * Open the workshop videos modal
+ * @param {string} workshopId
  */
-function renderVideoItem(video) {
-    const addedDate = video.addedAt?.toDate
-        ? video.addedAt.toDate().toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
-        : '';
-
-    return `
-        <div class="video-item">
-            <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" class="video-link">
-                <i class="fab fa-youtube"></i>
-                ${escapeHtml(video.title || 'Workshop Video')}
-            </a>
-            ${addedDate ? `<span class="video-date">${addedDate}</span>` : ''}
-        </div>
-    `;
+function openWorkshopVideosModal(workshopId) {
+    showSnackbar('Videos coming soon!', 'info');
 }
 
 // ============================================
