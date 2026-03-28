@@ -624,12 +624,11 @@
 
 .checkin-item {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
     padding: 15px;
-    background: var(--card-background);
-    border: 1px solid var(--border-color);
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     transition: all 0.2s ease;
 }
@@ -640,9 +639,48 @@
 }
 
 .checkin-item.checked-in {
-    background: var(--hover-background);
-    border-color: var(--success-color);
+    background: var(--bg-success-light);
+    border-color: var(--success);
 }
+
+.checkin-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.checkin-item-row .student-name {
+    margin-bottom: 0;
+}
+
+.payment-method-label {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.checkin-item-row .payment-method-select {
+    padding: 6px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    background: white;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.checkin-item-row .payment-method-select:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-medium);
+}
+
+.checkin-item-row .btn-checkin {
+    white-space: nowrap;
+}
+
 
 .student-info {
     flex: 1;
@@ -762,26 +800,22 @@
 }
 
 /* Button styling override - reset.css removes borders, we need to add them back */
-.checkin-item .btn-icon {
-    border: 1px solid var(--border-color) !important;
-}
+/* (btn-checkin now uses .btn.btn-primary which has its own styling) */
+
+/* Remove stale form-group overrides - no longer needed */
 
 /* Responsive adjustments for check-in modal */
 @media (max-width: 768px) {
-    .checkin-item {
+    .checkin-item-row {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
     }
-    
-    .payment-method-selector {
+
+    .checkin-item-row .payment-method-select {
         width: 100%;
     }
-    
-    .payment-method-select {
-        width: 100%;
-    }
-    
-    .checkin-item .btn-icon {
+
+    .checkin-item-row .btn-checkin {
         width: 100%;
         justify-content: center;
     }

@@ -127,32 +127,25 @@ function renderCheckinStudent(registration, workshop, isWalkIn = false) {
     
     return `
         <div class="checkin-item" data-student-id="${registration.studentId}">
-            <div class="student-info">
+            <div class="checkin-item-row">
                 <div class="student-name">${studentName}</div>
-                <div class="student-details" style="font-size: 0.9em; color: var(--text-secondary);">
-                    ${registrationInfo}
-                </div>
+                <button class="btn btn-primary btn-checkin" 
+                        data-student-id="${registration.studentId}" 
+                        data-paid-online="${registration.paidOnline || false}"
+                        data-walk-in="${isWalkIn}">
+                    <i class="fas fa-check"></i> Check In
+                </button>
             </div>
-            
             ${needsPayment ? `
-                <div class="form-group" style="margin: 10px 0;">
-                    <label>Payment Method:</label>
-                    <select class="payment-method-select" data-student-id="${registration.studentId}" 
-                            style="width: 200px;">
-                        <option value="cash">Cash</option>
-                        <option value="eftpos">EFTPOS</option>
-                        <option value="bank-transfer">Bank Transfer</option>
-                    </select>
-                </div>
+            <div class="checkin-item-row">
+                <label class="payment-method-label">Payment Method:</label>
+                <select class="payment-method-select" data-student-id="${registration.studentId}">
+                    <option value="cash">Cash</option>
+                    <option value="eftpos">EFTPOS</option>
+                    <option value="bank-transfer">Bank Transfer</option>
+                </select>
+            </div>
             ` : ''}
-            
-            <button class="btn-icon btn-checkin" 
-                    data-student-id="${registration.studentId}" 
-                    data-paid-online="${registration.paidOnline || false}"
-                    data-walk-in="${isWalkIn}"
-                    title="Check in ${studentName}">
-                <i class="fas fa-check"></i> Check In
-            </button>
         </div>
     `;
 }
