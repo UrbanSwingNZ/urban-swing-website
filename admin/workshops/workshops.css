@@ -465,6 +465,13 @@
     flex: 1;
 }
 
+.invited-student-item .invited-student-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
 .invited-student-item .btn-icon {
     flex-shrink: 0;
 }

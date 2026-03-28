@@ -508,15 +508,24 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
                 </span>`;
     }
 
+    const registerBtn = (!registered && !checkedIn) ? `
+        <button class="btn btn-primary btn-primary-sm" onclick="handleAdminRegister('${workshop.id}', '${studentId}')" title="Register on behalf of student (pay at door)">
+            <i class="fas fa-user-plus"></i> Register
+        </button>
+    ` : '';
+
     return `
         <div class="invited-student-item" data-student-id="${studentId}">
             <div class="student-info">
                 <span class="student-name">${studentName}</span>
                 ${badge}
             </div>
-            <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered || checkedIn ? 'disabled title="Cannot remove registered students"' : ''}>
-                <i class="fas fa-trash-alt"></i>
-            </button>
+            <div class="invited-student-actions">
+                ${registerBtn}
+                <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered || checkedIn ? 'disabled title="Cannot remove registered students"' : ''}>
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
         </div>
     `;
 }
@@ -622,6 +631,28 @@ async function handleRemoveInvite(workshopId, studentId) {
     });
     
     modal.show();
+}
+
+async function handleAdminRegister(workshopId, studentId) {
+    const spinner = new LoadingSpinner('invited-students-list');
+    spinner.show();
+    try {
+        const response = await fetch(API_CONFIG.WORKSHOP_PAYMENT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId, workshopId, paidOnline: false })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || 'Registration failed');
+        }
+        showSnackbar(`Student registered successfully (pay at door)`, 'success');
+        // List will refresh automatically via onSnapshot
+    } catch (error) {
+        showSnackbar(`Failed to register: ${error.message}`, 'error');
+    } finally {
+        spinner.hide();
+    }
 }
 
 // ============================================
@@ -836,3 +867,4 @@ window.openManageVideosModal = openManageVideosModal;
 window.confirmDeleteWorkshop = confirmDeleteWorkshop;
 window.handleRemoveInvite = handleRemoveInvite;
 window.handleRemoveVideo = handleRemoveVideo;
+window.handleAdminRegister = handleAdminRegister;
