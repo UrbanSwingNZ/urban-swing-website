@@ -188,6 +188,10 @@
     color: var(--text-primary);
 }
 
+.description-wrapper {
+    position: relative;
+}
+
 .workshop-description {
     font-size: 0.9rem;
     color: var(--text-secondary);
@@ -197,6 +201,47 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.description-wrapper.expanded .workshop-description {
+    display: block;
+    overflow: visible;
+}
+
+.desc-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--purple-primary);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.description-wrapper:not(.expanded) .desc-toggle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(to right, transparent, white 35%);
+    padding-left: 24px;
+}
+
+.description-wrapper.expanded .desc-toggle {
+    display: inline-block;
+    margin-top: 4px;
+}
+
+/* Desktop: show full description, hide the toggle */
+@media (min-width: 601px) {
+    .workshop-description {
+        display: block;
+        overflow: visible;
+    }
+
+    .desc-toggle {
+        display: none;
+    }
 }
 
 /* Card Actions */
