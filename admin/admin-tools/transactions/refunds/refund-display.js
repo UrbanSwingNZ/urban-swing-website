@@ -51,6 +51,9 @@ function getTypeBadgeWithRefundStatus(transaction) {
     } else if (transaction.type === 'casual-student') {
         typeBadgeClass = 'casual-student';
         typeName = 'Casual Entry (Student)';
+    } else if (transaction.type === 'workshop-entry') {
+        typeBadgeClass = 'workshop';
+        typeName = 'Workshop Entry';
     } else {
         typeBadgeClass = 'other';
         typeName = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1).toLowerCase();

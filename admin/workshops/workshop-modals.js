@@ -452,20 +452,28 @@ function generateInvitesContent(workshop, invitedStudentsData = []) {
 }
 
 function renderInvitedStudentWithName(studentId, studentName, workshop) {
-    // Check if student is registered
+    // Check if student is registered and/or checked in
     const registered = workshop.registeredStudents?.find(r => r.studentId === studentId);
+    const checkedIn = workshop.checkedInStudents?.includes(studentId);
     
+    let badge = '';
+    if (checkedIn) {
+        badge = `<span class="status-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--success); color: white; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                    <i class="fas fa-check-circle"></i> Checked In
+                </span>`;
+    } else if (registered) {
+        badge = `<span class="status-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--info, #0d6efd); color: white; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                    <i class="fas fa-calendar-check"></i> Registered
+                </span>`;
+    }
+
     return `
         <div class="invited-student-item" data-student-id="${studentId}">
             <div class="student-info">
                 <span class="student-name">${studentName}</span>
-                ${registered ? `
-                    <span class="registration-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--success-light); color: var(--success); border-radius: 4px; font-size: 12px;">
-                        <i class="fas fa-check-circle"></i> Registered
-                    </span>
-                ` : ''}
+                ${badge}
             </div>
-            <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered ? 'disabled title="Cannot remove registered students"' : ''}>
+            <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered || checkedIn ? 'disabled title="Cannot remove registered students"' : ''}>
                 <i class="fas fa-trash-alt"></i>
             </button>
         </div>
