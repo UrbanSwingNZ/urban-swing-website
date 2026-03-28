@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Management | Urban Swing</title>
+    
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="/styles/base/colors.css">
+    <link rel="stylesheet" href="/styles/base/buttons.css">
+    <link rel="stylesheet" href="/styles/base/typography.css">
+    <link rel="stylesheet" href="/admin/admin.css">
+    
+    <!-- Workshop-specific Styles -->
+    <link rel="stylesheet" href="workshops.css?v=7">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="main-container" class="dashboard-container">
+        <!-- Header will be injected by admin-header.js -->
+
+        <div class="admin-container">
+        <!-- Filter/Search Section -->
+        <div class="filter-section">
+            <button id="create-workshop-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Workshop
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="workshop-search" placeholder="Search workshops...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="draft">Draft</button>
+                <button class="filter-btn" data-filter="published">Published</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+            </div>
+        </div>
+
+        <!-- Workshops Table -->
+        <div class="workshops-container">
+            <div id="loading-state" class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i> Loading workshops...
+            </div>
+            
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <p>No workshops yet</p>
+                <button class="btn btn-primary" onclick="document.getElementById('create-workshop-btn').click()">
+                    Create Your First Workshop
+                </button>
+            </div>
+            
+            <div id="workshops-table-container" style="display: none;">
+                <table class="workshops-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Visibility</th>
+                            <th>Registrations</th>
+                            <th>Videos</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workshops-tbody">
+                        <!-- Rows populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>        </div>    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="/config/firebase-config.js"></script>
+    
+    <!-- Components -->
+    <script src="/components/modals/modal-base.js"></script>
+    <script src="/components/modals/confirmation-modal.js"></script>
+    <script src="/components/loading-spinner/loading-spinner.js"></script>
+    <script src="/components/snackbar/snackbar.js"></script>
+    
+    <!-- Admin Header Dependencies -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="/admin/js/header-config.js"></script>
+    <script src="/admin/js/header-configurator.js"></script>
+    <script src="/admin/js/mobile-nav.js"></script>
+    <script src="/admin/admin-header.js"></script>
+    
+    <!-- Workshop Scripts -->
+    <script src="workshop-manager.js"></script>
+    <script src="workshop-modals.js"></script>
+    <script src="workshop-display.js"></script>
+    <script src="workshop-checkin-modal.js"></script>
+</body>
+</html>

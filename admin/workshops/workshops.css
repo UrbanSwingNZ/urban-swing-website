@@ -1,0 +1,527 @@
+@import url('../../styles/base/colors.css');
+
+/* Hide any auto-generated dashboard welcome headings */
+.admin-container .dashboard-welcome,
+.admin-container h1,
+.admin-container h2 {
+    display: none;
+}
+
+/* Page Layout */
+.admin-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+}
+
+/* Filter Section */
+.filter-section {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    margin-top: 0;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: nowrap !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-section > * {
+    flex-shrink: 1;
+}
+
+.filter-section #create-workshop-btn {
+    flex-shrink: 0;
+    order: 1;
+    display: inline-flex !important;
+    width: auto !important;
+}
+
+.filter-section .search-box {
+    position: relative;
+    flex: 0 1 300px;
+    min-width: 200px;
+    order: 2;
+    display: block;
+}
+
+.filter-section .filter-buttons {
+    display: flex;
+    gap: 8px;
+    order: 3;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    background: var(--hover-background);
+}
+
+.filter-btn.active {
+    background: var(--purple-primary);
+    color: white;
+    border-color: var(--purple-primary);
+}
+
+/* Workshops Table */
+.workshops-table {
+    width: 100%;
+    background: var(--card-background);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.workshops-table thead {
+    background: var(--purple-primary);
+    color: white;
+}
+
+.workshops-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.workshops-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.workshops-table tbody tr:hover {
+    background: var(--hover-background);
+}
+
+.workshops-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.draft {
+    background: var(--warning-light);
+    color: var(--warning-darker);
+}
+
+.status-badge.published {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.status-badge.completed {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+/* Visibility Badge */
+.visibility-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.visibility-badge i {
+    font-size: 14px;
+}
+
+.visibility-badge.open-to-all {
+    color: var(--success);
+}
+
+.visibility-badge.invite-only {
+    color: var(--purple-primary);
+}
+
+/* Count Badges */
+.count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--hover-background);
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.action-btn.btn-view {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+.action-btn.btn-edit {
+    background: var(--warning-light);
+    color: var(--warning-darker);
+}
+
+.action-btn.btn-delete {
+    background: var(--error-light);
+    color: var(--error);
+}
+
+.action-btn:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Loading & Empty States */
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.loading-state i,
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--purple-primary);
+}
+
+.empty-state p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Workshop Details Expandable Row */
+.workshop-details-row {
+    background: var(--hover-background);
+}
+
+.workshop-details-content {
+    padding: 20px;
+}
+
+.workshop-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    color: var(--purple-primary);
+}
+
+.tab-btn.active {
+    color: var(--purple-primary);
+    border-bottom-color: var(--purple-primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Registrations List */
+.registrations-list {
+    display: grid;
+    gap: 12px;
+}
+
+.registration-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.student-info {
+    flex: 1;
+}
+
+.student-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.registration-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.payment-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.payment-indicator.paid-online {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.payment-indicator.pay-later {
+    background: var(--warning-light);
+    color: var(--warning-darker);
+}
+
+/* Invited Students List */
+.invited-list {
+    display: grid;
+    gap: 8px;
+}
+
+.invited-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+/* Videos List */
+.videos-list {
+    display: grid;
+    gap: 12px;
+}
+
+.video-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.video-info {
+    flex: 1;
+}
+
+.video-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.video-url {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Modal Overrides for Workshop Forms */
+.workshop-form {
+    display: grid;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* Student Search Autocomplete */
+.student-search {
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.search-result-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-result-item:hover {
+    background: var(--hover-background);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .filter-section {
+        flex-direction: column !important;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .filter-section #create-workshop-btn {
+        width: 100%;
+        order: 1;
+    }
+    
+    .filter-section .search-box {
+        width: 100%;
+        flex: 1 1 auto;
+        min-width: 0;
+        order: 2;
+    }
+    
+    .filter-section .filter-buttons {
+        width: 100%;
+        order: 3;
+        justify-content: center;
+        flex-wrap: nowrap;
+    }
+    
+    .filter-section .filter-btn {
+        flex: 1 1 auto;
+        min-width: 60px;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .workshops-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
