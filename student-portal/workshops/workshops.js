@@ -325,15 +325,23 @@ async function handleDeregister(workshopId) {
     try {
         LoadingSpinner.showGlobal('Cancelling registration...');
 
-        const workshopRef = db.collection('workshops').doc(workshopId);
-        const snap = await workshopRef.get();
-        if (!snap.exists) throw new Error('Workshop not found.');
+        const user = firebase.auth().currentUser;
+        const token = user ? await user.getIdToken() : null;
 
-        const registeredStudents = (snap.data().registeredStudents || []).filter(
-            r => r.studentId !== currentStudentId
-        );
+        const response = await fetch(API_CONFIG.WORKSHOP_DEREGISTER, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({ studentId: currentStudentId, workshopId })
+        });
 
-        await workshopRef.update({ registeredStudents });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to cancel registration.');
+        }
 
         showSnackbar('Registration cancelled.', 'success');
         await loadWorkshops(currentStudentId);
