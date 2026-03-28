@@ -385,6 +385,10 @@
     .form-row {
         grid-template-columns: 1fr;
     }
+
+    .btn-icon-desktop {
+        display: none;
+    }
 }
 
 .checkbox-group {
