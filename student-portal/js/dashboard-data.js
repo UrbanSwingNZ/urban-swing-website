@@ -27,7 +27,8 @@ function setupNavigationCards() {
         'nav-checkins': '../check-ins/index.html',
         'nav-profile': '../profile/index.html',
         'nav-purchase': '../purchase/index.html',
-        'nav-prepay': '../prepay/index.html'
+        'nav-prepay': '../prepay/index.html',
+        'nav-workshops': '../workshops/index.html'
     };
     
     // Setup click handlers for each card
