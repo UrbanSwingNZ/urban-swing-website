@@ -133,6 +133,21 @@ service cloud.firestore {
       allow read: if isStudent() && resource.data.studentId == getStudentId();
     }
     
+    // Workshops
+    match /workshops/{workshopId} {
+      // Admins and front-desk can read and write everything
+      allow read, write: if isAdminOrFrontDesk();
+      
+      // Students can read workshops that are:
+      // 1. Open to all (openToAll = true)
+      // 2. They're invited to (their studentId is in invitedStudents array)
+      // Note: Registered students remain in invitedStudents, so no separate check needed
+      allow read: if isStudent() && (
+        resource.data.openToAll == true ||
+        getStudentId() in resource.data.invitedStudents
+      );
+    }
+    
     // Users collection (for student portal authentication)
     match /users/{userId} {
       // Admins and front-desk can read and write everything

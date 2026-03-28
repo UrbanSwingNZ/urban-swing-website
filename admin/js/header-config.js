@@ -53,6 +53,14 @@ const AdminHeaderConfig = {
         showLogout: true,
         backUrl: '../index.html'
     },
+    '/admin/workshops/': {
+        title: 'Workshop Management',
+        activePage: 'workshops',
+        navSection: 'main-admin',
+        showBackButton: true,
+        showLogout: true,
+        backUrl: '../index.html'
+    },
     
     // Admin Tools Pages
     '/admin/admin-tools/': {
@@ -210,6 +218,15 @@ const AdminHeaderConfig = {
         backUrl: '/admin/index.html'
     },
     '/student-portal/check-ins/': {
+        title: 'Student Portal',
+        activePage: 'student-portal',
+        navSection: 'none',
+        showBackButton: true,
+        showLogout: true,
+        showStudentSelector: true,
+        backUrl: '/admin/index.html'
+    },
+    '/student-portal/workshops/': {
         title: 'Student Portal',
         activePage: 'student-portal',
         navSection: 'none',

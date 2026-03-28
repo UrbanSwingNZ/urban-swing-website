@@ -49,11 +49,13 @@ async function processTransactionsSnapshot(snapshot) {
     try {
         const transactionPromises = snapshot.docs.map(async doc => {
             const data = doc.data();
-            const date = data.transactionDate?.toDate ? data.transactionDate.toDate() : new Date(data.transactionDate);
+            const date = data.transactionDate?.toDate ? data.transactionDate.toDate()
+                : data.date?.toDate ? data.date.toDate()
+                : new Date(data.transactionDate || data.date);
             const paymentMethod = (data.paymentMethod || '').toLowerCase();
             let transactionType = data.type || 'concession-purchase';
             const isRefund = transactionType === 'refund';
-            const rawAmount = isRefund ? (data.amountRefunded || 0) : (data.amountPaid || 0);
+            const rawAmount = isRefund ? (data.amountRefunded || 0) : (data.amountPaid || data.amount || 0);
             // Make refund amounts negative so they subtract from totals
             const amount = isRefund ? -rawAmount : rawAmount;
             
@@ -92,6 +94,8 @@ async function processTransactionsSnapshot(snapshot) {
                     transactionType = 'casual';
                     typeName = 'Casual Entry';
                 }
+            } else if (transactionType === 'workshop-entry') {
+                typeName = 'Workshop Entry';
             } else {
                 typeName = 'Transaction';
             }

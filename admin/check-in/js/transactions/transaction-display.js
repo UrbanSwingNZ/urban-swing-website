@@ -57,6 +57,8 @@ function createCheckinTransactionRow(transaction) {
         typeBadgeClass = 'casual';
     } else if (transaction.type === 'casual-student') {
         typeBadgeClass = 'casual-student';
+    } else if (transaction.type === 'workshop-entry') {
+        typeBadgeClass = 'workshop';
     } else {
         typeBadgeClass = 'other';
     }
