@@ -309,7 +309,7 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
             updates.registeredStudents = firebase.firestore.FieldValue.arrayUnion({
                 studentId: studentId,
                 studentName: studentName,
-                registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+                registeredAt: new Date(),
                 paidOnline: false,
                 transactionId: transactionId
             });
