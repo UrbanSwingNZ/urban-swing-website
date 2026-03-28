@@ -223,6 +223,21 @@ function renderWorkshops(workshops) {
     list.querySelectorAll('[data-action="videos"]').forEach(btn => {
         btn.addEventListener('click', () => openWorkshopVideosModal(btn.dataset.workshopId));
     });
+    list.querySelectorAll('[data-action="desc-toggle"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const wrapper = btn.parentElement;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            if (expanded) {
+                wrapper.classList.remove('expanded');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.textContent = 'See more...';
+            } else {
+                wrapper.classList.add('expanded');
+                btn.setAttribute('aria-expanded', 'true');
+                btn.textContent = 'See less';
+            }
+        });
+    });
 }
 
 /**
@@ -299,7 +314,10 @@ function renderWorkshopCard(workshop) {
                         <strong>${cost}</strong>
                     </div>
                     ${workshop.description ? `
-                        <div class="workshop-description">${escapeHtml(workshop.description)}</div>
+                        <div class="description-wrapper">
+                            <div class="workshop-description">${escapeHtml(workshop.description)}</div>
+                            <button class="desc-toggle" data-action="desc-toggle" aria-expanded="false">See more...</button>
+                        </div>
                     ` : ''}
                 </div>
                 <div class="workshop-card-actions">
@@ -421,7 +439,7 @@ function generateRegistrationContent(workshop) {
                     <span class="value">${formattedDate}</span>
                 </div>
                 ${workshop.topic ? `
-                    <div class="summary-row">
+                    <div class="summary-row stacked">
                         <span class="label">Topic</span>
                         <span class="value">${escapeHtml(workshop.topic)}</span>
                     </div>
@@ -587,14 +605,14 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {string}
  */
 function formatWorkshopDate(date) {
-    return date.toLocaleDateString('en-NZ', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12;
+    return `${dd}/${mm}/${yyyy} ${hours}:${minutes} ${ampm}`;
 }
 
 /**
