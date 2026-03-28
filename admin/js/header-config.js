@@ -225,6 +225,15 @@ const AdminHeaderConfig = {
         showLogout: true,
         showStudentSelector: true,
         backUrl: '/admin/index.html'
+    },
+    '/student-portal/workshops/': {
+        title: 'Student Portal',
+        activePage: 'student-portal',
+        navSection: 'none',
+        showBackButton: true,
+        showLogout: true,
+        showStudentSelector: true,
+        backUrl: '/admin/index.html'
     }
 };
 

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshops - Urban Swing</title>
+    <link rel="stylesheet" href="../../styles/base/design-tokens.css">
+    <link rel="stylesheet" href="../../styles/base/reset.css">
+    <link rel="stylesheet" href="../../styles/base/typography.css">
+    <link rel="stylesheet" href="../../styles/base/colors.css">
+    <link rel="stylesheet" href="../../styles/base/buttons.css">
+    <link rel="stylesheet" href="../css/portal.css">
+    <link rel="stylesheet" href="workshops.css">
+
+    <!-- Modal System -->
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+
+    <!-- Student Portal Header Styles -->
+    <link rel="stylesheet" href="/styles/student-portal/student-portal-header.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+    <!-- Modal components -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/snackbar/snackbar.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div id="main-container" class="portal-container" style="display: none;">
+        <!-- Workshops Content -->
+        <div id="workshops-content" class="workshops-content" style="display: none;">
+            <div class="workshops-container">
+                <div class="back-nav">
+                    <a href="../dashboard/index.html" class="btn-primary btn-primary-lg">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+
+                <div class="workshops-header">
+                    <div class="header-info">
+                        <h2 id="student-name"><i class="fas fa-chalkboard-teacher"></i> Workshops</h2>
+                        <p class="header-subtitle">View upcoming workshops and your registrations</p>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="upcoming">
+                        <i class="fas fa-calendar-alt"></i> Upcoming
+                    </button>
+                    <button class="filter-tab" data-filter="past">
+                        <i class="fas fa-history"></i> Past
+                    </button>
+                    <button class="filter-tab" data-filter="registered">
+                        <i class="fas fa-ticket-alt"></i> My Registrations
+                    </button>
+                </div>
+
+                <!-- Workshops List -->
+                <div id="workshops-list">
+                    <!-- Workshop cards populated by JavaScript -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="no-workshops" class="no-data" style="display: none;">
+                    <i class="fas fa-chalkboard"></i>
+                    <h3 id="no-workshops-title">No Upcoming Workshops</h3>
+                    <p id="no-workshops-message">There are no upcoming workshops at this time. Check back soon!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (No Student Selected - Admin Only) -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-user-friends"></i>
+            <h2>Select a Student</h2>
+            <p>Choose a student from the dropdown above to view workshops.</p>
+        </div>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="../../config/firebase-config.js"></script>
+
+    <!-- API Config -->
+    <script src="../../config/api-config.js"></script>
+
+    <!-- Stripe Config -->
+    <script src="../../config/stripe-config.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="../js/firebase-init.js"></script>
+
+    <!-- Centralized Utilities -->
+    <script type="module" src="/js/utils/index.js"></script>
+
+    <!-- Student Loader Utility - Load before admin header -->
+    <script src="../js/utils/student-loader.js"></script>
+
+    <!-- Admin Header Component (for admin users) - Load first -->
+    <script src="../../admin/js/header-config.js"></script>
+    <script src="../../admin/js/header-configurator.js"></script>
+    <script src="../../admin/js/mobile-nav.js"></script>
+    <script src="../../admin/admin-header.js"></script>
+
+    <!-- Student Portal Header Component - Load after admin header -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../student-portal-header.js"></script>
+
+    <!-- Auth Utilities -->
+    <script src="../js/auth-utils.js"></script>
+
+    <!-- Auth Check Script -->
+    <script src="../js/auth-check.js"></script>
+
+    <!-- Payment Service (plain script - must load before module) -->
+    <script src="../prepay/payment-service.js"></script>
+
+    <!-- Workshops Module -->
+    <script type="module" src="workshops.js"></script>
+</body>
+</html>

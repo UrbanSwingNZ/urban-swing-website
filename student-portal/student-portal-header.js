@@ -36,6 +36,10 @@
         '/student-portal/check-ins/': {
             title: 'Check-In History',
             activePage: 'check-ins'
+        },
+        '/student-portal/workshops/': {
+            title: 'Workshops',
+            activePage: 'workshops'
         }
     };
 
