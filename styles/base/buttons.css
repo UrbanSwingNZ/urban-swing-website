@@ -443,6 +443,12 @@
   border-color: var(--error);
 }
 
+.btn-icon.btn-delete:disabled {
+  background: transparent !important;
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .btn-icon.btn-delete:hover {
   background: var(--error);
   border-color: var(--error);

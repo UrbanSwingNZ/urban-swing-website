@@ -276,10 +276,10 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
                 workshopName: workshop.name,
                 studentId: studentId,
                 studentName: studentName,
-                amount: workshop.cost,
+                amountPaid: workshop.cost,
                 paymentMethod: paymentMethod,
-                classDate: workshop.date, // For consistency with other transaction types
-                date: firebase.firestore.FieldValue.serverTimestamp(),
+                classDate: workshop.date,
+                transactionDate: firebase.firestore.FieldValue.serverTimestamp(),
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 createdBy: currentUser.uid,
                 reversed: false,
