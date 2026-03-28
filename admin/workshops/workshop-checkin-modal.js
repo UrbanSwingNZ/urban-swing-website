@@ -31,8 +31,16 @@ function openWorkshopCheckinModal(workshopId) {
         id: 'workshop-checkin-modal',
         title: `Check-In: ${workshop.name}`,
         content: generateCheckinContent(workshop),
-        size: 'large',
+        size: 'medium',
         buttons: [
+            {
+                text: 'Walk-In',
+                variant: 'primary',
+                onClick: (modal) => {
+                    modal.hide();
+                    openWalkInCheckinModal(workshopId);
+                }
+            },
             {
                 text: 'Close',
                 variant: 'secondary',
@@ -60,9 +68,9 @@ function generateCheckinContent(workshop) {
     
     return `
         <div class="workshop-info">
-            <div style="margin-bottom: 20px; padding: 12px; background: var(--info-light); border-radius: 6px;">
-                <strong>Workshop Date:</strong> ${formatDate(workshop.date)}<br>
-                <strong>Cost:</strong> $${workshop.cost}
+            <div style="margin-bottom: 20px; padding: 16px; background: var(--hover-background); border-radius: 8px; border: 1px solid var(--border-color); border-left: 4px solid var(--purple-primary);">
+                <div style="margin-bottom: 8px;"><strong>Workshop Date:</strong> ${formatDate(workshop.date)}</div>
+                <div><strong>Cost:</strong> $${workshop.cost}</div>
             </div>
         </div>
         
@@ -94,28 +102,6 @@ function generateCheckinContent(workshop) {
                 <i class="fas fa-info-circle"></i> No pre-registered students yet
             </div>
         ` : ''}
-        
-        <!-- Walk-In Student Section -->
-        <div class="walkin-students-section">
-            <h3 style="margin-bottom: 15px; color: var(--text-primary);">
-                <i class="fas fa-user-plus"></i> Check In Walk-In Student
-            </h3>
-            
-            <div class="student-search" style="margin-bottom: 15px; position: relative;">
-                <label for="walkin-search" style="display: block; margin-bottom: 8px; font-weight: 600;">
-                    Search for student
-                </label>
-                <input type="text" 
-                       id="walkin-search" 
-                       placeholder="Type student name..." 
-                       style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
-                <div id="walkin-search-results" class="search-results" style="display: none;"></div>
-            </div>
-            
-            <div id="walkin-selected-student" style="display: none;">
-                <!-- Selected walk-in student will be rendered here -->
-            </div>
-        </div>
     `;
 }
 
@@ -149,10 +135,10 @@ function renderCheckinStudent(registration, workshop, isWalkIn = false) {
             </div>
             
             ${needsPayment ? `
-                <div class="payment-method-selector" style="margin: 10px 0;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Payment Method:</label>
+                <div class="form-group" style="margin: 10px 0;">
+                    <label>Payment Method:</label>
                     <select class="payment-method-select" data-student-id="${registration.studentId}" 
-                            style="padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; width: 200px;">
+                            style="width: 200px;">
                         <option value="cash">Cash</option>
                         <option value="eftpos">EFTPOS</option>
                         <option value="bank-transfer">Bank Transfer</option>
@@ -196,73 +182,6 @@ function renderCheckedInStudent(registration) {
  * @param {BaseModal} modal - Modal instance
  */
 function attachCheckinListeners(workshop, modal) {
-    const searchInput = document.getElementById('walkin-search');
-    const searchResults = document.getElementById('walkin-search-results');
-    const selectedContainer = document.getElementById('walkin-selected-student');
-    
-    let searchTimeout;
-    let selectedWalkInStudent = null;
-    
-    // Walk-in student search
-    if (searchInput) {
-        searchInput.addEventListener('input', async (e) => {
-            const query = e.target.value.trim();
-            
-            if (query.length < 2) {
-                searchResults.style.display = 'none';
-                return;
-            }
-            
-            // Debounce search
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(async () => {
-                try {
-                    const students = await searchStudents(query);
-                    
-                    // Filter out students who are already registered or checked in
-                    const registeredIds = new Set((workshop.registeredStudents || []).map(r => r.studentId));
-                    const availableStudents = students.filter(s => !registeredIds.has(s.id));
-                    
-                    if (availableStudents.length === 0) {
-                        searchResults.innerHTML = '<div class="search-result-item" style="padding: 10px; color: var(--text-secondary);">No matching students found</div>';
-                        searchResults.style.display = 'block';
-                        return;
-                    }
-                    
-                    searchResults.innerHTML = availableStudents.map(student => `
-                        <div class="search-result-item" data-student-id="${student.id}">
-                            ${student.firstName} ${student.lastName}
-                        </div>
-                    `).join('');
-                    searchResults.style.display = 'block';
-                    
-                    // Add click handlers to search results
-                    searchResults.querySelectorAll('.search-result-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            const studentId = item.dataset.studentId;
-                            const student = availableStudents.find(s => s.id === studentId);
-                            if (student) {
-                                selectWalkInStudent(student, workshop, selectedContainer);
-                                searchInput.value = '';
-                                searchResults.style.display = 'none';
-                            }
-                        });
-                    });
-                } catch (error) {
-                    console.error('Search error:', error);
-                    showSnackbar('Failed to search students', 'error');
-                }
-            }, 300);
-        });
-    }
-    
-    // Hide search results when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.student-search')) {
-            searchResults.style.display = 'none';
-        }
-    });
-    
     // Check-in button handlers
     document.addEventListener('click', async (e) => {
         const checkinBtn = e.target.closest('.btn-checkin');
@@ -363,7 +282,11 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         
         // Create checkin document
         const checkinDate = workshop.date.toDate();
-        const dateStr = checkinDate.toISOString().split('T')[0];
+        // Use local date instead of UTC to avoid timezone shifting
+        const year = checkinDate.getFullYear();
+        const month = String(checkinDate.getMonth() + 1).padStart(2, '0');
+        const day = String(checkinDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
         const checkinId = `checkin-${dateStr}-${student.firstName.toLowerCase()}-${student.lastName.toLowerCase()}`;
         
         await db.collection('checkins').doc(checkinId).set({
@@ -433,9 +356,14 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         showSnackbar(`${studentName} checked in successfully`, 'success');
         LoadingSpinner.hideGlobal();
         
-        // Refresh the modal content
-        modal.setContent(generateCheckinContent(workshops[workshopIndex]));
-        attachCheckinListeners(workshops[workshopIndex], modal);
+        // Refresh the modal content based on modal type
+        if (modal.id === 'walkin-checkin-modal') {
+            modal.setContent(generateWalkInContent(workshops[workshopIndex]));
+            attachWalkInListeners(workshops[workshopIndex], modal);
+        } else {
+            modal.setContent(generateCheckinContent(workshops[workshopIndex]));
+            attachCheckinListeners(workshops[workshopIndex], modal);
+        }
         
         // Refresh workshop display in main table
         if (typeof renderWorkshops === 'function') {
@@ -449,5 +377,161 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
     }
 }
 
+/**
+ * Opens the walk-in check-in modal
+ * @param {string} workshopId - The workshop document ID
+ */
+function openWalkInCheckinModal(workshopId) {
+    const workshop = workshops.find(w => w.id === workshopId);
+    if (!workshop) {
+        showSnackbar('Workshop not found', 'error');
+        return;
+    }
+    
+    const modal = new BaseModal({
+        id: 'walkin-checkin-modal',
+        title: `Walk-In Check-In: ${workshop.name}`,
+        content: generateWalkInContent(workshop),
+        size: 'medium',
+        buttons: [
+            {
+                text: 'Back',
+                variant: 'secondary',
+                onClick: (modal) => {
+                    modal.hide();
+                    openWorkshopCheckinModal(workshopId);
+                }
+            }
+        ],
+        onOpen: () => {
+            // Attach listeners after modal is fully rendered
+            attachWalkInListeners(workshop, modal);
+        }
+    });
+    
+    modal.show();
+}
+
+/**
+ * Generates the HTML content for the walk-in check-in modal
+ * @param {Object} workshop - The workshop object
+ * @returns {string} HTML content
+ */
+function generateWalkInContent(workshop) {
+    return `
+        <div class="workshop-info">
+            <div style="margin-bottom: 20px; padding: 16px; background: var(--hover-background); border-radius: 8px; border: 1px solid var(--border-color); border-left: 4px solid var(--purple-primary);">
+                <div style="margin-bottom: 8px;"><strong>Workshop Date:</strong> ${formatDate(workshop.date)}</div>
+                <div><strong>Cost:</strong> $${workshop.cost}</div>
+            </div>
+        </div>
+        
+        <div class="walkin-students-section">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="walkin-search" style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">
+                    Search for Walk-In Student
+                </label>
+                <div class="student-search" style="position: relative;">
+                    <input type="text" 
+                           id="walkin-search" 
+                           placeholder="Type student name..." 
+                           autocomplete="off">
+                    <div id="walkin-search-results" class="search-results" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <div id="walkin-selected-student" style="display: none;">
+                <!-- Selected walk-in student will be rendered here -->
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Attaches event listeners for walk-in check-in interactions
+ * @param {Object} workshop - Workshop object
+ * @param {BaseModal} modal - Modal instance
+ */
+function attachWalkInListeners(workshop, modal) {
+    const searchInput = document.getElementById('walkin-search');
+    const searchResults = document.getElementById('walkin-search-results');
+    const selectedContainer = document.getElementById('walkin-selected-student');
+    
+    let searchTimeout;
+    
+    // Walk-in student search
+    if (searchInput) {
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            // Debounce search
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const students = await searchStudents(query);
+                    
+                    // Filter out students who are already registered or checked in
+                    const registeredIds = new Set((workshop.registeredStudents || []).map(r => r.studentId));
+                    const availableStudents = students.filter(s => !registeredIds.has(s.id));
+                    
+                    if (availableStudents.length === 0) {
+                        searchResults.innerHTML = '<div class="search-result-item" style="padding: 10px; color: var(--text-secondary);">No matching students found</div>';
+                        searchResults.style.display = 'block';
+                        return;
+                    }
+                    
+                    searchResults.innerHTML = availableStudents.map(student => `
+                        <div class="search-result-item" data-student-id="${student.id}">
+                            ${student.firstName} ${student.lastName}
+                        </div>
+                    `).join('');
+                    searchResults.style.display = 'block';
+                    
+                    // Add click handlers to search results
+                    searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const studentId = item.dataset.studentId;
+                            const student = availableStudents.find(s => s.id === studentId);
+                            if (student) {
+                                selectWalkInStudent(student, workshop, selectedContainer);
+                                searchInput.value = '';
+                                searchResults.style.display = 'none';
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Search error:', error);
+                    showSnackbar('Failed to search students', 'error');
+                }
+            }, 300);
+        });
+    }
+    
+    // Hide search results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.student-search')) {
+            searchResults.style.display = 'none';
+        }
+    });
+    
+    // Check-in button handlers
+    document.addEventListener('click', async (e) => {
+        const checkinBtn = e.target.closest('.btn-checkin');
+        if (!checkinBtn) return;
+        
+        const studentId = checkinBtn.dataset.studentId;
+        const paidOnline = checkinBtn.dataset.paidOnline === 'true';
+        const isWalkIn = checkinBtn.dataset.walkIn === 'true';
+        
+        await handleWorkshopCheckin(workshop.id, studentId, paidOnline, isWalkIn, modal);
+    });
+}
+
 // Export functions for use in other modules
 window.openWorkshopCheckinModal = openWorkshopCheckinModal;
+window.openWalkInCheckinModal = openWalkInCheckinModal;
