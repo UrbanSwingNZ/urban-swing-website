@@ -416,15 +416,17 @@ function generateInvitesContent(workshop, invitedStudentsData = []) {
     return `
         <div class="invite-management">
             <!-- Student Search -->
-            <div class="student-search" style="margin-bottom: 30px;">
+            <div class="form-group" style="margin-bottom: 30px;">
                 <label for="invite-search" style="display: block; margin-bottom: 8px; font-weight: 600;">
                     <i class="fas fa-search" style="color: var(--purple-primary);"></i> Search and add students:
                 </label>
-                <input type="text" 
-                       id="invite-search" 
-                       placeholder="Type student name..."
-                       style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
-                <div id="invite-search-results" class="search-results" style="display: none;"></div>
+                <div class="student-search" style="position: relative;">
+                    <input type="text" 
+                           id="invite-search" 
+                           placeholder="Type student name..." 
+                           autocomplete="off">
+                    <div id="invite-search-results" class="search-results" style="display: none;"></div>
+                </div>
             </div>
             
             <!-- Invited Students List -->

@@ -317,9 +317,16 @@
     font-size: 14px;
 }
 
-.form-group textarea {
+/* Override admin-modals.css to use consistent thin borders */
+.workshop-form .form-group textarea {
     min-height: 100px;
     resize: vertical;
+    border: 1px solid var(--border-light) !important;
+}
+
+.workshop-form .form-group textarea:focus {
+    border-color: var(--purple-primary) !important;
+    box-shadow: 0 0 0 3px var(--bg-purple-medium) !important;
 }
 
 .form-group input[type="time"] {
@@ -705,32 +712,7 @@
     box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
 }
 
-.btn-checkin {
-    padding: 10px 20px;
-    background: var(--success-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-checkin:hover:not(:disabled) {
-    background: var(--success-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 128, 0, 0.2);
-}
-
-.btn-checkin:disabled {
-    background: var(--border-color);
-    cursor: not-allowed;
-    opacity: 0.6;
-}
+/* Removed .btn-checkin styling - using standard .btn-icon instead */
 
 .search-results {
     position: absolute;
@@ -741,7 +723,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
     z-index: 1000;
     margin-top: 4px;
@@ -769,6 +751,21 @@
     margin-bottom: 15px;
 }
 
+/* Walk-in check-in modal - taller to accommodate search results */
+#walkin-checkin-modal .modal-content {
+    max-height: 95vh;
+    min-height: 600px;
+}
+
+#walkin-checkin-modal .modal-body {
+    min-height: 400px;
+}
+
+/* Button styling override - reset.css removes borders, we need to add them back */
+.checkin-item .btn-icon {
+    border: 1px solid var(--border-color) !important;
+}
+
 /* Responsive adjustments for check-in modal */
 @media (max-width: 768px) {
     .checkin-item {
@@ -784,7 +781,7 @@
         width: 100%;
     }
     
-    .btn-checkin {
+    .checkin-item .btn-icon {
         width: 100%;
         justify-content: center;
     }
