@@ -502,15 +502,17 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
         badge = `<span class="status-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--success); color: white; border-radius: 4px; font-size: 12px; font-weight: 600;">
                     <i class="fas fa-check-circle"></i> Checked In
                 </span>`;
-    } else if (registered) {
-        badge = `<span class="status-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--info, #0d6efd); color: white; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                    <i class="fas fa-calendar-check"></i> Registered
-                </span>`;
     }
 
     const registerBtn = (!registered && !checkedIn) ? `
         <button class="btn btn-primary btn-primary-sm" onclick="handleAdminRegister('${workshop.id}', '${studentId}')" title="Register on behalf of student (pay at door)">
-            <i class="fas fa-user-plus"></i> Register
+            <span class="btn-icon-desktop"><i class="fas fa-user-plus"></i></span> Register
+        </button>
+    ` : '';
+
+    const deregisterBtn = (registered && !checkedIn) ? `
+        <button class="btn btn-cancel btn-primary-sm" onclick="handleAdminDeregister('${workshop.id}', '${studentId}')" title="Cancel this student's registration">
+            <span class="btn-icon-desktop"><i class="fas fa-user-minus"></i></span> De-register
         </button>
     ` : '';
 
@@ -522,6 +524,7 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
             </div>
             <div class="invited-student-actions">
                 ${registerBtn}
+                ${deregisterBtn}
                 <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered || checkedIn ? 'disabled title="Cannot remove registered students"' : ''}>
                     <i class="fas fa-trash-alt"></i>
                 </button>
@@ -653,6 +656,42 @@ async function handleAdminRegister(workshopId, studentId) {
     } finally {
         spinner.hide();
     }
+}
+
+async function handleAdminDeregister(workshopId, studentId) {
+    const modal = new ConfirmationModal({
+        title: 'Cancel Registration',
+        message: 'Are you sure you want to cancel this student\'s registration?',
+        confirmText: 'De-register',
+        confirmClass: 'btn-danger',
+        onConfirm: async () => {
+            const spinner = new LoadingSpinner('invited-students-list');
+            spinner.show();
+            try {
+                const user = firebase.auth().currentUser;
+                const token = user ? await user.getIdToken() : null;
+                const response = await fetch(API_CONFIG.WORKSHOP_DEREGISTER, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ studentId, workshopId })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'De-registration failed');
+                }
+                showSnackbar('Registration cancelled.', 'success');
+                // List will refresh automatically via onSnapshot
+            } catch (error) {
+                showSnackbar(`Failed to de-register: ${error.message}`, 'error');
+            } finally {
+                spinner.hide();
+            }
+        }
+    });
+    modal.show();
 }
 
 // ============================================
@@ -868,3 +907,4 @@ window.confirmDeleteWorkshop = confirmDeleteWorkshop;
 window.handleRemoveInvite = handleRemoveInvite;
 window.handleRemoveVideo = handleRemoveVideo;
 window.handleAdminRegister = handleAdminRegister;
+window.handleAdminDeregister = handleAdminDeregister;
