@@ -3,6 +3,9 @@
  * Handles Firestore CRUD operations, state management, and event listeners
  */
 
+import { LoadingSpinner } from '/components/loading-spinner/loading-spinner.js';
+import { showSnackbar } from '/components/snackbar/snackbar.js';
+
 // ============================================
 // STATE MANAGEMENT
 // ============================================
@@ -117,7 +120,11 @@ async function loadWorkshops() {
         }));
         
         filteredWorkshops = [...workshops];
-        renderWorkshops();
+        
+        // Render workshops (Phase 6 - workshop-display.js)
+        if (window.renderWorkshops) {
+            window.renderWorkshops();
+        }
         
     } catch (error) {
         console.error('Error loading workshops:', error);
@@ -390,7 +397,9 @@ function setupEventListeners() {
     const createBtn = document.getElementById('create-workshop-btn');
     if (createBtn) {
         createBtn.addEventListener('click', () => {
-            openCreateWorkshopModal();
+            if (window.openCreateWorkshopModal) {
+                window.openCreateWorkshopModal();
+            }
         });
     }
 }
@@ -411,7 +420,10 @@ function handleSearch(e) {
         );
     }
     
-    renderWorkshops();
+    // Render workshops (Phase 6 - workshop-display.js)
+    if (window.renderWorkshops) {
+        window.renderWorkshops();
+    }
 }
 
 /**
@@ -433,7 +445,10 @@ function handleFilter(e) {
         filteredWorkshops = workshops.filter(w => w.status === filter);
     }
     
-    renderWorkshops();
+    // Render workshops (Phase 6 - workshop-display.js)
+    if (window.renderWorkshops) {
+        window.renderWorkshops();
+    }
 }
 
 // ============================================
@@ -484,3 +499,37 @@ function formatCost(cost) {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', initWorkshopManager);
+
+// ============================================
+// EXPORTS
+// ============================================
+
+export {
+    // State
+    workshops,
+    filteredWorkshops,
+    currentUser,
+    
+    // CRUD Operations
+    createWorkshop,
+    updateWorkshop,
+    deleteWorkshop,
+    updateWorkshopStatus,
+    loadWorkshops,
+    
+    // Invited Students
+    addInvitedStudent,
+    removeInvitedStudent,
+    
+    // Videos
+    addVideo,
+    removeVideo,
+    
+    // Search
+    searchStudents,
+    
+    // Helpers
+    getWorkshopById,
+    formatDate,
+    formatCost
+};

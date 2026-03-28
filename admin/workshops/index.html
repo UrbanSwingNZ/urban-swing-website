@@ -11,6 +11,12 @@
     <link rel="stylesheet" href="/styles/base/typography.css">
     <link rel="stylesheet" href="/admin/admin.css">
     
+    <!-- Modal Styles -->
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    
+    <!-- Date Picker Styles -->
+    <link rel="stylesheet" href="/styles/date-picker/date-picker.css">
+    
     <!-- Workshop-specific Styles -->
     <link rel="stylesheet" href="workshops.css?v=7">
     
@@ -82,10 +88,10 @@
     <script src="/config/firebase-config.js"></script>
     
     <!-- Components -->
-    <script src="/components/modals/modal-base.js"></script>
-    <script src="/components/modals/confirmation-modal.js"></script>
-    <script src="/components/loading-spinner/loading-spinner.js"></script>
-    <script src="/components/snackbar/snackbar.js"></script>
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+    <script type="module" src="/components/snackbar/snackbar.js"></script>
     
     <!-- Admin Header Dependencies -->
     <script src="/components/mobile-drawer.js"></script>
@@ -94,10 +100,13 @@
     <script src="/admin/js/mobile-nav.js"></script>
     <script src="/admin/admin-header.js"></script>
     
+    <!-- Date Picker -->
+    <script src="/functions/date-picker/date-picker.js"></script>
+    
     <!-- Workshop Scripts -->
-    <script src="workshop-manager.js"></script>
-    <script src="workshop-modals.js"></script>
-    <script src="workshop-display.js"></script>
-    <script src="workshop-checkin-modal.js"></script>
+    <script type="module" src="workshop-manager.js"></script>
+    <script type="module" src="workshop-modals.js"></script>
+    <!-- Phase 6: <script type="module" src="workshop-display.js"></script> -->
+    <!-- Phase 7: <script type="module" src="workshop-checkin-modal.js"></script> -->
 </body>
 </html>
