@@ -671,9 +671,200 @@ Console verification available:
 
 ---
 
-## Phase 5: Modal Handlers
+## Phase 5: Modal Handlers ✅ COMPLETED
 
-### 5.1 Create workshop-modals.js
+### What Was Implemented
+
+**File**: `/admin/workshops/workshop-modals.js` (670 lines)
+
+Created comprehensive modal handlers for all workshop management interactions:
+
+**Modals Implemented**:
+
+1. **Create Workshop Modal** (`openCreateWorkshopModal()`):
+   - Form fields: name, date/time, topic, description, cost, openToAll checkbox
+   - Form validation with HTML5 required attributes
+   - Calls `createWorkshop()` from workshop-manager.js
+   - Auto-closes on success
+
+2. **Edit Workshop Modal** (`openEditWorkshopModal(workshopId)`):
+   - Pre-populates all fields with current workshop data
+   - Includes status dropdown (draft/published/completed)
+   - Date formatting for datetime-local input
+   - Calls `updateWorkshop()` from workshop-manager.js
+   - Handles Firestore Timestamp to Date conversion
+
+3. **Manage Invites Modal** (`openManageInvitesModal(workshopId)`):
+   - Only available for invite-only workshops (disabled if openToAll=true)
+   - Student search with debounced autocomplete
+   - Displays invited students count
+   - Shows registration status badge for registered students
+   - Add student: searches and filters out already invited students
+   - Remove student: confirmation dialog, disabled for registered students
+   - Calls `addInvitedStudent()` and `removeInvitedStudent()`
+   - Real-time name loading from students collection
+
+4. **Manage Videos Modal** (`openManageVideosModal(workshopId)`):
+   - Add video form: title and YouTube URL inputs
+   - URL validation (must contain youtube.com or youtu.be)
+   - Video list with title, URL, and added date
+   - Remove video with confirmation dialog
+   - External link to open video in new tab
+   - Calls `addVideo()` and `removeVideo()`
+   - Modal content refreshes after add/remove
+
+5. **Delete Confirmation Modal** (`confirmDeleteWorkshop(workshopId)`):
+   - Uses ConfirmationModal component
+   - Prevents deletion if workshop has registrations
+   - Shows workshop name in confirmation message
+   - Calls `deleteWorkshop()` on confirmation
+
+**Key Features**:
+- All modals use BaseModal/ConfirmationModal components
+- Proper form validation before submission
+- Modal content auto-refreshes after operations
+- Debounced search (300ms) for performance
+- Error handling delegated to manager functions
+- Consistent styling with existing admin design
+- Accessibility: proper labels, placeholders, and disabled states
+
+**Helper Functions**:
+- `generateInvitesContent(workshop)` - Renders invite management UI
+- `renderInvitedStudent(studentId, workshop)` - Renders individual invited student
+- `attachInviteListeners(workshop, modal)` - Sets up invite search/add/remove
+- `loadInvitedStudentNames(workshop)` - Async loads student names
+- `handleRemoveInvite(workshopId, studentId)` - Handles invite removal
+- `generateVideosContent(workshop)` - Renders video management UI
+- `renderVideoItem(video, workshop)` - Renders individual video item
+- `attachVideoListeners(workshop, modal)` - Sets up video add form
+- `handleRemoveVideo(workshopId, videoUrl)` - Handles video removal
+
+### Testing Instructions
+
+Phase 5 provides the UI layer for testing Phase 4 functionality. You can now test the full create/edit/delete workflow.
+
+#### Test 1: Create Workshop
+
+1. Navigate to `/admin/workshops/`
+2. Click "Create Workshop" button
+3. **Expected**: Modal opens with empty form
+4. Fill in all required fields:
+   - Name: "Test Workshop"
+   - Date/Time: Select a future date
+   - Topic: "Test topic"
+   - Cost: 25
+   - Check "Open Workshop"
+5. Click "Create Workshop"
+6. **Expected**: 
+   - Loading spinner appears
+   - Success snackbar: "Workshop created successfully"
+   - Modal closes
+   - Workshop appears in table with "draft" status
+   - Filter updates to show 1 workshop
+
+#### Test 2: Form Validation
+
+1. Click "Create Workshop"
+2. Leave all fields empty and click "Create Workshop"
+3. **Expected**: Browser validation messages appear
+4. Fill in only name and date, leave cost empty
+5. Click "Create Workshop"
+6. **Expected**: Cost field shows validation error
+
+#### Test 3: Edit Workshop
+
+1. Click "Edit" button on a workshop
+2. **Expected**: Modal opens with pre-filled form
+3. Change the name to "Updated Workshop"
+4. Change status to "Published"
+5. Click "Save Changes"
+6. **Expected**:
+   - Success snackbar appears
+   - Modal closes
+   - Workshop name updates in table
+   - Status badge changes to green "published"
+
+#### Test 4: Manage Invites (Invite-Only Workshop)
+
+1. Create an invite-only workshop (uncheck "Open Workshop")
+2. Click "Invites" button on the workshop
+3. **Expected**: Modal opens with search box and empty invited list
+4. Type a student name in search box
+5. **Expected**: Dropdown appears with matching students
+6. Click a student
+7. **Expected**:
+   - Success snackbar: "Student added to invited list"
+   - Student appears in invited list
+   - Search box clears
+8. Click "Remove" on the student
+9. **Expected**: Confirmation dialog appears
+10. Click "Remove"
+11. **Expected**: Student removed from list
+
+#### Test 5: Manage Invites Button Visibility
+
+1. Click "Invites" button on an open workshop (openToAll=true)
+2. **Expected**: Snackbar message: "This is an open workshop. All students can see it."
+3. Check table: Invite-only workshops show "Invites" button, open workshops don't
+
+#### Test 6: Manage Videos
+
+1. Click "Videos" button on any workshop
+2. **Expected**: Modal opens with add video form and empty list
+3. Fill in:
+   - Title: "Drill 1: Connection"
+   - URL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+4. Click "Add Video"
+5. **Expected**:
+   - Success snackbar appears
+   - Video appears in list with title, URL link, and date
+   - Form clears
+6. Try invalid URL (e.g., "https://example.com")
+7. **Expected**: Warning snackbar: "Please enter a valid YouTube URL"
+8. Click "Remove" on a video
+9. **Expected**: Confirmation dialog → video removed
+
+#### Test 7: Delete Workshop
+
+1. Click "Delete" on a workshop with NO registrations
+2. **Expected**: Confirmation dialog appears with workshop name
+3. Click "Delete Workshop"
+4. **Expected**:
+   - Success snackbar: "Workshop deleted successfully"
+   - Workshop disappears from table
+5. Click "Delete" on workshop WITH registrations
+6. **Expected**: Button is disabled with tooltip "Cannot delete workshop with registrations"
+
+#### Test 8: Search and Filter Integration
+
+1. Create multiple workshops with different statuses
+2. Test search box while modal is open → should not interfere
+3. Close modal, use search box on main page
+4. **Expected**: Filtering still works properly
+5. Create workshop → verify it appears in current filter view
+
+#### Test 9: Error Handling
+
+1. Open browser console
+2. Disable network (DevTools → Network → Offline)
+3. Try to create a workshop
+4. **Expected**: Error snackbar appears (from workshop-manager.js)
+5. Re-enable network
+6. Try again → should work
+
+### Integration Notes
+
+Phase 5 completes the basic CRUD UI. With Phases 4 and 5 implemented:
+- ✅ Workshops can be created, edited, deleted via UI
+- ✅ Status can be changed (draft → published → completed)
+- ✅ Invited students can be managed for invite-only workshops
+- ✅ Videos can be added/removed
+- ⏳ Workshop display still shows loading spinner (Phase 6 needed)
+- ⏳ Check-in functionality not yet available (Phase 7 needed)
+
+**Phase 6 Next**: Implement workshop-display.js to render the table and replace loading spinner with actual workshop list.
+
+### Original Specification
 
 **File**: `admin/workshops/workshop-modals.js`
 
