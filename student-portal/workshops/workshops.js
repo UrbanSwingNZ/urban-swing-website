@@ -439,7 +439,7 @@ function generateRegistrationContent(workshop) {
                     <span class="value">${formattedDate}</span>
                 </div>
                 ${workshop.topic ? `
-                    <div class="summary-row">
+                    <div class="summary-row stacked">
                         <span class="label">Topic</span>
                         <span class="value">${escapeHtml(workshop.topic)}</span>
                     </div>
@@ -605,14 +605,14 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {string}
  */
 function formatWorkshopDate(date) {
-    return date.toLocaleDateString('en-NZ', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12;
+    return `${dd}/${mm}/${yyyy} ${hours}:${minutes} ${ampm}`;
 }
 
 /**

@@ -352,12 +352,18 @@
 }
 
 .registration-summary .summary-row .label {
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    font-weight: 700;
 }
 
 .registration-summary .summary-row .value {
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text-primary);
+}
+
+.registration-summary .summary-row.stacked {
+    flex-direction: column;
+    gap: 2px;
 }
 
 .registration-summary .summary-row.total {
@@ -370,6 +376,7 @@
 .registration-summary .summary-row.total .value {
     color: var(--purple-primary);
     font-size: 1.2rem;
+    font-weight: 700;
 }
 
 .payment-section h4 {
