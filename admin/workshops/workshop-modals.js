@@ -406,24 +406,24 @@ async function openManageInvitesModal(workshopId) {
         .onSnapshot(async (docSnapshot) => {
             if (!docSnapshot.exists) return;
             // Only update if the modal is still open
-            const listContainer = document.getElementById('invited-students-list');
-            if (!listContainer) return;
+            const regList = document.getElementById('invited-registered-list');
+            const pendingList = document.getElementById('invited-pending-list');
+            if (!regList && !pendingList) return;
 
             const latestWorkshop = { id: docSnapshot.id, ...docSnapshot.data() };
             const invitedStudentsData = await fetchAndSortInvitedStudents(latestWorkshop);
-            const heading = listContainer.closest('.invited-students-section')?.querySelector('h3');
-            if (heading) {
-                heading.innerHTML = `<i class="fas fa-users" style="color: var(--purple-primary);"></i> Invited Students (${invitedStudentsData.length})`;
+            const { registered, pending } = splitInvitedStudents(latestWorkshop, invitedStudentsData);
+
+            if (regList) {
+                const regCount = regList.closest('.invite-accordion')?.querySelector('.accordion-count');
+                if (regCount) regCount.textContent = `(${registered.length})`;
+                regList.innerHTML = renderInviteList(registered, latestWorkshop, 'registered');
             }
-            listContainer.innerHTML = invitedStudentsData.length === 0 ? `
-                <div style="padding: 20px; background: var(--hover-background); border-radius: 6px; text-align: center; color: var(--text-secondary);">
-                    <i class="fas fa-info-circle"></i> No students invited yet. Search above to add students.
-                </div>
-            ` : `
-                <div class="invited-list">
-                    ${invitedStudentsData.map(s => renderInvitedStudentWithName(s.id, s.fullName, latestWorkshop)).join('')}
-                </div>
-            `;
+            if (pendingList) {
+                const pendingCount = pendingList.closest('.invite-accordion')?.querySelector('.accordion-count');
+                if (pendingCount) pendingCount.textContent = `(${pending.length})`;
+                pendingList.innerHTML = renderInviteList(pending, latestWorkshop, 'pending');
+            }
         }, (error) => {
             console.error('Invites snapshot error:', error);
         });
@@ -454,10 +454,12 @@ async function fetchAndSortInvitedStudents(workshop) {
 }
 
 function generateInvitesContent(workshop, invitedStudentsData = []) {
+    const { registered, pending } = splitInvitedStudents(workshop, invitedStudentsData);
+
     return `
         <div class="invite-management">
             <!-- Student Search -->
-            <div class="form-group" style="margin-bottom: 30px;">
+            <div class="form-group" style="margin-bottom: 24px;">
                 <label for="invite-search" style="display: block; margin-bottom: 8px; font-weight: 600;">
                     <i class="fas fa-search" style="color: var(--purple-primary);"></i> Search and add students:
                 </label>
@@ -469,27 +471,48 @@ function generateInvitesContent(workshop, invitedStudentsData = []) {
                     <div id="invite-search-results" class="search-results" style="display: none;"></div>
                 </div>
             </div>
-            
-            <!-- Invited Students List -->
-            <div class="invited-students-section">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary);">
-                    <i class="fas fa-users" style="color: var(--purple-primary);"></i> Invited Students (${invitedStudentsData.length})
-                </h3>
-                
-                <div id="invited-students-list">
-                    ${invitedStudentsData.length === 0 ? `
-                        <div style="padding: 20px; background: var(--hover-background); border-radius: 6px; text-align: center; color: var(--text-secondary);">
-                            <i class="fas fa-info-circle"></i> No students invited yet. Search above to add students.
-                        </div>
-                    ` : `
-                        <div class="invited-list">
-                            ${invitedStudentsData.map(student => renderInvitedStudentWithName(student.id, student.fullName, workshop)).join('')}
-                        </div>
-                    `}
+
+            <!-- Registered Students Accordion -->
+            <div class="invite-accordion">
+                <button class="accordion-header" data-accordion="registered" aria-expanded="true">
+                    <span><i class="fas fa-calendar-check" style="color: var(--purple-primary);"></i> Registered <span class="accordion-count">(${registered.length})</span></span>
+                    <i class="fas fa-chevron-down accordion-chevron"></i>
+                </button>
+                <div class="accordion-body" id="invited-registered-list">
+                    ${renderInviteList(registered, workshop, 'registered')}
+                </div>
+            </div>
+
+            <!-- Pending Invites Accordion -->
+            <div class="invite-accordion">
+                <button class="accordion-header" data-accordion="pending" aria-expanded="true">
+                    <span><i class="fas fa-envelope" style="color: var(--purple-primary);"></i> Pending Invites <span class="accordion-count">(${pending.length})</span></span>
+                    <i class="fas fa-chevron-down accordion-chevron"></i>
+                </button>
+                <div class="accordion-body" id="invited-pending-list">
+                    ${renderInviteList(pending, workshop, 'pending')}
                 </div>
             </div>
         </div>
     `;
+}
+
+function splitInvitedStudents(workshop, studentsData) {
+    const registeredIds = new Set((workshop.registeredStudents || []).map(r => r.studentId));
+    return {
+        registered: studentsData.filter(s => registeredIds.has(s.id)),
+        pending: studentsData.filter(s => !registeredIds.has(s.id))
+    };
+}
+
+function renderInviteList(students, workshop, type) {
+    if (students.length === 0) {
+        const msg = type === 'pending'
+            ? 'No pending invites. Search above to add students.'
+            : 'No registered students yet.';
+        return `<div class="invite-empty"><i class="fas fa-info-circle"></i> ${msg}</div>`;
+    }
+    return `<div class="invited-list">${students.map(s => renderInvitedStudentWithName(s.id, s.fullName, workshop)).join('')}</div>`;
 }
 
 function renderInvitedStudentWithName(studentId, studentName, workshop) {
@@ -603,6 +626,16 @@ function attachInviteListeners(workshop, modal) {
         }
     };
     document.addEventListener('click', inviteDocumentClickHandler);
+
+    // Accordion toggle
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const body = header.nextElementSibling;
+            const expanded = header.getAttribute('aria-expanded') === 'true';
+            header.setAttribute('aria-expanded', String(!expanded));
+            body.style.display = expanded ? 'none' : '';
+        });
+    });
 }
 
 async function handleRemoveInvite(workshopId, studentId) {

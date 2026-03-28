@@ -445,10 +445,63 @@
 
 /* Invited Students List */
 .invited-list {
+    border-radius: 6px;
+}
+
+/* Invite Accordions */
+.invite-accordion {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.accordion-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--hover-background);
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: left;
+    transition: background 0.2s ease;
+}
+
+.accordion-header:hover {
+    background: var(--border-color);
+}
+
+.accordion-header .accordion-count {
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.accordion-chevron {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.accordion-header[aria-expanded="false"] .accordion-chevron {
+    transform: rotate(-90deg);
+}
+
+.accordion-body {
     max-height: 300px;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-top: 1px solid var(--border-color);
+}
+
+.invite-empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
 }
 
 .invited-student-item {
