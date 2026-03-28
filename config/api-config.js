@@ -28,7 +28,13 @@ const API_CONFIG = {
      * Process workshop registration payment
      * POST endpoint for processing workshop registration payments
      */
-    WORKSHOP_PAYMENT: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processWorkshopPayment`
+    WORKSHOP_PAYMENT: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processWorkshopPayment`,
+
+    /**
+     * Cancel a student's workshop registration
+     * POST endpoint: { studentId, workshopId }
+     */
+    WORKSHOP_DEREGISTER: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/deregisterWorkshop`
 };
 
 // Make API_CONFIG available globally for non-module scripts
