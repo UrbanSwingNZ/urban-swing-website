@@ -48,6 +48,9 @@ export function displayTodaysCheckins() {
         } else if (checkin.entryType === 'free' && checkin.freeEntryReason === 'crew-member') {
             typeClass = 'crew';
             typeLabel = 'Crew';
+        } else if (checkin.entryType === 'workshop-entry') {
+            typeClass = 'workshop-entry';
+            typeLabel = 'Workshop';
         } else {
             typeClass = 'free';
             typeLabel = 'Free Entry';
