@@ -356,6 +356,9 @@ function openEditWorkshopModal(workshopId) {
 // MANAGE INVITES MODAL
 // ============================================
 
+// Active onSnapshot unsubscribe for the Manage Invites modal
+let invitesSnapshotUnsubscribe = null;
+
 async function openManageInvitesModal(workshopId) {
     const workshop = getWorkshopById(workshopId);
     if (!workshop) {
@@ -381,11 +384,49 @@ async function openManageInvitesModal(workshopId) {
                 class: 'btn-cancel',
                 onClick: (modal) => modal.hide()
             }
-        ]
+        ],
+        onClose: () => {
+            if (invitesSnapshotUnsubscribe) {
+                invitesSnapshotUnsubscribe();
+                invitesSnapshotUnsubscribe = null;
+            }
+            if (inviteDocumentClickHandler) {
+                document.removeEventListener('click', inviteDocumentClickHandler);
+                inviteDocumentClickHandler = null;
+            }
+        }
     });
     
     modal.show();
     attachInviteListeners(workshop, modal);
+    
+    // Subscribe to live updates for this workshop document
+    if (invitesSnapshotUnsubscribe) invitesSnapshotUnsubscribe();
+    invitesSnapshotUnsubscribe = db.collection('workshops').doc(workshopId)
+        .onSnapshot(async (docSnapshot) => {
+            if (!docSnapshot.exists) return;
+            // Only update if the modal is still open
+            const listContainer = document.getElementById('invited-students-list');
+            if (!listContainer) return;
+
+            const latestWorkshop = { id: docSnapshot.id, ...docSnapshot.data() };
+            const invitedStudentsData = await fetchAndSortInvitedStudents(latestWorkshop);
+            const heading = listContainer.closest('.invited-students-section')?.querySelector('h3');
+            if (heading) {
+                heading.innerHTML = `<i class="fas fa-users" style="color: var(--purple-primary);"></i> Invited Students (${invitedStudentsData.length})`;
+            }
+            listContainer.innerHTML = invitedStudentsData.length === 0 ? `
+                <div style="padding: 20px; background: var(--hover-background); border-radius: 6px; text-align: center; color: var(--text-secondary);">
+                    <i class="fas fa-info-circle"></i> No students invited yet. Search above to add students.
+                </div>
+            ` : `
+                <div class="invited-list">
+                    ${invitedStudentsData.map(s => renderInvitedStudentWithName(s.id, s.fullName, latestWorkshop)).join('')}
+                </div>
+            `;
+        }, (error) => {
+            console.error('Invites snapshot error:', error);
+        });
 }
 
 async function fetchAndSortInvitedStudents(workshop) {
@@ -502,8 +543,9 @@ function attachInviteListeners(workshop, modal) {
         searchTimeout = setTimeout(async () => {
             const students = await searchStudents(query);
             
-            // Filter out already invited students
-            const invitedIds = new Set(workshop.invitedStudents || []);
+            // Filter out already invited students (use latest workshop data)
+            const latestWorkshop = getWorkshopById(workshop.id);
+            const invitedIds = new Set((latestWorkshop || workshop).invitedStudents || []);
             const notInvited = students.filter(s => !invitedIds.has(s.id));
             
             if (notInvited.length === 0) {
@@ -526,13 +568,7 @@ function attachInviteListeners(workshop, modal) {
                     
                     try {
                         await addInvitedStudent(workshop.id, studentId);
-                        
-                        // Refresh modal content with updated student list
-                        const updatedWorkshop = getWorkshopById(workshop.id);
-                        const invitedStudentsData = await fetchAndSortInvitedStudents(updatedWorkshop);
-                        modal.setContent(generateInvitesContent(updatedWorkshop, invitedStudentsData));
-                        attachInviteListeners(updatedWorkshop, modal);
-                        
+                        // List will refresh automatically via onSnapshot
                         searchInput.value = '';
                         searchResults.style.display = 'none';
                     } catch (error) {
@@ -578,18 +614,7 @@ async function handleRemoveInvite(workshopId, studentId) {
         onConfirm: async () => {
             try {
                 await removeInvitedStudent(workshopId, studentId);
-                
-                // Refresh the modal if it's still open
-                const existingModal = document.getElementById('manage-invites-modal');
-                if (existingModal) {
-                    const workshop = getWorkshopById(workshopId);
-                    const invitedStudentsData = await fetchAndSortInvitedStudents(workshop);
-                    const inviteModal = BaseModal.getInstance('manage-invites-modal');
-                    if (inviteModal) {
-                        inviteModal.setContent(generateInvitesContent(workshop, invitedStudentsData));
-                        attachInviteListeners(workshop, inviteModal);
-                    }
-                }
+                // List will refresh automatically via onSnapshot
             } catch (error) {
                 // Error handling in removeInvitedStudent()
             }
