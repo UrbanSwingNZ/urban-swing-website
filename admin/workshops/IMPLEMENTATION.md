@@ -1760,83 +1760,21 @@ async function handleWorkshopRegistration(workshopId, paymentMethodId) {
 
 ---
 
-### 9.5 Workshop Details Modal (Student)
+### 9.5 Workshop Videos Modal (Student)
 
-**File**: `student-portal/workshops/workshop-details-modal.js`
+**Decision**: The "Details" button was removed as it repeated information already visible on the card. It is replaced by a **"Videos" button** that is only visible when the student's `studentId` is in the workshop's `checkedInStudents` array (i.e. they have attended).
 
-Shows full workshop information and videos (if student checked in).
+**Videos are displayed as YouTube iframes** inside a `BaseModal` with `size: 'large'`.
+
+**Key implementation notes**:
+- Extract the YouTube video ID from whatever URL format was stored by admin (standard `watch?v=`, short `youtu.be/`, or already an embed URL) and construct `https://www.youtube.com/embed/VIDEO_ID`
+- **On modal close, set each iframe's `src` to `''`** to stop video playback. If this is not done, audio will continue playing after the modal is dismissed.
+- Use the `onClose` callback on `BaseModal` to null out iframe srcs.
 
 **Features**:
-- Display workshop name, date, topic, full description
-- Show registration status
-- **Video Access Control**: Only show videos if `currentUser.studentId` is in the workshop's `checkedInStudents` array
-- If not checked in: Show message "Videos will be available after attending the workshop"
-- If checked in: Display video list with YouTube embeds or links
-
-**Structure**:
-```javascript
-function openWorkshopDetailsModal(worksheet) {
-    const isCheckedIn = workshop.checkedInStudents?.includes(currentUser.studentId);
-    
-    const modal = new BaseModal({
-        id: 'workshop-details-modal',
-        title: workshop.name,
-        size: 'large',
-        content: generateDetailsContent(workshop, isCheckedIn),
-        buttons: [
-            {
-                text: 'Close',
-                variant: 'secondary',
-                onClick: (modal) => modal.hide()
-            }
-        ]
-    });
-    
-    modal.show();
-}
-
-function generateDetailsContent(workshop, isCheckedIn) {
-    return `
-        <div class="workshop-details">
-            <div class="workshop-info">
-                <strong>Date:</strong> ${formatDate(workshop.date)}<br>
-                <strong>Topic:</strong> ${workshop.topic}<br>
-                <strong>Cost:</strong> $${workshop.cost}
-            </div>
-            
-            <div class="workshop-description">
-                <h3>Description</h3>
-                <p>${workshop.description}</p>
-            </div>
-            
-            <div class="workshop-videos">
-                <h3>Workshop Videos</h3>
-                ${isCheckedIn ? renderVideos(workshop.videos) : `
-                    <div class="info-message">
-                        <i class="fas fa-info-circle"></i>
-                        Videos will be available after you attend the workshop
-                    </div>
-                `}
-            </div>
-        </div>
-    `;
-}
-
-function renderVideos(videos) {
-    if (!videos || videos.length === 0) {
-        return '<p>No videos available yet.</p>';
-    }
-    
-    return videos.map(video => `
-        <div class="video-item">
-            <a href="${video.url}" target="_blank" rel="noopener">
-                <i class="fas fa-play-circle"></i> ${video.title}
-            </a>
-            <span class="video-date">Added: ${formatDate(video.addedAt)}</span>
-        </div>
-    `).join('');
-}
-```
+- Videos button only rendered/visible if student is in `checkedInStudents[]`
+- If checked in but no videos added yet: show a "No videos available yet" message
+- Each video rendered as a responsive YouTube `<iframe>` with the video title above it
 
 ---
 

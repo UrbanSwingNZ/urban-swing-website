@@ -227,7 +227,35 @@
     box-shadow: 0 4px 12px var(--bg-purple-strong);
 }
 
-.btn-view-details {
+.btn-deregister {
+    background: white;
+    color: var(--text-secondary);
+    border: 2px solid var(--border-medium, #ccc);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-deregister:hover:not(:disabled) {
+    background: var(--error, #e53935);
+    color: white;
+    border-color: var(--error, #e53935);
+}
+
+.btn-deregister:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.btn-videos {
     background: white;
     color: var(--purple-primary);
     border: 2px solid var(--purple-primary);
@@ -244,154 +272,9 @@
     justify-content: center;
 }
 
-.btn-view-details:hover {
+.btn-videos:hover {
     background: var(--purple-primary);
     color: white;
-}
-
-.video-count-indicator {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.video-count-indicator i {
-    color: var(--success);
-}
-
-/* =========================================
-   DETAILS MODAL CONTENT
-   ========================================= */
-
-.workshop-details-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-}
-
-.workshop-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--space-sm);
-    padding: var(--space-md);
-    background: var(--bg-light);
-    border-radius: var(--radius-sm);
-    border-left: 4px solid var(--purple-primary);
-}
-
-.workshop-info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.workshop-info-label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-}
-
-.workshop-info-value {
-    font-size: 1rem;
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-.workshop-full-description {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-}
-
-.workshop-full-description h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: var(--space-xs);
-}
-
-/* Videos Section */
-.videos-section h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: var(--space-sm);
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-}
-
-.video-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-}
-
-.video-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-sm) var(--space-md);
-    background: var(--bg-light);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-light);
-}
-
-.video-link {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    color: var(--purple-primary);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    flex: 1;
-}
-
-.video-link:hover {
-    color: var(--purple-dark);
-    text-decoration: underline;
-}
-
-.video-link i {
-    color: var(--error);
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-
-.video-date {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    flex-shrink: 0;
-}
-
-.videos-locked-message {
-    padding: var(--space-md);
-    background: var(--info-light);
-    border-radius: var(--radius-sm);
-    border-left: 4px solid var(--info, #2196f3);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-}
-
-.videos-locked-message i {
-    color: var(--info, #2196f3);
-    font-size: 1.1rem;
-    flex-shrink: 0;
-}
-
-.no-videos-message {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    font-style: italic;
-    padding: var(--space-sm) 0;
 }
 
 /* =========================================
