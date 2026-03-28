@@ -1525,7 +1525,23 @@ With Phase 7 complete, the admin workshop management system is fully functional:
 
 ---
 
-### 8.2 Defensive Updates for Existing Admin Pages
+### 8.2 Defensive Updates for Existing Admin Pages ✅ COMPLETED
+
+### What Was Implemented
+
+All 5 files updated to gracefully handle `workshop-entry` transaction/check-in type:
+
+1. **`styles/components/badges.css`** — Added `.type-badge.workshop` with orange styling
+2. **`admin/check-in/js/transactions/transaction-display.js`** — Added `workshop-entry` → `'workshop'` badge class mapping
+3. **`admin/admin-tools/transactions/transactions.js`** — Added guard to block editing workshop transactions with a helpful redirect message
+4. **`admin/check-in/js/history-display.js`** — Added `workshop-entry` → `'Workshop'` label
+5. **`admin/check-in/check-in.css`** — Added `.checkin-type.workshop-entry` with orange styling
+
+**Note**: The spec referenced `--bg-orange-light` and `--orange-dark` which don't exist in the color system. Used `--warning-lighter` / `--text-orange-dark` as equivalents (consistent with the existing `.checkin-type.crew` pattern).
+
+---
+
+### 8.2 Original Specification
 
 These updates ensure existing admin pages gracefully handle workshop transactions when they appear in global transaction lists.
 
