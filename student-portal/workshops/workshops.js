@@ -46,9 +46,13 @@ window.addEventListener('studentSelected', async (event) => {
  */
 async function initializeWorkshops() {
     try {
-        await waitForAuth();
-
-        document.getElementById('main-container').style.display = 'block';
+        // waitForAuth() resolves as soon as isAuthorized is *defined* (initially false),
+        // which is before the actual async Firebase auth check sets it to true.
+        // Instead, wait for the authCheckComplete event that auth-check.js dispatches
+        // once the real check finishes.
+        await new Promise((resolve) => {
+            window.addEventListener('authCheckComplete', resolve, { once: true });
+        });
 
         currentStudentId = await getActiveStudentId();
 
@@ -95,11 +99,9 @@ async function loadWorkshops(studentId) {
         const [openSnap, invitedSnap] = await Promise.all([
             db.collection('workshops')
                 .where('openToAll', '==', true)
-                .where('status', '==', 'published')
                 .get(),
             db.collection('workshops')
                 .where('invitedStudents', 'array-contains', studentId)
-                .where('status', '==', 'published')
                 .get()
         ]);
 
