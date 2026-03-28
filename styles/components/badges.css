@@ -73,6 +73,11 @@
     color: var(--blue-accent);
 }
 
+.type-badge.workshop {
+    background: var(--warning-lighter);
+    color: var(--text-orange-dark);
+}
+
 .type-badge.gift {
     background: var(--bg-success-light);
     color: var(--success-dark);
