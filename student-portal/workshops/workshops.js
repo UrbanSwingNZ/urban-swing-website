@@ -66,7 +66,7 @@ async function initializeWorkshops() {
         if (student) {
             currentStudentName = `${student.firstName} ${student.lastName}`;
             document.getElementById('student-name').innerHTML =
-                `<i class="fas fa-chalkboard-teacher"></i> ${student.firstName}'s Workshops`;
+                `${student.firstName}'s Workshops`;
         }
 
         await loadWorkshops(currentStudentId);
