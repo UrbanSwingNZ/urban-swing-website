@@ -47,7 +47,7 @@ exports.processWorkshopPayment = onRequest(
           return;
         }
         
-        if (!data.paymentMethodId) {
+        if (!data.paymentMethodId && data.paidOnline) {
           response.status(400).json({ error: 'Missing payment method' });
           return;
         }
@@ -75,12 +75,6 @@ exports.processWorkshopPayment = onRequest(
         
         const workshopData = workshopDoc.data();
         
-        // Validate workshop status
-        if (workshopData.status !== 'published') {
-          response.status(400).json({ error: 'Workshop is not available for registration' });
-          return;
-        }
-        
         // Check if student is already registered
         const isRegistered = workshopData.registeredStudents?.some(
           reg => reg.studentId === data.studentId
@@ -100,7 +94,34 @@ exports.processWorkshopPayment = onRequest(
           }
         }
         
-        // Step 3: Get or create Stripe customer
+        // Step 3: Handle pay-at-door / free registration (no Stripe needed)
+        const hasCost = workshopData.cost && workshopData.cost > 0;
+        const paidOnline = data.paidOnline && hasCost;
+
+        if (!paidOnline) {
+          // Register without payment
+          const registration = {
+            studentId: data.studentId,
+            studentName: studentName,
+            registeredAt: admin.firestore.Timestamp.now(),
+            paidOnline: false,
+            transactionId: null
+          };
+
+          await db.collection('workshops').doc(data.workshopId).update({
+            registeredStudents: admin.firestore.FieldValue.arrayUnion(registration),
+            invitedStudents: admin.firestore.FieldValue.arrayUnion(data.studentId)
+          });
+
+          response.status(200).json({
+            success: true,
+            workshopName: workshopData.name,
+            paidOnline: false
+          });
+          return;
+        }
+
+        // Step 3 (continued): Get or create Stripe customer
         let customerId = studentData.stripeCustomerId;
         
         // Verify the customer exists in Stripe (it might be from test mode or deleted)
@@ -189,7 +210,7 @@ exports.processWorkshopPayment = onRequest(
         const registration = {
           studentId: data.studentId,
           studentName: studentName,
-          registeredAt: admin.firestore.FieldValue.serverTimestamp(),
+          registeredAt: admin.firestore.Timestamp.now(),
           paidOnline: true,
           transactionId: transactionRef.id
         };
