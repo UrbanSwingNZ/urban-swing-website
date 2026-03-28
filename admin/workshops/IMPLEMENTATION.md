@@ -1231,9 +1231,264 @@ With Phase 6 complete, the workshop management system is now fully functional fo
 
 ---
 
-## Phase 7: Workshop Check-In
+## Phase 7: Workshop Check-In ✅ COMPLETED
 
-### 7.1 Create workshop-checkin-modal.js
+### What Was Implemented
+
+**File**: `/admin/workshops/workshop-checkin-modal.js` (448 lines)
+
+Created comprehensive check-in modal for workshop attendance tracking:
+
+**Key Features**:
+- Displays registered students with payment status indicators (Paid Online / Pay Later)
+- Separates students into "Not Checked In" and "Already Checked In" sections
+- Walk-in student search with autocomplete (filters out already-registered students)
+- Payment method selection for pay-later and walk-in students (Cash, EFTPOS, Bank Transfer)
+- Creates check-in documents with workshop reference
+- Creates transaction documents for pay-later and walk-in payments
+- Updates workshop document with checkedInStudents array
+- Adds walk-ins to both invitedStudents (portal access) and registeredStudents arrays
+- Real-time modal content refresh after check-in
+- Check-in button integrated into workshop table and mobile cards
+
+**Functions Implemented**:
+- `openWorkshopCheckinModal(workshopId)` - Opens check-in modal
+- `generateCheckinContent(workshop)` - Generates modal HTML with student lists
+- `renderCheckinStudent(registration, workshop, isWalkIn)` - Renders individual student row
+- `renderCheckedInStudent(registration)` - Renders already-checked-in student (read-only)
+- `attachCheckinListeners(workshop, modal)` - Attaches event listeners for search and check-in
+- `selectWalkInStudent(student, workshop, container)` - Displays selected walk-in for check-in
+- `handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn, modal)` - Core check-in logic
+
+**Updated Files**:
+- `/admin/workshops/workshops.css` - Added check-in modal styles (200+ lines)
+- `/styles/base/buttons.css` - Added `.btn-icon.btn-success` variant for check-in button
+- `/admin/workshops/workshop-display.js` - Added check-in button to table row and mobile card
+
+**Design Features**:
+- Green check-in button with clipboard-check icon
+- Payment indicators with color coding (green for paid, yellow for pay-later)
+- Student search dropdown with hover states
+- Disabled state for already-checked-in students
+- Responsive design for mobile check-in
+
+### Testing Instructions
+
+Phase 7 completes the admin check-in workflow. These tests verify the full check-in process for both registered and walk-in students.
+
+#### Test 1: Check-In Button Visibility
+
+1. Navigate to `/admin/workshops/`
+2. **Expected**: Check-in button visible on every workshop row
+3. Check desktop table view:
+   - ✅ Green clipboard-check icon button between Invites and Videos
+   - ✅ Tooltip: "Check-In Students"
+4. Check mobile view (< 768px):
+   - ✅ Check-in button appears in mobile cards
+   - ✅ Same green styling as desktop
+
+#### Test 2: Open Check-In Modal (Workshop with Registrations)
+
+1. Create a workshop with at least 2 registered students (one paid online, one pay later)
+2. Click the check-in button
+3. **Expected**: Check-in modal opens with:
+   - ✅ Modal title: "Check-In: [Workshop Name]"
+   - ✅ Workshop info box (date, cost)
+   - ✅ "Registered Students" section with student count
+   - ✅ Student list shows both students
+   - ✅ "Paid Online" badge (green) for online payment
+   - ✅ "Pay Later" badge (yellow) for pay-later registration
+   - ✅ Payment method dropdown for pay-later student
+   - ✅ No payment dropdown for paid-online student
+   - ✅ Green "Check In" button for each student
+   - ✅ "Check In Walk-In Student" section at bottom
+
+#### Test 3: Check In Paid-Online Student
+
+1. Open check-in modal for workshop with online-paid registration
+2. Click "Check In" button for student who paid online
+3. **Expected**:
+   - ✅ Loading spinner appears
+   - ✅ Success snackbar: "[Student Name] checked in successfully"
+   - ✅ Modal content refreshes
+   - ✅ Student moves to "Already Checked In" section
+   - ✅ Green check-circle icon shown
+   - ✅ No action buttons (read-only)
+4. Check Firestore:
+   - ✅ New document in `checkins` collection with:
+     - `entryType: 'workshop-entry'`
+     - `workshopId`, `workshopName`, `studentId`, `studentName`
+     - `paymentMethod: 'online'`
+     - `amountPaid: 0` (already paid online)
+     - `onlineTransactionId` pointing to original transaction
+   - ✅ Workshop document updated:
+     - `checkedInStudents` array contains studentId
+
+#### Test 4: Check In Pay-Later Student
+
+1. Open check-in modal for workshop with pay-later registration
+2. Select payment method: "Cash"
+3. Click "Check In" button
+4. **Expected**:
+   - ✅ Loading spinner
+   - ✅ Success snackbar
+   - ✅ Student moves to "Already Checked In" section
+5. Check Firestore:
+   - ✅ New document in `transactions` collection:
+     - `type: 'workshop-entry'`
+     - `paymentMethod: 'cash'`
+     - `amount: [workshop cost]`
+     - `workshopId`, `studentId`, `studentName`, `workshopName`
+   - ✅ New document in `checkins` collection:
+     - `paymentMethod: 'cash'`
+     - `amountPaid: [workshop cost]`
+     - `onlineTransactionId: null`
+   - ✅ Workshop `checkedInStudents` array updated
+
+#### Test 5: Walk-In Student Search
+
+1. Open check-in modal
+2. Scroll to "Check In Walk-In Student" section
+3. Type "john" in search box
+4. **Expected**:
+   - ✅ Dropdown appears after 300ms debounce
+   - ✅ Shows matching students
+   - ✅ Does NOT show already-registered students
+5. Click a student from dropdown
+6. **Expected**:
+   - ✅ Search box clears
+   - ✅ Dropdown disappears
+   - ✅ Selected student appears below search
+   - ✅ Shows "Walk-In (requires payment)" label (orange)
+   - ✅ Payment method dropdown visible
+   - ✅ Check-in button available
+
+#### Test 6: Check In Walk-In Student
+
+1. Search for and select a walk-in student
+2. Select payment method: "EFTPOS"
+3. Click "Check In" button
+4. **Expected**:
+   - ✅ Loading spinner
+   - ✅ Success snackbar
+   - ✅ Modal refreshes
+   - ✅ Walk-in student appears in "Already Checked In" section
+5. Check Firestore:
+   - ✅ New `transaction` document created:
+     - `type: 'workshop-entry'`
+     - `paymentMethod: 'eftpos'`
+     - `amount: [workshop cost]`
+   - ✅ New `checkin` document created:
+     - `notes: 'Walk-in registration'`
+     - `paymentMethod: 'eftpos'`
+     - `amountPaid: [workshop cost]`
+   - ✅ Workshop document updated:
+     - `checkedInStudents` contains walk-in studentId
+     - `invitedStudents` contains walk-in studentId (for portal access)
+     - `registeredStudents` contains new registration object:
+       ```json
+       {
+         "studentId": "...",
+         "studentName": "...",
+         "registeredAt": <Timestamp>,
+         "paidOnline": false,
+         "transactionId": "..."
+       }
+       ```
+
+#### Test 7: Modal State Management
+
+1. Check in all registered students
+2. **Expected**:
+   - ✅ "Registered Students" section disappears
+   - ✅ "Already Checked In" section shows all students
+3. Close modal and reopen
+4. **Expected**:
+   - ✅ State persists correctly
+   - ✅ All checked-in students in "Already Checked In" section
+5. Search for new walk-in
+6. **Expected**:
+   - ✅ Search still works
+   - ✅ Already-checked-in students filtered out of search
+
+#### Test 8: Payment Method Validation
+
+1. Check in pay-later student with different payment methods:
+   - Cash
+   - EFTPOS
+   - Bank Transfer
+2. **Expected**:
+   - ✅ Each creates transaction with correct `paymentMethod`
+   - ✅ Check-in document records correct method
+3. Check transactions in admin tools:
+   - ✅ All appear with type: "workshop-entry"
+   - ✅ Correct payment methods displayed
+
+#### Test 9: Walk-In Not in Database
+
+1. Open check-in modal
+2. Search for non-existent student name (e.g., "ZZZZZ")
+3. **Expected**:
+   - ✅ Message: "No matching students found"
+   - ✅ No students in dropdown
+
+#### Test 10: Responsive Mobile Check-In
+
+1. Open DevTools, set mobile viewport (375px)
+2. Click check-in button (in mobile card)
+3. **Expected**:
+   - ✅ Modal opens and fills screen appropriately
+   - ✅ Students stack vertically
+   - ✅ Payment dropdowns full width
+   - ✅ Check-in buttons full width
+   - ✅ Search box full width
+4. Perform check-in on mobile
+5. **Expected**: Same functionality as desktop
+
+#### Test 11: Multiple Rapid Check-Ins
+
+1. Open check-in modal with 5+ registered students
+2. Quickly check in multiple students in sequence
+3. **Expected**:
+   - ✅ Each check-in completes before next starts (loading spinner)
+   - ✅ All students successfully checked in
+   - ✅ No race conditions or duplicate transactions
+   - ✅ Modal refreshes correctly after each check-in
+
+#### Test 12: Workshop Table Integration
+
+1. Check in students for a workshop
+2. Close modal
+3. **Expected**:
+   - ✅ Workshop registration count remains same (walk-ins increase it)
+   - ✅ Table displays updated data
+4. If walk-in added:
+   - ✅ Registration count increases by 1
+5. Refresh page
+6. **Expected**:
+   - ✅ All check-ins persist
+   - ✅ Counts accurate
+
+### Integration Status
+
+With Phase 7 complete, the admin workshop management system is fully functional:
+
+✅ **Phases 1-7 Complete**:
+- Firestore data model and security rules
+- Cloud Functions for online payments
+- Full admin UI (HTML/CSS/JS)
+- CRUD operations for workshops
+- Invite management
+- Video management
+- Check-in tracking with walk-ins
+
+⏳ **Still Pending**:
+- Phase 8: Admin navigation integration (header/dashboard)
+- Phase 9: Student portal integration (nav button, workshop display, videos)
+
+**Next Priority**: Phase 8 - Integrate workshop management into admin header and dashboard navigation.
+
+### 7.1 Create workshop-checkin-modal.js (ORIGINAL SPEC)
 
 **File**: `admin/workshops/workshop-checkin-modal.js`
 
@@ -1691,9 +1946,469 @@ Add workshop check-in styling (after the existing `.checkin-type.crew` rule, aro
 - **Check-in History**: Workshop check-ins will appear on regular check-in page with correct "Workshop" label instead of "Free Entry"
 - **Check-in Styling**: Ensures workshop check-ins have distinct visual appearance matching workshop theme
 
----for "Pay Later" registrations AND walk-ins (who always pay on arrival)
-- Students who paid online have read-only "Online Payment" indicator
-- **Walk-In Students**: Students who didn't pre-register can be checked in via the search function. They are added to both `invitedStudents[]` (for portal access) and `checkedInStudents[]` (for video access) at check-in time. Walk-ins always require payment at check-in.
+---
+
+## Phase 9: Student Portal Integration
+
+### Overview
+
+Phase 9 implements the student-facing workshop features, allowing students to:
+- View workshops they're invited to or open to all students
+- Register and pay for workshops online via Stripe
+- Access workshop videos after checking in
+- View their workshop registration history
+
+### 9.1 Student Portal Navigation
+
+**File**: `student-portal/components/student-nav.html` (or equivalent)
+
+Add Workshops navigation button to student portal header.
+
+**Implementation**:
+1. Add navigation link between existing nav items (after Classes, before Prepay)
+2. Icon: `fas fa-chalkboard` or `fas fa-chalkboard-teacher`
+3. Link points to `/student-portal/workshops/`
+4. Mobile drawer should include this link automatically
+
+**File**: `student-portal/js/header-config.js` (if exists)
+
+Add configuration:
+```javascript
+{
+  activePage: 'workshops',
+  backButton: null, // No back button, top-level page
+  title: 'Workshops'
+}
+```
+
+**Testing**:
+1. Navigate to student portal as logged-in student
+2. Verify Workshops button appears in navigation bar
+3. Click button - should navigate to workshops page (even if it shows 404 for now)
+4. Test mobile view - Workshops appears in mobile drawer
+
+---
+
+### 9.2 Student Workshop List Page
+
+**File**: `student-portal/workshops/index.html`
+
+Create student workshop listing page showing:
+- Open workshops (openToAll = true)
+- Private workshops student is invited to
+- Workshops student has registered for
+
+**Features**:
+- Filter by upcoming vs past workshops
+- Show registration status (Not Registered / Registered / Attended)
+- Display workshop name, date, topic, description, cost
+- "Register" button for workshops not yet registered
+- "View Details" to see more info and videos (if checked in)
+
+**Structure**:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshops - Urban Swing Dance Company</title>
+    
+    <!-- Firebase SDK -->
+    <!-- Student portal styles -->
+    <!-- Workshop-specific styles -->
+</head>
+<body>
+    <div id="student-nav-container"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Workshops</h1>
+        </div>
+        
+        <div class="filter-section">
+            <button class="filter-btn active" data-filter="upcoming">Upcoming</button>
+            <button class="filter-btn" data-filter="past">Past</button>
+            <button class="filter-btn" data-filter="registered">My Registrations</button>
+        </div>
+        
+        <div id="loading-state">
+            <!-- Loading spinner -->
+        </div>
+        
+        <div id="empty-state" style="display: none;">
+            <!-- No workshops message -->
+        </div>
+        
+        <div id="workshops-list">
+            <!-- Workshop cards populated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Modals container -->
+    <div id="modals-container"></div>
+    
+    <script src="workshops.js"></script>
+</body>
+</html>
+```
+
+---
+
+### 9.3 Student Workshop JavaScript
+
+**File**: `student-portal/workshops/workshops.js`
+
+Core logic for loading and displaying workshops to students.
+
+**Key Functions**:
+
+```javascript
+// Load workshops for current student
+async function loadStudentWorkshops() {
+    // Query workshops where:
+    // - openToAll = true, OR
+    // - currentStudent.studentId in invitedStudents array
+    
+    // Order by date, separate into upcoming/past
+}
+
+// Render workshop card
+function renderWorkshopCard(workshop, studentStatus) {
+    // Show workshop info: name, date, topic, description, cost
+    // Show registration status badge (Not Registered / Registered / Attended)
+    // Show "Register" button if not registered
+    // Show "View Details" button if registered or checked in
+    // Show video count if checked in
+}
+
+// Open workshop details modal
+function openWorkshopDetailsModal(workshopId) {
+    // Show full workshop info
+    // If student is in checkedInStudents[], show videos
+    // If not checked in yet, show message about video access
+}
+
+// Open registration modal (Stripe payment)
+function openWorkshopRegistrationModal(workshopId) {
+    // Show workshop cost
+    // Stripe Elements for payment
+    // "Pay Now" button calls Cloud Function
+    // "Pay Later" option (adds to registeredStudents with paidOnline: false)
+}
+```
+
+**Firestore Queries**:
+```javascript
+// Load workshops for student
+const studentId = currentUser.studentId;
+
+// Open workshops
+const openWorkshopsQuery = db.collection('workshops')
+    .where('openToAll', '==', true)
+    .where('status', '==', 'published');
+
+// Invited workshops
+const invitedWorkshopsQuery = db.collection('workshops')
+    .where('invitedStudents', 'array-contains', studentId)
+    .where('status', '==', 'published');
+
+// Combine results and deduplicate
+```
+
+---
+
+### 9.4 Workshop Registration Modal (Student)
+
+**File**: `student-portal/workshops/workshop-registration-modal.js`
+
+Handles student registration and payment for workshops.
+
+**Features**:
+- Display workshop details and cost
+- Stripe Elements integration (similar to casual rates)
+- "Pay Now" button → calls `processWorkshopPayment` Cloud Function
+- "Pay Later" option (optional) → adds registration without payment
+- Success: Redirect to workshop details or confirmation page
+
+**Structure**:
+```javascript
+function openWorkshopRegistrationModal(workshop) {
+    const modal = new BaseModal({
+        id: 'workshop-registration-modal',
+        title: 'Register for Workshop',
+        content: generateRegistrationContent(workshop),
+        buttons: [] // Custom payment buttons in content
+    });
+    
+    modal.show();
+    initializeStripeElements();
+}
+
+async function handleWorkshopRegistration(workshopId, paymentMethodId) {
+    // Call Cloud Function
+    const response = await fetch(CLOUD_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            studentId: currentUser.studentId,
+            workshopId: workshopId,
+            paymentMethodId: paymentMethodId
+        })
+    });
+    
+    if (response.ok) {
+        showSnackbar('Registration successful!', 'success');
+        // Refresh workshop list
+        // Close modal
+    }
+}
+```
+
+---
+
+### 9.5 Workshop Details Modal (Student)
+
+**File**: `student-portal/workshops/workshop-details-modal.js`
+
+Shows full workshop information and videos (if student checked in).
+
+**Features**:
+- Display workshop name, date, topic, full description
+- Show registration status
+- **Video Access Control**: Only show videos if `currentUser.studentId` is in the workshop's `checkedInStudents` array
+- If not checked in: Show message "Videos will be available after attending the workshop"
+- If checked in: Display video list with YouTube embeds or links
+
+**Structure**:
+```javascript
+function openWorkshopDetailsModal(worksheet) {
+    const isCheckedIn = workshop.checkedInStudents?.includes(currentUser.studentId);
+    
+    const modal = new BaseModal({
+        id: 'workshop-details-modal',
+        title: workshop.name,
+        size: 'large',
+        content: generateDetailsContent(workshop, isCheckedIn),
+        buttons: [
+            {
+                text: 'Close',
+                variant: 'secondary',
+                onClick: (modal) => modal.hide()
+            }
+        ]
+    });
+    
+    modal.show();
+}
+
+function generateDetailsContent(workshop, isCheckedIn) {
+    return `
+        <div class="workshop-details">
+            <div class="workshop-info">
+                <strong>Date:</strong> ${formatDate(workshop.date)}<br>
+                <strong>Topic:</strong> ${workshop.topic}<br>
+                <strong>Cost:</strong> $${workshop.cost}
+            </div>
+            
+            <div class="workshop-description">
+                <h3>Description</h3>
+                <p>${workshop.description}</p>
+            </div>
+            
+            <div class="workshop-videos">
+                <h3>Workshop Videos</h3>
+                ${isCheckedIn ? renderVideos(workshop.videos) : `
+                    <div class="info-message">
+                        <i class="fas fa-info-circle"></i>
+                        Videos will be available after you attend the workshop
+                    </div>
+                `}
+            </div>
+        </div>
+    `;
+}
+
+function renderVideos(videos) {
+    if (!videos || videos.length === 0) {
+        return '<p>No videos available yet.</p>';
+    }
+    
+    return videos.map(video => `
+        <div class="video-item">
+            <a href="${video.url}" target="_blank" rel="noopener">
+                <i class="fas fa-play-circle"></i> ${video.title}
+            </a>
+            <span class="video-date">Added: ${formatDate(video.addedAt)}</span>
+        </div>
+    `).join('');
+}
+```
+
+---
+
+### 9.6 Student Workshop Styles
+
+**File**: `student-portal/workshops/workshops.css`
+
+Styles for student workshop pages and modals.
+
+**Key Styles**:
+- Workshop cards with hover effects
+- Registration status badges (not-registered, registered, attended)
+- Video list styling with play icons
+- Responsive design for mobile
+- Payment form styling for Stripe Elements
+
+**Badge Colors**:
+```css
+.status-badge.not-registered {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+}
+
+.status-badge.registered {
+    background: var(--info-light);
+    color: var(--info-dark);
+}
+
+.status-badge.attended {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+```
+
+---
+
+### 9.7 Testing Student Portal Features
+
+#### Test 1: Navigate to Workshops
+
+1. Log in as student
+2. Verify Workshops button in navigation
+3. Click Workshops button
+4. **Expected**: Navigate to workshops page
+
+#### Test 2: View Open Workshops
+
+1. Create workshop with `openToAll: true`
+2. As student, navigate to workshops page
+3. **Expected**:
+   - ✅ Workshop appears in list
+   - ✅ Shows name, date, topic, cost
+   - ✅ Shows "Not Registered" status
+   - ✅ "Register" button visible
+
+#### Test 3: View Invited Workshop
+
+1. Create workshop with `openToAll: false`
+2. Add student's studentId to `invitedStudents` array
+3. As that student, view workshops page
+4. **Expected**:
+   - ✅ Private workshop appears
+   - ✅ "Register" button visible
+
+#### Test 4: Hidden Workshop
+
+1. Create workshop with `openToAll: false`
+2. Do NOT add student to `invitedStudents`
+3. As that student, view workshops page
+4. **Expected**:
+   - ✅ Workshop does NOT appear in list
+
+#### Test 5: Register for Workshop (Stripe Payment)
+
+1. Click "Register" on a workshop
+2. Fill in Stripe payment details (test card: 4242424242424242)
+3. Click "Pay Now"
+4. **Expected**:
+   - ✅ Loading spinner
+   - ✅ Success message
+   - ✅ Workshop status changes to "Registered"
+   - ✅ "Register" button replaced with "View Details"
+5. Check Firestore:
+   - ✅ Transaction created with `type: 'workshop-entry'`, `paymentMethod: 'online'`
+   - ✅ Workshop's `registeredStudents` includes student with `paidOnline: true`
+
+#### Test 6: View Workshop Details (Not Checked In)
+
+1. Register for a workshop
+2. Click "View Details"
+3. **Expected**:
+   - ✅ Modal shows workshop info
+   - ✅ Videos section shows message: "Videos will be available after you attend the workshop"
+   - ✅ No video links visible
+
+#### Test 7: View Workshop Videos (Checked In)
+
+1. Register for workshop
+2. As admin, check in the student
+3. As student, click "View Details"
+4. **Expected**:
+   - ✅ Modal shows workshop info
+   - ✅ Videos section shows video list
+   - ✅ Each video has clickable link to YouTube
+   - ✅ Date added displayed
+
+#### Test 8: Filter Workshops
+
+1. Create multiple workshops (past and future dates)
+2. Register for some workshops
+3. Test filters:
+   - Click "Upcoming" → shows only future workshops
+   - Click "Past" → shows only past workshops
+   - Click "My Registrations" → shows only workshops student registered for
+
+#### Test 9: Mobile Responsive
+
+1. Open student portal on mobile (< 768px)
+2. Navigate to Workshops
+3. **Expected**:
+   - ✅ Workshop cards stack vertically
+   - ✅ "Register" buttons full width
+   - ✅ Details modal responsive
+   - ✅ Video links tappable
+
+#### Test 10: Empty States
+
+1. As student with no available workshops:
+2. **Expected**:
+   - ✅ "No upcoming workshops" message
+3. Filter by "My Registrations" with no registrations:
+4. **Expected**:
+   - ✅ "You haven't registered for any workshops yet"
+
+---
+
+### Integration Checklist
+
+**Admin Side (Phases 1-8)**: ✅ Complete
+- Workshop CRUD operations
+- Invite management
+- Video management
+- Check-in tracking
+- Transaction handling
+
+**Student Side (Phase 9)**: ⏳ Pending
+- [ ] Navigation button added to student portal
+- [ ] Workshop list page created
+- [ ] Workshop cards render correctly
+- [ ] Registration modal with Stripe payment
+- [ ] Workshop details modal with video access control
+- [ ] Firestore security rules allow student read access (already done in Phase 1)
+- [ ] Cloud Function `processWorkshopPayment` accessible to students (already done in Phase 2)
+- [ ] Mobile responsive design
+
+**End-to-End Test**:
+1. Admin creates workshop
+2. Admin invites students (or opens to all)
+3. Student registers and pays
+4. Admin checks in student on workshop day
+5. Student accesses videos in portal
+6. Verify videos NOT accessible before check-in
+
+---
+
 ## Implementation Notes
 
 - All styles use existing color variables from `/styles/base/colors.css`
