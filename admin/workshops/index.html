@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Management | Urban Swing</title>
+    
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="/styles/base/colors.css">
+    <link rel="stylesheet" href="/styles/base/buttons.css">
+    <link rel="stylesheet" href="/styles/base/typography.css">
+    <link rel="stylesheet" href="/admin/admin.css">
+    
+    <!-- Modal Styles -->
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    
+    <!-- Date Picker Styles -->
+    <link rel="stylesheet" href="/styles/date-picker/date-picker.css">
+    
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="/styles/components/tables.css">
+    
+    <!-- Workshop-specific Styles -->
+    <link rel="stylesheet" href="workshops.css?v=7">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="main-container" class="dashboard-container">
+        <!-- Header will be injected by admin-header.js -->
+
+        <div class="admin-container">
+        <!-- Filter/Search Section -->
+        <div class="filter-section">
+            <button id="create-workshop-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Workshop
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="workshop-search" placeholder="Search workshops...">
+            </div>
+        </div>
+
+        <!-- Workshops Table -->
+        <div class="workshops-container">
+            <div id="loading-state" class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i> Loading workshops...
+            </div>
+            
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <p>No workshops yet</p>
+                <button class="btn btn-primary" onclick="document.getElementById('create-workshop-btn').click()">
+                    Create Your First Workshop
+                </button>
+            </div>
+            
+            <div id="workshops-table-container" class="table-container" style="display: none;">
+                <table class="data-table workshops-table">
+                    <thead class="table-header-gradient">
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Visibility</th>
+                            <th>Registrations</th>
+                            <th>Videos</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workshops-tbody">
+                        <!-- Rows populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="workshops-cards-container" class="workshops-cards" style="display: none;">
+                <!-- Cards populated by JavaScript on mobile -->
+            </div>
+        </div>        </div>    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="/config/firebase-config.js"></script>
+    <script src="/config/api-config.js"></script>
+    
+    <!-- Components -->
+    <script type="module" src="/components/modals/modal-base.js"></script>
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+    <script type="module" src="/components/snackbar/snackbar.js"></script>
+    
+    <!-- Admin Header Dependencies -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="/admin/js/header-config.js"></script>
+    <script src="/admin/js/header-configurator.js"></script>
+    <script src="/admin/js/mobile-nav.js"></script>
+    <script src="/admin/admin-header.js"></script>
+    
+    <!-- Date Picker -->
+    <script src="/functions/date-picker/date-picker.js"></script>
+    
+    <!-- Workshop Scripts -->
+    <script type="module" src="workshop-manager.js"></script>
+    <script type="module" src="workshop-modals.js"></script>
+    <script type="module" src="workshop-display.js"></script>
+    <script type="module" src="workshop-checkin-modal.js"></script>
+</body>
+</html>
+    <!-- Phase 7: <script type="module" src="workshop-checkin-modal.js"></script> -->
+    <!-- Phase 7: <script type="module" src="workshop-checkin-modal.js"></script> -->
+</body>
+</html>

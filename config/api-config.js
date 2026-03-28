@@ -22,7 +22,19 @@ const API_CONFIG = {
      * Process concession package purchase
      * POST endpoint for processing concession purchases
      */
-    CONCESSION_PURCHASE: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processConcessionPurchase`
+    CONCESSION_PURCHASE: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processConcessionPurchase`,
+
+    /**
+     * Process workshop registration payment
+     * POST endpoint for processing workshop registration payments
+     */
+    WORKSHOP_PAYMENT: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processWorkshopPayment`,
+
+    /**
+     * Cancel a student's workshop registration
+     * POST endpoint: { studentId, workshopId }
+     */
+    WORKSHOP_DEREGISTER: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/deregisterWorkshop`
 };
 
 // Make API_CONFIG available globally for non-module scripts

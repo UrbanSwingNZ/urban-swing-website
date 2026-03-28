@@ -53,6 +53,12 @@ async function processPendingCheckinsSnapshot(snapshot) {
                 continue;
             }
             
+            // Skip workshop entries — they are checked in at the door via the workshop
+            // check-in modal and do not need a separate pending check-in step
+            if (data.type === 'workshop-entry') {
+                continue;
+            }
+            
             // Fetch student info
             const studentDoc = await firebase.firestore()
                 .collection('students')

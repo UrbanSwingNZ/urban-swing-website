@@ -723,6 +723,11 @@
     color: var(--text-orange);
 }
 
+.checkin-type.workshop-entry {
+    background: var(--warning-lighter);
+    color: var(--text-orange-dark);
+}
+
 /* Reversed Check-in Styling */
 .reversed-checkin {
     opacity: 0.6;

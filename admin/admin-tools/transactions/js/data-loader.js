@@ -31,12 +31,14 @@ async function loadAllTransactions() {
  * Normalize transaction data to standard format
  */
 async function normalizeTransaction(transaction) {
-    const date = transaction.transactionDate?.toDate ? transaction.transactionDate.toDate() : new Date(transaction.transactionDate);
+    const date = transaction.transactionDate?.toDate ? transaction.transactionDate.toDate()
+        : transaction.date?.toDate ? transaction.date.toDate()
+        : new Date(transaction.transactionDate || transaction.date);
     const paymentMethod = (transaction.paymentMethod || '').toLowerCase();
     
     // Handle refund transactions differently
     const isRefund = transaction.type === 'refund';
-    const rawAmount = isRefund ? (transaction.amountRefunded || 0) : (transaction.amountPaid || 0);
+    const rawAmount = isRefund ? (transaction.amountRefunded || 0) : (transaction.amountPaid || transaction.amount || 0);
     // Make refund amounts negative so they subtract from totals
     const amount = isRefund ? -rawAmount : rawAmount;
     
@@ -82,6 +84,8 @@ async function normalizeTransaction(transaction) {
             transactionType = 'casual';
             typeName = 'Casual Entry';
         }
+    } else if (transactionType === 'workshop-entry') {
+        typeName = 'Workshop Entry';
     } else {
         typeName = 'Transaction';
     }

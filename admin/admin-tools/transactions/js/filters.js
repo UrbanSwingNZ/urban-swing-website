@@ -38,6 +38,7 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, 
             if (typeFilter === 'concession-gift' && transaction.type !== 'concession-gift') return false;
             // Match all casual entry types: 'casual-entry', 'casual', 'casual-student'
             if (typeFilter === 'casual-entry' && !['casual-entry', 'casual', 'casual-student'].includes(transaction.type)) return false;
+            if (typeFilter === 'workshop-entry' && transaction.type !== 'workshop-entry') return false;
         }
         
         // Payment method filter
