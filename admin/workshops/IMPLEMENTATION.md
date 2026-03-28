@@ -963,112 +963,271 @@ function openCreateWorkshopModal() {
 
 ---
 
-## Phase 6: Display & Rendering
+## Phase 6: Display & Rendering ✅ COMPLETED
 
-### 6.1 Create workshop-display.js
+### What Was Implemented
 
-**File**: `admin/workshops/workshop-display.js`
+**File**: `/admin/workshops/workshop-display.js` (124 lines)
 
-Renders workshop table, registration lists, etc.
+Created the workshop display and rendering module:
 
-**Key Functions**:
+**Key Features**:
+- Main rendering function that handles three states: loading, empty, and table display
+- Workshop row rendering with all columns: Name, Date, Visibility, Registrations, Videos, Actions
+- Badge rendering for visibility status (Open to All / Invite Only)
+- Count badges for registrations and videos with icons
+- Action buttons: Edit, Manage Invites (conditional), Manage Videos, Delete
+- Delete button disabled state for workshops with registrations
+- Proper formatting of workshop dates (DD/MM/YYYY HH:MMam/pm format)
+- Exports renderWorkshops() to window for manager.js to call
 
-```javascript
-function renderWorkshops() {
-    const tbody = document.getElementById('workshops-tbody');
-    const loadingState = document.getElementById('loading-state');
-    const emptyState = document.getElementById('empty-state');
-    const tableContainer = document.getElementById('workshops-table-container');
-    
-    // Handle empty state
-    if (filteredWorkshops.length === 0) {
-        loadingState.style.display = 'none';
-        tableContainer.style.display = 'none';
-        emptyState.style.display = 'block';
-        return;
-    }
-    
-    // Show table
-    loadingState.style.display = 'none';
-    emptyState.style.display = 'none';
-    tableContainer.style.display = 'block';
-    
-    // Render rows
-    tbody.innerHTML = filteredWorkshops.map(workshop => renderWorkshopRow(workshop)).join('');
-    
-    // Attach event listeners
-    attachWorkshopRowListeners();
-}
+**Functions Implemented**:
+- `renderWorkshops()` - Main rendering function, handles empty/loading/table states
+- `renderWorkshopRow(workshop)` - Generates HTML for individual table row
+- `getVisibilityBadge(openToAll)` - Returns visibility badge HTML (Open to All / Invite Only)
 
-function renderWorkshopRow(workshop) {
-    const statusBadge = `<span class="status-badge ${workshop.status}">${workshop.status}</span>`;
-    
-    const visibilityBadge = workshop.openToAll
-        ? `<span class="visibility-badge open-to-all"><i class="fas fa-globe"></i> Open to All</span>`
-        : `<span class="visibility-badge invite-only"><i class="fas fa-lock"></i> Invite Only</span>`;
-    
-    const registrationCount = workshop.registeredStudents.length;
-    const videoCount = workshop.videos.length;
-    
-    const formattedDate = formatDate(workshop.date);
-    
-    return `
-        <tr data-workshop-id="${workshop.id}">
-            <td>
-                <strong>${workshop.name}</strong>
-                <div style="font-size: 12px; color: var(--text-secondary);">${workshop.topic}</div>
-            </td>
-            <td>${formattedDate}</td>
-            <td>${statusBadge}</td>
-            <td>${visibilityBadge}</td>
-            <td>
-                <span class="count-badge">
-                    <i class="fas fa-users"></i> ${registrationCount}
-                </span>
-            </td>
-            <td>
-                <span class="count-badge">
-                    <i class="fas fa-video"></i> ${videoCount}
-                </span>
-            </td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn btn-view" onclick="viewWorkshopDetails('${workshop.id}')">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="action-btn btn-edit" onclick="openEditWorkshopModal('${workshop.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    ${!workshop.openToAll ? `
-                        <button class="action-btn" onclick="openManageInvitesModal('${workshop.id}')" style="background: var(--purple-primary); color: white;">
-                            <i class="fas fa-user-plus"></i> Invites
-                        </button>
-                    ` : ''}
-                    <button class="action-btn" onclick="openManageVideosModal('${workshop.id}')" style="background: var(--cyan); color: white;">
-                        <i class="fas fa-video"></i> Videos
-                    </button>
-                    <button class="action-btn btn-delete" onclick="confirmDeleteWorkshop('${workshop.id}')" ${registrationCount > 0 ? 'disabled title="Cannot delete workshop with registrations"' : ''}>
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-            </td>
-        </tr>
-    `;
-}
+**Design Changes from Original Spec**:
+- Status column and badges removed (workshop state determined by date only)
+- Date format changed to DD/MM/YYYY HH:MMam/pm (e.g., "12/04/2026 10:00am")
+- Table reduced from 7 columns to 6 columns (removed Status)
+- Invite button only shows for invite-only workshops
+- All buttons use icon-based styling with proper tooltips
 
-function formatDate(timestamp) {
-    if (!timestamp || !timestamp.toDate) return 'N/A';
-    const date = timestamp.toDate();
-    return date.toLocaleDateString('en-NZ', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-```
+### Testing Instructions
+
+Phase 6 completes the core workshop management UI. These tests verify the full integration of Phases 3-6 (HTML/CSS structure, business logic, modals, and display).
+
+#### Test 1: Initial Page Load & Empty State
+
+1. Navigate to `/admin/workshops/` (ensure you're logged in as admin)
+2. If no workshops exist:
+   - **Expected**: 
+     - ✅ Empty state displays with large icon
+     - ✅ "No workshops yet" message
+     - ✅ "Create Your First Workshop" button visible
+3. Click "Create Your First Workshop" button
+4. **Expected**: Create Workshop modal opens
+
+#### Test 2: Create Workshop & Table Display
+
+1. Click "Create Workshop" button
+2. Fill in form:
+   - **Name**: "Styling Fundamentals Workshop"
+   - **Date**: Select "12 April 2026"
+   - **Time**: Enter "10:00"
+   - **Topic**: "Introduction to styling basics"
+   - **Cost**: 25
+   - **Description**: "Learn the fundamentals of partner styling"
+   - **Open to All**: Check this checkbox
+3. Click "Create Workshop"
+4. **Expected**:
+   - ✅ Success snackbar: "Workshop created successfully"
+   - ✅ Modal closes
+   - ✅ Loading spinner disappears
+   - ✅ Workshop table displays
+   - ✅ One row visible with:
+     - Name: "Styling Fundamentals Workshop"
+     - Topic shown below name in smaller text
+     - Date: "12/04/2026 10:00am"
+     - Visibility: "Open to All" badge (green icon)
+     - Registrations: "0" with user icon
+     - Videos: "0" with video icon
+     - Actions: Edit, Videos, Delete buttons (NO Invites button)
+
+#### Test 3: Create Invite-Only Workshop
+
+1. Click "Create Workshop"
+2. Fill in form:
+   - **Name**: "Advanced Musicality"
+   - **Date**: Select "20 April 2026"
+   - **Time**: Enter "14:00"
+   - **Topic**: "Advanced musicality concepts"
+   - **Cost**: 30
+   - **Open to All**: Leave UNCHECKED
+3. Click "Create Workshop"
+4. **Expected**:
+   - ✅ Second row appears in table
+   - ✅ Visibility: "Invite Only" badge (purple lock icon)
+   - ✅ Action buttons include: Edit, Invites, Videos, Delete
+
+#### Test 4: Table Sorting & Display
+
+1. Verify both workshops are visible
+2. **Expected**:
+   - ✅ Workshops ordered by date (earliest first)
+   - ✅ Hover over table rows shows light background
+   - ✅ Table header has purple gradient
+   - ✅ All columns aligned properly
+
+#### Test 5: Search Functionality
+
+1. Type "styling" in search box
+2. **Expected**:
+   - ✅ "Advanced Musicality" disappears
+   - ✅ "Styling Fundamentals" remains visible
+3. Clear search box
+4. **Expected**:
+   - ✅ Both workshops reappear
+
+#### Test 6: Edit Workshop & Date Format
+
+1. Click "Edit" button on "Styling Fundamentals Workshop"
+2. **Expected**:
+   - ✅ Modal opens with all fields pre-populated
+   - ✅ Date field shows: "Sat, 12 Apr 2026" (or "12/04/2026" if already changed)
+   - ✅ Time field shows: "10:00"
+3. Change name to "Styling Basics Workshop"
+4. Click "Save Changes"
+5. **Expected**:
+   - ✅ Success snackbar appears
+   - ✅ Modal closes
+   - ✅ Table updates with new name immediately
+   - ✅ Date format remains: "12/04/2026 10:00am"
+
+#### Test 7: Manage Invites (Invite-Only Workshops)
+
+1. Click "Invites" button on "Advanced Musicality"
+2. **Expected**: Manage Invites modal opens with:
+   - ✅ Workshop name in title
+   - ✅ Student search input
+   - ✅ Empty invited list (or existing students if any)
+3. Type a student name in search
+4. **Expected**: Dropdown appears with matching students
+5. Click a student
+6. **Expected**:
+   - ✅ Success snackbar: "Student added to invited list"
+   - ✅ Student appears in invited list (alphabetically sorted)
+   - ✅ Student has "Remove" button (trash icon, right-aligned)
+7. Add 2-3 more students
+8. **Expected**:
+   - ✅ All students listed alphabetically by full name
+   - ✅ Vertical spacing: 8px between names
+   - ✅ If > 10 students, scrollbar appears (max-height: 300px)
+9. Close and reopen modal
+10. **Expected**: Students remain in list (persisted)
+
+#### Test 8: Manage Videos
+
+1. Click "Videos" button on any workshop
+2. **Expected**: Manage Videos modal opens with:
+   - ✅ "Add Video" section with Title and URL fields
+   - ✅ Add Video button aligned right
+   - ✅ Empty video list (or existing videos if any)
+3. Fill in:
+   - **Title**: "Drill 1: Connection"
+   - **URL**: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+4. Click "Add Video"
+5. **Expected**:
+   - ✅ Success snackbar appears
+   - ✅ Video appears in list with:
+     - Title as clickable external link
+     - Date added
+     - Delete button
+6. Click the video title link
+7. **Expected**: YouTube opens in new tab
+8. Add another video with invalid URL (e.g., "https://example.com")
+9. **Expected**: Warning snackbar: "Please enter a valid YouTube URL"
+10. Click "Delete" on first video
+11. **Expected**: Confirmation dialog → video removed
+
+#### Test 9: Delete Workshop
+
+1. Click "Delete" button on workshop with NO registrations
+2. **Expected**: Confirmation dialog with workshop name
+3. Click "Cancel"
+4. **Expected**: Nothing happens, workshop remains
+5. Click "Delete" again → Confirm
+6. **Expected**:
+   - ✅ Success snackbar: "Workshop deleted successfully"
+   - ✅ Workshop disappears from table
+   - ✅ If no workshops remain, empty state reappears
+
+#### Test 10: Delete Prevention
+
+1. Create a new workshop
+2. Manually add a registration to it via Firestore Console:
+   ```json
+   registeredStudents: [{
+     studentId: "test-student",
+     studentName: "Test Student",
+     registeredAt: <Timestamp>,
+     paidOnline: true
+   }]
+   ```
+3. Refresh the page
+4. **Expected**:
+   - ✅ Registrations count shows "1"
+   - ✅ Delete button is DISABLED (grayed out)
+   - ✅ Hover shows tooltip: "Cannot delete workshop with registrations"
+
+#### Test 11: Responsive Design
+
+1. Open DevTools → Toggle device toolbar (Ctrl+Shift+M)
+2. Set viewport to mobile (375px width)
+3. **Expected**:
+   - ✅ Create Workshop button stacks on its own line
+   - ✅ Search box takes full width
+   - ✅ Table is horizontally scrollable
+   - ✅ Action buttons stack vertically in cells
+4. Test modal responsiveness:
+   - Open any modal
+   - **Expected**: Modal adapts to mobile width properly
+
+#### Test 12: Data Persistence
+
+1. Create 2-3 workshops with different states:
+   - One with invited students
+   - One with videos
+   - One open to all
+2. Refresh the page (F5)
+3. **Expected**:
+   - ✅ All workshops reload from Firestore
+   - ✅ All data intact (names, dates, videos, invited students)
+   - ✅ Counts accurate (registrations, videos)
+4. Open browser in incognito/private mode
+5. Navigate to `/admin/workshops/`
+6. **Expected**: Redirected to login (auth check works)
+
+#### Test 13: Error Handling
+
+1. Open browser console
+2. Disable network (DevTools → Network → Offline)
+3. Try to create a workshop
+4. **Expected**: Error snackbar with appropriate message
+5. Re-enable network
+6. Try again
+7. **Expected**: Works normally
+
+#### Test 14: Multi-Workshop Workflow
+
+1. Create 5+ workshops with varying dates
+2. **Expected**: Listed in date order (earliest first)
+3. Edit multiple workshops in sequence
+4. **Expected**: All edits save correctly, no state conflicts
+5. Search for partial matches (e.g., "work")
+6. **Expected**: All workshops with "work" in name/topic/description appear
+7. Clear search
+8. **Expected**: All workshops reappear
+
+### Integration Status
+
+With Phase 6 complete, the workshop management system is now fully functional for admin operations:
+
+✅ **Phases 1-6 Complete**:
+- Firestore data model and security rules
+- Cloud Functions for online payments
+- Full admin UI with HTML/CSS
+- Core business logic (CRUD operations)
+- Modal handlers for all operations
+- Table display and rendering
+
+⏳ **Still Pending**:
+- Phase 7: Workshop check-in modal
+- Phase 8.1: Admin navigation integration (header/dashboard)
+- Phase 8.2: Defensive updates for existing admin pages
+- Phase 9: Student portal workshop display (future)
+
+**Next Priority**: Phase 7 - Implement workshop check-in functionality for tracking attendance and managing walk-ins.
 
 ---
 
