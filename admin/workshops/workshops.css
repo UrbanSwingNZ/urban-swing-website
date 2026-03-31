@@ -627,6 +627,47 @@
 
 /* Remove custom styling - let buttons use default .btn-icon styles */
 
+.btn-notes {
+    color: var(--purple-primary);
+}
+
+.btn-notes:hover {
+    background: var(--bg-purple-light, #f3e8ff);
+    color: var(--purple-dark, #5b21b6);
+}
+
+/* Notes Modal */
+.notes-modal-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.notes-textarea {
+    width: 100%;
+    min-height: 420px;
+    padding: var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.notes-textarea:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-light, #f3e8ff);
+}
+
+@media (max-width: 768px) {
+    .notes-textarea {
+        min-height: 60vh;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .page-header {
