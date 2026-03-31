@@ -133,6 +133,12 @@
     }
 }
 
+@media (hover: none) {
+    .count-badge.has-tooltip {
+        cursor: pointer;
+    }
+}
+
 #workshop-hover-tooltip {
     display: none;
     position: fixed;
