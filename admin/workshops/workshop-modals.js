@@ -548,9 +548,10 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
             <div class="invited-student-actions">
                 ${registerBtn}
                 ${deregisterBtn}
-                <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered || checkedIn ? 'disabled title="Cannot remove registered students"' : ''}>
+                ${(!registered && !checkedIn) ? `
+                <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" title="Remove invite">
                     <i class="fas fa-trash-alt"></i>
-                </button>
+                </button>` : ''}
             </div>
         </div>
     `;
