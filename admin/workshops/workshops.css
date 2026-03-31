@@ -127,6 +127,18 @@
     font-size: 13px;
 }
 
+button.count-badge {
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+button.count-badge.count-badge-clickable:hover {
+    background: var(--bg-purple-light);
+    color: var(--purple-primary);
+}
+
 @media (hover: hover) {
     .count-badge.has-tooltip {
         cursor: default;
