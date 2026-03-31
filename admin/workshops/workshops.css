@@ -127,6 +127,45 @@
     font-size: 13px;
 }
 
+button.count-badge {
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+button.count-badge.count-badge-clickable:hover {
+    background: var(--bg-purple-light);
+    color: var(--purple-primary);
+}
+
+@media (hover: hover) {
+    .count-badge.has-tooltip {
+        cursor: default;
+    }
+}
+
+@media (hover: none) {
+    .count-badge.has-tooltip {
+        cursor: pointer;
+    }
+}
+
+#workshop-hover-tooltip {
+    display: none;
+    position: fixed;
+    background: var(--text-primary);
+    color: white;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre;
+    padding: 6px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 /* Loading & Empty States */
 .loading-state,
 .empty-state {
@@ -626,6 +665,47 @@
 }
 
 /* Remove custom styling - let buttons use default .btn-icon styles */
+
+.btn-notes {
+    color: var(--purple-primary);
+}
+
+.btn-notes:hover {
+    background: var(--bg-purple-light, #f3e8ff);
+    color: var(--purple-dark, #5b21b6);
+}
+
+/* Notes Modal */
+.notes-modal-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.notes-textarea {
+    width: 100%;
+    min-height: 420px;
+    padding: var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.notes-textarea:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 3px var(--bg-purple-light, #f3e8ff);
+}
+
+@media (max-width: 768px) {
+    .notes-textarea {
+        min-height: 60vh;
+    }
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

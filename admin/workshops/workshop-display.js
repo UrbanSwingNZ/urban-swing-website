@@ -6,6 +6,69 @@
 import { filteredWorkshops, formatDate, formatCost } from './workshop-manager.js';
 
 // ============================================
+// FIXED TOOLTIP
+// ============================================
+
+let _tooltip = null;
+let _activeTooltipBadge = null;
+
+function getTooltipEl() {
+    if (!_tooltip) {
+        _tooltip = document.createElement('div');
+        _tooltip.id = 'workshop-hover-tooltip';
+        document.body.appendChild(_tooltip);
+    }
+    return _tooltip;
+}
+
+function showTooltip(badge) {
+    const tip = getTooltipEl();
+    tip.textContent = badge.dataset.tooltip.replace(/&#10;/g, '\n');
+    tip.style.display = 'block';
+    const rect = badge.getBoundingClientRect();
+    tip.style.left = `${rect.left + rect.width / 2}px`;
+    tip.style.top = `${rect.bottom + 6}px`;
+    tip.style.transform = 'translateX(-50%)';
+}
+
+function hideTooltip() {
+    getTooltipEl().style.display = 'none';
+    _activeTooltipBadge = null;
+}
+
+function initTooltipListeners() {
+    const tbody = document.getElementById('workshops-tbody');
+    if (tbody) {
+        tbody.addEventListener('mouseenter', (e) => {
+            const badge = e.target.closest('.has-tooltip');
+            if (!badge) return;
+            showTooltip(badge);
+        }, true);
+
+        tbody.addEventListener('mouseleave', (e) => {
+            if (!e.target.closest('.has-tooltip')) return;
+            hideTooltip();
+        }, true);
+    }
+
+    document.addEventListener('touchstart', (e) => {
+        const badge = e.target.closest('.has-tooltip');
+        const tip = getTooltipEl();
+        if (badge) {
+            e.preventDefault();
+            if (_activeTooltipBadge === badge) {
+                hideTooltip();
+            } else {
+                showTooltip(badge);
+                _activeTooltipBadge = badge;
+            }
+        } else if (tip.style.display === 'block') {
+            hideTooltip();
+        }
+    }, { passive: false });
+}
+
+// ============================================
 // MAIN RENDERING FUNCTION
 // ============================================
 
@@ -41,6 +104,8 @@ function renderWorkshops() {
     
     // Render cards (for mobile - visibility controlled by CSS media query)
     cardsContainer.innerHTML = filteredWorkshops.map(workshop => renderWorkshopCard(workshop)).join('');
+
+    initTooltipListeners();
 }
 
 // ============================================
@@ -52,7 +117,14 @@ function renderWorkshopRow(workshop) {
     const registrationCount = workshop.registeredStudents?.length || 0;
     const videoCount = workshop.videos?.length || 0;
     const formattedDate = formatDate(workshop.date);
-    
+
+    const registrationTooltip = registrationCount > 0
+        ? [...workshop.registeredStudents]
+            .sort((a, b) => a.studentName.localeCompare(b.studentName))
+            .map(r => r.studentName)
+            .join('&#10;')
+        : '';
+
     return `
         <tr data-workshop-id="${workshop.id}">
             <td>
@@ -62,16 +134,19 @@ function renderWorkshopRow(workshop) {
             <td>${formattedDate}</td>
             <td>${visibilityBadge}</td>
             <td class="text-center">
-                <span class="count-badge">
+                <span class="count-badge${registrationTooltip ? ' has-tooltip' : ''}" ${registrationTooltip ? `data-tooltip="${registrationTooltip}"` : ''}>
                     <i class="fas fa-users"></i> ${registrationCount}
                 </span>
             </td>
             <td class="text-center">
-                <span class="count-badge">
+                <button type="button" class="count-badge count-badge-clickable" onclick="window.openManageVideosModal('${workshop.id}')" title="Manage Videos">
                     <i class="fas fa-video"></i> ${videoCount}
-                </span>
+                </button>
             </td>
             <td class="action-buttons">
+                <button class="btn-icon btn-notes" onclick="window.openWorkshopNotesModal('${workshop.id}')" title="Workshop Notes">
+                    <i class="fas fa-sticky-note"></i>
+                </button>
                 <button class="btn-icon" onclick="window.openEditWorkshopModal('${workshop.id}')" title="Edit Workshop">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -82,9 +157,6 @@ function renderWorkshopRow(workshop) {
                 ` : ''}
                 <button class="btn-icon" onclick="window.openWorkshopCheckinModal('${workshop.id}')" title="Check-In Students">
                     <i class="fas fa-clipboard-check"></i>
-                </button>
-                <button class="btn-icon btn-video" onclick="window.openManageVideosModal('${workshop.id}')" title="Manage Videos">
-                    <i class="fas fa-video"></i>
                 </button>
                 <button class="btn-icon btn-delete" onclick="window.confirmDeleteWorkshop('${workshop.id}')" 
                     ${registrationCount > 0 ? 'disabled title="Cannot delete workshop with registrations"' : 'title="Delete Workshop"'}>
@@ -104,6 +176,12 @@ function renderWorkshopCard(workshop) {
     const registrationCount = workshop.registeredStudents?.length || 0;
     const videoCount = workshop.videos?.length || 0;
     const formattedDate = formatDate(workshop.date);
+    const registrationTooltip = registrationCount > 0
+        ? [...workshop.registeredStudents]
+            .sort((a, b) => a.studentName.localeCompare(b.studentName))
+            .map(r => r.studentName)
+            .join('&#10;')
+        : '';
     
     return `
         <div class="workshop-card" data-workshop-id="${workshop.id}">
@@ -115,15 +193,18 @@ function renderWorkshopCard(workshop) {
             
             <div class="workshop-card-info">
                 ${visibilityBadge}
-                <span class="count-badge">
+                <span class="count-badge${registrationTooltip ? ' has-tooltip' : ''}" ${registrationTooltip ? `data-tooltip="${registrationTooltip}"` : ''}>
                     <i class="fas fa-users"></i> ${registrationCount}
                 </span>
-                <span class="count-badge">
+                <button type="button" class="count-badge count-badge-clickable" onclick="window.openManageVideosModal('${workshop.id}')" title="Manage Videos">
                     <i class="fas fa-video"></i> ${videoCount}
-                </span>
+                </button>
             </div>
             
             <div class="workshop-card-actions">
+                <button class="btn-icon btn-notes" onclick="window.openWorkshopNotesModal('${workshop.id}')" title="Workshop Notes">
+                    <i class="fas fa-sticky-note"></i>
+                </button>
                 <button class="btn-icon" onclick="window.openEditWorkshopModal('${workshop.id}')" title="Edit Workshop">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -135,10 +216,7 @@ function renderWorkshopCard(workshop) {
                 <button class="btn-icon" onclick="window.openWorkshopCheckinModal('${workshop.id}')" title="Check-In Students">
                     <i class="fas fa-clipboard-check"></i>
                 </button>
-                <button class="btn-icon btn-video" onclick="window.openManageVideosModal('${workshop.id}')" title="Manage Videos">
-                    <i class="fas fa-video"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="window.confirmDeleteWorkshop('${workshop.id}')" 
+                <button class="btn-icon btn-delete" onclick="window.confirmDeleteWorkshop('${workshop.id}')"  
                     ${registrationCount > 0 ? 'disabled title="Cannot delete workshop with registrations"' : 'title="Delete Workshop"'}>
                     <i class="fas fa-trash-alt"></i>
                 </button>
