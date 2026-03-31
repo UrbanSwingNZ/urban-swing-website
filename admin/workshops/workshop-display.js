@@ -72,6 +72,9 @@ function renderWorkshopRow(workshop) {
                 </span>
             </td>
             <td class="action-buttons">
+                <button class="btn-icon btn-notes" onclick="window.openWorkshopNotesModal('${workshop.id}')" title="Workshop Notes">
+                    <i class="fas fa-sticky-note"></i>
+                </button>
                 <button class="btn-icon" onclick="window.openEditWorkshopModal('${workshop.id}')" title="Edit Workshop">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -124,6 +127,9 @@ function renderWorkshopCard(workshop) {
             </div>
             
             <div class="workshop-card-actions">
+                <button class="btn-icon btn-notes" onclick="window.openWorkshopNotesModal('${workshop.id}')" title="Workshop Notes">
+                    <i class="fas fa-sticky-note"></i>
+                </button>
                 <button class="btn-icon" onclick="window.openEditWorkshopModal('${workshop.id}')" title="Edit Workshop">
                     <i class="fas fa-edit"></i>
                 </button>
