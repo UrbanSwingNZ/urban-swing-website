@@ -6,6 +6,43 @@
 import { filteredWorkshops, formatDate, formatCost } from './workshop-manager.js';
 
 // ============================================
+// FIXED TOOLTIP
+// ============================================
+
+let _tooltip = null;
+
+function getTooltipEl() {
+    if (!_tooltip) {
+        _tooltip = document.createElement('div');
+        _tooltip.id = 'workshop-hover-tooltip';
+        document.body.appendChild(_tooltip);
+    }
+    return _tooltip;
+}
+
+function initTooltipListeners() {
+    const tbody = document.getElementById('workshops-tbody');
+    if (!tbody) return;
+
+    tbody.addEventListener('mouseenter', (e) => {
+        const badge = e.target.closest('.has-tooltip');
+        if (!badge) return;
+        const tip = getTooltipEl();
+        tip.textContent = badge.dataset.tooltip.replace(/&#10;/g, '\n');
+        tip.style.display = 'block';
+        const rect = badge.getBoundingClientRect();
+        tip.style.left = `${rect.left + rect.width / 2}px`;
+        tip.style.top = `${rect.bottom + 6}px`;
+        tip.style.transform = 'translateX(-50%)';
+    }, true);
+
+    tbody.addEventListener('mouseleave', (e) => {
+        if (!e.target.closest('.has-tooltip')) return;
+        getTooltipEl().style.display = 'none';
+    }, true);
+}
+
+// ============================================
 // MAIN RENDERING FUNCTION
 // ============================================
 
@@ -41,6 +78,8 @@ function renderWorkshops() {
     
     // Render cards (for mobile - visibility controlled by CSS media query)
     cardsContainer.innerHTML = filteredWorkshops.map(workshop => renderWorkshopCard(workshop)).join('');
+
+    initTooltipListeners();
 }
 
 // ============================================
@@ -52,7 +91,14 @@ function renderWorkshopRow(workshop) {
     const registrationCount = workshop.registeredStudents?.length || 0;
     const videoCount = workshop.videos?.length || 0;
     const formattedDate = formatDate(workshop.date);
-    
+
+    const registrationTooltip = registrationCount > 0
+        ? [...workshop.registeredStudents]
+            .sort((a, b) => a.studentName.localeCompare(b.studentName))
+            .map(r => r.studentName)
+            .join('&#10;')
+        : '';
+
     return `
         <tr data-workshop-id="${workshop.id}">
             <td>
@@ -62,7 +108,7 @@ function renderWorkshopRow(workshop) {
             <td>${formattedDate}</td>
             <td>${visibilityBadge}</td>
             <td class="text-center">
-                <span class="count-badge">
+                <span class="count-badge${registrationTooltip ? ' has-tooltip' : ''}" ${registrationTooltip ? `data-tooltip="${registrationTooltip}"` : ''}>
                     <i class="fas fa-users"></i> ${registrationCount}
                 </span>
             </td>

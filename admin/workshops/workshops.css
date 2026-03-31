@@ -127,6 +127,27 @@
     font-size: 13px;
 }
 
+@media (hover: hover) {
+    .count-badge.has-tooltip {
+        cursor: default;
+    }
+}
+
+#workshop-hover-tooltip {
+    display: none;
+    position: fixed;
+    background: var(--text-primary);
+    color: white;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre;
+    padding: 6px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 /* Loading & Empty States */
 .loading-state,
 .empty-state {
