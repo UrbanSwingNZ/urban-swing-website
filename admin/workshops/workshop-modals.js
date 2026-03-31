@@ -548,9 +548,10 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
             <div class="invited-student-actions">
                 ${registerBtn}
                 ${deregisterBtn}
-                <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" ${registered || checkedIn ? 'disabled title="Cannot remove registered students"' : ''}>
+                ${(!registered && !checkedIn) ? `
+                <button class="btn-icon btn-delete" onclick="handleRemoveInvite('${workshop.id}', '${studentId}')" title="Remove invite">
                     <i class="fas fa-trash-alt"></i>
-                </button>
+                </button>` : ''}
             </div>
         </div>
     `;
@@ -928,6 +929,57 @@ async function confirmDeleteWorkshop(workshopId) {
 }
 
 // ============================================
+// NOTES MODAL
+// ============================================
+
+async function openWorkshopNotesModal(workshopId) {
+    const workshop = getWorkshopById(workshopId);
+    if (!workshop) {
+        showSnackbar('Workshop not found', 'error');
+        return;
+    }
+
+    const modal = new BaseModal({
+        id: 'workshop-notes-modal',
+        title: `Notes: ${workshop.name}`,
+        size: 'large',
+        content: `
+            <div class="notes-modal-body">
+                <textarea id="workshop-notes-textarea" class="notes-textarea" placeholder="Add your notes here...">${escapeHtmlAttr(workshop.notes || '')}</textarea>
+            </div>
+        `,
+        buttons: [
+            {
+                text: 'Save',
+                class: 'btn-primary',
+                onClick: async (m) => {
+                    const text = document.getElementById('workshop-notes-textarea').value;
+                    try {
+                        await updateWorkshop(workshopId, { notes: text });
+                        showSnackbar('Notes saved', 'success');
+                        m.hide();
+                    } catch (error) {
+                        showSnackbar('Failed to save notes', 'error');
+                    }
+                }
+            },
+            {
+                text: 'Cancel',
+                class: 'btn-cancel',
+                onClick: (m) => m.hide()
+            }
+        ]
+    });
+
+    modal.show();
+}
+
+function escapeHtmlAttr(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ============================================
 // MAKE FUNCTIONS GLOBALLY AVAILABLE
 // ============================================
 
@@ -941,3 +993,4 @@ window.handleRemoveInvite = handleRemoveInvite;
 window.handleRemoveVideo = handleRemoveVideo;
 window.handleAdminRegister = handleAdminRegister;
 window.handleAdminDeregister = handleAdminDeregister;
+window.openWorkshopNotesModal = openWorkshopNotesModal;
