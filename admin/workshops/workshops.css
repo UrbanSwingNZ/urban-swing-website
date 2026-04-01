@@ -768,7 +768,14 @@ button.count-badge.count-badge-clickable:hover {
 
 @media (max-width: 768px) {
     .notes-textarea {
-        min-height: 60vh;
+        min-height: 40vh; /* fallback for browsers without dvh support */
+        min-height: 40dvh; /* dvh excludes browser chrome (address bar, nav controls) */
+    }
+
+    #workshop-notes-modal .modal-body {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     }
 }
 
