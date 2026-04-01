@@ -241,10 +241,16 @@ exports.processWorkshopPayment = onRequest(
         });
         
       } catch (error) {
+        // Pass Stripe card errors (declined, insufficient funds, etc.) back as 400
+        // so the client can show the actual reason to the user
+        if (error.type && (error.type === 'StripeCardError' || error.type === 'StripeInvalidRequestError')) {
+          response.status(400).json({ error: error.message });
+          return;
+        }
         console.error('Workshop payment error:', error);
-        response.status(500).json({ 
-          error: 'Internal server error processing workshop payment',
-          message: error.message 
+        response.status(500).json({
+          error: 'Something went wrong processing your payment. Please try again or contact us.',
+          message: error.message
         });
       }
     });

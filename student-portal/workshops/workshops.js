@@ -572,7 +572,16 @@ window.handleWorkshopRegistration = async function(workshopId, payNow) {
 
     } catch (error) {
         console.error('Registration error:', error);
-        showSnackbar(error.message || 'Registration failed. Please try again.', 'error');
+
+        const errorMessage = error.message || 'Registration failed. Please try again.';
+        showSnackbar(errorMessage, 'error');
+
+        // Also show the error inline in the modal so it's impossible to miss
+        const cardErrors = document.getElementById('card-errors');
+        if (cardErrors) {
+            cardErrors.textContent = errorMessage;
+            cardErrors.style.display = 'block';
+        }
 
         if (payBtn) {
             payBtn.disabled = false;
