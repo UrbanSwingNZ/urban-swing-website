@@ -163,6 +163,10 @@ exports.processWorkshopPayment = onRequest(
           customer: customerId,
           payment_method: data.paymentMethodId,
           confirm: true,
+          automatic_payment_methods: {
+            enabled: true,
+            allow_redirects: 'never'
+          },
           description: `Urban Swing - ${workshopData.name}`,
           metadata: {
             studentName: studentName,
