@@ -945,7 +945,7 @@ async function openWorkshopNotesModal(workshopId) {
         size: 'large',
         content: `
             <div class="notes-modal-body">
-                <textarea id="workshop-notes-textarea" class="notes-textarea" placeholder="Add your notes here...">${escapeHtmlAttr(workshop.notes || '')}</textarea>
+                <textarea class="notes-textarea" placeholder="Add your notes here...">${escapeHtmlAttr(workshop.notes || '')}</textarea>
             </div>
         `,
         buttons: [
@@ -953,7 +953,7 @@ async function openWorkshopNotesModal(workshopId) {
                 text: 'Save',
                 class: 'btn-primary',
                 onClick: async (m) => {
-                    const text = document.getElementById('workshop-notes-textarea').value;
+                    const text = m.element.querySelector('.notes-textarea').value;
                     try {
                         await updateWorkshop(workshopId, { notes: text });
                         showSnackbar('Notes saved', 'success');
