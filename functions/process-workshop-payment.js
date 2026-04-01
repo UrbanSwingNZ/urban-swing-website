@@ -148,9 +148,16 @@ exports.processWorkshopPayment = onRequest(
         }
         
         // Step 4: Attach payment method to customer and process payment directly
-        await stripe.paymentMethods.attach(data.paymentMethodId, {
-          customer: customerId
-        });
+        // (Ignore error if already attached to this customer)
+        try {
+          await stripe.paymentMethods.attach(data.paymentMethodId, {
+            customer: customerId
+          });
+        } catch (attachError) {
+          if (attachError.code !== 'payment_method_already_attached') {
+            throw attachError;
+          }
+        }
 
         await stripe.customers.update(customerId, {
           invoice_settings: { default_payment_method: data.paymentMethodId }
@@ -163,17 +170,15 @@ exports.processWorkshopPayment = onRequest(
           customer: customerId,
           payment_method: data.paymentMethodId,
           confirm: true,
-          automatic_payment_methods: {
-            enabled: true,
-            allow_redirects: 'never'
-          },
+          off_session: true,
           description: `Urban Swing - ${workshopData.name}`,
           metadata: {
             studentName: studentName,
             studentEmail: studentData.email,
             workshopId: data.workshopId,
             workshopName: workshopData.name,
-            type: 'workshop'
+            type: 'workshop',
+            source: 'student-portal'
           },
           receipt_email: studentData.email
         });
@@ -195,7 +200,10 @@ exports.processWorkshopPayment = onRequest(
         }
 
         const paymentIntentId = paymentIntent.id;
-        const receiptUrl = paymentIntent.charges?.data?.[0]?.receipt_url || null;
+        const latestCharge = paymentIntent.latest_charge
+          ? await stripe.charges.retrieve(paymentIntent.latest_charge)
+          : null;
+        const receiptUrl = latestCharge?.receipt_url || null;
         
         // Step 6: Create transaction record
         const transactionRef = await db.collection('transactions').add({
