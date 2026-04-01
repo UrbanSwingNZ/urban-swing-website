@@ -519,12 +519,24 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
     // Check if student is registered and/or checked in
     const registered = workshop.registeredStudents?.find(r => r.studentId === studentId);
     const checkedIn = workshop.checkedInStudents?.includes(studentId);
-    
-    let badge = '';
+
+    let checkedInBadge = '';
     if (checkedIn) {
-        badge = `<span class="status-badge" style="margin-left: 10px; padding: 3px 8px; background: var(--success); color: white; border-radius: 4px; font-size: 12px; font-weight: 600;">
+        checkedInBadge = `<span class="status-badge status-badge-checked-in">
                     <i class="fas fa-check-circle"></i> Checked In
                 </span>`;
+    }
+
+    let paymentBadge = '';
+    let paymentIconMobile = '';
+    if (registered) {
+        if (registered.paidOnline) {
+            paymentBadge = `<span class="status-badge status-badge-paid"><i class="fas fa-check"></i> Paid</span>`;
+            paymentIconMobile = `<span class="payment-icon-mobile payment-icon-paid" title="Paid online"><i class="fas fa-check-circle"></i></span>`;
+        } else {
+            paymentBadge = `<span class="status-badge status-badge-pending"><i class="fas fa-clock"></i> Pending Payment</span>`;
+            paymentIconMobile = `<span class="payment-icon-mobile payment-icon-pending" title="Payment pending"><i class="fas fa-clock"></i></span>`;
+        }
     }
 
     const registerBtn = (!registered && !checkedIn) ? `
@@ -542,8 +554,10 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
     return `
         <div class="invited-student-item" data-student-id="${studentId}">
             <div class="student-info">
+                ${paymentIconMobile}
                 <span class="student-name">${studentName}</span>
-                ${badge}
+                ${paymentBadge}
+                ${checkedInBadge}
             </div>
             <div class="invited-student-actions">
                 ${registerBtn}
