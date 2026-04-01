@@ -5,7 +5,8 @@
 
 const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
-const { createCustomer, processPayment } = require('./stripe/stripe-payment');
+const { createCustomer } = require('./stripe/stripe-payment');
+const { stripe, CURRENCY } = require('./stripe/stripe-config');
 const cors = require('cors')({ origin: true });
 
 /**
@@ -146,45 +147,51 @@ exports.processWorkshopPayment = onRequest(
           });
         }
         
-        // Step 4: Create workshop package info for payment processing
-        const workshopPackage = {
-          name: workshopData.name,
-          price: Math.round(workshopData.cost * 100), // Convert to cents
-          type: 'workshop'
-        };
-        
-        // Create temporary packages object for processPayment
-        const packages = {
-          [data.workshopId]: workshopPackage
-        };
-        
-        // Temporarily mock fetchPricing to return our workshop
-        const originalFetchPricing = require('./stripe/stripe-config').fetchPricing;
-        require('./stripe/stripe-config').fetchPricing = async () => packages;
-        
-        // Step 5: Process payment
-        const paymentResult = await processPayment({
-          customerId: customerId,
-          paymentMethodId: data.paymentMethodId,
-          packageId: data.workshopId,
-          studentData: {
-            firstName: studentData.firstName,
-            lastName: studentData.lastName,
-            email: studentData.email
-          }
+        // Step 4: Attach payment method to customer and process payment directly
+        await stripe.paymentMethods.attach(data.paymentMethodId, {
+          customer: customerId
         });
-        
-        // Restore original fetchPricing
-        require('./stripe/stripe-config').fetchPricing = originalFetchPricing;
-        
-        if (!paymentResult.success) {
-          response.status(400).json({ 
-            error: paymentResult.error,
-            requiresAction: paymentResult.requiresAction || false,
-            clientSecret: paymentResult.clientSecret || null
+
+        await stripe.customers.update(customerId, {
+          invoice_settings: { default_payment_method: data.paymentMethodId }
+        });
+
+        // Step 5: Create and confirm payment intent
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(workshopData.cost * 100),
+          currency: CURRENCY,
+          customer: customerId,
+          payment_method: data.paymentMethodId,
+          confirm: true,
+          description: `Urban Swing - ${workshopData.name}`,
+          metadata: {
+            studentName: studentName,
+            studentEmail: studentData.email,
+            workshopId: data.workshopId,
+            workshopName: workshopData.name,
+            type: 'workshop'
+          },
+          receipt_email: studentData.email
+        });
+
+        if (paymentIntent.status === 'requires_action') {
+          response.status(402).json({
+            error: 'Your card requires additional authentication. Please contact us to complete your registration.',
+            requiresAction: true,
+            clientSecret: paymentIntent.client_secret
           });
           return;
         }
+
+        if (paymentIntent.status !== 'succeeded') {
+          response.status(400).json({
+            error: `Payment failed (status: ${paymentIntent.status}). Please check your card details and try again.`
+          });
+          return;
+        }
+
+        const paymentIntentId = paymentIntent.id;
+        const receiptUrl = paymentIntent.charges?.data?.[0]?.receipt_url || null;
         
         // Step 6: Create transaction record
         const transactionRef = await db.collection('transactions').add({
@@ -199,7 +206,7 @@ exports.processWorkshopPayment = onRequest(
           date: admin.firestore.FieldValue.serverTimestamp(),
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           createdBy: data.studentId,
-          stripePaymentIntentId: paymentResult.paymentIntentId,
+          stripePaymentIntentId: paymentIntentId,
           reversed: false,
           refunded: null
         });
@@ -227,8 +234,8 @@ exports.processWorkshopPayment = onRequest(
         response.status(200).json({
           success: true,
           transactionId: transactionRef.id,
-          paymentIntentId: paymentResult.paymentIntentId,
-          receiptUrl: paymentResult.receiptUrl,
+          paymentIntentId: paymentIntentId,
+          receiptUrl: receiptUrl,
           workshopName: workshopData.name,
           amount: workshopData.cost
         });
