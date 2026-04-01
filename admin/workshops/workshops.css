@@ -559,6 +559,15 @@ button.count-badge.count-badge-clickable:hover {
     display: flex;
     align-items: center;
     flex: 1;
+    min-width: 0;
+    gap: 6px;
+}
+
+.invited-student-item .student-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
 }
 
 .invited-student-item .invited-student-actions {
@@ -570,6 +579,62 @@ button.count-badge.count-badge-clickable:hover {
 
 .invited-student-item .btn-icon {
     flex-shrink: 0;
+}
+
+/* Payment status badges (desktop: text badge after name) */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-badge-checked-in {
+    background: var(--success);
+    color: white;
+}
+
+.status-badge-paid {
+    background: var(--bg-success-light, #e8f5e9);
+    color: var(--success, #2e7d32);
+    border: 1px solid var(--success, #2e7d32);
+}
+
+.status-badge-pending {
+    background: var(--bg-warning-light, #fff8e1);
+    color: var(--warning-dark, #e65100);
+    border: 1px solid var(--warning, #f57c00);
+}
+
+/* Mobile: icon only, shown to left of name */
+.payment-icon-mobile {
+    display: none;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.payment-icon-paid {
+    color: var(--success, #2e7d32);
+}
+
+.payment-icon-pending {
+    color: var(--warning-dark, #e65100);
+}
+
+@media (max-width: 600px) {
+    .status-badge-paid,
+    .status-badge-pending {
+        display: none;
+    }
+
+    .payment-icon-mobile {
+        display: inline-flex;
+    }
 }
 
 /* Workshop Cards (Mobile View) */
@@ -703,7 +768,14 @@ button.count-badge.count-badge-clickable:hover {
 
 @media (max-width: 768px) {
     .notes-textarea {
-        min-height: 60vh;
+        min-height: 40vh; /* fallback for browsers without dvh support */
+        min-height: 40dvh; /* dvh excludes browser chrome (address bar, nav controls) */
+    }
+
+    #workshop-notes-modal .modal-body {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     }
 }
 
