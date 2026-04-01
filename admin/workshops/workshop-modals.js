@@ -671,8 +671,7 @@ async function handleRemoveInvite(workshopId, studentId) {
 }
 
 async function handleAdminRegister(workshopId, studentId) {
-    const spinner = new LoadingSpinner('invited-students-list');
-    spinner.show();
+    LoadingSpinner.showGlobal('Registering...');
     try {
         const response = await fetch(API_CONFIG.WORKSHOP_PAYMENT, {
             method: 'POST',
@@ -688,7 +687,7 @@ async function handleAdminRegister(workshopId, studentId) {
     } catch (error) {
         showSnackbar(`Failed to register: ${error.message}`, 'error');
     } finally {
-        spinner.hide();
+        LoadingSpinner.hideGlobal();
     }
 }
 
@@ -699,8 +698,7 @@ async function handleAdminDeregister(workshopId, studentId) {
         confirmText: 'De-register',
         confirmClass: 'btn-danger',
         onConfirm: async () => {
-            const spinner = new LoadingSpinner('invited-students-list');
-            spinner.show();
+            LoadingSpinner.showGlobal('De-registering...');
             try {
                 const user = firebase.auth().currentUser;
                 const token = user ? await user.getIdToken() : null;
@@ -721,7 +719,7 @@ async function handleAdminDeregister(workshopId, studentId) {
             } catch (error) {
                 showSnackbar(`Failed to de-register: ${error.message}`, 'error');
             } finally {
-                spinner.hide();
+                LoadingSpinner.hideGlobal();
             }
         }
     });
