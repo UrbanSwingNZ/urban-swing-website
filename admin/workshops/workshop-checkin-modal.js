@@ -23,17 +23,38 @@ let walkinListenerController = null;
 // Guard against concurrent/duplicate check-in writes
 let checkinInProgress = false;
 
+// Crew status cache for the current modal session (studentId -> boolean)
+let crewStatusMap = new Map();
+
+/**
+ * Fetches crew status for a list of registrations in one batch
+ * @param {Array} registrations - Array of {studentId, ...}
+ * @returns {Promise<Map>} Map of studentId -> boolean
+ */
+async function fetchCrewStatus(registrations) {
+    const map = new Map();
+    if (!registrations.length) return map;
+    const uniqueIds = [...new Set(registrations.map(r => r.studentId))];
+    const docs = await Promise.all(uniqueIds.map(id => db.collection('students').doc(id).get()));
+    docs.forEach(doc => {
+        if (doc.exists) map.set(doc.id, doc.data().crewMember === true);
+    });
+    return map;
+}
+
 /**
  * Opens the workshop check-in modal
  * @param {string} workshopId - The workshop document ID
  */
-function openWorkshopCheckinModal(workshopId) {
+async function openWorkshopCheckinModal(workshopId) {
     const workshop = workshops.find(w => w.id === workshopId);
     if (!workshop) {
         showSnackbar('Workshop not found', 'error');
         return;
     }
-    
+
+    crewStatusMap = await fetchCrewStatus(workshop.registeredStudents || []);
+
     const modal = new BaseModal({
         id: 'workshop-checkin-modal',
         title: `Check-In: ${workshop.name}`,
@@ -97,7 +118,7 @@ function generateCheckinContent(workshop) {
                     <i class="fas fa-users"></i> Registered Students (${notCheckedIn.length})
                 </h3>
                 <div class="checkin-list">
-                    ${notCheckedIn.map(reg => renderCheckinStudent(reg, workshop, false)).join('')}
+                    ${notCheckedIn.map(reg => renderCheckinStudent(reg, workshop, false, crewStatusMap.get(reg.studentId) || false)).join('')}
                 </div>
             </div>
         ` : ''}
@@ -128,37 +149,42 @@ function generateCheckinContent(workshop) {
  * @param {boolean} isWalkIn - Whether this is a walk-in student
  * @returns {string} HTML for student row
  */
-function renderCheckinStudent(registration, workshop, isWalkIn = false) {
+function renderCheckinStudent(registration, workshop, isWalkIn = false, isCrew = false) {
     const paidBadge = registration.paidOnline
         ? `<span class="payment-indicator paid-online"><i class="fas fa-check-circle"></i> Paid Online</span>`
         : `<span class="payment-indicator pay-later"><i class="fas fa-clock"></i> Pay Later</span>`;
     
     const studentName = registration.studentName || registration.studentId;
+    const crewBadge = isCrew
+        ? `<span class="type-badge crew" style="margin-left: 6px;">Crew</span>`
+        : '';
     const registrationInfo = !isWalkIn 
         ? `Registered: ${formatDate(registration.registeredAt)} | ${paidBadge}` 
         : `<strong style="color: var(--orange-primary);">Walk-In</strong> (requires payment)`;
     
     // Payment method selector only for pay-later and walk-ins
     const needsPayment = !registration.paidOnline || isWalkIn;
+    const defaultPayment = isCrew ? 'free' : 'cash';
     
     return `
         <div class="checkin-item" data-student-id="${registration.studentId}">
             <div class="checkin-item-row">
-                <div class="student-name">${studentName}</div>
+                <div class="student-name">${studentName}${crewBadge}</div>
                 <button class="btn btn-primary btn-checkin" 
                         data-student-id="${registration.studentId}" 
                         data-paid-online="${registration.paidOnline || false}"
                         data-walk-in="${isWalkIn}">
-                    <i class="fas fa-check"></i> Check In
+                    <i class="fas fa-check"></i><span class="btn-checkin-text"> Check In</span>
                 </button>
             </div>
             ${needsPayment ? `
             <div class="checkin-item-row">
                 <label class="payment-method-label">Payment Method:</label>
                 <select class="payment-method-select" data-student-id="${registration.studentId}">
-                    <option value="cash">Cash</option>
+                    <option value="cash" ${defaultPayment === 'cash' ? 'selected' : ''}>Cash</option>
                     <option value="eftpos">EFTPOS</option>
                     <option value="bank-transfer">Bank Transfer</option>
+                    <option value="free" ${defaultPayment === 'free' ? 'selected' : ''}>Free Entry (Crew)</option>
                 </select>
             </div>
             ` : ''}
@@ -214,6 +240,7 @@ function attachCheckinListeners(workshop, modal) {
  * @param {HTMLElement} container - Container to render into
  */
 function selectWalkInStudent(student, workshop, container) {
+    const isCrew = student.crewMember === true;
     const walkInRegistration = {
         studentId: student.id,
         studentName: `${student.firstName} ${student.lastName}`,
@@ -221,7 +248,7 @@ function selectWalkInStudent(student, workshop, container) {
         registeredAt: null
     };
     
-    container.innerHTML = renderCheckinStudent(walkInRegistration, workshop, true);
+    container.innerHTML = renderCheckinStudent(walkInRegistration, workshop, true, isCrew);
     container.style.display = 'block';
 }
 
@@ -260,33 +287,35 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         if (!paidOnline) {
             const paymentMethodSelect = document.querySelector(`.payment-method-select[data-student-id="${studentId}"]`);
             paymentMethod = paymentMethodSelect ? paymentMethodSelect.value : 'cash';
-            
-            // Create transaction document with deterministic ID
-            const workshopDate = workshop.date.toDate();
-            const txYear = workshopDate.getFullYear();
-            const txMonth = String(workshopDate.getMonth() + 1).padStart(2, '0');
-            const txDay = String(workshopDate.getDate()).padStart(2, '0');
-            const txDateStr = `${txYear}-${txMonth}-${txDay}`;
-            const transactionDocId = `${student.firstName.toLowerCase()}-${student.lastName.toLowerCase()}-workshop-entry-${txDateStr}`;
 
-            const transactionRef = db.collection('transactions').doc(transactionDocId);
-            await transactionRef.set({
-                type: 'workshop-entry',
-                workshopId: workshopId,
-                workshopName: workshop.name,
-                studentId: studentId,
-                studentName: studentName,
-                amountPaid: workshop.cost,
-                paymentMethod: paymentMethod,
-                classDate: workshop.date,
-                transactionDate: firebase.firestore.FieldValue.serverTimestamp(),
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                createdBy: currentUser.uid,
-                reversed: false,
-                refunded: null
-            });
-            
-            transactionId = transactionRef.id;
+            if (paymentMethod !== 'free') {
+                // Create transaction document with deterministic ID
+                const workshopDate = workshop.date.toDate();
+                const txYear = workshopDate.getFullYear();
+                const txMonth = String(workshopDate.getMonth() + 1).padStart(2, '0');
+                const txDay = String(workshopDate.getDate()).padStart(2, '0');
+                const txDateStr = `${txYear}-${txMonth}-${txDay}`;
+                const transactionDocId = `${student.firstName.toLowerCase()}-${student.lastName.toLowerCase()}-workshop-entry-${txDateStr}`;
+
+                const transactionRef = db.collection('transactions').doc(transactionDocId);
+                await transactionRef.set({
+                    type: 'workshop-entry',
+                    workshopId: workshopId,
+                    workshopName: workshop.name,
+                    studentId: studentId,
+                    studentName: studentName,
+                    amountPaid: workshop.cost,
+                    paymentMethod: paymentMethod,
+                    classDate: workshop.date,
+                    transactionDate: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser.uid,
+                    reversed: false,
+                    refunded: null
+                });
+
+                transactionId = transactionRef.id;
+            }
         } else {
             // Find existing online transaction for this student/workshop
             const transactionQuery = await db.collection('transactions')
@@ -311,15 +340,17 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         const dateStr = `${year}-${month}-${day}`;
         const checkinId = `checkin-${dateStr}-${student.firstName.toLowerCase()}-${student.lastName.toLowerCase()}`;
         
+        const isFreeEntry = paymentMethod === 'free';
         await db.collection('checkins').doc(checkinId).set({
             studentId: studentId,
             studentName: studentName,
             checkinDate: workshop.date,
-            entryType: 'workshop-entry',
+            entryType: isFreeEntry ? 'free' : 'workshop-entry',
+            freeEntryReason: isFreeEntry ? 'crew-member' : null,
             workshopId: workshopId,
             workshopName: workshop.name,
             paymentMethod: paymentMethod,
-            amountPaid: paidOnline ? 0 : workshop.cost, // 0 if already paid online
+            amountPaid: (paidOnline || isFreeEntry) ? 0 : workshop.cost,
             onlineTransactionId: paidOnline ? transactionId : null,
             notes: isWalkIn ? 'Walk-in registration' : null,
             reversed: false,
