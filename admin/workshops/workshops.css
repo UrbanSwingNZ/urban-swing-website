@@ -1022,17 +1022,17 @@ button.count-badge.count-badge-clickable:hover {
 
 /* Responsive adjustments for check-in modal */
 @media (max-width: 768px) {
-    .checkin-item-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
     .checkin-item-row .payment-method-select {
-        width: 100%;
+        flex: 1;
     }
 
     .checkin-item-row .btn-checkin {
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        flex-shrink: 0;
+        padding: 6px 10px;
+    }
+
+    .btn-checkin .btn-checkin-text {
+        display: none;
     }
 }
