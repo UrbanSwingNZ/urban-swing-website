@@ -235,6 +235,14 @@
     letter-spacing: 0.5px;
 }
 
+.class-plan-week.week-one {
+    background: var(--purple-primary);
+    color: var(--white);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+}
+
 .class-plan-date-main {
     display: flex;
     align-items: center;
