@@ -562,7 +562,8 @@ function createClassPlanCard(planData) {
     // Build week number display
     let weekHTML = '';
     if (planData.weekNumber && planData.blockSize) {
-        weekHTML = `<div class="class-plan-week">Week ${planData.weekNumber} of ${planData.blockSize}</div>`;
+        const weekClass = Number(planData.weekNumber) === 1 ? 'class-plan-week week-one' : 'class-plan-week';
+        weekHTML = `<div class="${weekClass}">Week ${planData.weekNumber} of ${planData.blockSize}</div>`;
     }
     
     card.innerHTML = `
