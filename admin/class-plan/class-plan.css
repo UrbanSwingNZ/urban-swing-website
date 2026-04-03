@@ -160,14 +160,6 @@
     box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-    .settings-inline {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-sm);
-    }
-}
-
 /* ========================================
    CLASS PLANS CONTAINER
    ======================================== */
