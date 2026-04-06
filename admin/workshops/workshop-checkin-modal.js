@@ -26,6 +26,9 @@ let checkinInProgress = false;
 // Crew status cache for the current modal session (studentId -> boolean)
 let crewStatusMap = new Map();
 
+// Checkin data cache for the current modal session (studentId -> {id, paymentMethod, entryType, freeEntryReason})
+let checkinDataMap = new Map();
+
 /**
  * Fetches crew status for a list of registrations in one batch
  * @param {Array} registrations - Array of {studentId, ...}
@@ -43,6 +46,28 @@ async function fetchCrewStatus(registrations) {
 }
 
 /**
+ * Fetches checkin documents for a workshop, keyed by studentId
+ * @param {string} workshopId
+ * @returns {Promise<Map>} Map of studentId -> {id, paymentMethod, entryType, freeEntryReason}
+ */
+async function fetchCheckinData(workshopId) {
+    const map = new Map();
+    const snapshot = await db.collection('checkins')
+        .where('workshopId', '==', workshopId)
+        .get();
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        map.set(data.studentId, {
+            id: doc.id,
+            paymentMethod: data.paymentMethod,
+            entryType: data.entryType,
+            freeEntryReason: data.freeEntryReason
+        });
+    });
+    return map;
+}
+
+/**
  * Opens the workshop check-in modal
  * @param {string} workshopId - The workshop document ID
  */
@@ -54,6 +79,7 @@ async function openWorkshopCheckinModal(workshopId) {
     }
 
     crewStatusMap = await fetchCrewStatus(workshop.registeredStudents || []);
+    checkinDataMap = await fetchCheckinData(workshopId);
 
     const modal = new BaseModal({
         id: 'workshop-checkin-modal',
@@ -129,7 +155,7 @@ function generateCheckinContent(workshop) {
                     <i class="fas fa-check-circle"></i> Already Checked In (${alreadyCheckedIn.length})
                 </h3>
                 <div class="checkin-list">
-                    ${alreadyCheckedIn.map(reg => renderCheckedInStudent(reg)).join('')}
+                    ${alreadyCheckedIn.map(reg => renderCheckedInStudent(reg, checkinDataMap.get(reg.studentId))).join('')}
                 </div>
             </div>
         ` : ''}
@@ -197,14 +223,28 @@ function renderCheckinStudent(registration, workshop, isWalkIn = false, isCrew =
  * @param {Object} registration - Registration object
  * @returns {string} HTML for checked-in student row
  */
-function renderCheckedInStudent(registration) {
+function getCheckinBadge(checkinData) {
+    if (!checkinData || checkinData.entryType === 'free') {
+        return `<span class="type-badge crew">Crew</span>`;
+    }
+    const method = checkinData.paymentMethod || 'unknown';
+    const labels = { cash: 'Cash', eftpos: 'EFTPOS', 'bank-transfer': 'Bank Transfer', online: 'Online' };
+    const label = labels[method] || method;
+    return `<span class="type-badge ${method}">${label}</span>`;
+}
+
+function renderCheckedInStudent(registration, checkinData) {
     const studentName = registration.studentName || registration.studentId;
+    const badge = getCheckinBadge(checkinData);
     return `
-        <div class="checkin-item checked-in" style="opacity: 0.7;">
-            <div class="student-info">
-                <div class="student-name">${studentName}</div>
-                <div class="student-details" style="font-size: 0.9em; color: var(--success-color);">
-                    <i class="fas fa-check-circle"></i> Checked In
+        <div class="checkin-item checked-in" data-student-id="${registration.studentId}">
+            <div class="checkin-item-row">
+                <span class="student-name">${studentName}</span>
+                <div class="checkin-item-actions">
+                    ${badge}
+                    <button class="btn-undo-checkin" data-student-id="${registration.studentId}" title="Undo Check-In">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -357,7 +397,15 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: currentUser.uid
         });
-        
+
+        // Update local checkin data cache
+        checkinDataMap.set(studentId, {
+            id: checkinId,
+            paymentMethod: paymentMethod,
+            entryType: isFreeEntry ? 'free' : 'workshop-entry',
+            freeEntryReason: isFreeEntry ? 'crew-member' : null
+        });
+
         // Update workshop document
         const updates = {
             checkedInStudents: firebase.firestore.FieldValue.arrayUnion(studentId)
@@ -445,6 +493,46 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
         LoadingSpinner.hideGlobal();
     } finally {
         checkinInProgress = false;
+    }
+}
+
+/**
+ * Undoes a workshop check-in, reverting the student to registered-not-checked-in
+ */
+async function handleUndoCheckin(workshopId, studentId, modal) {
+    try {
+        LoadingSpinner.showGlobal('Undoing check-in...');
+
+        const checkinInfo = checkinDataMap.get(studentId);
+        if (!checkinInfo) throw new Error('Check-in record not found');
+
+        await db.collection('checkins').doc(checkinInfo.id).delete();
+
+        await db.collection('workshops').doc(workshopId).update({
+            checkedInStudents: firebase.firestore.FieldValue.arrayRemove(studentId),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        const workshopIndex = workshops.findIndex(w => w.id === workshopId);
+        if (workshopIndex !== -1) {
+            workshops[workshopIndex].checkedInStudents =
+                (workshops[workshopIndex].checkedInStudents || []).filter(id => id !== studentId);
+        }
+
+        checkinDataMap.delete(studentId);
+
+        showSnackbar('Check-in undone', 'success');
+        LoadingSpinner.hideGlobal();
+
+        modal.setContent(generateCheckinContent(workshops[workshopIndex]));
+        attachCheckinListeners(workshops[workshopIndex], modal);
+
+        if (typeof renderWorkshops === 'function') renderWorkshops();
+
+    } catch (error) {
+        console.error('Undo check-in error:', error);
+        showSnackbar(`Failed to undo check-in: ${error.message}`, 'error');
+        LoadingSpinner.hideGlobal();
     }
 }
 
