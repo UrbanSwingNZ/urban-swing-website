@@ -306,28 +306,66 @@ button.count-badge.count-badge-clickable:hover {
 
 .video-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px 15px;
     background: white;
     border-radius: 6px;
     border: 1px solid var(--border-color);
+    margin-bottom: 10px;
 }
 
-.video-info {
-    flex: 1;
+.video-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
-.video-title {
+.video-item-title {
     font-weight: 600;
     color: var(--text-primary);
+    flex: 1;
+    min-width: 0;
 }
 
-.video-url {
+.video-item-date {
     font-size: 12px;
     color: var(--text-secondary);
-    margin-top: 4px;
 }
+
+.video-item-link {
+    font-size: 12px;
+    color: var(--purple-primary);
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.video-item-link:hover {
+    text-decoration: underline;
+}
+
+.btn-remove-video {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--error, #c62828);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: background 0.2s ease;
+    padding: 0;
+}
+
+.btn-remove-video:hover {
+    background: var(--error-darker, #8e0000);
+}
+
 
 /* Modal Overrides for Workshop Forms */
 .workshop-form {

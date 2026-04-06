@@ -824,25 +824,22 @@ function renderVideoItem(video, workshop) {
             month: 'short', 
             day: 'numeric' 
         }) : 'Unknown';
+    const safeUrl = video.url.replace(/'/g, "\\'");
     
     return `
-        <div class="video-item" style="padding: 15px; background: white; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 10px;">
-            <div style="display: flex; justify-content: space-between; align-items: start;">
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; margin-bottom: 5px;">
-                        <i class="fas fa-play-circle" style="color: var(--cyan);"></i> ${video.title}
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
-                        Added ${addedDate}
-                    </div>
-                    <a href="${video.url}" target="_blank" style="font-size: 12px; color: var(--purple-primary); text-decoration: none;">
-                        <i class="fas fa-external-link-alt"></i> ${video.url}
-                    </a>
+        <div class="video-item">
+            <div class="video-item-header">
+                <div class="video-item-title">
+                    <i class="fas fa-play-circle" style="color: var(--cyan);"></i> ${video.title}
                 </div>
-                <button class="action-btn btn-delete" onclick="handleRemoveVideo('${workshop.id}', '${video.url.replace(/'/g, "\\'")}')">
-                    <i class="fas fa-trash"></i> Remove
+                <button class="btn-remove-video" onclick="handleRemoveVideo('${workshop.id}', '${safeUrl}')" title="Remove video">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="video-item-date">Added ${addedDate}</div>
+            <a href="${video.url}" target="_blank" class="video-item-link">
+                <i class="fas fa-external-link-alt"></i> ${video.url}
+            </a>
         </div>
     `;
 }
