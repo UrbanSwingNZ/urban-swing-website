@@ -260,16 +260,17 @@ function renderWorkshopCard(workshop) {
         'attended': 'Attended'
     };
 
+    const videosBtn = isCheckedIn && videoCount > 0 ? `
+                <button class="btn-videos" data-action="videos" data-workshop-id="${workshop.id}">
+                    <i class="fas fa-video"></i> Videos (${videoCount})
+                </button>
+            ` : '';
+
     const actionButtons = (() => {
         if (isPast) {
             const disabledBtn = (status === 'registered' || status === 'attended') ? `
                 <button class="btn-deregister" disabled>
                     <i class="fas fa-times-circle"></i> De-register
-                </button>
-            ` : '';
-            const videosBtn = isCheckedIn && videoCount > 0 ? `
-                <button class="btn-videos" data-action="videos" data-workshop-id="${workshop.id}">
-                    <i class="fas fa-video"></i> Videos (${videoCount})
                 </button>
             ` : '';
             return disabledBtn + videosBtn;
@@ -291,7 +292,7 @@ function renderWorkshopCard(workshop) {
             `;
         }
 
-        return ''; // attended on upcoming (edge case)
+        return videosBtn; // attended on upcoming workshop
     })();
 
     return `
@@ -381,7 +382,43 @@ async function handleDeregister(workshopId) {
  * @param {string} workshopId
  */
 function openWorkshopVideosModal(workshopId) {
-    showSnackbar('Videos coming soon!', 'info');
+    const workshop = allWorkshops.find(w => w.id === workshopId);
+    if (!workshop) {
+        showSnackbar('Workshop not found.', 'error');
+        return;
+    }
+
+    const videos = workshop.videos || [];
+
+    const content = `
+        <div class="videos-modal-content">
+            ${videos.length === 0 ? `
+                <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                    <i class="fas fa-info-circle"></i> No videos available for this workshop yet.
+                </p>
+            ` : videos.map(video => `
+                <div class="portal-video-item">
+                    <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="portal-video-link">
+                        <i class="fas fa-play-circle portal-video-icon"></i>
+                        <span class="portal-video-title">${escapeHtml(video.title)}</span>
+                        <i class="fas fa-external-link-alt portal-video-external"></i>
+                    </a>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    const modal = new BaseModal({
+        id: 'workshop-videos-modal',
+        title: `Videos: ${escapeHtml(workshop.name || 'Workshop')}`,
+        size: 'small',
+        content,
+        buttons: [
+            { text: 'Close', variant: 'secondary', onClick: (m) => m.hide() }
+        ]
+    });
+
+    modal.show();
 }
 
 // ============================================
