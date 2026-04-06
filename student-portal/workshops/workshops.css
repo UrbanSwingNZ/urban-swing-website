@@ -152,7 +152,7 @@
 }
 
 .workshop-status-badge.attended {
-    background: var(--success-light);
+    background: var(--bg-success-light);
     color: var(--success-dark);
 }
 
