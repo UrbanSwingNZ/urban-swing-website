@@ -125,9 +125,10 @@ function generateCheckinContent(workshop) {
         return true;
     });
 
-    // Separate checked-in from not-checked-in
-    const notCheckedIn = uniqueRegistered.filter(r => !checkedInIds.has(r.studentId));
-    const alreadyCheckedIn = uniqueRegistered.filter(r => checkedInIds.has(r.studentId));
+    // Separate checked-in from not-checked-in, both sorted alphabetically by name
+    const byName = (a, b) => (a.studentName || '').localeCompare(b.studentName || '');
+    const notCheckedIn = uniqueRegistered.filter(r => !checkedInIds.has(r.studentId)).sort(byName);
+    const alreadyCheckedIn = uniqueRegistered.filter(r => checkedInIds.has(r.studentId)).sort(byName);
     
     return `
         <div class="workshop-info">
