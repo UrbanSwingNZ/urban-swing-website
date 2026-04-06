@@ -152,7 +152,7 @@
 }
 
 .workshop-status-badge.attended {
-    background: var(--success-light);
+    background: var(--bg-success-light);
     color: var(--success-dark);
 }
 
@@ -326,8 +326,65 @@
 }
 
 /* =========================================
-   REGISTRATION MODAL CONTENT
+   VIDEOS MODAL
    ========================================= */
+
+.videos-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.portal-video-item {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.portal-video-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: background 0.15s ease;
+}
+
+.portal-video-link:hover {
+    background: var(--bg-purple-light, #f3e5f5);
+    color: var(--purple-primary);
+    text-decoration: none;
+}
+
+.portal-video-link:hover .portal-video-title {
+    text-decoration: underline;
+}
+
+.portal-video-link:hover .portal-video-icon,
+.portal-video-link:hover .portal-video-external {
+    text-decoration: none;
+}
+
+.portal-video-icon {
+    font-size: 1.3rem;
+    color: var(--purple-primary);
+    flex-shrink: 0;
+}
+
+.portal-video-title {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.portal-video-external {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+
 
 .registration-content {
     display: flex;
