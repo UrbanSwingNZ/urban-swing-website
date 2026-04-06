@@ -904,22 +904,6 @@ button.count-badge.count-badge-clickable:hover {
     flex-shrink: 0;
 }
 
-.btn-undo-checkin {
-    padding: 6px 10px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm, 6px);
-    cursor: pointer;
-    color: var(--error, #c62828);
-    transition: all 0.2s ease;
-    line-height: 1;
-}
-
-.btn-undo-checkin:hover {
-    background: var(--bg-error-light);
-    border-color: var(--error, #c62828);
-}
-
 
 .student-info {
     flex: 1;

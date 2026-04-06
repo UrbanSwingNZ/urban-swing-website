@@ -236,13 +236,17 @@ function getCheckinBadge(checkinData) {
 function renderCheckedInStudent(registration, checkinData) {
     const studentName = registration.studentName || registration.studentId;
     const badge = getCheckinBadge(checkinData);
+    const checkinId = checkinData ? checkinData.id : '';
     return `
         <div class="checkin-item checked-in" data-student-id="${registration.studentId}">
             <div class="checkin-item-row">
                 <span class="student-name">${studentName}</span>
                 <div class="checkin-item-actions">
                     ${badge}
-                    <button class="btn-undo-checkin" data-student-id="${registration.studentId}" title="Undo Check-In">
+                    <button class="btn-icon btn-delete btn-undo-checkin"
+                            data-student-id="${registration.studentId}"
+                            data-checkin-id="${checkinId}"
+                            title="Undo Check-In">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -270,6 +274,12 @@ function attachCheckinListeners(workshop, modal) {
         const isWalkIn = checkinBtn.dataset.walkIn === 'true';
 
         await handleWorkshopCheckin(workshop.id, studentId, paidOnline, isWalkIn, modal);
+    }, { signal });
+
+    document.addEventListener('click', async (e) => {
+        const undoBtn = e.target.closest('.btn-undo-checkin');
+        if (!undoBtn) return;
+        await handleUndoCheckin(workshop.id, undoBtn.dataset.studentId, undoBtn.dataset.checkinId, modal);
     }, { signal });
 }
 
@@ -499,14 +509,27 @@ async function handleWorkshopCheckin(workshopId, studentId, paidOnline, isWalkIn
 /**
  * Undoes a workshop check-in, reverting the student to registered-not-checked-in
  */
-async function handleUndoCheckin(workshopId, studentId, modal) {
+async function handleUndoCheckin(workshopId, studentId, checkinId, modal) {
     try {
         LoadingSpinner.showGlobal('Undoing check-in...');
 
-        const checkinInfo = checkinDataMap.get(studentId);
-        if (!checkinInfo) throw new Error('Check-in record not found');
-
-        await db.collection('checkins').doc(checkinInfo.id).delete();
+        // Prefer the ID passed directly from the button attribute;
+        // fall back to the in-memory map; last resort: reconstruct deterministic ID
+        if (!checkinId) {
+            const cached = checkinDataMap.get(studentId);
+            if (cached) {
+                checkinId = cached.id;
+            } else {
+                const workshop = workshops.find(w => w.id === workshopId);
+                const studentDoc = await db.collection('students').doc(studentId).get();
+                if (!studentDoc.exists) throw new Error('Student not found');
+                const s = studentDoc.data();
+                const d = workshop.date.toDate();
+                const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                checkinId = `checkin-${dateStr}-${s.firstName.toLowerCase()}-${s.lastName.toLowerCase()}`;
+            }
+        }
+        await db.collection('checkins').doc(checkinId).delete();
 
         await db.collection('workshops').doc(workshopId).update({
             checkedInStudents: firebase.firestore.FieldValue.arrayRemove(studentId),
