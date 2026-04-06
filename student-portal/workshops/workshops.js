@@ -260,16 +260,17 @@ function renderWorkshopCard(workshop) {
         'attended': 'Attended'
     };
 
+    const videosBtn = isCheckedIn && videoCount > 0 ? `
+                <button class="btn-videos" data-action="videos" data-workshop-id="${workshop.id}">
+                    <i class="fas fa-video"></i> Videos (${videoCount})
+                </button>
+            ` : '';
+
     const actionButtons = (() => {
         if (isPast) {
             const disabledBtn = (status === 'registered' || status === 'attended') ? `
                 <button class="btn-deregister" disabled>
                     <i class="fas fa-times-circle"></i> De-register
-                </button>
-            ` : '';
-            const videosBtn = isCheckedIn && videoCount > 0 ? `
-                <button class="btn-videos" data-action="videos" data-workshop-id="${workshop.id}">
-                    <i class="fas fa-video"></i> Videos (${videoCount})
                 </button>
             ` : '';
             return disabledBtn + videosBtn;
@@ -291,7 +292,7 @@ function renderWorkshopCard(workshop) {
             `;
         }
 
-        return ''; // attended on upcoming (edge case)
+        return videosBtn; // attended on upcoming workshop
     })();
 
     return `
