@@ -114,7 +114,7 @@ function generateCheckinContent(workshop) {
         <!-- Registered Students Section -->
         ${notCheckedIn.length > 0 ? `
             <div class="registered-students-section" style="margin-bottom: 30px;">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary);">
+                <h3 style="margin-bottom: 15px; color: var(--purple-primary);">
                     <i class="fas fa-users"></i> Registered Students (${notCheckedIn.length})
                 </h3>
                 <div class="checkin-list">
@@ -125,7 +125,7 @@ function generateCheckinContent(workshop) {
         
         ${alreadyCheckedIn.length > 0 ? `
             <div class="checked-in-students-section" style="margin-bottom: 30px;">
-                <h3 style="margin-bottom: 15px; color: var(--success-color);">
+                <h3 style="margin-bottom: 15px; color: var(--purple-primary);">
                     <i class="fas fa-check-circle"></i> Already Checked In (${alreadyCheckedIn.length})
                 </h3>
                 <div class="checkin-list">
