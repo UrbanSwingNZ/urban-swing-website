@@ -151,8 +151,15 @@ function buildTransactionConcessionItem(block, status, studentId) {
     const lockBadge = isLocked ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
     
     // Determine button states based on block status
+    let editExpiryButton = '';
     let lockButton = '';
     let deleteButton = '';
+    
+    // Edit Expiry button - only for super admin, active blocks that are not locked
+    if (isSuperAdmin() && status === 'active' && !isLocked) {
+        const currentExpiryStr = formatDate(expiryDate);
+        editExpiryButton = `<button class="btn-primary" data-block-id="${block.id}" data-student-id="${studentId}" data-current-expiry="${currentExpiryStr}" title="Edit expiry date"><i class="fas fa-calendar-edit"></i> Edit Expiry</button>`;
+    }
     
     if (status === 'active') {
         // Active blocks cannot be locked/unlocked
@@ -239,6 +246,7 @@ function buildTransactionConcessionItem(block, status, studentId) {
             </div>
             <div class="concession-actions">
                 <div class="concession-actions-left">
+                    ${editExpiryButton}
                     ${lockButton}
                     ${deleteButton}
                 </div>
@@ -266,6 +274,20 @@ function attachTransactionConcessionEventListeners(contentEl, studentId) {
             
             // Toggle show class on content
             content.classList.toggle('show');
+        });
+    });
+    
+    // Edit Expiry buttons
+    contentEl.querySelectorAll('.btn-primary[data-block-id][data-current-expiry]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const blockId = btn.dataset.blockId;
+            const studentIdFromBtn = btn.dataset.studentId;
+            const currentExpiry = btn.dataset.currentExpiry;
+            // Call the global showEditExpiryModal function from concessions-detail-modal.js
+            if (typeof showEditExpiryModal === 'function') {
+                showEditExpiryModal(blockId, studentIdFromBtn, currentExpiry);
+            }
         });
     });
     

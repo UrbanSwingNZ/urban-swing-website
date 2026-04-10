@@ -326,6 +326,54 @@
         </div>
     </div>
 
+    <!-- Edit Expiry Modal -->
+    <div id="edit-expiry-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-alt"></i> Edit Expiry Date</h3>
+                <button class="modal-close" onclick="closeEditExpiryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem; color: var(--text-muted);">
+                    Set a new expiry date for this concession block.
+                </p>
+                
+                <div class="form-group">
+                    <label for="edit-expiry-date">
+                        <i class="fas fa-calendar-alt"></i> New Expiry Date
+                    </label>
+                    <div class="date-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="edit-expiry-date" 
+                            class="form-control" 
+                            readonly
+                            placeholder="Select expiry date"
+                            required>
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
+                    </div>
+                    <div id="edit-expiry-calendar" class="custom-calendar" style="display: none;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        <strong>Current expiry:</strong> <span id="current-expiry-date">-</span>
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeEditExpiryModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" id="save-expiry-btn">
+                    <i class="fas fa-save"></i> Save Expiry Date
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Transaction History Modal -->
     <div id="transaction-history-modal" class="modal" style="display: none;">
         <div class="modal-content">
