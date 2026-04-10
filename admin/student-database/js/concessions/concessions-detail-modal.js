@@ -182,6 +182,7 @@ function buildConcessionItem(block, status) {
                 <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
             </div>
             <div class="concession-actions">
+                ${buildEditExpiryButton(block, status)}
                 ${lockButton}
                 ${deleteButton}
             </div>
@@ -227,6 +228,22 @@ function buildDeleteButton(block, hasBeenUsed) {
 }
 
 /**
+ * Build edit expiry button HTML
+ * Only visible to super admin for active, unlocked blocks
+ */
+function buildEditExpiryButton(block, status) {
+    // Only show for super admin, active blocks that are not locked
+    if (!isSuperAdmin() || status !== 'active' || block.isLocked === true) {
+        return '';
+    }
+    
+    const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
+    const currentExpiryStr = formatDate(expiryDate);
+    
+    return `<button class="btn-primary" data-block-id="${block.id}" data-student-id="${block.studentId}" data-current-expiry="${currentExpiryStr}" title="Edit expiry date"><i class="fas fa-calendar-edit"></i> Edit Expiry</button>`;
+}
+
+/**
  * Attach event listeners to concession detail modal elements
  */
 function attachConcessionDetailEventListeners(contentEl, studentId) {
@@ -268,6 +285,17 @@ function attachConcessionDetailEventListeners(contentEl, studentId) {
         });
     });
     
+    // Edit Expiry buttons
+    contentEl.querySelectorAll('.btn-primary[data-block-id][data-current-expiry]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const blockId = btn.dataset.blockId;
+            const studentIdFromBtn = btn.dataset.studentId;
+            const currentExpiry = btn.dataset.currentExpiry;
+            showEditExpiryModal(blockId, studentIdFromBtn, currentExpiry);
+        });
+    });
+    
     // Delete buttons
     contentEl.querySelectorAll('.btn-delete').forEach(btn => {
         if (!btn.disabled) {
@@ -303,6 +331,178 @@ function attachConcessionDetailEventListeners(contentEl, studentId) {
 }
 
 /**
+ * Show edit expiry modal
+ */
+function showEditExpiryModal(blockId, studentId, currentExpiry) {
+    const modal = document.getElementById('edit-expiry-modal');
+    const currentExpiryEl = document.getElementById('current-expiry-date');
+    const dateInput = document.getElementById('edit-expiry-date');
+    
+    // Display current expiry
+    currentExpiryEl.textContent = currentExpiry;
+    
+    // Clear previous input
+    dateInput.value = '';
+    
+    // Store block and student IDs for save operation
+    modal.dataset.blockId = blockId;
+    modal.dataset.studentId = studentId;
+    
+    // Initialize DatePicker if not already done
+    if (!window.editExpiryDatePicker) {
+        window.editExpiryDatePicker = new DatePicker('edit-expiry-date', 'edit-expiry-calendar', {
+            allowedDays: [0, 1, 2, 3, 4, 5, 6],
+            disablePastDates: false,
+            ignoreClosedown: true
+        });
+    }
+    
+    // Show modal
+    modal.style.display = 'flex';
+}
+
+/**
+ * Close edit expiry modal
+ */
+function closeEditExpiryModal() {
+    const modal = document.getElementById('edit-expiry-modal');
+    modal.style.display = 'none';
+    
+    // Clear stored data
+    delete modal.dataset.blockId;
+    delete modal.dataset.studentId;
+}
+
+/**
+ * Save new expiry date
+ */
+async function saveExpiryDate() {
+    const modal = document.getElementById('edit-expiry-modal');
+    const blockId = modal.dataset.blockId;
+    const studentId = modal.dataset.studentId;
+    const dateInput = document.getElementById('edit-expiry-date');
+    const saveBtn = document.getElementById('save-expiry-btn');
+    
+    if (!dateInput.value) {
+        showSnackbar('Please select an expiry date', 'error');
+        return;
+    }
+    
+    // Parse the date (format: d/mm/yyyy)
+    const dateParts = dateInput.value.split('/');
+    if (dateParts.length !== 3) {
+        showSnackbar('Invalid date format', 'error');
+        return;
+    }
+    
+    const day = parseInt(dateParts[0]);
+    const month = parseInt(dateParts[1]) - 1; // JS months are 0-indexed
+    const year = parseInt(dateParts[2]);
+    const newExpiryDate = new Date(year, month, day);
+    
+    // Disable button and show loading
+    const originalText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    
+    try {
+        // Update the concession block in Firestore
+        await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .update({
+                expiryDate: firebase.firestore.Timestamp.fromDate(newExpiryDate),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        // Update the status based on the new expiry date
+        const now = new Date();
+        const isExpired = newExpiryDate < now;
+        const blockSnapshot = await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .get();
+        
+        const blockData = blockSnapshot.data();
+        const newStatus = blockData.remainingQuantity === 0 ? 'depleted' : (isExpired ? 'expired' : 'active');
+        
+        await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .update({
+                status: newStatus
+            });
+        
+        // Update student balance if status changed
+        if (typeof updateStudentBalance === 'function') {
+            await updateStudentBalance(studentId);
+        }
+        
+        showSnackbar('Expiry date updated successfully', 'success');
+        
+        // Close the edit modal
+        closeEditExpiryModal();
+        
+        // Refresh the concessions detail modal if it's open
+        const concessionsDetailModal = document.getElementById('concessions-detail-modal');
+        if (concessionsDetailModal && concessionsDetailModal.style.display === 'flex') {
+            await showConcessionsDetail(studentId);
+        }
+        
+        // Refresh the transaction history modal if it's open
+        const transactionHistoryModal = document.getElementById('transaction-history-modal');
+        if (transactionHistoryModal && transactionHistoryModal.style.display === 'flex') {
+            // Check if concessions tab is active
+            const concessionsTab = document.querySelector('[data-tab="concessions-content"]');
+            if (concessionsTab && concessionsTab.classList.contains('active')) {
+                // Reload concessions in transaction history
+                if (typeof loadTransactionHistoryConcessions === 'function') {
+                    await loadTransactionHistoryConcessions(studentId);
+                }
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error updating expiry date:', error);
+        showSnackbar('Error updating expiry date: ' + error.message, 'error');
+    } finally {
+        // Re-enable button
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+    }
+}
+
+/**
+ * Initialize edit expiry modal listeners
+ */
+function initializeEditExpiryModal() {
+    const saveBtn = document.getElementById('save-expiry-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', saveExpiryDate);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('edit-expiry-modal');
+            if (modal && modal.style.display === 'flex') {
+                closeEditExpiryModal();
+            }
+        }
+    });
+    
+    // Close when clicking outside
+    const modal = document.getElementById('edit-expiry-modal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeEditExpiryModal();
+            }
+        });
+    }
+}
+
+/**
  * Close concessions detail modal
  */
 function closeConcessionsDetailModal() {
@@ -329,6 +529,9 @@ function closeConcessionsDetailModal() {
  * Initialize Purchase Concessions button in detail modal
  */
 function initializePurchaseConcessionsButton() {
+    // Initialize edit expiry modal
+    initializeEditExpiryModal();
+    
     const purchaseBtn = document.getElementById('purchase-concessions-from-detail-btn');
     if (purchaseBtn) {
         purchaseBtn.addEventListener('click', async () => {
