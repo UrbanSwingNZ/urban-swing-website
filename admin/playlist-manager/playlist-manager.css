@@ -238,19 +238,6 @@ html, body {
     width: 100px;
     height: 100px;
   }
-  
-  .tracks-container {
-    padding: 0 15px 15px;
-  }
-  
-  .col-artist {
-    display: none;
-  }
-  
-  .col-duration {
-    width: 60px;
-    font-size: 0.85rem;
-  }
 }
 
 /* Loading Spinner Styles - Inherited from admin.css */
