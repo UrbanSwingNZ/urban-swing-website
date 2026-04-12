@@ -530,9 +530,10 @@ function renderInvitedStudentWithName(studentId, studentName, workshop) {
     let paymentBadge = '';
     let paymentIconMobile = '';
     if (registered) {
-        if (registered.paidOnline) {
+        // If checked in, they've already paid (or it's free entry)
+        if (checkedIn || registered.paidOnline) {
             paymentBadge = `<span class="status-badge status-badge-paid"><i class="fas fa-check"></i> Paid</span>`;
-            paymentIconMobile = `<span class="payment-icon-mobile payment-icon-paid" title="Paid online"><i class="fas fa-check-circle"></i></span>`;
+            paymentIconMobile = `<span class="payment-icon-mobile payment-icon-paid" title="Paid"><i class="fas fa-check-circle"></i></span>`;
         } else {
             paymentBadge = `<span class="status-badge status-badge-pending"><i class="fas fa-clock"></i> Pending Payment</span>`;
             paymentIconMobile = `<span class="payment-icon-mobile payment-icon-pending" title="Payment pending"><i class="fas fa-clock"></i></span>`;
