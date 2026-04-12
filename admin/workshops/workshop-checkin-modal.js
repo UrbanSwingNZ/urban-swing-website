@@ -189,7 +189,8 @@ function renderCheckinStudent(registration, workshop, isWalkIn = false, isCrew =
         ? `Registered: ${formatDate(registration.registeredAt)} | ${paidBadge}` 
         : `<strong style="color: var(--orange-primary);">Walk-In</strong> (requires payment)`;
     
-    // Payment method selector only for pay-later and walk-ins
+    // Payment method selector for those who haven't paid (including walk-ins)
+    // If paid online, show badge instead (regardless of crew status)
     const needsPayment = !registration.paidOnline || isWalkIn;
     const defaultPayment = isCrew ? 'free' : 'cash';
     
@@ -213,6 +214,11 @@ function renderCheckinStudent(registration, workshop, isWalkIn = false, isCrew =
                     <option value="bank-transfer">Bank Transfer</option>
                     <option value="free" ${defaultPayment === 'free' ? 'selected' : ''}>Free Entry (Crew)</option>
                 </select>
+            </div>
+            ` : ''}
+            ${!needsPayment ? `
+            <div class="checkin-item-row">
+                <span class="payment-indicator paid">Paid</span>
             </div>
             ` : ''}
         </div>

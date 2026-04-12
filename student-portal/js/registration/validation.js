@@ -122,7 +122,12 @@ function validateNewStudentMode(formData) {
         return false;
     }
     
-    if (!formData.firstClassDate) {
+    // Only require first class date if the field is visible and required
+    // (for casual rates it's required, for concession packages it's hidden)
+    const dateInput = document.getElementById('first-class-date');
+    const isDateRequired = dateInput && dateInput.hasAttribute('required');
+    
+    if (isDateRequired && !formData.firstClassDate) {
         showFieldError('first-class-date', 'Please select the date of your first class.');
         return false;
     }

@@ -156,6 +156,22 @@
     color: var(--success-dark);
 }
 
+.workshop-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.workshop-payment-badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--bg-success-light);
+    color: var(--success-dark);
+}
+
 .workshop-card-body {
     padding: var(--space-md) 24px;
     display: grid;
@@ -592,6 +608,10 @@
     .workshop-card-header {
         flex-direction: column;
         gap: var(--space-sm);
+    }
+
+    .workshop-badges {
+        align-items: flex-start;
     }
 
     .workshop-status-badge {
