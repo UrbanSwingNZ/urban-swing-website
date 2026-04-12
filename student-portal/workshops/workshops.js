@@ -149,6 +149,21 @@ function getStudentStatus(workshop, studentId) {
     return 'not-registered';
 }
 
+/**
+ * Check if the student has paid for a workshop
+ * @param {Object} workshop
+ * @param {string} studentId
+ * @returns {boolean}
+ */
+function hasStudentPaid(workshop, studentId) {
+    const checkedIn = workshop.checkedInStudents || [];
+    if (checkedIn.includes(studentId)) return true;
+
+    const registered = workshop.registeredStudents || [];
+    const registration = registered.find(r => r.studentId === studentId);
+    return registration?.paidOnline || false;
+}
+
 // ============================================
 // RENDERING
 // ============================================
@@ -247,6 +262,7 @@ function renderWorkshops(workshops) {
  */
 function renderWorkshopCard(workshop) {
     const status = getStudentStatus(workshop, currentStudentId);
+    const hasPaid = hasStudentPaid(workshop, currentStudentId);
     const date = workshop.date?.toDate ? workshop.date.toDate() : null;
     const formattedDate = date ? formatWorkshopDate(date) : 'Date TBC';
     const cost = workshop.cost != null ? `$${workshop.cost}` : 'Free';
@@ -259,6 +275,10 @@ function renderWorkshopCard(workshop) {
         'registered': 'Registered',
         'attended': 'Attended'
     };
+    
+    const paymentBadge = (status === 'registered' || status === 'attended') && hasPaid
+        ? `<span class="workshop-payment-badge">Paid</span>`
+        : '';
 
     const videosBtn = isCheckedIn && videoCount > 0 ? `
                 <button class="btn-videos" data-action="videos" data-workshop-id="${workshop.id}">
@@ -302,7 +322,10 @@ function renderWorkshopCard(workshop) {
                     <div class="workshop-name">${escapeHtml(workshop.name || 'Untitled Workshop')}</div>
                     ${workshop.topic ? `<div class="workshop-topic">${escapeHtml(workshop.topic)}</div>` : ''}
                 </div>
-                <span class="workshop-status-badge ${status}">${statusLabels[status]}</span>
+                <div class="workshop-badges">
+                    <span class="workshop-status-badge ${status}">${statusLabels[status]}</span>
+                    ${paymentBadge}
+                </div>
             </div>
             <div class="workshop-card-body">
                 <div class="workshop-meta">
