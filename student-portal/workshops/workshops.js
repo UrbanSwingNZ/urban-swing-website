@@ -123,6 +123,26 @@ async function loadWorkshops(studentId) {
             return dateB - dateA;
         });
 
+        // Determine default filter based on workshop availability
+        const now = new Date();
+        const hasUpcoming = allWorkshops.some(w => {
+            const date = w.date?.toDate ? w.date.toDate() : new Date(0);
+            return date >= now;
+        });
+
+        if (hasUpcoming) {
+            currentFilter = 'upcoming';
+        } else {
+            // Check if there are past workshops where student is registered/attended
+            const hasPast = allWorkshops.some(w => {
+                const date = w.date?.toDate ? w.date.toDate() : new Date(0);
+                if (date >= now) return false;
+                const status = getStudentStatus(w, studentId);
+                return status === 'registered' || status === 'attended';
+            });
+            currentFilter = hasPast ? 'past' : 'upcoming';
+        }
+
         applyFilter(currentFilter);
 
     } catch (error) {
