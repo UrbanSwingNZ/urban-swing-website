@@ -218,6 +218,7 @@ exports.processWorkshopPayment = onRequest(
           date: admin.firestore.FieldValue.serverTimestamp(),
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           createdBy: data.studentId,
+          stripeCustomerId: customerId,
           stripePaymentIntentId: paymentIntentId,
           reversed: false,
           refunded: null
