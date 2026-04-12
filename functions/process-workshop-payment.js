@@ -205,8 +205,16 @@ exports.processWorkshopPayment = onRequest(
           : null;
         const receiptUrl = latestCharge?.receipt_url || null;
         
-        // Step 6: Create transaction record
-        const transactionRef = await db.collection('transactions').add({
+        // Step 6: Create transaction record with deterministic ID
+        const workshopDate = workshopData.date.toDate();
+        const txYear = workshopDate.getFullYear();
+        const txMonth = String(workshopDate.getMonth() + 1).padStart(2, '0');
+        const txDay = String(workshopDate.getDate()).padStart(2, '0');
+        const txDateStr = `${txYear}-${txMonth}-${txDay}`;
+        const transactionDocId = `${studentData.firstName.toLowerCase()}-${studentData.lastName.toLowerCase()}-workshop-entry-${txDateStr}`;
+        
+        const transactionRef = db.collection('transactions').doc(transactionDocId);
+        await transactionRef.set({
           type: 'workshop-entry',
           workshopId: data.workshopId,
           workshopName: workshopData.name,
@@ -218,6 +226,7 @@ exports.processWorkshopPayment = onRequest(
           date: admin.firestore.FieldValue.serverTimestamp(),
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           createdBy: data.studentId,
+          stripeCustomerId: customerId,
           stripePaymentIntentId: paymentIntentId,
           reversed: false,
           refunded: null
