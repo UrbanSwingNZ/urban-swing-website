@@ -178,6 +178,50 @@ function playPreviewFallback(button, previewUrl) {
   });
 }
 
+// Stop playback completely (mobile double-tap action)
+export async function stopPlayback() {
+  // Remove playing state from UI
+  if (currentPlayingButton) {
+    const row = currentPlayingButton.closest('tr');
+    if (row) {
+      const colNumber = row.querySelector('.col-number');
+      colNumber?.classList.remove('playing');
+    }
+    currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
+    currentPlayingButton.classList.remove('playing');
+    currentPlayingButton = null;
+    currentPlayingTrackUri = null;
+  }
+  
+  // Stop preview audio if it's playing
+  if (previewAudio) {
+    previewAudio.pause();
+    previewAudio = null;
+  }
+  
+  // Stop Spotify Web Player (seek to beginning then pause)
+  try {
+    const { pausePlayback, seekToPosition, isReady, getCurrentState } = await import('../spotify-player.js');
+    if (isReady()) {
+      const state = await getCurrentState();
+      // Only proceed if there's an active track
+      if (state) {
+        // Seek to beginning first (while track may still be playing)
+        await seekToPosition(0);
+        // Wait a moment for seek to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+        // Then pause
+        await pausePlayback();
+      }
+    }
+  } catch (error) {
+    console.warn('Could not stop Spotify player:', error);
+  }
+  
+  // Clear playback state from localStorage
+  clearPlaybackState();
+}
+
 // Stop any playing audio when loading new tracks
 export async function stopCurrentAudio() {
   if (currentPlayingButton) {
@@ -215,3 +259,4 @@ export function getCurrentPlayingTrackUri() {
 window.restorePlaybackState = restorePlaybackState;
 window.handleTrackPlayPause = handleTrackPlayPause;
 window.stopCurrentAudio = stopCurrentAudio;
+window.stopPlayback = stopPlayback;

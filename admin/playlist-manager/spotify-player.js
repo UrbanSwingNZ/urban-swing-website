@@ -123,6 +123,12 @@ export async function togglePlayback() {
   await player.togglePlay();
 }
 
+// Seek to position (in milliseconds)
+export async function seekToPosition(positionMs) {
+  if (!player) return;
+  await player.seek(positionMs);
+}
+
 // Get current playback state
 export async function getCurrentState() {
   if (!player) return null;
