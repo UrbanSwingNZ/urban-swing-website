@@ -434,6 +434,15 @@ function addFieldFilter() {
     `;
     
     container.appendChild(filterRow);
+    
+    // Add Enter key listener to the value input
+    const valueInput = filterRow.querySelector('.field-filter-value');
+    valueInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            applyFilters();
+        }
+    });
 }
 
 /**
