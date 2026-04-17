@@ -6,6 +6,56 @@
  */
 
 import { createCheckinTransaction, reverseTransaction } from './checkin-transactions.js';
+import { BaseModal } from '/components/modals/modal-base.js';
+
+/**
+ * Show confirmation modal after successful check-in
+ * @param {Object} student - The student who was checked in
+ */
+function showCheckinConfirmation(student) {
+    const studentName = window.getStudentFullName(student);
+    
+    const modal = new BaseModal({
+        id: 'checkin-confirmation-modal',
+        title: '<i class="fas fa-check-circle"></i> Check-In Successful',
+        content: `
+            <div style="text-align: center; padding: 20px 0;">
+                <p style="font-size: 1.1em; margin-bottom: 20px;">
+                    <strong>${studentName}</strong> has been checked in successfully!
+                </p>
+                <p style="color: var(--text-muted);">
+                    Would you like to check in another student?
+                </p>
+            </div>
+        `,
+        size: 'small',
+        buttons: [
+            {
+                text: 'No',
+                class: 'btn-cancel',
+                onClick: (m) => {
+                    m.hide();
+                    m.destroy();
+                }
+            },
+            {
+                text: 'Yes',
+                class: 'btn-primary',
+                onClick: (m) => {
+                    m.hide();
+                    m.destroy();
+                    // Open a fresh check-in modal
+                    window.openCheckinModal();
+                }
+            }
+        ],
+        closeOnEscape: true,
+        closeOnOverlay: false,
+        showCloseButton: false
+    });
+    
+    modal.show();
+}
 
 /**
  * Save check-in to Firestore
@@ -267,9 +317,8 @@ export async function saveCheckinToFirestore(student, entryType, paymentMethod, 
             }
         }
         
-        // Close modal and show success
+        // Close modal first
         window.closeCheckinModal();
-        window.showSnackbar(`${window.getStudentFullName(student)} checked in successfully!`, 'success');
         
         // Clear the selected online transaction
         if (typeof window.clearSelectedOnlineTransaction === 'function') {
@@ -283,6 +332,9 @@ export async function saveCheckinToFirestore(student, entryType, paymentMethod, 
         if (checkinData.amountPaid > 0 && typeof window.loadCheckinTransactions === 'function') {
             window.loadCheckinTransactions();
         }
+        
+        // Show confirmation modal asking if they want to check in another student
+        showCheckinConfirmation(student);
         
     } catch (error) {
         console.error('Error saving check-in:', error);
