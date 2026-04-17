@@ -3,7 +3,7 @@
 
 import * as State from '../playlist-state.js';
 import { showTrackMenu } from './track-actions.js';
-import { handleTrackPlayPause, restorePlaybackState } from './track-audio.js';
+import { handleTrackPlayPause, restorePlaybackState, stopPlayback } from './track-audio.js';
 import { addSwipeToDelete, addLongPressMenu } from './track-mobile.js';
 import { initializeDragDrop } from './track-drag-drop.js';
 import { getDuplicateTooltip, isTrackDuplicate } from './track-duplicates.js';
@@ -162,17 +162,38 @@ function renderTrackBatch(tracks, startIndex) {
       });
     }
     
-    // Make entire row tappable on mobile (excluding drag handle)
+    // Make entire row tappable on mobile with double-tap detection
+    // Single click: play/pause, Double click: stop
+    let clickTimer = null;
+    let lastClickTime = 0;
+    
     tr.addEventListener('click', (e) => {
       // Only trigger on mobile (screen width <= 768px)
       if (window.innerWidth <= 768) {
-        // Don't trigger if clicking drag handle
-        if (e.target.closest('.drag-handle')) {
+        // Don't trigger if clicking drag handle, menu button, or play button
+        if (e.target.closest('.drag-handle') || 
+            e.target.closest('.track-menu-btn') || 
+            e.target.closest('.track-play-btn')) {
           return;
         }
         
-        // Trigger play/pause (pass the row element instead of playBtn for mobile)
-        handleTrackPlayPause(tr, track.uri, track.id);
+        const currentTime = Date.now();
+        const timeSinceLastClick = currentTime - lastClickTime;
+        
+        // If clicked within 300ms, it's a double-click
+        if (timeSinceLastClick < 300 && timeSinceLastClick > 0) {
+          clearTimeout(clickTimer);
+          stopPlayback();
+          lastClickTime = 0; // Reset to prevent triple-click
+        } else {
+          // Single click - wait to see if there's another click
+          lastClickTime = currentTime;
+          clearTimeout(clickTimer);
+          clickTimer = setTimeout(() => {
+            handleTrackPlayPause(tr, track.uri, track.id);
+            lastClickTime = 0; // Reset after action
+          }, 300);
+        }
       }
     });
     
