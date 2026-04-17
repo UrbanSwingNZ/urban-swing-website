@@ -94,7 +94,7 @@
 .col-duration { width: 80px; }
 .col-bpm { width: 80px; }
 .col-explicit { width: 80px; text-align: center; }
-.col-actions { width: 60px; text-align: right; }
+.col-actions { width: 100px; text-align: right; }
 
 /* Drag Handle */
 .drag-handle {
@@ -214,6 +214,7 @@
 }
 
 .track-play-btn,
+.track-stop-btn,
 .track-menu-btn {
   background: none;
   border: none;
@@ -235,7 +236,16 @@
   color: var(--spotify-green);
 }
 
+.track-stop-btn {
+  color: var(--spotify-green);
+}
+
 .track-play-btn:hover {
+  background: var(--bg-spotify-light);
+  transform: scale(1.1);
+}
+
+.track-stop-btn:hover {
   background: var(--bg-spotify-light);
   transform: scale(1.1);
 }
@@ -247,7 +257,8 @@
 
 .tracks-table tbody tr:hover .track-play-btn,
 .tracks-table tbody tr:hover .track-menu-btn,
-.track-play-btn.playing {
+.track-play-btn.playing,
+.track-stop-btn.visible {
   opacity: 1;
 }
 

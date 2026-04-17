@@ -146,6 +146,7 @@ function updatePlaybackUI(state) {
     const row = btn.closest('tr');
     const trackUri = row?.dataset.trackUri || btn.dataset.trackUri;
     const colNumber = row?.querySelector('.col-number');
+    const stopBtn = row?.querySelector('.track-stop-btn');
     
     // For modal buttons, get the animation container
     const searchResultItem = btn.closest('.search-result-item');
@@ -164,12 +165,20 @@ function updatePlaybackUI(state) {
         colNumber?.classList.add('playing');
         if (modalAnimation) modalAnimation.style.display = 'flex';
       }
+      // Show stop button for current track (desktop)
+      if (stopBtn) {
+        stopBtn.classList.add('visible');
+      }
     } else {
       // Other tracks should show play icon
       btn.innerHTML = '<i class="fas fa-play"></i>';
       btn.classList.remove('playing');
       colNumber?.classList.remove('playing');
       if (modalAnimation) modalAnimation.style.display = 'none';
+      // Hide stop button for other tracks
+      if (stopBtn) {
+        stopBtn.classList.remove('visible');
+      }
     }
   });
 
