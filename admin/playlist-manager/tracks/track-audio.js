@@ -42,6 +42,7 @@ export function restorePlaybackState() {
       if (trackRow) {
         const playBtn = trackRow.querySelector('.track-play-btn');
         const colNumber = trackRow.querySelector('.col-number');
+        const stopBtn = trackRow.querySelector('.track-stop-btn');
         if (playBtn) {
           playBtn.innerHTML = '<i class="fas fa-pause"></i>';
           playBtn.classList.add('playing');
@@ -49,6 +50,10 @@ export function restorePlaybackState() {
           currentPlayingTrackUri = trackUri;
           // Restore playing animation
           colNumber?.classList.add('playing');
+          // Show stop button
+          if (stopBtn) {
+            stopBtn.classList.add('visible');
+          }
         }
       }
     }
@@ -90,6 +95,14 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
         savePlaybackState(trackUri, false);
       }
       
+      // Ensure stop button is visible (for desktop)
+      if (row) {
+        const stopBtn = row.querySelector('.track-stop-btn');
+        if (stopBtn) {
+          stopBtn.classList.add('visible');
+        }
+      }
+      
       return;
     }
     
@@ -113,6 +126,11 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
       if (prevRow) {
         const prevColNumber = prevRow.querySelector('.col-number');
         prevColNumber?.classList.remove('playing');
+        // Hide stop button on previous track
+        const prevStopBtn = prevRow.querySelector('.track-stop-btn');
+        if (prevStopBtn) {
+          prevStopBtn.classList.remove('visible');
+        }
       }
     }
     
@@ -128,6 +146,11 @@ export async function handleTrackPlayPause(button, trackUri, trackId) {
     if (row) {
       const colNumber = row.querySelector('.col-number');
       colNumber?.classList.add('playing');
+      // Show stop button on current track (for desktop)
+      const stopBtn = row.querySelector('.track-stop-btn');
+      if (stopBtn) {
+        stopBtn.classList.add('visible');
+      }
     }
     
     // Save state to localStorage
@@ -186,6 +209,11 @@ export async function stopPlayback() {
     if (row) {
       const colNumber = row.querySelector('.col-number');
       colNumber?.classList.remove('playing');
+      // Hide stop button (for desktop)
+      const stopBtn = row.querySelector('.track-stop-btn');
+      if (stopBtn) {
+        stopBtn.classList.remove('visible');
+      }
     }
     currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
     currentPlayingButton.classList.remove('playing');
@@ -225,6 +253,14 @@ export async function stopPlayback() {
 // Stop any playing audio when loading new tracks
 export async function stopCurrentAudio() {
   if (currentPlayingButton) {
+    const row = currentPlayingButton.closest('tr');
+    if (row) {
+      // Hide stop button
+      const stopBtn = row.querySelector('.track-stop-btn');
+      if (stopBtn) {
+        stopBtn.classList.remove('visible');
+      }
+    }
     currentPlayingButton.innerHTML = '<i class="fas fa-play"></i>';
     currentPlayingButton.classList.remove('playing');
     currentPlayingButton = null;
