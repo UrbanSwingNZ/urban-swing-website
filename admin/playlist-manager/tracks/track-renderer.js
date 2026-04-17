@@ -139,6 +139,9 @@ function renderTrackBatch(tracks, startIndex) {
           <button class="track-play-btn" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Play track">
             <i class="fas fa-play"></i>
           </button>
+          <button class="track-stop-btn" data-track-uri="${track.uri}" data-track-id="${track.id}" title="Stop track">
+            <i class="fas fa-stop"></i>
+          </button>
           <button class="track-menu-btn" data-track-uri="${track.uri}">
             <i class="fas fa-ellipsis-v"></i>
           </button>
@@ -159,6 +162,15 @@ function renderTrackBatch(tracks, startIndex) {
       playBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         handleTrackPlayPause(playBtn, track.uri, track.id);
+      });
+    }
+    
+    // Add stop button click handler
+    const stopBtn = tr.querySelector('.track-stop-btn');
+    if (stopBtn) {
+      stopBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        stopPlayback();
       });
     }
     
