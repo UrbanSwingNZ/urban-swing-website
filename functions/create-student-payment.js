@@ -233,6 +233,35 @@ exports.createStudentWithPayment = onRequest(
         // Note: User document and auth user will be created by frontend after payment
         // This avoids IAM permission issues with backend creating auth users
         
+        // Step 6.5: Create concession block for concession-package purchases
+        let concessionBlockId = null;
+        if (packageInfo.type === 'concession-package') {
+          const purchaseDate = new Date();
+          const expiryDate = new Date();
+          expiryDate.setMonth(expiryDate.getMonth() + packageInfo.expiryMonths);
+          
+          concessionBlockId = `${studentId}-${data.packageId}-${Date.now()}`;
+          
+          const blockData = {
+            studentId: studentId,
+            packageId: data.packageId,
+            packageName: packageInfo.name,
+            initialQuantity: packageInfo.numberOfClasses,
+            remainingQuantity: packageInfo.numberOfClasses,
+            purchaseDate: admin.firestore.Timestamp.fromDate(purchaseDate),
+            expiryDate: admin.firestore.Timestamp.fromDate(expiryDate),
+            amountPaid: paymentResult.amount / 100,
+            paymentIntentId: paymentResult.paymentIntentId,
+            stripeCustomerId: customer.id,
+            receiptUrl: paymentResult.receiptUrl,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdBy: 'student-portal-registration'
+          };
+          
+          await db.collection('concessionBlocks').doc(concessionBlockId).set(blockData);
+          console.log('Concession block created:', concessionBlockId);
+        }
+        
         // Step 6.6: Create transaction record
         const timestamp = new Date().getTime();
         const firstNameClean = data.firstName.trim().toLowerCase()
@@ -276,11 +305,17 @@ exports.createStudentWithPayment = onRequest(
           console.log('Class date stored as:', classDate.toISOString(), '(NZ:', classDate.toLocaleString('en-NZ', {timeZone: 'Pacific/Auckland'}), ')');
         }
         
+        // Add concession block reference for concession-package purchases
+        if (packageInfo.type === 'concession-package' && concessionBlockId) {
+          transactionData.concessionBlockId = concessionBlockId;
+          transactionData.numberOfClasses = packageInfo.numberOfClasses;
+        }
+        
         await db.collection('transactions').doc(transactionId).set(transactionData);
         console.log('Transaction document created:', transactionId);
         
         // Step 7: Return success with all document IDs
-        response.status(200).json({
+        const successResponse = {
           success: true,
           studentId: studentId,
           userId: studentId,
@@ -289,7 +324,14 @@ exports.createStudentWithPayment = onRequest(
           paymentIntentId: paymentResult.paymentIntentId,
           receiptUrl: paymentResult.receiptUrl,
           message: 'Payment successful! Completing registration...'
-        });
+        };
+        
+        // Add concession block ID if one was created
+        if (concessionBlockId) {
+          successResponse.concessionBlockId = concessionBlockId;
+        }
+        
+        response.status(200).json(successResponse);
         
       } catch (error) {
         console.error('Error in createStudentWithPayment:', error);
