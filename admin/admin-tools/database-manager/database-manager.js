@@ -293,6 +293,9 @@ function displayCollectionsBrowser() {
                                             <button class="btn-primary btn-sm" onclick="event.stopPropagation(); editBrowserDocument('${collectionName}', '${doc.id}')">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
+                                            <button class="btn-success btn-sm" onclick="event.stopPropagation(); copyBrowserDocumentID('${collectionName}', '${doc.id}')">
+                                                <i class="fas fa-fingerprint"></i> Copy ID
+                                            </button>
                                             <button class="btn-success btn-sm" onclick="event.stopPropagation(); copyBrowserDocumentJSON('${collectionName}', '${doc.id}')">
                                                 <i class="fas fa-copy"></i> Copy JSON
                                             </button>
@@ -356,6 +359,17 @@ window.deleteBrowserDocument = async function(collectionName, docId) {
 /**
  * Copy document JSON to clipboard from browser
  */
+window.copyBrowserDocumentID = async function(collectionName, docId) {
+    try {
+        // Copy document ID to clipboard
+        await navigator.clipboard.writeText(docId);
+        showSnackbar('Document ID copied to clipboard', 'success');
+    } catch (error) {
+        console.error('Error copying document ID:', error);
+        showSnackbar('Failed to copy document ID: ' + error.message, 'error');
+    }
+};
+
 window.copyBrowserDocumentJSON = async function(collectionName, docId) {
     try {
         // Get the document data
@@ -420,6 +434,15 @@ function addFieldFilter() {
     `;
     
     container.appendChild(filterRow);
+    
+    // Add Enter key listener to the value input
+    const valueInput = filterRow.querySelector('.field-filter-value');
+    valueInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            applyFilters();
+        }
+    });
 }
 
 /**
