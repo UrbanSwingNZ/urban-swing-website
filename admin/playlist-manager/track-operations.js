@@ -23,7 +23,8 @@ import {
 import { 
   restorePlaybackState, 
   handleTrackPlayPause, 
-  stopCurrentAudio 
+  stopCurrentAudio,
+  stopPlayback
 } from './tracks/track-audio.js';
 
 // ========================================
@@ -52,6 +53,7 @@ window.handleAddSelectedTracks = handleAddSelectedTracks;
 window.restorePlaybackState = restorePlaybackState;
 window.handleTrackPlayPause = handleTrackPlayPause;
 window.stopCurrentAudio = stopCurrentAudio;
+window.stopPlayback = stopPlayback;
 
 // ========================================
 // EXPORTS
@@ -79,5 +81,6 @@ export {
   handleAddSelectedTracks,
   restorePlaybackState,
   handleTrackPlayPause,
-  stopCurrentAudio
+  stopCurrentAudio,
+  stopPlayback
 };
