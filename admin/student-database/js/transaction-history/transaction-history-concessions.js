@@ -209,9 +209,9 @@ function buildTransactionConcessionItem(block, status, studentId) {
             statusClass = '';
     }
     
-    // Get existing notes for expired/depleted items
+    // Get existing notes for locked blocks (any status) or expired/depleted items
     const existingNotes = block.lockNotes || '';
-    const showNotes = status === 'expired' || status === 'depleted';
+    const showNotes = isLocked || status === 'expired' || status === 'depleted';
     
     let html = `
         <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''} ${isGifted ? 'gifted' : ''}">
