@@ -115,12 +115,16 @@ function buildTransactionConcessionSection(title, count, blocks, status, student
             iconColor = 'var(--text-muted)';
     }
     
+    // Check if any blocks in this section are locked
+    const hasLockedBlocks = blocks.some(block => block.isLocked === true);
+    const lockedBadge = hasLockedBlocks ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
+    
     const accordionId = `transaction-concession-accordion-${status}`;
     
     let html = `
         <div class="concessions-section">
             <h4 class="concession-accordion-header ${isExpanded ? 'active' : ''}" data-target="${accordionId}">
-                <i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count})
+                <i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count}) ${lockedBadge}
                 <i class="fas fa-chevron-down accordion-icon"></i>
             </h4>
             <div id="${accordionId}" class="concessions-list accordion-content ${isExpanded ? 'show' : ''}">
@@ -161,21 +165,20 @@ function buildTransactionConcessionItem(block, status, studentId) {
         editExpiryButton = `<button class="btn-primary" data-block-id="${block.id}" data-student-id="${studentId}" data-current-expiry="${currentExpiryStr}" title="Edit expiry date"><i class="fas fa-calendar-edit"></i> Edit Expiry</button>`;
     }
     
+    // Lock/unlock buttons - available to super admin for all block statuses
+    if (isSuperAdmin()) {
+        lockButton = isLocked 
+            ? `<button class="btn-cancel" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
+            : `<button class="btn-cancel" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
+    }
+    
+    // Delete button - restrictions based on status and whether block has been used
     if (status === 'active') {
-        // Active blocks cannot be locked/unlocked
-        lockButton = `<button class="btn-cancel" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
         // Active blocks can only be deleted if no entries have been used (and only by super admin)
         deleteButton = (!isSuperAdmin() || hasBeenUsed)
             ? `<button class="btn-delete" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
             : `<button class="btn-delete" data-block-id="${block.id}" data-student-id="${studentId}" title="Delete this block"><i class="fas fa-trash"></i> Delete</button>`;
     } else {
-        // Expired and depleted blocks can be locked/unlocked (only by super admin)
-        if (isSuperAdmin()) {
-            lockButton = isLocked 
-                ? `<button class="btn-cancel" data-block-id="${block.id}" data-locked="true" title="Unlock this block"><i class="fas fa-unlock"></i> Unlock</button>`
-                : `<button class="btn-cancel" data-block-id="${block.id}" data-locked="false" title="Lock this block"><i class="fas fa-lock"></i> Lock</button>`;
-        }
-        
         // Expired/depleted blocks can only be deleted if no entries have been used (and only by super admin)
         deleteButton = (!isSuperAdmin() || hasBeenUsed)
             ? `<button class="btn-delete" disabled title="${!isSuperAdmin() ? 'Only super admin can delete' : 'Cannot delete - concession has been used'}"><i class="fas fa-trash"></i> Delete</button>`
@@ -206,9 +209,9 @@ function buildTransactionConcessionItem(block, status, studentId) {
             statusClass = '';
     }
     
-    // Get existing notes for expired/depleted items
+    // Get existing notes for locked blocks (any status) or expired/depleted items
     const existingNotes = block.lockNotes || '';
-    const showNotes = status === 'expired' || status === 'depleted';
+    const showNotes = isLocked || status === 'expired' || status === 'depleted';
     
     let html = `
         <div class="concession-item ${statusClass} ${isLocked ? 'locked' : ''} ${isGifted ? 'gifted' : ''}">
