@@ -106,6 +106,10 @@ function buildConcessionSection(title, count, blocks, status) {
             iconColor = 'var(--text-muted)';
     }
     
+    // Check if any blocks in this section are locked
+    const hasLockedBlocks = blocks.some(block => block.isLocked === true);
+    const lockedBadge = hasLockedBlocks ? '<span class="badge badge-locked" style="margin-left: 8px;"><i class="fas fa-lock"></i> LOCKED</span>' : '';
+    
     // Active sections are expanded by default, others are collapsed
     const isExpanded = status === 'active';
     const accordionId = `concession-accordion-${status}`;
@@ -113,7 +117,7 @@ function buildConcessionSection(title, count, blocks, status) {
     let html = `
         <div class="concessions-section">
             <h4 class="concession-accordion-header ${isExpanded ? 'active' : ''}" data-target="${accordionId}">
-                <i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count})
+                <i class="fas ${icon}" style="color: ${iconColor};"></i> ${title} (${count}) ${lockedBadge}
                 <i class="fas fa-chevron-down accordion-icon"></i>
             </h4>
             <div id="${accordionId}" class="concessions-list accordion-content ${isExpanded ? 'show' : ''}">
@@ -196,12 +200,7 @@ function buildConcessionItem(block, status) {
 function buildLockButton(block, status) {
     const isLocked = block.isLocked === true;
     
-    if (status === 'active') {
-        // Active blocks cannot be locked/unlocked
-        return `<button class="btn-cancel" disabled title="Cannot lock/unlock active concessions"><i class="fas fa-lock"></i> Lock</button>`;
-    }
-    
-    // Expired and depleted blocks can be locked/unlocked (only by super admin)
+    // Only super admin can lock/unlock blocks
     if (!isSuperAdmin()) {
         return '';
     }
