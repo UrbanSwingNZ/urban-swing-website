@@ -150,6 +150,10 @@ function buildConcessionItem(block, status) {
     const lockButton = buildLockButton(block, status);
     const deleteButton = buildDeleteButton(block, hasBeenUsed);
     
+    // Get existing notes for locked blocks (any status) or expired/depleted items
+    const existingNotes = block.lockNotes || '';
+    const showNotes = isLocked || status === 'expired' || status === 'depleted';
+    
     // Set labels and icons based on status
     let expiryLabel, expiryIcon, entriesLabel, statusClass;
     
@@ -185,6 +189,18 @@ function buildConcessionItem(block, status) {
                 <span><i class="fas ${expiryIcon}"></i> ${expiryLabel}: ${formatDate(expiryDate)}</span>
                 <span><i class="fas fa-shopping-cart"></i> Purchased: ${formatDate(purchaseDate)}</span>
             </div>
+            ${showNotes ? `
+            <div class="concession-notes">
+                <label for="notes-${block.id}">Notes:</label>
+                <textarea 
+                    id="notes-${block.id}" 
+                    class="concession-notes-input" 
+                    data-block-id="${block.id}"
+                    placeholder="Add notes about why this concession is locked/unlocked..."
+                    rows="3">${existingNotes}</textarea>
+                <span class="notes-save-status" id="notes-status-${block.id}"></span>
+            </div>
+            ` : ''}
             <div class="concession-actions">
                 ${buildEditExpiryButton(block, status)}
                 ${lockButton}
@@ -304,6 +320,49 @@ function attachConcessionDetailEventListeners(contentEl, studentId) {
                 showDeleteConfirmationModal(blockId, studentId);
             });
         }
+    });
+    
+    // Notes input - auto-save with debounce
+    const notesDebounceTimers = {};
+    contentEl.querySelectorAll('.concession-notes-input').forEach(textarea => {
+        textarea.addEventListener('input', (e) => {
+            const blockId = textarea.dataset.blockId;
+            const notes = textarea.value;
+            const statusEl = document.getElementById(`notes-status-${blockId}`);
+            
+            // Clear existing timer for this textarea
+            if (notesDebounceTimers[blockId]) {
+                clearTimeout(notesDebounceTimers[blockId]);
+            }
+            
+            // Show "saving..." indicator
+            if (statusEl) {
+                statusEl.textContent = 'Saving...';
+                statusEl.className = 'notes-save-status saving';
+            }
+            
+            // Set new timer to save after user stops typing (1 second delay)
+            notesDebounceTimers[blockId] = setTimeout(async () => {
+                try {
+                    await updateConcessionBlockNotes(blockId, notes);
+                    if (statusEl) {
+                        statusEl.textContent = 'Saved';
+                        statusEl.className = 'notes-save-status saved';
+                        // Clear the saved message after 2 seconds
+                        setTimeout(() => {
+                            statusEl.textContent = '';
+                            statusEl.className = 'notes-save-status';
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('Error saving notes:', error);
+                    if (statusEl) {
+                        statusEl.textContent = 'Error saving';
+                        statusEl.className = 'notes-save-status error';
+                    }
+                }
+            }, 1000);
+        });
     });
     
     // Lock all expired button
