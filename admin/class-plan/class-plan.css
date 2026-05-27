@@ -44,6 +44,125 @@
 }
 
 /* ========================================
+   TABS CONTAINER
+   ======================================== */
+.tabs-container {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: var(--space-lg);
+}
+
+/* Tab Header */
+.tabs-header {
+    display: flex;
+    border-bottom: 2px solid var(--border-light);
+    background: var(--bg-light);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: var(--space-md) var(--space-lg);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+}
+
+.tab-btn:hover {
+    background: var(--white);
+    color: var(--purple-primary);
+}
+
+.tab-btn.active {
+    background: var(--white);
+    color: var(--purple-primary);
+    border-bottom-color: var(--purple-primary);
+}
+
+.tab-btn i {
+    font-size: var(--font-size-base);
+}
+
+/* Tab Content */
+.tab-content {
+    padding: var(--space-lg);
+    min-height: 400px;
+}
+
+/* Mobile: Adjust tab spacing */
+@media (max-width: 640px) {
+    .tab-btn {
+        padding: var(--space-sm);
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ========================================
+   CYCLE PROGRESS INDICATOR (Level 1)
+   ======================================== */
+.cycle-progress-indicator {
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.cycle-progress-text {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-gray);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--gradient-blue-purple);
+    transition: width var(--transition-base);
+}
+
+/* ========================================
+   CURRENT WEEK HIGHLIGHT (Level 1)
+   ======================================== */
+.class-plan-card.current-week {
+    border-color: var(--text-orange);
+    background: var(--gradient-warning);
+}
+
+.class-plan-card.current-week:hover {
+    border-color: var(--text-orange);
+    background: var(--gradient-warning);
+}
+
+/* ========================================
+   SEARCH BOX FULL WIDTH (History tab)
+   ======================================== */
+.search-box-full-width {
+    flex: 1;
+    max-width: 600px;
+}
+
+/* ========================================
    ACTIONS AND SETTINGS CONTAINER
    ======================================== */
 .actions-settings-container {
@@ -195,6 +314,26 @@
     margin: 0;
 }
 
+/* Empty Week Message (inside Level 1 placeholder cards) */
+.empty-week-message {
+    text-align: center;
+    padding: var(--space-xl) var(--space-md);
+    color: var(--text-muted);
+}
+
+.empty-week-message i {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-xs);
+    color: var(--gray-400);
+    opacity: 0.5;
+}
+
+.empty-week-message p {
+    font-size: var(--font-size-sm);
+    margin: 0;
+    font-style: italic;
+}
+
 /* ========================================
    CLASS PLAN CARD
    ======================================== */
@@ -291,6 +430,14 @@
 
 .btn-icon.btn-edit:hover {
     background: var(--bg-purple-light);
+}
+
+.btn-icon.btn-add {
+    color: var(--success);
+}
+
+.btn-icon.btn-add:hover {
+    background: var(--bg-success-pale);
 }
 
 .btn-icon.btn-delete {
