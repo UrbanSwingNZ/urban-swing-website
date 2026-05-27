@@ -141,13 +141,15 @@ function setupEventListeners() {
         openModal();
     });
     
-    // Show/hide floating button on scroll
+    // Show/hide floating button on scroll (only for Level 2 tab)
     let lastScrollTop = 0;
     window.addEventListener('scroll', () => {
         const addButton = document.getElementById('add-class-btn');
         const floatingButton = document.getElementById('floating-add-btn');
+        const activeTab = localStorage.getItem('classPlanActiveTab') || 'level2';
         
-        if (addButton && floatingButton) {
+        // Only show floating button on Level 2 tab
+        if (addButton && floatingButton && activeTab === 'level2') {
             const rect = addButton.getBoundingClientRect();
             const isAddButtonVisible = rect.bottom > 0 && rect.top < window.innerHeight;
             
@@ -162,6 +164,10 @@ function setupEventListeners() {
                     }
                 }, 300);
             }
+        } else if (floatingButton && activeTab === 'level1') {
+            // Always hide on Level 1
+            floatingButton.classList.remove('visible');
+            floatingButton.style.display = 'none';
         }
     });
     
@@ -280,6 +286,15 @@ function switchTab(tabName) {
     document.getElementById(`${tabName}-tab`).style.display = 'block';
     document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
     
+    // Hide floating button on Level 1 (each week has its own add button)
+    const floatingBtn = document.getElementById('floating-add-btn');
+    if (floatingBtn) {
+        if (tabName === 'level1') {
+            floatingBtn.classList.remove('visible');
+            floatingBtn.style.display = 'none';
+        }
+    }
+    
     // Load data for selected tab
     if (tabName === 'level1') {
         loadLevel1Plans();
@@ -300,10 +315,29 @@ async function loadLevel1Plans() {
     showLoadingSpinner('Loading Level 1 cycle...');
     
     try {
+        // Get current settings
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        const blockSize = settingsDoc.exists ? (settingsDoc.data().blockSize || 12) : 12;
+        
+        // Get current cycle week
+        const currentWeek = await getCurrentCycleWeek();
+        
+        // Load existing Level 1 plans
         const snapshot = await window.db.collection('classPlans')
             .where('classLevel', '==', 'level1')
             .orderBy('cycleWeek', 'asc')
             .get();
+        
+        // Create a map of existing plans by cycle week
+        const plansMap = new Map();
+        snapshot.forEach(doc => {
+            const planData = doc.data();
+            planData.id = doc.id;
+            if (planData.date) {
+                planData.date = planData.date.toDate();
+            }
+            plansMap.set(planData.cycleWeek, planData);
+        });
         
         const container = document.getElementById('level1-plans-container');
         const emptyState = document.getElementById('level1-empty-state');
@@ -312,23 +346,28 @@ async function loadLevel1Plans() {
         const existingCards = container.querySelectorAll('.class-plan-card');
         existingCards.forEach(card => card.remove());
         
-        if (snapshot.empty) {
-            emptyState.style.display = 'block';
-        } else {
-            emptyState.style.display = 'none';
+        // Always hide empty state for Level 1 (we show placeholder cards)
+        emptyState.style.display = 'none';
+        
+        // Generate cards for all weeks (1 to blockSize)
+        for (let week = 1; week <= blockSize; week++) {
+            const planData = plansMap.get(week);
+            const isCurrentWeek = (week === currentWeek);
             
-            // Add cards
-            snapshot.forEach(doc => {
-                const planData = doc.data();
-                planData.id = doc.id;
-                if (planData.date) {
-                    planData.date = planData.date.toDate();
-                }
-                
-                const card = createClassPlanCard(planData);
+            if (planData) {
+                // Existing plan
+                const card = createClassPlanCard(planData, 'level1', isCurrentWeek);
                 container.appendChild(card);
-            });
+            } else {
+                // Placeholder card for empty week
+                const placeholderCard = createLevel1PlaceholderCard(week, isCurrentWeek);
+                container.appendChild(placeholderCard);
+            }
         }
+        
+        // Update cycle progress indicator
+        updateCycleProgress(currentWeek, blockSize);
+        
     } catch (error) {
         console.error('Error loading Level 1 plans:', error);
         showSnackbar('Error loading Level 1 plans: ' + error.message, 'error');
@@ -540,6 +579,57 @@ async function saveBlockSize() {
 }
 
 /**
+ * Get the Monday of a given week
+ * @param {Date} date - Any date in the week
+ * @returns {Date} The Monday of that week
+ */
+function getMondayOfWeek(date) {
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+    const monday = new Date(date);
+    monday.setDate(diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+}
+
+/**
+ * Calculate which week of the cycle we're currently in (based on Monday-Sunday weeks)
+ * @returns {Promise<number>} Current week number (1-12)
+ */
+async function getCurrentCycleWeek() {
+    try {
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        
+        if (!settingsDoc.exists) {
+            return 1; // Default to week 1
+        }
+        
+        const settings = settingsDoc.data();
+        const cycleStartDate = settings.cycleStartDate ? settings.cycleStartDate.toDate() : new Date('2026-06-04');
+        const blockSize = settings.blockSize || 12;
+        
+        // Get Monday of the cycle start week
+        const cycleStartMonday = getMondayOfWeek(cycleStartDate);
+        
+        // Get Monday of the current week
+        const today = new Date();
+        const currentMonday = getMondayOfWeek(today);
+        
+        // Calculate weeks difference
+        const daysDiff = Math.floor((currentMonday - cycleStartMonday) / (1000 * 60 * 60 * 24));
+        const weeksDiff = Math.floor(daysDiff / 7);
+        
+        // Get week number in cycle (1-based, wrapping at blockSize)
+        const weekNumber = ((weeksDiff % blockSize) + blockSize) % blockSize + 1;
+        
+        return weekNumber;
+    } catch (error) {
+        console.error('Error calculating current cycle week:', error);
+        return 1;
+    }
+}
+
+/**
  * Calculate which week number a date falls into based on cycle start date
  * @param {Date} classDate - The date of the class
  * @returns {Promise<number>} Week number in cycle (1-12)
@@ -584,17 +674,69 @@ async function updateNextWeekInfo() {
 }
 
 /**
- * Open the add/edit modal
+ * Open the add/edit modal for Level 1 (fixed cycle week)
+ */
+window.openLevel1Modal = async function(cycleWeek, planData = null) {
+    const modalTitle = document.getElementById('modal-title');
+    const form = document.getElementById('class-plan-form');
+    const weekInfoBanner = document.getElementById('week-info-banner');
+    const weekInfoText = document.getElementById('week-info-text');
+    const datePickerContainer = document.querySelector('.date-picker-container');
+    
+    // Reset form
+    form.reset();
+    editingPlanId = planData ? planData.id : null;
+    
+    // Hide date picker for Level 1
+    if (datePickerContainer) {
+        datePickerContainer.style.display = 'none';
+    }
+    
+    // Show week info
+    weekInfoText.textContent = `Week ${cycleWeek} of ${currentBlockSize} (Level 1 - Fixed Cycle)`;
+    weekInfoBanner.style.display = 'flex';
+    
+    // Store the cycle week for form submission
+    form.dataset.level = 'level1';
+    form.dataset.cycleWeek = cycleWeek;
+    
+    if (planData) {
+        // Editing existing Level 1 plan
+        modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Level 1 Week ' + cycleWeek;
+        document.getElementById('move-1').value = planData.move1 || '';
+        document.getElementById('move-2').value = planData.move2 || '';
+        document.getElementById('move-3').value = planData.move3 || '';
+        document.getElementById('notes').value = planData.notes || '';
+    } else {
+        // Adding new Level 1 plan
+        modalTitle.innerHTML = '<i class="fas fa-plus"></i> Add Level 1 Week ' + cycleWeek;
+    }
+    
+    formModal.show();
+};
+
+/**
+ * Open the add/edit modal for Level 2 (date-based)
  */
 async function openModal(planData = null) {
     const modalTitle = document.getElementById('modal-title');
     const form = document.getElementById('class-plan-form');
     const weekInfoBanner = document.getElementById('week-info-banner');
     const weekInfoText = document.getElementById('week-info-text');
+    const datePickerContainer = document.querySelector('.date-picker-container');
     
     // Reset form
     form.reset();
     editingPlanId = null;
+    
+    // Show date picker for Level 2
+    if (datePickerContainer) {
+        datePickerContainer.style.display = 'block';
+    }
+    
+    // Clear level data
+    delete form.dataset.level;
+    delete form.dataset.cycleWeek;
     
     if (planData) {
         // Editing existing plan
@@ -650,14 +792,18 @@ async function handleFormSubmit(e) {
     e.preventDefault();
     
     // Get form values
+    const form = document.getElementById('class-plan-form');
     const dateInput = document.getElementById('class-date').value;
     const move1 = document.getElementById('move-1').value.trim();
     const move2 = document.getElementById('move-2').value.trim();
     const move3 = document.getElementById('move-3').value.trim();
     const notes = document.getElementById('notes').value.trim();
     
-    // Validate date
-    if (!datePicker.selectedDate) {
+    const isLevel1 = form.dataset.level === 'level1';
+    const cycleWeek = isLevel1 ? parseInt(form.dataset.cycleWeek) : null;
+    
+    // Validation
+    if (!isLevel1 && !datePicker.selectedDate) {
         alert('Please select a date');
         return;
     }
@@ -673,7 +819,6 @@ async function handleFormSubmit(e) {
     
     try {
         const planData = {
-            date: window.firebase.firestore.Timestamp.fromDate(datePicker.selectedDate),
             move1: move1,
             move2: move2,
             move3: move3,
@@ -683,17 +828,28 @@ async function handleFormSubmit(e) {
         };
         
         if (editingPlanId) {
-            // Update existing plan (don't update weekNumber or blockSize)
+            // Update existing plan (don't update level, week, or date fields)
             await window.db.collection('classPlans').doc(editingPlanId).update(planData);
             showSnackbar('Class plan updated successfully', 'success');
         } else {
-            // Create new plan - calculate week number from selected date
-            const calculatedWeekNumber = await calculateWeekNumberFromDate(datePicker.selectedDate);
+            // Create new plan
+            if (isLevel1) {
+                // Level 1: Fixed cycle week, no date
+                planData.classLevel = 'level1';
+                planData.cycleWeek = cycleWeek;
+                planData.date = null;
+                planData.weekNumber = null;
+                planData.blockSize = null;
+            } else {
+                // Level 2: Date-based with calculated week
+                const calculatedWeekNumber = await calculateWeekNumberFromDate(datePicker.selectedDate);
+                planData.classLevel = 'level2';
+                planData.cycleWeek = null;
+                planData.date = window.firebase.firestore.Timestamp.fromDate(datePicker.selectedDate);
+                planData.weekNumber = calculatedWeekNumber;
+                planData.blockSize = currentBlockSize;
+            }
             
-            planData.classLevel = 'level2';  // New Level 2 class
-            planData.cycleWeek = null;       // Not used for Level 2
-            planData.weekNumber = calculatedWeekNumber;
-            planData.blockSize = currentBlockSize;
             planData.createdAt = window.firebase.firestore.FieldValue.serverTimestamp();
             planData.createdBy = currentUser.uid;
             await window.db.collection('classPlans').add(planData);
@@ -711,11 +867,74 @@ async function handleFormSubmit(e) {
 }
 
 /**
+ * Create a Level 1 placeholder card for weeks without content
+ */
+function createLevel1PlaceholderCard(weekNumber, isCurrentWeek = false) {
+    const card = document.createElement('div');
+    card.className = 'class-plan-card level1-card';
+    if (isCurrentWeek) {
+        card.classList.add('current-week');
+    }
+    
+    card.innerHTML = `
+        <div class="class-plan-card-header">
+            <div class="class-plan-date">
+                <div class="class-plan-week week-${weekNumber === 1 ? 'one' : 'normal'}">
+                    Week ${weekNumber} of ${currentBlockSize}
+                </div>
+            </div>
+            <div class="class-plan-actions">
+                <button class="btn-icon btn-add" onclick="openLevel1Modal(${weekNumber})" title="Add Content">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="class-plan-card-body">
+            <div class="empty-week-message">
+                <i class="fas fa-clipboard"></i>
+                <p>No content yet</p>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+/**
+ * Update the cycle progress indicator
+ */
+function updateCycleProgress(currentWeek, totalWeeks) {
+    const progressIndicator = document.getElementById('cycle-progress-indicator');
+    const progressText = document.getElementById('cycle-progress-text');
+    const progressBar = document.getElementById('progress-bar-fill');
+    
+    // Show the progress indicator
+    if (progressIndicator) {
+        progressIndicator.style.display = 'flex';
+    }
+    
+    if (progressText) {
+        progressText.textContent = `Currently Teaching: Week ${currentWeek} of ${totalWeeks}`;
+    }
+    
+    if (progressBar) {
+        const percentage = (currentWeek / totalWeeks) * 100;
+        progressBar.style.width = `${percentage}%`;
+    }
+}
+
+/**
  * Create a class plan card
  */
-function createClassPlanCard(planData) {
+function createClassPlanCard(planData, level = 'level2', isCurrentWeek = false) {
     const card = document.createElement('div');
     card.className = 'class-plan-card';
+    if (level === 'level1') {
+        card.classList.add('level1-card');
+    }
+    if (isCurrentWeek) {
+        card.classList.add('current-week');
+    }
     
     const formattedDate = formatDateForDisplay(planData.date);
     
@@ -766,29 +985,46 @@ function createClassPlanCard(planData) {
         `;
     }
     
-    // Build week number display
+    // Build week/date display
     let weekHTML = '';
-    if (planData.weekNumber && planData.blockSize) {
-        const weekClass = Number(planData.weekNumber) === 1 ? 'class-plan-week week-one' : 'class-plan-week';
-        weekHTML = `<div class="${weekClass}">Week ${planData.weekNumber} of ${planData.blockSize}</div>`;
+    let dateHTML = '';
+    
+    if (level === 'level1') {
+        // Level 1: Show cycle week, no date
+        const weekClass = planData.cycleWeek === 1 ? 'class-plan-week week-one' : 'class-plan-week';
+        weekHTML = `<div class="${weekClass}">Week ${planData.cycleWeek} of ${currentBlockSize}</div>`;
+    } else {
+        // Level 2: Show week number and date
+        if (planData.weekNumber && planData.blockSize) {
+            const weekClass = Number(planData.weekNumber) === 1 ? 'class-plan-week week-one' : 'class-plan-week';
+            weekHTML = `<div class="${weekClass}">Week ${planData.weekNumber} of ${planData.blockSize}</div>`;
+        }
+        dateHTML = `
+            <div class="class-plan-date-main">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>${formattedDate}</h3>
+            </div>
+        `;
     }
+    
+    // Build action buttons (no delete for Level 1)
+    const deleteButton = level === 'level1' ? '' : `
+        <button class="btn-icon btn-delete" onclick="deleteClassPlan('${planData.id}')" title="Delete">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
     
     card.innerHTML = `
         <div class="class-plan-card-header">
             <div class="class-plan-date">
                 ${weekHTML}
-                <div class="class-plan-date-main">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>${formattedDate}</h3>
-                </div>
+                ${dateHTML}
             </div>
             <div class="class-plan-actions">
                 <button class="btn-icon btn-edit" onclick="editClassPlan('${planData.id}')" title="Edit">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-icon btn-delete" onclick="deleteClassPlan('${planData.id}')" title="Delete">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${deleteButton}
             </div>
         </div>
         <div class="class-plan-card-body">
@@ -814,9 +1050,16 @@ window.editClassPlan = async function(planId) {
         
         const planData = doc.data();
         planData.id = doc.id;
-        planData.date = planData.date.toDate();
+        if (planData.date) {
+            planData.date = planData.date.toDate();
+        }
         
-        await openModal(planData);
+        // Check if it's a Level 1 plan
+        if (planData.classLevel === 'level1') {
+            await openLevel1Modal(planData.cycleWeek, planData);
+        } else {
+            await openModal(planData);
+        }
     } catch (error) {
         console.error('Error loading class plan:', error);
         showSnackbar('Error loading class plan: ' + error.message, 'error');
