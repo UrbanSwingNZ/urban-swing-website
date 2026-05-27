@@ -540,28 +540,53 @@ async function saveBlockSize() {
 }
 
 /**
- * Calculate and update the next week number info
+ * Calculate which week number a date falls into based on cycle start date
+ * @param {Date} classDate - The date of the class
+ * @returns {Promise<number>} Week number in cycle (1-12)
+ */
+async function calculateWeekNumberFromDate(classDate) {
+    try {
+        // Get cycle start date from settings
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        
+        if (!settingsDoc.exists) {
+            console.warn('Settings not found, defaulting to Week 1');
+            return 1;
+        }
+        
+        const settings = settingsDoc.data();
+        const cycleStartDate = settings.cycleStartDate ? settings.cycleStartDate.toDate() : new Date('2026-06-04');
+        const blockSize = settings.blockSize || 12;
+        
+        // Calculate days difference
+        const daysDiff = Math.floor((classDate - cycleStartDate) / (1000 * 60 * 60 * 24));
+        
+        // Calculate weeks difference (assuming Thursday classes, each week = 7 days)
+        const weeksDiff = Math.floor(daysDiff / 7);
+        
+        // Get week number in cycle (1-based, wrapping at blockSize)
+        const weekNumber = ((weeksDiff % blockSize) + blockSize) % blockSize + 1;
+        
+        return weekNumber;
+    } catch (error) {
+        console.error('Error calculating week number:', error);
+        return 1; // Default to week 1 on error
+    }
+}
+
+/**
+ * Calculate and update the next week number info (deprecated - kept for compatibility)
  */
 async function updateNextWeekInfo() {
-    try {
-        // Get all class plans with the current block size
-        const snapshot = await window.db.collection('classPlans')
-            .where('blockSize', '==', currentBlockSize)
-            .get();
-        
-        const count = snapshot.size;
-        nextWeekNumber = (count % currentBlockSize) + 1;
-    } catch (error) {
-        console.error('Error calculating next week number:', error);
-        // Default to week 1 if there's an error
-        nextWeekNumber = 1;
-    }
+    // This function is no longer needed since we calculate week numbers
+    // based on the date selected, but kept for compatibility
+    nextWeekNumber = 1; // Default
 }
 
 /**
  * Open the add/edit modal
  */
-function openModal(planData = null) {
+async function openModal(planData = null) {
     const modalTitle = document.getElementById('modal-title');
     const form = document.getElementById('class-plan-form');
     const weekInfoBanner = document.getElementById('week-info-banner');
@@ -593,9 +618,17 @@ function openModal(planData = null) {
         document.getElementById('move-3').value = planData.move3 || '';
         document.getElementById('notes').value = planData.notes || '';
     } else {
-        // Adding new plan - show next week number
+        // Adding new plan - calculate week based on today's date or cycle start
         modalTitle.innerHTML = '<i class="fas fa-plus"></i> Add Class Plan';
-        weekInfoText.textContent = `Week ${nextWeekNumber} of ${currentBlockSize}`;
+        
+        // Try to calculate week for a default date (next Thursday or cycle start)
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        const cycleStartDate = settingsDoc.exists && settingsDoc.data().cycleStartDate 
+            ? settingsDoc.data().cycleStartDate.toDate() 
+            : new Date('2026-06-04');
+        
+        const estimatedWeek = await calculateWeekNumberFromDate(cycleStartDate);
+        weekInfoText.textContent = `Week will be calculated from selected date`;
         weekInfoBanner.style.display = 'flex';
     }
     
@@ -654,18 +687,17 @@ async function handleFormSubmit(e) {
             await window.db.collection('classPlans').doc(editingPlanId).update(planData);
             showSnackbar('Class plan updated successfully', 'success');
         } else {
-            // Create new plan - add week number, block size, and class level
+            // Create new plan - calculate week number from selected date
+            const calculatedWeekNumber = await calculateWeekNumberFromDate(datePicker.selectedDate);
+            
             planData.classLevel = 'level2';  // New Level 2 class
             planData.cycleWeek = null;       // Not used for Level 2
-            planData.weekNumber = nextWeekNumber;
+            planData.weekNumber = calculatedWeekNumber;
             planData.blockSize = currentBlockSize;
             planData.createdAt = window.firebase.firestore.FieldValue.serverTimestamp();
             planData.createdBy = currentUser.uid;
             await window.db.collection('classPlans').add(planData);
             showSnackbar('Class plan created successfully', 'success');
-            
-            // Recalculate next week number
-            await updateNextWeekInfo();
         }
         
         closeModal();
@@ -784,7 +816,7 @@ window.editClassPlan = async function(planId) {
         planData.id = doc.id;
         planData.date = planData.date.toDate();
         
-        openModal(planData);
+        await openModal(planData);
     } catch (error) {
         console.error('Error loading class plan:', error);
         showSnackbar('Error loading class plan: ' + error.message, 'error');
