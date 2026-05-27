@@ -628,7 +628,8 @@ async function saveHistoryCutoffDate() {
 2. ✅ Create settings document with `cycleStartDate` and `historyCutoffDate`
 3. ✅ Create and run data migration script to add `classLevel: 'level2'` to all existing docs
 4. ✅ Verify data in Firebase Console
-5. **Milestone:** Data structure is ready ✅
+5. ✅ Create Firestore composite indexes for queries
+6. **Milestone:** Data structure is ready ✅
 
 ### Phase 2: Tabs + History (1 hour) ✅ COMPLETE
 1. ✅ Add tab HTML structure to `index.html`
@@ -638,16 +639,16 @@ async function saveHistoryCutoffDate() {
 5. ✅ Test: May 28 class appears in History tab
 6. **Milestone:** Can see existing data in History tab ✅
 
-### Phase 3: Level 2 Tab (1.5 hours) ⭐ NEXT
-1. Create `loadLevel2Plans()` function (query: `date >= June 1`)
-2. Add conditional UI visibility (show/hide add button, search, settings per tab)
-3. Update form submission to add `classLevel: 'level2'`
-4. Update modal to set classLevel on new Level 2 classes
-5. Test add/edit/delete on Level 2
-6. Test search on Level 2
-7. **Milestone:** Level 2 is fully functional for future classes
+### Phase 3: Level 2 Tab (1.5 hours) ✅ COMPLETE
+1. ✅ Create `loadLevel2Plans()` function (query: `date >= June 1`)
+2. ✅ Conditional UI visibility (actions bar in level2 tab content)
+3. ✅ Update form submission to add `classLevel: 'level2'`
+4. ✅ Tab-specific search functionality
+5. ✅ Edit/delete reload current tab
+6. ✅ Delete migration.html file
+7. **Milestone:** Level 2 is fully functional for future classes ✅
 
-### Phase 4: Level 1 Tab (2-3 hours)
+### Phase 4: Level 1 Tab (2-3 hours) ⭐ NEXT
 1. Create `loadLevel1Plans()` function (query: `classLevel == 'level1'`)
 2. Generate 12-week grid with placeholder cards for empty weeks
 3. Add current week calculation function
