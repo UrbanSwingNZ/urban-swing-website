@@ -55,6 +55,34 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "classPlans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "classLevel",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cycleWeek",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "classPlans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "classLevel",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

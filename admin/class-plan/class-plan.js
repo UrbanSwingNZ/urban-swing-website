@@ -92,8 +92,9 @@ function initializePage() {
     // Load block size settings
     loadBlockSettings();
     
-    // Load class plans
-    loadClassPlans();
+    // Load active tab (restore from localStorage or default to level2)
+    const savedTab = localStorage.getItem('classPlanActiveTab') || 'level2';
+    switchTab(savedTab);
 }
 
 /**
@@ -121,6 +122,14 @@ function initializeModals() {
  * Setup event listeners
  */
 function setupEventListeners() {
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tabName = e.currentTarget.getAttribute('data-tab');
+            switchTab(tabName);
+        });
+    });
+    
     // Add class button
     document.getElementById('add-class-btn').addEventListener('click', () => {
         openModal();
@@ -171,22 +180,31 @@ function setupEventListeners() {
     // Block settings
     document.getElementById('save-block-size-btn').addEventListener('click', saveBlockSize);
     
-    // Search functionality
+    // Search functionality - Level 2
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search');
     
-    searchInput.addEventListener('input', handleSearch);
-    clearSearchBtn.addEventListener('click', clearSearch);
+    searchInput.addEventListener('input', (e) => handleSearch(e, 'level2'));
+    clearSearchBtn.addEventListener('click', () => clearSearch('level2'));
+    
+    // Search functionality - History
+    const historySearchInput = document.getElementById('history-search-input');
+    const historyClearSearchBtn = document.getElementById('history-clear-search');
+    
+    historySearchInput.addEventListener('input', (e) => handleSearch(e, 'history'));
+    historyClearSearchBtn.addEventListener('click', () => clearSearch('history'));
 }
 
 /**
  * Handle search input
  */
-function handleSearch(e) {
+function handleSearch(e, tabName) {
     const searchTerm = e.target.value.toLowerCase().trim();
-    const clearBtn = document.getElementById('clear-search');
-    const cards = document.querySelectorAll('.class-plan-card');
-    const emptyState = document.getElementById('empty-state');
+    const clearBtn = tabName === 'level2' 
+        ? document.getElementById('clear-search')
+        : document.getElementById('history-clear-search');
+    const container = document.getElementById(`${tabName}-plans-container`);
+    const cards = container.querySelectorAll('.class-plan-card');
     
     // Show/hide clear button
     clearBtn.style.display = searchTerm ? 'block' : 'none';
@@ -194,16 +212,7 @@ function handleSearch(e) {
     if (!searchTerm) {
         // Show all cards if search is empty
         cards.forEach(card => card.style.display = 'block');
-        // Show empty state if there are no cards at all
-        if (cards.length === 0 && emptyState) {
-            emptyState.style.display = 'block';
-        }
         return;
-    }
-    
-    // Hide empty state during search
-    if (emptyState) {
-        emptyState.style.display = 'none';
     }
     
     let visibleCount = 0;
@@ -221,20 +230,20 @@ function handleSearch(e) {
     // Show a message if no cards match
     if (visibleCount === 0 && cards.length > 0) {
         // Create or update "no results" message
-        let noResultsMsg = document.getElementById('no-search-results');
+        let noResultsMsg = document.getElementById(`${tabName}-no-search-results`);
         if (!noResultsMsg) {
             noResultsMsg = document.createElement('div');
-            noResultsMsg.id = 'no-search-results';
+            noResultsMsg.id = `${tabName}-no-search-results`;
             noResultsMsg.className = 'empty-state';
             noResultsMsg.innerHTML = `
                 <i class="fas fa-search"></i>
                 <p>No class plans match your search</p>
             `;
-            document.getElementById('class-plans-container').appendChild(noResultsMsg);
+            container.appendChild(noResultsMsg);
         }
         noResultsMsg.style.display = 'block';
     } else {
-        const noResultsMsg = document.getElementById('no-search-results');
+        const noResultsMsg = document.getElementById(`${tabName}-no-search-results`);
         if (noResultsMsg) {
             noResultsMsg.style.display = 'none';
         }
@@ -244,11 +253,219 @@ function handleSearch(e) {
 /**
  * Clear search input
  */
-function clearSearch() {
-    const searchInput = document.getElementById('search-input');
+function clearSearch(tabName) {
+    const searchInput = tabName === 'level2'
+        ? document.getElementById('search-input')
+        : document.getElementById('history-search-input');
     searchInput.value = '';
-    handleSearch({ target: searchInput });
+    handleSearch({ target: searchInput }, tabName);
     searchInput.focus();
+}
+
+/**
+ * Switch between tabs
+ */
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(`${tabName}-tab`).style.display = 'block';
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    
+    // Load data for selected tab
+    if (tabName === 'level1') {
+        loadLevel1Plans();
+    } else if (tabName === 'level2') {
+        loadLevel2Plans();
+    } else if (tabName === 'history') {
+        loadHistoryPlans();
+    }
+    
+    // Save preference to localStorage
+    localStorage.setItem('classPlanActiveTab', tabName);
+}
+
+/**
+ * Load Level 1 plans (12-week cycle)
+ */
+async function loadLevel1Plans() {
+    showLoadingSpinner('Loading Level 1 cycle...');
+    
+    try {
+        const snapshot = await window.db.collection('classPlans')
+            .where('classLevel', '==', 'level1')
+            .orderBy('cycleWeek', 'asc')
+            .get();
+        
+        const container = document.getElementById('level1-plans-container');
+        const emptyState = document.getElementById('level1-empty-state');
+        
+        // Clear existing cards
+        const existingCards = container.querySelectorAll('.class-plan-card');
+        existingCards.forEach(card => card.remove());
+        
+        if (snapshot.empty) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+            
+            // Add cards
+            snapshot.forEach(doc => {
+                const planData = doc.data();
+                planData.id = doc.id;
+                if (planData.date) {
+                    planData.date = planData.date.toDate();
+                }
+                
+                const card = createClassPlanCard(planData);
+                container.appendChild(card);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading Level 1 plans:', error);
+        showSnackbar('Error loading Level 1 plans: ' + error.message, 'error');
+    } finally {
+        hideLoadingSpinner();
+    }
+}
+
+/**
+ * Load Level 2 plans (current and future classes)
+ */
+async function loadLevel2Plans() {
+    showLoadingSpinner('Loading Level 2 classes...');
+    
+    try {
+        // Get history cutoff date from settings
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        let cutoffDate = new Date('2026-06-01'); // Default
+        
+        if (settingsDoc.exists) {
+            const settings = settingsDoc.data();
+            if (settings.historyCutoffDate) {
+                cutoffDate = settings.historyCutoffDate.toDate();
+                // Add one day to cutoff to get the start of Level 2
+                cutoffDate.setDate(cutoffDate.getDate() + 1);
+            }
+        }
+        
+        const cutoffTimestamp = window.firebase.firestore.Timestamp.fromDate(cutoffDate);
+        
+        const snapshot = await window.db.collection('classPlans')
+            .where('classLevel', '==', 'level2')
+            .where('date', '>=', cutoffTimestamp)
+            .orderBy('date', 'desc')
+            .get();
+        
+        const container = document.getElementById('level2-plans-container');
+        const emptyState = document.getElementById('level2-empty-state');
+        
+        // Clear existing cards
+        const existingCards = container.querySelectorAll('.class-plan-card');
+        existingCards.forEach(card => card.remove());
+        
+        if (snapshot.empty) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+            
+            // Add cards
+            snapshot.forEach(doc => {
+                const planData = doc.data();
+                planData.id = doc.id;
+                planData.date = planData.date.toDate();
+                
+                const card = createClassPlanCard(planData);
+                container.appendChild(card);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading Level 2 plans:', error);
+        showSnackbar('Error loading Level 2 plans: ' + error.message, 'error');
+    } finally {
+        hideLoadingSpinner();
+    }
+}
+
+/**
+ * Load History plans (past classes)
+ */
+async function loadHistoryPlans() {
+    showLoadingSpinner('Loading class history...');
+    
+    try {
+        // Get history cutoff date from settings
+        const settingsDoc = await window.db.collection('settings').doc('classPlans').get();
+        let cutoffDate = new Date('2026-05-31T23:59:59'); // Default
+        
+        if (settingsDoc.exists) {
+            const settings = settingsDoc.data();
+            if (settings.historyCutoffDate) {
+                cutoffDate = settings.historyCutoffDate.toDate();
+            }
+        }
+        
+        const cutoffTimestamp = window.firebase.firestore.Timestamp.fromDate(cutoffDate);
+        
+        const snapshot = await window.db.collection('classPlans')
+            .where('classLevel', '==', 'level2')
+            .where('date', '<=', cutoffTimestamp)
+            .orderBy('date', 'desc')
+            .get();
+        
+        const container = document.getElementById('history-plans-container');
+        const emptyState = document.getElementById('history-empty-state');
+        
+        // Clear existing cards
+        const existingCards = container.querySelectorAll('.class-plan-card');
+        existingCards.forEach(card => card.remove());
+        
+        if (snapshot.empty) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+            
+            // Add cards
+            snapshot.forEach(doc => {
+                const planData = doc.data();
+                planData.id = doc.id;
+                planData.date = planData.date.toDate();
+                
+                const card = createClassPlanCard(planData);
+                container.appendChild(card);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading history plans:', error);
+        showSnackbar('Error loading history: ' + error.message, 'error');
+    } finally {
+        hideLoadingSpinner();
+    }
+}
+
+/**
+ * Handle search input
+ */
+/**
+ * Reload the currently active tab
+ */
+function reloadCurrentTab() {
+    const activeTab = localStorage.getItem('classPlanActiveTab') || 'level2';
+    if (activeTab === 'level1') {
+        loadLevel1Plans();
+    } else if (activeTab === 'level2') {
+        loadLevel2Plans();
+    } else if (activeTab === 'history') {
+        loadHistoryPlans();
+    }
 }
 
 /**
@@ -437,7 +654,9 @@ async function handleFormSubmit(e) {
             await window.db.collection('classPlans').doc(editingPlanId).update(planData);
             showSnackbar('Class plan updated successfully', 'success');
         } else {
-            // Create new plan - add week number and block size
+            // Create new plan - add week number, block size, and class level
+            planData.classLevel = 'level2';  // New Level 2 class
+            planData.cycleWeek = null;       // Not used for Level 2
             planData.weekNumber = nextWeekNumber;
             planData.blockSize = currentBlockSize;
             planData.createdAt = window.firebase.firestore.FieldValue.serverTimestamp();
@@ -450,54 +669,10 @@ async function handleFormSubmit(e) {
         }
         
         closeModal();
-        loadClassPlans();
+        reloadCurrentTab();
     } catch (error) {
         console.error('Error saving class plan:', error);
         showSnackbar('Error saving class plan: ' + error.message, 'error');
-    } finally {
-        hideLoadingSpinner();
-    }
-}
-
-/**
- * Load all class plans
- */
-async function loadClassPlans() {
-    showLoadingSpinner('Loading class plans...');
-    
-    try {
-        const snapshot = await window.db.collection('classPlans')
-            .orderBy('date', 'desc')
-            .get();
-        
-        const container = document.getElementById('class-plans-container');
-        const emptyState = document.getElementById('empty-state');
-        
-        if (snapshot.empty) {
-            emptyState.style.display = 'block';
-            // Remove any existing cards
-            const existingCards = container.querySelectorAll('.class-plan-card');
-            existingCards.forEach(card => card.remove());
-        } else {
-            emptyState.style.display = 'none';
-            
-            // Clear existing cards
-            const existingCards = container.querySelectorAll('.class-plan-card');
-            existingCards.forEach(card => card.remove());
-            
-            // Add cards
-            snapshot.forEach(doc => {
-                const planData = doc.data();
-                planData.id = doc.id;
-                planData.date = planData.date.toDate();
-                
-                const card = createClassPlanCard(planData);
-                container.appendChild(card);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading class plans:', error);
-        showSnackbar('Error loading class plans: ' + error.message, 'error');
     } finally {
         hideLoadingSpinner();
     }
@@ -649,7 +824,7 @@ async function handleDeleteConfirm() {
         await window.db.collection('classPlans').doc(planId).delete();
         showSnackbar('Class plan deleted successfully', 'success');
         closeDeleteModal();
-        loadClassPlans();
+        reloadCurrentTab();
     } catch (error) {
         console.error('Error deleting class plan:', error);
         showSnackbar('Error deleting class plan: ' + error.message, 'error');
