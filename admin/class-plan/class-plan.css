@@ -326,6 +326,26 @@
     margin: 0;
 }
 
+/* Empty Week Message (inside Level 1 placeholder cards) */
+.empty-week-message {
+    text-align: center;
+    padding: var(--space-xl) var(--space-md);
+    color: var(--text-muted);
+}
+
+.empty-week-message i {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-xs);
+    color: var(--gray-400);
+    opacity: 0.5;
+}
+
+.empty-week-message p {
+    font-size: var(--font-size-sm);
+    margin: 0;
+    font-style: italic;
+}
+
 /* ========================================
    CLASS PLAN CARD
    ======================================== */
@@ -422,6 +442,14 @@
 
 .btn-icon.btn-edit:hover {
     background: var(--bg-purple-light);
+}
+
+.btn-icon.btn-add {
+    color: var(--success);
+}
+
+.btn-icon.btn-add:hover {
+    background: var(--bg-success-pale);
 }
 
 .btn-icon.btn-delete {
