@@ -99,23 +99,11 @@
     min-height: 400px;
 }
 
-/* Mobile: Stack tabs if needed */
+/* Mobile: Adjust tab spacing */
 @media (max-width: 640px) {
-    .tabs-header {
-        flex-direction: column;
-    }
-    
     .tab-btn {
-        text-align: left;
-        justify-content: flex-start;
-        border-bottom: none;
-        border-left: 3px solid transparent;
-        padding: var(--space-sm) var(--space-md);
-    }
-    
-    .tab-btn.active {
-        border-left-color: var(--purple-primary);
-        border-bottom-color: transparent;
+        padding: var(--space-sm);
+        font-size: var(--font-size-base);
     }
 }
 
