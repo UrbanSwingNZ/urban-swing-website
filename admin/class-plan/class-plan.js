@@ -365,9 +365,6 @@ async function loadLevel1Plans() {
             }
         }
         
-        // Update cycle progress indicator
-        updateCycleProgress(currentWeek, blockSize);
-        
     } catch (error) {
         console.error('Error loading Level 1 plans:', error);
         showSnackbar('Error loading Level 1 plans: ' + error.message, 'error');
@@ -681,19 +678,23 @@ window.openLevel1Modal = async function(cycleWeek, planData = null) {
     const form = document.getElementById('class-plan-form');
     const weekInfoBanner = document.getElementById('week-info-banner');
     const weekInfoText = document.getElementById('week-info-text');
-    const datePickerContainer = document.querySelector('.date-picker-container');
+    const dateFormGroup = document.getElementById('date-form-group');
     
     // Reset form
     form.reset();
     editingPlanId = planData ? planData.id : null;
     
-    // Hide date picker for Level 1
-    if (datePickerContainer) {
-        datePickerContainer.style.display = 'none';
+    // Hide date picker for Level 1 and remove required attribute
+    const dateInput = document.getElementById('class-date');
+    if (dateFormGroup) {
+        dateFormGroup.style.display = 'none';
+    }
+    if (dateInput) {
+        dateInput.removeAttribute('required');
     }
     
     // Show week info
-    weekInfoText.textContent = `Week ${cycleWeek} of ${currentBlockSize} (Level 1 - Fixed Cycle)`;
+    weekInfoText.textContent = `Week ${cycleWeek} of ${currentBlockSize}`;
     weekInfoBanner.style.display = 'flex';
     
     // Store the cycle week for form submission
@@ -723,15 +724,19 @@ async function openModal(planData = null) {
     const form = document.getElementById('class-plan-form');
     const weekInfoBanner = document.getElementById('week-info-banner');
     const weekInfoText = document.getElementById('week-info-text');
-    const datePickerContainer = document.querySelector('.date-picker-container');
+    const dateFormGroup = document.getElementById('date-form-group');
     
     // Reset form
     form.reset();
     editingPlanId = null;
     
-    // Show date picker for Level 2
-    if (datePickerContainer) {
-        datePickerContainer.style.display = 'block';
+    // Show date picker for Level 2 and add required attribute
+    const dateInput = document.getElementById('class-date');
+    if (dateFormGroup) {
+        dateFormGroup.style.display = 'block';
+    }
+    if (dateInput) {
+        dateInput.setAttribute('required', 'required');
     }
     
     // Clear level data
@@ -879,7 +884,7 @@ function createLevel1PlaceholderCard(weekNumber, isCurrentWeek = false) {
     card.innerHTML = `
         <div class="class-plan-card-header">
             <div class="class-plan-date">
-                <div class="class-plan-week week-${weekNumber === 1 ? 'one' : 'normal'}">
+                <div class="class-plan-week">
                     Week ${weekNumber} of ${currentBlockSize}
                 </div>
             </div>
@@ -936,8 +941,6 @@ function createClassPlanCard(planData, level = 'level2', isCurrentWeek = false) 
         card.classList.add('current-week');
     }
     
-    const formattedDate = formatDateForDisplay(planData.date);
-    
     let movesHTML = '';
     if (planData.move1) {
         movesHTML += `
@@ -990,11 +993,11 @@ function createClassPlanCard(planData, level = 'level2', isCurrentWeek = false) 
     let dateHTML = '';
     
     if (level === 'level1') {
-        // Level 1: Show cycle week, no date
-        const weekClass = planData.cycleWeek === 1 ? 'class-plan-week week-one' : 'class-plan-week';
-        weekHTML = `<div class="${weekClass}">Week ${planData.cycleWeek} of ${currentBlockSize}</div>`;
+        // Level 1: Show cycle week, no date (all weeks same style)
+        weekHTML = `<div class="class-plan-week">Week ${planData.cycleWeek} of ${currentBlockSize}</div>`;
     } else {
         // Level 2: Show week number and date
+        const formattedDate = formatDateForDisplay(planData.date);
         if (planData.weekNumber && planData.blockSize) {
             const weekClass = Number(planData.weekNumber) === 1 ? 'class-plan-week week-one' : 'class-plan-week';
             weekHTML = `<div class="${weekClass}">Week ${planData.weekNumber} of ${planData.blockSize}</div>`;
