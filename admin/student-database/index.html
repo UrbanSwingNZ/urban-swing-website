@@ -170,21 +170,46 @@
                     <div class="form-row checkbox-row">
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
-                                <input type="checkbox" id="modal-emailConsent" disabled>
+                                <input type="checkbox" id="modal-emailConsent">
                                 <span>Email updates</span>
                             </label>
                         </div>
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
-                                <input type="checkbox" id="modal-over16Confirmed" disabled>
+                                <input type="checkbox" id="modal-over16Confirmed">
                                 <span>Over 16 confirmed</span>
                             </label>
                         </div>
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
-                                <input type="checkbox" id="modal-crewMember" disabled>
+                                <input type="checkbox" id="modal-improver">
+                                <span>Improver</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="modal-crewMember">
                                 <span>Crew Member</span>
                             </label>
+                        </div>
+                    </div>
+
+                    <!-- Membership Info (for improvers only) -->
+                    <div id="modal-membership-section" class="membership-info-section" style="display: none;">
+                        <div id="modal-membership-header" class="membership-header">
+                            <!-- Membership status will be shown here -->
+                        </div>
+                        <div id="modal-membership-details" class="membership-details">
+                            <!-- Membership details will be shown here -->
+                        </div>
+                    </div>
+
+                    <!-- Concession Balance (for non-improvers) -->
+                    <div id="modal-concession-section" class="concession-info-section" style="display: none;">
+                        <div class="concession-header">
+                            <i class="fas fa-ticket-alt"></i>
+                            <strong>Concession Balance:</strong>
+                            <span id="modal-concession-count" class="badge">—</span>
                         </div>
                     </div>
 
@@ -218,6 +243,9 @@
                 <div class="modal-actions-left">
                     <button type="button" class="btn-icon" id="edit-student-modal-btn" title="Edit Student">
                         <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn-icon" id="save-and-view-student-btn" style="display: none;" onclick="saveStudentAndReturnToView(event)" title="Save & Return to View">
+                        <i class="fas fa-save"></i>
                     </button>
                     <button type="button" class="btn-icon" id="transaction-history-btn" title="View Transaction History">
                         <i class="fas fa-history"></i>

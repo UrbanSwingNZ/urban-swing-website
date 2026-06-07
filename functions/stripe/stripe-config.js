@@ -62,6 +62,25 @@ async function fetchPricing() {
       }
     });
     
+    // Fetch membership types from Firestore
+    const membershipTypesSnapshot = await db.collection('membershipTypes').get();
+    
+    membershipTypesSnapshot.forEach(doc => {
+      const membership = doc.data();
+      const docId = doc.id;
+      
+      // Include all active membership types
+      if (membership.isActive !== false) {
+        packages[docId] = {
+          price: Math.round(membership.price * 100), // Convert to cents
+          name: membership.name || 'Monthly Membership',
+          type: 'membership',
+          billingPeriod: membership.billingPeriod || 'month',
+          description: membership.description || null
+        };
+      }
+    });
+    
     if (Object.keys(packages).length === 0) {
       throw new Error('No active packages found for purchase');
     }

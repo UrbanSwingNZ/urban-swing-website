@@ -88,6 +88,14 @@
     color: var(--success-dark);
 }
 
+.type-badge.membership,
+.type-badge.membership-purchase,
+.type-badge.membership-renewal,
+.type-badge.membership-cancellation {
+    background: #e8e4f3;
+    color: #5b4a99;
+}
+
 .type-badge.online {
     background: var(--bg-teal-light);
     color: var(--blue-accent);

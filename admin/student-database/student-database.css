@@ -1414,6 +1414,55 @@ textarea:focus {
 }
 
 /* ========================================
+   MEMBERSHIP INFO SECTION (IN STUDENT MODAL)
+   ======================================== */
+
+.membership-info-section {
+    background: var(--bg-white);
+    border: 2px solid #5b4a99;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.membership-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.membership-header i {
+    color: #5b4a99;
+}
+
+.membership-details {
+    /* Styles applied inline in JS for status-specific colors */
+}
+
+.concession-info-section {
+    background: var(--bg-light);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.concession-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.concession-header i {
+    color: var(--purple-primary);
+}
+
+/* ========================================
    LOADING SPINNER
    Inherited from admin.css - no need to redefine
    ======================================== */

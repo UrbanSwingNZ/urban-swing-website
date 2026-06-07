@@ -15,6 +15,7 @@ const {generateAdminNotificationEmail, generateWelcomeEmail} = require("./emails
 const {generateAccountSetupEmail} = require("./emails/student-portal-setup-email");
 const {generatePortalInvitationEmail} = require("./emails/student-portal-invitation");
 const {generateErrorNotificationEmail} = require("./emails/error-notification-email");
+const {generateImproverPromotionAlert} = require("./emails/improver-promotion-alert");
 const {generateLowBalanceEmail, generateExpiringConcessionsEmail} = require("./emails/concession-notifications");
 
 // Define secrets for email configuration
@@ -495,6 +496,84 @@ exports.sendPortalInvitationEmail = onCall(
         stack: error.stack
       });
       throw new Error(error.message || "Failed to send invitation email");
+    }
+  }
+);
+
+/**
+ * Send Improver Promotion Alert Email
+ * Callable function to notify admin when a student is promoted to improver with remaining concessions
+ */
+exports.sendImproverPromotionAlert = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {
+      studentId,
+      studentName,
+      studentEmail,
+      totalConcessions,
+      totalAmount,
+      concessionDetails
+    } = request.data;
+    
+    logger.info("Improver promotion alert requested for student:", studentId);
+
+    if (!studentId || !studentName) {
+      logger.error("Missing required data:", {studentId, studentName});
+      throw new Error("Student ID and name are required");
+    }
+
+    try {
+      // Generate alert email
+      const alertEmail = generateImproverPromotionAlert({
+        studentName,
+        studentId,
+        studentEmail: studentEmail || 'N/A',
+        totalConcessions: totalConcessions || 0,
+        totalAmount: totalAmount || 0,
+        concessionDetails: concessionDetails || []
+      });
+      
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+      
+      // Send alert email to admin
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: "dance@urbanswing.co.nz",
+        subject: alertEmail.subject,
+        text: alertEmail.text,
+        html: alertEmail.html,
+      });
+
+      logger.info("Improver promotion alert sent successfully for:", studentName);
+      
+      return {
+        success: true,
+        message: "Improver promotion alert sent to admin",
+        studentName
+      };
+    } catch (error) {
+      logger.error("Error sending improver promotion alert:", {
+        studentId,
+        studentName,
+        error: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      throw new Error(error.message || "Failed to send improver promotion alert");
     }
   }
 );
