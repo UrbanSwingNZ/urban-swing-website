@@ -5,7 +5,7 @@
  * Supports cash, bank transfer, EFTPOS, and online payments
  */
 
-const functions = require('firebase-functions');
+const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
 const { getStripeConfig } = require('./stripe/stripe-config');
 
@@ -13,31 +13,36 @@ const { getStripeConfig } = require('./stripe/stripe-config');
  * Admin-only function to assign membership to a student
  * Supports in-person payments (cash, bank transfer, EFTPOS) and online
  */
-exports.adminAssignMembership = functions.https.onCall(async (data, context) => {
-    // Check authentication
-    if (!context.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
+exports.adminAssignMembership = onCall(
+  { 
+    region: 'us-central1'
+  },
+  async (request) => {
+    // Check authentication (v2 API uses request.auth)
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'User must be authenticated');
     }
 
     // Check admin permissions
-    const adminUid = context.auth.uid;
+    const adminUid = request.auth.uid;
     const adminDoc = await admin.firestore().collection('users').doc(adminUid).get();
     
     if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
-        throw new functions.https.HttpsError('permission-denied', 'User must be an admin');
+        throw new HttpsError('permission-denied', 'User must be an admin');
     }
 
-    // Validate required fields
-    const { studentId, membershipTypeId, paymentMethod, startDate, isRecurring, notes } = data;
+    // Get data from request (v2 API uses request.data)
+    const { studentId, membershipTypeId, paymentMethod, startDate, isRecurring, notes } = request.data;
     
+    // Validate required fields
     if (!studentId || !membershipTypeId || !paymentMethod) {
-        throw new functions.https.HttpsError('invalid-argument', 'Missing required fields: studentId, membershipTypeId, paymentMethod');
+        throw new HttpsError('invalid-argument', 'Missing required fields: studentId, membershipTypeId, paymentMethod');
     }
 
     // Validate payment method
     const validPaymentMethods = ['cash', 'bank-transfer', 'eftpos', 'online', 'comp'];
     if (!validPaymentMethods.includes(paymentMethod)) {
-        throw new functions.https.HttpsError('invalid-argument', `Invalid payment method. Must be one of: ${validPaymentMethods.join(', ')}`);
+        throw new HttpsError('invalid-argument', `Invalid payment method. Must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
     // Force isRecurring to false for non-online payments
@@ -49,7 +54,7 @@ exports.adminAssignMembership = functions.https.onCall(async (data, context) => 
         // Get student document
         const studentDoc = await db.collection('students').doc(studentId).get();
         if (!studentDoc.exists) {
-            throw new functions.https.HttpsError('not-found', 'Student not found');
+            throw new HttpsError('not-found', 'Student not found');
         }
         const studentData = studentDoc.data();
         
@@ -61,28 +66,30 @@ exports.adminAssignMembership = functions.https.onCall(async (data, context) => 
         // Get membership type
         const membershipTypeDoc = await db.collection('membershipTypes').doc(membershipTypeId).get();
         if (!membershipTypeDoc.exists) {
-            throw new functions.https.HttpsError('not-found', 'Membership type not found');
+            throw new HttpsError('not-found', 'Membership type not found');
         }
         const membershipType = membershipTypeDoc.data();
         
         if (membershipType.isActive === false) {
-            throw new functions.https.HttpsError('failed-precondition', 'This membership type is not active');
+            throw new HttpsError('failed-precondition', 'This membership type is not active');
         }
 
         // Calculate dates
         const now = new Date();
         const purchaseDate = startDate ? new Date(startDate) : now;
         
-        // Calculate expiry date (1 month from purchase, anniversary-based)
+        // Calculate expiry date (valid until the day before the 1-month anniversary)
+        // e.g., purchased June 8 → expires end of July 7 (31 days, not 32)
         const expiryDate = new Date(purchaseDate);
         expiryDate.setMonth(expiryDate.getMonth() + 1);
+        expiryDate.setDate(expiryDate.getDate() - 1); // Subtract 1 day
         
-        // Adjust to last day of month if day doesn't exist (e.g., Jan 31 -> Feb 28)
-        if (expiryDate.getDate() < purchaseDate.getDate()) {
+        // Adjust to last day of month if day doesn't exist (e.g., Jan 31 → Feb 28)
+        if (expiryDate.getDate() < purchaseDate.getDate() - 1) {
             expiryDate.setDate(0); // Go to last day of previous month
         }
         
-        // Set to end of day
+        // Set to end of day (valid through 23:59:59.999)
         expiryDate.setHours(23, 59, 59, 999);
 
         // Check for existing active membership
@@ -181,10 +188,10 @@ exports.adminAssignMembership = functions.https.onCall(async (data, context) => 
     } catch (error) {
         console.error('Error assigning membership:', error);
         
-        if (error instanceof functions.https.HttpsError) {
+        if (error instanceof HttpsError) {
             throw error;
         }
         
-        throw new functions.https.HttpsError('internal', `Failed to assign membership: ${error.message}`);
+        throw new HttpsError('internal', `Failed to assign membership: ${error.message}`);
     }
 });

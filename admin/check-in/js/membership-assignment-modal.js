@@ -37,7 +37,6 @@ function initializeMembershipAssignmentModal() {
                 <div id="membership-student-info" class="student-info-card" style="display: none; margin-bottom: 20px;">
                     <h4 id="membership-student-name">Student Name</h4>
                     <p id="membership-student-email">email@example.com</p>
-                    <p id="membership-student-improver-status" style="margin-top: 8px;"></p>
                 </div>
                 
                 <div class="form-group">
@@ -55,17 +54,8 @@ function initializeMembershipAssignmentModal() {
                         <option value="cash">Cash</option>
                         <option value="eftpos">EFTPOS</option>
                         <option value="bank-transfer">Bank Transfer</option>
-                        <option value="online">Online</option>
                         <option value="comp">Complimentary</option>
                     </select>
-                </div>
-
-                <div class="form-group" id="recurring-checkbox-group" style="display: none;">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="membership-is-recurring">
-                        <span>Recurring Subscription (auto-renew monthly)</span>
-                    </label>
-                    <p class="form-hint">Only available for online payments. Requires Stripe subscription.</p>
                 </div>
 
                 <div class="form-group">
@@ -149,6 +139,9 @@ async function openMembershipAssignmentModal(studentId = null, callback = null, 
         membershipDatePicker.setDate(today);
     }
     
+    // Reset form first (before populating options)
+    resetMembershipForm();
+    
     // Load membership types and populate dropdown
     await populateMembershipTypeOptions();
     
@@ -158,9 +151,6 @@ async function openMembershipAssignmentModal(studentId = null, callback = null, 
     } else {
         document.getElementById('membership-student-info').style.display = 'none';
     }
-    
-    // Reset form
-    resetMembershipForm();
     
     modal.style.display = 'flex';
 }
@@ -202,27 +192,55 @@ async function populateMembershipTypeOptions() {
     if (!select) return;
     
     try {
+        // Fetch all membership types and filter in JavaScript to avoid composite index requirement
         const snapshot = await firebase.firestore()
             .collection('membershipTypes')
-            .where('isActive', '!=', false)
-            .orderBy('isActive', 'desc')
-            .orderBy('displayOrder', 'asc')
             .get();
         
         // Clear existing options except placeholder
         select.innerHTML = '<option value="">Select a membership type</option>';
         
+        // Filter and sort in JavaScript
+        const membershipTypes = [];
         snapshot.forEach(doc => {
-            const membershipType = doc.data();
+            const data = doc.data();
+            // Only include active membership types (isActive !== false)
+            if (data.isActive !== false) {
+                membershipTypes.push({
+                    id: doc.id,
+                    ...data
+                });
+            }
+        });
+        
+        // Sort by displayOrder
+        membershipTypes.sort((a, b) => {
+            const orderA = a.displayOrder || 0;
+            const orderB = b.displayOrder || 0;
+            return orderA - orderB;
+        });
+        
+        // Populate dropdown
+        membershipTypes.forEach(membershipType => {
             const option = document.createElement('option');
-            option.value = doc.id;
+            option.value = membershipType.id;
             option.textContent = `${membershipType.name} - $${membershipType.price.toFixed(2)}`;
             option.dataset.price = membershipType.price;
             select.appendChild(option);
         });
         
-        if (snapshot.empty) {
+        if (membershipTypes.length === 0) {
             select.innerHTML = '<option value="">No membership types available</option>';
+        } else if (membershipTypes.length === 1) {
+            // Auto-select if only one option
+            const singleType = membershipTypes[0];
+            select.value = singleType.id;
+            
+            // Update the amount display
+            document.getElementById('membership-total-amount').textContent = `$${singleType.price.toFixed(2)}`;
+            
+            // Trigger change event to update expiry preview and button state
+            select.dispatchEvent(new Event('change'));
         }
         
     } catch (error) {
@@ -246,16 +264,25 @@ async function showMembershipStudentInfo(studentId) {
         const student = doc.data();
         const fullName = `${student.firstName} ${student.lastName}`;
         
-        document.getElementById('membership-student-name').textContent = fullName;
-        document.getElementById('membership-student-email').textContent = student.email || '';
+        const studentNameEl = document.getElementById('membership-student-name');
+        studentNameEl.textContent = fullName;
         
-        // Show improver status
-        const statusEl = document.getElementById('membership-student-improver-status');
+        // Add improver badge to student name if improver
         if (student.improver === true) {
-            statusEl.innerHTML = '<span style="color: var(--success); font-weight: 500;"><i class="fas fa-check-circle"></i> Improver Student</span>';
-        } else {
-            statusEl.innerHTML = '<span style="color: var(--warning); font-weight: 500;"><i class="fas fa-exclamation-triangle"></i> Not marked as Improver</span>';
+            // Remove any existing badge first
+            const existingBadge = studentNameEl.querySelector('.improver-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            const badge = document.createElement('span');
+            badge.className = 'improver-badge';
+            badge.style.marginLeft = '8px';
+            badge.innerHTML = '<i class="fas fa-star"></i> IMPROVER';
+            studentNameEl.appendChild(badge);
         }
+        
+        document.getElementById('membership-student-email').textContent = student.email || '';
         
         document.getElementById('membership-student-info').style.display = 'block';
         
@@ -285,10 +312,8 @@ async function showMembershipStudentInfo(studentId) {
 function resetMembershipForm() {
     document.getElementById('membership-type-select').value = '';
     document.getElementById('membership-payment-select').value = '';
-    document.getElementById('membership-is-recurring').checked = false;
     document.getElementById('membership-notes').value = '';
     document.getElementById('membership-total-amount').textContent = '$0.00';
-    document.getElementById('recurring-checkbox-group').style.display = 'none';
     document.getElementById('membership-expiry-preview').style.display = 'none';
     updateMembershipButton();
 }
@@ -316,18 +341,8 @@ function setupMembershipModalListeners() {
         updateMembershipButton();
     });
     
-    // Payment selection shows/hides recurring checkbox
+    // Payment selection enables button
     paymentSelect.addEventListener('change', () => {
-        const paymentMethod = paymentSelect.value;
-        const recurringGroup = document.getElementById('recurring-checkbox-group');
-        
-        if (paymentMethod === 'online') {
-            recurringGroup.style.display = 'block';
-        } else {
-            recurringGroup.style.display = 'none';
-            document.getElementById('membership-is-recurring').checked = false;
-        }
-        
         updateMembershipButton();
     });
     
@@ -380,7 +395,6 @@ function updateMembershipButton() {
 async function handleMembershipAssignmentSubmit() {
     const typeId = document.getElementById('membership-type-select').value;
     const paymentMethod = document.getElementById('membership-payment-select').value;
-    const isRecurring = document.getElementById('membership-is-recurring').checked;
     const notes = document.getElementById('membership-notes').value;
     const startDate = membershipDatePicker.getSelectedDate();
     
@@ -392,17 +406,49 @@ async function handleMembershipAssignmentSubmit() {
     try {
         window.showLoading(true);
         
-        // Call Cloud Function
-        const adminAssignMembership = firebase.functions().httpsCallable('adminAssignMembership');
+        // Ensure user is authenticated
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+            throw new Error('You must be signed in to assign memberships');
+        }
+        
+        console.log('=== Admin Assign Membership Debug ===');
+        console.log('Current user:', currentUser.email);
+        console.log('Current user UID:', currentUser.uid);
+        
+        // Get fresh auth token
+        const token = await currentUser.getIdToken(true);
+        console.log('Auth token obtained:', token ? 'YES' : 'NO');
+        
+        // Ensure window.functions is available
+        if (!window.functions) {
+            console.error('window.functions not initialized');
+            throw new Error('Cloud Functions not initialized. Please refresh the page.');
+        }
+        
+        console.log('window.functions available:', typeof window.functions);
+        console.log('Calling adminAssignMembership function...');
+        console.log('Data:', {
+            studentId: membershipModalStudentId,
+            membershipTypeId: typeId,
+            paymentMethod: paymentMethod,
+            startDate: startDate.toISOString(),
+            notes: notes || null
+        });
+        
+        // Use the globally configured functions instance (properly initialized with auth context)
+        const adminAssignMembership = window.functions.httpsCallable('adminAssignMembership');
+        
         const result = await adminAssignMembership({
             studentId: membershipModalStudentId,
             membershipTypeId: typeId,
             paymentMethod: paymentMethod,
             startDate: startDate.toISOString(),
-            isRecurring: isRecurring,
             notes: notes || null
         });
         
+        console.log('Function result:', result);
+        console.log('=== End Debug ===');
         window.showLoading(false);
         
         if (result.data.success) {

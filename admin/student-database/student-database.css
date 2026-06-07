@@ -1069,7 +1069,7 @@ textarea:focus {
 
 /* Improver Name Styling */
 .improver-name {
-    color: #d4af37 !important;
+    color: var(--gold-improver) !important;
     /* Gold color */
 }
 
