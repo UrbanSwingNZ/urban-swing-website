@@ -3,6 +3,8 @@
  * Handles viewing and editing student details
  */
 
+import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+
 // Track the previous improver status to detect changes
 let previousImproverStatus = false;
 
@@ -104,9 +106,87 @@ export function openStudentModal(student, mode) {
 }
 
 /**
- * Close student modal
+ * Close student modal (saves any changes before closing)
  */
-export function closeStudentModal() {
+export async function closeStudentModal() {
+    const studentId = document.getElementById('modal-student-id').value;
+    const newImproverStatus = document.getElementById('modal-improver').checked;
+    const student = findStudentById(studentId);
+    
+    // Check if improver status changed from true to false
+    if (previousImproverStatus && !newImproverStatus) {
+        // Trying to uncheck improver - check if they have an active membership
+        if (student && student.activeMembershipId && student.membershipExpiryDate) {
+            const expiryDate = student.membershipExpiryDate.toDate ? student.membershipExpiryDate.toDate() : new Date(student.membershipExpiryDate);
+            const now = new Date();
+            
+            if (expiryDate > now) {
+                // Has active membership - show warning and prevent change
+                const warningModal = new ConfirmationModal({
+                    title: 'Cannot Revert to Beginner',
+                    message: `
+                        <p><strong>${student.firstName} ${student.lastName}</strong> has an active membership that expires on <strong>${formatDate(expiryDate)}</strong>.</p>
+                        <p>Students with active memberships cannot be reverted to beginner status.</p>
+                        <p>The membership must expire before this change can be made.</p>
+                    `,
+                    icon: 'fas fa-exclamation-triangle',
+                    confirmText: 'OK',
+                    confirmClass: 'btn-primary',
+                    onConfirm: () => {
+                        // Reset checkbox
+                        document.getElementById('modal-improver').checked = true;
+                    },
+                    onCancel: () => {
+                        // Reset checkbox on cancel too
+                        document.getElementById('modal-improver').checked = true;
+                    }
+                });
+                warningModal.show();
+                return;
+            }
+        }
+    }
+    
+    try {
+        // Save all changes before closing
+        const updateData = {
+            firstName: document.getElementById('modal-firstName').value,
+            lastName: document.getElementById('modal-lastName').value,
+            email: document.getElementById('modal-email').value,
+            phoneNumber: document.getElementById('modal-phoneNumber').value,
+            pronouns: document.getElementById('modal-pronouns').value,
+            emailConsent: document.getElementById('modal-emailConsent').checked,
+            over16Confirmed: document.getElementById('modal-over16Confirmed').checked,
+            improver: newImproverStatus,
+            crewMember: document.getElementById('modal-crewMember').checked,
+            adminNotes: document.getElementById('modal-adminNotes').value
+        };
+        
+        await updateStudent(studentId, updateData);
+        
+        // If improver status was just enabled, check for active concessions
+        if (!previousImproverStatus && newImproverStatus) {
+            const student = findStudentById(studentId);
+            if (student) {
+                await checkForConcessionsAndAlert(studentId, `${student.firstName} ${student.lastName}`, student.email);
+            }
+        }
+        
+        console.log('Student changes saved successfully');
+    } catch (error) {
+        console.error('Error saving student changes:', error);
+        const errorModal = new ConfirmationModal({
+            title: 'Error Saving Changes',
+            message: '<p>An error occurred while saving the changes. Please try again.</p>',
+            icon: 'fas fa-exclamation-circle',
+            confirmText: 'OK',
+            confirmClass: 'btn-primary'
+        });
+        errorModal.show();
+        return; // Don't close modal if save failed
+    }
+    
+    // Close the modal
     const modal = document.getElementById('student-modal');
     modal.style.display = 'none';
 }
@@ -166,7 +246,14 @@ export async function saveStudentChanges(event) {
         console.log('Student updated successfully');
     } catch (error) {
         console.error('Error updating student:', error);
-        alert('Error updating student. Please try again.');
+        const errorModal = new ConfirmationModal({
+            title: 'Error Updating Student',
+            message: '<p>An error occurred while updating the student. Please try again.</p>',
+            icon: 'fas fa-exclamation-circle',
+            confirmText: 'OK',
+            confirmClass: 'btn-primary'
+        });
+        errorModal.show();
     }
 }
 
@@ -205,7 +292,14 @@ export async function saveStudentAndReturnToView(event) {
         console.log('Student updated successfully');
     } catch (error) {
         console.error('Error updating student:', error);
-        alert('Error updating student. Please try again.');
+        const errorModal = new ConfirmationModal({
+            title: 'Error Updating Student',
+            message: '<p>An error occurred while updating the student. Please try again.</p>',
+            icon: 'fas fa-exclamation-circle',
+            confirmText: 'OK',
+            confirmClass: 'btn-primary'
+        });
+        errorModal.show();
     }
 }
 
@@ -362,18 +456,35 @@ async function getMembershipDetails(membershipId) {
 /**
  * Get concession count for a student
  * @param {string} studentId - Student ID
- * @returns {Promise<number>} Number of active concessions
+ * @returns {Promise<number>} Total remaining concessions across all blocks
  */
 async function getConcessionCount(studentId) {
     try {
         const now = new Date();
+        // Query by studentId only, filter remainingQuantity and expiryDate in JavaScript
+        // This avoids needing a composite index
         const snapshot = await db.collection('concessionBlocks')
             .where('studentId', '==', studentId)
-            .where('remaining', '>', 0)
-            .where('expiryDate', '>', now)
             .get();
         
-        return snapshot.size;
+        // Sum up remaining concessions, excluding expired blocks and blocks with 0 remaining
+        let totalRemaining = 0;
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const remainingQuantity = data.remainingQuantity || 0;
+            
+            // Skip if no remaining concessions
+            if (remainingQuantity <= 0) return;
+            
+            const expiryDate = data.expiryDate?.toDate ? data.expiryDate.toDate() : new Date(data.expiryDate);
+            
+            // Only count if not expired
+            if (expiryDate > now) {
+                totalRemaining += remainingQuantity;
+            }
+        });
+        
+        return totalRemaining;
     } catch (error) {
         console.error('Error getting concession count:', error);
         return 0;
@@ -399,32 +510,42 @@ function formatDate(date) {
 async function checkForConcessionsAndAlert(studentId, studentName, studentEmail) {
     try {
         const now = new Date();
+        // Query by studentId only, filter remainingQuantity and expiryDate in JavaScript
+        // This avoids needing a composite index
         const snapshot = await db.collection('concessionBlocks')
             .where('studentId', '==', studentId)
-            .where('remaining', '>', 0)
-            .where('expiryDate', '>', now)
             .get();
         
-        if (snapshot.empty) {
-            console.log('No active concessions found for this improver');
-            return;
-        }
-        
-        // Calculate total concessions and amount
+        // Calculate total concessions and amount (excluding expired blocks and blocks with 0 remaining)
         let totalConcessions = 0;
         let totalAmount = 0;
         const concessionDetails = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
-            totalConcessions += data.remaining;
-            totalAmount += (data.price || 0);
-            concessionDetails.push({
-                type: data.packageName || 'Unknown Package',
-                remaining: data.remaining,
-                price: data.price || 0
-            });
+            const remainingQuantity = data.remainingQuantity || 0;
+            
+            // Skip if no remaining concessions
+            if (remainingQuantity <= 0) return;
+            
+            const expiryDate = data.expiryDate?.toDate ? data.expiryDate.toDate() : new Date(data.expiryDate);
+            
+            // Only count if not expired
+            if (expiryDate > now) {
+                totalConcessions += remainingQuantity;
+                totalAmount += (data.price || 0);
+                concessionDetails.push({
+                    type: data.packageName || 'Unknown Package',
+                    remaining: remainingQuantity,
+                    price: data.price || 0
+                });
+            }
         });
+        
+        if (totalConcessions === 0) {
+            console.log('No active concessions found for this improver');
+            return;
+        }
         
         // Call Cloud Function to send alert email
         const sendImproverAlert = firebase.functions().httpsCallable('sendImproverPromotionAlert');
@@ -442,23 +563,35 @@ async function checkForConcessionsAndAlert(studentId, studentName, studentEmail)
             console.log('Improver promotion alert sent to admin');
             
             // Show modal to admin
-            alert(
-                `IMPROVER PROMOTION ALERT\n\n` +
-                `${studentName} has been marked as an improver and has ${totalConcessions} remaining concession${totalConcessions === 1 ? '' : 's'}.\n\n` +
-                `Total value: $${totalAmount.toFixed(2)}\n\n` +
-                `An email alert has been sent to dance@urbanswing.co.nz with full details. ` +
-                `Please process a pro-rated refund for unused concessions.`
-            );
+            const alertModal = new ConfirmationModal({
+                title: 'Improver Promotion Alert',
+                message: `
+                    <p><strong>${studentName}</strong> has been marked as an improver and has <strong>${totalConcessions}</strong> remaining concession${totalConcessions === 1 ? '' : 's'}.</p>
+                    <p><strong>Total value: $${totalAmount.toFixed(2)}</strong></p>
+                    <p>An email alert has been sent to <strong>dance@urbanswing.co.nz</strong> with full details.</p>
+                    <p>Please process a pro-rated refund for unused concessions.</p>
+                `,
+                icon: 'fas fa-exclamation-triangle',
+                confirmText: 'OK',
+                confirmClass: 'btn-primary'
+            });
+            alertModal.show();
         } catch (error) {
             console.error('Error sending improver alert email:', error);
             // Still show modal even if email fails
-            alert(
-                `IMPROVER PROMOTION ALERT\n\n` +
-                `${studentName} has been marked as an improver and has ${totalConcessions} remaining concession${totalConcessions === 1 ? '' : 's'}.\n\n` +
-                `Total value: $${totalAmount.toFixed(2)}\n\n` +
-                `Please process a pro-rated refund for unused concessions.\n\n` +
-                `(Email notification failed to send)`
-            );
+            const alertModal = new ConfirmationModal({
+                title: 'Improver Promotion Alert',
+                message: `
+                    <p><strong>${studentName}</strong> has been marked as an improver and has <strong>${totalConcessions}</strong> remaining concession${totalConcessions === 1 ? '' : 's'}.</p>
+                    <p><strong>Total value: $${totalAmount.toFixed(2)}</strong></p>
+                    <p>Please process a pro-rated refund for unused concessions.</p>
+                    <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Email notification failed to send</p>
+                `,
+                icon: 'fas fa-exclamation-triangle',
+                confirmText: 'OK',
+                confirmClass: 'btn-primary'
+            });
+            alertModal.show();
         }
     } catch (error) {
         console.error('Error checking for concessions:', error);

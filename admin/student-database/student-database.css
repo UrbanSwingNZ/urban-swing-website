@@ -1067,6 +1067,12 @@ textarea:focus {
     font-size: 1rem;
 }
 
+/* Improver Name Styling */
+.improver-name {
+    color: #d4af37 !important;
+    /* Gold color */
+}
+
 /* ========================================
    CONCESSIONS DETAIL MODAL
    ======================================== */
