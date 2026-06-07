@@ -56,8 +56,8 @@ async function updateMembershipInfo(student, membershipCheck) {
     if (studentNameEl && !studentNameEl.querySelector('.improver-badge')) {
         const badge = document.createElement('span');
         badge.className = 'improver-badge';
+        badge.style.marginLeft = '8px';
         badge.innerHTML = '<i class="fas fa-star"></i> IMPROVER';
-        badge.style.cssText = 'margin-left: 8px; padding: 4px 8px; background: linear-gradient(135deg, #5b4a99, #7a67c0); color: white; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;';
         studentNameEl.appendChild(badge);
     }
     
@@ -133,12 +133,12 @@ async function updateMembershipInfo(student, membershipCheck) {
             membershipRadio.parentElement.style.opacity = '0.5';
         }
         
-        // Default to free entry (admin override) if not in edit mode
+        // Default to casual entry if not in edit mode
         if (!isEditMode()) {
-            const freeEntryRadio = document.getElementById('entry-free');
-            if (freeEntryRadio) {
-                freeEntryRadio.checked = true;
-                freeEntryRadio.dispatchEvent(new Event('change'));
+            const casualEntryRadio = document.getElementById('entry-casual');
+            if (casualEntryRadio) {
+                casualEntryRadio.checked = true;
+                casualEntryRadio.dispatchEvent(new Event('change'));
             }
         }
     }
@@ -223,6 +223,13 @@ async function updateConcessionInfo(student) {
         } else {
             concessionRadio.disabled = true;
             concessionRadio.parentElement.style.opacity = '0.5';
+        }
+        
+        // Disable membership option for non-improver students
+        const membershipRadio = document.getElementById('entry-membership');
+        if (membershipRadio) {
+            membershipRadio.disabled = true;
+            membershipRadio.parentElement.style.opacity = '0.5';
         }
         
         // Set defaults only if NOT in edit mode

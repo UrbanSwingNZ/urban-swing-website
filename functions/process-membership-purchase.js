@@ -11,19 +11,20 @@ const { stripe, fetchPricing } = require('./stripe/stripe-config');
 const cors = require('cors')({ origin: true });
 
 /**
- * Calculate membership expiry date (1 month from start, using "sticky day" approach)
+ * Calculate membership expiry date (valid until day before 1-month anniversary)
  * @param {Date} startDate - Membership start date
  * @returns {Date} Expiry date (valid through end of day)
+ * 
+ * Example: Purchase on June 8 → Expires end of July 7 (31 days)
  */
 function calculateMembershipExpiry(startDate) {
   const expiryDate = new Date(startDate);
   
   // Add 1 month using JavaScript's built-in month arithmetic
-  // This automatically handles:
-  // - Jan 31 → Feb 28/29 (last day of month)
-  // - Feb 28 → Mar 28 (maintains day 28)
-  // - Leap years
   expiryDate.setMonth(expiryDate.getMonth() + 1);
+  
+  // Subtract 1 day (so purchased June 8 expires July 7, not July 8)
+  expiryDate.setDate(expiryDate.getDate() - 1);
   
   // Set to end of day (valid through 23:59:59.999)
   expiryDate.setHours(23, 59, 59, 999);
@@ -58,6 +59,23 @@ exports.processOneTimeMembershipPurchase = onRequest(
           return;
         }
         
+        // Verify authentication
+        const authHeader = request.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          response.status(401).json({ error: 'Authentication required' });
+          return;
+        }
+        
+        const token = authHeader.split('Bearer ')[1];
+        let decodedToken;
+        try {
+          decodedToken = await admin.auth().verifyIdToken(token);
+        } catch (error) {
+          console.error('Token verification failed:', error);
+          response.status(401).json({ error: 'Invalid authentication token' });
+          return;
+        }
+        
         const data = request.body;
     
         // Validate required fields
@@ -87,6 +105,12 @@ exports.processOneTimeMembershipPurchase = onRequest(
         }
         
         const studentData = studentDoc.data();
+        
+        // Verify that authenticated user matches the student's email (security check)
+        if (decodedToken.email?.toLowerCase() !== studentData.email?.toLowerCase()) {
+          response.status(403).json({ error: 'You can only purchase memberships for your own account' });
+          return;
+        }
         
         // Check if student is an improver
         if (!studentData.improver) {
@@ -312,6 +336,23 @@ exports.processRecurringMembershipPurchase = onRequest(
           return;
         }
         
+        // Verify authentication
+        const authHeader = request.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          response.status(401).json({ error: 'Authentication required' });
+          return;
+        }
+        
+        const token = authHeader.split('Bearer ')[1];
+        let decodedToken;
+        try {
+          decodedToken = await admin.auth().verifyIdToken(token);
+        } catch (error) {
+          console.error('Token verification failed:', error);
+          response.status(401).json({ error: 'Invalid authentication token' });
+          return;
+        }
+        
         const data = request.body;
     
         // Validate required fields
@@ -341,6 +382,12 @@ exports.processRecurringMembershipPurchase = onRequest(
         }
         
         const studentData = studentDoc.data();
+        
+        // Verify that authenticated user matches the student's email (security check)
+        if (decodedToken.email?.toLowerCase() !== studentData.email?.toLowerCase()) {
+          response.status(403).json({ error: 'You can only purchase memberships for your own account' });
+          return;
+        }
         
         // Check if student is an improver
         if (!studentData.improver) {

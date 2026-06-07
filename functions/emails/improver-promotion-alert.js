@@ -3,7 +3,18 @@
  * Sent to admin when a student is promoted to improver with remaining concessions
  */
 
-const { colors } = require('./email-styles');
+// Inline colors (since email-styles.js doesn't exist)
+const colors = {
+    purple: '#9a16f5',
+    darkPurple: '#7a0fd4',
+    lightPurple: '#f3e5ff',
+    gold: '#d4af37',
+    white: '#ffffff',
+    black: '#000000',
+    gray: '#666666',
+    lightGray: '#f5f5f5',
+    borderGray: '#ddd'
+};
 
 /**
  * Generate improver promotion alert email
