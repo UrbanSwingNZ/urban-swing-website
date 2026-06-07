@@ -86,6 +86,12 @@ async function normalizeTransaction(transaction) {
         }
     } else if (transactionType === 'workshop-entry') {
         typeName = 'Workshop Entry';
+    } else if (transactionType === 'membership-purchase') {
+        typeName = 'Membership Purchase';
+    } else if (transactionType === 'membership-renewal') {
+        typeName = 'Membership Renewal';
+    } else if (transactionType === 'membership-cancellation') {
+        typeName = 'Membership Cancellation';
     } else {
         typeName = 'Transaction';
     }

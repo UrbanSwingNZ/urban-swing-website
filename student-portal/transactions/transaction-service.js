@@ -102,6 +102,15 @@ class TransactionService {
                 typeName = 'Casual Entry';
                 badgeClass = 'casual';
             }
+        } else if (transactionType === 'membership-purchase') {
+            typeName = 'Membership Purchase';
+            badgeClass = 'membership-purchase';
+        } else if (transactionType === 'membership-renewal') {
+            typeName = 'Membership Renewal';
+            badgeClass = 'membership-renewal';
+        } else if (transactionType === 'membership-cancellation') {
+            typeName = 'Membership Cancellation';
+            badgeClass = 'membership-cancellation';
         } else {
             typeName = 'Transaction';
             badgeClass = 'other';

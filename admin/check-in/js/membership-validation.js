@@ -1,0 +1,119 @@
+/**
+ * membership-validation.js - Membership validation for improver students
+ */
+
+/**
+ * Check if student is improver and has active membership
+ * @param {string} studentId - Student document ID
+ * @returns {Promise<Object>} Membership validation result
+ */
+async function checkStudentMembership(studentId) {
+    try {
+        // Get student document
+        const studentDoc = await firebase.firestore()
+            .collection('students')
+            .doc(studentId)
+            .get();
+        
+        if (!studentDoc.exists) {
+            return {
+                isImprover: false,
+                hasActiveMembership: false,
+                canCheckIn: false,
+                error: 'Student not found'
+            };
+        }
+        
+        const studentData = studentDoc.data();
+        const isImprover = studentData.improver === true;
+        
+        // If not improver, allow check-in with concessions (existing logic)
+        if (!isImprover) {
+            return {
+                isImprover: false,
+                hasActiveMembership: false,
+                canCheckIn: true,
+                useExistingLogic: true
+            };
+        }
+        
+        // Improver - check for active membership
+        if (studentData.activeMembershipId && studentData.membershipExpiryDate) {
+            const now = new Date();
+            const expiryDate = studentData.membershipExpiryDate.toDate();
+            
+            // Valid through end of expiry day
+            expiryDate.setHours(23, 59, 59, 999);
+            
+            if (expiryDate >= now) {
+                // Has active membership
+                return {
+                    isImprover: true,
+                    hasActiveMembership: true,
+                    canCheckIn: true,
+                    membershipId: studentData.activeMembershipId,
+                    expiryDate: studentData.membershipExpiryDate,
+                    source: 'membership'
+                };
+            } else {
+                // Membership expired - clear fields
+                await firebase.firestore()
+                    .collection('students')
+                    .doc(studentId)
+                    .update({
+                        activeMembershipId: null,
+                        membershipStatus: null,
+                        membershipExpiryDate: null
+                    });
+            }
+        }
+        
+        // Improver with no active membership
+        return {
+            isImprover: true,
+            hasActiveMembership: false,
+            canCheckIn: false,
+            allowOverride: true,
+            reason: 'No active membership'
+        };
+        
+    } catch (error) {
+        console.error('Error checking student membership:', error);
+        return {
+            isImprover: false,
+            hasActiveMembership: false,
+            canCheckIn: false,
+            error: error.message
+        };
+    }
+}
+
+/**
+ * Get membership details for display
+ * @param {string} membershipId - Membership document ID
+ * @returns {Promise<Object|null>} Membership details
+ */
+async function getMembershipDetails(membershipId) {
+    try {
+        const doc = await firebase.firestore()
+            .collection('memberships')
+            .doc(membershipId)
+            .get();
+        
+        if (!doc.exists) {
+            return null;
+        }
+        
+        return {
+            id: doc.id,
+            ...doc.data()
+        };
+    } catch (error) {
+        console.error('Error getting membership details:', error);
+        return null;
+    }
+}
+
+// Expose functions globally
+window.checkStudentMembership = checkStudentMembership;
+window.getMembershipDetails = getMembershipDetails;

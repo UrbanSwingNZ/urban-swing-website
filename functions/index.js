@@ -87,6 +87,30 @@ exports.processWorkshopPayment = processWorkshopPayment;
 exports.deregisterWorkshop = deregisterWorkshop;
 
 // ========================================
+// MEMBERSHIP FUNCTIONS
+// ========================================
+const { 
+  processOneTimeMembershipPurchase,
+  processRecurringMembershipPurchase 
+} = require('./process-membership-purchase');
+
+const {
+  toggleMembershipAutoRenew,
+  cancelMembership
+} = require('./membership-management');
+
+const { stripeWebhookMemberships } = require('./stripe-webhook-memberships');
+
+const { adminAssignMembership } = require('./admin-assign-membership');
+
+exports.processOneTimeMembershipPurchase = processOneTimeMembershipPurchase;
+exports.processRecurringMembershipPurchase = processRecurringMembershipPurchase;
+exports.toggleMembershipAutoRenew = toggleMembershipAutoRenew;
+exports.cancelMembership = cancelMembership;
+exports.stripeWebhookMemberships = stripeWebhookMemberships;
+exports.adminAssignMembership = adminAssignMembership;
+
+// ========================================
 // TRANSACTION MANAGEMENT
 // ========================================
 const { updateClassDate } = require('./update-class-date');

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership - Urban Swing</title>
+    <link rel="stylesheet" href="../../styles/base/design-tokens.css">
+    <link rel="stylesheet" href="../../styles/base/reset.css">
+    <link rel="stylesheet" href="../../styles/base/typography.css">
+    <link rel="stylesheet" href="../../styles/base/colors.css">
+    <link rel="stylesheet" href="../../styles/base/buttons.css">
+    <link rel="stylesheet" href="../css/portal.css">
+    <link rel="stylesheet" href="membership.css">
+    
+    <!-- Modal System -->
+    <link rel="stylesheet" href="/styles/modals/modal-base.css">
+    <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    
+    <!-- Student Portal Header Styles -->
+    <link rel="stylesheet" href="/styles/student-portal/student-portal-header.css">
+    <link rel="stylesheet" href="/styles/components/badges.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- Loading Spinner Component -->
+    <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div id="main-container" class="portal-container" style="display: none;">
+        
+        <!-- Current Membership Section -->
+        <div id="current-membership-section" class="membership-section" style="display: none;">
+            <div class="back-nav">
+                <a href="../dashboard/index.html" class="btn-primary btn-primary-lg">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <div class="section-header">
+                <h2><i class="fas fa-id-card"></i> My Membership</h2>
+                <p class="section-description">Manage your monthly membership</p>
+            </div>
+
+            <div id="membership-details-card" class="membership-card">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Purchase Membership Section -->
+        <div id="purchase-membership-section" class="membership-section" style="display: none;">
+            <div class="back-nav">
+                <a href="../dashboard/index.html" class="btn-primary btn-primary-lg">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <div class="section-header">
+                <h2><i class="fas fa-id-card"></i> Purchase Membership</h2>
+                <p class="section-description">Choose your monthly membership plan</p>
+            </div>
+
+            <!-- Available Memberships -->
+            <div id="available-memberships" class="memberships-grid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Payment Form (shown when membership selected) -->
+            <div id="payment-form-container" class="purchase-card" style="display: none;">
+                <form id="membership-purchase-form">
+                    <div class="form-section">
+                        <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+                        
+                        <!-- Selected Membership Summary -->
+                        <div id="selected-membership-summary" class="selected-summary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+
+                        <!-- Membership Type Selection -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-sync-alt"></i> Membership Type
+                                <span class="required">*</span>
+                            </label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="membership-type" value="recurring" checked>
+                                    <span class="radio-text">
+                                        <strong>Auto-Renewing (Recommended)</strong>
+                                        <span class="radio-description">Automatically renews monthly until you cancel</span>
+                                    </span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="membership-type" value="onetime">
+                                    <span class="radio-text">
+                                        <strong>One-Time (1 Month)</strong>
+                                        <span class="radio-description">Valid for one month, then expires</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Auto-Renew Disclosure -->
+                        <div id="autorenew-disclosure" class="disclosure-box">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="disclosure-content">
+                                <strong>Auto-Renewing Membership:</strong>
+                                <p>Your membership will automatically renew monthly on the same day each month. You can cancel at any time, and you'll continue to have access until the end of your current billing period.</p>
+                            </div>
+                        </div>
+
+                        <!-- Stripe Card Element -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-credit-card"></i> Card Details
+                                <span class="required">*</span>
+                            </label>
+                            <div id="card-element" class="stripe-card-element">
+                                <!-- Stripe will inject card input here -->
+                            </div>
+                            <div id="card-errors" class="error-message"></div>
+                        </div>
+
+                        <!-- Security Notice -->
+                        <div class="security-notice">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Your payment information is secure and encrypted</span>
+                        </div>
+
+                        <!-- Terms Acceptance -->
+                        <div class="terms-acceptance">
+                            <label class="checkbox-label">
+                                <input 
+                                    type="checkbox" 
+                                    id="terms-accepted" 
+                                    name="termsAccepted"
+                                >
+                                <span class="checkbox-text">
+                                    I understand and agree to the following membership terms:
+                                </span>
+                            </label>
+                            <ul class="terms-list">
+                                <li><strong>Unlimited Classes:</strong> Access to all regular classes during your membership period</li>
+                                <li><strong>Billing:</strong> Monthly membership valid for one month from purchase date</li>
+                                <li><strong>Auto-Renewal:</strong> If selected, membership automatically renews monthly until you cancel</li>
+                                <li><strong>Cancellation:</strong> You can turn off auto-renewal at any time; membership remains active until the end of your current billing period</li>
+                                <li><strong>No Refunds:</strong> Membership fees are non-refundable once purchased</li>
+                                <li><strong>Remaining Concessions:</strong> If you have any unused concessions, they will be refunded on a pro-rata basis</li>
+                            </ul>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit" 
+                            id="submit-button" 
+                            class="btn-primary btn-primary-lg btn-submit"
+                            disabled
+                        >
+                            <i class="fas fa-lock"></i>
+                            <span id="submit-button-text">Complete Purchase</span>
+                        </button>
+
+                        <button 
+                            type="button" 
+                            id="cancel-purchase-button" 
+                            class="btn-cancel btn-cancel-lg"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Not Eligible Section (shown to non-improvers) -->
+        <div id="not-eligible-section" class="membership-section" style="display: none;">
+            <div class="back-nav">
+                <a href="../dashboard/index.html" class="btn-primary btn-primary-lg">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <div class="not-eligible-card">
+                <div class="not-eligible-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h2>Membership Not Available</h2>
+                <p>Memberships are currently only available for improver-level students.</p>
+                <p>Continue attending classes and using concession packages. When you're ready to join the improver program, we'll let you know!</p>
+                <a href="../purchase/index.html" class="btn-primary btn-primary-lg">
+                    <i class="fas fa-shopping-cart"></i>
+                    Purchase Concessions
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Empty State (No Student Selected - Admin Only) -->
+    <div id="empty-state" class="empty-state" style="display: none;">
+        <i class="fas fa-user-friends"></i>
+        <h2>Select a Student</h2>
+        <p>Choose a student from the dropdown above to view their membership information.</p>
+    </div>
+
+    <!-- Snackbar for notifications -->
+    <div id="snackbar" class="snackbar"></div>
+
+    <!-- Firebase Config & Logic -->
+    <script src="../../config/firebase-config.js"></script>
+    <script src="../../config/api-config.js"></script>
+    <script src="../../config/stripe-config.js"></script>
+    
+    <!-- Access Control -->
+    <script src="../js/access-control.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="../js/firebase-init.js"></script>
+    
+    <!-- Utilities -->
+    <script type="module" src="/js/utils/index.js"></script>
+    
+    <!-- Student Loader Utility - Load before admin header -->
+    <script src="../js/utils/student-loader.js"></script>
+    
+    <!-- Admin Header Component (for admin users) - Load first -->
+    <script src="../../admin/js/header-config.js"></script>
+    <script src="../../admin/js/header-configurator.js"></script>
+    <script src="../../admin/js/mobile-nav.js"></script>
+    <script src="../../admin/admin-header.js"></script>
+    
+    <!-- Payment Service -->
+    <script src="../prepay/payment-service.js"></script>
+    
+    <!-- Auth Utilities -->
+    <script src="../js/auth-utils.js"></script>
+    
+    <!-- Membership Logic -->
+    <script type="module" src="membership-service.js"></script>
+    <script type="module" src="membership.js"></script>
+    
+    <!-- Confirmation Modal Component -->
+    <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    
+    <!-- Student Portal Header -->
+    <script src="/components/mobile-drawer.js"></script>
+    <script src="../student-portal-header.js"></script>
+</body>
+</html>

@@ -59,6 +59,12 @@ function createCheckinTransactionRow(transaction) {
         typeBadgeClass = 'casual-student';
     } else if (transaction.type === 'workshop-entry') {
         typeBadgeClass = 'workshop';
+    } else if (transaction.type === 'membership-purchase') {
+        typeBadgeClass = 'membership-purchase';
+    } else if (transaction.type === 'membership-renewal') {
+        typeBadgeClass = 'membership-renewal';
+    } else if (transaction.type === 'membership-cancellation') {
+        typeBadgeClass = 'membership-cancellation';
     } else {
         typeBadgeClass = 'other';
     }

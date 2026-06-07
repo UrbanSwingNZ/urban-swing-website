@@ -24,6 +24,7 @@ function setupNavigationCards() {
     const navCards = {
         'nav-transactions': '../transactions/index.html',
         'nav-concessions': '../concessions/index.html',
+        'nav-membership': '../membership/index.html',
         'nav-checkins': '../check-ins/index.html',
         'nav-profile': '../profile/index.html',
         'nav-purchase': '../purchase/index.html',
