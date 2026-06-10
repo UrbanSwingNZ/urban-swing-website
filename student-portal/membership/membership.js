@@ -164,8 +164,8 @@ async function displayCurrentMembership() {
 
     const isRecurring = currentMembership.isRecurring === true;
     const statusBadge = currentMembership.status === 'active' 
-        ? '<span class="type-badge membership-purchase">Active</span>'
-        : '<span class="type-badge membership-cancellation">Inactive</span>';
+        ? '<span class="membership-status-badge active">Active</span>'
+        : '<span class="membership-status-badge inactive">Inactive</span>';
 
     container.innerHTML = `
         <div class="membership-status">
@@ -188,7 +188,7 @@ async function displayCurrentMembership() {
             </div>
             <div class="detail-item">
                 <span class="detail-label"><i class="fas fa-credit-card"></i> Payment Method</span>
-                <span class="detail-value">Card ending •••• ${currentMembership.last4 || '****'}</span>
+                <span class="detail-value">${formatPaymentMethod(currentMembership)}</span>
             </div>
         </div>
 
@@ -218,7 +218,7 @@ async function displayCurrentMembership() {
                 <i class="fas fa-receipt"></i> View Transaction History
             </button>
             ` : ''}
-            <button class="btn-cancel-membership btn-secondary-lg" id="cancel-membership-btn">
+            <button class="btn-cancel btn-cancel-lg" id="cancel-membership-btn">
                 <i class="fas fa-times-circle"></i> Cancel Membership
             </button>
         </div>
@@ -524,6 +524,35 @@ async function handleCancelMembership() {
     });
 
     modal.show();
+}
+
+/**
+ * Format payment method for display
+ */
+function formatPaymentMethod(membership) {
+    const method = (membership.paymentMethod || '').toLowerCase();
+    
+    // If it's an online payment with a card, show the last4 digits
+    if (method === 'online' && membership.last4) {
+        return `Card ending •••• ${membership.last4}`;
+    }
+    
+    // Otherwise, show the payment method name
+    switch (method) {
+        case 'cash':
+            return 'Cash';
+        case 'eftpos':
+            return 'EFTPOS';
+        case 'bank-transfer':
+        case 'bank transfer':
+            return 'Bank Transfer';
+        case 'online':
+            return 'Online';
+        case 'comp':
+            return 'Complimentary';
+        default:
+            return 'Unknown';
+    }
 }
 
 /**
