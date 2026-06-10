@@ -120,14 +120,21 @@ function createMembershipCard(id, membership) {
     </div>
     
     <div class="card-actions">
-      <button class="btn-primary btn-edit" onclick="editMembership('${id}')">
+      <button class="btn-primary btn-edit">
         <i class="fas fa-edit"></i> Edit
       </button>
-      <button class="btn-delete" onclick="confirmDeleteMembership('${id}', '${membership.name}')">
+      <button class="btn-delete">
         <i class="fas fa-trash"></i> Delete
       </button>
     </div>
   `;
+  
+  // Setup button listeners
+  const editBtn = card.querySelector('.btn-edit');
+  editBtn.addEventListener('click', () => editMembership(id));
+  
+  const deleteBtn = card.querySelector('.btn-delete');
+  deleteBtn.addEventListener('click', () => confirmDeleteMembership(id, membership.name));
   
   // Setup drag listeners
   setupMembershipDragListeners(card);

@@ -86,13 +86,29 @@ async function saveMembership(event) {
       membershipData.isActive = true;
       membershipData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       
-      await db.collection('membershipTypes').add(membershipData);
+      // Generate document ID from name (like concessionPackages)
+      const docId = name.toLowerCase()
+        .replace(/\s+/g, '-')        // Replace spaces with hyphens
+        .replace(/[^a-z0-9-]/g, '')  // Remove special characters
+        .replace(/-+/g, '-')         // Replace multiple hyphens with single
+        .replace(/^-|-$/g, '');      // Remove leading/trailing hyphens
+      
+      // Check if ID already exists
+      const existingDoc = await db.collection('membershipTypes').doc(docId).get();
+      if (existingDoc.exists) {
+        showSnackbar('A membership type with this name already exists', 'error');
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+        return;
+      }
+      
+      await db.collection('membershipTypes').doc(docId).set(membershipData);
       showSnackbar('Membership created successfully', 'success');
     }
     
     // Close modal and reload
     closeMembershipModal();
-    await loadMembershipTypes();
+    await window.loadMembershipTypes();
     
   } catch (error) {
     console.error('Error saving membership:', error);
@@ -139,10 +155,21 @@ async function editMembership(id) {
 async function confirmDeleteMembership(id, name) {
   const modal = new ConfirmationModal({
     title: 'Delete Membership Type',
-    message: `Are you sure you want to delete <strong>${name}</strong>?`,
-    confirmText: 'Delete',
+    message: `
+      <p>Are you sure you want to delete this membership type?</p>
+      <div class="student-info-delete">
+        <strong>${name}</strong>
+      </div>
+      <p class="text-muted" style="margin-top: 15px;">
+        <i class="fas fa-info-circle"></i> This will affect students and memberships across the system.
+      </p>
+    `,
+    icon: 'fas fa-trash',
+    variant: 'danger',
+    confirmText: 'Delete Membership',
+    confirmClass: 'btn-delete',
     cancelText: 'Cancel',
-    type: 'danger',
+    cancelClass: 'btn-cancel',
     onConfirm: async () => {
       await deleteMembership(id);
     }
@@ -171,7 +198,7 @@ async function deleteMembership(id) {
     showSnackbar('Membership deleted successfully', 'success');
     
     // Reload list
-    await loadMembershipTypes();
+    await window.loadMembershipTypes();
     
   } catch (error) {
     console.error('Error deleting membership:', error);
