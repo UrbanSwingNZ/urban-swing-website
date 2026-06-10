@@ -46,11 +46,11 @@
    =========================================== */
 
 .membership-card {
-    background: linear-gradient(135deg, #f8f7fc 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--bg-purple-light) 0%, #ffffff 100%);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
-    box-shadow: 0 4px 16px rgba(91, 74, 153, 0.15);
-    border: 2px solid #e8e4f3;
+    box-shadow: 0 4px 16px rgba(154, 22, 245, 0.15);
+    border: 2px solid var(--bg-purple-pale);
 }
 
 .membership-status {
@@ -59,15 +59,36 @@
     align-items: center;
     margin-bottom: var(--space-lg);
     padding-bottom: var(--space-md);
-    border-bottom: 2px solid #e8e4f3;
+    border-bottom: 2px solid var(--bg-purple-pale);
 }
 
 .membership-status h3 {
     font-size: 1.5rem;
-    color: #5b4a99;
+    color: var(--purple-primary);
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+}
+
+/* Membership Status Badge */
+.membership-status-badge {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.membership-status-badge.active {
+    background: var(--bg-success-light);
+    color: var(--success-dark);
+}
+
+.membership-status-badge.inactive {
+    background: var(--bg-error-light);
+    color: var(--error);
 }
 
 .membership-details-grid {
@@ -93,7 +114,7 @@
 }
 
 .detail-label i {
-    color: #5b4a99;
+    color: var(--purple-primary);
 }
 
 .detail-value {
@@ -103,17 +124,17 @@
 }
 
 .detail-value.price {
-    color: #5b4a99;
+    color: var(--purple-primary);
     font-size: 1.3rem;
 }
 
 /* Auto-Renew Toggle */
 .autorenew-toggle {
-    background: #f8f7fc;
+    background: var(--bg-purple-light);
     border-radius: var(--radius-md);
     padding: var(--space-md);
     margin: var(--space-lg) 0;
-    border: 1px solid #e8e4f3;
+    border: 1px solid var(--bg-purple-pale);
 }
 
 .autorenew-toggle-header {
@@ -170,7 +191,7 @@
 }
 
 .toggle-switch input:checked + .toggle-slider {
-    background: linear-gradient(135deg, #5b4a99, #7a67c0);
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -190,17 +211,6 @@
     margin-top: var(--space-lg);
 }
 
-.btn-cancel-membership {
-    background: var(--bg-error-light);
-    color: var(--error);
-    border: 1px solid var(--error);
-}
-
-.btn-cancel-membership:hover {
-    background: var(--error);
-    color: white;
-}
-
 /* ===========================================
    AVAILABLE MEMBERSHIPS GRID
    =========================================== */
@@ -213,37 +223,37 @@
 }
 
 .membership-option-card {
-    background: linear-gradient(135deg, #f8f7fc 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--bg-purple-light) 0%, #ffffff 100%);
     border-radius: var(--radius-lg);
     padding: var(--space-lg);
-    box-shadow: 0 4px 12px rgba(91, 74, 153, 0.1);
-    border: 2px solid #e8e4f3;
+    box-shadow: 0 4px 12px var(--bg-purple-medium);
+    border: 2px solid var(--bg-purple-pale);
     transition: all var(--transition-base);
     cursor: pointer;
 }
 
 .membership-option-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(91, 74, 153, 0.2);
-    border-color: #5b4a99;
+    box-shadow: 0 8px 24px rgba(154, 22, 245, 0.2);
+    border-color: var(--purple-primary);
 }
 
 .membership-option-card.selected {
-    border-color: #5b4a99;
-    background: linear-gradient(135deg, #e8e4f3 0%, #f8f7fc 100%);
+    border-color: var(--purple-primary);
+    background: linear-gradient(135deg, var(--bg-purple-pale) 0%, var(--bg-purple-light) 100%);
 }
 
 .membership-option-name {
     font-size: 1.4rem;
     font-weight: 700;
-    color: #5b4a99;
+    color: var(--purple-primary);
     margin-bottom: var(--space-sm);
 }
 
 .membership-option-price {
     font-size: 2rem;
     font-weight: 700;
-    color: #5b4a99;
+    color: var(--purple-primary);
     margin-bottom: var(--space-sm);
 }
 
@@ -276,7 +286,7 @@
 }
 
 .membership-option-features li i {
-    color: #5b4a99;
+    color: var(--purple-primary);
 }
 
 .btn-select-membership {
