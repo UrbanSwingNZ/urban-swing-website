@@ -264,7 +264,7 @@ exports.processOneTimeMembershipPurchase = onRequest(
           .replace(/-+/g, '-')
           .replace(/^-|-$/g, '');
         
-        const transactionId = `${firstNameClean}-${lastNameClean}-${data.membershipTypeId}-${timestamp}`;
+        const transactionId = `${firstNameClean}-${lastNameClean}-membership-${timestamp}`;
         
         console.log('Creating transaction with ID:', transactionId);
         
@@ -617,7 +617,7 @@ exports.processRecurringMembershipPurchase = onRequest(
           .replace(/-+/g, '-')
           .replace(/^-|-$/g, '');
         
-        const transactionId = `${firstNameClean}-${lastNameClean}-${data.membershipTypeId}-${timestamp}`;
+        const transactionId = `${firstNameClean}-${lastNameClean}-membership-${timestamp}`;
         
         console.log('Creating transaction with ID:', transactionId);
         

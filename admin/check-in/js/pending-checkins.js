@@ -59,6 +59,11 @@ async function processPendingCheckinsSnapshot(snapshot) {
                 continue;
             }
             
+            // Skip membership purchases — memberships provide ongoing access and don't need check-in
+            if (data.type === 'membership-purchase') {
+                continue;
+            }
+            
             // Fetch student info
             const studentDoc = await firebase.firestore()
                 .collection('students')

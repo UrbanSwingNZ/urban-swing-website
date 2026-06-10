@@ -112,7 +112,7 @@ exports.adminAssignMembership = onCall(
         }
 
         // Create membership document
-        const membershipRef = db.collection('memberships').doc();
+        const membershipId = `${studentId}-membership-${Date.now()}`;
         const membershipData = {
             studentId: studentId,
             studentName: `${studentData.firstName} ${studentData.lastName}`,
@@ -137,11 +137,11 @@ exports.adminAssignMembership = onCall(
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         };
 
-        await membershipRef.set(membershipData);
+        await db.collection('memberships').doc(membershipId).set(membershipData);
 
         // Update student document
         await db.collection('students').doc(studentId).update({
-            activeMembershipId: membershipRef.id,
+            activeMembershipId: membershipId,
             membershipStatus: 'active',
             membershipExpiryDate: admin.firestore.Timestamp.fromDate(expiryDate)
         });
@@ -149,7 +149,20 @@ exports.adminAssignMembership = onCall(
         // Create transaction record (unless comp)
         let transactionId = null;
         if (paymentMethod !== 'comp') {
-            const transactionRef = db.collection('transactions').doc();
+            // Generate transaction ID: firstname-lastname-membership-timestamp
+            const timestamp = Date.now();
+            const firstNameClean = studentData.firstName.toLowerCase()
+                .replace(/[^a-z0-9]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            
+            const lastNameClean = studentData.lastName.toLowerCase()
+                .replace(/[^a-z0-9]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            
+            transactionId = `${firstNameClean}-${lastNameClean}-membership-${timestamp}`;
+            
             const transactionData = {
                 studentId: studentId,
                 studentName: `${studentData.firstName} ${studentData.lastName}`,
@@ -158,28 +171,28 @@ exports.adminAssignMembership = onCall(
                 paymentMethod: paymentMethod,
                 status: 'completed',
                 description: `${membershipType.name} (Admin Assigned)`,
-                membershipId: membershipRef.id,
+                membershipId: membershipId,
                 membershipTypeId: membershipTypeId,
+                transactionDate: admin.firestore.Timestamp.fromDate(purchaseDate),
                 classDate: admin.firestore.Timestamp.fromDate(purchaseDate),
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
                 createdBy: adminUid,
                 adminAssigned: true
             };
 
-            await transactionRef.set(transactionData);
-            transactionId = transactionRef.id;
+            await db.collection('transactions').doc(transactionId).set(transactionData);
 
             // Update membership with transaction ID
-            await membershipRef.update({
+            await db.collection('memberships').doc(membershipId).update({
                 transactionId: transactionId
             });
         }
 
-        console.log(`Admin ${adminUid} assigned membership ${membershipRef.id} to student ${studentId}`);
+        console.log(`Admin ${adminUid} assigned membership ${membershipId} to student ${studentId}`);
 
         return {
             success: true,
-            membershipId: membershipRef.id,
+            membershipId: membershipId,
             transactionId: transactionId,
             expiryDate: expiryDate.toISOString(),
             message: `Membership assigned successfully. Valid until ${expiryDate.toLocaleDateString('en-NZ', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Pacific/Auckland' })}`

@@ -713,6 +713,11 @@
     color: var(--blue-accent);
 }
 
+.checkin-type.membership {
+    background: #e8e4f3;
+    color: #5b4a99;
+}
+
 .checkin-type.free {
     background: var(--bg-success-light);
     color: var(--success);

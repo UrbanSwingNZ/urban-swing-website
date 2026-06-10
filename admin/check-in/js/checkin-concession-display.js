@@ -162,12 +162,25 @@ function purchaseMembershipForStudent(studentId) {
     
     // Open membership assignment modal with student ID, callback, parent modal ID, student object, and check-in date
     window.openMembershipAssignmentModal(student.id, async (result) => {
-        // Re-set the selected student (state may have been lost)
-        setSelectedStudent(student);
+        // Fetch fresh student data from Firestore
+        const studentDoc = await firebase.firestore().collection('students').doc(student.id).get();
+        if (!studentDoc.exists) {
+            window.showSnackbar('Error: Student not found', 'error');
+            return;
+        }
+        
+        const freshStudentData = {
+            id: studentDoc.id,
+            ...studentDoc.data()
+        };
+        
+        // Re-set the selected student with fresh data
+        setSelectedStudent(freshStudentData);
+        
         // Refresh membership info after assignment
         const membershipCheck = await window.checkStudentMembership(student.id);
         if (membershipCheck.isImprover) {
-            await updateMembershipInfo(student, membershipCheck);
+            await updateMembershipInfo(freshStudentData, membershipCheck);
         }
     }, 'checkin-modal', student, selectedDate);
 }
