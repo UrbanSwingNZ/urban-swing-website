@@ -1,8 +1,21 @@
 # Monthly Membership System - Implementation Plan
 
-**Last Updated:** June 2026  
-**Version:** 3.0  
-**Status:** Phase 8 Complete - Student Database UI Updates Ready
+**Last Updated:** June 10, 2026  
+**Version:** 3.1  
+**Status:** Phase 8 Complete - Phase 9 Planned (Auto-Renew Enhancements & Lifecycle)
+
+**Major Changes in v3.1:**
+- 📋 **Phase 9 Planned:** Auto-Renew Enhancements & Membership Lifecycle
+  - Remove cancel membership button (auto-renew toggle handles this)
+  - Default to recurring purchases in UI
+  - Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships
+  - Add "Update Payment Method" button for online memberships
+  - Transaction type consistency (all use 'membership-purchase')
+  - Webhook period calculation from Stripe subscription object
+  - Scheduled function for daily expiry checks and admin notifications
+  - Email notifications (successful renewal, failed payment, expired memberships)
+  - Expired membership badge and UI updates
+  - Comprehensive test cases and verification steps
 
 **Major Changes in v3.0:**
 - ✅ **Phase 8 Complete:** Student Database UI Updates
@@ -673,7 +686,7 @@ Payment Processing
 
 ---
 
-## Remaining Implementation Phases (Phase 9+)
+## Remaining Implementation Phases (Phase 10+)
 
 ---
 
@@ -735,11 +748,346 @@ Payment Processing
 
 ---
 
-### Phase 9: Reporting & Admin Views
+### Phase 9: Auto-Renew Enhancements & Membership Lifecycle
+
+**Status:** Not Started (June 2026)
+
+**Overview:**
+This phase implements the complete auto-renew workflow, membership expiry handling, email notifications, and payment method updates based on clarified business rules:
+- Remove cancel membership button (not needed - auto-renew toggle handles this)
+- Default to recurring purchases
+- Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships
+- Update Payment Method functionality for online memberships
+- Automated expiry handling with admin notifications
+- Stripe webhook improvements for accurate period tracking
+
+---
+
+#### 9.1: UI Updates - Remove Cancel & Default to Recurring
+
+**Tasks:**
+
+1. **Remove Cancel Membership button** (`student-portal/membership/membership.js`)
+   - Remove `handleCancelMembership()` function
+   - Remove cancel button from `displayCurrentMembership()` HTML
+   - Remove event listener setup for cancel button
+   - Keep `PaymentService.cancelMembership()` method for potential admin use
+
+2. **Default to recurring purchases** (`student-portal/membership/membership.js`)
+   - Pre-select "Recurring" radio button in membership purchase form
+   - Add `checked` attribute to recurring radio: `<input type="radio" name="membership-type" value="recurring" checked>`
+   - Ensure auto-renew disclosure box is visible by default
+
+3. **Update payment method button** (`student-portal/membership/membership.js`)
+   - Replace Cancel button location with "Update Payment Method" button
+   - Only show for memberships where `paymentMethod === 'online'`
+   - Button text: "Update Payment Method"
+   - Button class: `btn-secondary btn-secondary-lg`
+   - Create `handleUpdatePaymentMethod()` function
+
+4. **Update payment method modal** (`student-portal/membership/` - new file: `update-payment-modal.js`)
+   - Modal title: "Update Payment Method"
+   - Show current membership type and expiry
+   - Stripe Elements card input (reuse existing card element setup)
+   - "Update" button to submit
+   - Call new Cloud Function `updateMembershipPaymentMethod`
+
+**Expected Outcome:**
+- No cancel button in student portal
+- Recurring is default selection (students must actively choose one-time)
+- Students can update card without cancelling/repurchasing
+
+---
+
+#### 9.2: Auto-Renew Toggle Visibility Rules
+
+**Tasks:**
+
+1. **Conditional display logic** (`student-portal/membership/membership.js`)
+   - Show auto-renew toggle section ONLY when:
+     ```javascript
+     isRecurring === true 
+     && paymentMethod === 'online' 
+     && status === 'active'
+     ```
+   - Hide entire auto-renew section for:
+     - Expired memberships (`status === 'expired'`)
+     - Inactive memberships (`status === 'inactive'`)
+     - Cash/EFTPOS/bank transfer memberships (`paymentMethod !== 'online'`)
+
+2. **Payment method display updates**
+   - For online memberships: Show "Online" (don't show card details)
+   - For cash/EFTPOS/bank transfer: Show as currently implemented
+
+**Expected Outcome:**
+- Auto-renew toggle hidden for all cash/in-person purchases
+- Expired memberships don't show confusing disabled toggle
+- Clean UI that only shows relevant controls
+
+---
+
+#### 9.3: Expired Membership Badge & UI
+
+**Tasks:**
+
+1. **Add expired status badge** (`student-portal/membership/membership.css`, `membership.js`)
+   - Create `.membership-status-badge.expired` CSS class
+   - Background: `var(--bg-error-light)`, Color: `var(--error)`
+   - Show "EXPIRED" badge for `status === 'expired'`
+   - Update `displayCurrentMembership()` to show expired badge
+
+2. **Expired membership message**
+   - Replace active membership details with:
+     ```html
+     <div class="expired-message">
+       <h3>Your membership has expired</h3>
+       <p>Purchase a new membership below to continue attending classes.</p>
+       <button class="btn-primary btn-primary-lg" onclick="scrollToPurchase()">
+         Purchase Membership
+       </button>
+     </div>
+     ```
+
+3. **Check-in UI for expired members** (already implemented in Phase 5, verify only)
+   - "Use Membership" radio button disabled
+   - Default to "Casual Entry" radio button
+   - Show expired badge in check-in modal
+
+**Expected Outcome:**
+- Clear visual indication membership has expired
+- Student directed to purchase new membership
+- Admin sees expired status during check-in
+
+---
+
+#### 9.4: Cloud Function - Update Payment Method
+
+**Tasks:**
+
+1. **Create `updateMembershipPaymentMethod` function** (`functions/membership-management.js`)
+   - HTTP function (onRequest) with authentication
+   - Parameters: `membershipId`, `paymentMethodId` (from Stripe Elements)
+   - Validation:
+     - Verify user owns the membership
+     - Verify membership is active with `isRecurring: true`
+     - Verify `paymentMethod === 'online'`
+   - Operations:
+     - Attach new payment method to Stripe customer
+     - Set as default payment method
+     - Update Stripe subscription payment method
+     - Detach old payment method (optional - Stripe keeps history)
+   - Return: Success status, last4 of new card
+
+2. **Export function** (`functions/index.js`)
+   - Add to exports: `exports.updateMembershipPaymentMethod = updateMembershipPaymentMethod;`
+
+3. **Add to API config** (`config/api-config.js`)
+   - Add endpoint: `MEMBERSHIP_UPDATE_PAYMENT: `${FUNCTIONS_BASE_URL}/updateMembershipPaymentMethod``
+
+**Expected Outcome:**
+- Students can update credit card without cancelling membership
+- No interruption to billing cycle
+- Secure payment method updates through Stripe
+
+---
+
+#### 9.5: Transaction Type Consistency
+
+**Tasks:**
+
+1. **Update webhook handler** (`functions/stripe-webhook-memberships.js`)
+   - Change transaction type from `'membership-renewal'` to `'membership-purchase'`
+   - Line ~155: `type: 'membership-purchase'` (instead of `'membership-renewal'`)
+   - Add comment: `// Type is 'membership-purchase' for consistency with initial purchase`
+
+2. **Verify initial purchase functions** (already correct)
+   - `processOneTimeMembershipPurchase`: Already uses `'membership-purchase'`
+   - `processRecurringMembershipPurchase`: Already uses `'membership-purchase'`
+
+**Expected Outcome:**
+- All membership transactions have consistent type: `'membership-purchase'`
+- Easier querying and reporting
+- No migration needed (no existing renewal transactions)
+
+---
+
+#### 9.6: Webhook Period Calculation Fix
+
+**Tasks:**
+
+1. **Update webhook period handling** (`functions/stripe-webhook-memberships.js`)
+   - In `invoice.payment_succeeded` handler:
+     - Instead of manually calculating period, read from subscription object
+     - Retrieve full subscription: `const subscription = await stripe.subscriptions.retrieve(invoice.subscription);`
+     - Use Stripe's authoritative period:
+       ```javascript
+       const newPeriodStart = new Date(subscription.current_period_start * 1000);
+       const newPeriodEnd = new Date(subscription.current_period_end * 1000);
+       ```
+     - Remove manual `calculateMembershipExpiry()` call
+
+2. **Verify initial purchase period** (`functions/process-membership-purchase.js`)
+   - In `processRecurringMembershipPurchase`:
+     - After creating subscription, read back the period:
+       ```javascript
+       const currentPeriodStart = new Date(subscription.current_period_start * 1000);
+       const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+       ```
+     - Use these values for membership document (instead of manual calculation)
+
+3. **Keep manual calculation for one-time purchases**
+   - `processOneTimeMembershipPurchase` still uses `calculateMembershipExpiry()`
+   - Admin assigned memberships still use `calculateMembershipExpiry()`
+
+**Expected Outcome:**
+- Stripe subscriptions use Stripe's authoritative billing cycle
+- No discrepancies between Stripe and Firestore
+- Manual calculation only for non-Stripe purchases
+
+---
+
+#### 9.7: Email Notifications
+
+**Tasks:**
+
+1. **Successful renewal email** (`functions/emails/membership-renewal-success.js` - new file)
+   - Template function: `generateMembershipRenewalSuccessEmail({ studentName, membershipType, newExpiryDate, amount })`
+   - Email to: Student email
+   - Subject: "Your Urban Swing Membership Has Renewed"
+   - Body includes:
+     - Confirmation of successful payment
+     - New expiry date
+     - Amount charged
+     - Link to view membership in student portal
+     - Link to turn off auto-renew if desired
+
+2. **Failed renewal email** (`functions/emails/membership-renewal-failed.js` - new file)
+   - Template function: `generateMembershipRenewalFailedEmail({ studentName, membershipType, expiryDate })`
+   - Email to: Student email
+   - Subject: "Action Required: Membership Payment Failed"
+   - Body includes:
+     - Payment failed notification
+     - Membership has expired
+     - Instructions to update payment method or purchase new membership
+     - Link to student portal
+
+3. **Expired membership admin alert** (`functions/emails/membership-expired-admin-alert.js` - new file)
+   - Template function: `generateMembershipExpiredAdminAlert({ expiredMemberships })`
+   - Email to: `dance@urbanswing.co.nz`
+   - Subject: "Daily Report: Expired Memberships - [Date]"
+   - Body includes:
+     - Count of memberships expired in last 24 hours
+     - Table with student name, membership type, expiry date
+     - Note: "These students will need to purchase new memberships"
+
+4. **Update webhook handler** (`functions/stripe-webhook-memberships.js`)
+   - In `invoice.payment_succeeded`:
+     - Call `sendMembershipRenewalSuccessEmail(studentData.email, emailData)`
+   - In `invoice.payment_failed`:
+     - Call `sendMembershipRenewalFailedEmail(studentData.email, emailData)`
+
+5. **Create email sending functions** (`functions/email-notifications.js`)
+   - Add exports:
+     - `sendMembershipRenewalSuccessEmail(to, data)`
+     - `sendMembershipRenewalFailedEmail(to, data)`
+     - `sendMembershipExpiredAdminAlert(expiredMemberships)`
+
+**Expected Outcome:**
+- Students notified of successful renewals
+- Students notified immediately of payment failures
+- Admin gets daily digest of expired memberships
+- All email patterns match existing email system
+
+---
+
+#### 9.8: Scheduled Function - Daily Expiry Check
+
+**Tasks:**
+
+1. **Create scheduled function** (`functions/scheduled-membership-expiry.js` - new file)
+   - Cloud Scheduler trigger: Daily at 8:00 AM NZ time
+   - Function: `checkExpiredMemberships`
+   - Query memberships where:
+     ```javascript
+     status === 'active' 
+     && currentPeriodEnd < now()
+     && (isRecurring === false || stripeSubscriptionId === null)
+     ```
+   - For each expired membership:
+     - Update membership: `status: 'expired'`
+     - Update student: `activeMembershipId: null`, `membershipStatus: 'expired'`
+     - Add to expiredList array
+   - After processing all:
+     - Send admin email with expiredList
+     - Log count and details
+
+2. **Export function** (`functions/index.js`)
+   - Add export: `exports.checkExpiredMemberships = checkExpiredMemberships;`
+
+3. **Set up Cloud Scheduler** (manual Firebase Console task)
+   - Create job: "check-expired-memberships"
+   - Frequency: `0 8 * * *` (8 AM daily)
+   - Timezone: Pacific/Auckland
+   - Target: Cloud Function `checkExpiredMemberships`
+
+**Expected Outcome:**
+- Non-recurring memberships automatically expire at end of period
+- Student and membership documents updated correctly
+- Admin notified daily of expiries
+- No manual checking required
+
+---
+
+#### 9.9: Testing & Verification
+
+**Manual Testing Checklist:**
+
+**Auto-Renew Toggle Visibility:**
+- [ ] Active online membership → Toggle visible and functional
+- [ ] Active cash membership → No toggle shown
+- [ ] Expired online membership → No toggle, expired badge shown
+- [ ] One-time online membership → No toggle shown
+
+**Update Payment Method:**
+- [ ] Button appears for online memberships (active)
+- [ ] Button hidden for cash/EFTPOS/bank transfer memberships
+- [ ] Click button → Modal opens with Stripe Elements
+- [ ] Enter new card → Successful update
+- [ ] Verify Stripe subscription updated with new payment method
+- [ ] Next renewal uses new card
+
+**Default Recurring:**
+- [ ] Open purchase page → Recurring radio pre-selected
+- [ ] Auto-renew disclosure visible by default
+- [ ] Can switch to one-time if desired
+
+**Email Notifications:**
+- [ ] Trigger renewal webhook → Student receives success email
+- [ ] Trigger failed payment webhook → Student receives failure email
+- [ ] Run scheduled function → Admin receives daily digest
+
+**Expired Membership Flow:**
+- [ ] Non-recurring membership reaches end date → Auto-expires via scheduled function
+- [ ] Student portal shows expired badge and purchase button
+- [ ] Check-in shows expired status, defaults to casual entry
+- [ ] Admin receives email notification
+
+**Webhook Period Calculation:**
+- [ ] Create recurring membership → Verify period matches Stripe subscription
+- [ ] Renewal occurs → Verify new period matches Stripe exactly
+- [ ] No off-by-one-day errors
+
+**Transaction Consistency:**
+- [ ] Initial purchase → Type is `'membership-purchase'`
+- [ ] Renewal → Type is `'membership-purchase'` (not renewal)
+
+---
+
+### Phase 10: Reporting & Admin Views
 
 **Background:**
 - Existing registration emails (for beginners) remain unchanged - they already handle casual rates and concessions correctly
-- NEW email needed: Admin alert when student is promoted to improver with remaining concessions
+- Improver promotion alert already implemented in Phase 8
 
 **Tasks:**
 1. **Create improver promotion alert email** (`functions/emails/improver-promotion-alert.js` - new file)
@@ -880,21 +1228,22 @@ Payment Processing
 
 ---
 
-### Phase 10: Testing & Verification
+### Phase 11: Testing & Verification
 
 #### Automated Tests
 
 1. **Cloud Function Unit Tests** (`functions/__tests__/`)
    - `processRecurringMembershipPurchase`: Verify Stripe subscription creation, database updates
    - `processOneTimeMembershipPurchase`: Verify Payment Intent, expiry calculation (1 month, sticky day)
-   - `cancelMembership`: Verify Stripe cancellation, status updates, permissions
+   - `updateMembershipPaymentMethod`: Verify payment method updates, permissions
    - Webhook handlers: Mock Stripe events, verify database updates
    - Expiry date calculation: Test anniversary billing (purchased 7th = expires 6th next month)
+   - Scheduled expiry function: Mock expired memberships, verify status updates
 
 2. **Firestore Security Rules Tests**
    - Students can read their own memberships
    - Students cannot read other students' memberships
-   - Students can cancel their own recurring memberships via Cloud Function
+   - Students can update payment methods via Cloud Function (own memberships only)
    - Admins can read/write all memberships
    - Public can read `membershipTypes` (for purchase interface)
    - Only admins can write `membershipTypes`
@@ -902,7 +1251,8 @@ Payment Processing
 3. **Integration Tests**
    - Full purchase flow: Select membership → Enter payment → Verify database updates → Verify Stripe
    - Check-in flow: Active membership → Check in → Verify concession not used
-   - Cancellation flow: Cancel recurring → Verify Stripe updated → Verify access until period end
+   - Update payment method flow: Change card → Verify Stripe updated → Next renewal uses new card
+   - Expiry flow: Non-recurring membership expires → Scheduled function updates status → Email sent
 
 #### Manual Testing Checklist
 
@@ -948,9 +1298,27 @@ Payment Processing
 - [ ] Verify improver badge shows in check-in modal
 - [ ] Verify confirmation prompts when toggling improver status
 
+**Phase 9 Features - Auto-Renew & Lifecycle:**
+- [ ] Open purchase page → Recurring radio button pre-selected by default
+- [ ] Purchase recurring membership → No cancel button shown in management page
+- [ ] Purchase cash membership → Auto-renew toggle hidden completely
+- [ ] Purchase online membership → Auto-renew toggle visible and functional
+- [ ] Update payment method button appears for online memberships only
+- [ ] Click "Update Payment Method" → Modal opens with Stripe card input
+- [ ] Update card successfully → Verify Stripe subscription updated
+- [ ] Expired membership shows "EXPIRED" badge (not disabled toggle)
+- [ ] Expired membership shows purchase button, not management controls
+- [ ] Transaction type is 'membership-purchase' for both initial and renewal
+- [ ] Webhook uses Stripe's period dates (not manual calculation)
+- [ ] Non-recurring membership expires → Scheduled function updates status
+- [ ] Successful renewal → Student receives email confirmation
+- [ ] Failed renewal payment → Student receives email alert
+- [ ] Daily expiry check → Admin receives email with list of expired memberships
+- [ ] Check in student with expired membership → Shows expired status, defaults to casual
+
 **Cancellation & Webhooks:**
-- [ ] Student cancels recurring → Verify Stripe subscription set to cancel at period end
-- [ ] Admin cancels recurring → Verify same behavior
+- [ ] Toggle auto-renew OFF → Verify Stripe subscription set to cancel at period end (no cancel button needed)
+- [ ] Auto-renew disabled → Membership continues until expiry, then expires naturally
 - [ ] Webhook: `invoice.payment_succeeded` → Verify membership period extended by 1 month
 - [ ] Webhook: `invoice.payment_failed` → Verify membership immediately expires, student notified
 - [ ] Webhook: `customer.subscription.deleted` → Verify membership marked cancelled, student fields cleared
@@ -1362,17 +1730,32 @@ const expiringMemberships = await db.collection('memberships')
 **Improver Promotion Alerts:** When admin sets `improver: true` on a student with active/unexpired concessions, system immediately sends email to admin (dance@urbanswing.co.nz) with concession details and refund information. Admin also sees modal warning (using shared confirmation modal) with concession count and manual refund requirement.
 
 **Auto-Renew Disclosure:** Clear, prominent disclosure of auto-renewal terms:
-- Purchase page: Sliding toggle (checked by default) with inline text explaining charges and cancellation
+- Purchase page: Recurring radio button (checked by default) with inline text explaining charges and cancellation
 - Confirmation modal: Shows before payment if auto-renew enabled, explains billing date and cancellation options
 - Management page: Large, obvious sliding toggle with plain-language helper text:
   - If ON: "Turn off to stop your credit card being automatically charged"
   - If OFF: "Turn on to auto-renew your membership"
 - Important: Turning off auto-renew doesn't cancel the current membership - it just prevents the next billing cycle. Membership remains active until end of current monthly period.
 
+**Auto-Renew & Lifecycle Management (Phase 9):**
+- **Default to Recurring:** Purchase page defaults to recurring membership (students must actively choose one-time)
+- **No Cancel Button:** Cancel button removed - auto-renew toggle handles this (toggle off = membership expires naturally at end of period)
+- **Cash Memberships:** Cannot auto-renew. Auto-renew toggle hidden completely for cash/EFTPOS/bank transfer purchases
+- **Update Payment Method:** Online memberships show "Update Payment Method" button (replaces cancel button) for changing credit card without interruption
+- **Expired Memberships:** Show "EXPIRED" badge, hide auto-renew controls, direct student to purchase new membership
+- **Transaction Consistency:** All membership transactions use type `'membership-purchase'` (initial purchase and renewals)
+- **Webhook Period Accuracy:** Read billing period from Stripe subscription object (not manual calculation) to avoid date discrepancies
+- **Scheduled Expiry:** Daily function checks for expired non-recurring memberships, updates status, notifies admin
+- **Email Notifications:**
+  - Successful renewal → Student receives confirmation email
+  - Failed renewal payment → Student receives failure email
+  - Daily expiry report → Admin (dance@urbanswing.co.nz) receives list of expired memberships
+
 **Payment Options:** 
-- Online payments: Auto-renew checkbox (checked by default), creates Stripe Subscription if checked
-- Cash/bank/eftpos: No auto-renew option, always one-time membership
+- Online payments: Auto-renew (recurring) selected by default, one-time available as option, creates Stripe Subscription if recurring
+- Cash/bank/eftpos: Cannot auto-renew, always one-time membership, must purchase new membership each time (no conversion to online)
 - Admin can purchase memberships on behalf of students for in-person payments
+- Payment method stored as `'online'` for student portal purchases (not `'stripe'`)
 
 **Membership Validity:** 1 month from purchase date (anniversary-based, "sticky day" approach). Valid through end of expiry day. If purchased on day that doesn't exist in next month (e.g., 31st), JavaScript automatically adjusts to last day of month, and that day "sticks" for future renewals. Recurring memberships auto-renew monthly; one-time memberships expire after 1 month.
 
@@ -1409,15 +1792,26 @@ const expiringMemberships = await db.collection('memberships')
 20. **What UI elements are hidden for non-improvers?** Membership tile/nav button (completely hidden - if improver: false or improver field missing)
 21. **What happens when auto-renew is turned off?** Membership continues until end of current monthly period. After expiry, student must manually purchase new membership (online or cash via admin).
 22. **How is expiry calculated?** 1 month from purchase using "sticky day" approach. Purchased 7th = expires 6th of next month. If purchased 31st Jan, expires 28/29th Feb (adjusted), then that day "sticks" (Feb 28 → Mar 28, not Mar 31).
+23. **Is cancel membership button needed? (Phase 9)** No - removed completely. Auto-renew toggle handles cancellation (toggle off = expires naturally at period end). No pro-rated refunds, so early cancellation not valid use case.
+24. **Should recurring be default? (Phase 9)** Yes - recurring radio button pre-selected by default. Students can still choose one-time if desired.
+25. **Can cash memberships be converted to auto-renew? (Phase 9)** No - cash/EFTPOS/bank transfer memberships cannot be converted. Student must purchase new online membership via student portal. Auto-renew toggle hidden for all non-online purchases.
+26. **How to update payment method? (Phase 9)** "Update Payment Method" button replaces cancel button location. Opens modal with Stripe Elements. Only visible for online memberships. Updates Stripe subscription seamlessly.
+27. **What happens when subscription auto-expires? (Phase 9)** Status updates to 'expired', activeMembershipId cleared, membershipStatus set to 'expired'. Handled by webhook (customer.subscription.deleted) or scheduled function (for non-recurring).
+28. **Transaction type for renewals? (Phase 9)** All transactions use 'membership-purchase' (not 'membership-renewal') for consistency.
+29. **How to calculate renewal periods? (Phase 9)** Read from Stripe subscription object (subscription.current_period_start, subscription.current_period_end) instead of manual calculation.
+30. **When to notify admin of expired memberships? (Phase 9)** Daily scheduled function sends email to dance@urbanswing.co.nz with list of all memberships that expired in last 24 hours.
+31. **Email notifications for renewals? (Phase 9)** Yes - successful renewal → student email; failed renewal → student email; expired membership → admin email (daily digest).
+32. **UI for expired memberships? (Phase 9)** Show "EXPIRED" badge, hide auto-renew section completely, display purchase button to buy new membership.
+33. **Grace period for expired memberships? (Phase 9)** No grace period. If expired, student must purchase new membership. Admin sees expired status during check-in and defaults to casual entry.
+34. **Where to show card details? (Phase 9)** Don't show card info at all (avoid implying we store card data). Show "Online" as payment method. "Update Payment Method" button allows changing card.
 
 ### Open Questions (To Be Decided During Implementation)
 1. **Improver promotion workflow:** Should there be an automated notification to student when promoted to improver?
 2. **Concession refund process:** Should system track/calculate refund amounts automatically?
-3. **Grace period for lapsed memberships:** Should improvers get 1-2 days grace period to renew?
-4. **Bulk improver assignment:** Need tool to promote multiple students at once?
-5. **Improver demotion:** Can students be demoted back to beginner? What happens to membership?
-6. **Membership types:** Start with one type or multiple improver membership tiers (e.g., standard vs premium)?
-7. **Dashboard placement:** Exact position of Membership tile in student portal dashboard
+3. **Bulk improver assignment:** Need tool to promote multiple students at once?
+4. **Improver demotion:** Can students be demoted back to beginner? What happens to membership?
+5. **Membership types:** Start with one type or multiple improver membership tiers (e.g., standard vs premium)?
+6. **Dashboard placement:** Exact position of Membership tile in student portal dashboard
 
 ---
 
@@ -1427,9 +1821,23 @@ const expiringMemberships = await db.collection('memberships')
 **Technical Contact:** Development Team  
 **Documentation Maintained By:** Implementation Team  
 
-**Last Updated:** June 5, 2026  
-**Version:** 2.0  
-**Status:** Ready for Implementation Approval  
+**Last Updated:** June 10, 2026  
+**Version:** 3.1  
+**Status:** Phase 8 Complete - Phase 9 Planned  
+
+**Major Changes in v3.1:**
+- Added comprehensive **Phase 9: Auto-Renew Enhancements & Membership Lifecycle**
+- Removed cancel membership button requirement (auto-renew toggle sufficient)
+- Default to recurring purchases with update payment method functionality
+- Cash memberships cannot convert to auto-renew (must purchase new online membership)
+- Transaction type consistency and webhook period calculation improvements
+- Automated expiry handling with scheduled functions and email notifications
+- Detailed test cases for all Phase 9 features
+
+**Major Changes in v3.0:**
+- ✅ **Phase 8 Complete:** Student Database UI Updates
+- Improver checkbox functional with membership/concession display logic
+- Improver promotion alert system with email and modal warnings
 
 **Major Changes in v2.0:**
 - Shifted from universal membership system to **improver-gated model**
@@ -1510,6 +1918,7 @@ _To be added: Screenshots of admin UI, student purchase page, membership managem
 | 2026-06-05 | 2.0 | **Major revision:** Shifted to improver-gated model. Memberships only for improvers; beginners continue using concessions. Removed registration integration. Added improver checkbox, conditional UI, and enhanced check-in validation. | Development Team |
 | 2026-06-05 | 2.1 | **Added clarifications:** (1) Registration emails unchanged - apply to beginners only. (2) Improver promotion alerts - email + modal when concessions remain. (3) Auto-renew disclosure - inline text + confirmation modal + sliding toggle. (4) Hide Prepay tile for improvers (in addition to Purchase Concessions). (5) Added toggleMembershipAutoRenew Cloud Function. | Development Team |
 | 2026-06-05 | 2.2 | **UI and auto-renew clarifications:** (1) Clarified UI visibility for non-improvers (hide Membership tile/nav). (2) Improved auto-renew toggle text for non-tech-savvy users ("Turn off to stop your credit card being automatically charged" vs "Turn on to auto-renew your membership"). (3) Clarified that turning off auto-renew does NOT cancel membership - membership continues until end of monthly period, then requires manual renewal. (4) Changed from "30 days" to "1 month" billing with "sticky day" approach (industry standard, matches Stripe behavior). | Development Team |
+| 2026-06-10 | 3.1 | **Phase 9 Added - Auto-Renew Enhancements & Lifecycle:** (1) Removed cancel membership button - not needed, auto-renew toggle handles cancellation. (2) Default to recurring purchases (students can still choose one-time). (3) Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships. (4) Add "Update Payment Method" button for online memberships. (5) Transaction type consistency - all use 'membership-purchase'. (6) Webhook period calculation - read from Stripe subscription object. (7) Scheduled function for daily expiry checks. (8) Email notifications - successful renewal, failed payment, expired memberships. (9) Expired membership badge and UI. (10) Clarified: cash memberships cannot convert to auto-renew, must purchase new online membership. (11) Payment method display - show "Online" without card details. (12) Renamed original Phases 9 & 10 to Phases 10 & 11. | Development Team |
 
 ---
 
