@@ -1,20 +1,20 @@
 # Monthly Membership System - Implementation Plan
 
-**Last Updated:** June 10, 2026  
+**Last Updated:** June 11, 2026  
 **Version:** 3.1  
-**Status:** Phase 8 Complete - Phase 9 Planned (Auto-Renew Enhancements & Lifecycle)
+**Status:** Phase 8 Complete - Phase 9 In Progress (3/4 tasks in 9.1 complete, 9.2 and 9.3 complete)
 
 **Major Changes in v3.1:**
-- 📋 **Phase 9 Planned:** Auto-Renew Enhancements & Membership Lifecycle
-  - Remove cancel membership button (auto-renew toggle handles this)
+- 🔄 **Phase 9 In Progress:** Auto-Renew Enhancements & Membership Lifecycle
+  - ✅ Removed cancel membership button (auto-renew toggle handles this) - **COMPLETE**
+  - ✅ Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships - **COMPLETE**
+  - ✅ Expired membership badge and UI updates - **COMPLETE**
   - Default to recurring purchases in UI
-  - Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships
   - Add "Update Payment Method" button for online memberships
   - Transaction type consistency (all use 'membership-purchase')
   - Webhook period calculation from Stripe subscription object
   - Scheduled function for daily expiry checks and admin notifications
   - Email notifications (successful renewal, failed payment, expired memberships)
-  - Expired membership badge and UI updates
   - Comprehensive test cases and verification steps
 
 **Major Changes in v3.0:**
@@ -765,13 +765,15 @@ This phase implements the complete auto-renew workflow, membership expiry handli
 
 #### 9.1: UI Updates - Remove Cancel & Default to Recurring
 
+**Status:** Partially Complete (1/4 tasks done)
+
 **Tasks:**
 
-1. **Remove Cancel Membership button** (`student-portal/membership/membership.js`)
-   - Remove `handleCancelMembership()` function
-   - Remove cancel button from `displayCurrentMembership()` HTML
-   - Remove event listener setup for cancel button
-   - Keep `PaymentService.cancelMembership()` method for potential admin use
+1. ✅ **Remove Cancel Membership button** (`student-portal/membership/membership.js`) - **COMPLETE**
+   - ✅ Removed `handleCancelMembership()` function
+   - ✅ Removed cancel button from `displayCurrentMembership()` HTML
+   - ✅ Removed event listener setup for cancel button
+   - ✅ Kept `PaymentService.cancelMembership()` method for potential admin use
 
 2. **Default to recurring purchases** (`student-portal/membership/membership.js`)
    - Pre-select "Recurring" radio button in membership purchase form
@@ -793,51 +795,51 @@ This phase implements the complete auto-renew workflow, membership expiry handli
    - Call new Cloud Function `updateMembershipPaymentMethod`
 
 **Expected Outcome:**
-- No cancel button in student portal
+- ✅ No cancel button in student portal
 - Recurring is default selection (students must actively choose one-time)
 - Students can update card without cancelling/repurchasing
 
 ---
 
-#### 9.2: Auto-Renew Toggle Visibility Rules
+#### 9.2: Auto-Renew Toggle Visibility Rules ✅ COMPLETE
 
 **Tasks:**
 
-1. **Conditional display logic** (`student-portal/membership/membership.js`)
-   - Show auto-renew toggle section ONLY when:
+1. ✅ **Conditional display logic** (`student-portal/membership/membership.js`)
+   - ✅ Show auto-renew toggle section ONLY when:
      ```javascript
      isRecurring === true 
      && paymentMethod === 'online' 
      && status === 'active'
      ```
-   - Hide entire auto-renew section for:
+   - ✅ Hide entire auto-renew section for:
      - Expired memberships (`status === 'expired'`)
      - Inactive memberships (`status === 'inactive'`)
      - Cash/EFTPOS/bank transfer memberships (`paymentMethod !== 'online'`)
 
-2. **Payment method display updates**
-   - For online memberships: Show "Online" (don't show card details)
-   - For cash/EFTPOS/bank transfer: Show as currently implemented
+2. ✅ **Payment method display updates**
+   - ✅ For online memberships: Show "Online" (don't show card details)
+   - ✅ For cash/EFTPOS/bank transfer: Show as currently implemented
 
 **Expected Outcome:**
-- Auto-renew toggle hidden for all cash/in-person purchases
-- Expired memberships don't show confusing disabled toggle
-- Clean UI that only shows relevant controls
+- ✅ Auto-renew toggle hidden for all cash/in-person purchases
+- ✅ Expired memberships don't show confusing disabled toggle
+- ✅ Clean UI that only shows relevant controls
 
 ---
 
-#### 9.3: Expired Membership Badge & UI
+#### 9.3: Expired Membership Badge & UI ✅ COMPLETE
 
 **Tasks:**
 
-1. **Add expired status badge** (`student-portal/membership/membership.css`, `membership.js`)
-   - Create `.membership-status-badge.expired` CSS class
-   - Background: `var(--bg-error-light)`, Color: `var(--error)`
-   - Show "EXPIRED" badge for `status === 'expired'`
-   - Update `displayCurrentMembership()` to show expired badge
+1. ✅ **Add expired status badge** (`student-portal/membership/membership.css`, `membership.js`)
+   - ✅ Create `.membership-status-badge.expired` CSS class
+   - ✅ Background: `var(--bg-error-light)`, Color: `var(--error)`
+   - ✅ Show "EXPIRED" badge for `status === 'expired'`
+   - ✅ Update `displayCurrentMembership()` to show expired badge
 
-2. **Expired membership message**
-   - Replace active membership details with:
+2. ✅ **Expired membership message**
+   - ✅ Replace active membership details with:
      ```html
      <div class="expired-message">
        <h3>Your membership has expired</h3>
@@ -847,16 +849,25 @@ This phase implements the complete auto-renew workflow, membership expiry handli
        </button>
      </div>
      ```
+   - ✅ Added `scrollToPurchase()` function to scroll to purchase section
 
-3. **Check-in UI for expired members** (already implemented in Phase 5, verify only)
+3. ✅ **Display expired membership with purchase options**
+   - ✅ Updated `getCurrentMembership()` to fetch both active and expired memberships
+   - ✅ When expired, return most recently expired membership (ordered by `currentPeriodEnd desc`)
+   - ✅ UI shows expired membership details at top, purchase options below
+   - ✅ Section header changes to "Previous Membership" for expired status
+   - ✅ Added CSS spacing between expired and purchase sections
+
+4. ✅ **Check-in UI for expired members** (already implemented in Phase 5, verify only)
    - "Use Membership" radio button disabled
    - Default to "Casual Entry" radio button
    - Show expired badge in check-in modal
 
 **Expected Outcome:**
-- Clear visual indication membership has expired
-- Student directed to purchase new membership
-- Admin sees expired status during check-in
+- ✅ Clear visual indication membership has expired
+- ✅ Student directed to purchase new membership
+- ✅ Expired membership details remain visible (most recent one if multiple)
+- ✅ Admin sees expired status during check-in
 
 ---
 
@@ -1919,6 +1930,10 @@ _To be added: Screenshots of admin UI, student purchase page, membership managem
 | 2026-06-05 | 2.1 | **Added clarifications:** (1) Registration emails unchanged - apply to beginners only. (2) Improver promotion alerts - email + modal when concessions remain. (3) Auto-renew disclosure - inline text + confirmation modal + sliding toggle. (4) Hide Prepay tile for improvers (in addition to Purchase Concessions). (5) Added toggleMembershipAutoRenew Cloud Function. | Development Team |
 | 2026-06-05 | 2.2 | **UI and auto-renew clarifications:** (1) Clarified UI visibility for non-improvers (hide Membership tile/nav). (2) Improved auto-renew toggle text for non-tech-savvy users ("Turn off to stop your credit card being automatically charged" vs "Turn on to auto-renew your membership"). (3) Clarified that turning off auto-renew does NOT cancel membership - membership continues until end of monthly period, then requires manual renewal. (4) Changed from "30 days" to "1 month" billing with "sticky day" approach (industry standard, matches Stripe behavior). | Development Team |
 | 2026-06-10 | 3.1 | **Phase 9 Added - Auto-Renew Enhancements & Lifecycle:** (1) Removed cancel membership button - not needed, auto-renew toggle handles cancellation. (2) Default to recurring purchases (students can still choose one-time). (3) Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships. (4) Add "Update Payment Method" button for online memberships. (5) Transaction type consistency - all use 'membership-purchase'. (6) Webhook period calculation - read from Stripe subscription object. (7) Scheduled function for daily expiry checks. (8) Email notifications - successful renewal, failed payment, expired memberships. (9) Expired membership badge and UI. (10) Clarified: cash memberships cannot convert to auto-renew, must purchase new online membership. (11) Payment method display - show "Online" without card details. (12) Renamed original Phases 9 & 10 to Phases 10 & 11. | Development Team |
+| 2026-06-11 | 3.1 | **Phase 9.1.1 Complete - Cancel Button Removed:** Removed Cancel Membership button from student portal membership management page. Removed `handleCancelMembership()` function and event listener. Membership actions section now only shows "View Transaction History" button for recurring memberships. Updated implementation plan to track progress (1/4 tasks in Phase 9.1 complete). | Development Team |
+| 2026-06-11 | 3.1 | **Phase 9.2 Complete - Auto-Renew Toggle Visibility:** Auto-renew toggle now only displays for online recurring memberships with active status (`isRecurring && paymentMethod === 'online' && status === 'active'`). Hidden for cash/EFTPOS/bank transfer memberships and expired/inactive memberships. Payment method display shows "Online" without card details. | Development Team |
+| 2026-06-11 | 3.1 | **Phase 9.3 Complete - Expired Membership UI:** Added `.membership-status-badge.expired` CSS class. Implemented expired membership message with "Purchase Membership" button. Added `scrollToPurchase()` function. When `status === 'expired'`, displays special UI directing students to purchase new membership. | Development Team |
+| 2026-06-11 | 3.1 | **Phase 9.3 Enhancement - Show Expired Membership Details:** Updated `getCurrentMembership()` in `membership-service.js` to fetch both active and expired memberships. If multiple expired memberships exist, returns most recently expired one (ordered by `currentPeriodEnd desc`). UI now shows expired membership details at top with purchase options below. Section header changes to "Previous Membership" when expired. Added CSS spacing between sections. Fixed `scrollToPurchase()` button to use event listener instead of inline onclick (module scope issue). Mobile UI improvements: expired badge stays on same line as heading, reduced padding in expired message box, smaller button size for mobile. | Development Team |
 
 ---
 

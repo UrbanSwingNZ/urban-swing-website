@@ -8,6 +8,15 @@
     padding: var(--space-xl);
 }
 
+/* When showing expired membership with purchase section below */
+#purchase-membership-section {
+    padding-top: 0;
+}
+
+#purchase-membership-section .section-header {
+    margin-top: var(--space-xl);
+}
+
 /* Back Navigation */
 .back-nav {
     margin-bottom: var(--space-md);
@@ -91,6 +100,11 @@
     color: var(--error);
 }
 
+.membership-status-badge.expired {
+    background: var(--bg-error-light);
+    color: var(--error);
+}
+
 .membership-details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -116,7 +130,26 @@
 .detail-label i {
     color: var(--purple-primary);
 }
+/* Expired Membership Message */
+.expired-message {
+    text-align: center;
+    padding: var(--space-xl);
+    background: var(--bg-error-light);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-lg);
+}
 
+.expired-message h3 {
+    color: var(--error);
+    margin-bottom: var(--space-sm);
+    font-size: 1.5rem;
+}
+
+.expired-message p {
+    color: var(--text-muted);
+    margin-bottom: var(--space-lg);
+    font-size: 1.05rem;
+}
 .detail-value {
     font-size: 1.1rem;
     font-weight: 700;
@@ -577,9 +610,36 @@ input[name="membership-type"][value="onetime"]:checked ~ #autorenew-disclosure {
     }
 
     .membership-status {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-sm);
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+    
+    .membership-status h3 {
+        font-size: 1.25rem;
+    }
+    
+    .membership-status-badge {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+
+    .expired-message {
+        padding: var(--space-md);
+    }
+    
+    .expired-message h3 {
+        font-size: 1.25rem;
+    }
+    
+    .expired-message p {
+        font-size: 0.95rem;
+    }
+    
+    .expired-message .btn-primary-lg {
+        font-size: 0.95rem;
+        padding: 12px 20px;
     }
 
     .membership-actions {

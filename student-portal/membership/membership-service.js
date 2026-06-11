@@ -36,15 +36,32 @@ export class MembershipService {
     }
 
     /**
-     * Get current active membership for a student
+     * Get current or most recently expired membership for a student
      * @param {string} studentId - Student document ID
-     * @returns {Promise<Object|null>} Current membership or null
+     * @returns {Promise<Object|null>} Current/recent membership or null
      */
     async getCurrentMembership(studentId) {
         try {
-            const snapshot = await this.db.collection('memberships')
+            // First try to get active membership
+            let snapshot = await this.db.collection('memberships')
                 .where('studentId', '==', studentId)
                 .where('status', '==', 'active')
+                .limit(1)
+                .get();
+
+            if (!snapshot.empty) {
+                const doc = snapshot.docs[0];
+                return {
+                    id: doc.id,
+                    ...doc.data()
+                };
+            }
+
+            // No active membership - get most recently expired one
+            snapshot = await this.db.collection('memberships')
+                .where('studentId', '==', studentId)
+                .where('status', '==', 'expired')
+                .orderBy('currentPeriodEnd', 'desc')
                 .limit(1)
                 .get();
 
