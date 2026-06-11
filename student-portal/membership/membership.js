@@ -110,15 +110,36 @@ async function initializePage() {
             return;
         }
 
-        // Load current membership
+        // Load current membership (active or most recently expired)
         currentMembership = await membershipService.getCurrentMembership(currentStudentId);
 
         if (currentMembership) {
-            // Student has active membership - show management view
-            await displayCurrentMembership();
-            showSection('current-membership');
+            if (currentMembership.status === 'active') {
+                // Student has active membership - show management view
+                // Reset section header in case it was changed
+                const sectionHeader = document.querySelector('#current-membership-section .section-header h2');
+                if (sectionHeader) {
+                    sectionHeader.innerHTML = '<i class="fas fa-id-card"></i> My Membership';
+                }
+                await displayCurrentMembership();
+                showSection('current-membership');
+            } else if (currentMembership.status === 'expired') {
+                // Student has expired membership - show both expired details and purchase options
+                // Update section header for expired membership
+                const sectionHeader = document.querySelector('#current-membership-section .section-header h2');
+                if (sectionHeader) {
+                    sectionHeader.innerHTML = '<i class="fas fa-history"></i> Previous Membership';
+                }
+                await displayCurrentMembership();
+                await displayAvailableMemberships();
+                showSection('expired-membership');
+            } else {
+                // Inactive or other status - show purchase view
+                await displayAvailableMemberships();
+                showSection('purchase-membership');
+            }
         } else {
-            // No active membership - show purchase view
+            // No membership at all - show purchase view
             await displayAvailableMemberships();
             showSection('purchase-membership');
         }
@@ -142,6 +163,10 @@ function showSection(section) {
 
     if (section === 'current-membership') {
         document.getElementById('current-membership-section').style.display = 'block';
+    } else if (section === 'expired-membership') {
+        // Show both expired details and purchase options
+        document.getElementById('current-membership-section').style.display = 'block';
+        document.getElementById('purchase-membership-section').style.display = 'block';
     } else if (section === 'purchase-membership') {
         document.getElementById('purchase-membership-section').style.display = 'block';
     } else if (section === 'not-eligible') {
@@ -163,9 +188,43 @@ async function displayCurrentMembership() {
     });
 
     const isRecurring = currentMembership.isRecurring === true;
-    const statusBadge = currentMembership.status === 'active' 
-        ? '<span class="membership-status-badge active">Active</span>'
-        : '<span class="membership-status-badge inactive">Inactive</span>';
+    const paymentMethod = (currentMembership.paymentMethod || '').toLowerCase();
+    
+    // Determine status badge
+    let statusBadge;
+    if (currentMembership.status === 'active') {
+        statusBadge = '<span class="membership-status-badge active">Active</span>';
+    } else if (currentMembership.status === 'expired') {
+        statusBadge = '<span class="membership-status-badge expired">Expired</span>';
+    } else {
+        statusBadge = '<span class="membership-status-badge inactive">Inactive</span>';
+    }
+    
+    // If membership is expired, show special UI
+    if (currentMembership.status === 'expired') {
+        container.innerHTML = `
+            <div class="membership-status">
+                <h3><i class="fas fa-id-card"></i> ${currentMembership.typeName}</h3>
+                ${statusBadge}
+            </div>
+            
+            <div class="expired-message">
+                <h3><i class="fas fa-exclamation-triangle"></i> Your membership has expired</h3>
+                <p>Your membership expired on ${formattedExpiry}. Purchase a new membership below to continue attending classes.</p>
+                <button class="btn-primary btn-primary-lg" id="scroll-to-purchase-btn">
+                    <i class="fas fa-shopping-cart"></i> Purchase Membership
+                </button>
+            </div>
+        `;
+        
+        // Add event listener for scroll button
+        const scrollBtn = document.getElementById('scroll-to-purchase-btn');
+        if (scrollBtn) {
+            scrollBtn.addEventListener('click', scrollToPurchase);
+        }
+        
+        return;
+    }
 
     container.innerHTML = `
         <div class="membership-status">
@@ -192,7 +251,7 @@ async function displayCurrentMembership() {
             </div>
         </div>
 
-        ${isRecurring ? `
+        ${isRecurring && paymentMethod === 'online' && currentMembership.status === 'active' ? `
         <div class="autorenew-toggle">
             <div class="autorenew-toggle-header">
                 <h4><i class="fas fa-sync-alt"></i> Auto-Renew</h4>
@@ -200,7 +259,7 @@ async function displayCurrentMembership() {
                     <input 
                         type="checkbox" 
                         id="autorenew-toggle-input"
-                        ${currentMembership.status === 'active' ? 'checked' : ''}
+                        checked
                     >
                     <span class="toggle-slider"></span>
                 </label>
@@ -212,26 +271,20 @@ async function displayCurrentMembership() {
         </div>
         ` : ''}
 
+        ${isRecurring ? `
         <div class="membership-actions">
-            ${isRecurring ? `
             <button class="btn-secondary btn-secondary-lg" id="view-transactions-btn">
                 <i class="fas fa-receipt"></i> View Transaction History
             </button>
-            ` : ''}
-            <button class="btn-cancel btn-cancel-lg" id="cancel-membership-btn">
-                <i class="fas fa-times-circle"></i> Cancel Membership
-            </button>
         </div>
+        ` : ''}
     `;
 
     // Setup event listeners
-    if (isRecurring) {
+    if (isRecurring && paymentMethod === 'online' && currentMembership.status === 'active') {
         const toggleInput = document.getElementById('autorenew-toggle-input');
         toggleInput.addEventListener('change', handleAutoRenewToggle);
     }
-
-    const cancelBtn = document.getElementById('cancel-membership-btn');
-    cancelBtn.addEventListener('click', handleCancelMembership);
 
     const viewTransactionsBtn = document.getElementById('view-transactions-btn');
     if (viewTransactionsBtn) {
@@ -483,50 +536,6 @@ async function handleAutoRenewToggle(event) {
 }
 
 /**
- * Handle membership cancellation
- */
-async function handleCancelMembership() {
-    const expiryDate = currentMembership.currentPeriodEnd.toDate();
-    const formattedExpiry = expiryDate.toLocaleDateString('en-NZ', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
-
-    const modal = new ConfirmationModal({
-        title: 'Cancel Membership?',
-        message: `Are you sure you want to cancel your membership? You'll continue to have access until ${formattedExpiry}, but your membership will not renew after that date.`,
-        confirmText: 'Yes, Cancel Membership',
-        cancelText: 'Keep Membership',
-        type: 'danger',
-        onConfirm: async () => {
-            try {
-                showLoading(true);
-                
-                const result = await paymentService.cancelMembership(currentMembership.id);
-                
-                if (result.success) {
-                    showSnackbar('Membership cancelled successfully', 'success');
-                    // Reload to show updated status
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                } else {
-                    throw new Error(result.error || 'Failed to cancel membership');
-                }
-            } catch (error) {
-                console.error('Cancellation error:', error);
-                showSnackbar(error.message || 'Failed to cancel membership', 'error');
-            } finally {
-                showLoading(false);
-            }
-        }
-    });
-
-    modal.show();
-}
-
-/**
  * Format payment method for display
  */
 function formatPaymentMethod(membership) {
@@ -552,6 +561,16 @@ function formatPaymentMethod(membership) {
             return 'Complimentary';
         default:
             return 'Unknown';
+    }
+}
+
+/**
+ * Scroll to purchase section
+ */
+function scrollToPurchase() {
+    const purchaseSection = document.getElementById('purchase-membership-section');
+    if (purchaseSection) {
+        purchaseSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
