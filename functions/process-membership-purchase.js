@@ -556,6 +556,10 @@ exports.processRecurringMembershipPurchase = onRequest(
           return;
         }
         
+        // Step 7a: Read authoritative period dates from Stripe subscription
+        const currentPeriodStart = new Date(subscription.current_period_start * 1000);
+        const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+        
         // Step 8: Get the initial invoice for receipt URL
         let receiptUrl = null;
         try {
@@ -582,8 +586,8 @@ exports.processRecurringMembershipPurchase = onRequest(
           status: 'active',
           isRecurring: true, // Recurring subscription
           purchaseDate: admin.firestore.Timestamp.fromDate(new Date()),
-          currentPeriodStart: admin.firestore.Timestamp.fromDate(billingCycleStart),
-          currentPeriodEnd: admin.firestore.Timestamp.fromDate(billingCycleEnd),
+          currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
+          currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
           stripeSubscriptionId: subscription.id,
           stripeCustomerId: customerId,
           paymentMethod: 'online',

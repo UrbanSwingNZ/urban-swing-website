@@ -273,6 +273,11 @@ async function displayCurrentMembership() {
 
         ${isRecurring ? `
         <div class="membership-actions">
+            ${paymentMethod === 'online' ? `
+            <button class="btn-secondary btn-secondary-lg" id="update-payment-btn">
+                <i class="fas fa-credit-card"></i> Update Payment Method
+            </button>
+            ` : ''}
             <button class="btn-secondary btn-secondary-lg" id="view-transactions-btn">
                 <i class="fas fa-receipt"></i> View Transaction History
             </button>
@@ -284,6 +289,11 @@ async function displayCurrentMembership() {
     if (isRecurring && paymentMethod === 'online' && currentMembership.status === 'active') {
         const toggleInput = document.getElementById('autorenew-toggle-input');
         toggleInput.addEventListener('change', handleAutoRenewToggle);
+    }
+
+    const updatePaymentBtn = document.getElementById('update-payment-btn');
+    if (updatePaymentBtn) {
+        updatePaymentBtn.addEventListener('click', handleUpdatePaymentMethod);
     }
 
     const viewTransactionsBtn = document.getElementById('view-transactions-btn');
@@ -533,6 +543,26 @@ async function handleAutoRenewToggle(event) {
     });
 
     modal.show();
+}
+
+/**
+ * Handle update payment method button click
+ */
+async function handleUpdatePaymentMethod() {
+    // TODO: Phase 9.1.4 - Implement full update payment modal with Stripe Elements
+    // TODO: Phase 9.4 - Call updateMembershipPaymentMethod Cloud Function
+    
+    showSnackbar('Update payment method feature coming soon', 'info');
+    
+    // Placeholder for modal implementation:
+    // const modal = new UpdatePaymentModal({
+    //     currentMembership: currentMembership,
+    //     onSuccess: async () => {
+    //         showSnackbar('Payment method updated successfully', 'success');
+    //         await initializePage();
+    //     }
+    // });
+    // modal.show();
 }
 
 /**
