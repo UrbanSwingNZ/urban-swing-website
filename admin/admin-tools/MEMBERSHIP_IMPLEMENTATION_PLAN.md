@@ -1,8 +1,8 @@
 # Monthly Membership System - Implementation Plan
 
 **Last Updated:** June 11, 2026  
-**Version:** 3.1  
-**Status:** Phase 8 Complete - Phase 9 In Progress (3/4 tasks in 9.1 complete, 9.2 and 9.3 complete)
+**Version:** 3.2  
+**Status:** Phase 8 Complete - Phase 9 Mostly Complete (7/9 sub-phases done, 3 tasks in 9.1 complete)
 
 **Major Changes in v3.1:**
 - 🔄 **Phase 9 In Progress:** Auto-Renew Enhancements & Membership Lifecycle
@@ -765,7 +765,7 @@ This phase implements the complete auto-renew workflow, membership expiry handli
 
 #### 9.1: UI Updates - Remove Cancel & Default to Recurring
 
-**Status:** Partially Complete (1/4 tasks done)
+**Status:** Partially Complete (3/4 tasks done)
 
 **Tasks:**
 
@@ -775,19 +775,17 @@ This phase implements the complete auto-renew workflow, membership expiry handli
    - ✅ Removed event listener setup for cancel button
    - ✅ Kept `PaymentService.cancelMembership()` method for potential admin use
 
-2. **Default to recurring purchases** (`student-portal/membership/membership.js`)
-   - Pre-select "Recurring" radio button in membership purchase form
-   - Add `checked` attribute to recurring radio: `<input type="radio" name="membership-type" value="recurring" checked>`
-   - Ensure auto-renew disclosure box is visible by default
+2. ✅ **Default to recurring purchases** (`student-portal/membership/index.html`) - **COMPLETE**
+   - ✅ Recurring radio button has `checked` attribute (already implemented)
+   - ✅ Auto-renew disclosure box visible by default
 
-3. **Update payment method button** (`student-portal/membership/membership.js`)
-   - Replace Cancel button location with "Update Payment Method" button
-   - Only show for memberships where `paymentMethod === 'online'`
-   - Button text: "Update Payment Method"
-   - Button class: `btn-secondary btn-secondary-lg`
-   - Create `handleUpdatePaymentMethod()` function
+3. ✅ **Update payment method button** (`student-portal/membership/membership.js`) - **COMPLETE**
+   - ✅ Added "Update Payment Method" button to membership-actions div
+   - ✅ Only shows for memberships where `paymentMethod === 'online'`
+   - ✅ Button class: `btn-secondary btn-secondary-lg`
+   - ✅ Created `handleUpdatePaymentMethod()` function (placeholder implementation)
 
-4. **Update payment method modal** (`student-portal/membership/` - new file: `update-payment-modal.js`)
+4. ❌ **Update payment method modal** (`student-portal/membership/` - new file: `update-payment-modal.js`) - **PENDING**
    - Modal title: "Update Payment Method"
    - Show current membership type and expiry
    - Stripe Elements card input (reuse existing card element setup)
@@ -796,8 +794,8 @@ This phase implements the complete auto-renew workflow, membership expiry handli
 
 **Expected Outcome:**
 - ✅ No cancel button in student portal
-- Recurring is default selection (students must actively choose one-time)
-- Students can update card without cancelling/repurchasing
+- ✅ Recurring is default selection (students must actively choose one-time)
+- ❌ Students can update card without cancelling/repurchasing (pending full modal)
 
 ---
 
@@ -902,52 +900,59 @@ This phase implements the complete auto-renew workflow, membership expiry handli
 
 ---
 
-#### 9.5: Transaction Type Consistency
+#### 9.5: Transaction Type Consistency ✅ COMPLETE
 
 **Tasks:**
 
-1. **Update webhook handler** (`functions/stripe-webhook-memberships.js`)
-   - Change transaction type from `'membership-renewal'` to `'membership-purchase'`
-   - Line ~155: `type: 'membership-purchase'` (instead of `'membership-renewal'`)
-   - Add comment: `// Type is 'membership-purchase' for consistency with initial purchase`
+1. ✅ **Update webhook handler** (`functions/stripe-webhook-memberships.js`)
+   - ✅ Changed transaction type from `'membership-renewal'` to `'membership-purchase'`
+   - ✅ Line ~144: `type: 'membership-purchase'` (instead of `'membership-renewal'`)
+   - ✅ Added comment: `// Type is 'membership-purchase' for consistency with initial purchase`
+   - ✅ Updated transactionId to use 'membership-purchase' prefix
 
-2. **Verify initial purchase functions** (already correct)
-   - `processOneTimeMembershipPurchase`: Already uses `'membership-purchase'`
-   - `processRecurringMembershipPurchase`: Already uses `'membership-purchase'`
+2. ✅ **Verify initial purchase functions** (already correct)
+   - ✅ `processOneTimeMembershipPurchase`: Already uses `'membership-purchase'`
+   - ✅ `processRecurringMembershipPurchase`: Already uses `'membership-purchase'`
 
 **Expected Outcome:**
-- All membership transactions have consistent type: `'membership-purchase'`
-- Easier querying and reporting
-- No migration needed (no existing renewal transactions)
+- ✅ All membership transactions have consistent type: `'membership-purchase'`
+- ✅ Easier querying and reporting
+- ✅ No migration needed (no existing renewal transactions)
 
 ---
 
-#### 9.6: Webhook Period Calculation Fix
+#### 9.6: Webhook Period Calculation Fix ✅ COMPLETE
 
 **Tasks:**
 
-1. **Update webhook period handling** (`functions/stripe-webhook-memberships.js`)
-   - In `invoice.payment_succeeded` handler:
-     - Instead of manually calculating period, read from subscription object
-     - Retrieve full subscription: `const subscription = await stripe.subscriptions.retrieve(invoice.subscription);`
-     - Use Stripe's authoritative period:
+1. ✅ **Update webhook period handling** (`functions/stripe-webhook-memberships.js`)
+   - ✅ In `invoice.payment_succeeded` handler:
+     - ✅ Instead of manually calculating period, read from subscription object
+     - ✅ Retrieve full subscription: `const subscription = await stripe.subscriptions.retrieve(invoice.subscription);`
+     - ✅ Use Stripe's authoritative period:
        ```javascript
        const newPeriodStart = new Date(subscription.current_period_start * 1000);
        const newPeriodEnd = new Date(subscription.current_period_end * 1000);
        ```
-     - Remove manual `calculateMembershipExpiry()` call
+     - ✅ Removed manual `calculateMembershipExpiry()` call
 
-2. **Verify initial purchase period** (`functions/process-membership-purchase.js`)
-   - In `processRecurringMembershipPurchase`:
-     - After creating subscription, read back the period:
+2. ✅ **Verify initial purchase period** (`functions/process-membership-purchase.js`)
+   - ✅ In `processRecurringMembershipPurchase`:
+     - ✅ After creating subscription, read back the period:
        ```javascript
        const currentPeriodStart = new Date(subscription.current_period_start * 1000);
        const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
        ```
-     - Use these values for membership document (instead of manual calculation)
+     - ✅ Use these values for membership document (instead of manual calculation)
 
-3. **Keep manual calculation for one-time purchases**
-   - `processOneTimeMembershipPurchase` still uses `calculateMembershipExpiry()`
+3. ✅ **Keep manual calculation for one-time purchases**
+   - ✅ `processOneTimeMembershipPurchase` still uses `calculateMembershipExpiry()`
+   - ✅ This is correct since one-time purchases don't have Stripe subscriptions
+
+**Expected Outcome:**
+- ✅ Period dates match Stripe subscription exactly (no off-by-one errors)
+- ✅ Renewal dates consistent with Stripe billing
+- ✅ "Sticky day" billing works correctly
    - Admin assigned memberships still use `calculateMembershipExpiry()`
 
 **Expected Outcome:**
@@ -1011,41 +1016,41 @@ This phase implements the complete auto-renew workflow, membership expiry handli
 
 ---
 
-#### 9.8: Scheduled Function - Daily Expiry Check
+#### 9.8: Scheduled Function - Daily Expiry Check ✅ COMPLETE
 
 **Tasks:**
 
-1. **Create scheduled function** (`functions/scheduled-membership-expiry.js` - new file)
-   - Cloud Scheduler trigger: Daily at 8:00 AM NZ time
-   - Function: `checkExpiredMemberships`
-   - Query memberships where:
+1. ✅ **Create scheduled function** (`functions/scheduled-membership-expiry.js` - new file)
+   - ✅ Cloud Scheduler trigger: Daily at 8:00 AM NZ time
+   - ✅ Function: `checkExpiredMemberships`
+   - ✅ Query memberships where:
      ```javascript
      status === 'active' 
      && currentPeriodEnd < now()
      && (isRecurring === false || stripeSubscriptionId === null)
      ```
-   - For each expired membership:
-     - Update membership: `status: 'expired'`
-     - Update student: `activeMembershipId: null`, `membershipStatus: 'expired'`
-     - Add to expiredList array
-   - After processing all:
-     - Send admin email with expiredList
-     - Log count and details
+   - ✅ For each expired membership:
+     - ✅ Update membership: `status: 'expired'`
+     - ✅ Update student: `activeMembershipId: null`, `membershipStatus: 'expired'`
+     - ✅ Add to expiredList array
+   - ✅ After processing all:
+     - ❌ Send admin email with expiredList (pending Phase 9.7)
+     - ✅ Log count and details
 
-2. **Export function** (`functions/index.js`)
-   - Add export: `exports.checkExpiredMemberships = checkExpiredMemberships;`
+2. ✅ **Export function** (`functions/index.js`)
+   - ✅ Add export: `exports.checkExpiredMemberships = checkExpiredMemberships;`
 
-3. **Set up Cloud Scheduler** (manual Firebase Console task)
+3. ❌ **Set up Cloud Scheduler** (manual Firebase Console task) - **PENDING**
    - Create job: "check-expired-memberships"
    - Frequency: `0 8 * * *` (8 AM daily)
    - Timezone: Pacific/Auckland
    - Target: Cloud Function `checkExpiredMemberships`
 
 **Expected Outcome:**
-- Non-recurring memberships automatically expire at end of period
-- Student and membership documents updated correctly
-- Admin notified daily of expiries
-- No manual checking required
+- ✅ Non-recurring memberships automatically expire at end of period
+- ✅ Student and membership documents updated correctly
+- ❌ Admin notified daily of expiries (pending Phase 9.7 email implementation)
+- ✅ No manual checking required
 
 ---
 
@@ -1934,6 +1939,10 @@ _To be added: Screenshots of admin UI, student purchase page, membership managem
 | 2026-06-11 | 3.1 | **Phase 9.2 Complete - Auto-Renew Toggle Visibility:** Auto-renew toggle now only displays for online recurring memberships with active status (`isRecurring && paymentMethod === 'online' && status === 'active'`). Hidden for cash/EFTPOS/bank transfer memberships and expired/inactive memberships. Payment method display shows "Online" without card details. | Development Team |
 | 2026-06-11 | 3.1 | **Phase 9.3 Complete - Expired Membership UI:** Added `.membership-status-badge.expired` CSS class. Implemented expired membership message with "Purchase Membership" button. Added `scrollToPurchase()` function. When `status === 'expired'`, displays special UI directing students to purchase new membership. | Development Team |
 | 2026-06-11 | 3.1 | **Phase 9.3 Enhancement - Show Expired Membership Details:** Updated `getCurrentMembership()` in `membership-service.js` to fetch both active and expired memberships. If multiple expired memberships exist, returns most recently expired one (ordered by `currentPeriodEnd desc`). UI now shows expired membership details at top with purchase options below. Section header changes to "Previous Membership" when expired. Added CSS spacing between sections. Fixed `scrollToPurchase()` button to use event listener instead of inline onclick (module scope issue). Mobile UI improvements: expired badge stays on same line as heading, reduced padding in expired message box, smaller button size for mobile. | Development Team |
+| 2026-06-11 | 3.2 | **Phase 9.1.2 & 9.1.3 Complete:** Confirmed recurring membership is default selection (already implemented). Added "Update Payment Method" button for online recurring memberships with placeholder `handleUpdatePaymentMethod()` function. Button appears in membership-actions section alongside "View Transaction History" button. | Development Team |
+| 2026-06-11 | 3.2 | **Phase 9.5 Complete - Transaction Type Consistency:** Changed all renewal transactions from type 'membership-renewal' to 'membership-purchase' in `stripe-webhook-memberships.js`. Updated transactionId prefix. All membership transactions now use consistent type for easier querying. | Development Team |
+| 2026-06-11 | 3.2 | **Phase 9.6 Complete - Webhook Period Calculation:** Updated webhook handler to read period from Stripe subscription object instead of manual calculation. In `stripe-webhook-memberships.js` and `process-membership-purchase.js`, now retrieve `subscription.current_period_start` and `subscription.current_period_end` for authoritative period dates. Eliminates off-by-one errors and ensures consistency with Stripe billing. | Development Team |
+| 2026-06-11 | 3.2 | **Phase 9.8 Complete - Scheduled Expiry Function:** Created `scheduled-membership-expiry.js` with daily scheduled function `checkExpiredMemberships` (runs 8 AM NZ time). Queries non-recurring/cancelled memberships past expiry, updates status to 'expired', clears student activeMembershipId. Exported in `index.js`. Email notification pending Phase 9.7 implementation. | Development Team |
 
 ---
 

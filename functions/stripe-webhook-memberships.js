@@ -102,12 +102,10 @@ exports.stripeWebhookMemberships = onRequest(
           const membershipData = membershipDoc.data();
           const membershipId = membershipDoc.id;
           
-          // Calculate new period dates
-          const currentPeriodEnd = membershipData.currentPeriodEnd.toDate();
-          const newPeriodStart = new Date(currentPeriodEnd);
-          newPeriodStart.setHours(0, 0, 0, 0);
-          
-          const newPeriodEnd = calculateMembershipExpiry(newPeriodStart);
+          // Retrieve subscription to get authoritative period dates from Stripe
+          const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
+          const newPeriodStart = new Date(subscription.current_period_start * 1000);
+          const newPeriodEnd = new Date(subscription.current_period_end * 1000);
           
           // Update membership document
           await db.collection('memberships').doc(membershipId).update({
@@ -126,7 +124,7 @@ exports.stripeWebhookMemberships = onRequest(
           
           // Create transaction record for renewal
           const timestamp = Date.now();
-          const transactionId = `${membershipData.studentId}-membership-renewal-${timestamp}`;
+          const transactionId = `${membershipData.studentId}-membership-purchase-${timestamp}`;
           
           let receiptUrl = null;
           try {
@@ -141,7 +139,7 @@ exports.stripeWebhookMemberships = onRequest(
           const transactionData = {
             studentId: membershipData.studentId,
             transactionDate: admin.firestore.FieldValue.serverTimestamp(),
-            type: 'membership-renewal',
+            type: 'membership-purchase', // Type is 'membership-purchase' for consistency with initial purchase
             membershipId: membershipId,
             membershipTypeId: membershipData.typeId,
             membershipTypeName: membershipData.typeName,

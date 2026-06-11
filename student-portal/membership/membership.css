@@ -5,11 +5,11 @@
 .membership-section {
     max-width: 1000px;
     margin: 0 auto;
-    padding: var(--space-xl);
+    padding: 40px var(--space-xl) var(--space-xl) var(--space-xl);
 }
 
-/* When showing expired membership with purchase section below */
-#purchase-membership-section {
+/* When both sections are visible (expired membership with purchase section below) */
+#current-membership-section:not([style*="none"]) + #purchase-membership-section {
     padding-top: 0;
 }
 
@@ -598,7 +598,7 @@ input[name="membership-type"][value="onetime"]:checked ~ #autorenew-disclosure {
 
 @media (max-width: 768px) {
     .membership-section {
-        padding: var(--space-md);
+        padding: var(--space-lg) var(--space-md);
     }
 
     .membership-details-grid {
