@@ -46,7 +46,8 @@ const {
   sendMerchOrderEmail,
   sendPortalInvitationEmail,
   sendLowBalanceEmail,
-  sendExpiryWarningEmails
+  sendExpiryWarningEmails,
+  sendImproverPromotionAlert
 } = require('./email-notifications');
 
 exports.sendNewStudentEmail = sendNewStudentEmail;
@@ -55,6 +56,7 @@ exports.sendMerchOrderEmail = sendMerchOrderEmail;
 exports.sendPortalInvitationEmail = sendPortalInvitationEmail;
 exports.sendLowBalanceEmail = sendLowBalanceEmail;
 exports.sendExpiryWarningEmails = sendExpiryWarningEmails;
+exports.sendImproverPromotionAlert = sendImproverPromotionAlert;
 
 // ========================================
 // USER MANAGEMENT
