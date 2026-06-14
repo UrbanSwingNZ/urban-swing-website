@@ -126,13 +126,14 @@ export async function copyBPMData(trackId, sourcePlaylistId, destPlaylistId) {
     const destDocRef = db.collection('songData').doc(destPlaylistId);
     const destDocSnap = await destDocRef.get();
     
-    if (!destDocSnap.exists) {
-      console.log(`Destination playlist ${destPlaylistId} has no songData document yet`);
-      return false;
-    }
+    let destTracks = [];
     
-    const destData = destDocSnap.data();
-    const destTracks = destData.tracks || [];
+    if (destDocSnap.exists) {
+      const destData = destDocSnap.data();
+      destTracks = destData.tracks || [];
+    } else {
+      console.log(`Destination playlist ${destPlaylistId} has no songData document yet - will create one`);
+    }
     
     // Check if track already exists in destination
     const existingTrackIndex = destTracks.findIndex(t => t.spotifyTrackId === trackId);
@@ -156,13 +157,13 @@ export async function copyBPMData(trackId, sourcePlaylistId, destPlaylistId) {
       });
     }
     
-    // Update destination playlist's songData
-    await destDocRef.update({
+    // Update or create destination playlist's songData
+    await destDocRef.set({
       tracks: destTracks,
       totalTracks: destTracks.length,
       scrapedAt: new Date().toISOString(),
       scrapedBy: 'copy-track-action'
-    });
+    }, { merge: true });
     
     console.log(`Copied BPM data for track ${trackId} from ${sourcePlaylistId} to ${destPlaylistId}`);
     return true;
@@ -171,4 +172,63 @@ export async function copyBPMData(trackId, sourcePlaylistId, destPlaylistId) {
     console.error('Error copying BPM data:', error);
     return false;
   }
+}
+
+/**
+ * Search across all playlists for missing BPM data
+ * @param {string} currentPlaylistId - Current playlist ID (will skip this one)
+ * @param {Array} tracksWithoutBPM - Array of track items missing BPM data
+ * @param {Array} allPlaylists - Array of all user playlists
+ * @returns {Promise<number>} Count of tracks where BPM was found and copied
+ */
+export async function searchAndCopyMissingBPM(currentPlaylistId, tracksWithoutBPM, allPlaylists) {
+  if (!tracksWithoutBPM || tracksWithoutBPM.length === 0) {
+    return 0;
+  }
+  
+  console.log(`🔍 Searching for BPM data for ${tracksWithoutBPM.length} tracks across ${allPlaylists.length} playlists...`);
+  
+  let foundCount = 0;
+  const missingTrackIds = new Set(
+    tracksWithoutBPM
+      .filter(item => item.track && item.track.id)
+      .map(item => item.track.id)
+  );
+  
+  // Filter out current playlist
+  const playlistsToSearch = allPlaylists.filter(p => p.id !== currentPlaylistId);
+  
+  // Search through other playlists
+  for (const playlist of playlistsToSearch) {
+    if (missingTrackIds.size === 0) {
+      break; // All tracks found, stop searching
+    }
+    
+    try {
+      const bpmMap = await fetchBPMData(playlist.id);
+      
+      if (bpmMap.size === 0) {
+        continue; // No BPM data in this playlist, skip
+      }
+      
+      // Check if any missing tracks have BPM in this playlist
+      for (const trackId of missingTrackIds) {
+        if (bpmMap.has(trackId)) {
+          // Found BPM! Copy it to current playlist
+          const copied = await copyBPMData(trackId, playlist.id, currentPlaylistId);
+          if (copied) {
+            foundCount++;
+            missingTrackIds.delete(trackId); // Remove from search list
+            console.log(`✅ Found and copied BPM for track ${trackId} from playlist: ${playlist.name}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Error checking playlist ${playlist.name}:`, error);
+      // Continue with next playlist
+    }
+  }
+  
+  console.log(`🎉 Background BPM search complete: Found ${foundCount}/${tracksWithoutBPM.length} tracks`);
+  return foundCount;
 }
