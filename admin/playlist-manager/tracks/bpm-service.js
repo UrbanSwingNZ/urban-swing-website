@@ -126,13 +126,14 @@ export async function copyBPMData(trackId, sourcePlaylistId, destPlaylistId) {
     const destDocRef = db.collection('songData').doc(destPlaylistId);
     const destDocSnap = await destDocRef.get();
     
-    if (!destDocSnap.exists) {
-      console.log(`Destination playlist ${destPlaylistId} has no songData document yet`);
-      return false;
-    }
+    let destTracks = [];
     
-    const destData = destDocSnap.data();
-    const destTracks = destData.tracks || [];
+    if (destDocSnap.exists) {
+      const destData = destDocSnap.data();
+      destTracks = destData.tracks || [];
+    } else {
+      console.log(`Destination playlist ${destPlaylistId} has no songData document yet - will create one`);
+    }
     
     // Check if track already exists in destination
     const existingTrackIndex = destTracks.findIndex(t => t.spotifyTrackId === trackId);
@@ -156,13 +157,13 @@ export async function copyBPMData(trackId, sourcePlaylistId, destPlaylistId) {
       });
     }
     
-    // Update destination playlist's songData
-    await destDocRef.update({
+    // Update or create destination playlist's songData
+    await destDocRef.set({
       tracks: destTracks,
       totalTracks: destTracks.length,
       scrapedAt: new Date().toISOString(),
       scrapedBy: 'copy-track-action'
-    });
+    }, { merge: true });
     
     console.log(`Copied BPM data for track ${trackId} from ${sourcePlaylistId} to ${destPlaylistId}`);
     return true;
