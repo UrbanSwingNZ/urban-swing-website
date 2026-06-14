@@ -7,7 +7,7 @@ import { displayTracks } from './track-renderer.js';
 import { initializeDragDrop } from './track-drag-drop.js';
 import { stopCurrentAudio } from './track-audio.js';
 import { formatTotalDuration } from './track-utils.js';
-import { loadAndMergeBPMData } from './bpm-service.js';
+import { loadAndMergeBPMData, searchAndCopyMissingBPM } from './bpm-service.js';
 import { cachePlaylistTracks } from './track-duplicates.js';
 
 // ========================================
@@ -101,6 +101,35 @@ export async function loadTracks(playlistId) {
       showSnackbar(`Loaded BPM data for ${bpmCount}/${currentTracks.length} tracks`, 'success');
     } else if (currentTracks.length > 0) {
       showSnackbar('No BPM data found. Use the songdata.io scraper to add BPM data.', 'info');
+    }
+    
+    // Background BPM search: Find missing BPM data from other playlists
+    const tracksWithoutBPM = currentTracks.filter(item => 
+      !item.audioFeatures || !item.audioFeatures.tempo
+    );
+    
+    if (tracksWithoutBPM.length > 0) {
+      // Run in background without blocking UI
+      setTimeout(async () => {
+        try {
+          const allPlaylists = State.getAllPlaylists();
+          if (allPlaylists.length <= 1) {
+            return; // No other playlists to search
+          }
+          
+          const foundCount = await searchAndCopyMissingBPM(playlistId, tracksWithoutBPM, allPlaylists);
+          
+          if (foundCount > 0) {
+            showSnackbar(`✨ Found BPM data for ${foundCount} more track(s) from other playlists`, 'success');
+            
+            // Reload tracks to show updated BPM data
+            await loadTracks(playlistId);
+          }
+        } catch (error) {
+          console.error('Background BPM search failed:', error);
+          // Silent failure - don't bother user
+        }
+      }, 1500); // Wait 1.5 seconds before starting search
     }
     
     // Note: Old lazy loading of audio features removed - we now use Firestore BPM data
