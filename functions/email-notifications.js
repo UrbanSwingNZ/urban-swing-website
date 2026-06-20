@@ -19,6 +19,7 @@ const {generateImproverPromotionAlert} = require("./emails/improver-promotion-al
 const {generateLowBalanceEmail, generateExpiringConcessionsEmail} = require("./emails/concession-notifications");
 const {generateMembershipRenewalSuccessEmail} = require("./emails/membership-renewal-success");
 const {generateMembershipRenewalFailureEmail} = require("./emails/membership-renewal-failure");
+const {generateMembershipExpiringSoonEmail} = require("./emails/membership-expiring-soon");
 
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
@@ -1002,6 +1003,79 @@ exports.sendMembershipRenewalFailureEmail = onCall(
       return { success: true };
     } catch (error) {
       logger.error("Error sending membership renewal failure email:", error);
+      throw error;
+    }
+  }
+);
+
+/**
+ * Send membership expiring soon warning email
+ * Called by scheduled function for non-recurring memberships expiring in 3 days
+ */
+exports.sendMembershipExpiringSoonEmail = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {
+      studentEmail,
+      studentName,
+      firstName,
+      membershipType,
+      expiryDate,
+      daysUntilExpiry
+    } = request.data;
+
+    logger.info("Membership expiring soon email requested for:", studentEmail);
+
+    if (!studentEmail || !studentName || !membershipType) {
+      logger.error("Missing required data:", {studentEmail, studentName, membershipType});
+      throw new Error("Student email, name, and membership type are required");
+    }
+
+    try {
+      // Generate email content
+      const emailContent = generateMembershipExpiringSoonEmail({
+        studentName,
+        firstName: firstName || studentName.split(' ')[0],
+        membershipType,
+        expiryDate: new Date(expiryDate).toLocaleDateString('en-NZ', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        daysUntilExpiry: daysUntilExpiry || 3
+      });
+
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+
+      // Send email with BCC to admin
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: studentEmail,
+        bcc: 'dance@urbanswing.co.nz',
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+      });
+
+      logger.info(`Membership expiring soon email sent to ${studentEmail}`);
+
+      return { success: true };
+    } catch (error) {
+      logger.error("Error sending membership expiring soon email:", error);
       throw error;
     }
   }
