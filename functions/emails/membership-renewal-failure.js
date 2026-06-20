@@ -133,7 +133,7 @@ function generateMembershipRenewalFailureEmail({
     failureMessage,
     paymentMethod
 }) {
-    const subject = '⚠️ Action Required: Membership Payment Failed';
+    const subject = 'Action Required: Membership Payment Failed';
 
     // Get user-friendly error message
     const { reason, details } = getUserFriendlyFailureReason(failureCode, failureMessage);
@@ -171,7 +171,7 @@ function generateMembershipRenewalFailureEmail({
         <!-- Header -->
         <div style="background: linear-gradient(135deg, ${colors.bluePrimary} 0%, ${colors.purplePrimary} 50%, ${colors.pinkPrimary} 100%); padding: 30px; text-align: center;">
             <h1 style="color: ${colors.white}; margin: 0; font-size: 24px; font-weight: 600;">
-                ⚠️ Membership Payment Failed
+                Membership Payment Failed
             </h1>
         </div>
         
@@ -249,7 +249,7 @@ function generateMembershipRenewalFailureEmail({
             
             <!-- Call to Action -->
             <div style="text-align: center; margin: 30px 0;">
-                <a href="https://urbanswing.co.nz/student-portal/membership/" 
+                <a href="https://urbanswing.co.nz/student-portal/" 
                    style="display: inline-block; background: linear-gradient(135deg, ${colors.bluePrimary} 0%, ${colors.purplePrimary} 50%, ${colors.pinkPrimary} 100%); color: ${colors.white}; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
                     Update Payment Method
                 </a>
@@ -273,7 +273,7 @@ function generateMembershipRenewalFailureEmail({
         <div style="background: ${colors.bgLight}; padding: 20px; border-top: 1px solid ${colors.borderMedium};">
             <p style="color: ${colors.textLight}; font-size: 12px; line-height: 1.6; margin: 0 0 10px 0;">
                 <strong>Questions about your membership?</strong><br>
-                Visit your <a href="https://urbanswing.co.nz/student-portal/membership/" style="color: ${colors.purplePrimary};">Student Portal</a> or email us at 
+                Visit your <a href="https://urbanswing.co.nz/student-portal/" style="color: ${colors.purplePrimary};">Student Portal</a> or email us at 
                 <a href="mailto:dance@urbanswing.co.nz" style="color: ${colors.purplePrimary};">dance@urbanswing.co.nz</a>.
             </p>
             <p style="color: ${colors.textLight}; font-size: 12px; line-height: 1.6; margin: 0;">
@@ -314,7 +314,7 @@ To continue your membership, you have two options:
 
 2. Purchase a new membership - You can purchase a new membership immediately from the Student Portal.
 
-Update your payment method: https://urbanswing.co.nz/student-portal/membership/
+Update your payment method: https://urbanswing.co.nz/student-portal/
 
 NEED HELP?
 ---------
@@ -324,7 +324,7 @@ The Urban Swing Team
 
 ---
 QUESTIONS ABOUT YOUR MEMBERSHIP?
-Visit your Student Portal: https://urbanswing.co.nz/student-portal/membership/
+Visit your Student Portal: https://urbanswing.co.nz/student-portal/
 Email us: dance@urbanswing.co.nz
 
 Urban Swing | Hawkes Bay, New Zealand

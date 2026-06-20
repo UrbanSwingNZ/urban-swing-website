@@ -39,7 +39,7 @@ function generateMembershipRenewalSuccessEmail({
     newExpiryDate,
     paymentMethod
 }) {
-    const subject = 'Your Urban Swing Membership Has Renewed ✓';
+    const subject = 'Your Urban Swing Membership Has Renewed';
 
     // Format dates
     const formatDate = (date) => {
@@ -74,7 +74,7 @@ function generateMembershipRenewalSuccessEmail({
         <!-- Header -->
         <div style="background: linear-gradient(135deg, ${colors.bluePrimary} 0%, ${colors.purplePrimary} 50%, ${colors.pinkPrimary} 100%); padding: 30px; text-align: center;">
             <h1 style="color: ${colors.white}; margin: 0; font-size: 24px; font-weight: 600;">
-                ✓ Membership Renewed Successfully
+                Membership Renewed Successfully
             </h1>
         </div>
         
@@ -135,7 +135,7 @@ function generateMembershipRenewalSuccessEmail({
             
             <!-- Call to Action -->
             <div style="text-align: center; margin: 30px 0;">
-                <a href="https://urbanswing.co.nz/student-portal/membership/" 
+                <a href="https://urbanswing.co.nz/student-portal/" 
                    style="display: inline-block; background: linear-gradient(135deg, ${colors.bluePrimary} 0%, ${colors.purplePrimary} 50%, ${colors.pinkPrimary} 100%); color: ${colors.white}; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
                     Manage Membership
                 </a>
@@ -155,7 +155,7 @@ function generateMembershipRenewalSuccessEmail({
             <p style="color: ${colors.textLight}; font-size: 12px; line-height: 1.6; margin: 0 0 10px 0;">
                 <strong>Questions about your membership?</strong><br>
                 You can update your payment method or turn off auto-renewal in the 
-                <a href="https://urbanswing.co.nz/student-portal/membership/" style="color: ${colors.purplePrimary};">Student Portal</a>.
+                <a href="https://urbanswing.co.nz/student-portal/" style="color: ${colors.purplePrimary};">Student Portal</a>.
             </p>
             <p style="color: ${colors.textLight}; font-size: 12px; line-height: 1.6; margin: 0;">
                 Urban Swing | Hawkes Bay, New Zealand<br>
@@ -186,7 +186,7 @@ YOUR MEMBERSHIP
 --------------
 Your membership will continue to renew automatically on the same day each month. You can turn off auto-renewal at any time from your Student Portal - you'll still have access until ${formatShortDate(newExpiryDate)}.
 
-Manage your membership: https://urbanswing.co.nz/student-portal/membership/
+Manage your membership: https://urbanswing.co.nz/student-portal/
 
 See you on the dance floor!
 
@@ -195,7 +195,7 @@ The Urban Swing Team
 ---
 QUESTIONS ABOUT YOUR MEMBERSHIP?
 You can update your payment method or turn off auto-renewal in the Student Portal.
-Visit: https://urbanswing.co.nz/student-portal/membership/
+Visit: https://urbanswing.co.nz/student-portal/
 
 Urban Swing | Hawkes Bay, New Zealand
 dance@urbanswing.co.nz

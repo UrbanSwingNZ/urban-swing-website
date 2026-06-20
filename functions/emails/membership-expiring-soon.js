@@ -21,7 +21,7 @@ function generateMembershipExpiringSoonEmail({
   expiryDate,
   daysUntilExpiry = 3
 }) {
-  const subject = `⏰ Your ${membershipType} Membership Expires in ${daysUntilExpiry} Days`;
+  const subject = `Your ${membershipType} Membership Expires in ${daysUntilExpiry} Days`;
 
   const html = `
 <!DOCTYPE html>
@@ -119,7 +119,7 @@ function generateMembershipExpiringSoonEmail({
     .cta-button {
       display: inline-block;
       background: linear-gradient(135deg, #3534fa 0%, #9a16f5 50%, #e800f2 100%);
-      color: #ffffff;
+      color: #ffffff !important;
       text-decoration: none;
       padding: 14px 32px;
       border-radius: 8px;
@@ -164,7 +164,7 @@ function generateMembershipExpiringSoonEmail({
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>⏰ Membership Expiring Soon</h1>
+      <h1>Membership Expiring Soon</h1>
       <div class="warning-badge">${daysUntilExpiry} Days Remaining</div>
     </div>
 
@@ -195,7 +195,7 @@ function generateMembershipExpiringSoonEmail({
       </p>
 
       <center>
-        <a href="https://urbanswing.co.nz/student-portal/membership/" class="cta-button">
+        <a href="https://urbanswing.co.nz/student-portal/" class="cta-button">
           Renew Membership
         </a>
       </center>
@@ -220,9 +220,13 @@ function generateMembershipExpiringSoonEmail({
 
     <!-- Footer -->
     <div class="footer">
-      <p><strong>Urban Swing</strong></p>
-      <p>Swing Dancing in Wellington</p>
-      <p><a href="https://urbanswing.co.nz">urbanswing.co.nz</a> | <a href="mailto:dance@urbanswing.co.nz">dance@urbanswing.co.nz</a></p>
+      <p><strong>Questions about your membership?</strong><br>
+        Visit your <a href="https://urbanswing.co.nz/student-portal/" style="color: #9a16f5;">Student Portal</a> or email us at 
+        <a href="mailto:dance@urbanswing.co.nz" style="color: #9a16f5;">dance@urbanswing.co.nz</a>.
+      </p>
+      <p><strong>Urban Swing</strong> | Hawkes Bay, New Zealand<br>
+        <a href="mailto:dance@urbanswing.co.nz" style="color: #9a16f5;">dance@urbanswing.co.nz</a>
+      </p>
     </div>
   </div>
 </body>
@@ -230,7 +234,7 @@ function generateMembershipExpiringSoonEmail({
   `.trim();
 
   const text = `
-⏰ MEMBERSHIP EXPIRING SOON
+MEMBERSHIP EXPIRING SOON
 
 Hi ${firstName},
 
@@ -239,7 +243,7 @@ Your ${membershipType} membership will expire in ${daysUntilExpiry} days (on ${e
 ⚠️ IMPORTANT: After your membership expires, you won't be able to attend Improver classes until you purchase a new membership.
 
 RENEW YOUR MEMBERSHIP
-Visit: https://urbanswing.co.nz/student-portal/membership/
+Visit: https://urbanswing.co.nz/student-portal/
 
 When you renew, you can:
 • Set up automatic renewal so you never have to worry about expiry again
@@ -251,9 +255,13 @@ Contact us at dance@urbanswing.co.nz
 ---
 Note: This is an automated reminder for memberships not set to auto-renew. If you've already renewed, please disregard this message.
 
-Urban Swing
-Swing Dancing in Wellington
-urbanswing.co.nz | dance@urbanswing.co.nz
+---
+QUESTIONS ABOUT YOUR MEMBERSHIP?
+Visit your Student Portal: https://urbanswing.co.nz/student-portal/
+Email us: dance@urbanswing.co.nz
+
+Urban Swing | Hawkes Bay, New Zealand
+dance@urbanswing.co.nz
   `.trim();
 
   return { subject, html, text };
