@@ -7,13 +7,17 @@
  * - Updates membership status to 'expired'
  * - Updates student activeMembershipId to null
  * - Updates student membershipStatus to 'expired'
- * - Sends admin email with list of expired memberships
+ * 
+ * For non-recurring memberships expiring in 3 days:
+ * - Sends warning email to student with BCC to admin
  * 
  * Note: Recurring memberships are handled by Stripe webhooks (customer.subscription.deleted)
  */
 
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const admin = require('firebase-admin');
+const { getFunctions } = require('firebase-admin/functions');
+const { httpsCallable } = require('firebase-admin/functions');
 
 /**
  * Check for expired memberships and update status
@@ -29,6 +33,17 @@ exports.checkExpiredMemberships = onSchedule({
   const db = admin.firestore();
   const now = admin.firestore.Timestamp.now();
   const expiredList = [];
+  
+  // Calculate 3 days from now for expiry warnings
+  const threeDaysFromNow = new Date();
+  threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+  threeDaysFromNow.setHours(23, 59, 59, 999); // End of day
+  const threeDaysTimestamp = admin.firestore.Timestamp.fromDate(threeDaysFromNow);
+  
+  // Calculate start of 3 days from now (for range query)
+  const threeDaysStart = new Date(threeDaysFromNow);
+  threeDaysStart.setHours(0, 0, 0, 0);
+  const threeDaysStartTimestamp = admin.firestore.Timestamp.fromDate(threeDaysStart);
   
   try {
     // Query for active memberships that have passed their expiry date
@@ -86,6 +101,85 @@ exports.checkExpiredMemberships = onSchedule({
     // Log summary
     console.log(`Expired membership check complete: ${expiredList.length} memberships expired`);
     
+    // ========================================
+    // CHECK FOR MEMBERSHIPS EXPIRING IN 3 DAYS
+    // ========================================
+    console.log('Checking for memberships expiring in 3 days...');
+    
+    const expiringList = [];
+    
+    // Query for non-recurring memberships expiring in 3 days
+    // Range: between start of 3 days from now and end of 3 days from now
+    const expiringMemberships = await db.collection('memberships')
+      .where('status', '==', 'active')
+      .where('currentPeriodEnd', '>=', threeDaysStartTimestamp)
+      .where('currentPeriodEnd', '<=', threeDaysTimestamp)
+      .get();
+    
+    console.log(`Found ${expiringMemberships.size} memberships expiring in 3 days`);
+    
+    // Process each expiring membership
+    for (const doc of expiringMemberships.docs) {
+      const membershipData = doc.data();
+      const membershipId = doc.id;
+      
+      // Only send emails to non-recurring memberships
+      // (recurring memberships will get payment failure emails if there's an issue)
+      if (membershipData.isRecurring) {
+        console.log(`Skipping ${membershipId} - is recurring (auto-renew enabled)`);
+        continue;
+      }
+      
+      console.log(`Processing expiring membership: ${membershipId}`);
+      
+      try {
+        // Fetch student data to get email
+        const studentDoc = await db.collection('students').doc(membershipData.studentId).get();
+        
+        if (!studentDoc.exists) {
+          console.error(`Student not found: ${membershipData.studentId}`);
+          continue;
+        }
+        
+        const studentData = studentDoc.data();
+        
+        if (!studentData.email) {
+          console.error(`No email for student: ${membershipData.studentId}`);
+          continue;
+        }
+        
+        // Send expiring soon email
+        try {
+          const sendExpiringSoonEmail = httpsCallable(getFunctions(), 'sendMembershipExpiringSoonEmail');
+          
+          await sendExpiringSoonEmail({
+            studentEmail: studentData.email,
+            studentName: membershipData.studentName,
+            firstName: studentData.firstName || membershipData.studentName.split(' ')[0],
+            membershipType: membershipData.typeName,
+            expiryDate: membershipData.currentPeriodEnd.toDate().toISOString(),
+            daysUntilExpiry: 3
+          });
+          
+          console.log(`Expiring soon email sent to ${studentData.email}`);
+          
+          expiringList.push({
+            studentId: membershipData.studentId,
+            studentName: membershipData.studentName,
+            membershipType: membershipData.typeName,
+            expiryDate: membershipData.currentPeriodEnd.toDate().toLocaleDateString('en-NZ')
+          });
+        } catch (emailError) {
+          console.error(`Error sending expiring soon email for ${membershipId}:`, emailError);
+          // Don't fail the entire job if one email fails
+        }
+      } catch (error) {
+        console.error(`Error processing expiring membership ${membershipId}:`, error);
+      }
+    }
+    
+    console.log(`Expiring soon check complete: ${expiringList.length} emails sent`);
+    
     // TODO: Phase 9.7 - Send admin email with expired memberships
     // if (expiredList.length > 0) {
     //   await sendMembershipExpiredAdminAlert(expiredList);
@@ -94,7 +188,9 @@ exports.checkExpiredMemberships = onSchedule({
     return {
       success: true,
       expiredCount: expiredList.length,
-      expiredMemberships: expiredList
+      expiredMemberships: expiredList,
+      expiringCount: expiringList.length,
+      expiringMemberships: expiringList
     };
     
   } catch (error) {
