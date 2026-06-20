@@ -156,6 +156,45 @@ exports.stripeWebhookMemberships = onRequest(
           await db.collection('transactions').doc(transactionId).set(transactionData);
           
           console.log('Membership renewed:', membershipId);
+          
+          // Send renewal success email
+          try {
+            const studentDoc = await db.collection('students').doc(membershipData.studentId).get();
+            if (studentDoc.exists) {
+              const studentData = studentDoc.data();
+              
+              // Get last 4 digits of payment method
+              let last4 = '****';
+              try {
+                const paymentMethod = await stripe.paymentMethods.retrieve(subscription.default_payment_method);
+                if (paymentMethod && paymentMethod.card) {
+                  last4 = paymentMethod.card.last4;
+                }
+              } catch (error) {
+                console.warn('Could not retrieve payment method details:', error.message);
+              }
+              
+              // Call email function
+              const { getFunctions, httpsCallable } = require('firebase-admin/functions');
+              const sendEmail = httpsCallable(getFunctions(), 'sendMembershipRenewalSuccessEmail');
+              
+              await sendEmail({
+                studentEmail: studentData.email,
+                studentName: `${studentData.firstName} ${studentData.lastName}`,
+                firstName: studentData.firstName,
+                membershipType: membershipData.typeName,
+                amount: invoice.amount_paid / 100,
+                renewalDate: newPeriodStart.toISOString(),
+                newExpiryDate: newPeriodEnd.toISOString(),
+                paymentMethod: last4
+              });
+              
+              console.log('Renewal success email sent to:', studentData.email);
+            }
+          } catch (emailError) {
+            console.error('Error sending renewal success email:', emailError);
+            // Don't fail the webhook if email fails
+          }
           break;
         }
         
@@ -200,8 +239,68 @@ exports.stripeWebhookMemberships = onRequest(
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
           });
           
-          // TODO: Send notification email to student and admin
           console.warn('Payment failed for membership:', membershipId, '- Marked as expired');
+          
+          // Send renewal failure email
+          try {
+            const studentDoc = await db.collection('students').doc(membershipData.studentId).get();
+            if (studentDoc.exists) {
+              const studentData = studentDoc.data();
+              
+              // Get last 4 digits of payment method if available
+              let last4 = '****';
+              try {
+                const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
+                if (subscription.default_payment_method) {
+                  const paymentMethod = await stripe.paymentMethods.retrieve(subscription.default_payment_method);
+                  if (paymentMethod && paymentMethod.card) {
+                    last4 = paymentMethod.card.last4;
+                  }
+                }
+              } catch (error) {
+                console.warn('Could not retrieve payment method details:', error.message);
+              }
+              
+              // Extract failure reason from invoice
+              let failureCode = 'generic_decline';
+              let failureMessage = 'Your payment could not be processed.';
+              
+              if (invoice.charge) {
+                try {
+                  const charge = await stripe.charges.retrieve(invoice.charge);
+                  if (charge.failure_code) {
+                    failureCode = charge.failure_code;
+                  }
+                  if (charge.failure_message) {
+                    failureMessage = charge.failure_message;
+                  }
+                } catch (error) {
+                  console.warn('Could not retrieve charge details:', error.message);
+                }
+              }
+              
+              // Call email function
+              const { getFunctions, httpsCallable } = require('firebase-admin/functions');
+              const sendEmail = httpsCallable(getFunctions(), 'sendMembershipRenewalFailureEmail');
+              
+              await sendEmail({
+                studentEmail: studentData.email,
+                studentName: `${studentData.firstName} ${studentData.lastName}`,
+                firstName: studentData.firstName,
+                membershipType: membershipData.typeName,
+                amount: invoice.amount_due / 100,
+                expiryDate: membershipData.currentPeriodEnd.toDate().toISOString(),
+                failureCode: failureCode,
+                failureMessage: failureMessage,
+                paymentMethod: last4
+              });
+              
+              console.log('Renewal failure email sent to:', studentData.email);
+            }
+          } catch (emailError) {
+            console.error('Error sending renewal failure email:', emailError);
+            // Don't fail the webhook if email fails
+          }
           break;
         }
         
