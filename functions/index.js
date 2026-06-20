@@ -47,7 +47,9 @@ const {
   sendPortalInvitationEmail,
   sendLowBalanceEmail,
   sendExpiryWarningEmails,
-  sendImproverPromotionAlert
+  sendImproverPromotionAlert,
+  sendMembershipRenewalSuccessEmail,
+  sendMembershipRenewalFailureEmail
 } = require('./email-notifications');
 
 exports.sendNewStudentEmail = sendNewStudentEmail;
@@ -57,6 +59,8 @@ exports.sendPortalInvitationEmail = sendPortalInvitationEmail;
 exports.sendLowBalanceEmail = sendLowBalanceEmail;
 exports.sendExpiryWarningEmails = sendExpiryWarningEmails;
 exports.sendImproverPromotionAlert = sendImproverPromotionAlert;
+exports.sendMembershipRenewalSuccessEmail = sendMembershipRenewalSuccessEmail;
+exports.sendMembershipRenewalFailureEmail = sendMembershipRenewalFailureEmail;
 
 // ========================================
 // USER MANAGEMENT
