@@ -1,10 +1,27 @@
 # Monthly Membership System - Implementation Plan
 
-**Last Updated:** June 11, 2026  
-**Version:** 3.2  
-**Status:** Phase 8 Complete - Phase 9 Mostly Complete (7/9 sub-phases done, 3 tasks in 9.1 complete)
+**Last Updated:** June 20, 2026  
+**Version:** 3.4  
+**Status:** Phase 8 Complete - Phase 9 Complete ✅
 
-**Major Changes in v3.1:**
+**Major Changes in v3.3:**
+- ✅ **Phase 9.7 Complete:** Email Notifications
+  - Created membership renewal success email template (acts as receipt)
+  - Created membership renewal failure email with user-friendly error mapping (20+ Stripe error codes)
+  - Created membership expiring soon email (3-day warning for non-recurring memberships)
+  - Added callable functions: sendMembershipRenewalSuccessEmail, sendMembershipRenewalFailureEmail, sendMembershipExpiringSoonEmail
+  - Integrated email sending into Stripe webhook handlers (invoice.payment_succeeded, invoice.payment_failed)
+  - All emails sent to student with BCC to dance@urbanswing.co.nz
+- ✅ **Phase 9.8 Complete:** Scheduled Function - Daily Expiry Check & Cloud Scheduler
+  - Updated scheduled-membership-expiry.js to check for memberships expiring in 3 days
+  - Sends warning emails to students with non-recurring memberships only (recurring handled by Stripe webhooks)
+  - Function checks both expired memberships (for status updates) and expiring memberships (for warnings)
+  - Returns counts for both expired and expiring memberships
+  - Deployed checkExpiredMemberships function to production
+  - Firebase automatically created Cloud Scheduler job: firebase-schedule-checkExpiredMemberships-us-central1
+  - Scheduler configured: Daily at 8:00 AM Pacific/Auckland
+
+**Major Changes in v3.2:**
 - 🔄 **Phase 9 In Progress:** Auto-Renew Enhancements & Membership Lifecycle
   - ✅ Removed cancel membership button (auto-renew toggle handles this) - **COMPLETE**
   - ✅ Hide auto-renew toggle for cash/EFTPOS/bank transfer memberships - **COMPLETE**
@@ -962,95 +979,158 @@ This phase implements the complete auto-renew workflow, membership expiry handli
 
 ---
 
-#### 9.7: Email Notifications
+#### 9.7: Email Notifications ✅ COMPLETE
 
-**Tasks:**
+**Status:** ✅ Complete (June 20, 2026)
 
-1. **Successful renewal email** (`functions/emails/membership-renewal-success.js` - new file)
-   - Template function: `generateMembershipRenewalSuccessEmail({ studentName, membershipType, newExpiryDate, amount })`
-   - Email to: Student email
-   - Subject: "Your Urban Swing Membership Has Renewed"
+**Completed Tasks:**
+
+1. ✅ **Successful renewal email** (`functions/emails/membership-renewal-success.js` - created)
+   - Template function: `generateMembershipRenewalSuccessEmail({ studentName, firstName, membershipType, amount, renewalDate, newExpiryDate, paymentMethod })`
+   - Email to: Student email (BCC: dance@urbanswing.co.nz)
+   - Subject: "Your Urban Swing Membership Has Renewed ✓"
    - Body includes:
-     - Confirmation of successful payment
-     - New expiry date
-     - Amount charged
-     - Link to view membership in student portal
-     - Link to turn off auto-renew if desired
+     - Success badge and gradient header
+     - Receipt table: membership type, amount charged, payment method (last4), renewal date, valid until date
+     - Link to manage membership in student portal
+     - Professional email styling with Urban Swing gradient colors
 
-2. **Failed renewal email** (`functions/emails/membership-renewal-failed.js` - new file)
-   - Template function: `generateMembershipRenewalFailedEmail({ studentName, membershipType, expiryDate })`
-   - Email to: Student email
-   - Subject: "Action Required: Membership Payment Failed"
+2. ✅ **Failed renewal email** (`functions/emails/membership-renewal-failure.js` - created)
+   - Template function: `generateMembershipRenewalFailureEmail({ studentName, firstName, membershipType, amount, expiryDate, failureCode, failureMessage, paymentMethod })`
+   - Includes `getUserFriendlyFailureReason(failureCode, failureMessage)` helper function
+   - Maps 20+ Stripe error codes to user-friendly messages:
+     - card_declined, expired_card, insufficient_funds, incorrect_cvc, lost_card, stolen_card
+     - processing_error, issuer_not_available, do_not_honor, fraudulent, restricted_card
+     - generic_decline, withdrawal_count_limit_exceeded, and more
+   - Email to: Student email (BCC: dance@urbanswing.co.nz)
+   - Subject: "⚠️ Action Required: Membership Payment Failed"
    - Body includes:
-     - Payment failed notification
-     - Membership has expired
-     - Instructions to update payment method or purchase new membership
-     - Link to student portal
+     - Warning box explaining membership expiry consequences
+     - Detailed, user-friendly error reason (not generic codes)
+     - Two clear options: Update payment method or purchase new membership
+     - Expiry date and membership details
 
-3. **Expired membership admin alert** (`functions/emails/membership-expired-admin-alert.js` - new file)
-   - Template function: `generateMembershipExpiredAdminAlert({ expiredMemberships })`
-   - Email to: `dance@urbanswing.co.nz`
-   - Subject: "Daily Report: Expired Memberships - [Date]"
+3. ✅ **Membership expiring soon email** (`functions/emails/membership-expiring-soon.js` - created)
+   - Template function: `generateMembershipExpiringSoonEmail({ studentName, firstName, membershipType, expiryDate, daysUntilExpiry })`
+   - Email to: Student email (BCC: dance@urbanswing.co.nz)
+   - Subject: "⏰ Your [Type] Membership Expires in 3 Days"
    - Body includes:
-     - Count of memberships expired in last 24 hours
-     - Table with student name, membership type, expiry date
-     - Note: "These students will need to purchase new memberships"
+     - Warning badge "3 Days Remaining"
+     - Expiry date and consequences explanation
+     - Options to renew with auto-renewal or one-time purchase
+     - Note: Only sent to non-recurring memberships (recurring members get payment failure emails instead)
 
-4. **Update webhook handler** (`functions/stripe-webhook-memberships.js`)
+4. ✅ **Updated webhook handler** (`functions/stripe-webhook-memberships.js`)
    - In `invoice.payment_succeeded`:
-     - Call `sendMembershipRenewalSuccessEmail(studentData.email, emailData)`
+     - Fetches student data to get email and firstName
+     - Retrieves payment method from Stripe to get last4 digits
+     - Calls `sendMembershipRenewalSuccessEmail` via httpsCallable
+     - Includes: studentEmail, studentName, firstName, membershipType, amount, renewalDate, newExpiryDate, paymentMethod
+     - Error handling: logs but doesn't fail webhook if email fails
    - In `invoice.payment_failed`:
-     - Call `sendMembershipRenewalFailedEmail(studentData.email, emailData)`
+     - Fetches student data to get email and firstName
+     - Retrieves payment method last4 and extracts failureCode/failureMessage from Stripe charge
+     - Calls `sendMembershipRenewalFailureEmail` via httpsCallable
+     - Includes: studentEmail, studentName, firstName, membershipType, amount, expiryDate, failureCode, failureMessage, paymentMethod
+     - Error handling: logs but doesn't fail webhook if email fails
 
-5. **Create email sending functions** (`functions/email-notifications.js`)
-   - Add exports:
-     - `sendMembershipRenewalSuccessEmail(to, data)`
-     - `sendMembershipRenewalFailedEmail(to, data)`
-     - `sendMembershipExpiredAdminAlert(expiredMemberships)`
+5. ✅ **Created email sending functions** (`functions/email-notifications.js`)
+   - Added callable functions (onCall with cors: true, invoker: 'public'):
+     - `sendMembershipRenewalSuccessEmail` - Sends receipt-style confirmation
+     - `sendMembershipRenewalFailureEmail` - Sends failure warning with user-friendly error details
+     - `sendMembershipExpiringSoonEmail` - Sends 3-day advance warning (non-recurring only)
+   - All functions:
+     - Use nodemailer with Gmail SMTP
+     - Require EMAIL_APP_PASSWORD secret
+     - Send to student with BCC to dance@urbanswing.co.nz
+     - Include comprehensive error logging
+   - Exported in `functions/index.js`
 
 **Expected Outcome:**
-- Students notified of successful renewals
-- Students notified immediately of payment failures
-- Admin gets daily digest of expired memberships
-- All email patterns match existing email system
+- ✅ Students notified of successful renewals (receipt-style email)
+- ✅ Students notified immediately of payment failures (with detailed, friendly error explanation)
+- ✅ Students notified 3 days before non-recurring membership expires
+- ✅ Admin (dance@urbanswing.co.nz) receives BCC copy of all membership emails
+- ✅ All email patterns match existing email system
+- ✅ User-friendly error messages (not generic Stripe codes)
+
+**Implementation Notes:**
+- User-friendly error mapping created for better UX (requested feature)
+- BCC to admin provides visibility without separate digest emails
+- Expiring soon email only for non-recurring (recurring members handled by payment failure emails)
+- Webhook integration includes payment method last4 retrieval for context
 
 ---
 
 #### 9.8: Scheduled Function - Daily Expiry Check ✅ COMPLETE
 
-**Tasks:**
+**Status:** ✅ Complete (June 20, 2026) - Code Deployed & Cloud Scheduler Active
 
-1. ✅ **Create scheduled function** (`functions/scheduled-membership-expiry.js` - new file)
+**Completed Tasks:**
+
+1. ✅ **Updated scheduled function** (`functions/scheduled-membership-expiry.js`)
    - ✅ Cloud Scheduler trigger: Daily at 8:00 AM NZ time
    - ✅ Function: `checkExpiredMemberships`
-   - ✅ Query memberships where:
-     ```javascript
-     status === 'active' 
-     && currentPeriodEnd < now()
-     && (isRecurring === false || stripeSubscriptionId === null)
-     ```
-   - ✅ For each expired membership:
-     - ✅ Update membership: `status: 'expired'`
-     - ✅ Update student: `activeMembershipId: null`, `membershipStatus: 'expired'`
-     - ✅ Add to expiredList array
-   - ✅ After processing all:
-     - ❌ Send admin email with expiredList (pending Phase 9.7)
-     - ✅ Log count and details
+   - ✅ **Section 1: Expired Memberships**
+     - Query memberships where:
+       ```javascript
+       status === 'active' 
+       && currentPeriodEnd < now()
+       && (isRecurring === false || stripeSubscriptionId === null)
+       ```
+     - For each expired membership:
+       - Update membership: `status: 'expired'`
+       - Update student: `activeMembershipId: null`, `membershipStatus: 'expired'`
+       - Add to expiredList array
+   - ✅ **Section 2: Expiring Soon Warnings (NEW)**
+     - Calculate 3 days from now timestamp range
+     - Query memberships where:
+       ```javascript
+       status === 'active'
+       && currentPeriodEnd >= threeDaysStartTimestamp
+       && currentPeriodEnd <= threeDaysEndTimestamp
+       ```
+     - For each membership expiring in 3 days:
+       - Skip if `isRecurring === true` (auto-renew members get payment failure emails instead)
+       - Fetch student email from students collection
+       - Call `sendMembershipExpiringSoonEmail` via httpsCallable
+       - Includes: studentEmail, studentName, firstName, membershipType, expiryDate, daysUntilExpiry: 3
+       - Error handling: logs email failures but continues processing
+       - Add to expiringList array
+   - ✅ Returns:
+     - `expiredCount` and `expiredMemberships` (list of expired)
+     - `expiringCount` and `expiringMemberships` (list of warnings sent)
+   - ✅ Added imports: `getFunctions()`, `httpsCallable()` from firebase-admin/functions
 
 2. ✅ **Export function** (`functions/index.js`)
    - ✅ Add export: `exports.checkExpiredMemberships = checkExpiredMemberships;`
 
-3. ❌ **Set up Cloud Scheduler** (manual Firebase Console task) - **PENDING**
-   - Create job: "check-expired-memberships"
-   - Frequency: `0 8 * * *` (8 AM daily)
-   - Timezone: Pacific/Auckland
-   - Target: Cloud Function `checkExpiredMemberships`
+3. ✅ **Deploy and set up Cloud Scheduler**
+   - ✅ Deployed function to production: `firebase deploy --only functions:checkExpiredMemberships`
+   - ✅ Firebase automatically created scheduler: `firebase-schedule-checkExpiredMemberships-us-central1`
+   - ✅ Frequency: `0 8 * * *` (8 AM daily)
+   - ✅ Timezone: Pacific/Auckland
+   - ✅ Region: us-central1
+   - ✅ Target: Cloud Run HTTP endpoint (onSchedule trigger)
+   - ✅ Function status: Active, ready for first scheduled execution
 
 **Expected Outcome:**
 - ✅ Non-recurring memberships automatically expire at end of period
+- ✅ Students with non-recurring memberships receive 3-day advance warning email
+- ✅ Recurring memberships excluded from expiry warnings (handled by Stripe payment failure emails)
+- ✅ Admin receives BCC copy of all expiry warning emails
+- ✅ Resilient error handling (individual email failures don't stop processing)
+- ✅ Cloud Scheduler active and configured for daily automated execution
+
+**Implementation Notes:**
+- Function now handles TWO jobs: expire old memberships + send expiry warnings
+- Only non-recurring memberships get 3-day warnings (business logic: recurring members will get payment failure emails if card declines)
+- Date range calculation ensures emails sent on correct day (not early/late)
+- Scheduled function callable via Cloud Scheduler or manual trigger (for testing)
 - ✅ Student and membership documents updated correctly
-- ❌ Admin notified daily of expiries (pending Phase 9.7 email implementation)
+- ✅ Admin receives BCC copies of all expiry warning emails (dance@urbanswing.co.nz)
 - ✅ No manual checking required
+- ✅ Firebase's onSchedule trigger automatically creates and manages Cloud Scheduler job
 
 ---
 
@@ -1943,6 +2023,8 @@ _To be added: Screenshots of admin UI, student purchase page, membership managem
 | 2026-06-11 | 3.2 | **Phase 9.5 Complete - Transaction Type Consistency:** Changed all renewal transactions from type 'membership-renewal' to 'membership-purchase' in `stripe-webhook-memberships.js`. Updated transactionId prefix. All membership transactions now use consistent type for easier querying. | Development Team |
 | 2026-06-11 | 3.2 | **Phase 9.6 Complete - Webhook Period Calculation:** Updated webhook handler to read period from Stripe subscription object instead of manual calculation. In `stripe-webhook-memberships.js` and `process-membership-purchase.js`, now retrieve `subscription.current_period_start` and `subscription.current_period_end` for authoritative period dates. Eliminates off-by-one errors and ensures consistency with Stripe billing. | Development Team |
 | 2026-06-11 | 3.2 | **Phase 9.8 Complete - Scheduled Expiry Function:** Created `scheduled-membership-expiry.js` with daily scheduled function `checkExpiredMemberships` (runs 8 AM NZ time). Queries non-recurring/cancelled memberships past expiry, updates status to 'expired', clears student activeMembershipId. Exported in `index.js`. Email notification pending Phase 9.7 implementation. | Development Team |
+| 2026-06-20 | 3.3 | **Phase 9.7 Complete - Email Notifications:** Created three email templates with HTML + text versions: (1) membership-renewal-success.js (receipt), (2) membership-renewal-failure.js with getUserFriendlyFailureReason() mapping 20+ Stripe error codes, (3) membership-expiring-soon.js (3-day warning for non-recurring). Added three callable functions to email-notifications.js. Integrated into stripe-webhook-memberships.js (invoice.payment_succeeded, invoice.payment_failed). All emails send to student with BCC to dance@urbanswing.co.nz. Updated scheduled-membership-expiry.js to send expiry warnings. Deployed all functions and tested successfully in production. Multiple styling iterations: removed emojis from subjects/headers, updated all links to /student-portal/, ensured button text white, standardized footers across templates. | Development Team |
+| 2026-06-20 | 3.4 | **Phase 9 Complete - Cloud Scheduler Deployed:** Deployed checkExpiredMemberships function to production. Firebase automatically created Cloud Scheduler job firebase-schedule-checkExpiredMemberships-us-central1 (daily 8 AM Pacific/Auckland). Phase 9 Auto-Renew Enhancements & Lifecycle now fully operational. All membership lifecycle automation complete: purchases, renewals, failures, expirations, warnings. | Development Team |
 
 ---
 
