@@ -58,7 +58,13 @@ const API_CONFIG = {
      * Cancel membership
      * POST endpoint: { membershipId, cancelledBy }
      */
-    MEMBERSHIP_CANCEL: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/cancelMembership`
+    MEMBERSHIP_CANCEL: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/cancelMembership`,
+
+    /**
+     * Update membership payment method
+     * POST endpoint: { membershipId, paymentMethodId }
+     */
+    MEMBERSHIP_UPDATE_PAYMENT: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/updateMembershipPaymentMethod`
 };
 
 // Make API_CONFIG available globally for non-module scripts
