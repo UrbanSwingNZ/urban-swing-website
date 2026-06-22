@@ -5,6 +5,7 @@
 
 import { showSnackbar } from '/js/utils/index.js';
 import { ConfirmationModal } from '/components/modals/confirmation-modal.js';
+import { UpdatePaymentModal } from './update-payment-modal.js';
 import MembershipService from './membership-service.js';
 
 let currentUser = null;
@@ -549,20 +550,21 @@ async function handleAutoRenewToggle(event) {
  * Handle update payment method button click
  */
 async function handleUpdatePaymentMethod() {
-    // TODO: Phase 9.1.4 - Implement full update payment modal with Stripe Elements
-    // TODO: Phase 9.4 - Call updateMembershipPaymentMethod Cloud Function
+    if (!currentMembership) {
+        showSnackbar('No active membership found', 'error');
+        return;
+    }
+
+    // Create and show the update payment modal
+    const modal = new UpdatePaymentModal({
+        currentMembership: currentMembership,
+        onSuccess: async (result) => {
+            // Refresh the page to show updated card info
+            await initializePage();
+        }
+    });
     
-    showSnackbar('Update payment method feature coming soon', 'info');
-    
-    // Placeholder for modal implementation:
-    // const modal = new UpdatePaymentModal({
-    //     currentMembership: currentMembership,
-    //     onSuccess: async () => {
-    //         showSnackbar('Payment method updated successfully', 'success');
-    //         await initializePage();
-    //     }
-    // });
-    // modal.show();
+    modal.show();
 }
 
 /**

@@ -104,7 +104,8 @@ const {
 
 const {
   toggleMembershipAutoRenew,
-  cancelMembership
+  cancelMembership,
+  updateMembershipPaymentMethod
 } = require('./membership-management');
 
 const { stripeWebhookMemberships } = require('./stripe-webhook-memberships');
@@ -117,6 +118,7 @@ exports.processOneTimeMembershipPurchase = processOneTimeMembershipPurchase;
 exports.processRecurringMembershipPurchase = processRecurringMembershipPurchase;
 exports.toggleMembershipAutoRenew = toggleMembershipAutoRenew;
 exports.cancelMembership = cancelMembership;
+exports.updateMembershipPaymentMethod = updateMembershipPaymentMethod;
 exports.stripeWebhookMemberships = stripeWebhookMemberships;
 exports.adminAssignMembership = adminAssignMembership;
 exports.checkExpiredMemberships = checkExpiredMemberships;

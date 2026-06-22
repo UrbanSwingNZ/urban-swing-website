@@ -287,3 +287,178 @@ exports.cancelMembership = onRequest(
     });
   }
 );
+
+/**
+ * Update payment method for a recurring membership
+ * HTTP Function with CORS support
+ * 
+ * Expected data structure:
+ * {
+ *   membershipId: string,
+ *   paymentMethodId: string (Stripe payment method ID from client)
+ * }
+ */
+exports.updateMembershipPaymentMethod = onRequest(
+  { 
+    region: 'us-central1',
+    invoker: 'public' // Allow unauthenticated calls from student portal
+  },
+  async (request, response) => {
+    // Handle CORS
+    return cors(request, response, async () => {
+      try {
+        // Only accept POST requests
+        if (request.method !== 'POST') {
+          response.status(405).json({ error: 'Method not allowed' });
+          return;
+        }
+        
+        const data = request.body;
+    
+        // Validate required fields
+        if (!data.membershipId) {
+          response.status(400).json({ error: 'Missing membership ID' });
+          return;
+        }
+        
+        if (!data.paymentMethodId) {
+          response.status(400).json({ error: 'Missing payment method ID' });
+          return;
+        }
+        
+        const db = admin.firestore();
+        
+        // Step 1: Get membership document
+        const membershipDoc = await db.collection('memberships').doc(data.membershipId).get();
+        
+        if (!membershipDoc.exists) {
+          response.status(404).json({ error: 'Membership not found' });
+          return;
+        }
+        
+        const membershipData = membershipDoc.data();
+        
+        // Validate membership is recurring
+        if (!membershipData.isRecurring || !membershipData.stripeSubscriptionId) {
+          response.status(400).json({ error: 'This membership does not have recurring payments' });
+          return;
+        }
+        
+        // Validate membership is active
+        if (membershipData.status !== 'active') {
+          response.status(400).json({ error: 'Cannot update payment method for inactive membership' });
+          return;
+        }
+        
+        // Step 2: Get student document for Stripe customer ID
+        const studentDoc = await db.collection('students').doc(membershipData.studentId).get();
+        
+        if (!studentDoc.exists) {
+          response.status(404).json({ error: 'Student not found' });
+          return;
+        }
+        
+        const studentData = studentDoc.data();
+        
+        if (!studentData.stripeCustomerId) {
+          response.status(400).json({ error: 'No Stripe customer ID found for student' });
+          return;
+        }
+        
+        // Step 3: Attach payment method to customer
+        try {
+          await stripe.paymentMethods.attach(data.paymentMethodId, {
+            customer: studentData.stripeCustomerId
+          });
+          
+          console.log(`Payment method ${data.paymentMethodId} attached to customer ${studentData.stripeCustomerId}`);
+        } catch (error) {
+          console.error('Error attaching payment method:', error);
+          response.status(500).json({ error: 'Failed to attach payment method: ' + error.message });
+          return;
+        }
+        
+        // Step 4: Set as default payment method on customer
+        try {
+          await stripe.customers.update(studentData.stripeCustomerId, {
+            invoice_settings: {
+              default_payment_method: data.paymentMethodId
+            }
+          });
+          
+          console.log(`Default payment method updated for customer ${studentData.stripeCustomerId}`);
+        } catch (error) {
+          console.error('Error setting default payment method:', error);
+          response.status(500).json({ error: 'Failed to set default payment method: ' + error.message });
+          return;
+        }
+        
+        // Step 5: Update subscription to use new payment method
+        try {
+          await stripe.subscriptions.update(
+            membershipData.stripeSubscriptionId,
+            {
+              default_payment_method: data.paymentMethodId
+            }
+          );
+          
+          console.log(`Subscription ${membershipData.stripeSubscriptionId} updated with new payment method`);
+        } catch (error) {
+          console.error('Error updating subscription payment method:', error);
+          response.status(500).json({ error: 'Failed to update subscription: ' + error.message });
+          return;
+        }
+        
+        // Step 6: Get payment method details for card last4
+        let cardLast4 = '****';
+        try {
+          const paymentMethod = await stripe.paymentMethods.retrieve(data.paymentMethodId);
+          if (paymentMethod.card && paymentMethod.card.last4) {
+            cardLast4 = paymentMethod.card.last4;
+          }
+        } catch (error) {
+          console.error('Error retrieving payment method details:', error);
+          // Non-fatal - continue with default last4
+        }
+        
+        // Step 7: Update membership document with new card info
+        await db.collection('memberships').doc(data.membershipId).update({
+          paymentMethodLast4: cardLast4,
+          stripePaymentMethodId: data.paymentMethodId,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Step 8: Create transaction record for audit trail
+        const timestamp = Date.now();
+        const transactionId = `${membershipData.studentId}-payment-update-${timestamp}`;
+        
+        const transactionData = {
+          studentId: membershipData.studentId,
+          transactionDate: admin.firestore.FieldValue.serverTimestamp(),
+          type: 'payment-method-update',
+          membershipId: data.membershipId,
+          newPaymentMethodId: data.paymentMethodId,
+          newCardLast4: cardLast4,
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('transactions').doc(transactionId).set(transactionData);
+        console.log('Payment method update transaction created:', transactionId);
+        
+        // Step 9: Return success
+        response.status(200).json({
+          success: true,
+          transactionId: transactionId,
+          cardLast4: cardLast4,
+          message: 'Payment method updated successfully'
+        });
+        
+      } catch (error) {
+        console.error('Error in updateMembershipPaymentMethod:', error);
+        response.status(500).json({ 
+          error: error.message || 'An error occurred updating payment method' 
+        });
+      }
+    });
+  }
+);
