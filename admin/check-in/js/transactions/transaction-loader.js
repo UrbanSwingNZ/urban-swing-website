@@ -49,9 +49,26 @@ async function processTransactionsSnapshot(snapshot) {
     try {
         const transactionPromises = snapshot.docs.map(async doc => {
             const data = doc.data();
-            const date = data.transactionDate?.toDate ? data.transactionDate.toDate()
-                : data.date?.toDate ? data.date.toDate()
-                : new Date(data.transactionDate || data.date);
+            
+            // Handle date parsing with fallbacks
+            let date;
+            if (data.transactionDate?.toDate) {
+                date = data.transactionDate.toDate();
+            } else if (data.date?.toDate) {
+                date = data.date.toDate();
+            } else if (data.classDate?.toDate) {
+                date = data.classDate.toDate();
+            } else if (data.createdAt?.toDate) {
+                date = data.createdAt.toDate();
+            } else if (data.transactionDate) {
+                date = new Date(data.transactionDate);
+            } else if (data.date) {
+                date = new Date(data.date);
+            } else {
+                console.warn('Transaction missing date field:', doc.id);
+                date = new Date();
+            }
+            
             const paymentMethod = (data.paymentMethod || '').toLowerCase();
             let transactionType = data.type || 'concession-purchase';
             const isRefund = transactionType === 'refund';
@@ -96,6 +113,12 @@ async function processTransactionsSnapshot(snapshot) {
                 }
             } else if (transactionType === 'workshop-entry') {
                 typeName = 'Workshop Entry';
+            } else if (transactionType === 'membership-purchase') {
+                typeName = 'Membership Purchase';
+            } else if (transactionType === 'membership-renewal') {
+                typeName = 'Membership Renewal';
+            } else if (transactionType === 'membership-cancellation') {
+                typeName = 'Membership Cancellation';
             } else {
                 typeName = 'Transaction';
             }

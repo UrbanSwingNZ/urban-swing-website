@@ -713,6 +713,11 @@
     color: var(--blue-accent);
 }
 
+.checkin-type.membership {
+    background: #e8e4f3;
+    color: #5b4a99;
+}
+
 .checkin-type.free {
     background: var(--bg-success-light);
     color: var(--success);
@@ -848,6 +853,34 @@
 }
 
 .concession-block i {
+    margin-right: 6px;
+}
+
+/* Membership Info (for improvers) */
+.membership-info {
+    background: var(--bg-white);
+    border: 2px solid #5b4a99;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.membership-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.membership-header i {
+    color: #5b4a99;
+}
+
+.membership-details {
+    /* Styles applied inline in JS for status-specific colors */
+}
     margin-right: 6px;
 }
 

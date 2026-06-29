@@ -26,6 +26,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     
     <!-- Loading Spinner Component -->
     <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
@@ -226,6 +227,16 @@
                         </div>
                     </div>
 
+                    <!-- Membership Info (for improvers) -->
+                    <div id="membership-info" class="membership-info" style="display: none;">
+                        <div id="membership-header" class="membership-header">
+                            <!-- Membership status will be shown here -->
+                        </div>
+                        <div id="membership-details" class="membership-details">
+                            <!-- Membership details will be shown here -->
+                        </div>
+                    </div>
+
                     <!-- Purchase Concessions -->
                     <div class="purchase-section">
                         <button type="button" class="btn-primary btn-purchase" id="purchase-concessions-btn">
@@ -237,6 +248,10 @@
                     <div class="form-group">
                         <label><i class="fas fa-sign-in-alt"></i> Entry Type</label>
                         <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="entry-type" value="membership" id="entry-membership">
+                                <span class="radio-label">Use Membership</span>
+                            </label>
                             <label class="radio-option">
                                 <input type="radio" name="entry-type" value="concession" id="entry-concession">
                                 <span class="radio-label">Use Concession</span>
@@ -419,6 +434,12 @@
                         </div>
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
+                                <input type="checkbox" id="modal-improver" disabled>
+                                <span>Improver</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
                                 <input type="checkbox" id="modal-crewMember" disabled>
                                 <span>Crew Member</span>
                             </label>
@@ -566,6 +587,8 @@
     <script src="js/checkin-form.js"></script>
     <script src="js/checkin-student-search.js"></script>
     <script src="js/checkin-concession-display.js"></script>
+    <script src="js/membership-validation.js"></script>
+    <script src="js/membership-assignment-modal.js"></script>
     <script type="module" src="js/checkin-firestore.js"></script>
     <script src="js/checkin-modal.js"></script>
     

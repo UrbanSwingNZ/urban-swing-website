@@ -190,7 +190,10 @@ function getTransactionTypeLabel(type) {
         'concession': 'Concession Purchase',
         'concession-purchase': 'Concession Purchase',
         'package': 'Class Package',
-        'refund': 'Refund'
+        'refund': 'Refund',
+        'membership-purchase': 'Membership Purchase',
+        'membership-renewal': 'Membership Renewal',
+        'membership-cancellation': 'Membership Cancellation'
     };
     return labels[type] || type;
 }

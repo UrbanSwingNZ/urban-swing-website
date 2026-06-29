@@ -15,7 +15,11 @@ const {generateAdminNotificationEmail, generateWelcomeEmail} = require("./emails
 const {generateAccountSetupEmail} = require("./emails/student-portal-setup-email");
 const {generatePortalInvitationEmail} = require("./emails/student-portal-invitation");
 const {generateErrorNotificationEmail} = require("./emails/error-notification-email");
+const {generateImproverPromotionAlert} = require("./emails/improver-promotion-alert");
 const {generateLowBalanceEmail, generateExpiringConcessionsEmail} = require("./emails/concession-notifications");
+const {generateMembershipRenewalSuccessEmail} = require("./emails/membership-renewal-success");
+const {generateMembershipRenewalFailureEmail} = require("./emails/membership-renewal-failure");
+const {generateMembershipExpiringSoonEmail} = require("./emails/membership-expiring-soon");
 
 // Define secrets for email configuration
 const emailPassword = defineSecret("EMAIL_APP_PASSWORD");
@@ -500,6 +504,84 @@ exports.sendPortalInvitationEmail = onCall(
 );
 
 /**
+ * Send Improver Promotion Alert Email
+ * Callable function to notify admin when a student is promoted to improver with remaining concessions
+ */
+exports.sendImproverPromotionAlert = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {
+      studentId,
+      studentName,
+      studentEmail,
+      totalConcessions,
+      totalAmount,
+      concessionDetails
+    } = request.data;
+    
+    logger.info("Improver promotion alert requested for student:", studentId);
+
+    if (!studentId || !studentName) {
+      logger.error("Missing required data:", {studentId, studentName});
+      throw new Error("Student ID and name are required");
+    }
+
+    try {
+      // Generate alert email
+      const alertEmail = generateImproverPromotionAlert({
+        studentName,
+        studentId,
+        studentEmail: studentEmail || 'N/A',
+        totalConcessions: totalConcessions || 0,
+        totalAmount: totalAmount || 0,
+        concessionDetails: concessionDetails || []
+      });
+      
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+      
+      // Send alert email to admin
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: "dance@urbanswing.co.nz",
+        subject: alertEmail.subject,
+        text: alertEmail.text,
+        html: alertEmail.html,
+      });
+
+      logger.info("Improver promotion alert sent successfully for:", studentName);
+      
+      return {
+        success: true,
+        message: "Improver promotion alert sent to admin",
+        studentName
+      };
+    } catch (error) {
+      logger.error("Error sending improver promotion alert:", {
+        studentId,
+        studentName,
+        error: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      throw new Error(error.message || "Failed to send improver promotion alert");
+    }
+  }
+);
+
+/**
  * Send low balance email when student has 1 concession remaining
  * Callable function to be invoked from client-side when balance drops to 1
  */
@@ -775,6 +857,225 @@ exports.sendExpiryWarningEmails = onSchedule(
         error: error.message,
         stack: error.stack
       });
+      throw error;
+    }
+  }
+);
+
+/**
+ * Send membership renewal success email
+ * Called when a recurring membership successfully renews via Stripe webhook
+ */
+exports.sendMembershipRenewalSuccessEmail = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {
+      studentEmail,
+      studentName,
+      firstName,
+      membershipType,
+      amount,
+      renewalDate,
+      newExpiryDate,
+      paymentMethod
+    } = request.data;
+
+    logger.info("Membership renewal success email requested for:", studentEmail);
+
+    if (!studentEmail || !studentName || !membershipType) {
+      logger.error("Missing required data:", {studentEmail, studentName, membershipType});
+      throw new Error("Student email, name, and membership type are required");
+    }
+
+    try {
+      // Generate email content
+      const emailContent = generateMembershipRenewalSuccessEmail({
+        studentName,
+        firstName: firstName || studentName.split(' ')[0],
+        membershipType,
+        amount,
+        renewalDate: renewalDate ? new Date(renewalDate) : new Date(),
+        newExpiryDate: new Date(newExpiryDate),
+        paymentMethod: paymentMethod || '****'
+      });
+
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+
+      // Send email with BCC to admin
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: studentEmail,
+        bcc: 'dance@urbanswing.co.nz',
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+      });
+
+      logger.info(`Membership renewal success email sent to ${studentEmail}`);
+
+      return { success: true };
+    } catch (error) {
+      logger.error("Error sending membership renewal success email:", error);
+      throw error;
+    }
+  }
+);
+
+/**
+ * Send membership renewal failure email
+ * Called when a recurring membership payment fails via Stripe webhook
+ */
+exports.sendMembershipRenewalFailureEmail = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {
+      studentEmail,
+      studentName,
+      firstName,
+      membershipType,
+      amount,
+      expiryDate,
+      failureCode,
+      failureMessage,
+      paymentMethod
+    } = request.data;
+
+    logger.info("Membership renewal failure email requested for:", studentEmail);
+
+    if (!studentEmail || !studentName || !membershipType) {
+      logger.error("Missing required data:", {studentEmail, studentName, membershipType});
+      throw new Error("Student email, name, and membership type are required");
+    }
+
+    try {
+      // Generate email content
+      const emailContent = generateMembershipRenewalFailureEmail({
+        studentName,
+        firstName: firstName || studentName.split(' ')[0],
+        membershipType,
+        amount,
+        expiryDate: new Date(expiryDate),
+        failureCode: failureCode || 'generic_decline',
+        failureMessage: failureMessage || 'Your payment could not be processed.',
+        paymentMethod: paymentMethod || '****'
+      });
+
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+
+      // Send email with BCC to admin
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: studentEmail,
+        bcc: 'dance@urbanswing.co.nz',
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+      });
+
+      logger.info(`Membership renewal failure email sent to ${studentEmail}`);
+
+      return { success: true };
+    } catch (error) {
+      logger.error("Error sending membership renewal failure email:", error);
+      throw error;
+    }
+  }
+);
+
+/**
+ * Send membership expiring soon warning email
+ * Called by scheduled function for non-recurring memberships expiring in 3 days
+ */
+exports.sendMembershipExpiringSoonEmail = onCall(
+  {
+    secrets: [emailPassword],
+    cors: true,
+    invoker: 'public',
+  },
+  async (request) => {
+    const {
+      studentEmail,
+      studentName,
+      firstName,
+      membershipType,
+      expiryDate,
+      daysUntilExpiry
+    } = request.data;
+
+    logger.info("Membership expiring soon email requested for:", studentEmail);
+
+    if (!studentEmail || !studentName || !membershipType) {
+      logger.error("Missing required data:", {studentEmail, studentName, membershipType});
+      throw new Error("Student email, name, and membership type are required");
+    }
+
+    try {
+      // Generate email content
+      const emailContent = generateMembershipExpiringSoonEmail({
+        studentName,
+        firstName: firstName || studentName.split(' ')[0],
+        membershipType,
+        expiryDate: new Date(expiryDate).toLocaleDateString('en-NZ', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        daysUntilExpiry: daysUntilExpiry || 3
+      });
+
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "dance@urbanswing.co.nz",
+          pass: emailPassword.value(),
+        },
+      });
+
+      // Send email with BCC to admin
+      await transporter.sendMail({
+        from: '"Urban Swing" <dance@urbanswing.co.nz>',
+        to: studentEmail,
+        bcc: 'dance@urbanswing.co.nz',
+        subject: emailContent.subject,
+        text: emailContent.text,
+        html: emailContent.html,
+      });
+
+      logger.info(`Membership expiring soon email sent to ${studentEmail}`);
+
+      return { success: true };
+    } catch (error) {
+      logger.error("Error sending membership expiring soon email:", error);
       throw error;
     }
   }

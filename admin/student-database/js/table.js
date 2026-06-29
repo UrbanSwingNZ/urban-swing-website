@@ -112,6 +112,9 @@ function createStudentRow(student) {
     const lastName = toTitleCase(student.lastName || '');
     const fullName = `${firstName} ${lastName}`.trim();
     
+    // Add improver styling if applicable
+    const improverClass = student.improver ? ' class="improver-name"' : '';
+    
     // Check if student was merged into another record
     const mergedBadge = (isDeleted && student.mergedInto) 
         ? `<span class="badge-merged" title="Merged into ${student.mergedInto}"><i class="fas fa-compress-arrows-alt"></i> Merged</span>`
@@ -172,7 +175,7 @@ function createStudentRow(student) {
         : 'N/A';
 
     row.innerHTML = `
-        <td><strong>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}</td>
+        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}</td>
         <td>${emailDisplay}</td>
         <td>${phoneDisplay}</td>
         <td>${escapeHtml(student.pronouns || '-')}</td>

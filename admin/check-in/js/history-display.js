@@ -27,6 +27,7 @@ function displayHistory(history) {
         const typeLabel = item.entryType === 'concession' ? 'Concession' : 
                          item.entryType === 'casual' ? 'Casual Entry' : 
                          item.entryType === 'casual-student' ? 'Casual Student' : 
+                         item.entryType === 'membership' ? 'Membership' : 
                          item.entryType === 'workshop-entry' ? 'Workshop' : 'Free Entry';
         return `<div class="history-item" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
             <div class="history-date-name" style="display:flex;align-items:center;gap:12px;">

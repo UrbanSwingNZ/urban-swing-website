@@ -257,6 +257,315 @@ class PaymentService {
     }
     
     /**
+     * Process one-time membership purchase
+     * @param {string} studentId - Student ID
+     * @param {string} membershipTypeId - Membership type ID
+     * @param {string} startDate - Optional ISO date string for scheduled membership
+     * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
+     */
+    async processMembershipPurchaseOneTime(studentId, membershipTypeId, startDate = null) {
+        try {
+            // Create payment method
+            const paymentMethodResult = await this.createPaymentMethod();
+            
+            if (!paymentMethodResult.success) {
+                throw new Error(paymentMethodResult.error);
+            }
+            
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Call Firebase Function to process purchase
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const requestBody = {
+                studentId: studentId,
+                membershipTypeId: membershipTypeId,
+                paymentMethodId: paymentMethodResult.paymentMethod.id
+            };
+            
+            if (startDate) {
+                requestBody.startDate = startDate;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_PURCHASE_ONETIME, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Membership purchase failed');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Membership purchase failed');
+            }
+            
+            return {
+                success: true,
+                result: result
+            };
+            
+        } catch (error) {
+            console.error('Membership purchase error:', error);
+            return {
+                success: false,
+                error: error.message || 'Membership purchase failed. Please try again.'
+            };
+        }
+    }
+    
+    /**
+     * Process recurring membership purchase (auto-renewing subscription)
+     * @param {string} studentId - Student ID
+     * @param {string} membershipTypeId - Membership type ID
+     * @param {string} startDate - Optional ISO date string for scheduled membership
+     * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
+     */
+    async processMembershipPurchaseRecurring(studentId, membershipTypeId, startDate = null) {
+        try {
+            // Create payment method
+            const paymentMethodResult = await this.createPaymentMethod();
+            
+            if (!paymentMethodResult.success) {
+                throw new Error(paymentMethodResult.error);
+            }
+            
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Call Firebase Function to process purchase
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const requestBody = {
+                studentId: studentId,
+                membershipTypeId: membershipTypeId,
+                paymentMethodId: paymentMethodResult.paymentMethod.id
+            };
+            
+            if (startDate) {
+                requestBody.startDate = startDate;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_PURCHASE_RECURRING, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Membership subscription failed');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Membership subscription failed');
+            }
+            
+            return {
+                success: true,
+                result: result
+            };
+            
+        } catch (error) {
+            console.error('Membership subscription error:', error);
+            return {
+                success: false,
+                error: error.message || 'Membership subscription failed. Please try again.'
+            };
+        }
+    }
+    
+    /**
+     * Toggle membership auto-renew
+     * @param {string} membershipId - Membership document ID
+     * @param {boolean} enabled - True to enable auto-renew, false to disable
+     * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
+     */
+    async toggleMembershipAutoRenew(membershipId, enabled) {
+        try {
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Call Firebase Function
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_TOGGLE_AUTORENEW, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    membershipId: membershipId,
+                    enabled: enabled
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update auto-renew');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to update auto-renew');
+            }
+            
+            return {
+                success: true,
+                result: result
+            };
+            
+        } catch (error) {
+            console.error('Auto-renew toggle error:', error);
+            return {
+                success: false,
+                error: error.message || 'Failed to update auto-renew. Please try again.'
+            };
+        }
+    }
+    
+    /**
+     * Cancel membership
+     * @param {string} membershipId - Membership document ID
+     * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
+     */
+    async cancelMembership(membershipId) {
+        try {
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Get user's name for cancelledBy field
+            const studentDoc = await firebase.firestore().collection('students').doc(user.uid).get();
+            const studentData = studentDoc.data();
+            const cancelledBy = `${studentData.firstName} ${studentData.lastName}`;
+            
+            // Call Firebase Function
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_CANCEL, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    membershipId: membershipId,
+                    cancelledBy: cancelledBy
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to cancel membership');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to cancel membership');
+            }
+            
+            return {
+                success: true,
+                result: result
+            };
+            
+        } catch (error) {
+            console.error('Membership cancellation error:', error);
+            return {
+                success: false,
+                error: error.message || 'Failed to cancel membership. Please try again.'
+            };
+        }
+    }
+    
+    /**
+     * Update membership payment method
+     * @param {string} membershipId - Membership document ID
+     * @param {string} paymentMethodId - Stripe payment method ID
+     * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
+     */
+    async updateMembershipPaymentMethod(membershipId, paymentMethodId) {
+        try {
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Call Firebase Function
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_UPDATE_PAYMENT, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    membershipId: membershipId,
+                    paymentMethodId: paymentMethodId
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update payment method');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to update payment method');
+            }
+            
+            return {
+                success: true,
+                result: result
+            };
+            
+        } catch (error) {
+            console.error('Payment method update error:', error);
+            return {
+                success: false,
+                error: error.message || 'Failed to update payment method. Please try again.'
+            };
+        }
+    }
+    
+    /**
      * Reset the card element (clear all input)
      */
     reset() {

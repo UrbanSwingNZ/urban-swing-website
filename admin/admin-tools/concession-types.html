@@ -49,6 +49,27 @@
 
             <div class="divider-gradient" style="margin: 40px 0;"></div>
 
+            <!-- Membership Types Section -->
+            <section class="membership-types-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fas fa-id-card"></i> Memberships</h2>
+                        <p class="section-description">Monthly membership options for improver students</p>
+                    </div>
+                    <button id="add-membership-btn" class="btn-primary btn-primary-lg">
+                        <i class="fas fa-plus"></i> Add Membership Type
+                    </button>
+                </div>
+                <div class="drag-hint" id="membership-drag-hint" style="display: none;">
+                    <i class="fas fa-arrows-alt"></i> Drag to reorder memberships
+                </div>
+                <div id="memberships-container" class="memberships-container">
+                    <!-- Membership types will be loaded here -->
+                </div>
+            </section>
+
+            <div class="divider-gradient" style="margin: 40px 0;"></div>
+
             <!-- Concession Packages Section -->
             <section class="concession-packages-section">
                 <div class="section-header">
@@ -146,6 +167,66 @@
         </div>
     </div>
 
+    <!-- Membership Add/Edit Modal -->
+    <div id="membership-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="membership-modal-title">
+                    <i class="fas fa-plus"></i> Add Membership Type
+                </h2>
+                <button class="modal-close" onclick="closeMembershipModal()">&times;</button>
+            </div>
+            
+            <form id="membership-form" onsubmit="saveMembership(event)">
+                <div class="modal-body">
+                    <div class="rate-form-group">
+                        <label for="membership-name">
+                            <i class="fas fa-tag"></i> Membership Name <span style="color: red;">*</span>
+                        </label>
+                        <input type="text" id="membership-name" placeholder="e.g., Monthly Membership, Premium Membership" required>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <label for="membership-price">
+                            <i class="fas fa-dollar-sign"></i> Monthly Price <span style="color: red;">*</span>
+                        </label>
+                        <div class="price-input-group">
+                            <input type="number" id="membership-price" step="0.01" min="0" placeholder="89.00" required>
+                        </div>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <label for="membership-description">
+                            <i class="fas fa-info-circle"></i> Description (Optional)
+                        </label>
+                        <textarea id="membership-description" placeholder="Additional information about this membership"></textarea>
+                    </div>
+
+                    <div class="rate-form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="membership-show-registration">
+                                <span>Offer on registration form</span>
+                            </label>
+                        </div>
+                        <small class="form-hint" style="display: block; margin-top: 4px; color: var(--text-muted); font-size: 0.85rem; font-style: italic;">
+                            Display this membership as an option when new improver students register
+                        </small>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeMembershipModal()">
+                    Cancel
+                </button>
+                <button type="submit" id="save-membership-btn" class="btn-primary" form="membership-form">
+                    <i class="fas fa-save"></i> Save Membership
+                </button>
+            </div>
+        </div>
+    </div>
+
 
 
     <!-- Firebase Config & Logic -->
@@ -163,6 +244,13 @@
     <script src="concession-types/package-display.js"></script>
     <script type="module" src="concession-types/modal-handlers.js"></script>
     <script src="concession-types/auth.js"></script>
+    
+    <!-- Membership Types Scripts -->
+    <script src="membership-types/drag-drop.js"></script>
+    <script src="membership-types/status-toggle.js"></script>
+    <script src="membership-types/membership-display.js"></script>
+    <script type="module" src="membership-types/modal-handlers.js"></script>
+    <script src="membership-types/auth.js"></script>
     
     <script>
         // Initialize casual rates when page loads

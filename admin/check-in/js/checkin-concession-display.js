@@ -5,7 +5,7 @@
 /**
  * Show selected student info
  */
-function showSelectedStudent(student) {
+async function showSelectedStudent(student) {
     const selectedInfo = document.getElementById('selected-student-info');
     const fullName = getStudentFullName(student);
     
@@ -13,14 +13,180 @@ function showSelectedStudent(student) {
     document.getElementById('selected-student-email').textContent = student.email || '';
     document.getElementById('selected-student-id').value = student.id;
     
-    // Show concession info and handle defaults based on crew member status
-    updateConcessionInfo(student);
+    // Check if student is improver
+    const membershipCheck = await window.checkStudentMembership(student.id);
+    
+    if (membershipCheck.isImprover) {
+        // Improver student - show membership info
+        await updateMembershipInfo(student, membershipCheck);
+    } else {
+        // Beginner student - show concession info (existing logic)
+        await updateConcessionInfo(student);
+    }
     
     selectedInfo.style.display = 'block';
     
     // Setup entry type listeners
     setupEntryTypeListeners();
 }
+
+/**
+ * Update membership info display for improver students
+ */
+async function updateMembershipInfo(student, membershipCheck) {
+    const concessionInfo = document.getElementById('concession-info');
+    const membershipInfo = document.getElementById('membership-info');
+    const purchaseSection = document.querySelector('.purchase-section');
+    
+    // Hide concession info, show membership info
+    if (concessionInfo) concessionInfo.style.display = 'none';
+    if (purchaseSection) purchaseSection.style.display = 'none';
+    if (membershipInfo) membershipInfo.style.display = 'block';
+    
+    const membershipHeader = document.getElementById('membership-header');
+    const membershipDetails = document.getElementById('membership-details');
+    
+    if (!membershipHeader || !membershipDetails) {
+        console.error('Membership UI elements not found');
+        return;
+    }
+    
+    // Add improver badge to student name
+    const studentNameEl = document.getElementById('selected-student-name');
+    if (studentNameEl && !studentNameEl.querySelector('.improver-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'improver-badge';
+        badge.style.marginLeft = '8px';
+        badge.innerHTML = '<i class="fas fa-star"></i> IMPROVER';
+        studentNameEl.appendChild(badge);
+    }
+    
+    if (membershipCheck.hasActiveMembership) {
+        // Has active membership
+        const expiryDate = membershipCheck.expiryDate.toDate();
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        membershipHeader.innerHTML = `
+            <i class="fas fa-id-card"></i>
+            <strong>Membership Status:</strong>
+            <span class="badge badge-yes">Active</span>
+        `;
+        
+        membershipDetails.innerHTML = `
+            <div style="padding: 0.75rem; background: var(--bg-success-light); border-radius: 4px; border-left: 4px solid var(--success);">
+                <div style="font-weight: 500; margin-bottom: 0.5rem;">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    Valid until: <strong>${formatDate(expiryDate)}</strong>
+                </div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">
+                    ${daysRemaining} ${daysRemaining === 1 ? 'day' : 'days'} remaining
+                </div>
+            </div>
+            <div style="margin-top: 0.75rem;">
+                <button type="button" class="btn-primary btn-purchase" onclick="purchaseMembershipForStudent('${student.id}')">
+                    <i class="fas fa-shopping-cart"></i> Renew Membership
+                </button>
+            </div>
+        `;
+        
+        // Enable membership entry option
+        const membershipRadio = document.getElementById('entry-membership');
+        if (membershipRadio) {
+            membershipRadio.disabled = false;
+            membershipRadio.parentElement.style.opacity = '1';
+            
+            // Set as default if not in edit mode
+            if (!isEditMode()) {
+                membershipRadio.checked = true;
+                membershipRadio.dispatchEvent(new Event('change'));
+                document.getElementById('confirm-checkin-btn').disabled = false;
+            }
+        }
+    } else {
+        // No active membership
+        membershipHeader.innerHTML = `
+            <i class="fas fa-id-card"></i>
+            <strong>Membership Status:</strong>
+            <span class="badge badge-no">No Active Membership</span>
+        `;
+        
+        membershipDetails.innerHTML = `
+            <div style="padding: 0.75rem; background: var(--bg-error-light); border-radius: 4px; border-left: 4px solid var(--error);">
+                <div style="font-weight: 500; margin-bottom: 0.5rem; color: var(--error);">
+                    <i class="fas fa-exclamation-circle"></i>
+                    This student does not have an active membership
+                </div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    Admin can override and check in anyway
+                </div>
+                <button type="button" class="btn-primary btn-purchase" onclick="purchaseMembershipForStudent('${student.id}')">
+                    <i class="fas fa-shopping-cart"></i> Purchase Membership
+                </button>
+            </div>
+        `;
+        
+        // Disable membership entry option
+        const membershipRadio = document.getElementById('entry-membership');
+        if (membershipRadio) {
+            membershipRadio.disabled = true;
+            membershipRadio.parentElement.style.opacity = '0.5';
+        }
+        
+        // Default to casual entry if not in edit mode
+        if (!isEditMode()) {
+            const casualEntryRadio = document.getElementById('entry-casual');
+            if (casualEntryRadio) {
+                casualEntryRadio.checked = true;
+                casualEntryRadio.dispatchEvent(new Event('change'));
+            }
+        }
+    }
+}
+
+/**
+ * Open membership assignment modal for a student (called from check-in UI)
+ */
+function purchaseMembershipForStudent(studentId) {
+    const student = getSelectedStudent();
+    if (!student || student.id !== studentId) {
+        window.showSnackbar('Student not found', 'error');
+        return;
+    }
+    
+    // Hide check-in modal before opening membership assignment modal
+    document.getElementById('checkin-modal').style.display = 'none';
+    
+    // Get the selected check-in date
+    const selectedDate = getSelectedCheckinDate();
+    
+    // Open membership assignment modal with student ID, callback, parent modal ID, student object, and check-in date
+    window.openMembershipAssignmentModal(student.id, async (result) => {
+        // Fetch fresh student data from Firestore
+        const studentDoc = await firebase.firestore().collection('students').doc(student.id).get();
+        if (!studentDoc.exists) {
+            window.showSnackbar('Error: Student not found', 'error');
+            return;
+        }
+        
+        const freshStudentData = {
+            id: studentDoc.id,
+            ...studentDoc.data()
+        };
+        
+        // Re-set the selected student with fresh data
+        setSelectedStudent(freshStudentData);
+        
+        // Refresh membership info after assignment
+        const membershipCheck = await window.checkStudentMembership(student.id);
+        if (membershipCheck.isImprover) {
+            await updateMembershipInfo(freshStudentData, membershipCheck);
+        }
+    }, 'checkin-modal', student, selectedDate);
+}
+
+// Expose function globally
+window.purchaseMembershipForStudent = purchaseMembershipForStudent;
 
 /**
  * Update concession info display
@@ -70,6 +236,13 @@ async function updateConcessionInfo(student) {
         } else {
             concessionRadio.disabled = true;
             concessionRadio.parentElement.style.opacity = '0.5';
+        }
+        
+        // Disable membership option for non-improver students
+        const membershipRadio = document.getElementById('entry-membership');
+        if (membershipRadio) {
+            membershipRadio.disabled = true;
+            membershipRadio.parentElement.style.opacity = '0.5';
         }
         
         // Set defaults only if NOT in edit mode

@@ -34,7 +34,37 @@ const API_CONFIG = {
      * Cancel a student's workshop registration
      * POST endpoint: { studentId, workshopId }
      */
-    WORKSHOP_DEREGISTER: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/deregisterWorkshop`
+    WORKSHOP_DEREGISTER: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/deregisterWorkshop`,
+
+    /**
+     * Process one-time membership purchase
+     * POST endpoint for non-recurring membership payments
+     */
+    MEMBERSHIP_PURCHASE_ONETIME: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processOneTimeMembershipPurchase`,
+
+    /**
+     * Process recurring membership purchase
+     * POST endpoint for auto-renewing membership subscriptions
+     */
+    MEMBERSHIP_PURCHASE_RECURRING: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/processRecurringMembershipPurchase`,
+
+    /**
+     * Toggle membership auto-renew
+     * POST endpoint: { membershipId, enabled }
+     */
+    MEMBERSHIP_TOGGLE_AUTORENEW: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/toggleMembershipAutoRenew`,
+
+    /**
+     * Cancel membership
+     * POST endpoint: { membershipId, cancelledBy }
+     */
+    MEMBERSHIP_CANCEL: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/cancelMembership`,
+
+    /**
+     * Update membership payment method
+     * POST endpoint: { membershipId, paymentMethodId }
+     */
+    MEMBERSHIP_UPDATE_PAYMENT: `https://${FUNCTIONS_REGION}-${PROJECT_ID}.cloudfunctions.net/updateMembershipPaymentMethod`
 };
 
 // Make API_CONFIG available globally for non-module scripts
