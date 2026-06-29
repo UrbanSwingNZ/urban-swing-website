@@ -40,6 +40,10 @@
         '/student-portal/workshops/': {
             title: 'Workshops',
             activePage: 'workshops'
+        },
+        '/student-portal/membership/': {
+            title: 'Membership',
+            activePage: 'membership'
         }
     };
 
@@ -132,7 +136,7 @@
         // Setup logout button
         setupLogout();
 
-        // Load user information
+        // Load user information (will trigger UI updates via events)
         loadUserInfo();
     }
 
@@ -277,6 +281,24 @@
                 if (event.detail && event.detail.student) {
                     const student = event.detail.student;
                     userNameElement.textContent = `${student.firstName} ${student.lastName}`;
+                    
+                    // Store student data and apply improver-based UI
+                    window.currentStudent = student;
+                    applyImproverBasedUI();
+                }
+            });
+            
+            // Listen for student loaded event (when regular student logs in)
+            window.addEventListener('studentLoaded', (event) => {
+                if (event.detail) {
+                    // Handle both event formats:
+                    // 1. event.detail = student (from auth-check.js)
+                    // 2. event.detail = { student, isAdminView } (from profile.js)
+                    const student = event.detail.student || event.detail;
+                    
+                    // Store student data and apply improver-based UI
+                    window.currentStudent = student;
+                    applyImproverBasedUI();
                 }
             });
 
@@ -326,7 +348,14 @@
 
             if (!studentsSnapshot.empty) {
                 const student = studentsSnapshot.docs[0].data();
+                const studentId = studentsSnapshot.docs[0].id;
                 element.textContent = `${student.firstName} ${student.lastName}`;
+                
+                // Store student data for UI visibility logic
+                window.currentStudent = { ...student, id: studentId };
+                
+                // Apply improver-based UI after loading student
+                applyImproverBasedUI();
             } else {
                 // Might be admin - just show email
                 element.textContent = user.email;
@@ -334,6 +363,68 @@
         } catch (error) {
             console.error('Error loading user name:', error);
             element.textContent = user.email;
+        }
+    }
+    
+    /**
+     * Apply improver-based UI visibility
+     * Shows/hides navigation items and dashboard tiles based on student's improver status
+     */
+    async function applyImproverBasedUI() {
+        try {
+            // Get current student
+            const student = window.currentStudent;
+            
+            if (!student) {
+                // Not yet loaded or admin viewing - default to showing beginner UI
+                return;
+            }
+            
+            const isImprover = student.improver === true;
+            
+            // Navigation items to toggle
+            const prepayNav = document.querySelector('[data-nav="prepay"]');
+            const purchaseNav = document.querySelector('[data-nav="purchase"]');
+            const concessionsNav = document.querySelector('[data-nav="concessions"]');
+            const membershipNav = document.querySelector('[data-nav="membership"]');
+            
+            // Dashboard tiles to toggle
+            const prepayTile = document.getElementById('nav-prepay');
+            const purchaseTile = document.getElementById('nav-purchase');
+            const concessionsTile = document.getElementById('nav-concessions');
+            const membershipTile = document.getElementById('nav-membership');
+            
+            if (isImprover) {
+                // IMPROVER: Show membership, hide concessions/prepay
+                if (membershipNav) membershipNav.style.display = '';
+                if (membershipTile) membershipTile.style.display = '';
+                
+                if (prepayNav) prepayNav.style.display = 'none';
+                if (purchaseNav) purchaseNav.style.display = 'none';
+                if (concessionsNav) concessionsNav.style.display = 'none';
+                
+                if (prepayTile) prepayTile.style.display = 'none';
+                if (purchaseTile) purchaseTile.style.display = 'none';
+                if (concessionsTile) concessionsTile.style.display = 'none';
+            } else {
+                // BEGINNER: Show concessions/prepay, hide membership
+                if (prepayNav) prepayNav.style.display = '';
+                if (purchaseNav) purchaseNav.style.display = '';
+                if (concessionsNav) concessionsNav.style.display = '';
+                
+                if (prepayTile) prepayTile.style.display = '';
+                if (purchaseTile) purchaseTile.style.display = '';
+                if (concessionsTile) concessionsTile.style.display = '';
+                
+                if (membershipNav) membershipNav.style.display = 'none';
+                if (membershipTile) membershipTile.style.display = 'none';
+            }
+            
+            // Refresh mobile menu to reflect changes
+            setupMobileMenu();
+            
+        } catch (error) {
+            console.error('Error applying improver-based UI:', error);
         }
     }
 

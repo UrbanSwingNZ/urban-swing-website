@@ -291,6 +291,9 @@ async function editTransaction(transaction) {
         } else if (transaction.type === 'workshop-entry') {
             showSnackbar('Workshop transactions cannot be edited here. Please manage from the Workshops page.', 'info');
             return;
+        } else if (transaction.type === 'membership-purchase' || transaction.type === 'membership-renewal' || transaction.type === 'membership-cancellation') {
+            showSnackbar('Membership transactions cannot be edited. Please manage from the Memberships page.', 'info');
+            return;
         } else if (transaction.type === 'casual' || transaction.type === 'casual-student') {
             await editCasualEntryTransaction(transaction, transactionData);
         } else if (transaction.type === 'concession-purchase') {

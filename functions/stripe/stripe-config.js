@@ -8,7 +8,16 @@ const Stripe = require('stripe');
 const admin = require('firebase-admin');
 
 // Initialize Stripe with secret key from environment variables
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+// During local code analysis, use placeholder if secret not available
+// IMPORTANT: Trim to remove any newlines or whitespace that could break the Authorization header
+const stripeKey = (process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder_for_analysis').trim();
+const stripe = Stripe(stripeKey, {
+  maxNetworkRetries: 2,
+  timeout: 20000, // 20 seconds
+  telemetry: false
+});
+
+console.log('Stripe SDK initialized with key prefix:', stripeKey.substring(0, 10));
 
 // Currency configuration
 const CURRENCY = 'nzd'; // New Zealand Dollars
@@ -58,6 +67,25 @@ async function fetchPricing() {
           numberOfClasses: pkg.numberOfClasses,
           expiryMonths: pkg.expiryMonths,
           description: pkg.description || null
+        };
+      }
+    });
+    
+    // Fetch membership types from Firestore
+    const membershipTypesSnapshot = await db.collection('membershipTypes').get();
+    
+    membershipTypesSnapshot.forEach(doc => {
+      const membership = doc.data();
+      const docId = doc.id;
+      
+      // Include all active membership types
+      if (membership.isActive !== false) {
+        packages[docId] = {
+          price: Math.round(membership.price * 100), // Convert to cents
+          name: membership.name || 'Monthly Membership',
+          type: 'membership',
+          billingPeriod: membership.billingPeriod || 'month',
+          description: membership.description || null
         };
       }
     });

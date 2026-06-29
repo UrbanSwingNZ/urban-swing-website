@@ -31,9 +31,28 @@ async function loadAllTransactions() {
  * Normalize transaction data to standard format
  */
 async function normalizeTransaction(transaction) {
-    const date = transaction.transactionDate?.toDate ? transaction.transactionDate.toDate()
-        : transaction.date?.toDate ? transaction.date.toDate()
-        : new Date(transaction.transactionDate || transaction.date);
+    // Handle date parsing with fallbacks
+    let date;
+    if (transaction.transactionDate?.toDate) {
+        date = transaction.transactionDate.toDate();
+    } else if (transaction.date?.toDate) {
+        date = transaction.date.toDate();
+    } else if (transaction.classDate?.toDate) {
+        // Fallback to classDate for older transactions
+        date = transaction.classDate.toDate();
+    } else if (transaction.createdAt?.toDate) {
+        // Fallback to createdAt as last resort
+        date = transaction.createdAt.toDate();
+    } else if (transaction.transactionDate) {
+        date = new Date(transaction.transactionDate);
+    } else if (transaction.date) {
+        date = new Date(transaction.date);
+    } else {
+        // If no valid date found, use current date and log warning
+        console.warn('Transaction missing date field:', transaction.id);
+        date = new Date();
+    }
+    
     const paymentMethod = (transaction.paymentMethod || '').toLowerCase();
     
     // Handle refund transactions differently
@@ -86,6 +105,12 @@ async function normalizeTransaction(transaction) {
         }
     } else if (transactionType === 'workshop-entry') {
         typeName = 'Workshop Entry';
+    } else if (transactionType === 'membership-purchase') {
+        typeName = 'Membership Purchase';
+    } else if (transactionType === 'membership-renewal') {
+        typeName = 'Membership Renewal';
+    } else if (transactionType === 'membership-cancellation') {
+        typeName = 'Membership Cancellation';
     } else {
         typeName = 'Transaction';
     }

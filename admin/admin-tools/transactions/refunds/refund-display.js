@@ -54,6 +54,15 @@ function getTypeBadgeWithRefundStatus(transaction) {
     } else if (transaction.type === 'workshop-entry') {
         typeBadgeClass = 'workshop';
         typeName = 'Workshop Entry';
+    } else if (transaction.type === 'membership-purchase') {
+        typeBadgeClass = 'membership-purchase';
+        typeName = 'Membership Purchase';
+    } else if (transaction.type === 'membership-renewal') {
+        typeBadgeClass = 'membership-renewal';
+        typeName = 'Membership Renewal';
+    } else if (transaction.type === 'membership-cancellation') {
+        typeBadgeClass = 'membership-cancellation';
+        typeName = 'Membership Cancellation';
     } else {
         typeBadgeClass = 'other';
         typeName = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1).toLowerCase();

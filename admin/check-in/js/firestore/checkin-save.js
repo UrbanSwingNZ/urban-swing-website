@@ -81,6 +81,18 @@ export async function saveCheckinToFirestore(student, entryType, paymentMethod, 
         let actualEntryType = entryType;
         let actualAmountPaid = 0;
         let actualPaymentMethod = paymentMethod;
+        let checkInSource = null; // Track source: 'membership', 'concession', or 'casual'
+        
+        // Determine source based on entry type
+        if (entryType === 'membership') {
+            checkInSource = 'membership';
+        } else if (entryType === 'concession') {
+            checkInSource = 'concession';
+        } else if (entryType === 'casual' || entryType === 'casual-student') {
+            checkInSource = 'casual';
+        } else if (entryType === 'free') {
+            checkInSource = 'free';
+        }
         
         // Handle online payment
         if (entryType === 'online-payment') {
@@ -271,6 +283,7 @@ export async function saveCheckinToFirestore(student, entryType, paymentMethod, 
             studentName: window.getStudentFullName(student),
             checkinDate: firebase.firestore.Timestamp.fromDate(checkinDate),
             entryType: actualEntryType,
+            source: checkInSource, // Track whether from membership, concession, or casual
             paymentMethod: actualPaymentMethod,
             freeEntryReason: entryType === 'free' ? freeEntryReason : null,
             amountPaid: actualAmountPaid,

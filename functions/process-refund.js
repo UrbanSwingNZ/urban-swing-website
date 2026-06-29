@@ -16,7 +16,8 @@ exports.processRefund = onCall(
     { 
         region: 'us-central1',
         cors: true,
-        invoker: 'public'
+        invoker: 'public',
+        secrets: ['STRIPE_SECRET_KEY']
     },
     async (request) => {
         // Ensure user is authenticated

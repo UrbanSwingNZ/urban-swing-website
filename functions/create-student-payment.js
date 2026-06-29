@@ -54,7 +54,8 @@ function generateStudentId(firstName, lastName) {
 exports.createStudentWithPayment = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Allow unauthenticated calls from student portal
+    invoker: 'public', // Allow unauthenticated calls from student portal
+    secrets: ['STRIPE_SECRET_KEY']
   },
   async (request, response) => {
     // Handle CORS

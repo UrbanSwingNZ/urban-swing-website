@@ -81,6 +81,7 @@ async function loadCurrentStudentProfile() {
         
         currentStudentId = student.id;
         currentStudent = student;
+        window.currentStudent = student; // Expose for header UI
         
         loadProfileData(currentStudent, currentStudentId);
         
@@ -117,6 +118,7 @@ async function loadStudentById(studentId) {
 async function loadStudentProfile(student) {
     currentStudent = student;
     currentStudentId = student.id;
+    window.currentStudent = student; // Expose for header UI
     
     // Ensure we're tracking admin status correctly
     isViewingAsAdmin = isAdminView();

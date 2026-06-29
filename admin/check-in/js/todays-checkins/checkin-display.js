@@ -45,6 +45,9 @@ export function displayTodaysCheckins() {
         } else if (checkin.entryType === 'casual-student') {
             typeClass = 'casual-student';
             typeLabel = 'Casual Student';
+        } else if (checkin.entryType === 'membership') {
+            typeClass = 'membership';
+            typeLabel = 'Membership';
         } else if (checkin.entryType === 'free' && checkin.freeEntryReason === 'crew-member') {
             typeClass = 'crew';
             typeLabel = 'Crew';

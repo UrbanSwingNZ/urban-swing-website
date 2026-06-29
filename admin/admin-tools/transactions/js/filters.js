@@ -39,6 +39,9 @@ function applyTransactionFilters(allTransactions, dateFrom, dateTo, typeFilter, 
             // Match all casual entry types: 'casual-entry', 'casual', 'casual-student'
             if (typeFilter === 'casual-entry' && !['casual-entry', 'casual', 'casual-student'].includes(transaction.type)) return false;
             if (typeFilter === 'workshop-entry' && transaction.type !== 'workshop-entry') return false;
+            if (typeFilter === 'membership-purchase' && transaction.type !== 'membership-purchase') return false;
+            if (typeFilter === 'membership-renewal' && transaction.type !== 'membership-renewal') return false;
+            if (typeFilter === 'membership-cancellation' && transaction.type !== 'membership-cancellation') return false;
         }
         
         // Payment method filter
