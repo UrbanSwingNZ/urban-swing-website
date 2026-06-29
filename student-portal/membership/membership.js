@@ -260,7 +260,7 @@ async function displayCurrentMembership() {
                     <input 
                         type="checkbox" 
                         id="autorenew-toggle-input"
-                        checked
+                        ${currentMembership.autoRenew ? 'checked' : ''}
                     >
                     <span class="toggle-slider"></span>
                 </label>

@@ -90,6 +90,7 @@ exports.toggleMembershipAutoRenew = onRequest(
         
         // Step 3: Update membership document
         const updateData = {
+          autoRenew: data.enabled, // Update the autoRenew field
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
         };
         
