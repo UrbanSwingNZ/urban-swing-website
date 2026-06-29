@@ -593,6 +593,7 @@ exports.processRecurringMembershipPurchase = onRequest(
           price: membershipInfo.price / 100, // Convert cents to dollars
           status: 'active',
           isRecurring: true, // Recurring subscription
+          autoRenew: true, // Auto-renew enabled by default for recurring subscriptions
           purchaseDate: admin.firestore.Timestamp.fromDate(new Date()),
           currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
           currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
