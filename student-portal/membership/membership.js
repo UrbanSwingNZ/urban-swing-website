@@ -14,6 +14,9 @@ let membershipService = null;
 let paymentService = null;
 let selectedMembershipType = null;
 let currentMembership = null;
+let upcomingMembership = null;
+let allActiveMemberships = [];
+let allScheduledMemberships = [];
 let isViewingAsAdmin = false;
 
 // Wait for Firebase and DOM
@@ -111,22 +114,59 @@ async function initializePage() {
             return;
         }
 
-        // Load current membership (active or most recently expired)
-        currentMembership = await membershipService.getCurrentMembership(currentStudentId);
+        // Load all memberships
+        allActiveMemberships = await membershipService.getAllActiveMemberships(currentStudentId);
+        
+        // Try to load scheduled memberships (may fail if index is still building)
+        try {
+            allScheduledMemberships = await membershipService.getScheduledMemberships(currentStudentId);
+        } catch (error) {
+            console.warn('Could not load scheduled memberships (index may be building):', error);
+            allScheduledMemberships = []; // Default to empty array
+        }
+        
+        // Get current active membership (if any)
+        currentMembership = allActiveMemberships.length > 0 ? allActiveMemberships[0] : null;
+        
+        // Get upcoming scheduled membership (if any)
+        upcomingMembership = allScheduledMemberships.length > 0 ? allScheduledMemberships[0] : null;
 
+        const totalMemberships = allActiveMemberships.length + allScheduledMemberships.length;
+
+        // Determine which sections to show
         if (currentMembership) {
+            // Has an active membership
             if (currentMembership.status === 'active') {
-                // Student has active membership - show management view
-                // Reset section header in case it was changed
+                // Reset section header
                 const sectionHeader = document.querySelector('#current-membership-section .section-header h2');
                 if (sectionHeader) {
                     sectionHeader.innerHTML = '<i class="fas fa-id-card"></i> My Membership';
                 }
                 await displayCurrentMembership();
-                showSection('current-membership');
-            } else if (currentMembership.status === 'expired') {
-                // Student has expired membership - show both expired details and purchase options
-                // Update section header for expired membership
+                
+                // Show upcoming membership if exists
+                if (upcomingMembership) {
+                    await displayUpcomingMembership();
+                }
+                
+                // Show purchase button if eligible (one-time membership AND less than 2 total memberships)
+                const canPurchaseMore = !currentMembership.autoRenew && totalMemberships < 2;
+                
+                if (canPurchaseMore) {
+                    await displayAvailableMemberships();
+                    showSection('current-with-purchase');
+                } else {
+                    showSection('current-membership');
+                }
+            }
+        } else {
+            // No active membership - check for most recently expired one
+            const expiredMembership = await membershipService.getCurrentMembership(currentStudentId);
+            
+            if (expiredMembership && expiredMembership.status === 'expired') {
+                // Has expired membership - show both expired details and purchase options
+                currentMembership = expiredMembership;
+                
                 const sectionHeader = document.querySelector('#current-membership-section .section-header h2');
                 if (sectionHeader) {
                     sectionHeader.innerHTML = '<i class="fas fa-history"></i> Previous Membership';
@@ -135,14 +175,10 @@ async function initializePage() {
                 await displayAvailableMemberships();
                 showSection('expired-membership');
             } else {
-                // Inactive or other status - show purchase view
+                // No membership at all - show purchase view
                 await displayAvailableMemberships();
                 showSection('purchase-membership');
             }
-        } else {
-            // No membership at all - show purchase view
-            await displayAvailableMemberships();
-            showSection('purchase-membership');
         }
 
     } catch (error) {
@@ -158,12 +194,22 @@ async function initializePage() {
  */
 function showSection(section) {
     document.getElementById('current-membership-section').style.display = 'none';
+    document.getElementById('upcoming-membership-section').style.display = 'none';
     document.getElementById('purchase-membership-section').style.display = 'none';
     document.getElementById('not-eligible-section').style.display = 'none';
     document.getElementById('main-container').style.display = 'block';
 
     if (section === 'current-membership') {
         document.getElementById('current-membership-section').style.display = 'block';
+        if (upcomingMembership) {
+            document.getElementById('upcoming-membership-section').style.display = 'block';
+        }
+    } else if (section === 'current-with-purchase') {
+        document.getElementById('current-membership-section').style.display = 'block';
+        if (upcomingMembership) {
+            document.getElementById('upcoming-membership-section').style.display = 'block';
+        }
+        document.getElementById('purchase-membership-section').style.display = 'block';
     } else if (section === 'expired-membership') {
         // Show both expired details and purchase options
         document.getElementById('current-membership-section').style.display = 'block';
@@ -256,19 +302,26 @@ async function displayCurrentMembership() {
         <div class="autorenew-toggle">
             <div class="autorenew-toggle-header">
                 <h4><i class="fas fa-sync-alt"></i> Auto-Renew</h4>
-                <label class="toggle-switch">
+                <label class="toggle-switch ${!currentMembership.autoRenew && allScheduledMemberships.length > 0 ? 'disabled' : ''}">
                     <input 
                         type="checkbox" 
                         id="autorenew-toggle-input"
                         ${currentMembership.autoRenew ? 'checked' : ''}
+                        ${!currentMembership.autoRenew && allScheduledMemberships.length > 0 ? 'disabled' : ''}
                     >
                     <span class="toggle-slider"></span>
                 </label>
             </div>
+            ${!currentMembership.autoRenew && allScheduledMemberships.length > 0 ? `
+            <p class="autorenew-description warning">
+                <i class="fas fa-info-circle"></i> Auto-renew is disabled because you have a scheduled membership that will start after this one expires.
+            </p>
+            ` : `
             <p class="autorenew-description">
                 When enabled, your membership will automatically renew monthly. 
                 Turning this off will not cancel your current membership - you'll have access until ${formattedExpiry}.
             </p>
+            `}
         </div>
         ` : ''}
 
@@ -303,6 +356,65 @@ async function displayCurrentMembership() {
             window.location.href = '../transactions/index.html';
         });
     }
+}
+
+/**
+ * Display upcoming scheduled membership
+ */
+async function displayUpcomingMembership() {
+    const container = document.getElementById('upcoming-membership-card');
+
+    if (!upcomingMembership) {
+        container.innerHTML = '<p>No upcoming membership scheduled.</p>';
+        return;
+    }
+
+    const startDate = upcomingMembership.startDate.toDate();
+    const formattedStart = startDate.toLocaleDateString('en-NZ', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    const expiryDate = upcomingMembership.currentPeriodEnd.toDate();
+    const formattedExpiry = expiryDate.toLocaleDateString('en-NZ', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    const isRecurring = upcomingMembership.isRecurring === true;
+
+    container.innerHTML = `
+        <div class="membership-status">
+            <h3><i class="fas fa-calendar-plus"></i> ${upcomingMembership.typeName}</h3>
+            <span class="membership-status-badge scheduled">Scheduled</span>
+        </div>
+
+        <div class="upcoming-message">
+            <i class="fas fa-info-circle"></i>
+            <p>Your new membership will automatically start on <strong>${formattedStart}</strong>, the day after your current membership expires.</p>
+        </div>
+
+        <div class="membership-details-grid">
+            <div class="detail-item">
+                <span class="detail-label"><i class="fas fa-dollar-sign"></i> Monthly Price</span>
+                <span class="detail-value price">$${upcomingMembership.price.toFixed(2)}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label"><i class="fas fa-calendar-check"></i> Starts On</span>
+                <span class="detail-value">${formattedStart}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label"><i class="fas fa-calendar-times"></i> Expires On</span>
+                <span class="detail-value">${formattedExpiry}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label"><i class="fas fa-sync-alt"></i> Membership Type</span>
+                <span class="detail-value">${isRecurring ? 'Auto-Renewing' : 'One-Time'}</span>
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -470,16 +582,61 @@ async function handlePurchaseSubmit(event) {
         const membershipType = document.querySelector('input[name="membership-type"]:checked').value;
         const isRecurring = membershipType === 'recurring';
 
-        // Process payment
+        // Calculate start date if purchasing with existing membership
+        let startDate = null;
+        if (allActiveMemberships.length > 0 || allScheduledMemberships.length > 0) {
+            // Find the latest expiry date among all memberships
+            const allMemberships = [...allActiveMemberships, ...allScheduledMemberships];
+            let latestExpiry = null;
+            
+            allMemberships.forEach(membership => {
+                if (membership.currentPeriodEnd && typeof membership.currentPeriodEnd.toDate === 'function') {
+                    const expiryDate = membership.currentPeriodEnd.toDate();
+                    if (!latestExpiry || expiryDate > latestExpiry) {
+                        latestExpiry = expiryDate;
+                    }
+                }
+            });
+            
+            if (latestExpiry) {
+                // Start new membership the day after latest expiry
+                // Extract local date components to determine the next day
+                const year = latestExpiry.getFullYear();
+                const month = latestExpiry.getMonth();
+                const day = latestExpiry.getDate();
+                
+                // Calculate next day (in local timezone)
+                const nextDay = new Date(year, month, day + 1);
+                
+                // Format as YYYY-MM-DD for the backend to parse consistently
+                const nextYear = nextDay.getFullYear();
+                const nextMonth = String(nextDay.getMonth() + 1).padStart(2, '0');
+                const nextDate = String(nextDay.getDate()).padStart(2, '0');
+                startDate = `${nextYear}-${nextMonth}-${nextDate}`;
+            }
+        }
+
+        // Process payment with optional start date
         let result;
         if (isRecurring) {
-            result = await paymentService.processMembershipPurchaseRecurring(currentStudentId, selectedMembershipType.id);
+            result = await paymentService.processMembershipPurchaseRecurring(
+                currentStudentId, 
+                selectedMembershipType.id,
+                startDate
+            );
         } else {
-            result = await paymentService.processMembershipPurchaseOneTime(currentStudentId, selectedMembershipType.id);
+            result = await paymentService.processMembershipPurchaseOneTime(
+                currentStudentId, 
+                selectedMembershipType.id,
+                startDate
+            );
         }
 
         if (result.success) {
-            showSnackbar('Membership activated successfully!', 'success');
+            const message = startDate 
+                ? 'Membership purchased! It will start after your current membership expires.'
+                : 'Membership activated successfully!';
+            showSnackbar(message, 'success');
             
             // Wait a moment then reload to show membership details
             setTimeout(() => {

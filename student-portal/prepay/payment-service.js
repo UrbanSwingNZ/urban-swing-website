@@ -260,9 +260,10 @@ class PaymentService {
      * Process one-time membership purchase
      * @param {string} studentId - Student ID
      * @param {string} membershipTypeId - Membership type ID
+     * @param {string} startDate - Optional ISO date string for scheduled membership
      * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
      */
-    async processMembershipPurchaseOneTime(studentId, membershipTypeId) {
+    async processMembershipPurchaseOneTime(studentId, membershipTypeId, startDate = null) {
         try {
             // Create payment method
             const paymentMethodResult = await this.createPaymentMethod();
@@ -284,14 +285,20 @@ class PaymentService {
                 headers['Authorization'] = `Bearer ${token}`;
             }
             
+            const requestBody = {
+                studentId: studentId,
+                membershipTypeId: membershipTypeId,
+                paymentMethodId: paymentMethodResult.paymentMethod.id
+            };
+            
+            if (startDate) {
+                requestBody.startDate = startDate;
+            }
+            
             const response = await fetch(API_CONFIG.MEMBERSHIP_PURCHASE_ONETIME, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({
-                    studentId: studentId,
-                    membershipTypeId: membershipTypeId,
-                    paymentMethodId: paymentMethodResult.paymentMethod.id
-                })
+                body: JSON.stringify(requestBody)
             });
             
             if (!response.ok) {
@@ -323,9 +330,10 @@ class PaymentService {
      * Process recurring membership purchase (auto-renewing subscription)
      * @param {string} studentId - Student ID
      * @param {string} membershipTypeId - Membership type ID
+     * @param {string} startDate - Optional ISO date string for scheduled membership
      * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
      */
-    async processMembershipPurchaseRecurring(studentId, membershipTypeId) {
+    async processMembershipPurchaseRecurring(studentId, membershipTypeId, startDate = null) {
         try {
             // Create payment method
             const paymentMethodResult = await this.createPaymentMethod();
@@ -347,14 +355,20 @@ class PaymentService {
                 headers['Authorization'] = `Bearer ${token}`;
             }
             
+            const requestBody = {
+                studentId: studentId,
+                membershipTypeId: membershipTypeId,
+                paymentMethodId: paymentMethodResult.paymentMethod.id
+            };
+            
+            if (startDate) {
+                requestBody.startDate = startDate;
+            }
+            
             const response = await fetch(API_CONFIG.MEMBERSHIP_PURCHASE_RECURRING, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({
-                    studentId: studentId,
-                    membershipTypeId: membershipTypeId,
-                    paymentMethodId: paymentMethodResult.paymentMethod.id
-                })
+                body: JSON.stringify(requestBody)
             });
             
             if (!response.ok) {

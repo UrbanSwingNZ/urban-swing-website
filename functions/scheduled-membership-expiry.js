@@ -28,10 +28,11 @@ exports.checkExpiredMemberships = onSchedule({
   timeZone: 'Pacific/Auckland',
   region: 'us-central1'
 }, async (event) => {
-  console.log('Starting daily expired membership check...');
+  console.log('Starting daily membership check (activation, expiry, warnings)...');
   
   const db = admin.firestore();
   const now = admin.firestore.Timestamp.now();
+  const activatedList = [];
   const expiredList = [];
   
   // Calculate 3 days from now for expiry warnings
@@ -46,6 +47,60 @@ exports.checkExpiredMemberships = onSchedule({
   const threeDaysStartTimestamp = admin.firestore.Timestamp.fromDate(threeDaysStart);
   
   try {
+    // ========================================
+    // 1. ACTIVATE SCHEDULED MEMBERSHIPS
+    // ========================================
+    console.log('Checking for scheduled memberships to activate...');
+    
+    const scheduledMemberships = await db.collection('memberships')
+      .where('status', '==', 'scheduled')
+      .where('startDate', '<=', now)
+      .get();
+    
+    console.log(`Found ${scheduledMemberships.size} scheduled memberships ready to activate`);
+    
+    for (const doc of scheduledMemberships.docs) {
+      const membershipData = doc.data();
+      const membershipId = doc.id;
+      
+      console.log(`Activating scheduled membership: ${membershipId}`);
+      
+      try {
+        // Update membership status to active
+        await db.collection('memberships').doc(membershipId).update({
+          status: 'active',
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update student document
+        await db.collection('students').doc(membershipData.studentId).update({
+          activeMembershipId: membershipId,
+          membershipStatus: 'active',
+          membershipExpiryDate: membershipData.currentPeriodEnd,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        
+        activatedList.push({
+          studentId: membershipData.studentId,
+          studentName: membershipData.studentName,
+          membershipType: membershipData.typeName,
+          startDate: membershipData.startDate.toDate().toLocaleDateString('en-NZ'),
+          expiryDate: membershipData.currentPeriodEnd.toDate().toLocaleDateString('en-NZ')
+        });
+        
+        console.log(`Successfully activated membership ${membershipId} for ${membershipData.studentName}`);
+      } catch (error) {
+        console.error(`Error activating membership ${membershipId}:`, error);
+      }
+    }
+    
+    console.log(`Scheduled membership activation complete: ${activatedList.length} memberships activated`);
+    
+    // ========================================
+    // 2. EXPIRE ACTIVE MEMBERSHIPS
+    // ========================================
+    console.log('Checking for expired memberships...');
+    
     // Query for active memberships that have passed their expiry date
     // Only check non-recurring OR recurring without Stripe subscription (manually cancelled)
     const expiredMemberships = await db.collection('memberships')
@@ -187,6 +242,8 @@ exports.checkExpiredMemberships = onSchedule({
     
     return {
       success: true,
+      activatedCount: activatedList.length,
+      activatedMemberships: activatedList,
       expiredCount: expiredList.length,
       expiredMemberships: expiredList,
       expiringCount: expiringList.length,
