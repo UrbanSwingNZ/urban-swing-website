@@ -22,7 +22,8 @@ const cors = require('cors')({ origin: true });
 exports.toggleMembershipAutoRenew = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Allow unauthenticated calls from student portal
+    invoker: 'public', // Allow unauthenticated calls from student portal
+    secrets: ['STRIPE_SECRET_KEY']
   },
   async (request, response) => {
     // Handle CORS
@@ -163,7 +164,8 @@ exports.toggleMembershipAutoRenew = onRequest(
 exports.cancelMembership = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Allow unauthenticated calls from student portal
+    invoker: 'public', // Allow unauthenticated calls from student portal
+    secrets: ['STRIPE_SECRET_KEY']
   },
   async (request, response) => {
     // Handle CORS
@@ -301,12 +303,29 @@ exports.cancelMembership = onRequest(
 exports.updateMembershipPaymentMethod = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Allow unauthenticated calls from student portal
+    invoker: 'public', // Allow unauthenticated calls from student portal
+    secrets: ['STRIPE_SECRET_KEY']
   },
   async (request, response) => {
     // Handle CORS
     return cors(request, response, async () => {
       try {
+        console.log('updateMembershipPaymentMethod called');
+        console.log('Stripe key exists:', !!process.env.STRIPE_SECRET_KEY);
+        console.log('Stripe key prefix:', process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.substring(0, 10) : 'undefined');
+        
+        // Test Stripe connection with a simple API call
+        try {
+          const balance = await stripe.balance.retrieve();
+          console.log('Stripe connection test successful, balance retrieved');
+        } catch (stripeTestError) {
+          console.error('Stripe connection test failed:', {
+            message: stripeTestError.message,
+            type: stripeTestError.type,
+            code: stripeTestError.code
+          });
+        }
+        
         // Only accept POST requests
         if (request.method !== 'POST') {
           response.status(405).json({ error: 'Method not allowed' });
@@ -314,6 +333,7 @@ exports.updateMembershipPaymentMethod = onRequest(
         }
         
         const data = request.body;
+        console.log('Request data:', { membershipId: data.membershipId, hasPaymentMethod: !!data.paymentMethodId });
     
         // Validate required fields
         if (!data.membershipId) {
@@ -360,18 +380,71 @@ exports.updateMembershipPaymentMethod = onRequest(
         
         const studentData = studentDoc.data();
         
-        if (!studentData.stripeCustomerId) {
-          response.status(400).json({ error: 'No Stripe customer ID found for student' });
-          return;
+        let customerId = studentData.stripeCustomerId;
+        
+        // Verify the customer exists in Stripe (might be from different mode or deleted)
+        if (customerId) {
+          console.log('Checking if customer exists in Stripe:', customerId);
+          try {
+            const existingCustomer = await stripe.customers.retrieve(customerId);
+            console.log('Using existing Stripe customer:', customerId);
+          } catch (error) {
+            console.log('Existing customer ID invalid, will create new. Error:', error.message);
+            customerId = null;
+          }
+        }
+        
+        // Create new customer if needed
+        if (!customerId) {
+          console.log('Creating new Stripe customer for student:', membershipData.studentId);
+          console.log('Student data:', { 
+            firstName: studentData.firstName, 
+            lastName: studentData.lastName, 
+            email: studentData.email 
+          });
+          
+          try {
+            console.log('Calling stripe.customers.create...');
+            const customer = await stripe.customers.create({
+              name: `${studentData.firstName} ${studentData.lastName}`,
+              email: studentData.email,
+              phone: studentData.phoneNumber || studentData.phone || undefined,
+              metadata: {
+                studentId: membershipData.studentId,
+                source: 'update-payment-method'
+              }
+            });
+            console.log('Stripe customer created successfully:', customer.id);
+            
+            customerId = customer.id;
+            
+            // Update student document with new customer ID
+            await db.collection('students').doc(membershipData.studentId).update({
+              stripeCustomerId: customerId
+            });
+            
+            console.log('Student document updated with customer ID');
+          } catch (error) {
+            console.error('Error creating Stripe customer:', {
+              message: error.message,
+              type: error.type,
+              code: error.code,
+              statusCode: error.statusCode,
+              raw: error.raw
+            });
+            response.status(500).json({ error: 'Failed to create customer: ' + error.message });
+            return;
+          }
         }
         
         // Step 3: Attach payment method to customer
+        console.log('Attaching payment method to customer...');
         try {
           await stripe.paymentMethods.attach(data.paymentMethodId, {
-            customer: studentData.stripeCustomerId
+            customer: customerId
           });
           
-          console.log(`Payment method ${data.paymentMethodId} attached to customer ${studentData.stripeCustomerId}`);
+          console.log(`Payment method ${data.paymentMethodId} attached to customer ${customerId}`);
         } catch (error) {
           console.error('Error attaching payment method:', error);
           response.status(500).json({ error: 'Failed to attach payment method: ' + error.message });
@@ -380,13 +453,13 @@ exports.updateMembershipPaymentMethod = onRequest(
         
         // Step 4: Set as default payment method on customer
         try {
-          await stripe.customers.update(studentData.stripeCustomerId, {
+          await stripe.customers.update(customerId, {
             invoice_settings: {
               default_payment_method: data.paymentMethodId
             }
           });
           
-          console.log(`Default payment method updated for customer ${studentData.stripeCustomerId}`);
+          console.log(`Default payment method updated for customer ${customerId}`);
         } catch (error) {
           console.error('Error setting default payment method:', error);
           response.status(500).json({ error: 'Failed to set default payment method: ' + error.message });

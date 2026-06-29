@@ -37,7 +37,8 @@ function calculateMembershipExpiry(startDate) {
 exports.stripeWebhookMemberships = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Stripe needs to call this
+    invoker: 'public', // Stripe needs to call this
+    secrets: ['STRIPE_SECRET_KEY']
   },
   async (request, response) => {
     try {

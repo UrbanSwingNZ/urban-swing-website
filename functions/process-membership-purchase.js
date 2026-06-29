@@ -47,7 +47,8 @@ function calculateMembershipExpiry(startDate) {
 exports.processOneTimeMembershipPurchase = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Allow unauthenticated calls from student portal
+    invoker: 'public', // Allow unauthenticated calls from student portal
+    secrets: ['STRIPE_SECRET_KEY'] // Access Stripe API key from secrets
   },
   async (request, response) => {
     // Handle CORS
@@ -324,7 +325,8 @@ exports.processOneTimeMembershipPurchase = onRequest(
 exports.processRecurringMembershipPurchase = onRequest(
   { 
     region: 'us-central1',
-    invoker: 'public' // Allow unauthenticated calls from student portal
+    invoker: 'public', // Allow unauthenticated calls from student portal
+    secrets: ['STRIPE_SECRET_KEY'] // Access Stripe API key from secrets
   },
   async (request, response) => {
     // Handle CORS
@@ -520,45 +522,51 @@ exports.processRecurringMembershipPurchase = onRequest(
               membershipTypeId: data.membershipTypeId
             }
           });
-          priceId = newPrice.id;
           console.log('Created new price:', priceId);
         }
         
-        // Step 6: Calculate billing cycle anchor (start of next period)
+        // Step 6: Calculate membership period
         const now = new Date();
-        const billingCycleStart = new Date(now);
-        billingCycleStart.setHours(0, 0, 0, 0);
+        const membershipStart = new Date(now);
+        membershipStart.setHours(0, 0, 0, 0);
         
-        const billingCycleEnd = calculateMembershipExpiry(billingCycleStart);
+        const membershipEnd = calculateMembershipExpiry(membershipStart);
         
-        // Calculate Unix timestamp for billing anchor (when first renewal should occur)
-        const billingAnchor = Math.floor(billingCycleEnd.getTime() / 1000);
+        console.log('Membership period:', {
+          start: membershipStart.toISOString(),
+          end: membershipEnd.toISOString()
+        });
         
-        // Step 7: Create Stripe Subscription
+        // Step 7: Create Stripe Subscription (let Stripe manage billing cycle naturally)
         let subscription;
         try {
           subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [{ price: priceId }],
-            billing_cycle_anchor: billingAnchor,
-            proration_behavior: 'none',
             metadata: {
               studentId: data.studentId,
               studentName: `${studentData.firstName} ${studentData.lastName}`,
-              membershipTypeId: data.membershipTypeId
+              membershipTypeId: data.membershipTypeId,
+              membershipStart: membershipStart.toISOString(),
+              membershipEnd: membershipEnd.toISOString()
             }
           });
           
           console.log('Stripe subscription created:', subscription.id);
+          console.log('Subscription period:', {
+            current_period_start: subscription.current_period_start,
+            current_period_end: subscription.current_period_end
+          });
         } catch (error) {
           console.error('Error creating subscription:', error);
           response.status(500).json({ error: 'Failed to create subscription: ' + error.message });
           return;
         }
         
-        // Step 7a: Read authoritative period dates from Stripe subscription
-        const currentPeriodStart = new Date(subscription.current_period_start * 1000);
-        const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+        // Step 7a: Use OUR calculated membership dates (not Stripe's billing dates)
+        // Our membership expires on day before 1-month anniversary
+        const currentPeriodStart = membershipStart;
+        const currentPeriodEnd = membershipEnd;
         
         // Step 8: Get the initial invoice for receipt URL
         let receiptUrl = null;
@@ -605,7 +613,7 @@ exports.processRecurringMembershipPurchase = onRequest(
         await db.collection('students').doc(data.studentId).update({
           activeMembershipId: membershipId,
           membershipStatus: 'active',
-          membershipExpiryDate: admin.firestore.Timestamp.fromDate(billingCycleEnd),
+          membershipExpiryDate: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
         
@@ -653,8 +661,8 @@ exports.processRecurringMembershipPurchase = onRequest(
           subscriptionId: subscription.id,
           receiptUrl: receiptUrl,
           amount: membershipInfo.price / 100,
-          currentPeriodStart: billingCycleStart.toISOString(),
-          currentPeriodEnd: billingCycleEnd.toISOString(),
+          currentPeriodStart: currentPeriodStart.toISOString(),
+          currentPeriodEnd: currentPeriodEnd.toISOString(),
           message: 'Membership purchase successful! Your membership will auto-renew monthly.'
         });
         

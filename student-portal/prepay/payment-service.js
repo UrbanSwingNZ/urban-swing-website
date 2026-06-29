@@ -497,6 +497,61 @@ class PaymentService {
     }
     
     /**
+     * Update membership payment method
+     * @param {string} membershipId - Membership document ID
+     * @param {string} paymentMethodId - Stripe payment method ID
+     * @returns {Promise<Object>} - {success: boolean, result: Object, error: string}
+     */
+    async updateMembershipPaymentMethod(membershipId, paymentMethodId) {
+        try {
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Call Firebase Function
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_UPDATE_PAYMENT, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    membershipId: membershipId,
+                    paymentMethodId: paymentMethodId
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update payment method');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to update payment method');
+            }
+            
+            return {
+                success: true,
+                result: result
+            };
+            
+        } catch (error) {
+            console.error('Payment method update error:', error);
+            return {
+                success: false,
+                error: error.message || 'Failed to update payment method. Please try again.'
+            };
+        }
+    }
+    
+    /**
      * Reset the card element (clear all input)
      */
     reset() {

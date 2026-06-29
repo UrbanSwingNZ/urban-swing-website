@@ -8,7 +8,16 @@ const Stripe = require('stripe');
 const admin = require('firebase-admin');
 
 // Initialize Stripe with secret key from environment variables
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+// During local code analysis, use placeholder if secret not available
+// IMPORTANT: Trim to remove any newlines or whitespace that could break the Authorization header
+const stripeKey = (process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder_for_analysis').trim();
+const stripe = Stripe(stripeKey, {
+  maxNetworkRetries: 2,
+  timeout: 20000, // 20 seconds
+  telemetry: false
+});
+
+console.log('Stripe SDK initialized with key prefix:', stripeKey.substring(0, 10));
 
 // Currency configuration
 const CURRENCY = 'nzd'; // New Zealand Dollars
