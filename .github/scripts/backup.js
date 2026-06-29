@@ -19,24 +19,43 @@ console.log(`Access token present: ${!!ACCESS_TOKEN}`);
 console.log('');
 
 /**
- * Make authenticated request to Firebase REST API
+ * Make authenticated request to Firebase REST API with retry logic
  */
-async function firebaseRequest(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Authorization': `Bearer ${ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
-      ...options.headers
+async function firebaseRequest(url, options = {}, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+          ...options.headers
+        }
+      });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`HTTP ${response.status}: ${error}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      const isLastAttempt = attempt === retries;
+      const isRetryableError = error.message.includes('Premature close') || 
+                               error.message.includes('ECONNRESET') ||
+                               error.message.includes('socket hang up') ||
+                               error.code === 'ECONNRESET';
+      
+      if (isLastAttempt || !isRetryableError) {
+        throw error;
+      }
+      
+      const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff: 2s, 4s, 8s
+      console.log(`  ⚠ Attempt ${attempt} failed: ${error.message}`);
+      console.log(`  ⏳ Retrying in ${waitTime/1000}s...`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
     }
-  });
-  
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`HTTP ${response.status}: ${error}`);
   }
-  
-  return response.json();
 }
 
 /**
@@ -136,17 +155,25 @@ async function exportAuthUsers() {
 }
 
 /**
- * Get all collection IDs
+ * Get all collection IDs with retry logic
  */
 async function getAllCollections() {
   console.log('Discovering collections...');
-  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents:listCollectionIds`;
-  const data = await firebaseRequest(url, { 
-    method: 'POST',
-    body: JSON.stringify({})
-  });
   
-  return data.collectionIds || [];
+  try {
+    const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents:listCollectionIds`;
+    const data = await firebaseRequest(url, { 
+      method: 'POST',
+      body: JSON.stringify({})
+    }, 5); // Use 5 retries for this critical call
+    
+    const collections = data.collectionIds || [];
+    console.log(`  ✓ Discovered ${collections.length} collections`);
+    return collections;
+  } catch (error) {
+    console.error(`  ✗ Failed to discover collections after retries: ${error.message}`);
+    throw error;
+  }
 }
 
 /**
