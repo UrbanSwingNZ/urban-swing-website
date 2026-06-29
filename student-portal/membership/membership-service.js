@@ -81,6 +81,61 @@ export class MembershipService {
     }
 
     /**
+     * Get all active memberships for a student (for checking count)
+     * @param {string} studentId - Student document ID
+     * @returns {Promise<Array>} Array of active memberships
+     */
+    async getAllActiveMemberships(studentId) {
+        try {
+            const snapshot = await this.db.collection('memberships')
+                .where('studentId', '==', studentId)
+                .where('status', '==', 'active')
+                .get();
+
+            const memberships = [];
+            snapshot.forEach(doc => {
+                memberships.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            return memberships;
+        } catch (error) {
+            console.error('Error fetching all active memberships:', error);
+            throw new Error('Failed to load active memberships');
+        }
+    }
+
+    /**
+     * Get all scheduled (future) memberships for a student
+     * @param {string} studentId - Student document ID
+     * @returns {Promise<Array>} Array of scheduled memberships
+     */
+    async getScheduledMemberships(studentId) {
+        try {
+            const snapshot = await this.db.collection('memberships')
+                .where('studentId', '==', studentId)
+                .where('status', '==', 'scheduled')
+                .orderBy('startDate', 'asc')
+                .get();
+
+            const memberships = [];
+            snapshot.forEach(doc => {
+                memberships.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            return memberships;
+        } catch (error) {
+            console.error('Error fetching scheduled memberships:', error);
+            throw new Error('Failed to load scheduled memberships');
+        }
+    }
+
+    /**
      * Check if a student is marked as improver
      * @param {string} studentId - Student document ID
      * @returns {Promise<boolean>} True if student is improver

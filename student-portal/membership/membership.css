@@ -13,6 +13,11 @@
     padding-top: 0;
 }
 
+/* Hide the second back button when both sections are visible */
+#current-membership-section:not([style*="none"]) ~ #purchase-membership-section .back-nav {
+    display: none;
+}
+
 #purchase-membership-section .section-header {
     margin-top: var(--space-xl);
 }
@@ -105,6 +110,11 @@
     color: var(--error);
 }
 
+.membership-status-badge.scheduled {
+    background: #e3f2fd; /* Light blue background */
+    color: #1976d2; /* Dark blue text */
+}
+
 .membership-details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -150,6 +160,33 @@
     margin-bottom: var(--space-lg);
     font-size: 1.05rem;
 }
+
+/* Upcoming Membership Message */
+.upcoming-message {
+    padding: var(--space-md);
+    background: #e3f2fd; /* Light blue background */
+    border-left: 4px solid #1976d2;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.upcoming-message i {
+    color: #1976d2;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.upcoming-message p {
+    color: var(--text-primary);
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
 .detail-value {
     font-size: 1.1rem;
     font-weight: 700;
@@ -231,10 +268,35 @@
     transform: translateX(26px);
 }
 
+.toggle-switch.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.toggle-switch input:disabled {
+    cursor: not-allowed;
+}
+
+.toggle-switch.disabled .toggle-slider {
+    cursor: not-allowed;
+}
+
 .autorenew-description {
     font-size: 0.9rem;
     color: var(--text-muted);
     line-height: 1.5;
+}
+
+.autorenew-description.warning {
+    color: var(--warning-dark);
+    background: var(--bg-warning-light);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--warning);
+}
+
+.autorenew-description.warning i {
+    color: var(--warning);
 }
 
 /* Membership Actions */

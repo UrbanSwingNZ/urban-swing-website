@@ -11,6 +11,23 @@ const { stripe, fetchPricing } = require('./stripe/stripe-config');
 const cors = require('cors')({ origin: true });
 
 /**
+ * Parse a date string/ISO string to a Date object at start of day in UTC
+ * This avoids timezone issues when comparing dates
+ * @param {string|Date} dateInput - ISO date string or Date object
+ * @returns {Date} Date at midnight UTC
+ */
+function parseDateAtMidnightUTC(dateInput) {
+  if (!dateInput) {
+    const now = new Date();
+    return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0));
+  }
+  
+  const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  // Extract date parts and create new Date in UTC to avoid timezone shifts
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
+}
+
+/**
  * Calculate membership expiry date (valid until day before 1-month anniversary)
  * @param {Date} startDate - Membership start date
  * @returns {Date} Expiry date (valid through end of day)
@@ -119,15 +136,35 @@ exports.processOneTimeMembershipPurchase = onRequest(
           return;
         }
         
-        // Check for existing active membership
-        const existingMemberships = await db.collection('memberships')
+        // Check for existing memberships (active + scheduled) - max 2 total
+        const existingActiveMemberships = await db.collection('memberships')
           .where('studentId', '==', data.studentId)
           .where('status', '==', 'active')
           .get();
         
-        if (!existingMemberships.empty) {
-          response.status(409).json({ error: 'You already have an active membership. Please wait until it expires before purchasing a new one.' });
+        const existingScheduledMemberships = await db.collection('memberships')
+          .where('studentId', '==', data.studentId)
+          .where('status', '==', 'scheduled')
+          .get();
+        
+        const totalMemberships = existingActiveMemberships.size + existingScheduledMemberships.size;
+        
+        if (totalMemberships >= 2) {
+          response.status(409).json({ 
+            error: 'You already have the maximum number of memberships (2). Please wait until one expires before purchasing another.' 
+          });
           return;
+        }
+        
+        // Check if existing active membership is auto-renewing (shouldn't allow purchase)
+        if (!existingActiveMemberships.empty) {
+          const activeMembership = existingActiveMemberships.docs[0].data();
+          if (activeMembership.autoRenew === true) {
+            response.status(409).json({ 
+              error: 'You have an auto-renewing membership. Please turn off auto-renew before purchasing a new membership.' 
+            });
+            return;
+          }
         }
         
         // Step 2: Fetch pricing to validate membership type ID
@@ -212,11 +249,15 @@ exports.processOneTimeMembershipPurchase = onRequest(
         console.log('Payment succeeded:', paymentResult.paymentIntentId);
         
         // Step 6: Calculate membership dates
-        const startDate = data.startDate ? new Date(data.startDate) : new Date();
-        const currentPeriodStart = new Date(startDate);
-        currentPeriodStart.setHours(0, 0, 0, 0); // Start of day
-        
+        const currentPeriodStart = parseDateAtMidnightUTC(data.startDate);
         const currentPeriodEnd = calculateMembershipExpiry(currentPeriodStart);
+        
+        // Determine if membership is scheduled (starts in future) or active (starts today or past)
+        const now = parseDateAtMidnightUTC();
+        const isScheduled = currentPeriodStart > now;
+        const membershipStatus = isScheduled ? 'scheduled' : 'active';
+        
+        console.log(`Membership status: ${membershipStatus} (start: ${currentPeriodStart.toISOString()}, now: ${now.toISOString()})`);
         
         // Step 7: Create membership document
         const membershipId = `${data.studentId}-membership-${Date.now()}`;
@@ -227,9 +268,11 @@ exports.processOneTimeMembershipPurchase = onRequest(
           typeId: data.membershipTypeId,
           typeName: membershipInfo.name,
           price: paymentResult.amount / 100, // Convert cents to dollars
-          status: 'active',
+          status: membershipStatus,
           isRecurring: false, // One-time purchase
+          autoRenew: false, // Not auto-renewing
           purchaseDate: admin.firestore.Timestamp.fromDate(new Date()),
+          startDate: admin.firestore.Timestamp.fromDate(currentPeriodStart),
           currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
           currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
           stripeSubscriptionId: null, // No subscription for one-time
@@ -245,13 +288,18 @@ exports.processOneTimeMembershipPurchase = onRequest(
         await db.collection('memberships').doc(membershipId).set(membershipData);
         console.log('Membership created:', membershipId);
         
-        // Step 8: Update student document
-        await db.collection('students').doc(data.studentId).update({
-          activeMembershipId: membershipId,
-          membershipStatus: 'active',
-          membershipExpiryDate: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        // Step 8: Update student document (only if membership is active, not scheduled)
+        if (!isScheduled) {
+          await db.collection('students').doc(data.studentId).update({
+            activeMembershipId: membershipId,
+            membershipStatus: 'active',
+            membershipExpiryDate: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+          console.log('Student document updated with active membership');
+        } else {
+          console.log('Membership is scheduled - student document not updated yet');
+        }
         
         // Step 9: Create transaction record
         const timestamp = Date.now();
@@ -319,7 +367,8 @@ exports.processOneTimeMembershipPurchase = onRequest(
  * {
  *   studentId: string,
  *   membershipTypeId: string (document ID from membershipTypes),
- *   paymentMethodId: string (from Stripe Elements)
+ *   paymentMethodId: string (from Stripe Elements),
+ *   startDate?: string (ISO date string, defaults to now)
  * }
  */
 exports.processRecurringMembershipPurchase = onRequest(
@@ -397,15 +446,35 @@ exports.processRecurringMembershipPurchase = onRequest(
           return;
         }
         
-        // Check for existing active membership
-        const existingMemberships = await db.collection('memberships')
+        // Check for existing memberships (active + scheduled) - max 2 total
+        const existingActiveMemberships = await db.collection('memberships')
           .where('studentId', '==', data.studentId)
           .where('status', '==', 'active')
           .get();
         
-        if (!existingMemberships.empty) {
-          response.status(409).json({ error: 'You already have an active membership. Please wait until it expires before purchasing a new one.' });
+        const existingScheduledMemberships = await db.collection('memberships')
+          .where('studentId', '==', data.studentId)
+          .where('status', '==', 'scheduled')
+          .get();
+        
+        const totalMemberships = existingActiveMemberships.size + existingScheduledMemberships.size;
+        
+        if (totalMemberships >= 2) {
+          response.status(409).json({ 
+            error: 'You already have the maximum number of memberships (2). Please wait until one expires before purchasing another.' 
+          });
           return;
+        }
+        
+        // Check if existing active membership is auto-renewing (shouldn't allow purchase)
+        if (!existingActiveMemberships.empty) {
+          const activeMembership = existingActiveMemberships.docs[0].data();
+          if (activeMembership.autoRenew === true) {
+            response.status(409).json({ 
+              error: 'You have an auto-renewing membership. Please turn off auto-renew before purchasing a new membership.' 
+            });
+            return;
+          }
         }
         
         // Step 2: Fetch pricing to validate membership type ID
@@ -526,10 +595,7 @@ exports.processRecurringMembershipPurchase = onRequest(
         }
         
         // Step 6: Calculate membership period
-        const now = new Date();
-        const membershipStart = new Date(now);
-        membershipStart.setHours(0, 0, 0, 0);
-        
+        const membershipStart = parseDateAtMidnightUTC(data.startDate);
         const membershipEnd = calculateMembershipExpiry(membershipStart);
         
         console.log('Membership period:', {
@@ -585,16 +651,24 @@ exports.processRecurringMembershipPurchase = onRequest(
         // Step 9: Create membership document
         const membershipId = `${data.studentId}-membership-${Date.now()}`;
         
+        // Determine if membership is scheduled (starts in future) or active
+        const now = parseDateAtMidnightUTC();
+        const isScheduled = currentPeriodStart > now;
+        const membershipStatus = isScheduled ? 'scheduled' : 'active';
+        
+        console.log(`Membership status: ${membershipStatus} (start: ${currentPeriodStart.toISOString()}, now: ${now.toISOString()})`);
+        
         const membershipData = {
           studentId: data.studentId,
           studentName: `${studentData.firstName} ${studentData.lastName}`,
           typeId: data.membershipTypeId,
           typeName: membershipInfo.name,
           price: membershipInfo.price / 100, // Convert cents to dollars
-          status: 'active',
+          status: membershipStatus,
           isRecurring: true, // Recurring subscription
           autoRenew: true, // Auto-renew enabled by default for recurring subscriptions
           purchaseDate: admin.firestore.Timestamp.fromDate(new Date()),
+          startDate: admin.firestore.Timestamp.fromDate(currentPeriodStart),
           currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
           currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
           stripeSubscriptionId: subscription.id,
@@ -610,13 +684,18 @@ exports.processRecurringMembershipPurchase = onRequest(
         await db.collection('memberships').doc(membershipId).set(membershipData);
         console.log('Membership created:', membershipId);
         
-        // Step 10: Update student document
-        await db.collection('students').doc(data.studentId).update({
-          activeMembershipId: membershipId,
-          membershipStatus: 'active',
-          membershipExpiryDate: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        // Step 10: Update student document (only if membership is active, not scheduled)
+        if (!isScheduled) {
+          await db.collection('students').doc(data.studentId).update({
+            activeMembershipId: membershipId,
+            membershipStatus: 'active',
+            membershipExpiryDate: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+          console.log('Student document updated with active membership');
+        } else {
+          console.log('Membership is scheduled - student document not updated yet');
+        }
         
         // Step 11: Create transaction record
         const timestamp = Date.now();
