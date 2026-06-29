@@ -62,7 +62,8 @@ class UpdatePaymentModal extends BaseModal {
             showCloseButton: true
         });
 
-        this.options = options;
+        // Store modal-specific options separately to avoid overwriting BaseModal's this.options
+        this.modalOptions = options;
         this.stripe = null;
         this.cardElement = null;
         this.isCardComplete = false;
@@ -90,8 +91,26 @@ class UpdatePaymentModal extends BaseModal {
                 throw new Error('Stripe not loaded');
             }
 
+            // Check if card element container exists in DOM
+            const cardContainer = document.getElementById('update-card-element');
+            if (!cardContainer) {
+                throw new Error('Card element container not found');
+            }
+
+            // Clean up existing card element if any
+            if (this.cardElement) {
+                try {
+                    this.cardElement.destroy();
+                } catch (e) {
+                    console.log('Card element already destroyed');
+                }
+                this.cardElement = null;
+            }
+
             // Initialize Stripe with publishable key
-            this.stripe = Stripe(stripeConfig.publishableKey);
+            if (!this.stripe) {
+                this.stripe = Stripe(stripeConfig.publishableKey);
+            }
 
             // Create card element
             const elements = this.stripe.elements();
@@ -177,25 +196,47 @@ class UpdatePaymentModal extends BaseModal {
                 throw new Error(error.message);
             }
 
-            // Call Cloud Function to update payment method
-            const updatePaymentMethod = firebase.functions().httpsCallable('updateMembershipPaymentMethod');
-            const result = await updatePaymentMethod({
-                membershipId: this.options.currentMembership.id,
-                paymentMethodId: paymentMethod.id
+            // Get Firebase auth token
+            const user = firebase.auth().currentUser;
+            const token = user ? await user.getIdToken() : null;
+            
+            // Call Cloud Function via HTTP endpoint
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(API_CONFIG.MEMBERSHIP_UPDATE_PAYMENT, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    membershipId: this.modalOptions.currentMembership.id,
+                    paymentMethodId: paymentMethod.id
+                })
             });
 
-            if (result.data.success) {
-                showSnackbar('Payment method updated successfully', 'success');
-                
-                // Call success callback
-                if (this.options.onSuccess) {
-                    await this.options.onSuccess(result.data);
-                }
-                
-                this.hide();
-            } else {
-                throw new Error(result.data.error || 'Failed to update payment method');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update payment method');
             }
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to update payment method');
+            }
+
+            showSnackbar('Payment method updated successfully', 'success');
+            
+            // Call success callback
+            if (this.modalOptions.onSuccess) {
+                await this.modalOptions.onSuccess(result);
+            }
+            
+            this.hide();
 
         } catch (error) {
             console.error('Error updating payment method:', error);
@@ -212,10 +253,32 @@ class UpdatePaymentModal extends BaseModal {
      */
     hide() {
         if (this.cardElement) {
-            this.cardElement.destroy();
+            try {
+                this.cardElement.unmount();
+                this.cardElement.destroy();
+            } catch (e) {
+                console.log('Card element cleanup:', e.message);
+            }
             this.cardElement = null;
         }
+        
+        // Clear the card element container to ensure clean state
+        const cardContainer = document.getElementById('update-card-element');
+        if (cardContainer) {
+            cardContainer.innerHTML = '';
+        }
+        
+        // Reset card completion state
+        this.isCardComplete = false;
+        
+        // Hide the modal
         super.hide();
+        
+        // Destroy the modal to remove it from DOM
+        // This prevents duplicate IDs when modal is reopened
+        setTimeout(() => {
+            this.destroy();
+        }, 300); // Wait for hide animation to complete
     }
 
     /**
