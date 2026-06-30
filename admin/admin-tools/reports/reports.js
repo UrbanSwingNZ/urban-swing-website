@@ -841,6 +841,181 @@ function formatDate(date) {
     return `${day}/${month}/${year}`;
 }
 
+/**
+ * Report 6: Improvers Membership Status
+ */
+async function generateImproversMembershipReport() {
+    const resultsDiv = document.getElementById('improvers-membership-results');
+    const tableDiv = document.getElementById('improvers-membership-table');
+    const countSpan = document.getElementById('improvers-count');
+    
+    // Show loading state
+    resultsDiv.style.display = 'block';
+    tableDiv.innerHTML = '<div class="loading-state"><i class="fas fa-spinner"></i><p>Loading data...</p></div>';
+    
+    try {
+        // Fetch all improver students
+        const studentsSnapshot = await window.db.collection('students')
+            .where('improver', '==', true)
+            .get();
+        
+        const improvers = [];
+        
+        for (const doc of studentsSnapshot.docs) {
+            const student = { id: doc.id, ...doc.data() };
+            
+            const improverData = {
+                studentId: student.id,
+                studentName: `${student.firstName} ${student.lastName}`,
+                studentEmail: student.email || 'No email',
+                hasActiveMembership: !!student.activeMembershipId,
+                membershipStatus: student.membershipStatus || null,
+                membershipExpiryDate: student.membershipExpiryDate?.toDate() || null,
+                membershipTypeName: null,
+                autoRenew: false
+            };
+            
+            // If they have an active membership, fetch its details
+            if (student.activeMembershipId) {
+                try {
+                    const membershipDoc = await window.db.collection('memberships')
+                        .doc(student.activeMembershipId)
+                        .get();
+                    
+                    if (membershipDoc.exists) {
+                        const membership = membershipDoc.data();
+                        improverData.membershipTypeName = membership.typeName || 'Unknown';
+                        improverData.autoRenew = membership.autoRenew || false;
+                    }
+                } catch (error) {
+                    console.error(`Error fetching membership for ${student.id}:`, error);
+                }
+            }
+            
+            improvers.push(improverData);
+        }
+        
+        // Sort by membership status (active first), then by name
+        improvers.sort((a, b) => {
+            if (a.hasActiveMembership && !b.hasActiveMembership) return -1;
+            if (!a.hasActiveMembership && b.hasActiveMembership) return 1;
+            return a.studentName.localeCompare(b.studentName);
+        });
+        
+        // Update count
+        countSpan.textContent = improvers.length;
+        
+        // Display results
+        if (improvers.length === 0) {
+            tableDiv.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>No improver students found</p></div>';
+        } else {
+            let tableHTML = `
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Has Membership</th>
+                            <th>Membership Type</th>
+                            <th>Auto-Renew</th>
+                            <th>Expiry Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            improvers.forEach(item => {
+                const hasMembershipBadge = item.hasActiveMembership
+                    ? '<span class="badge badge-yes">Yes</span>'
+                    : '<span class="badge badge-no">No</span>';
+                
+                const membershipType = item.membershipTypeName || '—';
+                
+                const autoRenewBadge = item.hasActiveMembership
+                    ? (item.autoRenew
+                        ? '<span class="badge badge-yes">Yes</span>'
+                        : '<span class="badge badge-no">No</span>')
+                    : '—';
+                
+                const expiryDate = item.membershipExpiryDate
+                    ? formatDate(item.membershipExpiryDate)
+                    : '—';
+                
+                const expiryClass = item.hasActiveMembership ? 'badge badge-yes' : '';
+                
+                tableHTML += `
+                    <tr>
+                        <td>${item.studentName}</td>
+                        <td>${item.studentEmail}</td>
+                        <td>${hasMembershipBadge}</td>
+                        <td>${membershipType}</td>
+                        <td>${autoRenewBadge}</td>
+                        <td><span class="${expiryClass}">${expiryDate}</span></td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += '</tbody></table>';
+            
+            // Add mobile cards
+            improvers.forEach(item => {
+                const hasMembershipBadge = item.hasActiveMembership
+                    ? '<span class="badge badge-yes">Yes</span>'
+                    : '<span class="badge badge-no">No</span>';
+                
+                const membershipType = item.membershipTypeName || '—';
+                
+                const autoRenewBadge = item.hasActiveMembership
+                    ? (item.autoRenew
+                        ? '<span class="badge badge-yes">Yes</span>'
+                        : '<span class="badge badge-no">No</span>')
+                    : '—';
+                
+                const expiryDate = item.membershipExpiryDate
+                    ? formatDate(item.membershipExpiryDate)
+                    : '—';
+                
+                const expiryClass = item.hasActiveMembership ? 'badge badge-yes' : '';
+                
+                tableHTML += `
+                    <div class="report-card">
+                        <div class="report-card-row">
+                            <span class="report-card-label">Student:</span>
+                            <span class="report-card-value">${item.studentName}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Email:</span>
+                            <span class="report-card-value">${item.studentEmail}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Has Membership:</span>
+                            <span class="report-card-value">${hasMembershipBadge}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Membership Type:</span>
+                            <span class="report-card-value">${membershipType}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Auto-Renew:</span>
+                            <span class="report-card-value">${autoRenewBadge}</span>
+                        </div>
+                        <div class="report-card-row">
+                            <span class="report-card-label">Expiry Date:</span>
+                            <span class="report-card-value"><span class="${expiryClass}">${expiryDate}</span></span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            tableDiv.innerHTML = tableHTML;
+        }
+        
+    } catch (error) {
+        console.error('Error generating report:', error);
+        tableDiv.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading data: ${error.message}</p></div>`;
+    }
+}
+
 // Make functions globally accessible for onclick handlers
 window.generateExpiredConcessionsReport = generateExpiredConcessionsReport;
 window.generateExpiringSoonReport = generateExpiringSoonReport;
@@ -848,3 +1023,4 @@ window.generateActiveConcessionsReport = generateActiveConcessionsReport;
 window.generateEmailConsentReport = generateEmailConsentReport;
 window.copyEmailsToBCC = copyEmailsToBCC;
 window.generatePortalAccountReport = generatePortalAccountReport;
+window.generateImproversMembershipReport = generateImproversMembershipReport;
