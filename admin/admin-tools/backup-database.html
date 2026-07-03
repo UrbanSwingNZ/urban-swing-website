@@ -264,10 +264,10 @@
             { name: 'concessionBlocks', label: 'Concession Blocks', icon: 'fa-ticket-alt', type: 'firestore' },
             { name: 'concessionPackages', label: 'Concession Packages', icon: 'fa-box', type: 'firestore' },
             { name: 'casualRates', label: 'Casual Rates', icon: 'fa-money-bill-wave', type: 'firestore' },
-            { name: 'closedownNights', label: 'Closedown Nights (incl Settings)', icon: 'fa-calendar-times', type: 'firestore', includesCollections: ['closedownNights', 'settings'] },
+            { name: 'memberships', label: 'Memberships', icon: 'fa-id-card', type: 'firestore', includesCollections: ['memberships', 'membershipTypes'] },
+            { name: 'closedownNights', label: 'Closedown Nights', icon: 'fa-calendar-times', type: 'firestore', includesCollections: ['closedownNights', 'settings'] },
             { name: 'classPlans', label: 'Class Plans', icon: 'fa-list-check', type: 'firestore' },
-            { name: 'songData', label: 'Song Data', icon: 'fa-music', type: 'firestore' },
-            { name: 'playlistPreferences', label: 'Playlist Preferences', icon: 'fa-list-ol', type: 'firestore' },
+            { name: 'songData', label: 'Song Data', icon: 'fa-music', type: 'firestore', includesCollections: ['songData', 'playlistPreferences'] },
             { name: 'users', label: 'Users (Firestore)', icon: 'fa-user-shield', type: 'firestore' },
             { name: 'authUsers', label: 'Auth Users', icon: 'fa-key', type: 'auth' }
         ];

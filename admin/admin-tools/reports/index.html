@@ -154,6 +154,28 @@
                 </div>
             </div>
 
+            <!-- Report 6: Improvers Membership Status -->
+            <div class="report-section">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-id-card"></i>
+                        <h3>Improvers Membership Status</h3>
+                    </div>
+                    <button class="btn-primary report-button" onclick="generateImproversMembershipReport()">
+                        <i class="fas fa-play"></i> Generate Report
+                    </button>
+                </div>
+                <div class="report-description">
+                    <p>Shows all improver students and their current membership status with expiry dates.</p>
+                </div>
+                <div id="improvers-membership-results" class="report-results" style="display: none;">
+                    <div class="results-header">
+                        <span class="result-count">Found <strong id="improvers-count">0</strong> improver students</span>
+                    </div>
+                    <div id="improvers-membership-table"></div>
+                </div>
+            </div>
+
         </main>
 
         <footer class="admin-footer">
