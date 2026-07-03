@@ -502,27 +502,9 @@ exports.updateMembershipPaymentMethod = onRequest(
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
         
-        // Step 8: Create transaction record for audit trail
-        const timestamp = Date.now();
-        const transactionId = `${membershipData.studentId}-payment-update-${timestamp}`;
-        
-        const transactionData = {
-          studentId: membershipData.studentId,
-          transactionDate: admin.firestore.FieldValue.serverTimestamp(),
-          type: 'payment-method-update',
-          membershipId: data.membershipId,
-          newPaymentMethodId: data.paymentMethodId,
-          newCardLast4: cardLast4,
-          createdAt: admin.firestore.FieldValue.serverTimestamp()
-        };
-        
-        await db.collection('transactions').doc(transactionId).set(transactionData);
-        console.log('Payment method update transaction created:', transactionId);
-        
-        // Step 9: Return success
+        // Step 8: Return success
         response.status(200).json({
           success: true,
-          transactionId: transactionId,
           cardLast4: cardLast4,
           message: 'Payment method updated successfully'
         });
