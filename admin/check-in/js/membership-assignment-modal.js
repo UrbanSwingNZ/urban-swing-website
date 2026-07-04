@@ -170,10 +170,8 @@ function closeMembershipAssignmentModal() {
         if (parentModal) {
             parentModal.style.display = 'flex';
             
-            // Restore parent student state if available
-            if (membershipModalParentStudent && typeof setSelectedStudent === 'function') {
-                setSelectedStudent(membershipModalParentStudent);
-            }
+            // Don't restore parent student state here - let the callback handle fresh data
+            // The callback will fetch fresh student data and update the display
         }
     }
     
@@ -454,13 +452,13 @@ async function handleMembershipAssignmentSubmit() {
         if (result.data.success) {
             window.showSnackbar(result.data.message, 'success');
             
-            // Close modal
-            closeMembershipAssignmentModal();
-            
-            // Call callback if provided
+            // Call callback FIRST (before closing modal) so data is refreshed
             if (membershipModalCallback) {
                 await membershipModalCallback(result.data);
             }
+            
+            // Then close modal - this will show the parent modal with fresh data
+            closeMembershipAssignmentModal();
         } else {
             window.showSnackbar(`Failed to assign membership: ${result.data.message}`, 'error');
         }

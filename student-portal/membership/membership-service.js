@@ -141,7 +141,10 @@ export class MembershipService {
      * @returns {Promise<boolean>} True if student is improver
      */
     async isImprover(studentId) {
-        try {
+        if (!studentId) {
+            console.warn('isImprover called with empty studentId');
+            return false;
+        }        try {
             const doc = await this.db.collection('students').doc(studentId).get();
             if (!doc.exists) {
                 return false;
