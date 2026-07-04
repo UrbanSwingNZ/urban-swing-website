@@ -720,4 +720,20 @@ input[name="membership-type"][value="onetime"]:checked ~ #autorenew-disclosure {
     .membership-actions button {
         width: 100%;
     }
+    
+    /* Purchase Form Buttons */
+    #submit-button,
+    #cancel-purchase-button {
+        width: 100%;
+        font-size: 1rem;
+    }
+    
+    #submit-button {
+        padding: 14px 20px;
+        margin-bottom: var(--space-sm);
+    }
+    
+    #cancel-purchase-button {
+        padding: 12px 20px;
+    }
 }
