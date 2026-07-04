@@ -92,6 +92,9 @@ function initializeDatePicker() {
             if (typeof loadCheckinTransactions === 'function') {
                 loadCheckinTransactions();
             }
+            
+            // Re-validate membership if a student is currently selected
+            revalidateSelectedStudentMembership(date);
         }
     });
     
@@ -150,6 +153,34 @@ function isSelectedDateToday() {
     const selectedDateStr = getSelectedCheckinDateString();
     const todayStr = getTodayDateString();
     return selectedDateStr === todayStr;
+}
+
+/**
+ * Re-validate selected student's membership when date changes
+ * @param {Date} newDate - The newly selected check-in date
+ */
+async function revalidateSelectedStudentMembership(newDate) {
+    // Check if we're in the check-in modal and have a student selected
+    const checkinModal = document.getElementById('checkin-modal');
+    if (!checkinModal || checkinModal.style.display === 'none') {
+        return; // Not in check-in modal
+    }
+    
+    // Get the currently selected student
+    const selectedStudent = window.getSelectedStudent ? window.getSelectedStudent() : null;
+    if (!selectedStudent) {
+        return; // No student selected
+    }
+    
+    // Re-validate membership against new date
+    const membershipCheck = await window.checkStudentMembership(selectedStudent.id, newDate);
+    
+    if (membershipCheck.isImprover) {
+        // Update membership info display with new validation result
+        if (typeof window.updateMembershipInfo === 'function') {
+            await window.updateMembershipInfo(selectedStudent, membershipCheck);
+        }
+    }
 }
 
 // Expose functions to window for use by modules and other scripts
