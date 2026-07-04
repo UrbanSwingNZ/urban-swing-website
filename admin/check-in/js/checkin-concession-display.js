@@ -153,7 +153,7 @@ async function updateMembershipInfo(student, membershipCheck) {
 /**
  * Open membership assignment modal for a student (called from check-in UI)
  */
-function purchaseMembershipForStudent(studentId) {
+async function purchaseMembershipForStudent(studentId) {
     const student = getSelectedStudent();
     if (!student || student.id !== studentId) {
         window.showSnackbar('Student not found', 'error');
@@ -166,7 +166,18 @@ function purchaseMembershipForStudent(studentId) {
     // Get the selected check-in date
     const selectedDate = getSelectedCheckinDate();
     
-    // Open membership assignment modal with student ID, callback, parent modal ID, student object, and check-in date
+    // Check if student has an active membership to determine default start date
+    let defaultStartDate = new Date(); // Default to today
+    
+    if (student.membershipExpiryDate) {
+        // Student has an active membership - set to day after expiry
+        const expiryDate = student.membershipExpiryDate.toDate();
+        const dayAfterExpiry = new Date(expiryDate);
+        dayAfterExpiry.setDate(dayAfterExpiry.getDate() + 1);
+        defaultStartDate = dayAfterExpiry;
+    }
+    
+    // Open membership assignment modal with student ID, callback, parent modal ID, student object, and default start date
     window.openMembershipAssignmentModal(student.id, async (result) => {
         // Fetch fresh student data from Firestore
         const studentDoc = await firebase.firestore().collection('students').doc(student.id).get();
@@ -189,7 +200,7 @@ function purchaseMembershipForStudent(studentId) {
         if (membershipCheck.isImprover) {
             await updateMembershipInfo(freshStudentData, membershipCheck);
         }
-    }, 'checkin-modal', student, selectedDate);
+    }, 'checkin-modal', student, defaultStartDate);
 }
 
 // Expose functions globally
