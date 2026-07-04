@@ -284,21 +284,6 @@ async function showMembershipStudentInfo(studentId) {
         
         document.getElementById('membership-student-info').style.display = 'block';
         
-        // Check for existing active membership
-        if (student.activeMembershipId) {
-            const activeMembershipDoc = await firebase.firestore()
-                .collection('memberships')
-                .doc(student.activeMembershipId)
-                .get();
-            
-            if (activeMembershipDoc.exists) {
-                const activeMembership = activeMembershipDoc.data();
-                if (activeMembership.status === 'active') {
-                    window.showSnackbar('Warning: This student already has an active membership. This will replace it.', 'warning');
-                }
-            }
-        }
-        
     } catch (error) {
         console.error('Error loading student info:', error);
     }
