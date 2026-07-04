@@ -86,6 +86,13 @@ export async function saveCheckinToFirestore(student, entryType, paymentMethod, 
         // Determine source based on entry type
         if (entryType === 'membership') {
             checkInSource = 'membership';
+            
+            // Validate membership is valid for the selected check-in date
+            const membershipCheck = await window.checkStudentMembership(student.id, checkinDate);
+            if (!membershipCheck.hasActiveMembership) {
+                window.showSnackbar('Membership is not valid for this date', 'error');
+                return;
+            }
         } else if (entryType === 'concession') {
             checkInSource = 'concession';
         } else if (entryType === 'casual' || entryType === 'casual-student') {

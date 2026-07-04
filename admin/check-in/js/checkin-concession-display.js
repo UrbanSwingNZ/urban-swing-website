@@ -13,8 +13,9 @@ async function showSelectedStudent(student) {
     document.getElementById('selected-student-email').textContent = student.email || '';
     document.getElementById('selected-student-id').value = student.id;
     
-    // Check if student is improver
-    const membershipCheck = await window.checkStudentMembership(student.id);
+    // Check if student is improver - validate against selected check-in date
+    const selectedDate = getSelectedCheckinDate();
+    const membershipCheck = await window.checkStudentMembership(student.id, selectedDate);
     
     if (membershipCheck.isImprover) {
         // Improver student - show membership info
@@ -177,16 +178,18 @@ function purchaseMembershipForStudent(studentId) {
         // Re-set the selected student with fresh data
         setSelectedStudent(freshStudentData);
         
-        // Refresh membership info after assignment
-        const membershipCheck = await window.checkStudentMembership(student.id);
+        // Refresh membership info after assignment - validate against selected check-in date
+        const selectedDate = getSelectedCheckinDate();
+        const membershipCheck = await window.checkStudentMembership(student.id, selectedDate);
         if (membershipCheck.isImprover) {
             await updateMembershipInfo(freshStudentData, membershipCheck);
         }
     }, 'checkin-modal', student, selectedDate);
 }
 
-// Expose function globally
+// Expose functions globally
 window.purchaseMembershipForStudent = purchaseMembershipForStudent;
+window.updateMembershipInfo = updateMembershipInfo;
 
 /**
  * Update concession info display

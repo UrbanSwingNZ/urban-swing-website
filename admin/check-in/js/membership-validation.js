@@ -5,9 +5,10 @@
 /**
  * Check if student is improver and has active membership
  * @param {string} studentId - Student document ID
+ * @param {Date} checkinDate - Optional check-in date to validate against (defaults to current date)
  * @returns {Promise<Object>} Membership validation result
  */
-async function checkStudentMembership(studentId) {
+async function checkStudentMembership(studentId, checkinDate = null) {
     try {
         // Get student document
         const studentDoc = await firebase.firestore()
@@ -39,13 +40,17 @@ async function checkStudentMembership(studentId) {
         
         // Improver - check for active membership
         if (studentData.activeMembershipId && studentData.membershipExpiryDate) {
-            const now = new Date();
+            // Use provided checkin date or current date
+            const validationDate = checkinDate || new Date();
+            // Normalize to start of day for comparison
+            validationDate.setHours(0, 0, 0, 0);
+            
             const expiryDate = studentData.membershipExpiryDate.toDate();
             
             // Valid through end of expiry day
             expiryDate.setHours(23, 59, 59, 999);
             
-            if (expiryDate >= now) {
+            if (expiryDate >= validationDate) {
                 // Has active membership
                 return {
                     isImprover: true,
