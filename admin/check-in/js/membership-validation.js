@@ -51,13 +51,28 @@ async function checkStudentMembership(studentId, checkinDate = null) {
             expiryDate.setHours(23, 59, 59, 999);
             
             if (expiryDate >= validationDate) {
-                // Has active membership
+                // Has active membership - fetch membership details for auto-renew status
+                let autoRenew = false;
+                try {
+                    const membershipDoc = await firebase.firestore()
+                        .collection('memberships')
+                        .doc(studentData.activeMembershipId)
+                        .get();
+                    
+                    if (membershipDoc.exists) {
+                        autoRenew = membershipDoc.data().autoRenew === true;
+                    }
+                } catch (error) {
+                    console.error('Error fetching membership details:', error);
+                }
+                
                 return {
                     isImprover: true,
                     hasActiveMembership: true,
                     canCheckIn: true,
                     membershipId: studentData.activeMembershipId,
                     expiryDate: studentData.membershipExpiryDate,
+                    autoRenew: autoRenew,
                     source: 'membership'
                 };
             } else {
