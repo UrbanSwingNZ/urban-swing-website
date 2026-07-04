@@ -52,7 +52,11 @@ window.addEventListener('load', async () => {
             } else {
                 // Regular student view
                 currentStudentId = await getStudentIdByEmail(user.email);
-                await initializePage();
+                if (currentStudentId) {
+                    await initializePage();
+                }
+                // If no student found, page remains in loading/empty state
+                // Admin users without student records will trigger studentSelected event
             }
         } else {
             // Redirect to login
@@ -63,7 +67,7 @@ window.addEventListener('load', async () => {
 
 // Listen for student selection (admin view)
 window.addEventListener('studentSelected', async (event) => {
-    if (event.detail && event.detail.student) {
+    if (event.detail && event.detail.student && event.detail.student.id) {
         currentStudentId = event.detail.student.id;
         
         // Hide empty state
