@@ -174,7 +174,6 @@ exports.adminAssignMembership = onCall(
                 membershipId: membershipId,
                 membershipTypeId: membershipTypeId,
                 transactionDate: admin.firestore.Timestamp.fromDate(purchaseDate),
-                classDate: admin.firestore.Timestamp.fromDate(purchaseDate),
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
                 createdBy: adminUid,
                 adminAssigned: true
