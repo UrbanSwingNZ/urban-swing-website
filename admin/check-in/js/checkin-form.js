@@ -60,6 +60,32 @@ function setupEntryTypeListeners() {
                 onlinePaymentMessages.innerHTML = '';
             }
             
+            // Handle membership/concession info toggle for improvers without active membership
+            const student = getSelectedStudent();
+            if (student) {
+                const membershipCheck = await window.checkStudentMembership(student.id, getSelectedCheckinDate());
+                if (membershipCheck && membershipCheck.isImprover && !membershipCheck.hasActiveMembership) {
+                    const membershipInfo = document.getElementById('membership-info');
+                    const concessionInfo = document.getElementById('concession-info');
+                    
+                    if (radio.value === 'concession') {
+                        // Load concession data FIRST while membership container is still visible
+                        if (typeof window.updateConcessionInfo === 'function') {
+                            // Pass false to prevent setting defaults (avoid infinite loop)
+                            await window.updateConcessionInfo(student, false);
+                        }
+                        
+                        // Then swap containers after data is loaded (prevents modal resize)
+                        if (concessionInfo) concessionInfo.style.display = 'block';
+                        if (membershipInfo) membershipInfo.style.display = 'none';
+                    } else {
+                        // Swap containers immediately to prevent modal resize
+                        if (membershipInfo) membershipInfo.style.display = 'block';
+                        if (concessionInfo) concessionInfo.style.display = 'none';
+                    }
+                }
+            }
+            
             // Show appropriate section based on selection
             if (radio.value === 'casual' || radio.value === 'casual-student') {
                 paymentSection.style.display = 'block';
