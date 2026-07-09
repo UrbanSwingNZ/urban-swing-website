@@ -139,6 +139,26 @@ async function updateMembershipInfo(student, membershipCheck) {
             membershipRadio.parentElement.style.opacity = '0.5';
         }
         
+        // Check concession balance to enable/disable concession radio button
+        const concessionRadio = document.getElementById('entry-concession');
+        if (concessionRadio) {
+            try {
+                const concessionData = await getConcessionData(student.id);
+                if (concessionData.totalBalance > 0) {
+                    concessionRadio.disabled = false;
+                    concessionRadio.parentElement.style.opacity = '1';
+                } else {
+                    concessionRadio.disabled = true;
+                    concessionRadio.parentElement.style.opacity = '0.5';
+                }
+            } catch (error) {
+                console.error('Error checking concession balance:', error);
+                // Default to disabled if error
+                concessionRadio.disabled = true;
+                concessionRadio.parentElement.style.opacity = '0.5';
+            }
+        }
+        
         // Default to casual entry if not in edit mode
         if (!isEditMode()) {
             const casualEntryRadio = document.getElementById('entry-casual');
@@ -206,13 +226,24 @@ async function purchaseMembershipForStudent(studentId) {
 // Expose functions globally
 window.purchaseMembershipForStudent = purchaseMembershipForStudent;
 window.updateMembershipInfo = updateMembershipInfo;
+window.updateConcessionInfo = updateConcessionInfo;
 
 /**
  * Update concession info display
+ * @param {Object} student - Student object
+ * @param {boolean} setDefaults - Whether to set default radio selections (default: true)
  */
-async function updateConcessionInfo(student) {
+async function updateConcessionInfo(student, setDefaults = true) {
     const balanceSpan = document.getElementById('concession-balance');
     const blocksDiv = document.getElementById('concession-blocks');
+    const membershipInfo = document.getElementById('membership-info');
+    const concessionInfo = document.getElementById('concession-info');
+    const purchaseSection = document.querySelector('.purchase-section');
+    
+    // Hide membership info, show concession info
+    if (membershipInfo) membershipInfo.style.display = 'none';
+    if (purchaseSection) purchaseSection.style.display = 'block';
+    if (concessionInfo) concessionInfo.style.display = 'block';
     
     // Show loading state
     balanceSpan.textContent = 'Loading...';
@@ -249,6 +280,7 @@ async function updateConcessionInfo(student) {
         const freeEntryRadio = document.getElementById('entry-free');
         const freeEntryReasonSelect = document.getElementById('free-entry-reason');
         
+        // Enable concession radio if student has a balance (works for both improvers and non-improvers)
         if (concessionData.totalBalance > 0) {
             concessionRadio.disabled = false;
             concessionRadio.parentElement.style.opacity = '1';
@@ -264,8 +296,8 @@ async function updateConcessionInfo(student) {
             membershipRadio.parentElement.style.opacity = '0.5';
         }
         
-        // Set defaults only if NOT in edit mode
-        if (!isEditMode()) {
+        // Set defaults only if NOT in edit mode AND setDefaults is true
+        if (!isEditMode() && setDefaults) {
             // If student is a crew member, default to free entry with crew member reason
             if (student.crewMember === true) {
                 freeEntryRadio.checked = true;
