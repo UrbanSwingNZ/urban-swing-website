@@ -834,9 +834,10 @@ async function handleUnlock(e) {
 function formatDate(date) {
     if (!date) return 'N/A';
     
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    // Use UTC methods to avoid timezone conversion issues
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const year = date.getUTCFullYear();
     
     return `${day}/${month}/${year}`;
 }
@@ -869,6 +870,7 @@ async function generateImproversMembershipReport() {
                 studentName: `${student.firstName} ${student.lastName}`,
                 studentEmail: student.email || 'No email',
                 hasActiveMembership: !!student.activeMembershipId,
+                activeMembershipId: student.activeMembershipId || null,
                 membershipStatus: student.membershipStatus || null,
                 membershipExpiryDate: student.membershipExpiryDate?.toDate() || null,
                 membershipTypeName: null,
@@ -937,11 +939,19 @@ async function generateImproversMembershipReport() {
                         : '<span class="badge badge-no">No</span>')
                     : '—';
                 
-                const expiryDate = item.membershipExpiryDate
-                    ? formatDate(item.membershipExpiryDate)
-                    : '—';
-                
-                const expiryClass = item.hasActiveMembership ? 'badge badge-yes' : '';
+                // Make expiry date clickable if they have an active membership
+                let expiryDateDisplay;
+                if (item.membershipExpiryDate && item.hasActiveMembership) {
+                    const formattedDate = formatDate(item.membershipExpiryDate);
+                    expiryDateDisplay = `<span class="expiry-date-link" onclick="openUpdateExpiryModal('${item.studentId}', '${item.studentName}', '${item.studentEmail}', '${item.membershipExpiryDate.toISOString()}', '${item.activeMembershipId}')" title="Click to update expiry date">
+                        <span class="badge badge-yes">${formattedDate}</span>
+                        <i class="fas fa-pencil-alt"></i>
+                    </span>`;
+                } else if (item.membershipExpiryDate) {
+                    expiryDateDisplay = formatDate(item.membershipExpiryDate);
+                } else {
+                    expiryDateDisplay = '—';
+                }
                 
                 tableHTML += `
                     <tr>
@@ -950,7 +960,7 @@ async function generateImproversMembershipReport() {
                         <td>${hasMembershipBadge}</td>
                         <td>${membershipType}</td>
                         <td>${autoRenewBadge}</td>
-                        <td><span class="${expiryClass}">${expiryDate}</span></td>
+                        <td>${expiryDateDisplay}</td>
                     </tr>
                 `;
             });
@@ -971,11 +981,19 @@ async function generateImproversMembershipReport() {
                         : '<span class="badge badge-no">No</span>')
                     : '—';
                 
-                const expiryDate = item.membershipExpiryDate
-                    ? formatDate(item.membershipExpiryDate)
-                    : '—';
-                
-                const expiryClass = item.hasActiveMembership ? 'badge badge-yes' : '';
+                // Make expiry date clickable if they have an active membership
+                let expiryDateDisplay;
+                if (item.membershipExpiryDate && item.hasActiveMembership) {
+                    const formattedDate = formatDate(item.membershipExpiryDate);
+                    expiryDateDisplay = `<span class="expiry-date-link" onclick="openUpdateExpiryModal('${item.studentId}', '${item.studentName}', '${item.studentEmail}', '${item.membershipExpiryDate.toISOString()}', '${item.activeMembershipId}')" title="Click to update expiry date">
+                        <span class="badge badge-yes">${formattedDate}</span>
+                        <i class="fas fa-pencil-alt"></i>
+                    </span>`;
+                } else if (item.membershipExpiryDate) {
+                    expiryDateDisplay = formatDate(item.membershipExpiryDate);
+                } else {
+                    expiryDateDisplay = '—';
+                }
                 
                 tableHTML += `
                     <div class="report-card">
@@ -1001,7 +1019,7 @@ async function generateImproversMembershipReport() {
                         </div>
                         <div class="report-card-row">
                             <span class="report-card-label">Expiry Date:</span>
-                            <span class="report-card-value"><span class="${expiryClass}">${expiryDate}</span></span>
+                            <span class="report-card-value">${expiryDateDisplay}</span>
                         </div>
                     </div>
                 `;
@@ -1024,3 +1042,182 @@ window.generateEmailConsentReport = generateEmailConsentReport;
 window.copyEmailsToBCC = copyEmailsToBCC;
 window.generatePortalAccountReport = generatePortalAccountReport;
 window.generateImproversMembershipReport = generateImproversMembershipReport;
+
+// ========================================
+// UPDATE MEMBERSHIP EXPIRY MODAL
+// ========================================
+
+let updateExpiryDatePicker = null;
+let currentExpiryData = null; // Store current student/membership data
+
+/**
+ * Initialize the update expiry modal and date picker
+ */
+function initializeUpdateExpiryModal() {
+    updateExpiryDatePicker = new DatePicker('update-expiry-new-date', 'update-expiry-calendar', {
+        allowedDays: [0, 1, 2, 3, 4, 5, 6], // All days
+        disablePastDates: true, // Don't allow dates in the past
+        ignoreClosedown: true, // Admin can select any date
+        showTime: false,
+        onDateSelected: () => {
+            // Enable the update button when a date is selected
+            document.getElementById('confirm-update-expiry-btn').disabled = false;
+        }
+    });
+}
+
+/**
+ * Open the update expiry modal
+ * @param {string} studentId - Student document ID
+ * @param {string} studentName - Student name
+ * @param {string} studentEmail - Student email
+ * @param {string} currentExpiryISO - Current expiry date in ISO format
+ * @param {string} membershipId - Membership document ID
+ */
+function openUpdateExpiryModal(studentId, studentName, studentEmail, currentExpiryISO, membershipId) {
+    const modal = document.getElementById('update-expiry-modal');
+    if (!modal) return;
+
+    // Store current data
+    currentExpiryData = {
+        studentId: studentId,
+        studentName: studentName,
+        studentEmail: studentEmail,
+        currentExpiry: new Date(currentExpiryISO),
+        membershipId: membershipId
+    };
+
+    // Populate modal fields
+    document.getElementById('update-expiry-student-name').textContent = studentName;
+    document.getElementById('update-expiry-student-email').textContent = studentEmail;
+    document.getElementById('update-expiry-current-date').value = formatDate(currentExpiryData.currentExpiry);
+    document.getElementById('update-expiry-reason').value = '';
+
+    // Initialize date picker if not already initialized
+    if (!updateExpiryDatePicker) {
+        initializeUpdateExpiryModal();
+    }
+
+    // Reset date picker and disable button
+    updateExpiryDatePicker.clearDate();
+    document.getElementById('confirm-update-expiry-btn').disabled = true;
+
+    // Show modal
+    modal.style.display = 'flex';
+}
+
+/**
+ * Close the update expiry modal
+ */
+function closeUpdateExpiryModal() {
+    const modal = document.getElementById('update-expiry-modal');
+    if (!modal) return;
+
+    modal.style.display = 'none';
+    currentExpiryData = null;
+    
+    if (updateExpiryDatePicker) {
+        updateExpiryDatePicker.clearDate();
+    }
+    
+    document.getElementById('update-expiry-reason').value = '';
+    document.getElementById('confirm-update-expiry-btn').disabled = true;
+}
+
+/**
+ * Quick extend the expiry date by a number of days
+ * @param {number} days - Number of days to extend
+ */
+function quickExtendExpiry(days) {
+    if (!currentExpiryData) return;
+
+    const newDate = new Date(currentExpiryData.currentExpiry);
+    newDate.setDate(newDate.getDate() + days);
+
+    if (updateExpiryDatePicker) {
+        updateExpiryDatePicker.setDate(newDate);
+        document.getElementById('confirm-update-expiry-btn').disabled = false;
+    }
+}
+
+/**
+ * Confirm and submit the expiry date update
+ */
+async function confirmUpdateExpiry() {
+    if (!currentExpiryData || !updateExpiryDatePicker) return;
+
+    const newDate = updateExpiryDatePicker.selectedDate;
+    if (!newDate) {
+        alert('Please select a new expiry date');
+        return;
+    }
+
+    const reason = document.getElementById('update-expiry-reason').value.trim();
+    const confirmBtn = document.getElementById('confirm-update-expiry-btn');
+
+    // Disable button and show loading state
+    confirmBtn.disabled = true;
+    const originalHTML = confirmBtn.innerHTML;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+    try {
+        // Format date as YYYY-MM-DD to avoid timezone issues
+        const year = newDate.getFullYear();
+        const month = String(newDate.getMonth() + 1).padStart(2, '0');
+        const day = String(newDate.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
+
+        // Call the Cloud Function
+        const updateMembershipExpiry = firebase.functions().httpsCallable('updateMembershipExpiry');
+        const result = await updateMembershipExpiry({
+            membershipId: currentExpiryData.membershipId,
+            newExpiryDate: dateString,
+            reason: reason || undefined
+        });
+
+        console.log('Expiry date updated successfully:', result.data);
+
+        // Format the date for display (DD/MM/YYYY)
+        const [displayYear, displayMonth, displayDay] = dateString.split('-');
+        const formattedDate = `${displayDay}/${displayMonth}/${displayYear}`;
+
+        // Show success message
+        const successModal = new ConfirmationModal({
+            title: 'Expiry Date Updated',
+            message: `<p>The membership expiry date for <strong>${currentExpiryData.studentName}</strong> has been updated to <strong>${formattedDate}</strong>.</p>`,
+            icon: 'fas fa-check-circle',
+            confirmText: 'OK',
+            confirmClass: 'btn-primary'
+        });
+        successModal.show();
+
+        // Close modal
+        closeUpdateExpiryModal();
+
+        // Refresh the report to show updated data
+        await generateImproversMembershipReport();
+
+    } catch (error) {
+        console.error('Error updating expiry date:', error);
+        
+        // Restore button
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = originalHTML;
+
+        // Show error message
+        const errorModal = new ConfirmationModal({
+            title: 'Update Failed',
+            message: `<p>Failed to update expiry date: ${error.message}</p>`,
+            icon: 'fas fa-exclamation-circle',
+            confirmText: 'OK',
+            confirmClass: 'btn-primary'
+        });
+        errorModal.show();
+    }
+}
+
+// Make modal functions globally accessible
+window.openUpdateExpiryModal = openUpdateExpiryModal;
+window.closeUpdateExpiryModal = closeUpdateExpiryModal;
+window.quickExtendExpiry = quickExtendExpiry;
+window.confirmUpdateExpiry = confirmUpdateExpiry;

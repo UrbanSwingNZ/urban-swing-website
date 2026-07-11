@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="reports.css">
     <link rel="stylesheet" href="/styles/modals/modal-base.css">
     <link rel="stylesheet" href="/styles/modals/confirmation-modal.css">
+    <link rel="stylesheet" href="/styles/date-picker/date-picker.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icons/favicon.ico" type="image/x-icon">
     
@@ -16,6 +17,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     
     <!-- Loading Spinner Component -->
     <script type="module" src="/components/loading-spinner/loading-spinner.js"></script>
@@ -183,6 +185,64 @@
         </footer>
     </div>
 
+    <!-- Update Membership Expiry Modal -->
+    <div id="update-expiry-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-alt"></i> Update Membership Expiry</h3>
+                <button class="modal-close" onclick="closeUpdateExpiryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="student-info-card" style="margin-bottom: 20px;">
+                    <h4 id="update-expiry-student-name">Student Name</h4>
+                    <p id="update-expiry-student-email">email@example.com</p>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-check"></i> Current Expiry Date</label>
+                    <input type="text" id="update-expiry-current-date" class="form-control" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-plus"></i> New Expiry Date</label>
+                    <div class="date-input-wrapper">
+                        <input type="text" id="update-expiry-new-date" class="form-control" readonly placeholder="Select new expiry date">
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
+                    </div>
+                    <div id="update-expiry-calendar" class="custom-calendar" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-bolt"></i> Quick Extend</label>
+                    <div class="quick-extend-buttons">
+                        <button type="button" class="btn-secondary btn-small" onclick="quickExtendExpiry(7)">
+                            <i class="fas fa-plus"></i> +1 Week
+                        </button>
+                        <button type="button" class="btn-secondary btn-small" onclick="quickExtendExpiry(14)">
+                            <i class="fas fa-plus"></i> +2 Weeks
+                        </button>
+                        <button type="button" class="btn-secondary btn-small" onclick="quickExtendExpiry(30)">
+                            <i class="fas fa-plus"></i> +1 Month
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> Reason (Optional)</label>
+                    <textarea id="update-expiry-reason" class="form-control" rows="3" placeholder="e.g., Class cancelled due to weather"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeUpdateExpiryModal()">Cancel</button>
+                <button type="button" class="btn-primary" id="confirm-update-expiry-btn" disabled onclick="confirmUpdateExpiry()">
+                    <i class="fas fa-check"></i> Update Expiry
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config -->
     <script src="../../../config/firebase-config.js"></script>
         <!-- Centralized Utilities -->
@@ -197,6 +257,9 @@
     <!-- Modals -->
     <script type="module" src="/components/modals/modal-base.js"></script>
     <script type="module" src="/components/modals/confirmation-modal.js"></script>
+    
+    <!-- Date Picker -->
+    <script src="/functions/date-picker/date-picker.js"></script>
     
     <!-- Portal Invitation Utilities -->
     <script src="../../student-database/js/invitation-utils.js" type="module"></script>
