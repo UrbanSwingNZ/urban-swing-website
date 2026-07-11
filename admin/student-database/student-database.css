@@ -176,6 +176,11 @@
     color: var(--text-orange);
 }
 
+.badge-inactive {
+    background: var(--bg-light);
+    color: var(--text-light);
+}
+
 /* Deleted Student Row Styling */
 .deleted-student {
     color: var(--error);
@@ -221,6 +226,22 @@
 
 .concessions-cell {
     text-align: center;
+}
+
+.membership-cell {
+    text-align: center;
+}
+
+.membership-expiry-date {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.membership-no-active {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-style: italic;
 }
 
 /* Mini Purchase Button */
@@ -522,6 +543,12 @@ textarea:focus {
     .students-table tbody td .btn-copy-contact {
         display: none;
     }
+    
+    /* Hide membership column on desktop - only show on mobile */
+    .students-table thead th.membership-column,
+    .students-table tbody td.membership-cell {
+        display: none;
+    }
 }
 
 /* ========================================
@@ -657,7 +684,8 @@ textarea:focus {
     .students-table tbody tr td:nth-child(5),
     .students-table tbody tr td:nth-child(6),
     .students-table tbody tr td:nth-child(7),
-    .students-table tbody tr td:nth-child(8) {
+    .students-table tbody tr td:nth-child(8),
+    .students-table tbody tr td:nth-child(9) {
         display: none;
         padding: 0.75rem 1rem;
         border: none;
@@ -669,14 +697,43 @@ textarea:focus {
     .students-table tbody tr.expanded td:nth-child(2),
     .students-table tbody tr.expanded td:nth-child(3),
     .students-table tbody tr.expanded td:nth-child(5),
-    .students-table tbody tr.expanded td:nth-child(6),
-    .students-table tbody tr.expanded td:nth-child(7),
-    .students-table tbody tr.expanded td:nth-child(8) {
+    .students-table tbody tr.expanded td:nth-child(8),
+    .students-table tbody tr.expanded td:nth-child(9) {
         display: block;
+    }
+    
+    /* Concessions and Membership - side by side */
+    .students-table tbody tr.expanded td:nth-child(6),
+    .students-table tbody tr.expanded td:nth-child(7) {
+        display: inline-block;
+        width: 49%;
+        vertical-align: top;
+        box-sizing: border-box;
+        padding: 0.75rem 0.5rem;
+    }
+    
+    /* Remove border-top from membership cell to prevent wrapping */
+    .students-table tbody tr.expanded td:nth-child(7) {
+        border-top: none !important;
+    }
+    
+    /* First cell in the row gets left padding */
+    .students-table tbody tr.expanded td:nth-child(6) {
+        padding-left: 1rem;
+    }
+    
+    /* Last cell in the row gets right padding */
+    .students-table tbody tr.expanded td:nth-child(7) {
+        padding-right: 1rem;
+    }
+    
+    /* Override desktop hiding for membership column on mobile when expanded */
+    .students-table tbody tr.expanded td.membership-cell {
+        display: inline-block !important;
     }
 
     /* Add labels for expanded content */
-    .students-table tbody tr.expanded td:nth-child(7)::before {
+    .students-table tbody tr.expanded td:nth-child(8)::before {
         content: '📅 Registered: ';
         font-weight: 600;
         color: var(--text-primary);
@@ -707,20 +764,37 @@ textarea:focus {
     }
 
     .students-table tbody tr.expanded td:nth-child(6)::before {
-        content: 'Concessions: ';
+        content: 'Concessions';
         font-weight: 600;
         opacity: 0.8;
         display: block;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(7)::before {
+        content: 'Membership';
+        font-weight: 600;
+        opacity: 0.8;
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .students-table tbody tr.expanded td:nth-child(8)::before {
+        content: '📅 Registered: ';
+        font-weight: 600;
+        color: var(--text-primary);
+        opacity: 0.8;
     }
 
     /* Action buttons - full width when expanded */
-    .students-table tbody tr.expanded td:nth-child(8) {
+    .students-table tbody tr.expanded td:nth-child(9) {
         padding: 1rem;
         background: var(--bg-purple-alt-medium);
     }
 
-    .students-table tbody tr.expanded td:nth-child(8).action-buttons {
+    .students-table tbody tr.expanded td:nth-child(9).action-buttons {
         display: flex;
         gap: 0.5rem;
         justify-content: stretch;
@@ -729,7 +803,7 @@ textarea:focus {
         box-sizing: border-box;
     }
 
-    .students-table tbody tr.expanded td:nth-child(8) .btn-icon {
+    .students-table tbody tr.expanded td:nth-child(9) .btn-icon {
         flex: 1;
         padding: 0.5rem;
         display: inline-flex;
@@ -742,7 +816,7 @@ textarea:focus {
         box-sizing: border-box;
     }
 
-    .students-table tbody tr.expanded td:nth-child(8) .btn-icon i {
+    .students-table tbody tr.expanded td:nth-child(9) .btn-icon i {
         font-size: 1.2rem;
     }
 
@@ -1259,6 +1333,156 @@ textarea:focus {
     border-color: var(--purple-primary);
 }
 
+/* ========================================
+   PAUSE ALL MEMBERSHIPS FEATURE
+   ======================================== */
+
+/* Header buttons container */
+.database-header-buttons {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .database-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .database-header-buttons {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+    
+    .database-header-buttons button {
+        width: 100%;
+    }
+}
+
+/* Extension method tabs */
+.extension-method-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.tab-button {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    border: 2px solid var(--border-light);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.tab-button:hover {
+    border-color: var(--purple-primary);
+    background: var(--purple-light);
+}
+
+.tab-button.active {
+    border-color: var(--purple-primary);
+    background: var(--purple-primary);
+    color: white;
+}
+
+.tab-button i {
+    margin-right: var(--space-xs);
+}
+
+/* Extension method content */
+.extension-method-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Preview section */
+.preview-section {
+    margin-top: var(--space-lg);
+    padding: var(--space-md);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+.preview-section h4 {
+    margin: 0 0 var(--space-md) 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.preview-section h4 i {
+    margin-right: var(--space-xs);
+    color: var(--purple-primary);
+}
+
+.preview-stats {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.preview-stats span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.preview-stats strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.preview-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.preview-item {
+    padding: var(--space-sm);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+}
+
+.preview-item-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.preview-item-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.preview-item-badge {
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--purple-light);
+    color: var(--purple-primary);
+}
+
+/* Medium modal size */
+.modal-content.modal-medium {
+    max-width: 600px;
+}
+
 .btn-lock-toggle i {
     margin-right: 4px;
 }
@@ -1473,3 +1697,39 @@ textarea:focus {
    Inherited from admin.css - no need to redefine
    ======================================== */
 
+
+
+/* ========================================
+   UPDATE MEMBERSHIP EXPIRY MODAL STYLES
+   ======================================== */
+
+.quick-extend-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Student Info Card in Modal */
+.student-info-card {
+    background: var(--bg-light);
+    border-left: 4px solid var(--purple-primary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+}
+
+.student-info-card h4 {
+    color: var(--purple-primary);
+    margin: 0 0 var(--space-xs) 0;
+    font-size: 1.1rem;
+}
+
+.student-info-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}

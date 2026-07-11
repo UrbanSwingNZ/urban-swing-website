@@ -42,6 +42,12 @@
     transform: none;
 }
 
+.btn-primary:disabled:hover {
+    background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
+    transform: none;
+    box-shadow: none;
+}
+
 .btn-secondary {
     padding: 6px 10px;
     background: transparent;

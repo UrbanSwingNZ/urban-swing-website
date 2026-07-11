@@ -34,8 +34,7 @@ function initializeApp() {
     // Initialize transaction history modal
     initializeTransactionHistoryModalListeners();
     
-    // Initialize modal event listeners
-    initializeModalListeners();
+    // Note: initializeModalListeners() is called automatically by modal.js when it loads
     
     // Initialize search
     initializeSearch();
@@ -45,13 +44,20 @@ function initializeApp() {
 }
 
 /**
- * Initialize filter controls (show deleted checkbox)
+ * Initialize filter controls (show deleted checkbox and show improvers checkbox)
  */
 function initializeFilterControls() {
     const showDeletedCheckbox = document.getElementById('show-deleted-checkbox');
     if (showDeletedCheckbox) {
         showDeletedCheckbox.addEventListener('change', (e) => {
             toggleShowDeleted(e.target.checked);
+        });
+    }
+    
+    const showImproversCheckbox = document.getElementById('show-improvers-checkbox');
+    if (showImproversCheckbox) {
+        showImproversCheckbox.addEventListener('change', (e) => {
+            toggleShowImprovers(e.target.checked);
         });
     }
 }

@@ -37,18 +37,18 @@ exports.exchangeSpotifyToken = onCall(async (request) => {
     }
 
     // Exchange code for tokens
-    const tokenResponse = await axios.post("https://accounts.spotify.com/api/token", 
-      new URLSearchParams({
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: redirectUri,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+    const tokenResponse = await axios.post("https://accounts.spotify.com/api/token",
+        new URLSearchParams({
+          grant_type: "authorization_code",
+          code: code,
+          redirect_uri: redirectUri,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+          },
         },
-      }
     );
 
     const tokens = tokenResponse.data;
@@ -107,17 +107,17 @@ exports.refreshSpotifyToken = onCall(async (request) => {
     }
 
     // Refresh the access token
-    const tokenResponse = await axios.post("https://accounts.spotify.com/api/token", 
-      new URLSearchParams({
-        grant_type: "refresh_token",
-        refresh_token: refreshToken,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+    const tokenResponse = await axios.post("https://accounts.spotify.com/api/token",
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: refreshToken,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64"),
+          },
         },
-      }
     );
 
     const tokens = tokenResponse.data;

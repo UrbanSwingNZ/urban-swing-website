@@ -7,20 +7,20 @@
  * Generate student portal invitation email
  * @param {Object} student - Student data
  * @param {string} registrationLink - Link to the registration page
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
-function generatePortalInvitationEmail(student, registrationLink = 'https://urbanswing.co.nz/student-portal') {
+function generatePortalInvitationEmail(student, registrationLink = "https://urbanswing.co.nz/student-portal") {
   // Email color mappings from styles/base/colors.css
   const colors = {
-    purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#e800f2',      // --pink-primary
-    white: '#ffffff',            // --white
-    textPrimary: '#333',         // --text-primary
-    textLight: '#666',           // --text-light
-    bgLight: '#f8f9fa',          // --bg-light / --gray-200
-    bgInfoLight: '#e8f4fd',      // --info-light
-    infoBlue: '#0c5aa6',         // Dark blue for info sections
-    borderLight: '#e0e0e0',      // --border-light / --gray-450
+    purplePrimary: "#9a16f5", // --purple-primary
+    pinkPrimary: "#e800f2", // --pink-primary
+    white: "#ffffff", // --white
+    textPrimary: "#333", // --text-primary
+    textLight: "#666", // --text-light
+    bgLight: "#f8f9fa", // --bg-light / --gray-200
+    bgInfoLight: "#e8f4fd", // --info-light
+    infoBlue: "#0c5aa6", // Dark blue for info sections
+    borderLight: "#e0e0e0", // --border-light / --gray-450
   };
 
   const html = `
@@ -141,9 +141,9 @@ Website: https://urbanswing.co.nz
 Email: dance@urbanswing.co.nz
   `;
 
-  return { html, text };
+  return {html, text};
 }
 
 module.exports = {
-  generatePortalInvitationEmail
+  generatePortalInvitationEmail,
 };

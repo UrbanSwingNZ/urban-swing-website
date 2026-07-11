@@ -55,6 +55,14 @@ async function displayStudents() {
         setTimeout(() => {
             loadStudentConcessions(student.id, concessionsCellId);
         }, 0);
+        
+        // Load membership for improvers
+        if (student.improver) {
+            const membershipCellId = `membership-${student.id}`;
+            setTimeout(() => {
+                loadStudentMembership(student.id, membershipCellId);
+            }, 0);
+        }
     });
 
     // Update sort icons
@@ -139,6 +147,9 @@ function createStudentRow(student) {
     // Concessions badge (will be populated async)
     const concessionsCellId = `concessions-${student.id}`;
     
+    // Membership badge (will be populated async for improvers)
+    const membershipCellId = `membership-${student.id}`;
+    
     // Check if student has notes
     const hasNotes = student.adminNotes && student.adminNotes.trim().length > 0;
     const notesButtonClass = hasNotes ? 'btn-icon has-notes' : 'btn-icon';
@@ -183,6 +194,9 @@ function createStudentRow(student) {
         <td id="${concessionsCellId}" class="concessions-cell">
             <i class="fas fa-spinner fa-spin text-muted"></i>
         </td>
+        <td id="${membershipCellId}" class="membership-cell">
+            ${student.improver ? '<i class="fas fa-spinner fa-spin text-muted"></i>' : '<span class="text-muted">-</span>'}
+        </td>
         <td>${registeredDate}</td>
         <td class="action-buttons">
             ${!isDeleted ? `<button class="btn-icon btn-disabled" id="auth-action-${student.id}" data-auth-action="checking" title="Checking auth status...">
@@ -212,7 +226,11 @@ function createStudentRow(student) {
             toggleMobileAccordion(row);
         } else {
             // Desktop: open detail modal
-            viewStudent(student.id);
+            if (typeof window.viewStudent === 'function') {
+                window.viewStudent(student.id);
+            } else {
+                console.error('viewStudent function not available yet');
+            }
         }
     });
     
@@ -269,10 +287,14 @@ async function loadStudentConcessions(studentId, cellId) {
     try {
         const blocks = await getStudentConcessionBlocks(studentId);
         const stats = calculateConcessionStats(blocks);
-        const badgeHTML = getConcessionBadgeHTML(stats);
+        
+        // Get student to check for active membership
+        const student = findStudentById(studentId);
+        const hasActiveMembership = student && student.activeMembershipId && student.membershipExpiryDate;
+        
+        const badgeHTML = getConcessionBadgeHTML(stats, hasActiveMembership);
         
         // Cache the concession count on the student object for sorting
-        const student = findStudentById(studentId);
         if (student) {
             // Use totalCount for students with concessions, -1 for students needing to purchase
             student._concessionsCount = stats.totalCount > 0 ? stats.totalCount : -1;
@@ -292,7 +314,7 @@ async function loadStudentConcessions(studentId, cellId) {
             
             // Add click handler for purchase button (opens purchase modal)
             const purchaseBtn = cell.querySelector('.btn-primary.btn-primary-sm');
-            if (purchaseBtn) {
+            if (purchaseBtn && !purchaseBtn.disabled) {
                 purchaseBtn.addEventListener('click', async (e) => {
                     e.stopPropagation();
                     const student = findStudentById(studentId);
@@ -315,6 +337,49 @@ async function loadStudentConcessions(studentId, cellId) {
         if (student) {
             student._concessionsCount = -1;
         }
+    }
+}
+
+/**
+ * Load and display membership information for an improver student
+ */
+async function loadStudentMembership(studentId, cellId) {
+    const cell = document.getElementById(cellId);
+    if (!cell) {
+        console.warn('Cell not found for membership:', cellId);
+        return;
+    }
+    
+    try {
+        const student = findStudentById(studentId);
+        if (!student) {
+            cell.innerHTML = '<span class="text-muted">-</span>';
+            return;
+        }
+        
+        // Check if student has an active membership
+        const hasActiveMembership = student.activeMembershipId && student.membershipExpiryDate;
+        
+        if (hasActiveMembership) {
+            // Format expiry date
+            const expiryDate = student.membershipExpiryDate.toDate ? 
+                student.membershipExpiryDate.toDate() : 
+                new Date(student.membershipExpiryDate);
+            
+            const day = String(expiryDate.getUTCDate()).padStart(2, '0');
+            const month = String(expiryDate.getUTCMonth() + 1).padStart(2, '0');
+            const year = expiryDate.getUTCFullYear();
+            const formattedDate = `${day}/${month}/${year}`;
+            
+            // Show expiry date with green badge styling
+            cell.innerHTML = `<span class="badge badge-yes">${formattedDate}</span>`;
+        } else {
+            // No active membership - show red badge
+            cell.innerHTML = `<span class="badge badge-no">No active membership</span>`;
+        }
+    } catch (error) {
+        console.error('Error loading membership for student:', studentId, error);
+        cell.innerHTML = '<span class="text-muted">-</span>';
     }
 }
 
@@ -392,4 +457,23 @@ function inviteStudentToPortal(studentId) {
     
     // Use the invitation modal
     inviteToPortal(studentId, fullName, student.email);
+}
+
+/**
+ * Open prepay page for student to purchase membership
+ */
+function openPrepayPage(studentId, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const student = findStudentById(studentId);
+    if (!student) {
+        alert('Unable to find student information.');
+        return;
+    }
+    
+    // Open student portal prepay page in new tab
+    const prepayUrl = `/student-portal/prepay/?studentId=${studentId}`;
+    window.open(prepayUrl, '_blank');
 }

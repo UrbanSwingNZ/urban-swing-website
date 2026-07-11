@@ -3,102 +3,101 @@
  * Stripe API configuration and initialization
  */
 
-require('dotenv').config();
-const Stripe = require('stripe');
-const admin = require('firebase-admin');
+require("dotenv").config();
+const Stripe = require("stripe");
+const admin = require("firebase-admin");
 
 // Initialize Stripe with secret key from environment variables
 // During local code analysis, use placeholder if secret not available
 // IMPORTANT: Trim to remove any newlines or whitespace that could break the Authorization header
-const stripeKey = (process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder_for_analysis').trim();
+const stripeKey = (process.env.STRIPE_SECRET_KEY || "sk_test_placeholder_for_analysis").trim();
 const stripe = Stripe(stripeKey, {
   maxNetworkRetries: 2,
   timeout: 20000, // 20 seconds
-  telemetry: false
+  telemetry: false,
 });
 
-console.log('Stripe SDK initialized with key prefix:', stripeKey.substring(0, 10));
+console.log("Stripe SDK initialized with key prefix:", stripeKey.substring(0, 10));
 
 // Currency configuration
-const CURRENCY = 'nzd'; // New Zealand Dollars
+const CURRENCY = "nzd"; // New Zealand Dollars
 
 /**
  * Fetch pricing from Firestore
  * Dynamically fetches ALL active, non-promo rates and packages
- * @returns {Promise<Object>} Package prices in cents with metadata
+ * @return {Promise<Object>} Package prices in cents with metadata
  */
 async function fetchPricing() {
   const db = admin.firestore();
   const packages = {};
-  
+
   try {
     // Fetch casual rates from Firestore
-    const casualRatesSnapshot = await db.collection('casualRates').get();
-    
-    casualRatesSnapshot.forEach(doc => {
+    const casualRatesSnapshot = await db.collection("casualRates").get();
+
+    casualRatesSnapshot.forEach((doc) => {
       const rate = doc.data();
       const docId = doc.id;
-      
+
       // Include all active, non-promo casual rates
       if (rate.isActive && !rate.isPromo) {
         packages[docId] = {
           price: Math.round(rate.price * 100), // Convert to cents
-          name: rate.name || 'Casual Entry',
-          type: 'casual-rate',
-          description: rate.description || null
+          name: rate.name || "Casual Entry",
+          type: "casual-rate",
+          description: rate.description || null,
         };
       }
     });
-    
+
     // Fetch concession packages from Firestore
-    const concessionPackagesSnapshot = await db.collection('concessionPackages').get();
-    
-    concessionPackagesSnapshot.forEach(doc => {
+    const concessionPackagesSnapshot = await db.collection("concessionPackages").get();
+
+    concessionPackagesSnapshot.forEach((doc) => {
       const pkg = doc.data();
       const docId = doc.id;
-      
+
       // Include all active packages (not explicitly inactive)
       // Frontend handles filtering for specific contexts (registration form, student portal, admin)
       if (pkg.isActive !== false) {
         packages[docId] = {
           price: Math.round(pkg.price * 100), // Convert to cents
           name: pkg.name || `${pkg.numberOfClasses}-Class Package`,
-          type: 'concession-package',
+          type: "concession-package",
           numberOfClasses: pkg.numberOfClasses,
           expiryMonths: pkg.expiryMonths,
-          description: pkg.description || null
+          description: pkg.description || null,
         };
       }
     });
-    
+
     // Fetch membership types from Firestore
-    const membershipTypesSnapshot = await db.collection('membershipTypes').get();
-    
-    membershipTypesSnapshot.forEach(doc => {
+    const membershipTypesSnapshot = await db.collection("membershipTypes").get();
+
+    membershipTypesSnapshot.forEach((doc) => {
       const membership = doc.data();
       const docId = doc.id;
-      
+
       // Include all active membership types
       if (membership.isActive !== false) {
         packages[docId] = {
           price: Math.round(membership.price * 100), // Convert to cents
-          name: membership.name || 'Monthly Membership',
-          type: 'membership',
-          billingPeriod: membership.billingPeriod || 'month',
-          description: membership.description || null
+          name: membership.name || "Monthly Membership",
+          type: "membership",
+          billingPeriod: membership.billingPeriod || "month",
+          description: membership.description || null,
         };
       }
     });
-    
+
     if (Object.keys(packages).length === 0) {
-      throw new Error('No active packages found for purchase');
+      throw new Error("No active packages found for purchase");
     }
-    
-    console.log('Fetched packages from Firestore:', Object.keys(packages));
+
+    console.log("Fetched packages from Firestore:", Object.keys(packages));
     return packages;
-    
   } catch (error) {
-    console.error('Error fetching pricing from Firestore:', error);
+    console.error("Error fetching pricing from Firestore:", error);
     throw new Error(`Failed to fetch pricing: ${error.message}`);
   }
 }
@@ -106,5 +105,5 @@ async function fetchPricing() {
 module.exports = {
   stripe,
   fetchPricing,
-  CURRENCY
+  CURRENCY,
 };
