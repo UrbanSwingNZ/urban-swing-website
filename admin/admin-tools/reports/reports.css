@@ -377,3 +377,243 @@
         display: block;
     }
 }
+
+/* ========================================
+   UPDATE EXPIRY MODAL STYLES
+   ======================================== */
+
+/* Expiry Date Link (clickable date in table) */
+.expiry-date-link {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: var(--transition-base);
+}
+
+.expiry-date-link:hover {
+    opacity: var(--opacity-hover);
+    transform: translateY(-1px);
+}
+
+/* ========================================
+   PAUSE ALL MEMBERSHIPS FEATURE
+   ======================================== */
+
+/* Report header buttons container */
+.report-header-buttons {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .report-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+    
+    .report-header-buttons {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+    
+    .report-header-buttons button {
+        width: 100%;
+    }
+}
+
+/* Extension method tabs */
+.extension-method-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.tab-button {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    border: 2px solid var(--border-light);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.tab-button:hover {
+    border-color: var(--purple-primary);
+    background: var(--purple-light);
+}
+
+.tab-button.active {
+    border-color: var(--purple-primary);
+    background: var(--purple-primary);
+    color: white;
+}
+
+.tab-button i {
+    margin-right: var(--space-xs);
+}
+
+/* Extension method content */
+.extension-method-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Preview section */
+.preview-section {
+    margin-top: var(--space-lg);
+    padding: var(--space-md);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+.preview-section h4 {
+    margin: 0 0 var(--space-md) 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.preview-section h4 i {
+    margin-right: var(--space-xs);
+    color: var(--purple-primary);
+}
+
+.preview-stats {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.preview-stats span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.preview-stats strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.preview-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.preview-item {
+    padding: var(--space-sm);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+}
+
+.preview-item-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.preview-item-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.preview-item-badge {
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--purple-light);
+    color: var(--purple-primary);
+}
+
+/* Medium modal size */
+.modal-content.modal-medium {
+    max-width: 600px;
+}
+
+.expiry-date-link:hover .badge {
+    box-shadow: 0 2px 6px var(--shadow-medium);
+}
+
+.expiry-date-link i {
+    font-size: 0.75rem;
+    color: var(--purple-primary);
+    opacity: 0.7;
+}
+
+.expiry-date-link:hover i {
+    opacity: 1;
+}
+
+/* Quick Extend Buttons */
+.quick-extend-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Student Info Card in Modal */
+.student-info-card {
+    background: var(--bg-light);
+    border-left: 4px solid var(--purple-primary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+}
+
+.student-info-card h4 {
+    color: var(--purple-primary);
+    margin: 0 0 var(--space-xs) 0;
+    font-size: 1.1rem;
+}
+
+.student-info-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Date Input Wrapper */
+.date-input-wrapper {
+    position: relative;
+}
+
+.date-input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Mobile responsive for quick extend buttons */
+@media (max-width: 768px) {
+    .quick-extend-buttons {
+        flex-direction: column;
+    }
+
+    .btn-small {
+        width: 100%;
+    }
+}

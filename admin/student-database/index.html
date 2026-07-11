@@ -44,9 +44,14 @@
                     <h2>Registered Students</h2>
                     <p class="student-count">Total: <span id="student-count">0</span> students</p>
                 </div>
-                <button class="btn-primary btn-primary-lg" id="register-btn">
-                    <i class="fas fa-user-plus"></i> Register New Student
-                </button>
+                <div class="database-header-buttons">
+                    <button class="btn-primary btn-primary-lg" id="pause-all-btn" onclick="openPauseAllModal()">
+                        <i class="fas fa-pause-circle"></i> Pause All Memberships
+                    </button>
+                    <button class="btn-primary btn-primary-lg" id="register-btn">
+                        <i class="fas fa-user-plus"></i> Register New Student
+                    </button>
+                </div>
             </div>
 
             <!-- Search Section -->
@@ -62,6 +67,10 @@
                     <label class="filter-checkbox">
                         <input type="checkbox" id="show-deleted-checkbox">
                         <span>Show deleted students</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="show-improvers-checkbox">
+                        <span>Show Improvers</span>
                     </label>
                 </div>
                 <p class="search-results-info" id="search-results-info" style="display: none;"></p>
@@ -89,6 +98,9 @@
                             </th>
                             <th class="sortable" data-sort="concessions">
                                 Concessions <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="membership-column">
+                                Membership
                             </th>
                             <th class="sortable" data-sort="registeredAt">
                                 Registered <i class="fas fa-sort sort-icon"></i>
@@ -444,8 +456,166 @@
         </div>
     </div>
 
+    <!-- Pause All Memberships Modal -->
+    <div id="pause-all-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3><i class="fas fa-pause-circle"></i> Pause All Memberships</h3>
+                <button class="modal-close" onclick="closePauseAllModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">This will extend the expiry date for all active memberships. For auto-renewing memberships, the Stripe subscription will be paused accordingly.</p>
+                
+                <!-- Extension Method Selection -->
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Select Extension Method</label>
+                    <div class="extension-method-tabs">
+                        <button type="button" class="tab-button active" onclick="switchPauseAllMethod('date')">
+                            <i class="fas fa-calendar"></i> Specific Date
+                        </button>
+                        <button type="button" class="tab-button" onclick="switchPauseAllMethod('duration')">
+                            <i class="fas fa-clock"></i> Duration
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Date Picker Method -->
+                <div id="pause-all-date-method" class="extension-method-content">
+                    <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 0.75rem; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: start; gap: 0.5rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: #856404; margin-top: 0.125rem;"></i>
+                            <div style="color: #856404; font-size: 0.9rem; line-height: 1.4;">
+                                <strong>Warning:</strong> If members have different expiry dates, not all memberships may be updated. 
+                                It's recommended to use <strong>Duration</strong> instead unless you are certain about the specific date needed.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-plus"></i> New Expiry Date</label>
+                        <div class="date-input-wrapper">
+                            <input type="text" id="pause-all-date-picker" class="form-control" readonly placeholder="Select new expiry date">
+                            <i class="fas fa-calendar-alt date-input-icon"></i>
+                        </div>
+                        <div id="pause-all-calendar" class="custom-calendar" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <!-- Duration Method -->
+                <div id="pause-all-duration-method" class="extension-method-content" style="display: none;">
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Extension Duration</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="pause-all-duration-value" class="form-control" min="1" placeholder="Enter number" style="flex: 1;">
+                            <select id="pause-all-duration-unit" class="form-control" style="flex: 1;">
+                                <option value="days">Days</option>
+                                <option value="weeks" selected>Weeks</option>
+                                <option value="months">Months</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> Reason (Optional)</label>
+                    <textarea id="pause-all-reason" class="form-control" rows="3" placeholder="e.g., Christmas closedown"></textarea>
+                </div>
+
+                <!-- Preview Section -->
+                <div id="pause-all-preview" class="preview-section" style="display: none;">
+                    <h4><i class="fas fa-list"></i> Memberships to Update</h4>
+                    <div class="preview-stats">
+                        <span>Will be updated: <strong id="pause-all-total-count">0</strong></span>
+                        <span>Auto-renewing: <strong id="pause-all-auto-renew-count">0</strong></span>
+                    </div>
+                    <div id="pause-all-preview-list" class="preview-list"></div>
+                    
+                    <!-- Skipped Memberships Warning -->
+                    <div id="pause-all-skipped-section" style="display: none; margin-top: 1.5rem; padding: 1rem; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px;">
+                        <h4 style="color: #856404; margin: 0 0 0.5rem 0;"><i class="fas fa-exclamation-triangle"></i> Memberships NOT Being Updated</h4>
+                        <div style="color: #856404; margin-bottom: 0.5rem;">
+                            <strong id="pause-all-skipped-count">0</strong> membership(s) will be skipped because they already expire after the selected date.
+                        </div>
+                        <div id="pause-all-skipped-list" class="preview-list" style="max-height: 150px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closePauseAllModal()">Cancel</button>
+                <button type="button" class="btn-primary" id="preview-pause-all-btn" onclick="previewPauseAll()">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button type="button" class="btn-primary" id="confirm-pause-all-btn" disabled onclick="confirmPauseAll()">
+                    <i class="fas fa-check"></i> Pause All Memberships
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Membership Expiry Modal -->
+    <div id="update-expiry-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-alt"></i> Update Membership Expiry</h3>
+                <button class="modal-close" onclick="closeUpdateExpiryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="student-info-card" style="margin-bottom: 20px;">
+                    <h4 id="update-expiry-student-name">Student Name</h4>
+                    <p id="update-expiry-student-email">email@example.com</p>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-check"></i> Current Expiry Date</label>
+                    <input type="text" id="update-expiry-current-date" class="form-control" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-plus"></i> New Expiry Date</label>
+                    <div class="date-input-wrapper">
+                        <input type="text" id="update-expiry-new-date" class="form-control" readonly placeholder="Select new expiry date">
+                        <i class="fas fa-calendar-alt date-input-icon"></i>
+                    </div>
+                    <div id="update-expiry-calendar" class="custom-calendar" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-bolt"></i> Quick Extend</label>
+                    <div class="quick-extend-buttons">
+                        <button type="button" class="btn-secondary btn-small" onclick="quickExtendExpiry(7)">
+                            <i class="fas fa-plus"></i> +1 Week
+                        </button>
+                        <button type="button" class="btn-secondary btn-small" onclick="quickExtendExpiry(14)">
+                            <i class="fas fa-plus"></i> +2 Weeks
+                        </button>
+                        <button type="button" class="btn-secondary btn-small" onclick="quickExtendExpiry(30)">
+                            <i class="fas fa-plus"></i> +1 Month
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> Reason (Optional)</label>
+                    <textarea id="update-expiry-reason" class="form-control" rows="3" placeholder="e.g., Class cancelled due to weather"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeUpdateExpiryModal()">Cancel</button>
+                <button type="button" class="btn-primary" id="confirm-update-expiry-btn" disabled onclick="confirmUpdateExpiry()">
+                    <i class="fas fa-check"></i> Update Expiry
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Config & Scripts -->
     <script src="../../config/firebase-config.js?v=4"></script>
+    
+    <!-- Firebase Functions -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-functions-compat.js"></script>
     
     <!-- Password Reset Utilities -->
     <script src="../../js/password-reset-utils.js" type="module"></script>
@@ -473,6 +643,9 @@
     <script src="js/table.js?v=11"></script>
     <script type="module" src="js/modal.js?v=13"></script>
     <script src="js/navigation.js?v=10"></script>
+    
+    <!-- Pause All Memberships Module (Shared) -->
+    <script type="module" src="/admin/js/pause-all-memberships.js"></script>
     
     <!-- Transaction History Module -->
     <script src="js/transaction-history/transaction-history-modal.js?v=1"></script>

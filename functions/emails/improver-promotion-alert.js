@@ -5,15 +5,15 @@
 
 // Inline colors (since email-styles.js doesn't exist)
 const colors = {
-    purple: '#9a16f5',
-    darkPurple: '#7a0fd4',
-    lightPurple: '#f3e5ff',
-    gold: '#d4af37',
-    white: '#ffffff',
-    black: '#000000',
-    gray: '#666666',
-    lightGray: '#f5f5f5',
-    borderGray: '#ddd'
+  purple: "#9a16f5",
+  darkPurple: "#7a0fd4",
+  lightPurple: "#f3e5ff",
+  gold: "#d4af37",
+  white: "#ffffff",
+  black: "#000000",
+  gray: "#666666",
+  lightGray: "#f5f5f5",
+  borderGray: "#ddd",
 };
 
 /**
@@ -25,28 +25,28 @@ const colors = {
  * @param {number} params.totalConcessions - Total remaining concessions
  * @param {number} params.totalAmount - Total amount spent on concessions
  * @param {Array} params.concessionDetails - Array of concession block details
- * @returns {Object} Email content with subject, html, and text
+ * @return {Object} Email content with subject, html, and text
  */
-function generateImproverPromotionAlert({ 
-    studentName, 
-    studentId, 
-    studentEmail,
-    totalConcessions, 
-    totalAmount,
-    concessionDetails 
+function generateImproverPromotionAlert({
+  studentName,
+  studentId,
+  studentEmail,
+  totalConcessions,
+  totalAmount,
+  concessionDetails,
 }) {
-    const subject = `Action Required: ${studentName} Promoted to Improver with Remaining Concessions`;
-    
-    // Build concession details table rows
-    const concessionRows = concessionDetails.map(concession => `
+  const subject = `Action Required: ${studentName} Promoted to Improver with Remaining Concessions`;
+
+  // Build concession details table rows
+  const concessionRows = concessionDetails.map((concession) => `
         <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${concession.type}</td>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium}; text-align: center;">${concession.remaining}</td>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium}; text-align: right;">$${concession.price.toFixed(2)}</td>
         </tr>
-    `).join('');
-    
-    const html = `
+    `).join("");
+
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -99,7 +99,7 @@ function generateImproverPromotionAlert({
                     Remaining Concessions:
                 </p>
                 <p style="margin: 0; color: #0c5460; font-size: 20px; font-weight: 700;">
-                    ${totalConcessions} class${totalConcessions === 1 ? '' : 'es'}
+                    ${totalConcessions} class${totalConcessions === 1 ? "" : "es"}
                 </p>
                 <p style="margin: 10px 0 0 0; color: #0c5460; font-size: 14px;">
                     Total Amount Spent: <strong>$${totalAmount.toFixed(2)}</strong>
@@ -165,9 +165,9 @@ function generateImproverPromotionAlert({
 </body>
 </html>
     `;
-    
-    // Plain text version
-    const text = `
+
+  // Plain text version
+  const text = `
 IMPROVER PROMOTION ALERT - ACTION REQUIRED
 
 A student has been promoted to Improver status and has remaining concessions that need to be refunded.
@@ -177,11 +177,11 @@ STUDENT DETAILS:
 - Email: ${studentEmail}
 - Student ID: ${studentId}
 
-REMAINING CONCESSIONS: ${totalConcessions} class${totalConcessions === 1 ? '' : 'es'}
+REMAINING CONCESSIONS: ${totalConcessions} class${totalConcessions === 1 ? "" : "es"}
 Total Amount Spent: $${totalAmount.toFixed(2)}
 
 CONCESSION BLOCK DETAILS:
-${concessionDetails.map(c => `- ${c.type}: ${c.remaining} remaining ($${c.price.toFixed(2)})`).join('\n')}
+${concessionDetails.map((c) => `- ${c.type}: ${c.remaining} remaining ($${c.price.toFixed(2)})`).join("\n")}
 
 NEXT STEPS:
 1. Calculate pro-rated refund based on unused concessions
@@ -196,8 +196,8 @@ Please ensure the refund is processed promptly to maintain good customer relatio
 ---
 This is an automated alert from the Urban Swing Student Management System
     `.trim();
-    
-    return { subject, html, text };
+
+  return {subject, html, text};
 }
 
-module.exports = { generateImproverPromotionAlert };
+module.exports = {generateImproverPromotionAlert};

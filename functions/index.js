@@ -1,9 +1,9 @@
 ﻿/**
  * Urban Swing Cloud Functions - Main Entry Point
- * 
+ *
  * This file orchestrates all Firebase Cloud Functions by importing
  * and re-exporting them from their respective modules.
- * 
+ *
  * Module Structure:
  * - spotify-auth.js: Spotify token exchange and refresh
  * - email-notifications.js: Automated email sending
@@ -15,7 +15,7 @@ const admin = require("firebase-admin");
 const {setGlobalOptions} = require("firebase-functions/v2");
 
 // Load environment variables
-require('dotenv').config();
+require("dotenv").config();
 
 // Initialize Firebase Admin (only once)
 admin.initializeApp();
@@ -29,10 +29,10 @@ setGlobalOptions({
 // ========================================
 // SPOTIFY AUTHENTICATION
 // ========================================
-const { 
-  exchangeSpotifyToken, 
-  refreshSpotifyToken 
-} = require('./spotify-auth');
+const {
+  exchangeSpotifyToken,
+  refreshSpotifyToken,
+} = require("./spotify-auth");
 
 exports.exchangeSpotifyToken = exchangeSpotifyToken;
 exports.refreshSpotifyToken = refreshSpotifyToken;
@@ -40,8 +40,8 @@ exports.refreshSpotifyToken = refreshSpotifyToken;
 // ========================================
 // EMAIL NOTIFICATIONS
 // ========================================
-const { 
-  sendNewStudentEmail, 
+const {
+  sendNewStudentEmail,
   sendAccountSetupEmail,
   sendMerchOrderEmail,
   sendPortalInvitationEmail,
@@ -50,8 +50,8 @@ const {
   sendImproverPromotionAlert,
   sendMembershipRenewalSuccessEmail,
   sendMembershipRenewalFailureEmail,
-  sendMembershipExpiringSoonEmail
-} = require('./email-notifications');
+  sendMembershipExpiringSoonEmail,
+} = require("./email-notifications");
 
 exports.sendNewStudentEmail = sendNewStudentEmail;
 exports.sendAccountSetupEmail = sendAccountSetupEmail;
@@ -67,11 +67,11 @@ exports.sendMembershipExpiringSoonEmail = sendMembershipExpiringSoonEmail;
 // ========================================
 // USER MANAGEMENT
 // ========================================
-const { 
-  disableUserAccount, 
+const {
+  disableUserAccount,
   enableUserAccount,
-  exportAuthUsers
-} = require('./user-management');
+  exportAuthUsers,
+} = require("./user-management");
 
 exports.disableUserAccount = disableUserAccount;
 exports.enableUserAccount = enableUserAccount;
@@ -80,12 +80,12 @@ exports.exportAuthUsers = exportAuthUsers;
 // ========================================
 // STRIPE PAYMENT FUNCTIONS
 // ========================================
-const { createStudentWithPayment } = require('./create-student-payment');
-const { getAvailablePackages } = require('./get-available-packages');
-const { processCasualPayment } = require('./process-casual-payment');
-const { processConcessionPurchase } = require('./process-concession-purchase');
-const { processWorkshopPayment } = require('./process-workshop-payment');
-const { deregisterWorkshop } = require('./deregister-workshop');
+const {createStudentWithPayment} = require("./create-student-payment");
+const {getAvailablePackages} = require("./get-available-packages");
+const {processCasualPayment} = require("./process-casual-payment");
+const {processConcessionPurchase} = require("./process-concession-purchase");
+const {processWorkshopPayment} = require("./process-workshop-payment");
+const {deregisterWorkshop} = require("./deregister-workshop");
 
 exports.createStudentWithPayment = createStudentWithPayment;
 exports.getAvailablePackages = getAvailablePackages;
@@ -97,22 +97,24 @@ exports.deregisterWorkshop = deregisterWorkshop;
 // ========================================
 // MEMBERSHIP FUNCTIONS
 // ========================================
-const { 
+const {
   processOneTimeMembershipPurchase,
-  processRecurringMembershipPurchase 
-} = require('./process-membership-purchase');
+  processRecurringMembershipPurchase,
+} = require("./process-membership-purchase");
 
 const {
   toggleMembershipAutoRenew,
   cancelMembership,
-  updateMembershipPaymentMethod
-} = require('./membership-management');
+  updateMembershipPaymentMethod,
+} = require("./membership-management");
 
-const { stripeWebhookMemberships } = require('./stripe-webhook-memberships');
+const {stripeWebhookMemberships} = require("./stripe-webhook-memberships");
 
-const { adminAssignMembership } = require('./admin-assign-membership');
+const {adminAssignMembership} = require("./admin-assign-membership");
 
-const { checkExpiredMemberships } = require('./scheduled-membership-expiry');
+const {checkExpiredMemberships} = require("./scheduled-membership-expiry");
+
+const {updateMembershipExpiry} = require("./update-membership-expiry");
 
 exports.processOneTimeMembershipPurchase = processOneTimeMembershipPurchase;
 exports.processRecurringMembershipPurchase = processRecurringMembershipPurchase;
@@ -122,12 +124,13 @@ exports.updateMembershipPaymentMethod = updateMembershipPaymentMethod;
 exports.stripeWebhookMemberships = stripeWebhookMemberships;
 exports.adminAssignMembership = adminAssignMembership;
 exports.checkExpiredMemberships = checkExpiredMemberships;
+exports.updateMembershipExpiry = updateMembershipExpiry;
 
 // ========================================
 // TRANSACTION MANAGEMENT
 // ========================================
-const { updateClassDate } = require('./update-class-date');
-const { processRefund } = require('./process-refund');
+const {updateClassDate} = require("./update-class-date");
+const {processRefund} = require("./process-refund");
 
 exports.updateClassDate = updateClassDate;
 exports.processRefund = processRefund;
@@ -135,8 +138,8 @@ exports.processRefund = processRefund;
 // ========================================
 // DATABASE MANAGEMENT
 // ========================================
-const { listCollections } = require('./list-collections');
-const { manageAuthUsers } = require('./manage-auth-users');
+const {listCollections} = require("./list-collections");
+const {manageAuthUsers} = require("./manage-auth-users");
 
 exports.listCollections = listCollections;
 exports.manageAuthUsers = manageAuthUsers;

@@ -9,20 +9,20 @@
  * @param {string} student.firstName - Student's first name
  * @param {string} student.email - Student's email
  * @param {number} remainingBalance - Number of active concessions remaining (should be 1)
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
 function generateLowBalanceEmail(student, remainingBalance = 1) {
   // Email color mappings from styles/base/colors.css
   const colors = {
-    bluePrimary: '#3534fa',      // --blue-primary
-    purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#e800f2',      // --pink-primary
-    white: '#ffffff',            // --white
-    textLight: '#666',           // --text-light
-    textPrimary: '#333',         // --text-primary
-    bgLight: '#f8f9fa',          // --bg-light / --gray-200
-    warning: '#ffc107',          // --warning
-    borderMedium: '#ddd',        // --gray-500
+    bluePrimary: "#3534fa", // --blue-primary
+    purplePrimary: "#9a16f5", // --purple-primary
+    pinkPrimary: "#e800f2", // --pink-primary
+    white: "#ffffff", // --white
+    textLight: "#666", // --text-light
+    textPrimary: "#333", // --text-primary
+    bgLight: "#f8f9fa", // --bg-light / --gray-200
+    warning: "#ffc107", // --warning
+    borderMedium: "#ddd", // --gray-500
   };
 
   const html = `
@@ -39,7 +39,7 @@ function generateLowBalanceEmail(student, remainingBalance = 1) {
         
         <div style="background: ${colors.bgLight}; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${colors.warning};">
           <p style="color: ${colors.textPrimary}; font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">
-            ⚠️ You have ${remainingBalance} concession${remainingBalance === 1 ? '' : 's'} remaining
+            ⚠️ You have ${remainingBalance} concession${remainingBalance === 1 ? "" : "s"} remaining
           </p>
           <p style="color: ${colors.textLight}; margin: 0;">
             This is a friendly reminder that your concession balance is running low. Consider purchasing more concessions to keep dancing!
@@ -93,7 +93,7 @@ Hi ${student.firstName},
 
 YOUR CONCESSIONS ARE RUNNING LOW
 
-You have ${remainingBalance} concession${remainingBalance === 1 ? '' : 's'} remaining.
+You have ${remainingBalance} concession${remainingBalance === 1 ? "" : "s"} remaining.
 
 This is a friendly reminder that your concession balance is running low. Consider purchasing more concessions to keep dancing!
 
@@ -119,7 +119,7 @@ Urban Swing | Hawkes Bay, New Zealand
 dance@urbanswing.co.nz
   `.trim();
 
-  return { html, text };
+  return {html, text};
 }
 
 /**
@@ -131,21 +131,21 @@ dance@urbanswing.co.nz
  * @param {number} expiringBlocks[].remainingQuantity - Number of entries remaining
  * @param {Date} expiringBlocks[].expiryDate - When the block expires
  * @param {string} expiringBlocks[].packageName - Name of the concession package
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
 function generateExpiringConcessionsEmail(student, expiringBlocks) {
   // Email color mappings from styles/base/colors.css
   const colors = {
-    bluePrimary: '#3534fa',      // --blue-primary
-    purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#e800f2',      // --pink-primary
-    white: '#ffffff',            // --white
-    textLight: '#666',           // --text-light
-    textPrimary: '#333',         // --text-primary
-    bgLight: '#f8f9fa',          // --bg-light / --gray-200
-    warning: '#ffc107',          // --warning
-    borderMedium: '#ddd',        // --gray-500
-    borderLight: '#e0e0e0',      // --border-light
+    bluePrimary: "#3534fa", // --blue-primary
+    purplePrimary: "#9a16f5", // --purple-primary
+    pinkPrimary: "#e800f2", // --pink-primary
+    white: "#ffffff", // --white
+    textLight: "#666", // --text-light
+    textPrimary: "#333", // --text-primary
+    bgLight: "#f8f9fa", // --bg-light / --gray-200
+    warning: "#ffc107", // --warning
+    borderMedium: "#ddd", // --gray-500
+    borderLight: "#e0e0e0", // --border-light
   };
 
   // Calculate total expiring concessions
@@ -154,22 +154,22 @@ function generateExpiringConcessionsEmail(student, expiringBlocks) {
   // Format expiry dates
   const formatDate = (date) => {
     const d = date instanceof Date ? date : new Date(date);
-    return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'long', year: 'numeric' });
+    return d.toLocaleDateString("en-NZ", {day: "numeric", month: "long", year: "numeric"});
   };
 
   // Generate block list HTML
-  const blockListHtml = expiringBlocks.map(block => `
+  const blockListHtml = expiringBlocks.map((block) => `
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid ${colors.borderLight};">${block.packageName}</td>
       <td style="padding: 10px; border-bottom: 1px solid ${colors.borderLight}; text-align: center;">${block.remainingQuantity}</td>
       <td style="padding: 10px; border-bottom: 1px solid ${colors.borderLight}; text-align: right;">${formatDate(block.expiryDate)}</td>
     </tr>
-  `).join('');
+  `).join("");
 
   // Generate block list text
-  const blockListText = expiringBlocks.map(block => 
-    `- ${block.packageName}: ${block.remainingQuantity} concession${block.remainingQuantity === 1 ? '' : 's'} expiring on ${formatDate(block.expiryDate)}`
-  ).join('\n');
+  const blockListText = expiringBlocks.map((block) =>
+    `- ${block.packageName}: ${block.remainingQuantity} concession${block.remainingQuantity === 1 ? "" : "s"} expiring on ${formatDate(block.expiryDate)}`,
+  ).join("\n");
 
   const html = `
     <!-- Generated by JS: concession-notifications.js > generateExpiringConcessionsEmail -->
@@ -185,7 +185,7 @@ function generateExpiringConcessionsEmail(student, expiringBlocks) {
         
         <div style="background: ${colors.bgLight}; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${colors.warning};">
           <p style="color: ${colors.textPrimary}; font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">
-            ⚠️ ${totalExpiring} concession${totalExpiring === 1 ? '' : 's'} expiring within 4 weeks
+            ⚠️ ${totalExpiring} concession${totalExpiring === 1 ? "" : "s"} expiring within 4 weeks
           </p>
           <p style="color: ${colors.textLight}; margin: 0;">
             This is a friendly reminder that some of your concessions will expire soon. Use them before they expire, or they'll go to waste!
@@ -247,7 +247,7 @@ Hi ${student.firstName},
 
 YOUR CONCESSIONS ARE EXPIRING SOON
 
-${totalExpiring} concession${totalExpiring === 1 ? '' : 's'} expiring within 4 weeks.
+${totalExpiring} concession${totalExpiring === 1 ? "" : "s"} expiring within 4 weeks.
 
 This is a friendly reminder that some of your concessions will expire soon. Use them before they expire, or they'll go to waste!
 
@@ -277,7 +277,7 @@ Urban Swing | Hawkes Bay, New Zealand
 dance@urbanswing.co.nz
   `.trim();
 
-  return { html, text };
+  return {html, text};
 }
 
 module.exports = {
