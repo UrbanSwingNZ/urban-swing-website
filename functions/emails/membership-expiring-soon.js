@@ -12,14 +12,14 @@
  * @param {string} params.membershipType - Type of membership (e.g., "Improver - Monthly")
  * @param {string} params.expiryDate - Formatted expiry date string
  * @param {number} params.daysUntilExpiry - Number of days until expiry (should be 3)
- * @returns {Object} Email with subject, html, and text properties
+ * @return {Object} Email with subject, html, and text properties
  */
 function generateMembershipExpiringSoonEmail({
   studentName,
   firstName,
   membershipType,
   expiryDate,
-  daysUntilExpiry = 3
+  daysUntilExpiry = 3,
 }) {
   const subject = `Your ${membershipType} Membership Expires in ${daysUntilExpiry} Days`;
 
@@ -264,9 +264,9 @@ Urban Swing | Hawkes Bay, New Zealand
 dance@urbanswing.co.nz
   `.trim();
 
-  return { subject, html, text };
+  return {subject, html, text};
 }
 
 module.exports = {
-  generateMembershipExpiringSoonEmail
+  generateMembershipExpiringSoonEmail,
 };

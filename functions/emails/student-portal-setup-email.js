@@ -8,20 +8,20 @@
  * @param {Object} student - Student data
  * @param {Object} user - User data
  * @param {string} setupDate - Formatted setup date
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
 function generateAccountSetupEmail(student, user, setupDate) {
   // Email color mappings from styles/base/colors.css
   const colors = {
-    purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#ed217c',      // Custom gradient color (similar to --pink-primary)
-    white: '#ffffff',            // --white
-    textPrimary: '#333',         // --text-primary
-    textLight: '#666',           // --text-light
-    bgLight: '#f8f9fa',          // --bg-light / --gray-200
-    bgInfoLight: '#e8f4fd',      // --info-light
-    infoBlue: '#0c5aa6',         // Dark blue for info sections
-    borderLight: '#e0e0e0',      // --border-light / --gray-450
+    purplePrimary: "#9a16f5", // --purple-primary
+    pinkPrimary: "#ed217c", // Custom gradient color (similar to --pink-primary)
+    white: "#ffffff", // --white
+    textPrimary: "#333", // --text-primary
+    textLight: "#666", // --text-light
+    bgLight: "#f8f9fa", // --bg-light / --gray-200
+    bgInfoLight: "#e8f4fd", // --info-light
+    infoBlue: "#0c5aa6", // Dark blue for info sections
+    borderLight: "#e0e0e0", // --border-light / --gray-450
   };
 
   const html = `
@@ -139,9 +139,9 @@ Website: https://urbanswing.co.nz
 Email: dance@urbanswing.co.nz
   `;
 
-  return { html, text };
+  return {html, text};
 }
 
 module.exports = {
-  generateAccountSetupEmail
+  generateAccountSetupEmail,
 };

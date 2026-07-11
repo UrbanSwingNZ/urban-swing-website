@@ -17,23 +17,23 @@
  * @param {string} purchaseData.packageType - Type of package ('casual-rate' or 'concession-package')
  * @param {string} purchaseData.packageName - Name of the package
  * @param {Date|null} purchaseData.firstClassDate - Date of first class (for casual purchases)
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
 function generateAdminNotificationEmail(student, studentId, registeredAt, casualRate, studentRate, fiveClassPrice, tenClassPrice, purchaseData = null) {
   // Email color mappings from styles/base/colors.css
   const colors = {
-    bluePrimary: '#3534fa',      // --blue-primary
-    purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#e800f2',      // --pink-primary
-    white: '#ffffff',            // --white
-    textLight: '#666',           // --text-light
-    textPrimary: '#333',         // --text-primary
-    bgLight: '#f8f9fa',          // --bg-light / --gray-200
-    bgLighter: '#e9ecef',        // Light gray background
-    borderMedium: '#ddd',        // --gray-500
-    borderLight: '#e0e0e0',      // --border-light / --gray-450
-    borderLighter: '#f0f0f0',    // --gray-350
-    success: '#28a745',          // --success
+    bluePrimary: "#3534fa", // --blue-primary
+    purplePrimary: "#9a16f5", // --purple-primary
+    pinkPrimary: "#e800f2", // --pink-primary
+    white: "#ffffff", // --white
+    textLight: "#666", // --text-light
+    textPrimary: "#333", // --text-primary
+    bgLight: "#f8f9fa", // --bg-light / --gray-200
+    bgLighter: "#e9ecef", // Light gray background
+    borderMedium: "#ddd", // --gray-500
+    borderLight: "#e0e0e0", // --border-light / --gray-450
+    borderLighter: "#f0f0f0", // --gray-350
+    success: "#28a745", // --success
   };
 
   const html = `
@@ -57,27 +57,27 @@ function generateAdminNotificationEmail(student, studentId, registeredAt, casual
           </tr>
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};"><strong>Phone:</strong></td>
-            <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${student.phoneNumber || 'N/A'}</td>
+            <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${student.phoneNumber || "N/A"}</td>
           </tr>
           ${student.pronouns ? `
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};"><strong>Pronouns:</strong></td>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${student.pronouns}</td>
           </tr>
-          ` : ''}
+          ` : ""}
           ${student.referral ? `
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};"><strong>Referral:</strong></td>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${student.referral}</td>
           </tr>
-          ` : ''}
+          ` : ""}
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};"><strong>Registered:</strong></td>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${registeredAt}</td>
           </tr>
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};"><strong>Email Consent:</strong></td>
-            <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${student.emailConsent ? '✅ Yes' : '❌ No'}</td>
+            <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};">${student.emailConsent ? "✅ Yes" : "❌ No"}</td>
           </tr>
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid ${colors.borderMedium};"><strong>Student ID:</strong></td>
@@ -97,28 +97,28 @@ function generateAdminNotificationEmail(student, studentId, registeredAt, casual
               <td style="padding: 8px; border-bottom: 1px solid ${colors.borderLighter};"><strong>Package:</strong></td>
               <td style="padding: 8px; border-bottom: 1px solid ${colors.borderLighter};">${purchaseData.packageName}</td>
             </tr>
-            ${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `
+            ${purchaseData.packageType === "casual-rate" && purchaseData.firstClassDate ? `
             <tr>
               <td style="padding: 8px;"><strong>Date of First Class:</strong></td>
-              <td style="padding: 8px; color: ${colors.purplePrimary}; font-weight: bold;">${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Pacific/Auckland' })}</td>
+              <td style="padding: 8px; color: ${colors.purplePrimary}; font-weight: bold;">${purchaseData.firstClassDate.toLocaleDateString("en-NZ", {weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "Pacific/Auckland"})}</td>
             </tr>
-            ` : ''}
-            ${purchaseData.packageType === 'concession-package' ? `
+            ` : ""}
+            ${purchaseData.packageType === "concession-package" ? `
             <tr>
               <td style="padding: 8px;"><strong>Purchase Type:</strong></td>
               <td style="padding: 8px;">Concession Package</td>
             </tr>
-            ` : ''}
+            ` : ""}
           </table>
         </div>
-        ` : ''}
+        ` : ""}
         
         ${student.adminNotes ? `
         <div style="margin-top: 20px; padding: 15px; background: ${colors.white}; border-left: 4px solid ${colors.purplePrimary};">
           <strong>Admin Notes:</strong><br>
           ${student.adminNotes}
         </div>
-        ` : ''}
+        ` : ""}
         
         <div style="margin-top: 30px; text-align: center;">
           <h3 style="color: ${colors.purplePrimary}; margin-top: 30px; text-align: left;">Pricing</h3>
@@ -163,11 +163,11 @@ New Student Registration
 
 Name: ${student.firstName} ${student.lastName}
 Email: ${student.email}
-Phone: ${student.phoneNumber || 'N/A'}
-${student.pronouns ? `Pronouns: ${student.pronouns}\n` : ''}${student.referral ? `Referral: ${student.referral}\n` : ''}Registered: ${registeredAt}
-Email Consent: ${student.emailConsent ? 'Yes' : 'No'}
+Phone: ${student.phoneNumber || "N/A"}
+${student.pronouns ? `Pronouns: ${student.pronouns}\n` : ""}${student.referral ? `Referral: ${student.referral}\n` : ""}Registered: ${registeredAt}
+Email Consent: ${student.emailConsent ? "Yes" : "No"}
 Student ID: ${studentId}
-${purchaseData ? `\nONLINE PURCHASE:\nAmount Paid: $${purchaseData.amount.toFixed(2)}\nPackage: ${purchaseData.packageName}${purchaseData.packageType === 'casual-rate' && purchaseData.firstClassDate ? `\nDate of First Class: ${purchaseData.firstClassDate.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Pacific/Auckland' })}` : ''}${purchaseData.packageType === 'concession-package' ? `\nPurchase Type: Concession Package` : ''}\n` : ''}${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}\n` : ''}
+${purchaseData ? `\nONLINE PURCHASE:\nAmount Paid: $${purchaseData.amount.toFixed(2)}\nPackage: ${purchaseData.packageName}${purchaseData.packageType === "casual-rate" && purchaseData.firstClassDate ? `\nDate of First Class: ${purchaseData.firstClassDate.toLocaleDateString("en-NZ", {weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "Pacific/Auckland"})}` : ""}${purchaseData.packageType === "concession-package" ? `\nPurchase Type: Concession Package` : ""}\n` : ""}${student.adminNotes ? `\nAdmin Notes:\n${student.adminNotes}\n` : ""}
 Pricing:
 - Single Class: $${casualRate}
 - Single Class (Student): $${studentRate}
@@ -177,7 +177,7 @@ Pricing:
 View in admin database: https://urbanswing.co.nz/admin/student-database/
   `;
 
-  return { html, text };
+  return {html, text};
 }
 
 /**
@@ -188,25 +188,25 @@ View in admin database: https://urbanswing.co.nz/admin/student-database/
  * @param {number} fiveClassPrice - 5-class concession price
  * @param {number} tenClassPrice - 10-class concession price
  * @param {boolean} hasUserAccount - Whether student has a user account (portal access)
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
 function generateWelcomeEmail(student, casualRate, studentRate, fiveClassPrice, tenClassPrice, hasUserAccount = false) {
   // Email color mappings from styles/base/colors.css
   const colors = {
-    bluePrimary: '#3534fa',      // --blue-primary
-    purplePrimary: '#9a16f5',    // --purple-primary
-    pinkPrimary: '#e800f2',      // --pink-primary
-    white: '#ffffff',            // --white
-    textLight: '#666',           // --text-light
-    textPrimary: '#333',         // --text-primary
-    bgLight: '#f8f9fa',          // --bg-light / --gray-200
-    borderMedium: '#ddd',        // --gray-500
-    borderLight: '#e0e0e0',      // --border-light / --gray-450
-    borderLighter: '#f0f0f0',    // --gray-350
-    success: '#28a745',          // --success
-    successLight: '#e8f5e9',     // Light green background
-    successDark: '#1b5e20',      // Dark green text
-    infoBg: '#f0f4ff',           // Light blue background
+    bluePrimary: "#3534fa", // --blue-primary
+    purplePrimary: "#9a16f5", // --purple-primary
+    pinkPrimary: "#e800f2", // --pink-primary
+    white: "#ffffff", // --white
+    textLight: "#666", // --text-light
+    textPrimary: "#333", // --text-primary
+    bgLight: "#f8f9fa", // --bg-light / --gray-200
+    borderMedium: "#ddd", // --gray-500
+    borderLight: "#e0e0e0", // --border-light / --gray-450
+    borderLighter: "#f0f0f0", // --gray-350
+    success: "#28a745", // --success
+    successLight: "#e8f5e9", // Light green background
+    successDark: "#1b5e20", // Dark green text
+    infoBg: "#f0f4ff", // Light blue background
   };
 
   const html = `
@@ -446,10 +446,10 @@ Website: https://urbanswing.co.nz
 Email: dance@urbanswing.co.nz
   `;
 
-  return { html, text };
+  return {html, text};
 }
 
 module.exports = {
   generateAdminNotificationEmail,
-  generateWelcomeEmail
+  generateWelcomeEmail,
 };

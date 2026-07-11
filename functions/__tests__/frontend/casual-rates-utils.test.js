@@ -1,23 +1,23 @@
 /**
  * Tests for casual-rates-utils.js
  * Tests rate fetching, caching, and formatting logic
- * 
+ *
  * SCOPE: Behavior testing - caching logic, Firestore queries, error handling, formatting
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Mock Firebase
 const mockFirestore = {
   collection: jest.fn(),
   where: jest.fn(),
   orderBy: jest.fn(),
-  get: jest.fn()
+  get: jest.fn(),
 };
 
 const mockFirebase = {
-  firestore: jest.fn(() => mockFirestore)
+  firestore: jest.fn(() => mockFirestore),
 };
 
 global.firebase = mockFirebase;
@@ -27,7 +27,7 @@ const originalConsole = console;
 global.console = {
   log: jest.fn(),
   error: jest.fn(),
-  warn: jest.fn()
+  warn: jest.fn(),
 };
 
 // Import the module after mocking
@@ -39,43 +39,43 @@ const {
   getCasualRatePrice,
   clearCasualRatesCache,
   formatCasualRateDisplay,
-  getAllCasualRates
-} = require('../../../js/casual-rates-utils.js');
+  getAllCasualRates,
+} = require("../../../js/casual-rates-utils.js");
 
-describe('casual-rates-utils', () => {
+describe("casual-rates-utils", () => {
   let mockQueryChain;
   let mockSnapshot;
 
   const testRates = [
     {
-      id: 'casual-standard',
-      name: 'Casual Entry',
+      id: "casual-standard",
+      name: "Casual Entry",
       price: 15,
       isActive: true,
       isPromo: false,
-      displayOrder: 1
+      displayOrder: 1,
     },
     {
-      id: 'casual-student',
-      name: 'Student Casual Entry',
+      id: "casual-student",
+      name: "Student Casual Entry",
       price: 12,
       isActive: true,
       isPromo: false,
-      displayOrder: 2
+      displayOrder: 2,
     },
     {
-      id: 'casual-promo',
-      name: 'Promo Casual Entry',
+      id: "casual-promo",
+      name: "Promo Casual Entry",
       price: 10,
       isActive: true,
       isPromo: true,
-      displayOrder: 3
-    }
+      displayOrder: 3,
+    },
   ];
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Clear the cache before each test
     if (clearCasualRatesCache) {
       clearCasualRatesCache();
@@ -84,39 +84,39 @@ describe('casual-rates-utils', () => {
     // Setup mock Firestore query chain
     mockSnapshot = {
       forEach: jest.fn((callback) => {
-        testRates.forEach(rate => {
+        testRates.forEach((rate) => {
           callback({
             id: rate.id,
             data: () => {
-              const { id, ...data } = rate;
+              const {id, ...data} = rate;
               return data;
-            }
+            },
           });
         });
-      })
+      }),
     };
 
     mockQueryChain = {
       where: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
-      get: jest.fn().mockResolvedValue(mockSnapshot)
+      get: jest.fn().mockResolvedValue(mockSnapshot),
     };
 
     mockFirestore.collection.mockReturnValue(mockQueryChain);
   });
 
-  describe('getCasualRates', () => {
-    test('should fetch rates from Firestore on first call', async () => {
+  describe("getCasualRates", () => {
+    test("should fetch rates from Firestore on first call", async () => {
       const rates = await getCasualRates();
 
-      expect(mockFirestore.collection).toHaveBeenCalledWith('casualRates');
-      expect(mockQueryChain.where).toHaveBeenCalledWith('isActive', '==', true);
-      expect(mockQueryChain.orderBy).toHaveBeenCalledWith('displayOrder', 'asc');
+      expect(mockFirestore.collection).toHaveBeenCalledWith("casualRates");
+      expect(mockQueryChain.where).toHaveBeenCalledWith("isActive", "==", true);
+      expect(mockQueryChain.orderBy).toHaveBeenCalledWith("displayOrder", "asc");
       expect(rates).toEqual(testRates);
       expect(rates.length).toBe(3);
     });
 
-    test('should return cached rates on second call', async () => {
+    test("should return cached rates on second call", async () => {
       // First call - should fetch from Firestore
       const rates1 = await getCasualRates();
       expect(mockQueryChain.get).toHaveBeenCalledTimes(1);
@@ -127,7 +127,7 @@ describe('casual-rates-utils', () => {
       expect(rates2).toEqual(rates1);
     });
 
-    test('should refresh cache when forceRefresh is true', async () => {
+    test("should refresh cache when forceRefresh is true", async () => {
       // First call
       await getCasualRates();
       expect(mockQueryChain.get).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe('casual-rates-utils', () => {
       expect(mockQueryChain.get).toHaveBeenCalledTimes(2);
     });
 
-    test('should refresh cache after 5 minutes', async () => {
+    test("should refresh cache after 5 minutes", async () => {
       // First call
       await getCasualRates();
       expect(mockQueryChain.get).toHaveBeenCalledTimes(1);
@@ -155,25 +155,25 @@ describe('casual-rates-utils', () => {
       Date.now = realDateNow;
     });
 
-    test('should return expired cache if Firestore fails', async () => {
+    test("should return expired cache if Firestore fails", async () => {
       // First successful call to populate cache
       const rates1 = await getCasualRates();
 
       // Second call fails
-      mockQueryChain.get.mockRejectedValueOnce(new Error('Network error'));
+      mockQueryChain.get.mockRejectedValueOnce(new Error("Network error"));
 
       const rates2 = await getCasualRates(true);
       expect(rates2).toEqual(rates1);
-      expect(console.warn).toHaveBeenCalledWith('Using expired cache due to error');
+      expect(console.warn).toHaveBeenCalledWith("Using expired cache due to error");
     });
 
-    test('should throw error if Firestore fails and no cache exists', async () => {
-      mockQueryChain.get.mockRejectedValueOnce(new Error('Network error'));
+    test("should throw error if Firestore fails and no cache exists", async () => {
+      mockQueryChain.get.mockRejectedValueOnce(new Error("Network error"));
 
-      await expect(getCasualRates()).rejects.toThrow('Network error');
+      await expect(getCasualRates()).rejects.toThrow("Network error");
     });
 
-    test('should include document ID in returned rate objects', async () => {
+    test("should include document ID in returned rate objects", async () => {
       const rates = await getCasualRates();
 
       rates.forEach((rate, index) => {
@@ -182,88 +182,88 @@ describe('casual-rates-utils', () => {
     });
   });
 
-  describe('getCasualRateByName', () => {
-    test('should return rate matching the name', async () => {
-      const rate = await getCasualRateByName('Casual Entry');
+  describe("getCasualRateByName", () => {
+    test("should return rate matching the name", async () => {
+      const rate = await getCasualRateByName("Casual Entry");
 
       expect(rate).toEqual(testRates[0]);
-      expect(rate.name).toBe('Casual Entry');
+      expect(rate.name).toBe("Casual Entry");
       expect(rate.price).toBe(15);
     });
 
-    test('should return rate for student entry', async () => {
-      const rate = await getCasualRateByName('Student Casual Entry');
+    test("should return rate for student entry", async () => {
+      const rate = await getCasualRateByName("Student Casual Entry");
 
       expect(rate).toEqual(testRates[1]);
       expect(rate.price).toBe(12);
     });
 
-    test('should return null if rate not found', async () => {
-      const rate = await getCasualRateByName('Nonexistent Rate');
+    test("should return null if rate not found", async () => {
+      const rate = await getCasualRateByName("Nonexistent Rate");
 
       expect(rate).toBeNull();
     });
 
-    test('should be case-sensitive', async () => {
-      const rate = await getCasualRateByName('casual entry'); // lowercase
+    test("should be case-sensitive", async () => {
+      const rate = await getCasualRateByName("casual entry"); // lowercase
 
       expect(rate).toBeNull();
     });
   });
 
-  describe('getStandardCasualRate', () => {
-    test('should return non-student, non-promo rate', async () => {
+  describe("getStandardCasualRate", () => {
+    test("should return non-student, non-promo rate", async () => {
       const rate = await getStandardCasualRate();
 
-      expect(rate.name).toBe('Casual Entry');
+      expect(rate.name).toBe("Casual Entry");
       expect(rate.price).toBe(15);
       expect(rate.isPromo).toBe(false);
-      expect(rate.name).not.toContain('Student');
+      expect(rate.name).not.toContain("Student");
     });
 
-    test('should exclude rates with "student" in name', async () => {
+    test("should exclude rates with \"student\" in name", async () => {
       const rate = await getStandardCasualRate();
 
-      expect(rate.name.toLowerCase()).not.toContain('student');
+      expect(rate.name.toLowerCase()).not.toContain("student");
     });
 
-    test('should exclude promo rates', async () => {
+    test("should exclude promo rates", async () => {
       const rate = await getStandardCasualRate();
 
       expect(rate.isPromo).toBe(false);
     });
 
-    test('should return first rate if no standard rate found', async () => {
+    test("should return first rate if no standard rate found", async () => {
       // Mock only student and promo rates
       const specialRates = [
         {
-          id: 'student-only',
-          name: 'Student Casual Entry',
+          id: "student-only",
+          name: "Student Casual Entry",
           price: 12,
           isActive: true,
           isPromo: false,
-          displayOrder: 1
-        }
+          displayOrder: 1,
+        },
       ];
 
       mockSnapshot.forEach = jest.fn((callback) => {
-        specialRates.forEach(rate => {
+        specialRates.forEach((rate) => {
           callback({
             id: rate.id,
             data: () => {
-              const { id, ...data } = rate;
+              const {id, ...data} = rate;
               return data;
-            }
+            },
           });
         });
       });
 
       const rate = await getStandardCasualRate();
 
-      expect(rate.id).toBe('student-only');
+      expect(rate.id).toBe("student-only");
     });
 
-    test('should return null if no rates exist', async () => {
+    test("should return null if no rates exist", async () => {
       mockSnapshot.forEach = jest.fn((callback) => {
         // No rates
       });
@@ -274,59 +274,59 @@ describe('casual-rates-utils', () => {
     });
   });
 
-  describe('getStudentCasualRate', () => {
-    test('should return rate with "student" in name', async () => {
+  describe("getStudentCasualRate", () => {
+    test("should return rate with \"student\" in name", async () => {
       const rate = await getStudentCasualRate();
 
-      expect(rate.name).toBe('Student Casual Entry');
+      expect(rate.name).toBe("Student Casual Entry");
       expect(rate.price).toBe(12);
-      expect(rate.name.toLowerCase()).toContain('student');
+      expect(rate.name.toLowerCase()).toContain("student");
     });
 
-    test('should exclude promo rates', async () => {
+    test("should exclude promo rates", async () => {
       const rate = await getStudentCasualRate();
 
       expect(rate.isPromo).toBe(false);
     });
 
-    test('should be case-insensitive for "student"', async () => {
+    test("should be case-insensitive for \"student\"", async () => {
       const ratesWithVariations = [
         {
-          id: 'rate1',
-          name: 'STUDENT Entry',
+          id: "rate1",
+          name: "STUDENT Entry",
           price: 12,
           isActive: true,
           isPromo: false,
-          displayOrder: 1
-        }
+          displayOrder: 1,
+        },
       ];
 
       mockSnapshot.forEach = jest.fn((callback) => {
-        ratesWithVariations.forEach(rate => {
+        ratesWithVariations.forEach((rate) => {
           callback({
             id: rate.id,
             data: () => {
-              const { id, ...data } = rate;
+              const {id, ...data} = rate;
               return data;
-            }
+            },
           });
         });
       });
 
       const rate = await getStudentCasualRate();
 
-      expect(rate.name).toBe('STUDENT Entry');
+      expect(rate.name).toBe("STUDENT Entry");
     });
 
-    test('should return null if no student rate exists', async () => {
+    test("should return null if no student rate exists", async () => {
       mockSnapshot.forEach = jest.fn((callback) => {
-        [testRates[0]].forEach(rate => { // Only standard rate
+        [testRates[0]].forEach((rate) => { // Only standard rate
           callback({
             id: rate.id,
             data: () => {
-              const { id, ...data } = rate;
+              const {id, ...data} = rate;
               return data;
-            }
+            },
           });
         });
       });
@@ -337,156 +337,156 @@ describe('casual-rates-utils', () => {
     });
   });
 
-  describe('getCasualRatePrice', () => {
-    test('should return price for existing rate', async () => {
-      const price = await getCasualRatePrice('Casual Entry');
+  describe("getCasualRatePrice", () => {
+    test("should return price for existing rate", async () => {
+      const price = await getCasualRatePrice("Casual Entry");
 
       expect(price).toBe(15);
     });
 
-    test('should return price for student rate', async () => {
-      const price = await getCasualRatePrice('Student Casual Entry');
+    test("should return price for student rate", async () => {
+      const price = await getCasualRatePrice("Student Casual Entry");
 
       expect(price).toBe(12);
     });
 
-    test('should return default price if rate not found', async () => {
-      const price = await getCasualRatePrice('Nonexistent Rate');
+    test("should return default price if rate not found", async () => {
+      const price = await getCasualRatePrice("Nonexistent Rate");
 
       expect(price).toBe(15); // default
     });
 
-    test('should return custom default price', async () => {
-      const price = await getCasualRatePrice('Nonexistent Rate', 20);
+    test("should return custom default price", async () => {
+      const price = await getCasualRatePrice("Nonexistent Rate", 20);
 
       expect(price).toBe(20);
     });
 
-    test('should return default price on error', async () => {
-      mockQueryChain.get.mockRejectedValueOnce(new Error('Network error'));
+    test("should return default price on error", async () => {
+      mockQueryChain.get.mockRejectedValueOnce(new Error("Network error"));
 
-      const price = await getCasualRatePrice('Casual Entry', 18);
+      const price = await getCasualRatePrice("Casual Entry", 18);
 
       expect(price).toBe(18);
-      expect(console.error).toHaveBeenCalledWith('Error getting casual rate price:', expect.any(Error));
+      expect(console.error).toHaveBeenCalledWith("Error getting casual rate price:", expect.any(Error));
     });
   });
 
-  describe('formatCasualRateDisplay', () => {
-    test('should format rate with name and price', () => {
+  describe("formatCasualRateDisplay", () => {
+    test("should format rate with name and price", () => {
       const formatted = formatCasualRateDisplay(testRates[0]);
 
-      expect(formatted).toBe('Casual Entry ($15.00)');
+      expect(formatted).toBe("Casual Entry ($15.00)");
     });
 
-    test('should format decimal prices correctly', () => {
-      const rate = { name: 'Test Rate', price: 12.5 };
+    test("should format decimal prices correctly", () => {
+      const rate = {name: "Test Rate", price: 12.5};
       const formatted = formatCasualRateDisplay(rate);
 
-      expect(formatted).toBe('Test Rate ($12.50)');
+      expect(formatted).toBe("Test Rate ($12.50)");
     });
 
-    test('should return default text if rate is null', () => {
+    test("should return default text if rate is null", () => {
       const formatted = formatCasualRateDisplay(null);
 
-      expect(formatted).toBe('Casual Entry');
+      expect(formatted).toBe("Casual Entry");
     });
 
-    test('should return default text if rate is undefined', () => {
+    test("should return default text if rate is undefined", () => {
       const formatted = formatCasualRateDisplay(undefined);
 
-      expect(formatted).toBe('Casual Entry');
+      expect(formatted).toBe("Casual Entry");
     });
 
-    test('should format whole number prices with two decimal places', () => {
-      const rate = { name: 'Round Price', price: 20 };
+    test("should format whole number prices with two decimal places", () => {
+      const rate = {name: "Round Price", price: 20};
       const formatted = formatCasualRateDisplay(rate);
 
-      expect(formatted).toBe('Round Price ($20.00)');
+      expect(formatted).toBe("Round Price ($20.00)");
     });
   });
 
-  describe('getAllCasualRates', () => {
-    test('should fetch all rates without filtering by isActive', async () => {
+  describe("getAllCasualRates", () => {
+    test("should fetch all rates without filtering by isActive", async () => {
       const allRates = [
         ...testRates,
         {
-          id: 'inactive-rate',
-          name: 'Inactive Rate',
+          id: "inactive-rate",
+          name: "Inactive Rate",
           price: 8,
           isActive: false,
           isPromo: false,
-          displayOrder: 4
-        }
+          displayOrder: 4,
+        },
       ];
 
       mockSnapshot.forEach = jest.fn((callback) => {
-        allRates.forEach(rate => {
+        allRates.forEach((rate) => {
           callback({
             id: rate.id,
             data: () => {
-              const { id, ...data } = rate;
+              const {id, ...data} = rate;
               return data;
-            }
+            },
           });
         });
       });
 
       const rates = await getAllCasualRates();
 
-      expect(mockFirestore.collection).toHaveBeenCalledWith('casualRates');
+      expect(mockFirestore.collection).toHaveBeenCalledWith("casualRates");
       expect(mockQueryChain.where).not.toHaveBeenCalled(); // No filtering
-      expect(mockQueryChain.orderBy).toHaveBeenCalledWith('displayOrder', 'asc');
+      expect(mockQueryChain.orderBy).toHaveBeenCalledWith("displayOrder", "asc");
       expect(rates.length).toBe(4);
     });
 
-    test('should throw error on Firestore failure', async () => {
-      mockQueryChain.get.mockRejectedValueOnce(new Error('Permission denied'));
+    test("should throw error on Firestore failure", async () => {
+      mockQueryChain.get.mockRejectedValueOnce(new Error("Permission denied"));
 
-      await expect(getAllCasualRates()).rejects.toThrow('Permission denied');
-      expect(console.error).toHaveBeenCalledWith('Error fetching all casual rates:', expect.any(Error));
+      await expect(getAllCasualRates()).rejects.toThrow("Permission denied");
+      expect(console.error).toHaveBeenCalledWith("Error fetching all casual rates:", expect.any(Error));
     });
 
-    test('should include inactive rates', async () => {
+    test("should include inactive rates", async () => {
       const allRates = [
         {
-          id: 'active-rate',
-          name: 'Active Rate',
+          id: "active-rate",
+          name: "Active Rate",
           price: 15,
           isActive: true,
           isPromo: false,
-          displayOrder: 1
+          displayOrder: 1,
         },
         {
-          id: 'inactive-rate',
-          name: 'Inactive Rate',
+          id: "inactive-rate",
+          name: "Inactive Rate",
           price: 10,
           isActive: false,
           isPromo: false,
-          displayOrder: 2
-        }
+          displayOrder: 2,
+        },
       ];
 
       mockSnapshot.forEach = jest.fn((callback) => {
-        allRates.forEach(rate => {
+        allRates.forEach((rate) => {
           callback({
             id: rate.id,
             data: () => {
-              const { id, ...data } = rate;
+              const {id, ...data} = rate;
               return data;
-            }
+            },
           });
         });
       });
 
       const rates = await getAllCasualRates();
 
-      expect(rates.some(r => r.isActive === false)).toBe(true);
+      expect(rates.some((r) => r.isActive === false)).toBe(true);
     });
   });
 
-  describe('clearCasualRatesCache', () => {
-    test('should clear cache and force new fetch', async () => {
+  describe("clearCasualRatesCache", () => {
+    test("should clear cache and force new fetch", async () => {
       // First call - populates cache
       await getCasualRates();
       expect(mockQueryChain.get).toHaveBeenCalledTimes(1);
@@ -503,15 +503,15 @@ describe('casual-rates-utils', () => {
       expect(mockQueryChain.get).toHaveBeenCalledTimes(2);
     });
 
-    test('should log cache cleared message', () => {
+    test("should log cache cleared message", () => {
       clearCasualRatesCache();
 
-      expect(console.log).toHaveBeenCalledWith('Casual rates cache cleared');
+      expect(console.log).toHaveBeenCalledWith("Casual rates cache cleared");
     });
   });
 
-  describe('Cache Behavior', () => {
-    test('should cache rates for 5 minutes', async () => {
+  describe("Cache Behavior", () => {
+    test("should cache rates for 5 minutes", async () => {
       const realDateNow = Date.now;
       const startTime = 1000000;
       Date.now = jest.fn(() => startTime);
@@ -533,13 +533,13 @@ describe('casual-rates-utils', () => {
       Date.now = realDateNow;
     });
 
-    test('should use cached data across different getter functions', async () => {
+    test("should use cached data across different getter functions", async () => {
       // First call populates cache
       await getCasualRates();
       expect(mockQueryChain.get).toHaveBeenCalledTimes(1);
 
       // Other functions should use cache
-      await getCasualRateByName('Casual Entry');
+      await getCasualRateByName("Casual Entry");
       await getStandardCasualRate();
       await getStudentCasualRate();
 

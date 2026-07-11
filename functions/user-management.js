@@ -18,58 +18,58 @@ const getFirestore = () => {
  * Requires admin authentication
  */
 exports.disableUserAccount = onCall(
-  {
-    region: 'us-central1',
-    cors: true,
-    invoker: 'public'
-  },
-  async (request) => {
+    {
+      region: "us-central1",
+      cors: true,
+      invoker: "public",
+    },
+    async (request) => {
     // Verify user is authenticated
-    if (!request.auth) {
-      logger.error("Unauthenticated request to disableUserAccount");
-      throw new Error("Authentication required");
-    }
+      if (!request.auth) {
+        logger.error("Unauthenticated request to disableUserAccount");
+        throw new Error("Authentication required");
+      }
 
-  logger.info("Disabling user account, requested by:", request.auth.uid);
+      logger.info("Disabling user account, requested by:", request.auth.uid);
 
-  try {
-    // Verify the requesting user is an admin or super-admin
-    const db = getFirestore();
-    const userDoc = await db.collection('users').doc(request.auth.uid).get();
-    
-    if (!userDoc.exists) {
-      logger.error("User document not found:", request.auth.uid);
-      throw new Error("User not authorized");
-    }
+      try {
+        // Verify the requesting user is an admin or super-admin
+        const db = getFirestore();
+        const userDoc = await db.collection("users").doc(request.auth.uid).get();
 
-    const userData = userDoc.data();
-    if (userData.role !== 'admin' && userData.role !== 'super-admin') {
-      logger.error("Non-admin user attempted to disable account:", request.auth.uid);
-      throw new Error("Admin privileges required");
-    }
+        if (!userDoc.exists) {
+          logger.error("User document not found:", request.auth.uid);
+          throw new Error("User not authorized");
+        }
 
-    const { authUid } = request.data;
-    
-    if (!authUid) {
-      throw new Error("authUid is required");
-    }
+        const userData = userDoc.data();
+        if (userData.role !== "admin" && userData.role !== "super-admin") {
+          logger.error("Non-admin user attempted to disable account:", request.auth.uid);
+          throw new Error("Admin privileges required");
+        }
 
-    // Disable the Firebase Auth user
-    await admin.auth().updateUser(authUid, {
-      disabled: true
+        const {authUid} = request.data;
+
+        if (!authUid) {
+          throw new Error("authUid is required");
+        }
+
+        // Disable the Firebase Auth user
+        await admin.auth().updateUser(authUid, {
+          disabled: true,
+        });
+
+        logger.info("Successfully disabled user account:", authUid);
+
+        return {
+          success: true,
+          message: "User account disabled successfully",
+        };
+      } catch (error) {
+        logger.error("Error disabling user account:", error);
+        throw new Error(`Failed to disable user account: ${error.message}`);
+      }
     });
-
-    logger.info("Successfully disabled user account:", authUid);
-
-    return {
-      success: true,
-      message: "User account disabled successfully"
-    };
-  } catch (error) {
-    logger.error("Error disabling user account:", error);
-    throw new Error(`Failed to disable user account: ${error.message}`);
-  }
-});
 
 /**
  * Enable a Firebase Auth user account
@@ -77,58 +77,58 @@ exports.disableUserAccount = onCall(
  * Requires admin authentication
  */
 exports.enableUserAccount = onCall(
-  {
-    region: 'us-central1',
-    cors: true,
-    invoker: 'public'
-  },
-  async (request) => {
+    {
+      region: "us-central1",
+      cors: true,
+      invoker: "public",
+    },
+    async (request) => {
     // Verify user is authenticated
-    if (!request.auth) {
-      logger.error("Unauthenticated request to enableUserAccount");
-      throw new Error("Authentication required");
-    }
+      if (!request.auth) {
+        logger.error("Unauthenticated request to enableUserAccount");
+        throw new Error("Authentication required");
+      }
 
-  logger.info("Enabling user account, requested by:", request.auth.uid);
+      logger.info("Enabling user account, requested by:", request.auth.uid);
 
-  try {
-    // Verify the requesting user is an admin or super-admin
-    const db = getFirestore();
-    const userDoc = await db.collection('users').doc(request.auth.uid).get();
-    
-    if (!userDoc.exists) {
-      logger.error("User document not found:", request.auth.uid);
-      throw new Error("User not authorized");
-    }
+      try {
+        // Verify the requesting user is an admin or super-admin
+        const db = getFirestore();
+        const userDoc = await db.collection("users").doc(request.auth.uid).get();
 
-    const userData = userDoc.data();
-    if (userData.role !== 'admin' && userData.role !== 'super-admin') {
-      logger.error("Non-admin user attempted to enable account:", request.auth.uid);
-      throw new Error("Admin privileges required");
-    }
+        if (!userDoc.exists) {
+          logger.error("User document not found:", request.auth.uid);
+          throw new Error("User not authorized");
+        }
 
-    const { authUid } = request.data;
-    
-    if (!authUid) {
-      throw new Error("authUid is required");
-    }
+        const userData = userDoc.data();
+        if (userData.role !== "admin" && userData.role !== "super-admin") {
+          logger.error("Non-admin user attempted to enable account:", request.auth.uid);
+          throw new Error("Admin privileges required");
+        }
 
-    // Enable the Firebase Auth user
-    await admin.auth().updateUser(authUid, {
-      disabled: false
+        const {authUid} = request.data;
+
+        if (!authUid) {
+          throw new Error("authUid is required");
+        }
+
+        // Enable the Firebase Auth user
+        await admin.auth().updateUser(authUid, {
+          disabled: false,
+        });
+
+        logger.info("Successfully enabled user account:", authUid);
+
+        return {
+          success: true,
+          message: "User account enabled successfully",
+        };
+      } catch (error) {
+        logger.error("Error enabling user account:", error);
+        throw new Error(`Failed to enable user account: ${error.message}`);
+      }
     });
-
-    logger.info("Successfully enabled user account:", authUid);
-
-    return {
-      success: true,
-      message: "User account enabled successfully"
-    };
-  } catch (error) {
-    logger.error("Error enabling user account:", error);
-    throw new Error(`Failed to enable user account: ${error.message}`);
-  }
-});
 
 /**
  * Export all Firebase Authentication users
@@ -147,8 +147,8 @@ exports.exportAuthUsers = onCall(async (request) => {
   try {
     // Verify the requesting user is an admin
     const db = getFirestore();
-    const userDoc = await db.collection('users').doc(request.auth.uid).get();
-    
+    const userDoc = await db.collection("users").doc(request.auth.uid).get();
+
     if (!userDoc.exists) {
       logger.error("User document not found:", request.auth.uid);
       throw new Error("User not authorized");
@@ -162,7 +162,7 @@ exports.exportAuthUsers = onCall(async (request) => {
 
     // List all auth users
     const listUsersResult = await admin.auth().listUsers();
-    const authUsers = listUsersResult.users.map(userRecord => ({
+    const authUsers = listUsersResult.users.map((userRecord) => ({
       uid: userRecord.uid,
       email: userRecord.email,
       emailVerified: userRecord.emailVerified,
