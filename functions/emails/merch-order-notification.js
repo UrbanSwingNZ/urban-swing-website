@@ -7,94 +7,94 @@
  * Generate merchandise order confirmation email
  * @param {Object} order - Order data from merchOrders collection
  * @param {string} orderId - Order document ID
- * @returns {Object} Object with subject, html and text versions
+ * @return {Object} Object with subject, html and text versions
  */
 function generateMerchOrderEmail(order, orderId) {
   // Product name mapping with stock codes
   const productNames = {
-    'maliTee': 'Mali Tee (4008)',
-    'cropTee': 'Crop Tee (4062)',
-    'stapleTee': 'Staple Tee (5001)',
-    'womensZipHood': "Women's Relax Zip Hood (4162)",
-    'mensZipHood': "Men's Relax Zip Hood (5162)",
-    'womensCrew': "Women's Relax Crew (4160)",
-    'mensCrew': "Men's Relax Crew (5160)"
+    "maliTee": "Mali Tee (4008)",
+    "cropTee": "Crop Tee (4062)",
+    "stapleTee": "Staple Tee (5001)",
+    "womensZipHood": "Women's Relax Zip Hood (4162)",
+    "mensZipHood": "Men's Relax Zip Hood (5162)",
+    "womensCrew": "Women's Relax Crew (4160)",
+    "mensCrew": "Men's Relax Crew (5160)",
   };
 
   // Format items list
   const items = order.items || {};
   const itemsList = Object.entries(items).map(([key, item]) => {
     const name = item.productName || productNames[key] || key;
-    const size = item.size || 'N/A';
-    
+    const size = item.size || "N/A";
+
     // Handle tee items with color quantities
     if (item.blackQty !== undefined || item.whiteQty !== undefined) {
       const blackQty = item.blackQty || 0;
       const whiteQty = item.whiteQty || 0;
-      
+
       // Build color string showing only non-zero quantities
       const colors = [];
       if (blackQty > 0) colors.push(`Black: ${blackQty}`);
       if (whiteQty > 0) colors.push(`White: ${whiteQty}`);
-      const colorStr = colors.length > 0 ? colors.join(', ') : 'N/A';
-      
+      const colorStr = colors.length > 0 ? colors.join(", ") : "N/A";
+
       return {
         name,
         size,
         colorStr,
-        hasColors: true
+        hasColors: true,
       };
-    } 
+    }
     // Handle single quantity items (hoodies, etc.)
     else {
       return {
         name,
         size,
         quantity: item.quantity || 0,
-        hasColors: false
+        hasColors: false,
       };
     }
   });
 
   // Build HTML items list
-  const itemsHtml = itemsList.map(item => {
+  const itemsHtml = itemsList.map((item) => {
     if (item.hasColors) {
       return `<li style="margin-bottom: 8px;">${item.name} - Size: ${item.size} - ${item.colorStr}</li>`;
     } else {
       return `<li style="margin-bottom: 8px;">${item.name} - Size: ${item.size} - Quantity: ${item.quantity}</li>`;
     }
-  }).join('');
+  }).join("");
 
   // Build text items list
-  const itemsText = itemsList.map(item => {
+  const itemsText = itemsList.map((item) => {
     if (item.hasColors) {
       return `  - ${item.name} - Size: ${item.size} - ${item.colorStr}`;
     } else {
       return `  - ${item.name} - Size: ${item.size} - Quantity: ${item.quantity}`;
     }
-  }).join('\n');
+  }).join("\n");
 
   // Shipping method display
   const shippingLabels = {
-    'courier': 'Courier Delivery',
-    'collect-urban-swing': 'Collect from Urban Swing',
-    'collect-event': 'Collect at Event'
+    "courier": "Courier Delivery",
+    "collect-urban-swing": "Collect from Urban Swing",
+    "collect-event": "Collect at Event",
   };
   const shippingMethod = shippingLabels[order.shipping] || order.shipping;
 
   // Conditional shipping address/pickup info
-  let shippingInfoHtml = '';
-  let shippingInfoText = '';
+  let shippingInfoHtml = "";
+  let shippingInfoText = "";
 
-  if (order.shipping === 'courier') {
+  if (order.shipping === "courier") {
     shippingInfoHtml = `
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Shipping Address:</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${order.address || 'N/A'}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${order.address || "N/A"}</td>
       </tr>
     `;
-    shippingInfoText = `Shipping Address: ${order.address || 'N/A'}`;
-  } else if (order.shipping === 'collect-event' && order.eventName) {
+    shippingInfoText = `Shipping Address: ${order.address || "N/A"}`;
+  } else if (order.shipping === "collect-event" && order.eventName) {
     shippingInfoHtml = `
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Pickup Location:</strong></td>
@@ -110,9 +110,9 @@ function generateMerchOrderEmail(order, orderId) {
       <strong style="color: #856404;">Additional Notes:</strong><br>
       <span style="color: #856404;">${order.additionalNotes}</span>
     </div>
-  ` : '';
+  ` : "";
 
-  const notesText = order.additionalNotes ? `\nAdditional Notes:\n${order.additionalNotes}` : '';
+  const notesText = order.additionalNotes ? `\nAdditional Notes:\n${order.additionalNotes}` : "";
 
   // Chosen name section
   const chosenNameHtml = order.chosenName ? `
@@ -120,15 +120,15 @@ function generateMerchOrderEmail(order, orderId) {
       <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Custom Name:</strong></td>
       <td style="padding: 10px; border-bottom: 1px solid #ddd;">${order.chosenName}</td>
     </tr>
-  ` : '';
+  ` : "";
 
-  const chosenNameText = order.chosenName ? `Custom Name: ${order.chosenName}` : '';
+  const chosenNameText = order.chosenName ? `Custom Name: ${order.chosenName}` : "";
 
   // Format order date
-  const orderDate = new Date().toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const orderDate = new Date().toLocaleDateString("en-NZ", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   const html = `
@@ -166,7 +166,7 @@ function generateMerchOrderEmail(order, orderId) {
           </tr>
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Phone:</strong></td>
-            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${order.phoneNumber || 'N/A'}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">${order.phoneNumber || "N/A"}</td>
           </tr>
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Shipping Method:</strong></td>
@@ -231,7 +231,7 @@ Order ID: ${orderId}
 Order Date: ${orderDate}
 Customer Name: ${order.fullName}
 Email: ${order.email}
-Phone: ${order.phoneNumber || 'N/A'}
+Phone: ${order.phoneNumber || "N/A"}
 Shipping Method: ${shippingMethod}
 ${shippingInfoText}
 ${chosenNameText}
@@ -256,10 +256,10 @@ This is an automated notification from Urban Swing merchandise order system.
   return {
     subject: `New Merchandise Order from ${order.fullName}`,
     html,
-    text
+    text,
   };
 }
 
 module.exports = {
-  generateMerchOrderEmail
+  generateMerchOrderEmail,
 };

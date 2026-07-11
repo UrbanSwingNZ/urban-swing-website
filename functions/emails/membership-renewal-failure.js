@@ -5,109 +5,109 @@
  */
 
 const colors = {
-    bluePrimary: '#3534fa',
-    purplePrimary: '#9a16f5',
-    pinkPrimary: '#e800f2',
-    white: '#ffffff',
-    textLight: '#666',
-    textPrimary: '#333',
-    bgLight: '#f8f9fa',
-    error: '#dc3545',
-    errorLight: '#f8d7da',
-    warning: '#ffc107',
-    warningLight: '#fff3cd',
-    borderMedium: '#ddd',
-    borderLight: '#e0e0e0'
+  bluePrimary: "#3534fa",
+  purplePrimary: "#9a16f5",
+  pinkPrimary: "#e800f2",
+  white: "#ffffff",
+  textLight: "#666",
+  textPrimary: "#333",
+  bgLight: "#f8f9fa",
+  error: "#dc3545",
+  errorLight: "#f8d7da",
+  warning: "#ffc107",
+  warningLight: "#fff3cd",
+  borderMedium: "#ddd",
+  borderLight: "#e0e0e0",
 };
 
 /**
  * Convert Stripe error code to user-friendly message
  * @param {string} failureCode - Stripe decline/failure code
  * @param {string} failureMessage - Raw Stripe failure message
- * @returns {Object} Object with reason (short) and details (longer explanation)
+ * @return {Object} Object with reason (short) and details (longer explanation)
  */
 function getUserFriendlyFailureReason(failureCode, failureMessage) {
-    // Map common Stripe decline codes to user-friendly messages
-    const errorMap = {
-        // Card-specific errors
-        'card_declined': {
-            reason: 'Card Declined',
-            details: 'Your card was declined by your bank. This could be due to insufficient funds, daily spending limits, or security restrictions. Please contact your bank for more information or try a different card.'
-        },
-        'expired_card': {
-            reason: 'Card Expired',
-            details: 'The card on file has expired. Please update your payment method with a valid card to continue your membership.'
-        },
-        'insufficient_funds': {
-            reason: 'Insufficient Funds',
-            details: 'Your card does not have sufficient funds to process this payment. Please add funds to your account or use a different payment method.'
-        },
-        'incorrect_cvc': {
-            reason: 'Incorrect Security Code',
-            details: 'The security code (CVC/CVV) for your card is incorrect. Please update your payment method with the correct card details.'
-        },
-        'incorrect_number': {
-            reason: 'Invalid Card Number',
-            details: 'The card number on file is invalid. Please update your payment method with a valid card.'
-        },
-        'invalid_expiry_year': {
-            reason: 'Invalid Expiry Date',
-            details: 'The expiry date for your card is invalid. Please update your payment method with the correct card details.'
-        },
-        'lost_card': {
-            reason: 'Card Reported Lost',
-            details: 'This card has been reported as lost. Please update your payment method with a different card.'
-        },
-        'stolen_card': {
-            reason: 'Card Reported Stolen',
-            details: 'This card has been reported as stolen. Please update your payment method with a different card.'
-        },
-        
-        // Processing errors
-        'processing_error': {
-            reason: 'Payment Processing Error',
-            details: 'There was an error processing your payment. This is usually temporary. Please try updating your payment method, or contact us if the issue persists.'
-        },
-        'issuer_not_available': {
-            reason: 'Bank System Unavailable',
-            details: 'Your bank\'s system was temporarily unavailable. This is usually a temporary issue. You can manually renew your membership, or wait and we\'ll try again on your next billing date.'
-        },
-        
-        // Security/fraud
-        'do_not_honor': {
-            reason: 'Payment Declined by Bank',
-            details: 'Your bank declined this payment. This is often due to security measures. Please contact your bank to authorize payments to Urban Swing, or try a different card.'
-        },
-        'fraudulent': {
-            reason: 'Payment Blocked for Security',
-            details: 'This payment was flagged by our security systems. Please contact us at dance@urbanswing.co.nz to resolve this issue.'
-        },
-        'restricted_card': {
-            reason: 'Card Restricted',
-            details: 'This card cannot be used for this type of payment. Please try a different card or contact your bank for assistance.'
-        },
-        
-        // Other common errors
-        'generic_decline': {
-            reason: 'Payment Declined',
-            details: 'Your payment was declined. Please contact your bank for more information or try a different payment method.'
-        },
-        'withdrawal_count_limit_exceeded': {
-            reason: 'Transaction Limit Exceeded',
-            details: 'You have exceeded the number of transactions allowed on this card. Please try again tomorrow or use a different card.'
-        }
-    };
+  // Map common Stripe decline codes to user-friendly messages
+  const errorMap = {
+    // Card-specific errors
+    "card_declined": {
+      reason: "Card Declined",
+      details: "Your card was declined by your bank. This could be due to insufficient funds, daily spending limits, or security restrictions. Please contact your bank for more information or try a different card.",
+    },
+    "expired_card": {
+      reason: "Card Expired",
+      details: "The card on file has expired. Please update your payment method with a valid card to continue your membership.",
+    },
+    "insufficient_funds": {
+      reason: "Insufficient Funds",
+      details: "Your card does not have sufficient funds to process this payment. Please add funds to your account or use a different payment method.",
+    },
+    "incorrect_cvc": {
+      reason: "Incorrect Security Code",
+      details: "The security code (CVC/CVV) for your card is incorrect. Please update your payment method with the correct card details.",
+    },
+    "incorrect_number": {
+      reason: "Invalid Card Number",
+      details: "The card number on file is invalid. Please update your payment method with a valid card.",
+    },
+    "invalid_expiry_year": {
+      reason: "Invalid Expiry Date",
+      details: "The expiry date for your card is invalid. Please update your payment method with the correct card details.",
+    },
+    "lost_card": {
+      reason: "Card Reported Lost",
+      details: "This card has been reported as lost. Please update your payment method with a different card.",
+    },
+    "stolen_card": {
+      reason: "Card Reported Stolen",
+      details: "This card has been reported as stolen. Please update your payment method with a different card.",
+    },
 
-    // Return mapped error or generic error
-    if (errorMap[failureCode]) {
-        return errorMap[failureCode];
-    }
+    // Processing errors
+    "processing_error": {
+      reason: "Payment Processing Error",
+      details: "There was an error processing your payment. This is usually temporary. Please try updating your payment method, or contact us if the issue persists.",
+    },
+    "issuer_not_available": {
+      reason: "Bank System Unavailable",
+      details: "Your bank's system was temporarily unavailable. This is usually a temporary issue. You can manually renew your membership, or wait and we'll try again on your next billing date.",
+    },
 
-    // Generic fallback if code not recognized
-    return {
-        reason: 'Payment Failed',
-        details: failureMessage || 'Your payment could not be processed. Please update your payment method or contact your bank for more information. If you continue to have issues, please email us at dance@urbanswing.co.nz.'
-    };
+    // Security/fraud
+    "do_not_honor": {
+      reason: "Payment Declined by Bank",
+      details: "Your bank declined this payment. This is often due to security measures. Please contact your bank to authorize payments to Urban Swing, or try a different card.",
+    },
+    "fraudulent": {
+      reason: "Payment Blocked for Security",
+      details: "This payment was flagged by our security systems. Please contact us at dance@urbanswing.co.nz to resolve this issue.",
+    },
+    "restricted_card": {
+      reason: "Card Restricted",
+      details: "This card cannot be used for this type of payment. Please try a different card or contact your bank for assistance.",
+    },
+
+    // Other common errors
+    "generic_decline": {
+      reason: "Payment Declined",
+      details: "Your payment was declined. Please contact your bank for more information or try a different payment method.",
+    },
+    "withdrawal_count_limit_exceeded": {
+      reason: "Transaction Limit Exceeded",
+      details: "You have exceeded the number of transactions allowed on this card. Please try again tomorrow or use a different card.",
+    },
+  };
+
+  // Return mapped error or generic error
+  if (errorMap[failureCode]) {
+    return errorMap[failureCode];
+  }
+
+  // Generic fallback if code not recognized
+  return {
+    reason: "Payment Failed",
+    details: failureMessage || "Your payment could not be processed. Please update your payment method or contact your bank for more information. If you continue to have issues, please email us at dance@urbanswing.co.nz.",
+  };
 }
 
 /**
@@ -121,44 +121,44 @@ function getUserFriendlyFailureReason(failureCode, failureMessage) {
  * @param {string} params.failureCode - Stripe decline/failure code
  * @param {string} params.failureMessage - Raw Stripe failure message
  * @param {string} params.paymentMethod - Last 4 digits of card (e.g., "4242")
- * @returns {Object} Email content with subject, html, and text
+ * @return {Object} Email content with subject, html, and text
  */
 function generateMembershipRenewalFailureEmail({
-    studentName,
-    firstName,
-    membershipType,
-    amount,
-    expiryDate,
-    failureCode,
-    failureMessage,
-    paymentMethod
+  studentName,
+  firstName,
+  membershipType,
+  amount,
+  expiryDate,
+  failureCode,
+  failureMessage,
+  paymentMethod,
 }) {
-    const subject = 'Action Required: Membership Payment Failed';
+  const subject = "Action Required: Membership Payment Failed";
 
-    // Get user-friendly error message
-    const { reason, details } = getUserFriendlyFailureReason(failureCode, failureMessage);
+  // Get user-friendly error message
+  const {reason, details} = getUserFriendlyFailureReason(failureCode, failureMessage);
 
-    // Format dates
-    const formatDate = (date) => {
-        const d = date instanceof Date ? date : new Date(date);
-        return d.toLocaleDateString('en-NZ', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
+  // Format dates
+  const formatDate = (date) => {
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toLocaleDateString("en-NZ", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
-    const formatShortDate = (date) => {
-        const d = date instanceof Date ? date : new Date(date);
-        return d.toLocaleDateString('en-NZ', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
+  const formatShortDate = (date) => {
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toLocaleDateString("en-NZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
-    const html = `
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -286,7 +286,7 @@ function generateMembershipRenewalFailureEmail({
 </html>
     `.trim();
 
-    const text = `
+  const text = `
 MEMBERSHIP PAYMENT FAILED - ACTION REQUIRED
 
 Hi ${firstName},
@@ -331,10 +331,10 @@ Urban Swing | Hawkes Bay, New Zealand
 dance@urbanswing.co.nz
     `.trim();
 
-    return { subject, html, text };
+  return {subject, html, text};
 }
 
 module.exports = {
-    generateMembershipRenewalFailureEmail,
-    getUserFriendlyFailureReason
+  generateMembershipRenewalFailureEmail,
+  getUserFriendlyFailureReason,
 };

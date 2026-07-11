@@ -8,7 +8,7 @@
  * @param {Object} student - Student data
  * @param {string} studentId - Student document ID
  * @param {Error} error - The error that occurred
- * @returns {Object} Object with html and text versions
+ * @return {Object} Object with html and text versions
  */
 function generateErrorNotificationEmail(student, studentId, error) {
   const html = `
@@ -88,9 +88,9 @@ Fix Pricing Configuration: https://urbanswing.co.nz/admin/admin-tools/concession
 This is an automated error notification from Urban Swing student registration system.
   `;
 
-  return { html, text };
+  return {html, text};
 }
 
 module.exports = {
-  generateErrorNotificationEmail
+  generateErrorNotificationEmail,
 };

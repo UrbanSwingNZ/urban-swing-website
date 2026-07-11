@@ -5,17 +5,17 @@
  */
 
 const colors = {
-    bluePrimary: '#3534fa',
-    purplePrimary: '#9a16f5',
-    pinkPrimary: '#e800f2',
-    white: '#ffffff',
-    textLight: '#666',
-    textPrimary: '#333',
-    bgLight: '#f8f9fa',
-    success: '#28a745',
-    successLight: '#d4edda',
-    borderMedium: '#ddd',
-    borderLight: '#e0e0e0'
+  bluePrimary: "#3534fa",
+  purplePrimary: "#9a16f5",
+  pinkPrimary: "#e800f2",
+  white: "#ffffff",
+  textLight: "#666",
+  textPrimary: "#333",
+  bgLight: "#f8f9fa",
+  success: "#28a745",
+  successLight: "#d4edda",
+  borderMedium: "#ddd",
+  borderLight: "#e0e0e0",
 };
 
 /**
@@ -28,40 +28,40 @@ const colors = {
  * @param {Date} params.renewalDate - Date of renewal
  * @param {Date} params.newExpiryDate - New membership expiry date
  * @param {string} params.paymentMethod - Last 4 digits of card (e.g., "4242")
- * @returns {Object} Email content with subject, html, and text
+ * @return {Object} Email content with subject, html, and text
  */
 function generateMembershipRenewalSuccessEmail({
-    studentName,
-    firstName,
-    membershipType,
-    amount,
-    renewalDate,
-    newExpiryDate,
-    paymentMethod
+  studentName,
+  firstName,
+  membershipType,
+  amount,
+  renewalDate,
+  newExpiryDate,
+  paymentMethod,
 }) {
-    const subject = 'Your Urban Swing Membership Has Renewed';
+  const subject = "Your Urban Swing Membership Has Renewed";
 
-    // Format dates
-    const formatDate = (date) => {
-        const d = date instanceof Date ? date : new Date(date);
-        return d.toLocaleDateString('en-NZ', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
+  // Format dates
+  const formatDate = (date) => {
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toLocaleDateString("en-NZ", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
-    const formatShortDate = (date) => {
-        const d = date instanceof Date ? date : new Date(date);
-        return d.toLocaleDateString('en-NZ', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
+  const formatShortDate = (date) => {
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toLocaleDateString("en-NZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
-    const html = `
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -167,7 +167,7 @@ function generateMembershipRenewalSuccessEmail({
 </html>
     `.trim();
 
-    const text = `
+  const text = `
 MEMBERSHIP RENEWED SUCCESSFULLY
 
 Hi ${firstName},
@@ -201,7 +201,7 @@ Urban Swing | Hawkes Bay, New Zealand
 dance@urbanswing.co.nz
     `.trim();
 
-    return { subject, html, text };
+  return {subject, html, text};
 }
 
-module.exports = { generateMembershipRenewalSuccessEmail };
+module.exports = {generateMembershipRenewalSuccessEmail};
