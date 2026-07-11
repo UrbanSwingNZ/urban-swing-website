@@ -6,6 +6,7 @@
 let studentsData = [];
 let allStudentsData = []; // Store all students including deleted ones
 let showDeletedStudents = false;
+let showImproversOnly = false;
 let studentsUnsubscribe = null; // Store unsubscribe function for snapshot listener
 
 /**
@@ -18,14 +19,31 @@ function toggleShowDeleted(show) {
 }
 
 /**
+ * Toggle showing improvers only
+ */
+function toggleShowImprovers(show) {
+    showImproversOnly = show;
+    // Filter existing data instead of reloading
+    filterAndDisplayStudents();
+}
+
+/**
  * Filter and display students based on current settings
  */
 function filterAndDisplayStudents() {
-    if (showDeletedStudents) {
-        studentsData = [...allStudentsData];
-    } else {
-        studentsData = allStudentsData.filter(student => student.deleted !== true);
+    let filteredData = [...allStudentsData];
+    
+    // Apply deleted filter
+    if (!showDeletedStudents) {
+        filteredData = filteredData.filter(student => student.deleted !== true);
     }
+    
+    // Apply improvers filter
+    if (showImproversOnly) {
+        filteredData = filteredData.filter(student => student.improver === true);
+    }
+    
+    studentsData = filteredData;
     displayStudents();
 }
 
