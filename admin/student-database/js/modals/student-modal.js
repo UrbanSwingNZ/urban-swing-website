@@ -721,13 +721,25 @@ async function confirmUpdateExpiry() {
 
     const newDate = updateExpiryDatePicker.selectedDate;
     if (!newDate) {
-        alert('Please select a new expiry date');
+        const validationModal = new ConfirmationModal({
+            title: 'Date Required',
+            message: 'Please select a new expiry date.',
+            confirmText: 'OK',
+            showCancel: false
+        });
+        validationModal.show();
         return;
     }
 
     // Validate: new date must be after current expiry date
     if (newDate <= currentExpiryData.currentExpiry) {
-        alert('The new expiry date must be later than the current expiry date. Memberships can only be extended, not shortened.');
+        const validationModal = new ConfirmationModal({
+            title: 'Invalid Date',
+            message: 'The new expiry date must be later than the current expiry date. Memberships can only be extended, not shortened.',
+            confirmText: 'OK',
+            showCancel: false
+        });
+        validationModal.show();
         return;
     }
 
