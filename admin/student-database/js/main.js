@@ -34,8 +34,7 @@ function initializeApp() {
     // Initialize transaction history modal
     initializeTransactionHistoryModalListeners();
     
-    // Initialize modal event listeners
-    initializeModalListeners();
+    // Note: initializeModalListeners() is called automatically by modal.js when it loads
     
     // Initialize search
     initializeSearch();

@@ -226,7 +226,11 @@ function createStudentRow(student) {
             toggleMobileAccordion(row);
         } else {
             // Desktop: open detail modal
-            viewStudent(student.id);
+            if (typeof window.viewStudent === 'function') {
+                window.viewStudent(student.id);
+            } else {
+                console.error('viewStudent function not available yet');
+            }
         }
     });
     

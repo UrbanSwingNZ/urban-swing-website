@@ -26,4 +26,5 @@ window.initializeModalListeners = initializeModalListeners;
 window.openStudentModal = openStudentModal;
 window.ConfirmationModal = ConfirmationModal;
 
-
+// Initialize modal listeners automatically when this module loads
+initializeModalListeners();
