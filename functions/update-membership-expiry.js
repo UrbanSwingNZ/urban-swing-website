@@ -10,10 +10,6 @@ const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 const Stripe = require("stripe");
 
-// Initialize Stripe (get key from environment)
-const stripeKey = (process.env.STRIPE_SECRET_KEY || "").trim();
-const stripe = Stripe(stripeKey);
-
 /**
  * Update membership expiry date
  * Callable function - Admin only
@@ -176,6 +172,13 @@ exports.updateMembershipExpiry = onCall(
         if (membershipData.isRecurring &&
             membershipData.stripeSubscriptionId) {
           try {
+            // Initialize Stripe with environment key
+            const stripeKey = (process.env.STRIPE_SECRET_KEY || "").trim();
+            if (!stripeKey) {
+              throw new Error("STRIPE_SECRET_KEY not configured");
+            }
+            const stripe = Stripe(stripeKey);
+
             // Calculate pause duration in days
             const currentExpiryDate = membershipData.currentPeriodEnd.toDate();
             const pauseDays = Math.ceil(
