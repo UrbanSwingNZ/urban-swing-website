@@ -275,6 +275,20 @@ function generateWelcomeEmail(student, casualRate, studentRate, fiveClassPrice, 
           <li>Beginner-friendly instruction</li>
         </ul>
 
+        <h3 style="color: ${colors.purplePrimary}; margin-top: 30px;">Join Our Community</h3>
+        
+        <div style="background: ${colors.infoBg}; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <p style="margin: 0 0 15px 0; font-size: 1rem; color: ${colors.textPrimary};">
+            Connect with fellow dancers, share your progress, and stay updated on social events by joining our Facebook group!
+          </p>
+          <p style="margin: 0; text-align: center;">
+            <a href="https://www.facebook.com/groups/urbanswingdancers" 
+               style="display: inline-block; padding: 12px 24px; background: ${colors.purplePrimary}; color: ${colors.white}; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Join Urban Swing Dancers Group
+            </a>
+          </p>
+        </div>
+
         ${hasUserAccount ? `
         <h3 style="color: ${colors.purplePrimary}; margin-top: 30px;">Your Student Portal</h3>
         
@@ -390,6 +404,11 @@ WHAT TO EXPECT
 - Welcoming community of dancers
 - No partner required - we rotate partners during class
 - Beginner-friendly instruction
+
+JOIN OUR COMMUNITY
+Connect with fellow dancers, share your progress, and stay updated on social events by joining our Facebook group!
+
+Join Urban Swing Dancers Group: https://www.facebook.com/groups/urbanswingdancers
 
 ${hasUserAccount ? `YOUR STUDENT PORTAL
 As a registered student, you now have access to your own Student Portal where you can:
