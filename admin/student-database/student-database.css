@@ -1547,3 +1547,39 @@ textarea:focus {
    Inherited from admin.css - no need to redefine
    ======================================== */
 
+
+
+/* ========================================
+   UPDATE MEMBERSHIP EXPIRY MODAL STYLES
+   ======================================== */
+
+.quick-extend-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Student Info Card in Modal */
+.student-info-card {
+    background: var(--bg-light);
+    border-left: 4px solid var(--purple-primary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+}
+
+.student-info-card h4 {
+    color: var(--purple-primary);
+    margin: 0 0 var(--space-xs) 0;
+    font-size: 1.1rem;
+}
+
+.student-info-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}
