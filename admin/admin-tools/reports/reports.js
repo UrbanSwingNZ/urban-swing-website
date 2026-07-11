@@ -943,19 +943,10 @@ async function generateImproversMembershipReport() {
                 let expiryDateDisplay;
                 if (item.membershipExpiryDate && item.hasActiveMembership) {
                     const formattedDate = formatDate(item.membershipExpiryDate);
-                    if (item.autoRenew) {
-                        // Auto-renewing: show info icon instead of edit icon
-                        expiryDateDisplay = `<span class="expiry-date-link" onclick="showAutoRenewWarning()" title="Cannot edit auto-renewing membership">
-                            <span class="badge badge-yes">${formattedDate}</span>
-                            <i class="fas fa-info-circle" style="color: var(--text-muted);"></i>
-                        </span>`;
-                    } else {
-                        // Not auto-renewing: show edit icon
-                        expiryDateDisplay = `<span class="expiry-date-link" onclick="openUpdateExpiryModal('${item.studentId}', '${item.studentName}', '${item.studentEmail}', '${item.membershipExpiryDate.toISOString()}', '${item.activeMembershipId}', false)" title="Click to update expiry date">
-                            <span class="badge badge-yes">${formattedDate}</span>
-                            <i class="fas fa-pencil-alt"></i>
-                        </span>`;
-                    }
+                    expiryDateDisplay = `<span class="expiry-date-link" onclick="openUpdateExpiryModal('${item.studentId}', '${item.studentName}', '${item.studentEmail}', '${item.membershipExpiryDate.toISOString()}', '${item.activeMembershipId}', ${item.autoRenew || false})" title="Click to update expiry date">
+                        <span class="badge badge-yes">${formattedDate}</span>
+                        <i class="fas fa-pencil-alt"></i>
+                    </span>`;
                 } else if (item.membershipExpiryDate) {
                     expiryDateDisplay = formatDate(item.membershipExpiryDate);
                 } else {
@@ -994,19 +985,10 @@ async function generateImproversMembershipReport() {
                 let expiryDateDisplay;
                 if (item.membershipExpiryDate && item.hasActiveMembership) {
                     const formattedDate = formatDate(item.membershipExpiryDate);
-                    if (item.autoRenew) {
-                        // Auto-renewing: show info icon instead of edit icon
-                        expiryDateDisplay = `<span class="expiry-date-link" onclick="showAutoRenewWarning()" title="Cannot edit auto-renewing membership">
-                            <span class="badge badge-yes">${formattedDate}</span>
-                            <i class="fas fa-info-circle" style="color: var(--text-muted);"></i>
-                        </span>`;
-                    } else {
-                        // Not auto-renewing: show edit icon
-                        expiryDateDisplay = `<span class="expiry-date-link" onclick="openUpdateExpiryModal('${item.studentId}', '${item.studentName}', '${item.studentEmail}', '${item.membershipExpiryDate.toISOString()}', '${item.activeMembershipId}', false)" title="Click to update expiry date">
-                            <span class="badge badge-yes">${formattedDate}</span>
-                            <i class="fas fa-pencil-alt"></i>
-                        </span>`;
-                    }
+                    expiryDateDisplay = `<span class="expiry-date-link" onclick="openUpdateExpiryModal('${item.studentId}', '${item.studentName}', '${item.studentEmail}', '${item.membershipExpiryDate.toISOString()}', '${item.activeMembershipId}', ${item.autoRenew || false})" title="Click to update expiry date">
+                        <span class="badge badge-yes">${formattedDate}</span>
+                        <i class="fas fa-pencil-alt"></i>
+                    </span>`;
                 } else if (item.membershipExpiryDate) {
                     expiryDateDisplay = formatDate(item.membershipExpiryDate);
                 } else {
@@ -1085,49 +1067,15 @@ function initializeUpdateExpiryModal() {
 }
 
 /**
- * Show warning modal for auto-renewing memberships
- */
-function showAutoRenewWarning() {
-    const warningModal = new ConfirmationModal({
-        title: 'Cannot Edit Auto-Renewing Membership',
-        message: `
-            <div style="text-align: left;">
-                <p><strong>This membership automatically renews via Stripe.</strong></p>
-                <p>The expiry date is controlled by Stripe's billing schedule and cannot be changed here.</p>
-                <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
-                    <strong>Why?</strong> Changing the date here would create a mismatch between your system and Stripe's billing schedule, 
-                    causing confusion when payments are processed.
-                </p>
-                <p style="margin-top: 1rem;">
-                    If you need to extend access due to cancelled classes or modify the billing cycle, 
-                    please contact support to update the subscription in Stripe.
-                </p>
-            </div>
-        `,
-        icon: 'fas fa-info-circle',
-        confirmText: 'OK',
-        confirmClass: 'btn-primary',
-        showCancel: false
-    });
-    warningModal.show();
-}
-
-/**
  * Open the update expiry modal
  * @param {string} studentId - Student document ID
  * @param {string} studentName - Student name
  * @param {string} studentEmail - Student email
  * @param {string} currentExpiryISO - Current expiry date in ISO format
  * @param {string} membershipId - Membership document ID
- * @param {boolean} isAutoRenewing - Whether the membership auto-renews via Stripe (should always be false when called)
+ * @param {boolean} isAutoRenewing - Whether the membership auto-renews via Stripe
  */
 function openUpdateExpiryModal(studentId, studentName, studentEmail, currentExpiryISO, membershipId, isAutoRenewing = false) {
-    // Safety check: should not be called for auto-renewing memberships
-    if (isAutoRenewing) {
-        showAutoRenewWarning();
-        return;
-    }
-
     const modal = document.getElementById('update-expiry-modal');
     if (!modal) return;
 
@@ -1137,7 +1085,8 @@ function openUpdateExpiryModal(studentId, studentName, studentEmail, currentExpi
         studentName: studentName,
         studentEmail: studentEmail,
         currentExpiry: new Date(currentExpiryISO),
-        membershipId: membershipId
+        membershipId: membershipId,
+        isAutoRenewing: isAutoRenewing
     };
 
     // Populate modal fields
@@ -1205,6 +1154,12 @@ async function confirmUpdateExpiry() {
         return;
     }
 
+    // Validate: new date must be after current expiry date
+    if (newDate <= currentExpiryData.currentExpiry) {
+        alert('The new expiry date must be later than the current expiry date. Memberships can only be extended, not shortened.');
+        return;
+    }
+
     const reason = document.getElementById('update-expiry-reason').value.trim();
     const confirmBtn = document.getElementById('confirm-update-expiry-btn');
 
@@ -1234,10 +1189,18 @@ async function confirmUpdateExpiry() {
         const [displayYear, displayMonth, displayDay] = dateString.split('-');
         const formattedDate = `${displayDay}/${displayMonth}/${displayYear}`;
 
-        // Show success message
+        // Show success message with different text for auto-renewing memberships
+        let successMessage = `<p>The membership expiry date for <strong>${currentExpiryData.studentName}</strong> has been updated to <strong>${formattedDate}</strong>.</p>`;
+        
+        if (currentExpiryData.isAutoRenewing) {
+            // Calculate pause duration
+            const pauseDays = Math.ceil((newDate - currentExpiryData.currentExpiry) / (1000 * 60 * 60 * 24));
+            successMessage += `<p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">The Stripe subscription has been paused for <strong>${pauseDays} day${pauseDays === 1 ? '' : 's'}</strong> and will automatically resume billing on the new date.</p>`;
+        }
+
         const successModal = new ConfirmationModal({
             title: 'Expiry Date Updated',
-            message: `<p>The membership expiry date for <strong>${currentExpiryData.studentName}</strong> has been updated to <strong>${formattedDate}</strong>.</p>`,
+            message: successMessage,
             icon: 'fas fa-check-circle',
             confirmText: 'OK',
             confirmClass: 'btn-primary'

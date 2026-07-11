@@ -3,10 +3,16 @@
  * Updates the expiry date of a membership
  * Updates both the membership document (currentPeriodEnd) and
  * student document (membershipExpiryDate)
+ * For auto-renewing memberships, pauses the Stripe subscription
  */
 
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
+const Stripe = require("stripe");
+
+// Initialize Stripe (get key from environment)
+const stripeKey = (process.env.STRIPE_SECRET_KEY || "").trim();
+const stripe = Stripe(stripeKey);
 
 /**
  * Update membership expiry date
@@ -165,6 +171,52 @@ exports.updateMembershipExpiry = onCall(
         await studentRef.update({
           membershipExpiryDate: expiryTimestamp,
         });
+
+        // If auto-renewing membership, pause the Stripe subscription
+        if (membershipData.isRecurring &&
+            membershipData.stripeSubscriptionId) {
+          try {
+            // Calculate pause duration in days
+            const currentExpiryDate = membershipData.currentPeriodEnd.toDate();
+            const pauseDays = Math.ceil(
+                (dateAtNoonUTC - currentExpiryDate) / (1000 * 60 * 60 * 24),
+            );
+
+            // Calculate when billing should resume (new expiry date)
+            const resumeTimestamp = Math.floor(
+                dateAtNoonUTC.getTime() / 1000,
+            );
+
+            // Pause the Stripe subscription
+            await stripe.subscriptions.update(
+                membershipData.stripeSubscriptionId,
+                {
+                  pause_collection: {
+                    behavior: "void",
+                    resumes_at: resumeTimestamp,
+                  },
+                },
+            );
+
+            console.log(
+                `Stripe subscription paused - Subscription: ` +
+              `${membershipData.stripeSubscriptionId}, ` +
+              `Pause Duration: ${pauseDays} days, ` +
+              `Resumes: ${dateAtNoonUTC.toISOString()}`,
+            );
+          } catch (stripeError) {
+            console.error(
+                "Error pausing Stripe subscription:",
+                stripeError,
+            );
+            // Don't fail the whole operation if Stripe pause fails
+            // The expiry date has been updated successfully
+            console.warn(
+                "Firestore updated but Stripe pause failed - " +
+              "manual Stripe intervention may be needed",
+            );
+          }
+        }
 
         // Log the update
         const reasonText = reason || "Not provided";
