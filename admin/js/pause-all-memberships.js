@@ -337,12 +337,12 @@ function displayPauseAllPreview(memberships, targetDate) {
     autoRenewCount.textContent = autoRenewingCount;
 
     // Build and display memberships to update list
-    buildMembershipsList(previewList, membershipsToExtend, false, false);
+    buildMembershipsList(previewList, membershipsToExtend, false, false, targetDate);
 
     // Handle skipped memberships section
     if (membershipsToSkip.length > 0) {
         skippedCount.textContent = membershipsToSkip.length;
-        buildMembershipsList(skippedList, membershipsToSkip, true, false);
+        buildMembershipsList(skippedList, membershipsToSkip, true, false, targetDate);
         skippedSection.style.display = 'block';
     } else {
         skippedSection.style.display = 'none';
@@ -358,8 +358,9 @@ function displayPauseAllPreview(memberships, targetDate) {
  * @param {Array} memberships - Array of membership objects
  * @param {boolean} isSkipped - Whether this is the skipped list
  * @param {boolean} showAll - Whether to show all items or limit the list
+ * @param {Date} targetDate - The new expiry date
  */
-function buildMembershipsList(container, memberships, isSkipped, showAll) {
+function buildMembershipsList(container, memberships, isSkipped, showAll, targetDate) {
     let listHTML = '';
     const limit = isSkipped ? 5 : 10;
     const displayMemberships = showAll ? memberships : memberships.slice(0, limit);
@@ -384,11 +385,24 @@ function buildMembershipsList(container, memberships, isSkipped, showAll) {
                 </div>
             `;
         } else {
+            const currentExpiryStr = membership.currentExpiryDate.toLocaleDateString('en-NZ', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            const newExpiryStr = targetDate.toLocaleDateString('en-NZ', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
             listHTML += `
                 <div class="preview-item">
                     <div>
                         <div class="preview-item-name">${membership.studentName}</div>
                         <div class="preview-item-email">${membership.studentEmail}</div>
+                        <div class="preview-item-email" style="font-size: 0.85rem; color: var(--text-secondary);">
+                            ${currentExpiryStr} → ${newExpiryStr}
+                        </div>
                     </div>
                     ${badge}
                 </div>
@@ -432,10 +446,10 @@ function expandMembershipsList(listType) {
     
     if (listType === 'update') {
         const previewList = document.getElementById('pause-all-preview-list');
-        buildMembershipsList(previewList, membershipsToExtend, false, true);
+        buildMembershipsList(previewList, membershipsToExtend, false, true, targetDate);
     } else {
         const skippedList = document.getElementById('pause-all-skipped-list');
-        buildMembershipsList(skippedList, membershipsToSkip, true, true);
+        buildMembershipsList(skippedList, membershipsToSkip, true, true, targetDate);
     }
 }
 
@@ -452,10 +466,10 @@ function collapseMembershipsList(listType) {
     
     if (listType === 'update') {
         const previewList = document.getElementById('pause-all-preview-list');
-        buildMembershipsList(previewList, membershipsToExtend, false, false);
+        buildMembershipsList(previewList, membershipsToExtend, false, false, targetDate);
     } else {
         const skippedList = document.getElementById('pause-all-skipped-list');
-        buildMembershipsList(skippedList, membershipsToSkip, true, false);
+        buildMembershipsList(skippedList, membershipsToSkip, true, false, targetDate);
     }
 }
 
