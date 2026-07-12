@@ -131,17 +131,38 @@
 /* Column widths */
 .students-table th:nth-child(6),
 .students-table td:nth-child(6) {
-    width: 240px; /* Wider Actions column for 5 buttons */
+    width: 240px; /* Wider Actions column for up to 5 buttons */
     min-width: 240px;
 }
 
-/* Pronouns below name styling */
+/* Pronouns inline styling */
 .student-pronouns {
     font-size: 0.85rem;
     color: var(--text-light);
     font-weight: normal;
-    margin-top: 0.25rem;
+    margin-left: 0.5rem;
     text-transform: none;
+}
+
+/* Email consent envelope icon */
+.email-consent-icon {
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+}
+
+.email-consent-icon.consent-yes {
+    color: var(--success);
+}
+
+.email-consent-icon.consent-no {
+    color: var(--error);
+}
+
+/* Hide envelope icon on desktop - only show on mobile */
+@media (min-width: 769px) {
+    .email-consent-icon {
+        display: none;
+    }
 }
 
 /* Email Consent Badge */
@@ -599,6 +620,9 @@ textarea:focus {
         width: 100%;
         box-sizing: border-box;
         max-height: none;
+        background: transparent; /* Remove container background */
+        box-shadow: none; /* Remove container shadow */
+        border-radius: 0; /* Remove container border radius */
     }
 
     /* Hide table headers on mobile */
@@ -623,6 +647,7 @@ textarea:focus {
         overflow: hidden;
         cursor: pointer;
         transition: all var(--transition-fast);
+        position: relative; /* For positioning chevron */
     }
 
     .students-table tbody tr:hover {
@@ -634,6 +659,7 @@ textarea:focus {
     .students-table tbody tr td:nth-child(1) {
         display: block;
         padding: 1rem;
+        padding-right: 2.5rem; /* Make room for chevron */
         border: none;
         text-align: left;
         font-size: 1.1rem;
@@ -652,10 +678,11 @@ textarea:focus {
         opacity: 0.8;
     }
 
-    /* Pronouns below name - slightly larger on mobile */
+    /* Pronouns inline to the right of name on mobile */
     .students-table tbody tr td:nth-child(1) .student-pronouns {
-        font-size: 0.9rem;
-        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+        display: inline;
     }
 
     /* Accordion content - hidden by default */
@@ -671,9 +698,8 @@ textarea:focus {
         border-top: 1px solid var(--bg-purple-medium);
     }
 
-    /* When row is expanded, show email and email consent */
+    /* When row is expanded, show email and actions (not email consent - it's inline with email now) */
     .students-table tbody tr.expanded td:nth-child(2),
-    .students-table tbody tr.expanded td:nth-child(3),
     .students-table tbody tr.expanded td:nth-child(6) {
         display: block;
     }
@@ -686,21 +712,31 @@ textarea:focus {
         vertical-align: top;
         box-sizing: border-box;
         padding: 0.75rem 0.5rem;
+        border-top: none; /* Remove individual borders */
     }
     
-    /* Remove border-top from membership cell to prevent wrapping */
-    .students-table tbody tr.expanded td:nth-child(5) {
-        border-top: none !important;
-    }
-    
-    /* First cell in the row gets left padding */
+    /* Concessions cell - add positioning */
     .students-table tbody tr.expanded td:nth-child(4) {
+        position: relative;
         padding-left: 1rem;
+        padding-top: 0.75rem; /* Add top padding for border spacing */
     }
     
-    /* Last cell in the row gets right padding */
+    /* Add full-width border above concessions/membership row */
+    .students-table tbody tr.expanded td:nth-child(4)::after {
+        content: '';
+        position: absolute;
+        left: -1rem; /* Start from left edge of card (before cell padding) */
+        top: 0;
+        width: 220%; /* Extend to cover both 49% cells plus padding */
+        height: 1px;
+        background: var(--bg-purple-medium);
+    }
+    
+    /* Membership cell - right padding and top padding for border */
     .students-table tbody tr.expanded td:nth-child(5) {
         padding-right: 1rem;
+        padding-top: 0.75rem;
     }
     
     /* Override desktop hiding for membership column on mobile when expanded */
@@ -721,12 +757,7 @@ textarea:focus {
         word-break: break-word;
     }
 
-    .students-table tbody tr.expanded td:nth-child(3)::before {
-        content: 'Email Consent: ';
-        font-weight: 600;
-        opacity: 0.8;
-    }
-
+    /* Labels for Concessions and Membership cells */
     .students-table tbody tr.expanded td:nth-child(4)::before {
         content: 'Concessions';
         font-weight: 600;
@@ -734,6 +765,8 @@ textarea:focus {
         display: block;
         margin-bottom: 0.5rem;
         font-size: 0.85rem;
+        position: relative;
+        z-index: 1; /* Ensure label appears above border */
     }
 
     .students-table tbody tr.expanded td:nth-child(5)::before {
@@ -743,6 +776,8 @@ textarea:focus {
         display: block;
         margin-bottom: 0.5rem;
         font-size: 0.85rem;
+        position: relative;
+        z-index: 1; /* Ensure label appears above border */
     }
 
     /* Action buttons - full width when expanded */
@@ -753,7 +788,7 @@ textarea:focus {
 
     .students-table tbody tr.expanded td:nth-child(6).action-buttons {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.4rem; /* Slightly reduced gap to accommodate 5 buttons */
         justify-content: stretch;
         width: 100%;
         flex-direction: row !important;
@@ -762,7 +797,7 @@ textarea:focus {
 
     .students-table tbody tr.expanded td:nth-child(6) .btn-icon {
         flex: 1;
-        padding: 0.5rem;
+        padding: 0.5rem 0.3rem; /* Slightly reduced horizontal padding */
         display: inline-flex;
         flex-direction: row !important;
         align-items: center;
@@ -777,17 +812,22 @@ textarea:focus {
         font-size: 1.2rem;
     }
 
-    /* Add expand indicator */
-    .students-table tbody tr td:nth-child(1)::after {
+    /* Add expand indicator - positioned at top right of card */
+    .students-table tbody tr::after {
         content: '\f078';
         font-family: 'Font Awesome 6 Free';
         font-weight: 900;
-        float: right;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
         opacity: 0.5;
         transition: transform 0.3s ease;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        pointer-events: none; /* Don't interfere with clicks */
     }
 
-    .students-table tbody tr.expanded td:nth-child(1)::after {
+    .students-table tbody tr.expanded::after {
         transform: rotate(180deg);
     }
 
