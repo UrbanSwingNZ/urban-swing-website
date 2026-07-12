@@ -189,7 +189,7 @@ function createStudentRow(student) {
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
                 <i class="fas fa-sticky-note"></i>
             </button>
-            <button class="btn-icon" onclick="viewTransactionHistory('${student.id}')" title="View Transaction History">
+            <button class="btn-icon btn-transaction-history" onclick="viewTransactionHistory('${student.id}')" title="View Transaction History">
                 <i class="fas fa-history"></i>
             </button>
             <button class="btn-icon" onclick="editStudent('${student.id}')" title="Edit Student">
