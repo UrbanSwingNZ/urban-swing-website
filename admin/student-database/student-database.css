@@ -161,7 +161,12 @@
 /* Hide envelope icon on desktop - only show on mobile */
 @media (min-width: 769px) {
     .email-consent-icon {
-        display: none;
+        display: none !important;
+    }
+    
+    /* Hide transaction history button on desktop - only show on mobile */
+    .btn-transaction-history {
+        display: none !important;
     }
 }
 
