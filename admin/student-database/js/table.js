@@ -128,16 +128,8 @@ function createStudentRow(student) {
         ? `<span class="badge-merged" title="Merged into ${student.mergedInto}"><i class="fas fa-compress-arrows-alt"></i> Merged</span>`
         : '';
     
-    // Format registration date
-    let registeredDate = 'N/A';
-    if (student.registeredAt) {
-        const date = student.registeredAt.toDate ? student.registeredAt.toDate() : new Date(student.registeredAt);
-        registeredDate = date.toLocaleDateString('en-NZ', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-        });
-    }
+    // Format pronouns for display inline to the right of name
+    const pronounsDisplay = student.pronouns ? `<span class="student-pronouns">${escapeHtml(student.pronouns)}</span>` : '';
 
     // Email consent badge
     const emailConsentBadge = student.emailConsent 
@@ -164,10 +156,15 @@ function createStudentRow(student) {
                 <i class="fas fa-trash-alt"></i>
             </button>` : ''}`;
 
-    // Email and phone with copy buttons
+    // Email with envelope icon showing consent status
     const email = student.email || 'N/A';
+    const emailConsentIcon = student.emailConsent
+        ? '<i class="fas fa-envelope email-consent-icon consent-yes" title="Email consent given - OK to send marketing emails"></i>'
+        : '<i class="fas fa-envelope email-consent-icon consent-no" title="No email consent - Do not send marketing emails"></i>';
+    
     const emailDisplay = email !== 'N/A' 
         ? `<span class="contact-field-wrapper">
+                ${emailConsentIcon}
                 <span class="contact-text">${escapeHtml(email)}</span>
                 <button class="btn-copy-contact" data-copy-value="${escapeHtml(email)}" data-copy-label="Email" title="Copy email">
                     <i class="fas fa-copy"></i>
@@ -175,21 +172,9 @@ function createStudentRow(student) {
             </span>`
         : 'N/A';
     
-    const phone = student.phoneNumber || 'N/A';
-    const phoneDisplay = phone !== 'N/A'
-        ? `<span class="contact-field-wrapper">
-                <span class="contact-text">${escapeHtml(phone)}</span>
-                <button class="btn-copy-contact" data-copy-value="${escapeHtml(phone)}" data-copy-label="Phone" title="Copy phone">
-                    <i class="fas fa-copy"></i>
-                </button>
-            </span>`
-        : 'N/A';
-
     row.innerHTML = `
-        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}</td>
+        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${pronounsDisplay}${notesIcon}${mergedBadge}</td>
         <td>${emailDisplay}</td>
-        <td>${phoneDisplay}</td>
-        <td>${escapeHtml(student.pronouns || '-')}</td>
         <td>${emailConsentBadge}</td>
         <td id="${concessionsCellId}" class="concessions-cell">
             <i class="fas fa-spinner fa-spin text-muted"></i>
@@ -197,13 +182,15 @@ function createStudentRow(student) {
         <td id="${membershipCellId}" class="membership-cell">
             ${student.improver ? '<i class="fas fa-spinner fa-spin text-muted"></i>' : '<span class="text-muted">-</span>'}
         </td>
-        <td>${registeredDate}</td>
         <td class="action-buttons">
             ${!isDeleted ? `<button class="btn-icon btn-disabled" id="auth-action-${student.id}" data-auth-action="checking" title="Checking auth status...">
                 <i class="fas fa-spinner fa-spin"></i>
             </button>` : ''}
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
                 <i class="fas fa-sticky-note"></i>
+            </button>
+            <button class="btn-icon btn-transaction-history" onclick="viewTransactionHistory('${student.id}')" title="View Transaction History">
+                <i class="fas fa-history"></i>
             </button>
             <button class="btn-icon" onclick="editStudent('${student.id}')" title="Edit Student">
                 <i class="fas fa-edit"></i>
@@ -375,7 +362,7 @@ async function loadStudentMembership(studentId, cellId) {
             cell.innerHTML = `<span class="badge badge-yes">${formattedDate}</span>`;
         } else {
             // No active membership - show red badge
-            cell.innerHTML = `<span class="badge badge-no">No active membership</span>`;
+            cell.innerHTML = `<span class="badge badge-no">Inactive</span>`;
         }
     } catch (error) {
         console.error('Error loading membership for student:', studentId, error);
