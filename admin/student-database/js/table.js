@@ -128,16 +128,8 @@ function createStudentRow(student) {
         ? `<span class="badge-merged" title="Merged into ${student.mergedInto}"><i class="fas fa-compress-arrows-alt"></i> Merged</span>`
         : '';
     
-    // Format registration date
-    let registeredDate = 'N/A';
-    if (student.registeredAt) {
-        const date = student.registeredAt.toDate ? student.registeredAt.toDate() : new Date(student.registeredAt);
-        registeredDate = date.toLocaleDateString('en-NZ', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-        });
-    }
+    // Format pronouns for display below name
+    const pronounsDisplay = student.pronouns ? `<div class="student-pronouns">${escapeHtml(student.pronouns)}</div>` : '';
 
     // Email consent badge
     const emailConsentBadge = student.emailConsent 
@@ -175,21 +167,9 @@ function createStudentRow(student) {
             </span>`
         : 'N/A';
     
-    const phone = student.phoneNumber || 'N/A';
-    const phoneDisplay = phone !== 'N/A'
-        ? `<span class="contact-field-wrapper">
-                <span class="contact-text">${escapeHtml(phone)}</span>
-                <button class="btn-copy-contact" data-copy-value="${escapeHtml(phone)}" data-copy-label="Phone" title="Copy phone">
-                    <i class="fas fa-copy"></i>
-                </button>
-            </span>`
-        : 'N/A';
-
     row.innerHTML = `
-        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}</td>
+        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}${pronounsDisplay}</td>
         <td>${emailDisplay}</td>
-        <td>${phoneDisplay}</td>
-        <td>${escapeHtml(student.pronouns || '-')}</td>
         <td>${emailConsentBadge}</td>
         <td id="${concessionsCellId}" class="concessions-cell">
             <i class="fas fa-spinner fa-spin text-muted"></i>
@@ -197,7 +177,6 @@ function createStudentRow(student) {
         <td id="${membershipCellId}" class="membership-cell">
             ${student.improver ? '<i class="fas fa-spinner fa-spin text-muted"></i>' : '<span class="text-muted">-</span>'}
         </td>
-        <td>${registeredDate}</td>
         <td class="action-buttons">
             ${!isDeleted ? `<button class="btn-icon btn-disabled" id="auth-action-${student.id}" data-auth-action="checking" title="Checking auth status...">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -375,7 +354,7 @@ async function loadStudentMembership(studentId, cellId) {
             cell.innerHTML = `<span class="badge badge-yes">${formattedDate}</span>`;
         } else {
             // No active membership - show red badge
-            cell.innerHTML = `<span class="badge badge-no">No active membership</span>`;
+            cell.innerHTML = `<span class="badge badge-no">Inactive</span>`;
         }
     } catch (error) {
         console.error('Error loading membership for student:', studentId, error);

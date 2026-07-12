@@ -98,19 +98,11 @@
 
 /* Header alignment to match columns */
 .students-table th:nth-child(3) {
-    text-align: right; /* Phone column */
-}
-
-.students-table th:nth-child(5) {
     text-align: center; /* Email Consent column */
 }
 
-.students-table th:nth-child(6) {
+.students-table th:nth-child(4) {
     text-align: center; /* Concessions column */
-}
-
-.students-table th:nth-child(7) {
-    text-align: right; /* Registered column */
 }
 
 .students-table tbody tr {
@@ -129,26 +121,27 @@
 }
 
 .students-table td:nth-child(3) {
-    text-align: right; /* Right-align phone numbers */
-}
-
-.students-table td:nth-child(5) {
     text-align: center; /* Center email consent badges */
 }
 
-.students-table td:nth-child(6) {
+.students-table td:nth-child(4) {
     text-align: center; /* Center concessions badges */
 }
 
-.students-table td:nth-child(7) {
-    text-align: right; /* Right-align dates */
-}
-
 /* Column widths */
-.students-table th:nth-child(8),
-.students-table td:nth-child(8) {
+.students-table th:nth-child(6),
+.students-table td:nth-child(6) {
     width: 240px; /* Wider Actions column for 5 buttons */
     min-width: 240px;
+}
+
+/* Pronouns below name styling */
+.student-pronouns {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: normal;
+    margin-top: 0.25rem;
+    text-transform: none;
 }
 
 /* Email Consent Badge */
@@ -543,12 +536,6 @@ textarea:focus {
     .students-table tbody td .btn-copy-contact {
         display: none;
     }
-    
-    /* Hide membership column on desktop - only show on mobile */
-    .students-table thead th.membership-column,
-    .students-table tbody td.membership-cell {
-        display: none;
-    }
 }
 
 /* ========================================
@@ -644,21 +631,16 @@ textarea:focus {
     }
 
     /* Accordion header - always visible */
-    .students-table tbody tr td:nth-child(1),
-    .students-table tbody tr td:nth-child(4) {
+    .students-table tbody tr td:nth-child(1) {
         display: block;
         padding: 1rem;
         border: none;
         text-align: left;
-    }
-
-    /* Name - prominent display */
-    .students-table tbody tr td:nth-child(1) {
         font-size: 1.1rem;
         font-weight: 700;
         color: var(--text-primary);
         border-bottom: 1px solid var(--bg-purple-medium);
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.75rem;
     }
 
     /* Note indicator icon - only visible on mobile */
@@ -670,22 +652,18 @@ textarea:focus {
         opacity: 0.8;
     }
 
-    /* Pronouns - below name */
-    .students-table tbody tr td:nth-child(4) {
-        font-size: 0.85rem;
-        color: var(--text-light);
-        padding-top: 0.5rem;
-        padding-bottom: 1rem;
+    /* Pronouns below name - slightly larger on mobile */
+    .students-table tbody tr td:nth-child(1) .student-pronouns {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
 
     /* Accordion content - hidden by default */
     .students-table tbody tr td:nth-child(2),
     .students-table tbody tr td:nth-child(3),
+    .students-table tbody tr td:nth-child(4),
     .students-table tbody tr td:nth-child(5),
-    .students-table tbody tr td:nth-child(6),
-    .students-table tbody tr td:nth-child(7),
-    .students-table tbody tr td:nth-child(8),
-    .students-table tbody tr td:nth-child(9) {
+    .students-table tbody tr td:nth-child(6) {
         display: none;
         padding: 0.75rem 1rem;
         border: none;
@@ -693,18 +671,16 @@ textarea:focus {
         border-top: 1px solid var(--bg-purple-medium);
     }
 
-    /* When row is expanded, show all content */
+    /* When row is expanded, show email and email consent */
     .students-table tbody tr.expanded td:nth-child(2),
     .students-table tbody tr.expanded td:nth-child(3),
-    .students-table tbody tr.expanded td:nth-child(5),
-    .students-table tbody tr.expanded td:nth-child(8),
-    .students-table tbody tr.expanded td:nth-child(9) {
+    .students-table tbody tr.expanded td:nth-child(6) {
         display: block;
     }
     
     /* Concessions and Membership - side by side */
-    .students-table tbody tr.expanded td:nth-child(6),
-    .students-table tbody tr.expanded td:nth-child(7) {
+    .students-table tbody tr.expanded td:nth-child(4),
+    .students-table tbody tr.expanded td:nth-child(5) {
         display: inline-block;
         width: 49%;
         vertical-align: top;
@@ -713,17 +689,17 @@ textarea:focus {
     }
     
     /* Remove border-top from membership cell to prevent wrapping */
-    .students-table tbody tr.expanded td:nth-child(7) {
+    .students-table tbody tr.expanded td:nth-child(5) {
         border-top: none !important;
     }
     
     /* First cell in the row gets left padding */
-    .students-table tbody tr.expanded td:nth-child(6) {
+    .students-table tbody tr.expanded td:nth-child(4) {
         padding-left: 1rem;
     }
     
     /* Last cell in the row gets right padding */
-    .students-table tbody tr.expanded td:nth-child(7) {
+    .students-table tbody tr.expanded td:nth-child(5) {
         padding-right: 1rem;
     }
     
@@ -732,38 +708,26 @@ textarea:focus {
         display: inline-block !important;
     }
 
-    /* Add labels for expanded content */
-    .students-table tbody tr.expanded td:nth-child(8)::before {
-        content: '📅 Registered: ';
-        font-weight: 600;
-        color: var(--text-primary);
-        opacity: 0.8;
-    }
-
     /* Contact field wrappers with copy buttons */
-    .students-table tbody tr.expanded td:nth-child(2) .contact-field-wrapper,
-    .students-table tbody tr.expanded td:nth-child(3) .contact-field-wrapper {
+    .students-table tbody tr.expanded td:nth-child(2) .contact-field-wrapper {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         width: 100%;
     }
 
-    .students-table tbody tr.expanded td:nth-child(2) .contact-text,
-    .students-table tbody tr.expanded td:nth-child(3) .contact-text {
+    .students-table tbody tr.expanded td:nth-child(2) .contact-text {
         flex: 1;
         word-break: break-word;
     }
 
-
-
-    .students-table tbody tr.expanded td:nth-child(5)::before {
+    .students-table tbody tr.expanded td:nth-child(3)::before {
         content: 'Email Consent: ';
         font-weight: 600;
         opacity: 0.8;
     }
 
-    .students-table tbody tr.expanded td:nth-child(6)::before {
+    .students-table tbody tr.expanded td:nth-child(4)::before {
         content: 'Concessions';
         font-weight: 600;
         opacity: 0.8;
@@ -772,7 +736,7 @@ textarea:focus {
         font-size: 0.85rem;
     }
 
-    .students-table tbody tr.expanded td:nth-child(7)::before {
+    .students-table tbody tr.expanded td:nth-child(5)::before {
         content: 'Membership';
         font-weight: 600;
         opacity: 0.8;
@@ -781,20 +745,13 @@ textarea:focus {
         font-size: 0.85rem;
     }
 
-    .students-table tbody tr.expanded td:nth-child(8)::before {
-        content: '📅 Registered: ';
-        font-weight: 600;
-        color: var(--text-primary);
-        opacity: 0.8;
-    }
-
     /* Action buttons - full width when expanded */
-    .students-table tbody tr.expanded td:nth-child(9) {
+    .students-table tbody tr.expanded td:nth-child(6) {
         padding: 1rem;
         background: var(--bg-purple-alt-medium);
     }
 
-    .students-table tbody tr.expanded td:nth-child(9).action-buttons {
+    .students-table tbody tr.expanded td:nth-child(6).action-buttons {
         display: flex;
         gap: 0.5rem;
         justify-content: stretch;
@@ -803,7 +760,7 @@ textarea:focus {
         box-sizing: border-box;
     }
 
-    .students-table tbody tr.expanded td:nth-child(9) .btn-icon {
+    .students-table tbody tr.expanded td:nth-child(6) .btn-icon {
         flex: 1;
         padding: 0.5rem;
         display: inline-flex;
@@ -816,7 +773,7 @@ textarea:focus {
         box-sizing: border-box;
     }
 
-    .students-table tbody tr.expanded td:nth-child(9) .btn-icon i {
+    .students-table tbody tr.expanded td:nth-child(6) .btn-icon i {
         font-size: 1.2rem;
     }
 

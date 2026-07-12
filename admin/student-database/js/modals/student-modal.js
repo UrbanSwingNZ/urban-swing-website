@@ -341,7 +341,7 @@ async function loadMembershipInfo(student) {
         membershipHeader.innerHTML = `
             <i class="fas fa-id-card"></i>
             <strong>Membership Status:</strong>
-            <span class="badge badge-no">No Active Membership</span>
+            <span class="badge badge-no">Inactive</span>
         `;
         membershipDetails.innerHTML = `
             <div style="padding: 0.75rem; background: var(--bg-warning-pale); border-radius: 4px; border-left: 4px solid var(--text-orange);">
@@ -362,7 +362,7 @@ async function loadMembershipInfo(student) {
             membershipHeader.innerHTML = `
                 <i class="fas fa-id-card"></i>
                 <strong>Membership Status:</strong>
-                <span class="badge badge-no">No Active Membership</span>
+                <span class="badge badge-no">Inactive</span>
             `;
             membershipDetails.innerHTML = '<div style="color: var(--text-muted);">Membership not found</div>';
             return;
