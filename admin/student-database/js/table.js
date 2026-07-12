@@ -128,8 +128,8 @@ function createStudentRow(student) {
         ? `<span class="badge-merged" title="Merged into ${student.mergedInto}"><i class="fas fa-compress-arrows-alt"></i> Merged</span>`
         : '';
     
-    // Format pronouns for display below name
-    const pronounsDisplay = student.pronouns ? `<div class="student-pronouns">${escapeHtml(student.pronouns)}</div>` : '';
+    // Format pronouns for display inline to the right of name
+    const pronounsDisplay = student.pronouns ? `<span class="student-pronouns">${escapeHtml(student.pronouns)}</span>` : '';
 
     // Email consent badge
     const emailConsentBadge = student.emailConsent 
@@ -156,10 +156,15 @@ function createStudentRow(student) {
                 <i class="fas fa-trash-alt"></i>
             </button>` : ''}`;
 
-    // Email and phone with copy buttons
+    // Email with envelope icon showing consent status
     const email = student.email || 'N/A';
+    const emailConsentIcon = student.emailConsent
+        ? '<i class="fas fa-envelope email-consent-icon consent-yes" title="Email consent given - OK to send marketing emails"></i>'
+        : '<i class="fas fa-envelope email-consent-icon consent-no" title="No email consent - Do not send marketing emails"></i>';
+    
     const emailDisplay = email !== 'N/A' 
         ? `<span class="contact-field-wrapper">
+                ${emailConsentIcon}
                 <span class="contact-text">${escapeHtml(email)}</span>
                 <button class="btn-copy-contact" data-copy-value="${escapeHtml(email)}" data-copy-label="Email" title="Copy email">
                     <i class="fas fa-copy"></i>
@@ -168,7 +173,7 @@ function createStudentRow(student) {
         : 'N/A';
     
     row.innerHTML = `
-        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${mergedBadge}${notesIcon}${pronounsDisplay}</td>
+        <td><strong${improverClass}>${escapeHtml(fullName)}</strong>${pronounsDisplay}${notesIcon}${mergedBadge}</td>
         <td>${emailDisplay}</td>
         <td>${emailConsentBadge}</td>
         <td id="${concessionsCellId}" class="concessions-cell">
@@ -183,6 +188,9 @@ function createStudentRow(student) {
             </button>` : ''}
             <button class="${notesButtonClass}" onclick="editNotes('${student.id}')" title="${hasNotes ? 'Edit Notes' : 'Add Notes'}">
                 <i class="fas fa-sticky-note"></i>
+            </button>
+            <button class="btn-icon" onclick="viewTransactionHistory('${student.id}')" title="View Transaction History">
+                <i class="fas fa-history"></i>
             </button>
             <button class="btn-icon" onclick="editStudent('${student.id}')" title="Edit Student">
                 <i class="fas fa-edit"></i>
