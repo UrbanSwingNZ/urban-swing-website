@@ -8,7 +8,7 @@ import { getShowReversedCheckins } from './checkin-filters.js';
 /**
  * Display today's check-ins list
  */
-export function displayTodaysCheckins() {
+export async function displayTodaysCheckins() {
     const checkinsList = document.getElementById('checkins-list');
     const emptyState = document.getElementById('empty-state');
     const todaysCheckins = getTodaysCheckins();
@@ -62,9 +62,15 @@ export function displayTodaysCheckins() {
         // Add reversed class if check-in is reversed
         const reversedClass = checkin.reversed ? 'reversed-checkin' : '';
         
+        // Add placeholder for concession badge if this is a concession check-in
+        const concessionBadge = checkin.entryType === 'concession' 
+            ? `<span class="concession-count-badge" data-student-id="${checkin.studentId}"></span>` 
+            : '';
+        
         return `<div class="checkin-item ${reversedClass}" data-checkin-id="${checkin.id}" data-student-id="${checkin.studentId}">
             <div class="checkin-info-row" data-action="edit">
                 <span class="checkin-name">${escapeHtml(checkin.studentName)}</span>
+                ${concessionBadge}
                 ${checkin.reversed ? '<span class="reversed-badge">REVERSED</span>' : ''}
             </div>
             <div class="checkin-actions">
@@ -82,6 +88,9 @@ export function displayTodaysCheckins() {
     // Add event listeners to check-in items
     attachCheckinEventListeners();
     
+    // Update concession badges for all concession check-ins
+    await updateConcessionBadges();
+    
     // Calculate separate counts for students and crew
     const crewCount = checkinsToDisplay.filter(c => 
         c.entryType === 'free' && c.freeEntryReason === 'crew-member'
@@ -89,6 +98,48 @@ export function displayTodaysCheckins() {
     const studentCount = checkinsToDisplay.length - crewCount;
     
     updateCheckinCount(studentCount, crewCount);
+}
+
+/**
+ * Update concession badges for all students who checked in with concessions
+ */
+async function updateConcessionBadges() {
+    const concessionBadges = document.querySelectorAll('.concession-count-badge');
+    
+    // Fetch concession data for each student and update badges
+    const updatePromises = Array.from(concessionBadges).map(async (badgeElement) => {
+        const studentId = badgeElement.dataset.studentId;
+        if (!studentId) return;
+        
+        try {
+            // Fetch concession blocks for this student
+            const blocks = await getStudentConcessionBlocks(studentId);
+            const stats = calculateConcessionStats(blocks);
+            
+            // Generate badge HTML based on stats
+            let badgeHTML = '';
+            if (stats.activeCount > 0 && stats.expiredCount === 0) {
+                // Only active concessions - green badge
+                badgeHTML = `<span class="badge badge-yes">${stats.activeCount}</span>`;
+            } else if (stats.expiredCount > 0 && stats.activeCount === 0) {
+                // Only expired concessions - red badge
+                badgeHTML = `<span class="badge badge-no">${stats.expiredCount}</span>`;
+            } else if (stats.activeCount > 0 && stats.expiredCount > 0) {
+                // Both active and expired - orange badge
+                badgeHTML = `<span class="badge badge-warning">${stats.totalCount}</span>`;
+            } else if (stats.totalCount === 0) {
+                // No concessions remaining - show 0 with red badge (same as expired)
+                badgeHTML = `<span class="badge badge-no">0</span>`;
+            }
+            
+            badgeElement.innerHTML = badgeHTML;
+        } catch (error) {
+            console.error('Error fetching concession data for student:', studentId, error);
+            // Leave badge empty on error
+        }
+    });
+    
+    await Promise.all(updatePromises);
 }
 
 /**
