@@ -311,9 +311,9 @@ async function handleCasualEntryUpdate() {
         return;
     }
     
-    if (!casualEntryModalData.transactionId || !casualEntryModalData.checkinId) {
+    if (!casualEntryModalData.transactionId) {
         if (typeof showSnackbar === 'function') {
-            showSnackbar('Missing transaction or check-in data', 'error');
+            showSnackbar('Missing transaction data', 'error');
         }
         return;
     }
@@ -362,15 +362,18 @@ async function handleCasualEntryUpdate() {
             .doc(casualEntryModalData.transactionId)
             .update(transactionUpdate);
         
-        // Update the associated check-in record
-        await firebase.firestore()
-            .collection('checkins')
-            .doc(casualEntryModalData.checkinId)
-            .update({
-                checkinDate: firebase.firestore.Timestamp.fromDate(parsedDate),
-                paymentMethod: paymentMethod,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+        // Update the associated check-in record (if it exists)
+        // Note: Pre-registered entries may not have a check-in record yet
+        if (casualEntryModalData.checkinId) {
+            await firebase.firestore()
+                .collection('checkins')
+                .doc(casualEntryModalData.checkinId)
+                .update({
+                    checkinDate: firebase.firestore.Timestamp.fromDate(parsedDate),
+                    paymentMethod: paymentMethod,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+        }
         
         if (typeof showLoading === 'function') {
             showLoading(false);
