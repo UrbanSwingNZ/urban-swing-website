@@ -105,6 +105,10 @@
         padding: var(--space-sm);
         font-size: var(--font-size-base);
     }
+    
+    .tab-content {
+        padding: var(--space-md);
+    }
 }
 
 /* ========================================
@@ -238,6 +242,25 @@
     .actions-settings-container {
         flex-direction: column;
         align-items: stretch;
+        padding: var(--space-sm);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .actions-settings-container .btn-primary-lg {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .settings-inline {
+        flex-wrap: wrap;
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .settings-inline .setting-label {
+        width: 100%;
+        margin-bottom: var(--space-xs);
     }
 }
 
