@@ -754,6 +754,18 @@
     margin-left: var(--space-xs);
 }
 
+/* Concession count badge - displays remaining concessions after student name */
+.concession-count-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: var(--space-xs);
+}
+
+.concession-count-badge .badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+}
+
 .checkin-balance {
     color: var(--text-muted);
     font-size: 0.85rem;
@@ -1431,6 +1443,18 @@ textarea.form-control {
         border-radius: var(--radius-xs);
         text-transform: uppercase;
         font-weight: 600;
+    }
+
+    /* Concession count badge on mobile */
+    .concession-count-badge {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 0.5rem;
+    }
+
+    .concession-count-badge .badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
     }
 
     /* Entry Type Badge and Action Buttons - Top Right */
