@@ -128,8 +128,8 @@ async function updateConcessionBadges() {
                 // Both active and expired - orange badge
                 badgeHTML = `<span class="badge badge-warning">${stats.totalCount}</span>`;
             } else if (stats.totalCount === 0) {
-                // No concessions remaining - don't show badge
-                badgeHTML = '';
+                // No concessions remaining - show 0 with red badge (same as expired)
+                badgeHTML = `<span class="badge badge-no">0</span>`;
             }
             
             badgeElement.innerHTML = badgeHTML;
