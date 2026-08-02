@@ -70,8 +70,8 @@ async function generateExpiredConcessionsReport() {
             const concession = { id: doc.id, ...doc.data() };
             const expiryDate = concession.expiryDate?.toDate();
             
-            // Only include expired concessions with remaining balance
-            if (concession.status === 'expired' && concession.remainingQuantity > 0) {
+            // Only include expired concessions with remaining balance (exclude locked)
+            if (concession.status === 'expired' && concession.remainingQuantity > 0 && concession.isLocked !== true) {
                 const student = students[concession.studentId];
                 if (student) {
                     expiredConcessions.push({
@@ -219,7 +219,7 @@ async function generateExpiringSoonReport() {
             const concession = { id: doc.id, ...doc.data() };
             const expiryDate = concession.expiryDate?.toDate();
             
-            if (expiryDate && expiryDate > now && expiryDate <= futureDate && concession.remainingQuantity > 0) {
+            if (expiryDate && expiryDate > now && expiryDate <= futureDate && concession.remainingQuantity > 0 && concession.isLocked !== true) {
                 const student = students[concession.studentId];
                 if (student) {
                     const daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
@@ -346,8 +346,8 @@ async function generateActiveConcessionsReport() {
             const concession = { id: doc.id, ...doc.data() };
             const expiryDate = concession.expiryDate?.toDate();
             
-            // Active = has balance > 0 AND not expired
-            if (concession.remainingQuantity > 0 && expiryDate && expiryDate > now) {
+            // Active = has balance > 0 AND not expired AND not locked
+            if (concession.remainingQuantity > 0 && expiryDate && expiryDate > now && concession.isLocked !== true) {
                 const student = students[concession.studentId];
                 if (student) {
                     activeConcessions.push({
