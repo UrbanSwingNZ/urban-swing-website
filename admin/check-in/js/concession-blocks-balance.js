@@ -20,11 +20,22 @@ async function updateStudentBalance(studentId) {
         
         snapshot.forEach(doc => {
             const data = doc.data();
-            totalBalance += data.remainingQuantity;
+            
+            // Skip locked blocks - they should not count toward balance
+            if (data.isLocked === true) {
+                return;
+            }
+            
+            const quantity = Number(data.remainingQuantity) || 0;
+            totalBalance += quantity;
             if (data.status === 'expired') {
-                expiredBalance += data.remainingQuantity;
+                expiredBalance += quantity;
             }
         });
+        
+        // Ensure we have valid numbers
+        totalBalance = Number(totalBalance) || 0;
+        expiredBalance = Number(expiredBalance) || 0;
         
         await firebase.firestore()
             .collection('students')

@@ -106,6 +106,11 @@ function calculateConcessionStats(blocks) {
     const depletedBlocks = [];
     
     blocks.forEach(block => {
+        // Skip locked blocks - students should not see them
+        if (block.isLocked === true) {
+            return;
+        }
+        
         const expiryDate = block.expiryDate?.toDate ? block.expiryDate.toDate() : new Date(block.expiryDate);
         const hasBalance = block.remainingQuantity > 0;
         const isExpired = expiryDate < now;
