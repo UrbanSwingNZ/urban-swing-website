@@ -275,9 +275,16 @@ async function loadStudentConcessions(studentId, cellId) {
         const blocks = await getStudentConcessionBlocks(studentId);
         const stats = calculateConcessionStats(blocks);
         
-        // Get student to check for active membership
+        // Get student to check for active membership (validate expiry date)
         const student = findStudentById(studentId);
-        const hasActiveMembership = student && student.activeMembershipId && student.membershipExpiryDate;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let hasActiveMembership = false;
+        if (student && student.activeMembershipId && student.membershipExpiryDate) {
+            const expiryDate = student.membershipExpiryDate.toDate();
+            expiryDate.setHours(0, 0, 0, 0);
+            hasActiveMembership = expiryDate >= today;
+        }
         
         const badgeHTML = getConcessionBadgeHTML(stats, hasActiveMembership);
         
