@@ -336,6 +336,10 @@ function getTypeBadgeClass(entryType) {
             return 'casual-student';
         case 'free':
             return 'free';
+        case 'workshop-entry':
+            return 'workshop';
+        case 'membership':
+            return 'membership';
         default:
             return 'other';
     }
@@ -358,6 +362,10 @@ function getTypeDisplayName(entryType) {
             return 'Casual Entry (Student)';
         case 'free':
             return 'Free Entry';
+        case 'workshop-entry':
+            return 'Workshop Entry';
+        case 'membership':
+            return 'Membership';
         default:
             return entryType;
     }
