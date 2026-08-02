@@ -206,14 +206,48 @@ async function createTransaction(studentId, packageData, paymentMethod, transact
 
 /**
  * Update student's concession balance
+ * Recalculates from all blocks with remainingQuantity > 0, excluding locked blocks
  */
-async function updateStudentBalance(studentId, classesToAdd) {
-    const studentRef = db.collection('students').doc(studentId);
-    
-    await studentRef.update({
-        concessionBalance: firebase.firestore.FieldValue.increment(classesToAdd),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+async function updateStudentBalance(studentId, classesToAdd = null) {
+    try {
+        // Recalculate balance from blocks (ignoring classesToAdd parameter for backwards compatibility)
+        const snapshot = await db.collection('concessionBlocks')
+            .where('studentId', '==', studentId)
+            .where('remainingQuantity', '>', 0)
+            .get();
+        
+        let totalBalance = 0;
+        let expiredBalance = 0;
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            
+            // Skip locked blocks - they should not count toward balance
+            if (data.isLocked === true) {
+                return;
+            }
+            
+            const quantity = Number(data.remainingQuantity) || 0;
+            totalBalance += quantity;
+            if (data.status === 'expired') {
+                expiredBalance += quantity;
+            }
+        });
+        
+        // Ensure we have valid numbers
+        totalBalance = Number(totalBalance) || 0;
+        expiredBalance = Number(expiredBalance) || 0;
+        
+        const studentRef = db.collection('students').doc(studentId);
+        await studentRef.update({
+            concessionBalance: totalBalance,
+            expiredConcessions: expiredBalance,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Error updating student balance:', error);
+        throw error;
+    }
 }
 
 /**

@@ -10,6 +10,19 @@
  */
 async function lockConcessionBlock(blockId, notes = null) {
     try {
+        // Get the block to retrieve studentId
+        const blockDoc = await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .get();
+        
+        if (!blockDoc.exists) {
+            console.error('Concession block not found:', blockId);
+            return false;
+        }
+        
+        const studentId = blockDoc.data().studentId;
+        
         const updateData = { 
             isLocked: true,
             lockedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -27,6 +40,12 @@ async function lockConcessionBlock(blockId, notes = null) {
             .collection('concessionBlocks')
             .doc(blockId)
             .update(updateData);
+        
+        // Update student's balance to reflect the locked block
+        if (typeof updateStudentBalance === 'function') {
+            await updateStudentBalance(studentId);
+        }
+        
         return true;
     } catch (error) {
         console.error('Error locking concession block:', error);
@@ -42,6 +61,19 @@ async function lockConcessionBlock(blockId, notes = null) {
  */
 async function unlockConcessionBlock(blockId, notes = null) {
     try {
+        // Get the block to retrieve studentId
+        const blockDoc = await firebase.firestore()
+            .collection('concessionBlocks')
+            .doc(blockId)
+            .get();
+        
+        if (!blockDoc.exists) {
+            console.error('Concession block not found:', blockId);
+            return false;
+        }
+        
+        const studentId = blockDoc.data().studentId;
+        
         const updateData = { 
             isLocked: false,
             unlockedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -59,6 +91,12 @@ async function unlockConcessionBlock(blockId, notes = null) {
             .collection('concessionBlocks')
             .doc(blockId)
             .update(updateData);
+        
+        // Update student's balance to reflect the unlocked block
+        if (typeof updateStudentBalance === 'function') {
+            await updateStudentBalance(studentId);
+        }
+        
         return true;
     } catch (error) {
         console.error('Error unlocking concession block:', error);

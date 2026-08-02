@@ -47,9 +47,16 @@ async function updateStudentConcessionBadge(studentId) {
         const blocks = await getStudentConcessionBlocks(studentId);
         const stats = calculateConcessionStats(blocks);
         
-        // Check if student has active membership
+        // Check if student has active membership (validate expiry date)
         const student = findStudentById(studentId);
-        const hasActiveMembership = student && student.activeMembershipId && student.membershipExpiryDate;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let hasActiveMembership = false;
+        if (student && student.activeMembershipId && student.membershipExpiryDate) {
+            const expiryDate = student.membershipExpiryDate.toDate();
+            expiryDate.setHours(0, 0, 0, 0);
+            hasActiveMembership = expiryDate >= today;
+        }
         
         // Find the table cell for this student
         const row = document.querySelector(`tr[data-student-id="${studentId}"]`);

@@ -477,7 +477,7 @@ async function getConcessionCount(studentId) {
             .where('studentId', '==', studentId)
             .get();
         
-        // Sum up remaining concessions, excluding expired blocks and blocks with 0 remaining
+        // Sum up remaining concessions, excluding locked blocks, expired blocks, and blocks with 0 remaining
         let totalRemaining = 0;
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -485,6 +485,9 @@ async function getConcessionCount(studentId) {
             
             // Skip if no remaining concessions
             if (remainingQuantity <= 0) return;
+            
+            // Skip locked blocks - they should not count toward balance
+            if (data.isLocked === true) return;
             
             const expiryDate = data.expiryDate?.toDate ? data.expiryDate.toDate() : new Date(data.expiryDate);
             
