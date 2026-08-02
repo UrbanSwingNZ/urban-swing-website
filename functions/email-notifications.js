@@ -633,8 +633,14 @@ exports.sendLowBalanceEmail = onCall(
         .where('remainingQuantity', '>', 0)
         .get();
 
+      // Calculate total balance, excluding locked blocks
       const totalBalance = blocksSnapshot.docs.reduce((sum, doc) => {
-        return sum + doc.data().remainingQuantity;
+        const data = doc.data();
+        // Skip locked blocks
+        if (data.isLocked === true) {
+          return sum;
+        }
+        return sum + data.remainingQuantity;
       }, 0);
 
       logger.info(`Student ${studentId} active balance: ${totalBalance}`);
@@ -728,10 +734,10 @@ exports.sendExpiryWarningEmails = onSchedule(
 
       logger.info(`Found ${blocksSnapshot.size} blocks in expiry window`);
 
-      // Filter out blocks that have already been notified
+      // Filter out blocks that have already been notified or are locked
       const blocksToNotify = blocksSnapshot.docs.filter(doc => {
         const data = doc.data();
-        return !data.expiryWarningEmailSent;
+        return !data.expiryWarningEmailSent && data.isLocked !== true;
       });
 
       logger.info(`${blocksToNotify.length} blocks need notification`);
