@@ -29,6 +29,17 @@ const getFirestore = () => {
   return admin.firestore();
 };
 
+const BLOCKED_DOMAINS = ["example.com", "example.net", "example.org", "test.com", "localhost"];
+
+// Throws before sending if the recipient is a well-known test/placeholder domain.
+const assertSafeRecipient = (address) => {
+  if (!address) throw new Error("Email recipient is missing");
+  const domain = address.split("@")[1]?.toLowerCase();
+  if (!domain || BLOCKED_DOMAINS.includes(domain)) {
+    throw new Error(`Refusing to send email to blocked domain: ${domain}`);
+  }
+};
+
 /**
  * Send email notification when a new student registers
  * Triggers on new document creation in the 'students' collection
@@ -195,6 +206,7 @@ exports.sendNewStudentEmail = onDocumentCreated(
       }
 
       // Send welcome email to student
+      assertSafeRecipient(student.email);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
@@ -308,6 +320,7 @@ exports.sendAccountSetupEmail = onDocumentCreated(
       
       const accountSetupEmail = generateAccountSetupEmail(student, user, setupDate);
       
+      assertSafeRecipient(user.email);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: user.email,
@@ -476,6 +489,7 @@ exports.sendPortalInvitationEmail = onCall(
       
       // Send invitation email
       logger.info("Sending invitation email to:", student.email);
+      assertSafeRecipient(student.email);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
@@ -669,6 +683,7 @@ exports.sendLowBalanceEmail = onCall(
       });
 
       // Send email
+      assertSafeRecipient(student.email);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: student.email,
@@ -823,6 +838,7 @@ exports.sendExpiryWarningEmails = onSchedule(
           const emailContent = generateExpiringConcessionsEmail(student, expiringBlocks);
 
           // Send email
+          assertSafeRecipient(student.email);
           await transporter.sendMail({
             from: '"Urban Swing" <dance@urbanswing.co.nz>',
             to: student.email,
@@ -921,6 +937,7 @@ exports.sendMembershipRenewalSuccessEmail = onCall(
       });
 
       // Send email with BCC to admin
+      assertSafeRecipient(studentEmail);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: studentEmail,
@@ -995,6 +1012,7 @@ exports.sendMembershipRenewalFailureEmail = onCall(
       });
 
       // Send email with BCC to admin
+      assertSafeRecipient(studentEmail);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: studentEmail,
@@ -1068,6 +1086,7 @@ exports.sendMembershipExpiringSoonEmail = onCall(
       });
 
       // Send email with BCC to admin
+      assertSafeRecipient(studentEmail);
       await transporter.sendMail({
         from: '"Urban Swing" <dance@urbanswing.co.nz>',
         to: studentEmail,
