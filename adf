@@ -1,0 +1,207 @@
+  PendingCheckinsMobileDisplay                                [m 4287b4d Fix mobile display for pending checkins
+  add-bpm-to-mobile-display                                   [m 90157bc Add BPM on mobile display
+  add-class-date-to-transaction-mobile-card                   [m a58b19c Add Class Date to mobile card on Transactions screen for casual classes booked online
+  add-date-selector-to-registration-form                      [m 91ec763 Make the user select a date for their first class
+  add-merch-colors                                            [m 87fd99c Update email template to include product codes
+  add-new-email-templates                                     [m 434becd Replace 'you have unsaved changes' browser alert with modal
+  add-online-checkin-to-modal                                 [m 3f9377f Bug fixes
+  add-paid-badge-for-workshop                                 [m 37276d7 Fix workshop 'notes' modal height on mobile display
+  add-purchase-data-to-admin-email                            [m 0a4c008 Add info about student purchase to admin email for new student registration
+  add-refund-system-doc                                       [m 98a91c7 Update refund system doc.
+  add-social-media-icons                                      [m 03b30dd Added social media links
+  add-student-portal-nav-button                               [m 76b1115 Add nav button for student portal access
+  add-track-enhancements                                      [m e8c13ee Remove autocomplete from Add Tracks search box
+  admin-bugs                                                  [m acf7152 Date picker on certain admin pages ignores closedown periods
+  admin-login-portal                                          [m 004196e UI tidy ups
+  admin-portal-mobile-enhancements                            [m 8495afd Removed purple borders from transaction totals
+  admin-portal-navigation                                     [m 907c395 Add navigation buttons to header of admin portal
+  another-stripe-fix                                          [m 9179ee4 Final, proper fix for Stripe payments in student portal
+  automated-emails                                            [m 44a2213 Automated emails for students with expring concessions and when there's only 1 concession remaining
+  backend-changes                                             [m af9fd0a Remove unnecessary files and logs
+  bpm                                                         [m 0db4957 Tried and failed to add BPM information
+  bpm-improvements                                            [m 3d0f1c9 Track duplication detection only checks my own playlists for duplicates
+  bpm-script                                                  [m 8f90bce Change 'copy playlist link' button to go straight to songdata.io
+  bug-fix-edit-preregistered-class-date                       [m 76d355d Bug fix: can edit class date for a pre-registered student without requireing checkInId
+  bug-fixes                                                   [m efe2fde Fix permissions error relating to sending new student emails
+  bug-fixes-from-uat                                          [m fbafa33 Ensure concessionBlock document is appropriately named for gifted concessions
+  casual-pricing                                              [m 1344bc2 Rename Concesstion Types Manager page & tiles
+  check-in-transactions-display-for-online-payments           [m 6430617 Fix payment method display on mobile cards for individual transactions (check-in screen)
+  checkin-mobile-enhancements                                 [m c1b3d19 Transactions on checkin screen displayed as cards
+  checkin-online-payments                                     [m 323d27d Enhance online payment functionality in check-in modal; add checks for available payments and auto-select matching transactions
+  checkin-transaction-fixes                                   [m 297a8b6 Add toggle to Transactions screen to show uninvoiced transactions only
+  class-plan                                                  [m 9a5d066 Add Class Plan section to admin portal
+  class-plan-display-fix                                      [m 0df2a4c Final tweak
+  class-plan-ui-enhancements                                  [m f94ce15 Missing border from class search box added
+  class-plan-upgrade                                          [m 2f96b7f Improve modal design
+  class-registration-timezone-fix                             [m be38b6e Same fix but for student-portal/prepay
+  concession-gift-transactions                                [m a443a2d Prevent gifted concessions from showing when 'non-invoiced only' toggle is true
+  concession-gifting                                          [m 90c1fe5 Prevent browser autocomplete on student db searchbar
+  concession-gifting-tidy-up                                  [m 31fa48b Fix bug that prevented purchase price from being displayed on concession blocks
+  concession-manager-save-bug                                 [m 8553f6c Add navigation menu to student check in and database pages
+  concession-types-refactor                                   [m ab67e1a Refactor concession-types.js
+  concession-use-order                                        [m d07564a Crew members can be flagged as such
+  concessions-for-improvers                                   [m 5138f41 Show concession balance for improvers when Use Concession is selected on check-in
+  conession-gifting-mobile                                    [m 3728fac Fix dark mode display for concession gift number field
+  consolidate-registration-forms                              [m 0de52fb Hide password container by default and give the student the option to create an account via checkbox
+  context-menu-fixes                                          [m 774297a Fix playlist context menu
+  copilot-code-refactor                                       [m 6536615 Fixed mobile site width
+  copy-icons-for-email-on-student-db                          [m c2a3c6f Add copy buttons on mobile display on Student Database cards for email + phone number
+  create-student-database                                     [m af521a8 Tidy look of Add Concession Package modal
+  create-transactions-for-casual-entry                        [m 4c8492a Update backend with new transaction types and fix filtering on transactions page
+  csv-backup                                                  [m 6fd0fb3 CSV format added to backup function
+  custom-date-picker                                          [m dd26c00 Final UI tweaks
+  date-picker-bug-fixes                                       [m 7d7d0e3 Updating concession purchase date now updates the concession block and the expiry date
+  db-management                                               [m 20bc7ac Expanded docs and collections remain expanded when Edit or Delete button is clicked
+  db-manager-copy-doc-name                                    [m 914ffe9 Pressing enter on filter value field will apply the filter
+  default-date-on-date-picker-fix                             [m b45bde4 Ensure date picker opens using the current month
+  delete-concession-on-full-refund                            [m 11514bf Delete concessions block on full refund
+  delete-students                                             [m aec07c7 Fix bug that prevented all students from being displayed on student dropdown lists.
+  delete-transaction-bug-fix                                  [m 1432c69 Fix delete transaction error when deleting a transaction from the Transaction History (student) modal
+  design-system                                               [m 2a660cb Final doc update
+  display-concession-balance-on-check-in                      [m 5270523 Badge to display a 0 balance
+  duplicate-email-problem                                     [m d6b5bb1 Prevent duplicate emails from being registered
+  edit-concession-expiry                                      [m 117673b Ability to edit concession expiry date
+  email-manager                                               [m 0e4ab86 Update student portal registration form to use firestore email templates
+  email-template-modals                                       [m 077212c Migrate 'update base template' confirmation modal to shared modal structure
+  existing-students-button-on-classes-page                    [m d6f785f Make it easier for existing students to find the portal
+  fix-concession-balance-display-for-active-locked-concessions[m 46b9483 Remove locked active concessions from automated emails and DB reports
+  fix-depleted-concession-display                             [m 4746c2d Add yellow border to depleted concessions cards
+  fix-email-templates                                         [m 8d85da8 Fix email templates to use correct variables
+  fix-header-in-place                                         [m a3d0d4e Fix header in place
+  fix-locked-concession-display                               [m 8e2cf62 Fix casing of student check-in tile
+  fix-mobile-dragging                                         [m 1981cd4 Fix overflow
+  fix-playlist-mobile-display                                 [m 6866aa9 Fix truncated columns on mobile display
+  fix-playlist-order                                          [m c34628f Improve Spotify token expiry handling
+  fix-pricing-page-width                                      [m 2301472 Add Register nav button
+  fix-stripe                                                  [m cba09cb Fix stripe payment issues in portal
+  fix-stripe-complete                                         [m f8234ff Fix stripe payments
+  fix-stripe-refunds                                          [m 818cc10 Fixed stripe refund
+  fix-tranasction-totals                                      [m fc21a7a Fix Online totals on transcations screen
+  fix-transaction-totals                                      [m 5a3bdfa Fix Transactions on checkin screen & ensure refunds are subtracted from totals
+  fix-transactions-view-for-mobile                            [m 5c936ec Improve filter container for Transactions screen on mobile
+  flag-crew-members                                           [m 0925a19 New Crew badge created for check-in page
+  form-validation                                             [m 7027c31 Replace hardcoded colors with vars
+  freeze-transactions-table-header                            [m a53eb42 Freeze table header and introduce pagination on Admin Tools > Transactions
+  front-desk-permissions                                      [m 219e3f1 Add restrictions for front desk user
+  gift-concession-fixes                                       [m 1da9ef7 Add badge to gift concession transactions
+  gift-concessions-snackbar                                   [m dec206f Add logout handler to pages that were missing it
+  how-did-you-hear-about-us                                   [m ba8b7e8 Bug fix that prevented email template page from loading
+  improve-admin-header-nav-buttons                            [m 4b90e9f Make Admin Tools an accordion on mobile drawer
+  improve-nav                                                 [m d0f3ace Fix behaviour of Back button in DB Tools section
+  improve-pricing-table                                       [m 801805b Pricing table improvements
+  include-class-plan-in-backup                                [m ef7ee24 Add classPlan firestore collection to DB backup tool
+  integration-tests                                           [m 8d869e0 Update integration testing documentation
+  light-and-dark-modes                                        [m fa9cea1 Updated font colour
+  lock-active-concessions                                     [m 0756167 Add notes field to locked active concessions
+* [32mmain                                                        [m ae46a76 Add recipient domain guardrail to block test/placeholder email addresses
+  meet-nicole-and-lance                                       [m a202fc2 Resolve comment
+  meet-the-crew-placeholder                                   [m 7dff847 Changed line height in content wrapper to 1.5
+  membership                                                  [m 6bc273e Reset Stripe to production
+  membership-bug-fixes                                        [m cd68df5 Fix 'student not found' console error
+  membership-checkin-improvement                              [m 9bab1d8 Remove unnecessary snackbar
+  membership-expiry-ui                                        [m d0c18b3 Show new membershp expiry date on preview for bulk updates
+  membership-fixes                                            [m a5dd98f Remove payment-method-update transaction type
+  merch-and-registration-form-back-buttons                    [m 1c3a37e Add 'back to home' buttons on regisration and merch order forms
+  merch-form                                                  [m 9aef290 Add link to merch order form to public site
+  merge-students                                              [m 75f4d0f Fix bug preventing success message from displaying after merging students
+  migrate-action-buttons                                      [m e832979 Update styling for Register Student button on register.html
+  migrate-student-info-to-firestore                           [m b833400 First cut of student database
+  minor-improvements                                          [m 15c7bf8 Fix broken width of purchase icon on check-in screen
+  minor-update                                                [m 48a0348 separate student check-in count from crew check-in count
+  mobile-display                                              [m e522096 Imporoved mobile layout
+  mobile-enhancements                                         [m ffd3e13 Add playback animation & display artist underneath title on mobile
+  mobile-improvements                                         [m 444b864 Merch Orders page now displays cards on mobile
+  mobile-improvements-studentdb                               [m 33bae71 Fix display of pagination controls on mobile
+  mobile-playlist-play-pause                                  [m 3b9657c Implement pause and stop on mobile playlist manager
+  mobile-tweaks                                               [m e261306 Correct button color gradient for mobile only on checkin page
+  modal-consolidation                                         [m b43bcb8 Consolidate modal structures for password reset, email existence, terms acceptance, and change password functionalities
+  modal-consolidation02                                       [m d51c4fe Fix error that prevent students from being found in the student search on gift concessions page.
+  modal-tidy-up                                               [m 962f7cb Copy/move track modal now uses correct styles
+  moderinise-website                                          [m 77a9902 First cut of website modernisation
+  modernise-website                                           [m 751a0ae Fix path to admin portal
+  more-fucking-bugs                                           [m 77a1aac Bug fix for purchasing concession package when registering a new student
+  more-modal-migration                                        [m f88ffc8 Add casual entry modal integration and edit functionality for transactions.
+  more-playlist-bugs                                          [m 4e1ca0e Use onSnapshot to automatically highlight tracks when added to another playlist
+  multi-level-class-plan                                      [m 181a5c1 Mobile UI tweak
+  nav-button-styles                                           [m 545ed39 Update public site to use shared buttons.css for nav buttons
+  new-student-concession-purchase-bug-fix                     [m 711695c Bug fix: Concession block should be created when a new student registers and buys concessions
+  non-operating-nights                                        [m 3d18956 Add new collections to backup and fix some minor bugs on the backup page
+  notes-for-locking-concessions                               [m a0cf698 Ability to save notes for locking/unlocking concessions
+  other-class-locations                                       [m d016792 Other class locations links
+  password-reset                                              [m 47a6d9f Password reset button added to student database table
+  payment-history-enhancements                                [m 7433280 Fix Bank Transfer column on Transaction screen
+  pending-checkins                                            [m f82b2c1 Fix bug that prevented pending checkins from displaying on page refresh
+  play-functionality                                          [m 6d375ec Fix mouse cursor when hovering on tracks. Clicking 3-dots on a displayed menu should collapse the menu. If a track is playing then the pause button is visible not just on hover.
+  playlist-bpm-improvements                                   [m 1ea6d20 Auto update bpm if track is found on another playlist
+  playlist-fixes                                              [m 68f3711 Display entire playlist name in playlist list
+  playlist-load-performance                                   [m 93ee3d7 Performance enhancement to allow fast loading of large playlists
+  playlist-manager                                            [m 30f8b5b Maybe the spotify playlist manager is fixed?
+  playlist-manager-bugs                                       [m c76910b Prevent error when refreshing Spotify token
+  playlist-manager-tweaks                                     [m a85e4ac Some fixes - not perfect
+  playlist-manager-ui-enhancements                            [m 1ac16f0 Fixed display of hamburger menu on desktop and persistent Save Order button when the order has not changed
+  playlist-ownership                                          [m fe66e19 Prevent duplication of tracks on a playlist
+  playlist-stop-button-fix                                    [m 8dd3ef7 Push it real good
+  portal-invitation-email                                     [m d4eb28b Corrected the shade of pink used in the invitation email
+  post-refactor-bug-fixes                                     [m e535ba4 Check for duplicate names when registering a new student
+  pricing-page-mobile-display-fix                             [m 695f97c Fix mobile display for pricing information
+  publish-registration-form                                   [m 2f95789 Add social media icons to email
+  put-address-on-rego-form                                    [m c836cf7 Put time and location on registration form (public view only)
+  pwd-reset-improvement                                       [m b9b1b73 Add reminder to check spam folder
+  quick-wins                                                  [m 963270d Concession purchase date matches check-in date when purchase modal is opened from check-in screen
+  refactor                                                    [m 245eb19 Refactor student portal profile and purchase pages; implement package service and payment service for better modularity and maintainability
+  refactor-01                                                 [m 4bbdaf4 Fix bug that didn't display Urban Swing logo for empty playlists.
+  refactor-centralised-utilities                              [m 66f19be Final update to documentation
+  refactor-css                                                [m 94b54ce Remove powershell script
+  refactor-css-colors                                         [m 62ccc03 Update docs
+  refactor-hamburger-menu                                     [m d2e58c2 Add highlight to indicate which is the active page
+  refactor-modals-again                                       [m 0352ea2 Update docs
+  refactor-playlist-manager                                   [m d28e176 Final touch ups
+  refactor-snackbar                                           [m 8f6a24b Update documentation
+  refactor-spinner                                            [m cf3d9ef Refactor spinner
+  refactor-split-large-files                                  [m 8783cc5 Update docs
+  refund-system                                               [m d6300b8 Refund system
+  registration-form-update                                    [m 6324b03 Updated student registration with T&Cs
+  remove-dark-mode                                            [m 0204868 Remove dark mode support
+  remove-email-templates                                      [m 66465c8 Removed old email template from admin-tools
+  remove-old-files                                            [m 8cc0b2f Remove all .old files
+  remove-transaction-history-student-portal                   [m b978dd8 Hide Transactions page on student portal
+  reporting-tool                                              [m fe09e5c Mobile styling added
+  reverse-transactions                                        [m 63963cc Show reverse transaction toggle on check-in page
+  search-class-plan                                           [m 93e421a Add search functionality to Class Plan
+  show-classdate-on-transaction                               [m d230bc8 Consolidate Cash/EFTPOS etc columns into a single Payment Method column in Transactions area on check in page
+  show-prepaid-classes                                        [m ca3c359 Remove casual entry badge from prepaid class transactions
+  show-transactions-on-checkin-screen                         [m 76af553 Accordion headers for checkin/transaction section
+  snackbar-consolidation                                      [m f7efa5d Migrate snackbar on Student Portal > Profile
+  social-dancing                                              [m 75d85ed Prevent 'promo' casual rates from displaying in student-portal/prepay
+  speed-up-checkin                                            [m 52c2a67 Improve checkin process
+  spotify-api-migration                                       [m 02e4b48 Migrate to Spotify API March 2026 endpoints
+  spotify-connection-fix                                      [m 61b9164 Move MD documents and fix Redirect URI for Spotify connection
+  spotify-token-refresh-improvements                          [m 7f91b8d Change sort order of class plans to desc
+  stripe-return-url                                           [m 3b7c2e3 Add Stripe return url
+  student-db-table-improvement                                [m 980f9e8 Hide mobile-only elements from desktop view
+  student-id-warning                                          [m cf51750 Hide 'student ID warning' when student rate is not selected
+  student-portal                                              [m fbb0c8f Remove second trolley icon from Purchase Concessions button
+  student-portal-admin-view-bug                               [m 255d6ae Fix bug that prevent student portal pages from refreshing when viewed as admin and student selected was changed
+  student-portal-mobile-enhancements                          [m 8afe0f6 Replace browser alert with modal for cancel confirmation on pre-pay class and purchase concession pages
+  student-portal-shared-header                                [m 9bbf846 Name update
+  surface-prepaid-class-date                                  [m 47f3f44 Show prepaid class date on transaction in student database transaction history
+  test-setup                                                  [m a54a50d Add comprehensive unit tests for payment functions
+  tile-styles                                                 [m 8a8a920 Removed tile action buttons and converted tiles to links on admin tools page
+  transaction-and-workshop-bug-fixes                          [m e464361 Bug fix: New students couldn't buy concession packages when registering
+  transactions-page                                           [m 8ae47f5 Number formatting fixes
+  update-db-backup-tool                                       [m 4989c76 UI improvements to the Auth Users cards on DB manager
+  update-faqs                                                 [m 36e684f Update faqs with payment and student portal info
+  update-nodejs-github-action                                 [m 7c02454 Update to Node.js 24 and latest action versions
+  update-registration                                         [m 7754f1d Added ability to toggle which packages are displayed on registration form
+  update-terms-conditions                                     [m 2cb975b Add concession purchase condition to purchase concessions page
+  update-transactions-table-with-online-column                [m 254556a Fix filter for casual entries on transactions page
+  upgrade-spotify-functions                                   [m 678cb71 Upgrade Spotify functions from V1
+  user-creation                                               [m fe0b496 Add stripe payment element to class pre-purchase and concession purchase
+  user-distinction                                            [m e1203c4 Show Return to Website button on registration form for public users
+  weekly-backup                                               [m aa44c40 Add weekly backup workflow
+  workshop-checkins-free-for-crew                             [m 5732fc6 Free checkin for crew members
+  workshop-notes                                              [m cfcd3bc Remove delete button next to Registered students on 'invited students' modal
+  workshop-page-improvements                                  [m ef2181e Add view-video modal on student portal
+  workshop-payment-fix                                        [m f6a3a12 Fix bug that prevented online payments going through for workshop registration
+  workshop-ui-tweaks                                          [m 4626a93 Separate pending invitations from registered students on Manage Invites modal
+  workshops                                                   [m 8933183 Admin can register students on their behalf
