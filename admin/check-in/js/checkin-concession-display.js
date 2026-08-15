@@ -13,6 +13,10 @@ async function showSelectedStudent(student) {
     document.getElementById('selected-student-email').textContent = student.email || '';
     document.getElementById('selected-student-id').value = student.id;
     
+    // Setup entry type listeners before any default radio selection is dispatched.
+    // This ensures the payment/free sections initialize correctly on the first modal open.
+    setupEntryTypeListeners();
+    
     // Check if student is improver - validate against selected check-in date
     const selectedDate = getSelectedCheckinDate();
     const membershipCheck = await window.checkStudentMembership(student.id, selectedDate);
@@ -26,9 +30,6 @@ async function showSelectedStudent(student) {
     }
     
     selectedInfo.style.display = 'block';
-    
-    // Setup entry type listeners
-    setupEntryTypeListeners();
 }
 
 /**
