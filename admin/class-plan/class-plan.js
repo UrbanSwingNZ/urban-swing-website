@@ -349,8 +349,9 @@ async function loadLevel1Plans() {
         // Always hide empty state for Level 1 (we show placeholder cards)
         emptyState.style.display = 'none';
         
-        // Generate cards for all weeks (1 to blockSize)
-        for (let week = 1; week <= blockSize; week++) {
+        // Start with the current week and wrap back to Week 1 after the block ends.
+        for (let offset = 0; offset < blockSize; offset++) {
+            const week = ((currentWeek - 1 + offset) % blockSize) + 1;
             const planData = plansMap.get(week);
             const isCurrentWeek = (week === currentWeek);
             

@@ -129,7 +129,7 @@ await batch.commit();
 ### 2.2 Level 1 Tab Layout
 
 **Features:**
-- Display all 12 weeks in ascending order (Week 1 → Week 12)
+- Display all weeks starting with the current highlighted week, then ascending and wrapping after the final week (e.g. Week 10 → Week 11 → Week 12 → Week 1 → ... → Week 9). Recalculate this order whenever Level 1 plans are loaded.
 - Grid layout: 3-4 columns on desktop, 1-2 on mobile
 - Empty weeks show "Add Moves" button
 - Filled weeks show moves + "Edit" button
